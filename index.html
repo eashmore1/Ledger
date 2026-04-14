@@ -278,6 +278,16 @@ a{color:var(--ind);text-decoration:none}
 .auth-form-btn:hover{background:#ea6c0a;transform:translateY(-1px)}
 .auth-terms{font-size:11px;color:var(--mut);text-align:center;margin-top:16px;line-height:1.6}
 .auth-terms a{color:var(--ind)}
+.auth-method-row{display:flex;gap:8px;margin-bottom:20px}
+.auth-method-btn{flex:1;padding:10px 8px;border:1.5px solid var(--bdr2);background:var(--surf);border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--mut);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.auth-method-btn:hover{border-color:var(--ora);color:var(--txt)}
+.auth-method-btn.active{border-color:var(--ora);background:rgba(249,115,22,.06);color:var(--ora)}
+.auth-method-btn span{font-size:18px}
+.phone-flag{font-size:20px;margin-right:4px}
+.otp-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.otp-digit{width:46px;height:54px;text-align:center;font-size:22px;font-weight:700;background:var(--surf2);border:2px solid var(--bdr);border-radius:10px;color:var(--txt);outline:none;transition:border-color .15s}
+.otp-digit:focus{border-color:var(--ora)}
+.otp-digit.filled{border-color:var(--ind)}
 
 /* Google account picker modal */
 .google-picker{background:var(--surf);border-radius:16px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:modalIn .2s ease;overflow:hidden}
@@ -1325,14 +1335,19 @@ function renderUpgradeModal(featureHint){
 }
 
 function activatePlan(tier){
-  // Route to Stripe if enabled
-  if(STRIPE_ENABLED&&tier!=='trial'){
+  // ── Beta mode: free switching, no payment required ──
+  // Route to Stripe only when STRIPE_ENABLED=true AND real keys are configured
+  if(STRIPE_ENABLED && tier!=='trial' && !STRIPE_CONFIG.paymentLinks.pro_monthly.includes('REPLACE')){
     const keyMap={pro:'pro_'+(_upgradeBilling==='annual'?'annual':'monthly'),elite:'elite_'+(_upgradeBilling==='annual'?'annual':'monthly'),cram:'cram_plan'};
     redirectToStripeCheckout(keyMap[tier]||'pro_monthly');
     return;
   }
-  const label={pro:'Pro',elite:'Elite',cram:'6-Month Cram Plan'}[tier]||tier;
-  if(tier==='pro'&&!SUB.trialUsed){
+  if(tier==='free'){
+    SUB={...SUB,tier:'free',startDate:null};
+    saveSub(SUB);
+    closeUpgradeModal();
+    showToast('Switched to Free tier','info');
+  } else if(tier==='pro'&&!SUB.trialUsed){
     SUB={...SUB,tier:'trial',billingCycle:_upgradeBilling,startDate:Date.now(),trialEnd:Date.now()+7*86400000,trialUsed:true};
     saveSub(SUB);
     closeUpgradeModal();
@@ -1455,6 +1470,9 @@ function init(){
 // ═══════════════════════════════════════════════
 let authMode = 'signin'; // 'signin' | 'signup'
 let authEmailInput = '';
+let authMethod = 'email'; // 'email' | 'phone'
+let phoneConfirmResult = null; // Firebase ConfirmationResult
+let recaptchaVerifier = null;
 
 function renderAuth(){
   applyTheme();
@@ -1514,7 +1532,7 @@ function renderAuth(){
       <button class="auth-tab${authMode==='signup'?' active':''}" onclick="switchAuthMode('signup')">Create Account</button>
     </div>
 
-    <!-- Google button -->
+    <!-- Google SSO -->
     <button class="google-btn" onclick="FIREBASE_ENABLED?signInWithGoogle():openGooglePicker()">
       <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -1525,11 +1543,21 @@ function renderAuth(){
       Continue with Google
     </button>
 
-    <div class="auth-divider"><span>or ${authMode==='signin'?'sign in':'sign up'} with email</span></div>
+    <!-- Method picker: Email or Phone -->
+    <div class="auth-method-row">
+      <button class="auth-method-btn${authMethod==='email'?' active':''}" onclick="switchAuthMethod('email')">
+        <span>✉️</span>Email
+      </button>
+      <button class="auth-method-btn${authMethod==='phone'?' active':''}" onclick="switchAuthMethod('phone')">
+        <span>📱</span>Phone
+      </button>
+    </div>
 
     <div id="auth-form-body">
       ${buildAuthForm()}
     </div>
+    <!-- Invisible reCAPTCHA container for phone auth -->
+    <div id="recaptcha-container"></div>
 
     <div class="auth-terms">
       By continuing, you agree to Ledger's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
@@ -1560,6 +1588,31 @@ function renderAuth(){
 }
 
 function buildAuthForm(){
+  // ── Phone method ──────────────────────────────────
+  if(authMethod==='phone'){
+    return`
+<div class="form-grp">
+  <label>Phone Number</label>
+  <div style="display:flex;gap:8px">
+    <select id="auth-country-code" style="padding:10px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;font-size:13px;color:var(--txt);outline:none;flex-shrink:0">
+      <option value="+1">🇺🇸 +1</option>
+      <option value="+44">🇬🇧 +44</option>
+      <option value="+91">🇮🇳 +91</option>
+      <option value="+61">🇦🇺 +61</option>
+      <option value="+52">🇲🇽 +52</option>
+      <option value="+49">🇩🇪 +49</option>
+      <option value="+33">🇫🇷 +33</option>
+      <option value="+81">🇯🇵 +81</option>
+      <option value="+86">🇨🇳 +86</option>
+      <option value="+55">🇧🇷 +55</option>
+    </select>
+    <input id="auth-phone" type="tel" placeholder="(555) 000-0000" autocomplete="tel" style="flex:1" oninput="formatPhoneInput(this)">
+  </div>
+</div>
+<button class="auth-form-btn" onclick="handlePhoneSendOTP()">Send Verification Code →</button>
+<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px;line-height:1.6">We'll text you a 6-digit code. Standard rates may apply.</div>`;
+  }
+  // ── Email method ─────────────────────────────────
   if(authMode==='signup'){
     return`
 <div class="form-grp">
@@ -1592,20 +1645,30 @@ function buildAuthForm(){
 
 function switchAuthMode(mode){
   authMode=mode;
-  // Update tabs
+  phoneConfirmResult=null;
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='signin')||(i===1&&mode==='signup')));
-  // Update heading
   const hdr=document.getElementById('auth-heading');
   if(hdr)hdr.innerHTML=`<div style="font-size:24px;font-weight:900;margin-bottom:4px">${mode==='signin'?'Welcome back':'Create your account'}</div><div style="font-size:13px;color:var(--sub)">${mode==='signin'?'Sign in to continue your CPA journey':'Join 12,400+ candidates grinding toward CPA'}</div>`;
-  // Update divider
-  const div=document.querySelector('.auth-divider span');
-  if(div)div.textContent=`or ${mode==='signin'?'sign in':'sign up'} with email`;
-  // Update form
   const fb=document.getElementById('auth-form-body');
   if(fb)fb.innerHTML=buildAuthForm();
-  // Update terms
   const terms=document.querySelector('.auth-terms');
   if(terms)terms.innerHTML=`By continuing, you agree to Ledger's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>${mode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}`;
+}
+
+function switchAuthMethod(method){
+  authMethod=method;
+  phoneConfirmResult=null;
+  document.querySelectorAll('.auth-method-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(method)));
+  const fb=document.getElementById('auth-form-body');
+  if(fb)fb.innerHTML=buildAuthForm();
+}
+
+function formatPhoneInput(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>10)v=v.slice(0,10);
+  if(v.length>=7) el.value='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);
+  else if(v.length>=4) el.value='('+v.slice(0,3)+') '+v.slice(3);
+  else if(v.length>0) el.value=v;
 }
 
 // Simulated Google accounts stored in localStorage
@@ -1726,6 +1789,124 @@ async function handleEmailAuth(){
   obData.name=displayName.split(' ')[0]||displayName;
   showToast(`${authMode==='signup'?'Account created':'Signed in'} as ${displayName} ✓`,'ok');
   setTimeout(()=>{if(!S){renderOnboarding();}else{renderApp();}},300);
+}
+
+// ═══════════════════════════════════════════════
+// PHONE AUTH
+// ═══════════════════════════════════════════════
+async function handlePhoneSendOTP(){
+  if(!FIREBASE_ENABLED){ showToast('Phone auth requires Firebase — enable it first','err'); return; }
+  const code=document.getElementById('auth-country-code')?.value||'+1';
+  const raw=document.getElementById('auth-phone')?.value?.replace(/\D/g,'')||'';
+  if(raw.length<7){ showToast('Enter a valid phone number','err'); return; }
+  const fullPhone=code+raw;
+
+  const btn=document.querySelector('.auth-form-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Sending code…'; }
+
+  try {
+    // Destroy previous verifier if exists
+    if(recaptchaVerifier){ try{ recaptchaVerifier.clear(); }catch(e){} recaptchaVerifier=null; }
+    recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container',{
+      size:'invisible',
+      callback:()=>{}
+    });
+    phoneConfirmResult = await firebaseAuth.signInWithPhoneNumber(fullPhone, recaptchaVerifier);
+    renderOTPScreen(fullPhone);
+  } catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='Send Verification Code →'; }
+    if(recaptchaVerifier){ try{ recaptchaVerifier.clear(); }catch(x){} recaptchaVerifier=null; }
+    const msg = e.code==='auth/invalid-phone-number' ? 'Invalid phone number — include country code'
+              : e.code==='auth/too-many-requests' ? 'Too many attempts — try again later'
+              : e.message;
+    showToast(msg,'err');
+  }
+}
+
+function renderOTPScreen(phone){
+  const fb=document.getElementById('auth-form-body');
+  if(!fb) return;
+  fb.innerHTML=`
+<div style="text-align:center;margin-bottom:20px">
+  <div style="font-size:40px;margin-bottom:10px">📱</div>
+  <div style="font-size:16px;font-weight:800;margin-bottom:6px">Enter the code</div>
+  <div style="font-size:12px;color:var(--sub);line-height:1.6">We texted a 6-digit code to<br><strong>${phone}</strong></div>
+</div>
+<div class="otp-inputs" id="otp-inputs">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,0)" onkeydown="otpBack(event,this,0)">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,1)" onkeydown="otpBack(event,this,1)">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,2)" onkeydown="otpBack(event,this,2)">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,3)" onkeydown="otpBack(event,this,3)">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,4)" onkeydown="otpBack(event,this,4)">
+  <input class="otp-digit" maxlength="1" type="tel" inputmode="numeric" oninput="otpAdvance(this,5)" onkeydown="otpBack(event,this,5)">
+</div>
+<button class="auth-form-btn" id="otp-verify-btn" onclick="handleVerifyOTP()">Verify Code →</button>
+<div style="text-align:center;margin-top:14px">
+  <a href="#" onclick="handlePhoneResend();return false" style="font-size:12px;color:var(--sub)">Didn't get it? Resend →</a>
+  &nbsp;·&nbsp;
+  <a href="#" onclick="switchAuthMethod('phone');return false" style="font-size:12px;color:var(--sub)">Change number</a>
+</div>`;
+  setTimeout(()=>document.querySelector('.otp-digit')?.focus(),80);
+}
+
+function otpAdvance(el, idx){
+  const digits=document.querySelectorAll('.otp-digit');
+  el.classList.toggle('filled',el.value.length>0);
+  // Auto-submit when all filled
+  if(el.value&&idx<5){ digits[idx+1]?.focus(); }
+  const code=[...digits].map(d=>d.value).join('');
+  if(code.length===6) handleVerifyOTP();
+}
+
+function otpBack(e, el, idx){
+  const digits=document.querySelectorAll('.otp-digit');
+  if(e.key==='Backspace'&&!el.value&&idx>0){ digits[idx-1].focus(); digits[idx-1].value=''; digits[idx-1].classList.remove('filled'); }
+  // Handle paste
+  if(e.key==='v'&&(e.ctrlKey||e.metaKey)){
+    e.preventDefault();
+    navigator.clipboard.readText().then(txt=>{
+      const nums=txt.replace(/\D/g,'').slice(0,6);
+      [...document.querySelectorAll('.otp-digit')].forEach((d,i)=>{ d.value=nums[i]||''; d.classList.toggle('filled',!!nums[i]); });
+      if(nums.length===6) handleVerifyOTP();
+    }).catch(()=>{});
+  }
+}
+
+async function handleVerifyOTP(){
+  if(!phoneConfirmResult){ showToast('Session expired — resend the code','err'); return; }
+  const code=[...document.querySelectorAll('.otp-digit')].map(d=>d.value).join('');
+  if(code.length!==6){ showToast('Enter all 6 digits','err'); return; }
+  const btn=document.getElementById('otp-verify-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Verifying…'; }
+  try {
+    const result=await phoneConfirmResult.confirm(code);
+    const user=result.user;
+    AUTH={
+      uid: user.uid,
+      displayName: user.displayName||('User '+user.phoneNumber?.slice(-4)||'User'),
+      email: user.email||null,
+      phone: user.phoneNumber,
+      method:'phone',
+      created: Date.now()
+    };
+    saveAuth(AUTH);
+    showToast('Phone verified ✓','ok');
+    setTimeout(()=>{ if(!S) renderOnboarding(); else renderApp(); },300);
+  } catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='Verify Code →'; }
+    const msg = e.code==='auth/invalid-verification-code' ? 'Incorrect code — check and try again'
+              : e.code==='auth/code-expired' ? 'Code expired — tap Resend'
+              : e.message;
+    showToast(msg,'err');
+    document.querySelectorAll('.otp-digit').forEach(d=>{ d.value=''; d.classList.remove('filled'); });
+    document.querySelector('.otp-digit')?.focus();
+  }
+}
+
+async function handlePhoneResend(){
+  phoneConfirmResult=null;
+  switchAuthMethod('phone');
+  showToast('Enter your number again to resend','info');
 }
 
 function handleForgotPassword(){
@@ -4479,10 +4660,21 @@ ${[
   {name:'6-Month Cram','price':'$99 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
+<!-- Beta tier switcher -->
+${!STRIPE_ENABLED||STRIPE_CONFIG.paymentLinks.pro_monthly.includes('REPLACE')?`
+<div style="margin-top:8px;padding:14px 16px;background:var(--ind-bg);border:1.5px dashed rgba(99,102,241,.4);border-radius:10px">
+  <div style="font-size:12px;font-weight:700;color:var(--ind);margin-bottom:10px">🧪 Beta Mode — Switch Tier Freely</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    ${['free','pro','elite','cram'].map(t=>'<button onclick="activatePlan(\''+t+'\');buildSettingsBilling&&renderAppSettingsSection()" style="padding:6px 14px;background:'+(SUB.tier===t||isOnTrial()&&t==='pro'?'var(--ind)':'var(--surf2)')+';color:'+(SUB.tier===t||isOnTrial()&&t==='pro'?'#fff':'var(--txt)')+';border:1.5px solid '+(SUB.tier===t||isOnTrial()&&t==='pro'?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">'+t.charAt(0).toUpperCase()+t.slice(1)+'</button>').join('')}
+  </div>
+  <div style="font-size:10px;color:var(--mut);margin-top:8px">Billing is disabled until Stripe keys are configured. Use this to test all feature tiers.</div>
+</div>
+`:''}
+
 <!-- Payment & security note -->
-<div style="margin-top:16px;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:11px;color:var(--mut);line-height:1.7">
-  🔒 Payments are processed securely by <strong>Stripe</strong>. Ledger never stores your card details. Cancel anytime — no questions asked.
-  ${FIREBASE_ENABLED?'':'<br>⚠️ Running in demo mode — real payments are not active.'}
+<div style="margin-top:12px;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:11px;color:var(--mut);line-height:1.7">
+  🔒 Payments processed securely by <strong>Stripe</strong>. Ledger never stores card details. Cancel anytime.
+  ${!STRIPE_ENABLED||STRIPE_CONFIG.paymentLinks.pro_monthly.includes('REPLACE')?'<br>⚠️ Billing is in beta mode — no charges will occur.':''}
 </div>`;
 }
 
