@@ -639,11 +639,18 @@ function initFirebase(){
     // Listen for auth state changes from Google sign-in
     firebaseAuth.onAuthStateChanged(user=>{
       if(user && !AUTH){
+        // Email/password users must verify their email before accessing the app
+        const isEmailUser = user.providerData.some(p=>p.providerId==='password');
+        if(isEmailUser && !user.emailVerified){
+          // Silently wait — they'll sign in manually after verifying
+          return;
+        }
+        const method = user.providerData[0]?.providerId==='google.com' ? 'google' : 'email';
         AUTH = {
           uid: user.uid,
           displayName: user.displayName || user.email.split('@')[0],
           email: user.email,
-          method: 'google',
+          method,
           photoURL: user.photoURL || null,
           created: Date.now()
         };
@@ -689,11 +696,18 @@ async function signInWithEmailFirebase(email, password){
   if(!FIREBASE_ENABLED) return false;
   try {
     const cred = await firebaseAuth.signInWithEmailAndPassword(email, password);
+    if(!cred.user.emailVerified){
+      // Keep signed in so they can resend, but don't grant app access
+      return 'unverified';
+    }
     AUTH = { uid: cred.user.uid, displayName: cred.user.displayName||email.split('@')[0], email, method:'email', created: Date.now() };
     saveAuth(AUTH);
     return true;
   } catch(e){
-    showToast(e.code==='auth/wrong-password'?'Incorrect password':e.code==='auth/user-not-found'?'No account with that email':e.message,'err');
+    const msg = e.code==='auth/wrong-password'||e.code==='auth/invalid-credential' ? 'Incorrect password'
+              : e.code==='auth/user-not-found' ? 'No account with that email'
+              : e.message;
+    showToast(msg,'err');
     return false;
   }
 }
@@ -703,12 +717,27 @@ async function signUpWithEmailFirebase(email, password, name){
   try {
     const cred = await firebaseAuth.createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName: name });
-    AUTH = { uid: cred.user.uid, displayName: name, email, method:'email', created: Date.now() };
-    saveAuth(AUTH);
-    return true;
+    // Send verification email — user must verify before accessing the app
+    await cred.user.sendEmailVerification({
+      url: 'https://ledgercpa.vercel.app'
+    });
+    // Don't set AUTH yet — wait for verification
+    return 'verify';
   } catch(e){
     showToast(e.code==='auth/email-already-in-use'?'Account already exists — sign in instead':e.message,'err');
     return false;
+  }
+}
+
+async function resendVerificationEmail(){
+  if(!FIREBASE_ENABLED) return;
+  try {
+    const user = firebaseAuth.currentUser;
+    if(!user){ showToast('Please sign in first','err'); return; }
+    await user.sendEmailVerification({ url: 'https://ledgercpa.vercel.app' });
+    showToast('Verification email sent — check your inbox ✓','ok');
+  } catch(e){
+    showToast('Could not send email: '+e.message,'err');
   }
 }
 
@@ -1652,15 +1681,37 @@ function openGooglePicker(){
 }
 function closeGooglePicker(){document.getElementById('google-picker-overlay')?.classList.remove('open');}
 
-function handleEmailAuth(){
+async function handleEmailAuth(){
   const email=document.getElementById('auth-email')?.value?.trim();
   const pass=document.getElementById('auth-pass')?.value?.trim();
   const name=authMode==='signup'?document.getElementById('auth-name')?.value?.trim():'';
   if(authMode==='signup'&&!name){showToast('Enter your full name','err');return;}
   if(!email||!email.includes('@')){showToast('Enter a valid email address','err');return;}
   if(!pass||pass.length<8){showToast('Password must be at least 8 characters','err');return;}
+
+  // ── Real Firebase path ──────────────────────────────
+  if(FIREBASE_ENABLED){
+    const btn=document.querySelector('.auth-form-btn');
+    if(btn){btn.disabled=true;btn.textContent='Please wait…';}
+    if(authMode==='signup'){
+      const result=await signUpWithEmailFirebase(email,pass,name);
+      if(result==='verify'){
+        renderEmailVerificationScreen(email,false);
+      }
+      // if false, error toast already shown
+    } else {
+      const result=await signInWithEmailFirebase(email,pass);
+      if(result==='unverified'){
+        renderEmailVerificationScreen(email,true);
+      } else if(result===true){
+        if(!S) renderOnboarding(); else renderApp();
+      }
+    }
+    return;
+  }
+
+  // ── Demo / offline path ─────────────────────────────
   const displayName=authMode==='signup'?name:(email.split('@')[0]);
-  // Simulate email auth — store credentials
   const accounts=getGoogleAccounts();
   let existing=accounts.find(a=>a.email===email);
   if(authMode==='signin'&&!existing){showToast('No account found. Create one first.','err');return;}
@@ -1701,6 +1752,9 @@ function submitPasswordReset(){
   submitPasswordResetForEmail(email);
 }
 function submitPasswordResetForEmail(email){
+  if(FIREBASE_ENABLED && firebaseAuth){
+    firebaseAuth.sendPasswordResetEmail(email,{url:'https://ledgercpa.vercel.app'}).catch(()=>{});
+  }
   const fb=document.getElementById('auth-form-body');
   if(fb){fb.innerHTML=`<div style="text-align:center;padding:20px 0">
     <div style="font-size:36px;margin-bottom:12px">📧</div>
@@ -1708,6 +1762,37 @@ function submitPasswordResetForEmail(email){
     <div style="font-size:12px;color:var(--sub);line-height:1.7">We sent a reset link to<br><strong>${email}</strong><br>Check your spam folder if you don't see it.</div>
     <a href="#" onclick="switchAuthMode('signin');return false" style="display:inline-block;margin-top:16px;font-size:12px">← Back to sign in</a>
   </div>`;}
+}
+
+function renderEmailVerificationScreen(email, isResend){
+  // isResend=true means they tried to sign in but email isn't verified yet
+  const heading = isResend ? 'Verify your email' : 'Check your inbox';
+  const sub = isResend
+    ? 'Your account isn\'t verified yet. We sent a new link to'
+    : 'We sent a verification link to';
+  const fb=document.getElementById('auth-form-body');
+  if(!fb) return;
+  fb.innerHTML=`
+<div style="text-align:center;padding:8px 0 4px">
+  <div style="font-size:52px;margin-bottom:14px;line-height:1">📬</div>
+  <div style="font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px">${heading}</div>
+  <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:6px">${sub}</div>
+  <div style="font-size:14px;font-weight:700;color:var(--ora);margin-bottom:18px">${email}</div>
+  <div style="font-size:12px;color:var(--mut);line-height:1.7;margin-bottom:24px;padding:12px 16px;background:var(--surf2);border-radius:10px;border:1px solid var(--bdr)">
+    Click the link in the email to activate your account.<br>
+    Check your spam folder if you don't see it within a minute.
+  </div>
+  <button class="auth-form-btn" onclick="resendVerificationEmail()" style="margin-bottom:12px">
+    Resend Verification Email
+  </button>
+  <div>
+    <a href="#" onclick="switchAuthMode('signin');return false" style="font-size:12px;color:var(--sub)">
+      Already verified? Sign in →
+    </a>
+  </div>
+</div>`;
+  // Re-send immediately if this is triggered from the sign-in flow
+  if(isResend) resendVerificationEmail();
 }
 
 function signOut(){
