@@ -1594,7 +1594,7 @@ function buildAuthForm(){
 <div class="form-grp">
   <label>Phone Number</label>
   <div style="display:flex;gap:8px">
-    <select id="auth-country-code" style="padding:10px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;font-size:13px;color:var(--txt);outline:none;flex-shrink:0">
+    <select id="auth-country-code" style="padding:14px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:15px;color:var(--txt);outline:none;flex-shrink:0">
       <option value="+1">🇺🇸 +1</option>
       <option value="+44">🇬🇧 +44</option>
       <option value="+91">🇮🇳 +91</option>
@@ -1606,7 +1606,7 @@ function buildAuthForm(){
       <option value="+86">🇨🇳 +86</option>
       <option value="+55">🇧🇷 +55</option>
     </select>
-    <input id="auth-phone" type="tel" placeholder="(555) 000-0000" autocomplete="tel" style="flex:1" oninput="formatPhoneInput(this)">
+    <input id="auth-phone" type="tel" placeholder="(555) 000-0000" autocomplete="tel" style="flex:1;padding:14px 16px;font-size:18px;letter-spacing:.04em;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);outline:none" oninput="formatPhoneInput(this)">
   </div>
 </div>
 <button class="auth-form-btn" onclick="handlePhoneSendOTP()">Send Verification Code →</button>
