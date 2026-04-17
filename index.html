@@ -1576,6 +1576,10 @@ function showPostOnboardingOffer(){
 // ═══════════════════════════════════════════════
 function init(){
   initFirebase();
+  // Pre-populate invite code from URL so new users join an existing cohort
+  const urlJoinCode=new URLSearchParams(window.location.search).get('join');
+  if(urlJoinCode&&obData){obData.firmCode=urlJoinCode.toUpperCase();}
+  if(urlJoinCode&&S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
   if(!AUTH){renderAuth();return;}
   if(!S){renderOnboarding();return;}
   renderApp();
@@ -1931,7 +1935,7 @@ function signOut(){
 // ONBOARDING
 // ═══════════════════════════════════════════════
 let obStep=0;
-let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},school:'',classYear:'',bio:'',avatar:'🎓'};
+let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},school:'',classYear:'',bio:'',avatar:'🎓',firmCode:'',firmName:''};
 function initObData(){obData.name=(AUTH?.displayName||'').split(' ')[0]||'';}
 initObData();
 
@@ -1945,9 +1949,9 @@ function renderOnboarding(){
     ${AUTH?`<div style="display:inline-flex;align-items:center;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:var(--grn);font-weight:600"><div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">${(AUTH.displayName||'?').charAt(0).toUpperCase()}</div>Signed in as ${AUTH.email}</div>`:''}
     <div class="onboard-sub">Tell us about yourself so we can build your personalized CPA study plan.</div>
     <div class="steps">
-      ${[0,1,2].map(i=>`<div class="step-dot${i<=obStep?' done':''}"></div>`).join('')}
+      ${[0,1,2,3].map(i=>`<div class="step-dot${i<=obStep?' done':''}"></div>`).join('')}
     </div>
-    ${obStep===0?renderObStep0():obStep===1?renderObStep1():renderObStep2()}
+    ${obStep===0?renderObStep0():obStep===1?renderObStep1():obStep===2?renderObStep2():renderObStep3()}
   </div>
 </div>`;
   attachObHandlers();
@@ -2048,6 +2052,30 @@ function renderObStep2(){
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
+<button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obNext()">Continue →</button>`;
+}
+
+function renderObStep3(){
+  const inviteCode=obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
+  const inviteUrl=window.location.origin+window.location.pathname+'?join='+inviteCode;
+  return`
+<div class="ob-card">
+  <h3>Invite your study group</h3>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.6">Ledger works best with your cohort. Add a firm or group name and share the invite link — everyone who joins sees the same leaderboard.</div>
+  <div class="form-grp">
+    <label>Firm / Group Name <span style="color:var(--mut);font-weight:400">(optional)</span></label>
+    <input id="ob-firm" type="text" placeholder="e.g. Deloitte Dallas, Study Squad, Class of 2026" value="${obData.firmName||''}">
+  </div>
+  <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:16px">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Your invite link</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="flex:1;font-size:11px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
+      <button class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Copy</button>
+    </div>
+    <div style="font-size:11px;color:var(--mut);margin-top:8px">Share this link — anyone who joins gets added to your cohort leaderboard.</div>
+  </div>
+</div>
+<button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obFinish()">Build My Plan 🚀</button>`;
 }
 
@@ -2083,16 +2111,24 @@ function obNext(){
   } else if(obStep===1){
     if(!obData.disc){showToast('Choose a discipline section','err');return;}
     obStep=2;renderOnboarding();
+  } else if(obStep===2){
+    const sections=['FAR','AUD','REG',obData.disc];
+    sections.forEach(s=>{obData.examDates[s]=document.getElementById('date-'+s)?.value||'';});
+    obStep=3;renderOnboarding();
   }
 }
 function obBack(){obStep=Math.max(0,obStep-1);renderOnboarding();}
 function obFinish(){
   const sections=['FAR','AUD','REG',obData.disc];
-  const examDates={};
-  sections.forEach(s=>{examDates[s]=document.getElementById('date-'+s)?.value||'';});
+  const examDates=obData.examDates||{};
+  sections.forEach(s=>{if(!examDates[s])examDates[s]=document.getElementById('date-'+s)?.value||'';});
+  const firmName=document.getElementById('ob-firm')?.value?.trim()||obData.firmName||'';
+  obData.firmName=firmName;
   const sectionStatus={};
   sections.forEach(s=>{sectionStatus[s]='planned';});
   sectionStatus['FAR']='studying';
+  const urlJoinCode=new URLSearchParams(window.location.search).get('join')||'';
+  const firmCode=urlJoinCode||obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
   S={
     name:obData.name,state:obData.state,hoursPerWeek:obData.hoursPerWeek,
     disc:obData.disc,sections,examDates,sectionStatus,
@@ -2101,6 +2137,7 @@ function obFinish(){
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],
+    firmCode,firmName,
     created:Date.now()
   };
   saveState();
@@ -2327,6 +2364,7 @@ function buildFeed(){
     <div class="section-title">This Week</div>
     ${buildMiniLeaderboard()}
   </div>
+  ${buildCohortCard()}
   <div class="card card-pad">
     <div class="section-title">Who's Studying</div>
     ${MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id)).slice(0,4).map(f=>`
@@ -2369,6 +2407,20 @@ function buildMiniLeaderboard(){
   </div>`).join('');
 }
 
+function buildCohortCard(){
+  if(!S.firmCode)return '';
+  const firmName=S.firmName||'Your Cohort';
+  const inviteUrl=window.location.origin+window.location.pathname+'?join='+S.firmCode;
+  return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border-left:3px solid var(--ind)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div class="section-title" style="margin-bottom:0">${firmName}</div>
+    <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
+  </div>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:8px">Just you so far — share your invite link to add cohort members.</div>
+  <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Copied!','ok'))" title="Click to copy">${inviteUrl}</div>
+</div>`;
+}
+
 function buildActivityCard(a){
   const ex=EXAMS[a.section];
   const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
@@ -2376,6 +2428,23 @@ function buildActivityCard(a){
   const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const passedBadge=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId)?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${MOCK_FRIENDS.find(f=>f.id===a.userId).passedSections.length} Passed</span>`:'':'';
+
+  // Private session: show minimal card for own sessions, hide from others' view
+  if(a.private && a.isMine){
+    return`<div class="activity-card" style="margin-bottom:16px;border-style:dashed" data-aid="${a.id}" data-uid="${a.userId}">
+  <div class="ac-header">
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff">${a.userInitials}</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:6px"><span class="ac-user-name">${a.userName} <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span></span></div>
+      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+    </div>
+    <span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:20px;font-weight:700">Private</span>
+  </div>
+  <div class="ac-body" style="color:var(--mut);font-size:12px;padding-bottom:14px">
+    Logged a private session · ${a.hours}h studied (visible only to you)
+  </div>
+</div>`;
+  }
 
   return`<div class="activity-card" style="margin-bottom:16px" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header">
@@ -2947,6 +3016,13 @@ function openPostModal(prefSection=''){
     <div class="diff-row" id="diff-row">${diffOpts}</div>
   </div>
 </div>
+<div style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--surf2);border-radius:9px;margin-bottom:6px;margin-top:2px;cursor:pointer" onclick="document.getElementById('pm-private').checked=!document.getElementById('pm-private').checked">
+  <input type="checkbox" id="pm-private" style="width:15px;height:15px;accent-color:var(--ind);cursor:pointer" onclick="event.stopPropagation()">
+  <div>
+    <div style="font-size:12px;font-weight:700;color:var(--txt)">Post privately</div>
+    <div style="font-size:11px;color:var(--mut)">Others see "logged a session" — hours stay hidden</div>
+  </div>
+</div>
 <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:4px" onclick="submitPost()">📝 Post Session</button>`;
   document.getElementById('post-modal').classList.add('open');
 }
@@ -2969,7 +3045,8 @@ function submitPost(){
   const caption=document.getElementById('pm-caption')?.value?.trim()||'';
   if(!section){showToast('Select a section','err');return;}
   if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
-  const act={id:'u'+Date.now(),date:date+'T'+new Date().toTimeString().slice(0,8),section,hours,material,caption,difficulty:postDiff,feeling:postFeeling,kudos:[],comments:[]};
+  const isPrivate=document.getElementById('pm-private')?.checked||false;
+  const act={id:'u'+Date.now(),date:date+'T'+new Date().toTimeString().slice(0,8),section,hours,material,caption,difficulty:postDiff,feeling:postFeeling,kudos:[],comments:[],private:isPrivate};
   S.activities.push(act);
   saveState();
   checkAchievements();
@@ -5708,6 +5785,9 @@ function openQBSection(code) {
     '</div>' +
     // Modes
     '<div style="padding:20px 24px 24px">' +
+      '<div style="background:var(--amb-bg);border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:11px;color:var(--sub);margin-bottom:14px">' +
+        '⚗️ <strong style="color:var(--amb)">Beta content</strong> — Always verify answers with your Becker or Gleim review course before your exam.' +
+      '</div>' +
       '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:14px">Choose a practice mode</div>' +
       modeCards +
     '</div>' +
@@ -6060,10 +6140,13 @@ function buildAIStudyCoach() {
   }).join('');
 
   return '<div class="card card-pad" style="margin-bottom:16px">' +
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
       '<div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>' +
       '<div><div style="font-size:15px;font-weight:800">Ask Ledger</div>' +
       '<div style="font-size:11px;color:var(--mut)">Personalized insights based on your data</div></div>' +
+    '</div>' +
+    '<div style="background:var(--amb-bg);border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:11px;color:var(--sub);margin-bottom:14px">' +
+      '⚗️ <strong style="color:var(--amb)">Beta</strong> — Insights are calculated from your logged data. Always verify study advice with your Becker or Gleim review course.' +
     '</div>' +
 
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">' +
