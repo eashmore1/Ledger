@@ -2485,40 +2485,13 @@ function buildDashboard(){
     ${buildScoreTracker()}
   </div>
 
-  <!-- PRO: AI Study Coach -->
-  <div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">
-    <div class="section-title">🤖 AI Study Coach</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.35;pointer-events:none;user-select:none">
-      <div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Today's Focus</div><div style="font-size:11px;color:var(--mut)">FAR — Governmental Accounting (CAFR)<br>Estimated: 2.5 hrs to stay on pace</div></div>
-      <div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Weak Spot Alert</div><div style="font-size:11px;color:var(--mut)">NFP Revenue Recognition needs attention<br>Below target by 8 hrs</div></div>
-      <div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Pass Probability</div><div style="font-size:22px;font-weight:900;color:var(--grn)">67%</div><div style="font-size:10px;color:var(--mut)">Based on your current pace</div></div>
-      <div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Next Milestone</div><div style="font-size:11px;color:var(--mut)">50 hours → unlock "Dedicated" badge<br>You're 48h in — just 2 more!</div></div>
-    </div>
-    ${isPro()?'':proLockHTML('AI Study Coach','Unlock AI Coach')}
-  </div>
+  ${buildAIStudyCoach()}
 
-  <!-- PRO: Advanced Analytics -->
-  <div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">
-    <div class="section-title">📊 Advanced Analytics</div>
-    <div style="opacity:.3;pointer-events:none;user-select:none">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-        <div class="stat-box"><div class="stat-val" style="color:var(--ind)">81%</div><div class="stat-lbl">Peak Day: Tue</div></div>
-        <div class="stat-box"><div class="stat-val" style="color:var(--grn)">3.2h</div><div class="stat-lbl">Avg Session</div></div>
-        <div class="stat-box"><div class="stat-val" style="color:var(--amb)">9pm</div><div class="stat-lbl">Best Time</div></div>
-      </div>
-      <div style="height:80px;background:linear-gradient(90deg,var(--surf2) 0%,var(--surf3) 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--mut)">Topic-level heatmap visualization</div>
-    </div>
-    ${isPro()?'':proLockHTML('Advanced Analytics','Unlock Analytics')}
-  </div>
+  ${buildAdvancedAnalytics()}
 
-  <!-- PRO: Smart Study Schedule -->
-  <div class="card card-pad pro-lock-wrap">
-    <div class="section-title">📅 Smart Study Schedule</div>
-    <div style="opacity:.3;pointer-events:none;user-select:none">
-      ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d,i)=>'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)"><div style="width:36px;font-size:11px;font-weight:700;color:var(--mut)">'+d+'</div><div style="flex:1;background:var(--ind-bg);border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--ind)">'+(i<5?'FAR · '+(1+i*0.5).toFixed(1)+'h planned':'Rest day 🛌')+'</div></div>').join('')}
-    </div>
-    ${isPro()?'':proLockHTML('Smart Study Schedule','Unlock Schedule')}
-  </div>
+  <div id="schedule-section">${buildStudySchedule()}</div>
+
+  ${buildWellnessTools()}
 </div>`;
 }
 
@@ -2719,17 +2692,17 @@ function buildProfile(){
     })()}
   </div>
 
-  <!-- PRO: Streak Shield -->
-  ${(()=>{
+  <!-- Streak Shield pill (subtle) -->
+  ${isPro()?(()=>{
     const shieldsUsed=S.shieldsUsed||0;
-    const shieldsTotal=isElite()?999:isPro()?3:0;
-    if(!isPro()) return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">🛡️ Streak Shield</div><div style="text-align:center;padding:18px;opacity:.35;user-select:none"><div style="font-size:36px;margin-bottom:8px">🛡️🛡️🛡️</div><div style="font-size:12px;font-weight:700">3 shields per month — protect your streak</div></div>'+proLockHTML('Streak Shield','Unlock Shields')+'</div>';
-    return '<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">🛡️ Streak Shield</div><span class="pro-plan-badge badge-pro">Pro</span></div><div style="display:flex;gap:10px;align-items:center"><div style="display:flex;gap:6px">'+(isElite()?'<span style="font-size:24px">🛡️</span><span style="font-size:12px;color:var(--sub)">Unlimited shields</span>':['🛡️','🛡️','🛡️'].map((s,i)=>'<span style="font-size:24px;'+(i<shieldsUsed?'filter:grayscale(1);opacity:.3':'')+'">'+s+'</span>').join('')+'<span style="font-size:12px;color:var(--mut);margin-left:4px">'+(shieldsTotal-shieldsUsed)+' remaining this month</span>')+'</div><button class="btn btn-ghost btn-xs" onclick="useStreakShield()">Use Shield</button></div><div style="font-size:11px;color:var(--mut);margin-top:8px">A shield protects your streak if you miss a day. Resets monthly.</div></div>';
-  })()}
+    const shieldsTotal=isElite()?999:3;
+    const remaining=isElite()?'∞':shieldsTotal-shieldsUsed;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:12px;cursor:pointer" onclick="useStreakShield()" title="Streak Shield — protects your streak if you miss a day"><span style="font-size:14px">🛡️</span><span style="font-size:12px;font-weight:700;color:var(--sub)">Streak Shield</span><span style="font-size:11px;color:var(--mut)">'+remaining+' remaining</span><button class="btn btn-ghost btn-xs" style="margin-left:auto" onclick="event.stopPropagation();useStreakShield()">Use</button></div>';
+  })():''}
 
   <!-- PRO: Weekly Progress Report -->
   ${isPro()?
-    '<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">📝 Weekly Progress Report</div><span class="pro-plan-badge badge-pro">Pro</span></div><div style="background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div style="flex:1"><div style="font-size:13px;font-weight:700">Week of '+new Date(Date.now()-7*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">'+Math.round(getWeekHours())+'h studied · '+getStreak()+' day streak · '+(S.activities||[]).filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).length+' sessions</div></div><button class="btn btn-ghost btn-sm" onclick="generatePDFReport()">⬇ Download PDF</button></div></div>'
+    '<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">📝 Progress Report</div><span class="pro-plan-badge badge-pro">Pro</span></div><div style="background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📊</span><div style="flex:1"><div style="font-size:13px;font-weight:700">Week of '+new Date(Date.now()-7*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">'+Math.round(getWeekHours())+'h studied · '+getStreak()+' day streak · '+(S.activities||[]).filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).length+' sessions</div></div><button class="btn btn-ind btn-sm" onclick="openProgressReport()">📊 View Report</button></div></div>'
     :
     '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">📝 Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
   }
@@ -2853,20 +2826,7 @@ function buildExplore(){
       </div>
       <div style="max-height:520px;overflow-y:auto;padding-right:2px">${challengeCards}</div>
     </div>
-    <!-- PRO: Full Exam Simulator -->
-    <div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">🎯 Exam Simulator</div>
-        ${isPro()?'<span class="pro-plan-badge badge-pro">Pro</span>':''}
-      </div>
-      <div style="opacity:${isPro()?1:.3};pointer-events:${isPro()?'auto':'none'};user-select:${isPro()?'auto':'none'}">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-          ${['FAR','AUD','REG','TCP'].map(s=>'<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:12px;cursor:'+(isPro()?'pointer':'default')+'" '+(isPro()?'onclick="showToast(\'Launching '+s+' simulator…\',\'ok\')"':'')+'><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="badge badge-'+s+'">'+s+'</span><span style="font-size:11px;color:var(--mut)">Timed · 4h</span></div><div style="font-size:11px;color:var(--sub)">50 MCQ + 7 TBS</div><div style="font-size:10px;color:var(--mut);margin-top:3px">Adaptive · Score tracked</div></div>').join('')}
-        </div>
-        <div style="background:var(--surf2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--sub);line-height:1.6">Your last simulation: <strong style="color:var(--txt)">No sims taken yet</strong> · Adaptive MCQs adjust to your weak areas · Full scoring report included</div>
-      </div>
-      ${isPro()?'':proLockHTML('Full Exam Simulator','Unlock Simulator')}
-    </div>
+    <div style="margin-bottom:16px">${buildQuestionBank()}</div>
     <div class="card card-pad">
       <div class="section-title">👥 Find CPA Candidates</div>
       ${friendCards}
@@ -5019,289 +4979,6 @@ function confirmReset(){
 }
 
 // ═══════════════════════════════════════════════
-// CPA EXAM SIMULATOR
-// ═══════════════════════════════════════════════
-const EXAM_QUESTIONS = {
-  FAR: [
-    {q:"Under GASB standards, which basis of accounting is used for governmental funds?",choices:["Accrual basis","Modified accrual basis","Cash basis","Full accrual basis"],correct:1,exp:"Governmental funds use modified accrual accounting. Revenue is recognized when available and measurable; expenditures when incurred (with exceptions)."},
-    {q:"A company uses FIFO inventory. Ending inventory is $500,000. If LIFO were used, ending inventory would be $430,000. What is the LIFO reserve?",choices:["$70,000","$500,000","$430,000","$930,000"],correct:0,exp:"LIFO Reserve = FIFO Inventory – LIFO Inventory = $500,000 – $430,000 = $70,000."},
-    {q:"Under ASC 842, how does a lessee report an operating lease on the balance sheet?",choices:["Off balance sheet; disclose only in footnotes","Record a right-of-use asset and a lease liability","Record only the lease liability","Record only the right-of-use asset"],correct:1,exp:"ASC 842 requires lessees to recognize a right-of-use (ROU) asset and a corresponding lease liability for virtually all leases on the balance sheet."},
-    {q:"Which fund type would a city use to account for water utility operations?",choices:["General Fund","Special Revenue Fund","Enterprise Fund","Agency Fund"],correct:2,exp:"Enterprise funds (proprietary funds) account for activities financed and operated in a manner similar to a private business, such as utilities."},
-    {q:"Under the allowance method, when a specific account is written off, net realizable value of accounts receivable:",choices:["Decreases","Increases","Remains unchanged","Depends on the amount"],correct:2,exp:"Writing off a specific account debits the Allowance and credits AR by equal amounts. Both gross AR and the allowance decrease by the same amount, so NRV is unchanged."},
-    {q:"A company issues $1,000,000 of 8% bonds at 105. The premium on issuance is:",choices:["$50,000","$80,000","$105,000","$45,000"],correct:0,exp:"Premium = Issue price – Face value = ($1,000,000 × 1.05) – $1,000,000 = $1,050,000 – $1,000,000 = $50,000."},
-    {q:"Under SFAS 87 (ASC 715), the service cost component of net periodic pension cost is reported in:",choices:["Other comprehensive income","Operating expenses","Financing activities","Non-operating income"],correct:1,exp:"Service cost is the actuarial present value of benefits earned by employees during the period and is classified as an operating expense."},
-    {q:"Which of the following is a required financial statement for a nongovernmental nonprofit organization?",choices:["Statement of Cash Flows","Statement of Activities","Statement of Financial Position","All of the above"],correct:3,exp:"GAAP (ASC 958) requires nonprofits to present: Statement of Financial Position, Statement of Activities, Statement of Cash Flows, and Statement of Functional Expenses (for voluntary health/welfare)."},
-    {q:"Under IFRS, development costs that meet specific criteria are:",choices:["Always expensed immediately","Capitalized as an intangible asset","Amortized over 40 years","Written off in the period incurred"],correct:1,exp:"Under IAS 38, development costs are capitalized when technical feasibility, intent to complete, ability to use/sell, probable future benefits, adequate resources, and ability to reliably measure costs are all demonstrated."},
-    {q:"Comprehensive income equals net income plus:",choices:["Unrealized gains on available-for-sale securities only","All items in other comprehensive income (OCI)","Operating income","Retained earnings changes"],correct:1,exp:"Comprehensive income = Net income + Other comprehensive income (OCI). OCI includes unrealized gains/losses on AFS securities, foreign currency translation, pension adjustments, and cash flow hedge gains/losses."},
-    {q:"Which of the following is NOT a characteristic of the general fund?",choices:["Accounts for most basic governmental services","Uses modified accrual accounting","Can run a deficit","Is a proprietary fund"],correct:3,exp:"The general fund is a governmental fund, not a proprietary fund. Proprietary funds include enterprise and internal service funds and use full accrual accounting."},
-    {q:"A $200,000 machine with a 10-year life and $20,000 salvage value is depreciated using double-declining balance. Depreciation in Year 1 is:",choices:["$18,000","$36,000","$40,000","$20,000"],correct:2,exp:"DDB rate = 2/10 = 20%. Year 1 depreciation = $200,000 × 20% = $40,000. Note: salvage value is ignored until it would cause book value to go below salvage."},
-  ],
-  AUD: [
-    {q:"The PRIMARY objective of the auditor with respect to misstatements is to:",choices:["Detect all misstatements regardless of materiality","Obtain reasonable assurance that the financial statements are free from material misstatement","Guarantee the accuracy of financial statements","Prevent management from making errors"],correct:1,exp:"The auditor's objective is to obtain reasonable assurance — a high but not absolute level — that the financial statements are free from material misstatement, whether due to fraud or error."},
-    {q:"Which of the following best describes inherent risk?",choices:["The risk that the audit team makes a material error","The susceptibility of an assertion to material misstatement, assuming no related controls","The risk that internal controls fail to prevent misstatements","The risk that misstatements are not detected on a test basis"],correct:1,exp:"Inherent risk is the susceptibility of an assertion to material misstatement before considering any related controls. It reflects the nature of the account or transaction."},
-    {q:"In which situation is a disclaimer of opinion most appropriate?",choices:["A material uncertainty exists about going concern","The auditor cannot obtain sufficient appropriate audit evidence","The financial statements contain a material misstatement","The client changes accounting principles"],correct:1,exp:"A disclaimer of opinion is issued when the auditor is unable to obtain sufficient appropriate audit evidence. It represents a failure of scope, not a finding of misstatement."},
-    {q:"Which of the following is NOT a type of analytical procedure?",choices:["Ratio analysis","Trend analysis","Regression analysis","Vouching source documents"],correct:3,exp:"Vouching involves examining source documents and is a substantive test of details, not an analytical procedure. Analytical procedures involve plausible relationships among data."},
-    {q:"The concept of 'professional skepticism' means the auditor assumes:",choices:["Management is dishonest","Nothing — it means critical thinking without assuming honesty or dishonesty","All information is accurate unless proven otherwise","All management representations are false"],correct:1,exp:"Professional skepticism is neither suspicious nor naive — it involves a questioning mind and critical assessment of audit evidence, without assuming management is honest or dishonest."},
-    {q:"When assessing control risk, the auditor is assessing the risk that:",choices:["Material misstatements will not be prevented or detected by internal controls","The auditor will choose the wrong test","Management will override controls","Employees will commit fraud"],correct:0,exp:"Control risk is the risk that material misstatements in an assertion will not be prevented or detected on a timely basis by internal controls."},
-    {q:"A material weakness in internal control is one where:",choices:["A single deficiency that cannot prevent material misstatement","A deficiency, or combination, where there is a reasonable possibility of material misstatement not being prevented or detected","Any control deficiency exists","More than one control fails"],correct:1,exp:"A material weakness is a deficiency (or combination) in ICFR where there is a reasonable possibility that a material misstatement of the financial statements will not be prevented, or detected and corrected, on a timely basis."},
-    {q:"Which of the following is considered the most reliable form of audit evidence?",choices:["Oral representations from management","Internally generated documents reviewed by auditor","Externally generated documents received directly by auditor","Internally generated unreviewed documents"],correct:2,exp:"Externally generated evidence received directly by the auditor (e.g., confirmations sent back to auditor, bank statements) provides the highest reliability because it bypasses client controls."},
-    {q:"The engagement letter is primarily designed to:",choices:["Comply with SEC requirements","Establish the terms of the engagement and reduce misunderstanding","Replace the management representation letter","Describe the client's internal controls"],correct:1,exp:"The engagement letter documents the agreed-upon terms of the engagement, responsibilities of both parties, and scope — primarily to reduce misunderstandings."},
-    {q:"Sampling risk in auditing refers to:",choices:["The risk of selecting a non-representative sample","The possibility that the auditor's conclusion based on a sample may differ from the conclusion if the entire population were examined","The risk that the sample is too small","Both A and C"],correct:1,exp:"Sampling risk is the risk that the auditor's conclusion based on a sample differs from what it would be if the entire population were tested. It is an inherent aspect of statistical sampling."},
-    {q:"Under PCAOB standards, an integrated audit includes an audit of:",choices:["Financial statements only","Internal control over financial reporting only","Both financial statements and ICFR","Management's discussion and analysis"],correct:2,exp:"An integrated audit (required for large accelerated filers under SOX Section 404(b)) includes both an audit of the financial statements and an audit of ICFR."},
-    {q:"Which of the following would most likely be considered a related party transaction requiring disclosure?",choices:["A purchase from a major supplier at market price","A loan to the CEO at below-market interest rates","Routine accounts payable to a vendor","Monthly utility payments"],correct:1,exp:"Related party transactions include loans to/from officers, directors, or major shareholders — especially at non-arm's length terms. These require disclosure under ASC 850."},
-  ],
-  REG: [
-    {q:"A sole proprietor has net self-employment income of $100,000. What is the deductible portion of self-employment tax for AGI purposes?",choices:["$7,065","$14,130","$7,650","$15,300"],correct:0,exp:"SE tax = $100,000 × 92.35% × 15.3% = $14,130. The deductible portion for AGI = 50% of SE tax = $14,130 / 2 = $7,065."},
-    {q:"Under the UCC, a firm offer made by a merchant is irrevocable for a maximum of:",choices:["30 days","60 days","90 days","3 months"],correct:3,exp:"Under UCC Article 2, a firm offer by a merchant (in a signed writing) is irrevocable for the time stated, or if no time is stated, for a reasonable time not exceeding 3 months."},
-    {q:"Which of the following assets does NOT qualify for the Section 179 expensing deduction?",choices:["Machinery used in a manufacturing business","A computer used in a dental office","Residential rental property","Office furniture"],correct:2,exp:"Section 179 applies to tangible personal property and certain qualified real property improvements. Residential rental real property does NOT qualify for Section 179."},
-    {q:"Under the discharge of contract by impossibility doctrine, which of the following would excuse performance?",choices:["Increased cost of performance","The subject matter of the contract is destroyed without fault of either party","Financial difficulty of one party","A party finding a better deal"],correct:1,exp:"Impossibility excuses performance when: (1) the subject matter is destroyed, (2) the contract becomes illegal, or (3) a key person dies/becomes incapacitated. Increased cost alone is not sufficient."},
-    {q:"For tax purposes, capital gains on property held MORE than one year are taxed at:",choices:["Ordinary income rates","0%, 15%, or 20% preferential rates","A flat 28% rate","The same rate as dividends only"],correct:1,exp:"Long-term capital gains (property held >1 year) are taxed at preferential rates of 0%, 15%, or 20% depending on taxable income. Short-term gains are taxed at ordinary rates."},
-    {q:"In a Chapter 7 bankruptcy, which claim has the HIGHEST priority?",choices:["Secured creditors","Unsecured priority claims (wages)","Domestic support obligations","Administrative expenses of the bankruptcy estate"],correct:2,exp:"Under the Bankruptcy Code, domestic support obligations (child support, alimony) have the highest priority among unsecured claims in a Chapter 7 distribution."},
-    {q:"The statute of limitations for an IRS audit of a 'substantially false' return is:",choices:["3 years","6 years","No limit — indefinite","5 years"],correct:2,exp:"If a taxpayer files a fraudulent return or willfully attempts to evade tax, there is NO statute of limitations. The IRS can assess taxes at any time."},
-    {q:"Which of the following correctly describes an 'S Corporation'?",choices:["A corporation taxed at both corporate and individual levels","A pass-through entity with no corporate-level tax, limited to 100 shareholders","Subject to corporate AMT","Unlimited number of shareholders allowed"],correct:1,exp:"An S Corp is a pass-through entity with no entity-level income tax. It is limited to 100 shareholders, one class of stock, and only eligible shareholders (citizens/residents, certain trusts/estates)."},
-    {q:"In agency law, an agent acting with 'apparent authority' means:",choices:["The principal explicitly authorized the act","A third party reasonably believes the agent has authority based on the principal's conduct","The agent exceeded actual authority and is personally liable","The agent had written authorization"],correct:1,exp:"Apparent authority arises when a third party reasonably believes an agent has authority based on representations or conduct of the principal (not the agent). The principal is bound."},
-    {q:"A partnership distributes property with FMV of $50,000 and an adjusted basis of $30,000 to a partner. What is the partner's basis in the property?",choices:["$50,000","$30,000","$20,000","$0"],correct:1,exp:"In a non-liquidating distribution, a partner's basis in distributed property equals the partnership's adjusted basis in that property ($30,000), not the FMV. Gain is generally not recognized."},
-    {q:"Under the UETA (Uniform Electronic Transactions Act), an electronic signature is:",choices:["Only valid if notarized","Valid and enforceable with the same legal effect as a handwritten signature","Only valid for commercial transactions over $500","Not admissible as evidence"],correct:1,exp:"Under UETA (and ESIGN Act), electronic signatures and records have the same legal effect as paper signatures. They are valid and enforceable in contract formation and enforcement."},
-    {q:"A taxpayer sells her primary residence that she owned and lived in for 3 years for $450,000 (basis $200,000). How much of the $250,000 gain is taxable?",choices:["$250,000 fully taxable","$0 — fully excluded under Section 121","$0 for single filer up to $250,000 exclusion","$150,000"],correct:1,exp:"Section 121 excludes up to $250,000 ($500,000 MFJ) of gain if the taxpayer owned and used the home as a principal residence for at least 2 of the last 5 years. The full $250,000 gain is excluded."},
-  ],
-  TCP: [
-    {q:"Under the check-the-box regulations, a single-member LLC is treated as a _____ by default.",choices:["C Corporation","S Corporation","Disregarded entity (sole proprietorship)","Partnership"],correct:2,exp:"A domestic single-member LLC is treated as a disregarded entity (ignored for tax purposes) by default. The owner reports income/expenses directly on their return unless an election is made."},
-    {q:"The built-in gains (BIG) tax applies to S corporations that:",choices:["Have losses in the first year","Were previously C corporations and converted to S status, then dispose of appreciated assets within the recognition period","Have more than 100 shareholders","Distribute earnings in excess of AAA"],correct:1,exp:"The BIG tax (Section 1374) applies to net recognized built-in gains from assets held at S election date, when the disposition occurs within 5 years of the S election (the recognition period)."},
-    {q:"A corporation has a $100,000 charitable contribution. Its taxable income before the deduction is $500,000. What is the deductible amount?",choices:["$100,000","$50,000","$10,000","$25,000"],correct:1,exp:"Corporate charitable contributions are limited to 10% of taxable income before the deduction. 10% × $500,000 = $50,000. The excess $50,000 can be carried forward for 5 years."},
-    {q:"Which of the following is included in a corporation's earnings and profits (E&P)?",choices:["Federal income taxes","Capital loss carryovers","Tax-exempt interest income","NOL deductions"],correct:2,exp:"Tax-exempt interest income is included in E&P even though it is excluded from taxable income. E&P measures the corporation's economic ability to pay dividends."},
-    {q:"A parent corporation owns 80% of a subsidiary. In a consolidated return, intercompany sales between the companies are:",choices:["Recognized immediately","Eliminated until the goods are sold to a third party","Subject to double taxation","Always taxable at corporate rates"],correct:1,exp:"Intercompany transactions within a consolidated group are deferred (eliminated) until the goods or services are sold to parties outside the group, at which point the deferred gain is recognized."},
-    {q:"Under Section 351, no gain or loss is recognized when property is transferred to a corporation if the transferors:",choices:["Transfer property and receive only stock","Control at least 80% of the corporation immediately after the exchange","Both A and B","Neither A nor B — gain is always recognized"],correct:2,exp:"Section 351 non-recognition requires: (1) property is transferred in exchange for stock, and (2) the transferors as a group control (own ≥80% of voting stock and ≥80% of all other stock classes) the corporation immediately after the transfer."},
-    {q:"The dividends received deduction (DRD) for a C corporation owning 20% of the distributing corporation is:",choices:["50%","65%","70%","100%"],correct:1,exp:"For corporate shareholders owning ≥20% but <80%, the DRD is 65%. Less than 20% ownership = 50% DRD. 80% or more ownership = 100% DRD (if consolidated return requirements met)."},
-    {q:"Which of the following correctly describes the 'accumulated earnings tax'?",choices:["Applies to all C corporations regardless of intent","Is a penalty tax on unreasonable accumulations of earnings beyond the reasonable needs of the business","Applies only to S corporations","Is calculated at 15%"],correct:1,exp:"The accumulated earnings tax (AET) is a 20% penalty tax imposed on C corporations that accumulate earnings beyond the reasonable needs of the business to avoid shareholder dividends."},
-    {q:"Under the at-risk rules, a partner may deduct losses only to the extent of:",choices:["Their capital account balance","Their share of partnership liabilities plus cash contributed","Their amount at risk — essentially economic exposure in the activity","Their outside basis only"],correct:2,exp:"The at-risk rules (Section 465) limit loss deductions to the taxpayer's amount at risk — the amount they could actually lose economically. This generally includes cash contributed, adjusted basis of property contributed, and certain borrowed amounts for which the taxpayer is personally liable."},
-    {q:"A calendar-year C corporation must file its income tax return by:",choices:["March 15","April 15","March 15 with 6-month extension available","April 15 with 6-month extension available"],correct:3,exp:"C corporations with a December 31 year-end must file by April 15. They may request an automatic 6-month extension (to October 15) by filing Form 7004. However, any tax owed is still due by April 15."},
-    {q:"In a stock redemption treated as a dividend (not a sale), the shareholder's basis in the redeemed shares is:",choices:["Lost permanently","Added to the basis of remaining shares","Creates a capital loss deduction","Reduces E&P of the corporation"],correct:1,exp:"When a redemption is recharacterized as a dividend (fails the sale/exchange tests), the redeemed shares' basis transfers to the shareholder's remaining shares (or to related party shares)."},
-    {q:"The Section 163(j) limitation on business interest expense deduction is generally limited to:",choices:["30% of adjusted taxable income","50% of adjusted gross income","25% of business income","No limit — all business interest is deductible"],correct:0,exp:"Under Section 163(j), the deduction for net business interest expense is limited to 30% of adjusted taxable income (ATI). Disallowed amounts carry forward indefinitely."},
-  ],
-};
-
-// Flatten all questions with section tags
-const ALL_EXAM_QUESTIONS = Object.entries(EXAM_QUESTIONS).flatMap(([sec,qs])=>qs.map((q,i)=>({...q,section:sec,id:sec+'_'+i})));
-
-let _examSim = {
-  active: false,
-  section: 'FAR',
-  questions: [],
-  current: 0,
-  answers: {},
-  flagged: new Set(),
-  startTime: null,
-  timeLimit: 240, // minutes
-  timerInterval: null,
-  phase: 'setup', // setup | active | review
-};
-
-function openExamSimulator(){
-  if(!isPro()){ openUpgradeModal('Full Exam Simulator'); return; }
-  _examSim.phase = 'setup';
-  let el = document.getElementById('exam-sim-overlay');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'exam-sim-overlay';
-    el.style.cssText = 'display:none;position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;animation:fadeIn .2s ease';
-    document.body.appendChild(el);
-  }
-  el.style.display = 'block';
-  renderExamSimSetup();
-}
-
-function closeExamSimulator(){
-  if(_examSim.timerInterval) clearInterval(_examSim.timerInterval);
-  _examSim.active = false;
-  const el = document.getElementById('exam-sim-overlay');
-  if(el) el.style.display = 'none';
-  renderTab(); // refresh explore tab
-}
-
-function renderExamSimSetup(){
-  const el = document.getElementById('exam-sim-overlay'); if(!el) return;
-  const history = (S.examSimHistory||[]);
-  const secAvg = sec => {
-    const runs = history.filter(h=>h.section===sec||sec==='Mixed');
-    if(!runs.length) return null;
-    return Math.round(runs.reduce((a,b)=>a+b.pct,0)/runs.length);
-  };
-  const secCard = (sec,icon,color) => {
-    const avg = secAvg(sec);
-    const qs = sec==='Mixed'?ALL_EXAM_QUESTIONS:EXAM_QUESTIONS[sec]||[];
-    return '<div onclick="startExamSim(\''+sec+'\')" style="background:var(--surf);border:2px solid var(--bdr);border-radius:16px;padding:22px 20px;cursor:pointer;transition:all .2s;text-align:center" onmouseover="this.style.borderColor=\''+color+'\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(0,0,0,.12)\'" onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'+'<div style="font-size:32px;margin-bottom:8px">'+icon+'</div>'+'<div style="font-size:18px;font-weight:900;color:'+color+';margin-bottom:4px">'+sec+'</div>'+'<div style="font-size:11px;color:var(--mut);margin-bottom:10px">'+qs.length+' questions</div>'+(avg!==null?'<div style="font-size:13px;font-weight:700;color:'+(avg>=75?'var(--grn)':avg>=60?'var(--amb)':'var(--red)')+'">Avg: '+avg+'%</div>':'<div style="font-size:11px;color:var(--mut)">Not taken yet</div>')+'</div>';
-  };
-  el.innerHTML =
-  '<div style="max-width:700px;margin:0 auto;padding:32px 20px">'+
-  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">'+
-  '<div><div style="font-size:24px;font-weight:900">🎯 Exam Simulator</div><div style="font-size:13px;color:var(--mut);margin-top:3px">Practice CPA-style MCQs with instant feedback and scoring</div></div>'+
-  '<button onclick="closeExamSimulator()" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--sub)">← Back</button>'+
-  '</div>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px">'+
-  secCard('FAR','📊','#ef4444')+
-  secCard('AUD','🔍','#4f8ef7')+
-  secCard('REG','⚖️','#10b981')+
-  '</div>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px">'+
-  secCard('TCP','🧮','#14b8a6')+
-  secCard('Mixed','🎲','#a855f7')+
-  '</div>'+
-  (history.length?
-  '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:20px">'+
-  '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Recent Results</div>'+
-  history.slice(-5).reverse().map(h=>'<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)"><span class="badge badge-'+h.section+'" style="flex-shrink:0">'+h.section+'</span><div style="flex:1;font-size:12px;color:var(--sub)">'+h.correct+'/'+h.total+' correct · '+new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div><span style="font-size:16px;font-weight:900;color:'+(h.pct>=75?'var(--grn)':h.pct>=60?'var(--amb)':'var(--red)')+'">'+h.pct+'%</span></div>').join('')+
-  '</div>':'');
-}
-
-function startExamSim(section){
-  const qs = section==='Mixed'
-    ? [...ALL_EXAM_QUESTIONS].sort(()=>Math.random()-.5).slice(0,20)
-    : (EXAM_QUESTIONS[section]||[]).map((q,i)=>({...q,section,id:section+'_'+i}));
-  _examSim = {
-    active: true, section, questions: qs, current: 0,
-    answers: {}, flagged: new Set(),
-    startTime: Date.now(), timeLimit: section==='Mixed'?30:60,
-    timerInterval: null, phase: 'active'
-  };
-  renderExamSimActive();
-  _examSim.timerInterval = setInterval(()=>{
-    const elapsed = Math.floor((Date.now()-_examSim.startTime)/1000);
-    const remaining = _examSim.timeLimit*60 - elapsed;
-    if(remaining<=0){ clearInterval(_examSim.timerInterval); submitExamSim(); return; }
-    const el = document.getElementById('exam-timer');
-    if(el){
-      const m=Math.floor(remaining/60), s=remaining%60;
-      el.textContent = m+':'+String(s).padStart(2,'0');
-      el.style.color = remaining<300?'var(--red)':remaining<600?'var(--amb)':'var(--grn)';
-    }
-  },1000);
-}
-
-function renderExamSimActive(){
-  const el = document.getElementById('exam-sim-overlay'); if(!el) return;
-  const {questions,current,answers,flagged,section,timeLimit} = _examSim;
-  const q = questions[current];
-  const total = questions.length;
-  const answered = Object.keys(answers).length;
-  const secColor = {FAR:'#ef4444',AUD:'#4f8ef7',REG:'#10b981',TCP:'#14b8a6',Mixed:'#a855f7'}[section]||'#6366f1';
-  const isFlagged = flagged.has(current);
-  const choiceLetters = ['A','B','C','D'];
-
-  el.innerHTML =
-  '<div style="max-width:740px;margin:0 auto;padding:20px 16px">'+
-  // Header
-  '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">'+
-  '<span class="badge badge-'+section+'" style="font-size:11px">'+section+'</span>'+
-  '<div style="flex:1;font-size:12px;color:var(--mut)">Question '+(current+1)+' of '+total+' · '+answered+' answered · '+flagged.size+' flagged</div>'+
-  '<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:7px 14px"><span>⏱</span><span id="exam-timer" style="color:var(--grn);font-variant-numeric:tabular-nums">'+timeLimit+':00</span></div>'+
-  '<button onclick="if(confirm(\'Submit now with '+answered+'/'+total+' answered?\'))submitExamSim()" style="background:var(--grn);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer">Submit</button>'+
-  '<button onclick="closeExamSimulator()" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mut)">✕ Exit</button>'+
-  '</div>'+
-  // Progress bar
-  '<div style="height:4px;background:var(--surf2);border-radius:4px;margin-bottom:20px;overflow:hidden"><div style="height:100%;width:'+(answered/total*100)+'%;background:'+secColor+';border-radius:4px;transition:width .3s"></div></div>'+
-  // Question panel
-  '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:24px 26px;margin-bottom:14px">'+
-  '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">'+
-  '<div style="font-size:11px;font-weight:700;color:'+secColor+';text-transform:uppercase;letter-spacing:.08em">Multiple Choice</div>'+
-  '<button onclick="toggleExamFlag('+current+')" style="background:'+(isFlagged?'var(--amb-bg)':'var(--surf2)')+';border:1px solid '+(isFlagged?'var(--amb)':'var(--bdr)')+';border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;color:'+(isFlagged?'var(--amb)':'var(--mut)')+'">🚩 '+(isFlagged?'Flagged':'Flag')+' for Review</button>'+
-  '</div>'+
-  '<div style="font-size:15px;font-weight:600;line-height:1.6;margin-bottom:20px;color:var(--txt)">'+q.q+'</div>'+
-  q.choices.map((c,i)=>'<div onclick="selectExamAnswer('+current+','+i+')" style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:2px solid '+(answers[current]===i?secColor:'var(--bdr)')+';background:'+(answers[current]===i?secColor+'14':'var(--surf2)')+';border-radius:11px;margin-bottom:9px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor=\''+secColor+'\'" onmouseout="this.style.borderColor=\''+(answers[current]===i?secColor:'var(--bdr)')+'\'"><span style="width:24px;height:24px;border-radius:50%;background:'+(answers[current]===i?secColor:'var(--bdr)')+';color:'+(answers[current]===i?'#fff':'var(--sub)')+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">'+choiceLetters[i]+'</span><span style="font-size:13px;line-height:1.5;color:var(--txt);padding-top:2px">'+c+'</span></div>').join('')+
-  '</div>'+
-  // Navigation
-  '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(32px,1fr));gap:5px;margin-bottom:16px">'+
-  questions.map((_,i)=>'<button onclick="jumpExamQuestion('+i+')" style="height:32px;border-radius:7px;border:1.5px solid '+(i===current?secColor:flagged.has(i)?'var(--amb)':answers[i]!==undefined?secColor+'66':'var(--bdr)')+';background:'+(i===current?secColor:answers[i]!==undefined?secColor+'22':'transparent')+';cursor:pointer;font-size:10px;font-weight:700;color:'+(i===current?'#fff':answers[i]!==undefined?secColor:'var(--mut)')+'">'+( i+1)+'</button>').join('')+
-  '</div>'+
-  // Prev/Next
-  '<div style="display:flex;gap:10px">'+
-  '<button onclick="jumpExamQuestion('+(Math.max(0,current-1))+')" '+(current===0?'disabled style="opacity:.3"':'')+' style="flex:1;padding:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:var(--sub)">← Previous</button>'+
-  '<button onclick="jumpExamQuestion('+(Math.min(total-1,current+1))+')" '+(current===total-1?'disabled style="opacity:.3"':'')+' style="flex:1;padding:12px;background:'+secColor+';border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff">Next →</button>'+
-  '</div>'+
-  '</div>';
-}
-
-function selectExamAnswer(qIdx, choiceIdx){
-  _examSim.answers[qIdx] = choiceIdx;
-  renderExamSimActive();
-}
-
-function toggleExamFlag(qIdx){
-  if(_examSim.flagged.has(qIdx)) _examSim.flagged.delete(qIdx);
-  else _examSim.flagged.add(qIdx);
-  renderExamSimActive();
-}
-
-function jumpExamQuestion(idx){
-  _examSim.current = idx;
-  renderExamSimActive();
-}
-
-function submitExamSim(){
-  if(_examSim.timerInterval) clearInterval(_examSim.timerInterval);
-  _examSim.phase = 'review';
-  const {questions, answers, section, startTime} = _examSim;
-  const total = questions.length;
-  const correct = questions.filter((q,i)=>answers[i]===q.correct).length;
-  const pct = Math.round(correct/total*100);
-  const timeTaken = Math.round((Date.now()-startTime)/1000);
-  const tm = Math.floor(timeTaken/60)+'m '+( timeTaken%60)+'s';
-  // Save to history
-  if(!S.examSimHistory) S.examSimHistory=[];
-  S.examSimHistory.push({section,correct,total,pct,timeTaken,date:Date.now()});
-  saveState();
-  renderExamSimResults(correct,total,pct,tm);
-}
-
-function renderExamSimResults(correct,total,pct,tm){
-  const el = document.getElementById('exam-sim-overlay'); if(!el) return;
-  const {questions,answers,section} = _examSim;
-  const secColor = {FAR:'#ef4444',AUD:'#4f8ef7',REG:'#10b981',TCP:'#14b8a6',Mixed:'#a855f7'}[section]||'#6366f1';
-  const grade = pct>=75?{label:'PASS',color:'var(--grn)',icon:'🎉'}:pct>=60?{label:'CLOSE',color:'var(--amb)',icon:'📈'}:{label:'NEEDS WORK',color:'var(--red)',icon:'📚'};
-  const choiceLetters=['A','B','C','D'];
-
-  el.innerHTML =
-  '<div style="max-width:740px;margin:0 auto;padding:32px 16px">'+
-  // Score hero
-  '<div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:20px;padding:32px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden">'+
-  '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(249,115,22,.35),transparent 55%)"></div>'+
-  '<div style="position:relative;z-index:1">'+
-  '<div style="font-size:48px;margin-bottom:10px">'+grade.icon+'</div>'+
-  '<div style="font-size:64px;font-weight:900;color:'+grade.color+';line-height:1;letter-spacing:-3px">'+pct+'%</div>'+
-  '<div style="font-size:16px;font-weight:800;color:'+grade.color+';margin-top:4px;text-transform:uppercase;letter-spacing:.1em">'+grade.label+'</div>'+
-  '<div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:8px">'+correct+' of '+total+' correct · '+tm+'</div>'+
-  '<div style="display:flex;justify-content:center;gap:20px;margin-top:18px">'+
-  '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">'+correct+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase">Correct</div></div>'+
-  '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--red)">'+(total-correct)+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase">Incorrect</div></div>'+
-  '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--amb)">'+(total-Object.keys(answers).length)+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase">Unanswered</div></div>'+
-  '</div>'+
-  '</div>'+
-  '</div>'+
-  // Action buttons
-  '<div style="display:flex;gap:10px;margin-bottom:24px">'+
-  '<button onclick="startExamSim(\''+section+'\')" style="flex:1;padding:13px;background:'+secColor+';color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↺ Retake '+section+'</button>'+
-  '<button onclick="renderExamSimSetup()" style="flex:1;padding:13px;background:var(--surf);border:1px solid var(--bdr);border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;color:var(--sub)">Choose Section</button>'+
-  '<button onclick="closeExamSimulator()" style="padding:13px 20px;background:var(--surf2);border:1px solid var(--bdr);border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--mut)">Exit</button>'+
-  '</div>'+
-  // Review all questions
-  '<div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Answer Review</div>'+
-  questions.map((q,i)=>{
-    const userAns = answers[i];
-    const isCorrect = userAns===q.correct;
-    const unanswered = userAns===undefined;
-    return '<div style="background:var(--surf);border:1px solid '+(isCorrect?'var(--grn)':unanswered?'var(--bdr)':'var(--red)')+';border-left:4px solid '+(isCorrect?'var(--grn)':unanswered?'var(--mut)':'var(--red)')+';border-radius:12px;padding:18px 20px;margin-bottom:12px">'+
-    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
-    '<span style="background:'+(isCorrect?'var(--grn)':unanswered?'var(--mut)':'var(--red)')+';color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">'+(isCorrect?'✓':unanswered?'—':'✗')+'</span>'+
-    '<span style="font-size:11px;font-weight:700;color:var(--mut)">Q'+(i+1)+' · '+q.section+'</span>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:12px;line-height:1.5">'+q.q+'</div>'+
-    q.choices.map((c,ci)=>'<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 10px;border-radius:8px;margin-bottom:5px;background:'+(ci===q.correct?'var(--grn-bg)':ci===userAns&&!isCorrect?'var(--red-bg)':'transparent')+';border:1px solid '+(ci===q.correct?'rgba(16,185,129,.35)':ci===userAns&&!isCorrect?'rgba(239,68,68,.3)':'transparent')+'">'+'<span style="font-size:11px;font-weight:800;color:'+(ci===q.correct?'var(--grn)':ci===userAns&&!isCorrect?'var(--red)':'var(--mut)')+';flex-shrink:0;margin-top:1px">'+choiceLetters[ci]+'</span>'+'<span style="font-size:12px;color:var(--sub);line-height:1.4">'+c+'</span>'+(ci===q.correct?'<span style="margin-left:auto;font-size:10px;font-weight:800;color:var(--grn);flex-shrink:0">✓ Correct</span>':ci===userAns&&!isCorrect?'<span style="margin-left:auto;font-size:10px;font-weight:800;color:var(--red);flex-shrink:0">Your answer</span>':'')+'</div>').join('')+
-    '<div style="margin-top:10px;padding:10px 12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-size:11px;color:var(--ind);line-height:1.6"><strong>Explanation:</strong> '+q.exp+'</div>'+
-    '</div>';
-  }).join('')+
-  '</div>';
-}
-
-// ═══════════════════════════════════════════════
 // MOBILE BOTTOM NAV
 // ═══════════════════════════════════════════════
 function injectMobileNav(){
@@ -5757,6 +5434,88 @@ function sendCoachMessage() {
 }
 
 // ═══════════════════════════════════════════════
+// ADVANCED ANALYTICS
+// ═══════════════════════════════════════════════
+function buildAdvancedAnalytics() {
+  if (!isPro()) {
+    return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
+      '<div class="section-title">📊 Advanced Analytics</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;opacity:.3;pointer-events:none;user-select:none">' +
+        '<div class="stat-box"><div class="stat-val" style="color:var(--ind)">—</div><div class="stat-lbl">Best Study Day</div></div>' +
+        '<div class="stat-box"><div class="stat-val" style="color:var(--grn)">—</div><div class="stat-lbl">Avg Session</div></div>' +
+        '<div class="stat-box"><div class="stat-val" style="color:var(--amb)">—</div><div class="stat-lbl">Peak Hour</div></div>' +
+      '</div>' +
+      proLockHTML('Advanced Analytics', 'Unlock Analytics') +
+    '</div>';
+  }
+
+  const acts = S.activities || [];
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Best day of week
+  const dayTotals = [0,0,0,0,0,0,0];
+  const dayCounts = [0,0,0,0,0,0,0];
+  acts.forEach(function(a) {
+    const d = new Date(a.date+'T12:00:00').getDay();
+    dayTotals[d] += (a.hours||0);
+    dayCounts[d]++;
+  });
+  const dayAvgs = dayTotals.map(function(t,i){ return dayCounts[i]>0?t/dayCounts[i]:0; });
+  const bestDayIdx = dayAvgs.indexOf(Math.max.apply(null, dayAvgs));
+  const bestDay = acts.length > 0 ? days[bestDayIdx] : '—';
+
+  // Avg session length
+  const avgSession = acts.length > 0 ? (acts.reduce(function(s,a){ return s+(a.hours||0); },0)/acts.length).toFixed(1) : '—';
+
+  // Section breakdown by time (last 30 days)
+  const thirtyAgo = new Date(Date.now()-30*86400000);
+  const recentActs = acts.filter(function(a){ return new Date(a.date)>=thirtyAgo; });
+  const secTotals = {};
+  recentActs.forEach(function(a){ secTotals[a.section]=(secTotals[a.section]||0)+(a.hours||0); });
+  const totalSec = Object.values(secTotals).reduce(function(s,v){ return s+v; },0)||1;
+
+  const sectionBars = Object.entries(secTotals).sort(function(a,b){ return b[1]-a[1]; }).map(function(e) {
+    const pct = Math.round(e[1]/totalSec*100);
+    const sec = e[0];
+    const color = (window.EXAMS&&window.EXAMS[sec]) ? EXAMS[sec].color : '#6366f1';
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+      '<span class="badge badge-' + sec + '" style="min-width:38px;text-align:center">' + sec + '</span>' +
+      '<div style="flex:1;background:var(--surf2);border-radius:4px;height:10px;overflow:hidden">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;transition:width .5s"></div>' +
+      '</div>' +
+      '<span style="font-size:11px;font-weight:700;color:var(--sub);min-width:32px;text-align:right">' + e[1].toFixed(1) + 'h</span>' +
+    '</div>';
+  }).join('');
+
+  // Day-of-week bar chart
+  const maxDayAvg = Math.max.apply(null, dayAvgs.concat([0.1]));
+  const dowBars = dayAvgs.map(function(avg, i) {
+    const h = Math.max(4, Math.round(avg/maxDayAvg*48));
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
+      '<div style="width:24px;height:' + h + 'px;background:' + (i===bestDayIdx?'var(--ind)':'var(--bdr2)') + ';border-radius:4px;transition:height .4s"></div>' +
+      '<div style="font-size:9px;color:var(--mut);font-weight:600">' + days[i].slice(0,1) + '</div>' +
+    '</div>';
+  }).join('');
+
+  return '<div class="card card-pad" style="margin-bottom:16px">' +
+    '<div class="section-title">📊 Advanced Analytics</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">' +
+      '<div class="stat-box" style="border-top:3px solid var(--ind)"><div class="stat-val" style="color:var(--ind)">' + bestDay + '</div><div class="stat-lbl">Best Study Day</div></div>' +
+      '<div class="stat-box" style="border-top:3px solid var(--grn)"><div class="stat-val" style="color:var(--grn)">' + avgSession + 'h</div><div class="stat-lbl">Avg Session</div></div>' +
+      '<div class="stat-box" style="border-top:3px solid var(--amb)"><div class="stat-val" style="color:var(--amb)">' + acts.length + '</div><div class="stat-lbl">Total Sessions</div></div>' +
+    '</div>' +
+    '<div style="margin-bottom:14px">' +
+      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Avg Hours by Day of Week</div>' +
+      '<div style="display:flex;gap:6px;align-items:flex-end;height:60px">' + dowBars + '</div>' +
+    '</div>' +
+    (sectionBars ? '<div>' +
+      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Section Focus (Last 30 Days)</div>' +
+      sectionBars +
+    '</div>' : '') +
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════
 // WELLNESS TOOLS + FOCUS TIMER
 // ═══════════════════════════════════════════════
 const FOCUS_MODES = [
@@ -5951,7 +5710,7 @@ function buildWellnessTools() {
     : '<div style="background:var(--grn-bg);border:1px solid rgba(14,165,116,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--sub)">' +
         'Last check-in: ' + daysSince + ' day' + (daysSince===1?'':'s') + ' ago · ' +
         (lastHist ? 'Energy ' + lastHist.energy + ' · Stress ' + lastHist.stress + ' · Motivation ' + lastHist.motivation : '') +
-        '<br><button onclick="S.lastBurnoutCheck=0;buildWellnessSection()" style="margin-top:8px;padding:5px 12px;background:transparent;border:1px solid var(--grn);border-radius:6px;font-size:11px;font-weight:700;color:var(--grn);cursor:pointer">Check In Again</button>' +
+        '<br><button onclick="S.lastBurnoutCheck=0;S.lastBurnoutCheck=0;renderTab()" style="margin-top:8px;padding:5px 12px;background:transparent;border:1px solid var(--grn);border-radius:6px;font-size:11px;font-weight:700;color:var(--grn);cursor:pointer">Check In Again</button>' +
       '</div>';
 
   // Habit tracker
