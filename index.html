@@ -76,9 +76,9 @@ a:hover{opacity:.75}
 
 /* ── CARDS ── */
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow)}
-.card-pad{padding:var(--sp-5)}
+.card-pad{padding:18px 20px}
 .card+.card{margin-top:var(--sp-4)}
-.section-title{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp-3)}
+.section-title{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
 * + .section-title{margin-top:var(--sp-5)}
 
 /* ── BUTTONS ── */
@@ -152,11 +152,11 @@ a:hover{opacity:.75}
 .profile-hero{background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:var(--r);padding:var(--sp-6);color:#fff;position:relative;overflow:hidden;margin-bottom:var(--sp-5)}
 .profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(249,115,22,.65),transparent 48%),radial-gradient(ellipse at 95% 5%,rgba(90,95,207,.22),transparent 40%)}
 .profile-hero-inner{position:relative;z-index:1}
-.profile-name{font-size:34px;font-weight:900;margin:var(--sp-3) 0 4px;letter-spacing:-.05em}
-.profile-state{font-size:13px;opacity:.75;margin-bottom:var(--sp-4)}
-.profile-stats{display:flex;gap:var(--sp-6);flex-wrap:wrap}
-.profile-stat-val{font-size:38px;font-weight:900;letter-spacing:-.05em;line-height:1}
-.profile-stat-lbl{font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+.profile-name{font-size:26px;font-weight:900;margin:var(--sp-2) 0 4px;letter-spacing:-.04em}
+.profile-state{font-size:12px;opacity:.7;margin-bottom:var(--sp-3)}
+.profile-stats{display:flex;gap:var(--sp-5);flex-wrap:wrap}
+.profile-stat-val{font-size:30px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.profile-stat-lbl{font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
 
 /* ── STATS GRID ── */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4)}
@@ -165,7 +165,7 @@ a:hover{opacity:.75}
 .stats-grid .stat-box:nth-child(2){animation-delay:65ms}
 .stats-grid .stat-box:nth-child(3){animation-delay:130ms}
 .stats-grid .stat-box:nth-child(4){animation-delay:195ms}
-.stat-val{font-size:44px;font-weight:900;line-height:1;letter-spacing:-.05em}
+.stat-val{font-size:36px;font-weight:900;line-height:1;letter-spacing:-.04em}
 .stat-lbl{font-size:11px;color:var(--mut);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 
 /* ── ACHIEVEMENTS ── */
@@ -406,7 +406,7 @@ a:hover{opacity:.75}
 
 /* ── PROFILE AVATAR EDIT ── */
 .profile-av-wrap{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0;cursor:pointer;overflow:hidden;position:relative}
-.profile-av-edit-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transition:opacity .18s;border-radius:50%}
+.profile-av-edit-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;opacity:0;transition:opacity .18s;border-radius:50%;text-transform:uppercase;letter-spacing:.06em}
 .profile-av-wrap:hover .profile-av-edit-overlay{opacity:1}
 
 /* ── FOLLOW LIST ── */
@@ -1991,10 +1991,7 @@ function renderObStep0(){
     <input id="ob-bio" type="text" placeholder="e.g. Big 4 associate grinding toward CPA 💪">
   </div>
   <div class="form-grp">
-    <label>Pick Your Avatar Emoji</label>
-    <div id="emoji-picker" style="display:flex;flex-wrap:wrap;gap:6px">
-      ${['🎓','👤','💼','📚','⚡','🦊','🐻','🦁','🐯','🦅','🌟','🔥','💎','🚀','🎯','🏆'].map(e=>`<div class="emoji-av-opt" data-emoji="${e}" onclick="selectEmoji('${e}',this)" style="width:36px;height:36px;border-radius:8px;border:2px solid var(--bdr);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .15s">${e}</div>`).join('')}
-    </div>
+    <div style="font-size:12px;color:var(--mut)">Your initials will be used as your avatar.</div>
   </div>
 </div>
 <button class="ob-big-btn" onclick="obNext()">Continue →</button>`;
@@ -2489,7 +2486,7 @@ function buildDashboard(){
   return`
 <div style="max-width:880px;margin:0 auto">
   <div style="margin-bottom:24px">
-    <h1 style="font-size:42px;font-weight:900;line-height:1;letter-spacing:-.05em">Hey, ${S.name}.</h1>
+    <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">Hey, ${S.name}.</h1>
     <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
   </div>
 
@@ -2508,7 +2505,7 @@ function buildDashboard(){
         <div class="section-title" style="margin-bottom:2px">Weekly Pacing</div>
         <div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${weekGoal} hrs</div>
       </div>
-      <div style="font-size:42px;font-weight:900;letter-spacing:-.05em;line-height:1;color:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ora)'}">${weekPct}<span style="font-size:20px;font-weight:700;opacity:.6">%</span></div>
+      <div style="font-size:32px;font-weight:900;letter-spacing:-.04em;line-height:1;color:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ora)'}">${weekPct}<span style="font-size:16px;font-weight:700;opacity:.6">%</span></div>
     </div>
     <div class="prog-bar" style="height:10px;margin-bottom:14px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ind)'}"></div></div>
     <div class="week-chart">${chartBars}</div>
@@ -2526,12 +2523,12 @@ function buildDashboard(){
   </div>
 
   <div class="card card-pad" style="margin-bottom:16px">
-    <div class="section-title">📅 Study Heat Map — Last 16 Weeks</div>
+    <div class="section-title">Study Heat Map — Last 16 Weeks</div>
     ${buildHeatMap()}
   </div>
 
   <div class="card card-pad" style="margin-bottom:16px">
-    <div class="section-title">🎯 Score Tracker</div>
+    <div class="section-title">Score Tracker</div>
     ${buildScoreTracker()}
   </div>
 
@@ -2590,7 +2587,7 @@ function buildProfile(){
   const totalHrs=getTotalHours();
   const streak=getStreak();
   const weekHrs=getWeekHours();
-  const avatar=S.avatar||'🎓';
+  const initials=(S.name||'CPA').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
   const followers=MOCK_FRIENDS.filter(f=>['f1','f2','f5'].includes(f.id)); // mock followers
   const following=MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id));
   const followersCount=followers.length;
@@ -2646,8 +2643,8 @@ function buildProfile(){
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:16px">
           <div class="profile-av-wrap" onclick="openEditProfile()" title="Edit profile">
-            ${S.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span>${avatar}</span>`}
-            <div class="profile-av-edit-overlay">✏️</div>
+            ${S.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${initials}</span>`}
+            <div class="profile-av-edit-overlay" style="font-size:12px;font-weight:700;letter-spacing:.02em">Edit</div>
           </div>
           <div>
             <div class="profile-name" style="margin-top:0">${S.name}</div>
@@ -2659,7 +2656,7 @@ function buildProfile(){
             </div>
           </div>
         </div>
-        <button onclick="openEditProfile()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">✏️ Edit Profile</button>
+        <button onclick="openEditProfile()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
       </div>
 
       <!-- SOCIAL STATS -->
@@ -5111,127 +5108,197 @@ const QB_SECTIONS = [
 const QB_QUESTIONS = {
   FAR: [
     {q:'Under GASB, governmental funds use which basis of accounting?',choices:['Full accrual','Modified accrual','Cash basis','Tax basis'],correct:1,exp:'Governmental funds use modified accrual. Revenue is recognized when available and measurable; expenditures when the liability is incurred.'},
-    {q:'A company uses FIFO. Ending inventory is $500,000; under LIFO it would be $430,000. The LIFO reserve is:',choices:['$70,000','$500,000','$430,000','$930,000'],correct:0,exp:'LIFO Reserve = FIFO Inventory – LIFO Inventory = $500,000 – $430,000 = $70,000.'},
+    {q:'A company uses FIFO. Ending inventory is $500,000; under LIFO it would be $430,000. The LIFO reserve is:',choices:['$70,000','$500,000','$430,000','$930,000'],correct:0,exp:'LIFO Reserve = FIFO Inventory \u2013 LIFO Inventory = $500,000 \u2013 $430,000 = $70,000.'},
     {q:'Under ASC 842, a lessee records an operating lease as:',choices:['Off-balance-sheet','Right-of-use asset + lease liability','Lease liability only','Right-of-use asset only'],correct:1,exp:'ASC 842 requires lessees to recognize a ROU asset and corresponding lease liability for virtually all leases.'},
     {q:'Which fund accounts for water utility operations?',choices:['General Fund','Special Revenue Fund','Enterprise Fund','Agency Fund'],correct:2,exp:'Enterprise funds (proprietary) account for business-like activities such as utilities.'},
     {q:'When a specific account is written off under the allowance method, net realizable value:',choices:['Decreases','Increases','Is unchanged','Depends on amount'],correct:2,exp:'Both gross AR and the allowance decrease by the same amount, so NRV is unchanged.'},
-    {q:'A $1,000,000 8% bond issued at 105 creates a premium of:',choices:['$50,000','$80,000','$105,000','$45,000'],correct:0,exp:'Premium = $1,050,000 – $1,000,000 = $50,000.'},
-    {q:'Service cost component of net periodic pension cost is reported as:',choices:['OCI','Operating expense','Financing activity','Non-operating income'],correct:1,exp:'Service cost is the PV of benefits earned this period and is an operating expense.'},
-    {q:'Under IFRS, qualifying development costs are:',choices:['Always expensed','Capitalized as intangible','Amortized over 40 years','Written off immediately'],correct:1,exp:'IAS 38 requires capitalization of development costs when specific criteria are met.'},
-    {q:'Comprehensive income equals net income plus:',choices:['Unrealized AFS gains only','All OCI items','Operating income','Retained earnings changes'],correct:1,exp:'Comprehensive income = Net income + Other Comprehensive Income (OCI).'},
-    {q:'A $200,000 machine with 10-year life and $20,000 salvage value — DDB depreciation Year 1 is:',choices:['$18,000','$36,000','$40,000','$20,000'],correct:2,exp:'DDB rate = 2/10 = 20%. Year 1 = $200,000 × 20% = $40,000 (salvage ignored until book value approaches it).'},
+    {q:'A $1,000,000 8% bond issued at 105 creates a premium of:',choices:['$50,000','$80,000','$105,000','$45,000'],correct:0,exp:'Premium = $1,050,000 \u2013 $1,000,000 = $50,000.'},
     {q:'Under ASC 606, revenue is recognized:',choices:['When cash is received','When invoice is issued','When performance obligations are satisfied','At contract inception'],correct:2,exp:'Revenue is recognized when (or as) performance obligations are satisfied per ASC 606.'},
     {q:'The indirect method for operating cash flows starts with:',choices:['Revenue','Gross profit','Net income','Operating income'],correct:2,exp:'The indirect method starts with net income and adjusts for non-cash items and changes in working capital.'},
-    {q:'An intangible asset with an indefinite life is:',choices:['Amortized over 40 years','Not amortized but tested for impairment annually','Expensed immediately','Amortized over 10 years'],correct:1,exp:'Indefinite-lived intangibles are not amortized; they are tested for impairment at least annually.'},
-    {q:'Under SFAS 123R, stock options are measured at:',choices:['Intrinsic value at grant','Fair value at grant','Fair value at vest','Market price at exercise'],correct:1,exp:'Stock-based compensation is measured at fair value at the grant date.'},
-    {q:'Which is NOT a component of stockholders\' equity?',choices:['Common stock','APIC','Retained earnings','Accounts payable'],correct:3,exp:'Accounts payable is a liability, not a stockholders\' equity component.'},
-    {q:'Treasury stock is recorded at:',choices:['Par value','Fair value','Cost','Book value'],correct:2,exp:'Treasury stock is typically recorded at cost under the cost method.'},
+    {q:'An intangible asset with an indefinite life is:',choices:['Amortized over 40 years','Tested for impairment annually, not amortized','Expensed immediately','Amortized over 10 years'],correct:1,exp:'Indefinite-lived intangibles are not amortized; they are tested for impairment at least annually.'},
     {q:'A contingent liability is accrued when a loss is:',choices:['Possible and estimable','Probable and reasonably estimable','Remote and estimable','Probable only'],correct:1,exp:'Per ASC 450, a contingent loss is accrued when it is probable and the amount can be reasonably estimated.'},
-    {q:'Under the equity method, an investor owns 25% of an investee. Investee earns $100,000. Investor records:',choices:['$0','$25,000 income','$100,000 income','$25,000 dividend'],correct:1,exp:'Under the equity method, the investor recognizes its proportionate share of the investee\'s net income.'},
-    {q:'Goodwill is recognized in a business combination as:',choices:['Cost over fair value of net assets','FMV of acquired assets','Purchase price minus liabilities','Excess of purchase price over fair value of net identifiable assets'],correct:3,exp:'Goodwill = Purchase price – Fair value of net identifiable assets acquired.'},
-    {q:'A temporary difference that creates a deferred tax liability occurs when:',choices:['Book income > Tax income','Tax income > Book income','Tax expense > Book expense','No timing difference exists'],correct:0,exp:'When book income exceeds taxable income, more taxes will be owed in the future — creating a deferred tax liability.'},
+    {q:'Under the equity method, an investor owns 25% of an investee earning $100,000. Investor records:',choices:['$0','$25,000 income','$100,000 income','$25,000 dividend income'],correct:1,exp:'Under the equity method, the investor recognizes its proportionate share of the investee\'s net income.'},
+    {q:'Goodwill is recognized in a business combination as:',choices:['Cost over book value of net assets','FMV of acquired assets','Purchase price minus liabilities assumed','Excess of purchase price over FMV of net identifiable assets'],correct:3,exp:'Goodwill = Purchase price \u2013 Fair value of net identifiable assets acquired.'},
+    {q:'A temporary difference creating a deferred tax liability occurs when:',choices:['Book income > Tax income in current period','Tax income > Book income','Tax expense > Book expense','No timing difference exists'],correct:0,exp:'When book income exceeds taxable income, more taxes will be owed in the future, creating a DTL.'},
+    {q:'Treasury stock is recorded at:',choices:['Par value','Fair value at repurchase','Cost','Book value per share'],correct:2,exp:'Treasury stock is typically recorded at cost under the cost method.'},
+    {q:'A $200,000 machine with 10-year life, $20,000 salvage \u2014 DDB depreciation Year 1 is:',choices:['$18,000','$36,000','$40,000','$20,000'],correct:2,exp:'DDB rate = 2/10 = 20%. Year 1 = $200,000 \u00d7 20% = $40,000 (salvage ignored until book value nears it).'},
+    {q:'Under IFRS, qualifying development costs are:',choices:['Always expensed','Capitalized as intangible when criteria met','Amortized over 40 years','Written off in period incurred'],correct:1,exp:'IAS 38 requires capitalization of development costs when specific feasibility and intent criteria are demonstrated.'},
+    {q:'Which is NOT a component of stockholders\' equity?',choices:['Common stock','APIC','Retained earnings','Accounts payable'],correct:3,exp:'Accounts payable is a liability, not equity.'},
+    {q:'Under the percentage-of-completion method, revenue is recognized:',choices:['At project completion','Based on costs incurred relative to total expected costs','When cash is received','Equally each period'],correct:1,exp:'Percentage-of-completion recognizes revenue proportional to work completed, typically measured by cost incurred to date / total estimated cost.'},
+    {q:'Service cost component of net periodic pension cost is classified as:',choices:['OCI','Operating expense','Financing activity','Non-operating income'],correct:1,exp:'Service cost \u2014 the PV of benefits earned by employees this period \u2014 is an operating expense.'},
+    {q:'Comprehensive income equals:',choices:['Net income only','Net income + OCI','Operating income','Gross profit'],correct:1,exp:'Comprehensive income = Net income + Other Comprehensive Income (OCI), which includes items like unrealized AFS gains and pension adjustments.'},
+    {q:'Under ASC 810, a variable interest entity (VIE) is consolidated by:',choices:['The entity with the most equity','The primary beneficiary who absorbs majority of risk/reward','The entity that created it','No consolidation required'],correct:1,exp:'The primary beneficiary \u2014 who absorbs the majority of expected losses or residual returns \u2014 must consolidate a VIE.'},
+    {q:'A bond discount is amortized using the effective interest method. This means interest expense is:',choices:['Constant each period','Calculated as carrying value \u00d7 market rate','Equal to the coupon payment','Lower than cash paid'],correct:1,exp:'Under the effective interest method, interest expense = carrying value \u00d7 market (effective) interest rate at issuance.'},
+    {q:'Which statement is true about IFRS vs. US GAAP inventory?',choices:['IFRS permits LIFO','US GAAP requires FIFO','IFRS prohibits LIFO; US GAAP allows LIFO, FIFO, or weighted avg','Both require FIFO'],correct:2,exp:'IFRS prohibits LIFO. US GAAP allows LIFO, FIFO, and weighted average, but requires LIFO conformity for tax purposes.'},
+    {q:'Under ASC 958, a nonprofit organization reports net assets in how many classes?',choices:['One','Two (with and without donor restrictions)','Three','Four'],correct:1,exp:'ASU 2016-14 simplified nonprofit net asset classifications to two: with donor restrictions and without donor restrictions.'},
+    {q:'The direct method for operating cash flows shows:',choices:['Net income adjusted for non-cash items','Actual cash receipts and payments from operations','Only investing activities','Capital expenditures less depreciation'],correct:1,exp:'The direct method presents major classes of gross cash receipts and payments from operating activities directly.'},
+    {q:'An investment in debt securities classified as "held-to-maturity" is reported at:',choices:['Fair value with unrealized gains/losses in OCI','Amortized cost','Fair value through net income','Lower of cost or market'],correct:1,exp:'HTM debt securities are reported at amortized cost; the entity has intent and ability to hold them to maturity.'},
+    {q:'Which type of lease is recorded by the lessee similarly to a purchased asset?',choices:['Operating lease','Finance lease','Short-term lease','Month-to-month lease'],correct:1,exp:'Finance leases (formerly capital leases) result in the lessee recognizing an ROU asset that is depreciated and an interest-bearing liability, similar to owning the asset.'},
+    {q:'Under GASB, which fund type uses full accrual accounting?',choices:['General fund','Special revenue fund','Enterprise fund (proprietary)','Debt service fund'],correct:2,exp:'Proprietary funds (enterprise and internal service) use full accrual accounting, like commercial entities.'},
+    {q:'A company issues convertible bonds. Under US GAAP (pre-ASU 2020-06), the conversion feature was recorded as:',choices:['Entirely as debt','Partly as debt, partly as equity (APIC)','Entirely as equity','As a derivative liability'],correct:1,exp:'Pre-ASU 2020-06, US GAAP required bifurcation: the debt component was discounted and the equity (conversion option) was recorded in APIC.'},
+    {q:'R&D costs under US GAAP are:',choices:['Capitalized and amortized over product life','Expensed as incurred','Capitalized only if technological feasibility established','Deferred until revenue is earned'],correct:1,exp:'Under ASC 730, R&D costs are generally expensed as incurred under US GAAP (unlike IFRS which capitalizes qualifying development costs).'},
   ],
   AUD: [
-    {q:'The primary objective of an audit is to:',choices:['Detect all misstatements','Guarantee accuracy','Obtain reasonable assurance FS are free of material misstatement','Prevent fraud'],correct:2,exp:'The auditor obtains reasonable assurance — high but not absolute — that FS are free from material misstatement.'},
-    {q:'Inherent risk is best described as:',choices:['Risk of audit team error','Susceptibility to misstatement assuming no controls','Risk that controls fail','Risk of undetected misstatements in testing'],correct:1,exp:'Inherent risk is the susceptibility of an assertion to material misstatement before considering any related controls.'},
-    {q:'A disclaimer of opinion is issued when:',choices:['Going concern exists','Scope limitation prevents sufficient evidence','Material misstatement found','Client changes accounting principle'],correct:1,exp:'A disclaimer is appropriate when the auditor cannot obtain sufficient appropriate audit evidence.'},
+    {q:'The primary objective of an audit is to:',choices:['Detect all misstatements','Guarantee financial statement accuracy','Obtain reasonable assurance FS are free of material misstatement','Prevent all fraud'],correct:2,exp:'The auditor obtains reasonable assurance \u2014 high but not absolute \u2014 that FS are free from material misstatement.'},
+    {q:'Inherent risk is best described as:',choices:['Risk of audit team error','Susceptibility to misstatement assuming no controls','Risk that controls fail to prevent misstatement','Risk of undetected misstatements in testing'],correct:1,exp:'Inherent risk is the susceptibility of an assertion to material misstatement before considering any related controls.'},
+    {q:'A disclaimer of opinion is issued when:',choices:['Going concern uncertainty exists','Scope limitation prevents sufficient evidence','Material misstatement found','Client changes accounting principle'],correct:1,exp:'A disclaimer is appropriate when the auditor cannot obtain sufficient appropriate audit evidence.'},
     {q:'Which is NOT an analytical procedure?',choices:['Ratio analysis','Trend analysis','Regression analysis','Vouching source documents'],correct:3,exp:'Vouching is a substantive test of details, not an analytical procedure.'},
-    {q:'Professional skepticism means the auditor:',choices:['Assumes management is dishonest','Applies critical thinking without bias','Assumes information is accurate','Considers all management statements false'],correct:1,exp:'Professional skepticism is a questioning mind and critical assessment, not assuming honesty or dishonesty.'},
-    {q:'Control risk is the risk that:',choices:['Internal controls fail to prevent/detect material misstatement','Auditor selects wrong test','Management overrides controls','Employees commit fraud'],correct:0,exp:'Control risk: material misstatements will not be prevented or detected on a timely basis by internal controls.'},
-    {q:'A material weakness is a deficiency where there is:',choices:['Any single control failure','Reasonable possibility material misstatement won\'t be prevented/detected','Every possible failure','More than one control failure'],correct:1,exp:'Material weakness = reasonable possibility that a material misstatement won\'t be prevented or detected on a timely basis.'},
-    {q:'Most reliable form of audit evidence:',choices:['Oral management representations','Internal docs reviewed by auditor','External docs received directly by auditor','Unreviewed internal docs'],correct:2,exp:'Evidence received directly from external parties (e.g., bank confirmations) is most reliable.'},
-    {q:'The engagement letter primarily:',choices:['Satisfies SEC rules','Establishes engagement terms and reduces misunderstanding','Replaces the management rep letter','Describes internal controls'],correct:1,exp:'The engagement letter documents agreed-upon terms to reduce misunderstandings between auditor and client.'},
-    {q:'Sampling risk refers to:',choices:['Risk of non-representative sample','Conclusion from sample may differ from testing the entire population','Risk of too small a sample','Both A and C'],correct:1,exp:'Sampling risk: auditor\'s conclusion based on the sample may differ from what the full population would indicate.'},
-    {q:'A PCAOB integrated audit includes an audit of:',choices:['FS only','ICFR only','Both FS and ICFR','MD&A'],correct:2,exp:'An integrated audit (SOX Section 404(b)) covers both the financial statements and ICFR.'},
-    {q:'Which would most likely require related-party disclosure?',choices:['Purchase from major supplier at market price','CEO loan at below-market rate','Routine accounts payable','Monthly utility payments'],correct:1,exp:'Non-arm\'s-length transactions with related parties (like officer loans) require disclosure under ASC 850.'},
-    {q:'An unmodified opinion means:',choices:['Minor issues found','FS present fairly in all material respects','Scope was limited','Going concern exists'],correct:1,exp:'An unmodified (clean) opinion states that FS present fairly in all material respects in conformity with GAAP.'},
+    {q:'Professional skepticism means the auditor:',choices:['Assumes management is dishonest','Applies critical questioning without bias toward honesty or dishonesty','Assumes information is accurate until disproven','Considers all management statements unreliable'],correct:1,exp:'Professional skepticism is a questioning mind and critical assessment, not assuming honesty or dishonesty.'},
+    {q:'Control risk is the risk that:',choices:['Internal controls fail to prevent/detect material misstatement on a timely basis','Auditor selects the wrong test','Management overrides all controls','Employees commit fraud undetected'],correct:0,exp:'Control risk: material misstatements will not be prevented or detected on a timely basis by internal controls.'},
+    {q:'A material weakness is defined as a deficiency where there is a:',choices:['Any single control failure','Reasonable possibility that material misstatement won\'t be prevented/detected on a timely basis','Certainty of a misstatement','Minor control gap with no financial impact'],correct:1,exp:'Material weakness = reasonable possibility that a material misstatement won\'t be prevented or detected and corrected on a timely basis.'},
+    {q:'The most reliable form of audit evidence is:',choices:['Oral management representations','Internal documents reviewed internally','External documents received directly by the auditor','Internally generated unreviewed documents'],correct:2,exp:'Evidence received directly from external parties (e.g., bank confirmations sent to auditor) is most reliable.'},
+    {q:'The engagement letter primarily serves to:',choices:['Satisfy SEC disclosure requirements','Establish engagement terms and reduce misunderstanding','Replace the management representation letter','Document the client\'s internal controls'],correct:1,exp:'The engagement letter documents agreed-upon terms to reduce misunderstandings between auditor and client.'},
+    {q:'Sampling risk in auditing refers to:',choices:['Risk of selecting a non-representative sample by chance','Possibility the sample conclusion differs from what full-population testing would show','Risk that the sample size is too small','Both A and C'],correct:1,exp:'Sampling risk: the auditor\'s conclusion based on the sample may differ from what the entire population would indicate.'},
+    {q:'An integrated audit under PCAOB includes:',choices:['Financial statements only','Internal control over financial reporting only','Both financial statements and ICFR','Management discussion and analysis'],correct:2,exp:'An integrated audit (SOX Section 404(b)) covers both the financial statements and ICFR.'},
+    {q:'An unmodified (clean) opinion means:',choices:['No issues were found','Financial statements present fairly in all material respects','Scope was fully unrestricted','No related-party transactions exist'],correct:1,exp:'An unmodified opinion states that FS present fairly in all material respects in conformity with GAAP.'},
     {q:'Audit documentation must be retained for at least:',choices:['3 years','5 years','7 years','10 years'],correct:2,exp:'Under PCAOB and AICPA standards, audit documentation must generally be retained for 7 years.'},
-    {q:'The purpose of a management representation letter is to:',choices:['Substitute for audit evidence','Confirm management\'s representations and responsibilities','Replace the engagement letter','Document internal controls'],correct:1,exp:'The management rep letter confirms that management has provided complete and accurate information and acknowledges its responsibilities.'},
-    {q:'When assessing going concern, the auditor looks forward:',choices:['3 months','6 months','12 months','24 months'],correct:2,exp:'Auditors assess whether conditions/events raise substantial doubt about the entity\'s ability to continue for 12 months from FS date.'},
-    {q:'A Type 1 subsequent event requires:',choices:['Disclosure only','Adjustment to FS','No action','New audit report'],correct:1,exp:'Type 1 (recognized) subsequent events provide evidence of conditions existing at the balance sheet date and require adjustment.'},
-    {q:'Independence standards prohibit the auditor from having:',choices:['Any contact with client','Financial interest in audit client','Non-audit discussions','Any client referrals'],correct:1,exp:'Independence rules prohibit financial interests (investments, loans) in audit clients that could impair objectivity.'},
-    {q:'Substantive analytical procedures are most useful when:',choices:['Internal controls are strong','Data is predictable and reliable','Controls are weak','Fraud risk is high'],correct:0,exp:'Substantive analytical procedures are most effective when strong internal controls increase the reliability of underlying data.'},
-    {q:'Which type of opinion is issued when FS contain a material misstatement?',choices:['Unmodified','Qualified or Adverse','Disclaimer','None required'],correct:1,exp:'A qualified opinion (material but not pervasive) or adverse opinion (material and pervasive) is issued when FS are materially misstated.'},
+    {q:'A Type II subsequent event requires:',choices:['Adjustment to financial statements','Disclosure only in the notes','No action required','Reissuance of the audit report'],correct:1,exp:'Type II (non-recognized) subsequent events do not provide evidence of conditions at the balance sheet date \u2014 only note disclosure is required.'},
+    {q:'Which procedure provides the highest level of assurance?',choices:['Inquiry of management','Analytical procedures','Inspection of external documents','Observation of physical inventory'],correct:2,exp:'Inspection of externally generated documents provides stronger evidence than inquiry or analytical procedures.'},
+    {q:'A significant deficiency in ICFR is:',choices:['Less severe than a material weakness but still important enough to merit attention of those charged with governance','More severe than a material weakness','Any minor control gap','A deficiency with no financial impact'],correct:0,exp:'A significant deficiency warrants the attention of those charged with governance but is less severe than a material weakness.'},
+    {q:'When assessing going concern, the auditor looks forward:',choices:['3 months from FS date','6 months from FS date','12 months from FS issuance date','24 months from FS date'],correct:2,exp:'Auditors assess substantial doubt about an entity\'s ability to continue for 12 months from the FS issuance date.'},
+    {q:'Statistical sampling allows the auditor to:',choices:['Eliminate sampling risk','Quantify and control sampling risk','Remove the need for professional judgment','Test 100% of a population efficiently'],correct:1,exp:'Statistical sampling allows the auditor to quantify (measure) and control sampling risk; non-statistical sampling does not.'},
+    {q:'The purpose of a management representation letter is to:',choices:['Substitute for audit evidence obtained','Confirm management\'s responsibilities and representations about the FS','Replace the engagement letter','Document the audit strategy'],correct:1,exp:'The management rep letter confirms that management has provided complete information and acknowledges its responsibilities.'},
+    {q:'Independence standards generally prohibit the auditor from having:',choices:['Any business discussions with the client','A direct or material indirect financial interest in the audit client','Non-audit service discussions','Any client referrals or social interactions'],correct:1,exp:'Independence rules prohibit financial interests in audit clients that could impair objectivity and the appearance of independence.'},
+    {q:'Which opinion is appropriate when the FS contain a material and pervasive misstatement?',choices:['Unmodified','Qualified','Adverse','Disclaimer'],correct:2,exp:'An adverse opinion is issued when FS are materially and pervasively misstated \u2014 they do not present fairly.'},
+    {q:'Audit risk = inherent risk \u00d7 control risk \u00d7 detection risk. If IR and CR are both high, detection risk should be set:',choices:['High','Moderate','Low','Zero'],correct:2,exp:'Audit risk is the product of IR \u00d7 CR \u00d7 DR. If IR and CR are both high, the auditor must set DR low (perform more/better tests) to keep overall audit risk at an acceptable level.'},
+    {q:'The concept of materiality is BEST described as:',choices:['Any amount over $10,000','An amount that would influence the decision of a reasonable user of the financial statements','Amounts exceeding 5% of net income','All errors regardless of size'],correct:1,exp:'Materiality is a matter of professional judgment \u2014 it is the threshold above which a misstatement would influence the economic decisions of reasonable users.'},
+    {q:'In a review engagement, the accountant provides:',choices:['Reasonable assurance','Limited (negative) assurance','Absolute assurance','No assurance'],correct:1,exp:'A review provides limited (negative) assurance: "nothing came to our attention" \u2014 less than the reasonable assurance of an audit.'},
+    {q:'The auditor\'s report on ICFR under AS 2201 should be issued as of:',choices:['The end of the most recent fiscal year','The date of auditor\'s report on FS','The beginning of the fiscal year','The date management assessed ICFR'],correct:0,exp:'The auditor\'s ICFR opinion is as of the end of the most recent fiscal year, coinciding with the FS balance sheet date.'},
+    {q:'Fraud risk factors related to misappropriation of assets typically include:',choices:['Complex related-party transactions','Large cash balances with weak controls over custody','Aggressive revenue recognition','Management override of revenue controls'],correct:1,exp:'Misappropriation of assets is most common when there are valuable, liquid assets (cash, inventory) with weak custody and accountability controls.'},
+    {q:'Which of the following is an example of a substantive test?',choices:['Reviewing the entity\'s org chart','Walkthrough of a control','Confirmation of accounts receivable balances','Evaluating control design effectiveness'],correct:2,exp:'Confirmations are substantive procedures \u2014 they directly test account balances and transaction amounts for accuracy.'},
+    {q:'A CPA firm\'s quality control policies should address:',choices:['Only independence requirements','Human resources, engagement performance, and monitoring, among other elements','Client billing practices only','Audit fees and staffing'],correct:1,exp:'Quality control per SQCS No. 8 addresses: leadership responsibilities, ethical requirements, acceptance/continuance, human resources, engagement performance, and monitoring.'},
+    {q:'When the auditor identifies a related-party transaction, the primary concern is:',choices:['Whether the transaction is legal','Whether proper disclosure has been made and terms are at arm\'s length','Transaction size only','Whether all parties are profitable'],correct:1,exp:'Related-party transactions require disclosure under ASC 850. The auditor focuses on whether terms are disclosed and whether the transaction was conducted at arm\'s length.'},
+    {q:'Under SAS No. 99, the auditor should specifically address fraud risk by:',choices:['Assuming management is trustworthy','Brainstorming with the engagement team about how fraud might occur','Relying solely on analytical procedures','Testing only high-value transactions'],correct:1,exp:'SAS 99 requires an engagement team discussion (brainstorming) about how and where fraud might occur, regardless of prior experience with the client.'},
   ],
   REG: [
-    {q:'Self-employment income of $100,000: deductible portion of SE tax for AGI is:',choices:['$7,065','$14,130','$7,650','$15,300'],correct:0,exp:'SE tax = $100,000 × 92.35% × 15.3% = $14,130. Deductible = 50% = $7,065.'},
-    {q:'A merchant\'s firm offer under UCC is irrevocable for a max of:',choices:['30 days','60 days','90 days','3 months'],correct:3,exp:'UCC Article 2: firm offer by a merchant is irrevocable for the stated time, not exceeding 3 months.'},
-    {q:'Which asset does NOT qualify for Section 179?',choices:['Manufacturing machinery','Dental office computer','Residential rental property','Office furniture'],correct:2,exp:'Section 179 does not apply to residential rental real property.'},
-    {q:'Impossibility of contract performance is excused when:',choices:['Performance costs more than expected','Subject matter is destroyed without either party\'s fault','One party has financial difficulty','Better deal found'],correct:1,exp:'True impossibility excuses performance when: subject matter destroyed, performance becomes illegal, or key person dies/incapacitated.'},
-    {q:'Long-term capital gains are taxed at:',choices:['Ordinary income rates','0%, 15%, or 20% preferential rates','Flat 28%','Same as dividends only'],correct:1,exp:'LTCG (held >1 year) are taxed at preferential rates of 0%, 15%, or 20% depending on taxable income.'},
-    {q:'In Chapter 7 bankruptcy, highest priority unsecured claim is:',choices:['Secured creditors','Employee wages','Domestic support obligations','Administrative expenses'],correct:2,exp:'Domestic support obligations (child support, alimony) have the highest priority among unsecured claims.'},
-    {q:'IRS statute of limitations for a fraudulent return is:',choices:['3 years','6 years','Indefinite','5 years'],correct:2,exp:'No statute of limitations applies to fraudulent returns or willful tax evasion.'},
-    {q:'An S corporation is:',choices:['Double-taxed entity','Pass-through, max 100 shareholders','Subject to corporate AMT','Unlimited shareholders'],correct:1,exp:'S corps are pass-through entities with no entity-level tax, limited to 100 eligible shareholders and one class of stock.'},
-    {q:'Apparent authority in agency law means:',choices:['Principal explicitly authorized act','Third party reasonably believes agent has authority based on principal\'s conduct','Agent exceeded actual authority','Agent has written authorization'],correct:1,exp:'Apparent authority arises from the principal\'s conduct that leads third parties to reasonably believe the agent has authority.'},
-    {q:'Partnership distributes property with FMV $50,000 and basis $30,000. Partner\'s basis in the property is:',choices:['$50,000','$30,000','$20,000','$0'],correct:1,exp:'In a non-liquidating distribution, partner takes the partnership\'s adjusted basis in the distributed property ($30,000).'},
-    {q:'Under UETA, an electronic signature is:',choices:['Only valid if notarized','Valid with the same legal effect as handwritten signature','Only valid over $500','Not admissible as evidence'],correct:1,exp:'UETA and ESIGN Act give electronic signatures the same legal effect as paper signatures.'},
-    {q:'Taxpayer sells primary residence owned/used 3 years for $450,000 (basis $200,000). Taxable gain is:',choices:['$250,000 fully taxable','$0 — fully excluded','$0 up to $250,000 exclusion','$150,000'],correct:1,exp:'Section 121 excludes up to $250,000 ($500,000 MFJ) of gain if owned and used as principal residence for 2 of last 5 years. Full $250,000 is excluded.'},
-    {q:'For income tax purposes, a gift received by an individual is:',choices:['Fully taxable income','Excluded from gross income','Taxable as capital gain','Taxed at 15%'],correct:1,exp:'Gifts received are excluded from the recipient\'s gross income under IRC Section 102.'},
-    {q:'The standard deduction for 2024 for a single filer is approximately:',choices:['$12,950','$13,850','$14,600','$10,000'],correct:2,exp:'The 2024 standard deduction for single filers is $14,600 (adjusted annually for inflation).'},
-    {q:'An LLC taxed as a partnership: guaranteed payments to members are:',choices:['Never taxed','Deductible by LLC; ordinary income to member','Capital gains to member','Tax-free distributions'],correct:1,exp:'Guaranteed payments are deductible by the LLC and treated as ordinary income to the receiving member.'},
-    {q:'Under the UTMA, property transferred to a minor:',choices:['Reverts to donor at any time','Is irrevocable and held until the minor reaches majority','Requires court approval','Is always taxed at donor\'s rate'],correct:1,exp:'Under UTMA, the transfer is irrevocable and the custodian manages assets until the minor reaches the age of majority.'},
-    {q:'The "kiddie tax" applies to unearned income of children under age:',choices:['14','17','19 (or 24 if student)','21'],correct:2,exp:'The kiddie tax applies to unearned income of children under 19, or full-time students under 24, taxed at the parent\'s rate.'},
-    {q:'A C corporation\'s charitable contribution deduction is limited to:',choices:['5% of taxable income','10% of taxable income','25% of taxable income','No limit'],correct:1,exp:'Corporate charitable deductions are limited to 10% of taxable income before the contribution deduction.'},
-    {q:'Under UCC, risk of loss for a shipment contract passes to the buyer:',choices:['When buyer receives goods','When seller delivers to carrier','When buyer pays','At contract formation'],correct:1,exp:'In a shipment contract, risk of loss passes to the buyer when the seller duly delivers goods to the carrier.'},
-    {q:'A tax return preparer who knowingly understates liability faces a penalty of:',choices:['$250 per return','$1,000 or 50% of fee, whichever is greater','$5,000 per return','No penalty unless fraud proven'],correct:1,exp:'IRC Section 6694(b): a preparer who recklessly or intentionally disregards rules faces a penalty of $5,000 or 75% of income from the return, whichever is greater (or $1,000 for negligent understatement under 6694(a)).'},
+    {q:'Self-employment income of $100,000 \u2014 deductible SE tax for AGI:',choices:['$7,065','$14,130','$7,650','$15,300'],correct:0,exp:'SE tax = $100,000 \u00d7 92.35% \u00d7 15.3% = $14,130. Deductible amount = 50% \u00d7 $14,130 = $7,065.'},
+    {q:'A merchant\'s firm offer under UCC Article 2 is irrevocable for a max of:',choices:['30 days','60 days','90 days','3 months'],correct:3,exp:'UCC Article 2: a merchant firm offer is irrevocable for the time stated, not exceeding 3 months.'},
+    {q:'Which asset does NOT qualify for Section 179 expensing?',choices:['Manufacturing machinery','Dental office computer','Residential rental property','Office furniture'],correct:2,exp:'Section 179 does not apply to residential rental real property.'},
+    {q:'Impossibility of contract performance excuses performance when:',choices:['Performance becomes more expensive than expected','Subject matter is destroyed without either party\'s fault','One party has financial hardship','A better deal is found'],correct:1,exp:'True impossibility excuses performance when: subject matter is destroyed, performance becomes illegal, or a key person dies/becomes incapacitated.'},
+    {q:'Long-term capital gains are preferentially taxed at:',choices:['Ordinary income rates','0%, 15%, or 20% depending on taxable income','A flat 28% rate','Same rate as qualified dividends, always 15%'],correct:1,exp:'LTCG (held >1 year) are taxed at preferential rates of 0%, 15%, or 20% depending on the taxpayer\'s taxable income.'},
+    {q:'In Chapter 7 bankruptcy, the highest priority unsecured claim is:',choices:['Secured creditors','Employee wages up to a limit','Domestic support obligations (child support, alimony)','Administrative expenses of the estate'],correct:2,exp:'Domestic support obligations have the highest priority among unsecured claims in Chapter 7 distribution.'},
+    {q:'The IRS statute of limitations for a fraudulent return is:',choices:['3 years','6 years','No limit \u2014 indefinite','5 years'],correct:2,exp:'No statute of limitations applies when a fraudulent return is filed or a taxpayer willfully attempts to evade tax.'},
+    {q:'An S corporation is correctly described as:',choices:['A corporation taxed at corporate and individual levels','Pass-through entity with corporate-level tax on built-in gains only (BIG tax)','A pass-through entity limited to 100 shareholders and one class of stock','Subject to corporate alternative minimum tax'],correct:2,exp:'S corps are pass-through entities; generally no entity-level tax, limited to 100 eligible shareholders, and one class of stock.'},
+    {q:'Apparent authority in agency law arises from:',choices:['Principal explicitly authorizing the act','Third party\'s reasonable belief of authority based on principal\'s conduct','Agent exceeding actual authority','Agent having written authorization'],correct:1,exp:'Apparent authority arises from the principal\'s representations or conduct that lead third parties to reasonably believe the agent has authority.'},
+    {q:'A partnership distributes property with FMV $50,000 and basis $30,000. Partner\'s basis in the distributed property is:',choices:['$50,000 (FMV)','$30,000 (partnership\'s basis)','$20,000 (difference)','$0'],correct:1,exp:'In a non-liquidating distribution, the partner takes the partnership\'s adjusted basis in the distributed property ($30,000).'},
+    {q:'Under UETA, an electronic signature:',choices:['Is only valid if notarized','Has the same legal effect as a handwritten signature','Is only valid for contracts over $500','Is not admissible as evidence in court'],correct:1,exp:'UETA (and ESIGN Act) give electronic signatures the same legal effect as paper signatures.'},
+    {q:'A taxpayer sells her primary residence (owned/used 3 years) for $450,000 (basis $200,000). Taxable gain:',choices:['$250,000 fully taxable','$0 \u2014 all excluded under Section 121','$150,000 taxable','$100,000 taxable'],correct:1,exp:'Section 121 excludes up to $250,000 ($500,000 MFJ) of gain if owned and used as principal residence for 2 of the last 5 years.'},
+    {q:'A gift received by an individual is:',choices:['Fully taxable ordinary income','Excluded from gross income under IRC \u00a7102','Taxed at capital gain rates','Taxable only above $15,000'],correct:1,exp:'Gifts received are excluded from the recipient\'s gross income (the donor may owe gift tax, not the recipient).'},
+    {q:'Guaranteed payments to LLC members are:',choices:['Tax-free distributions','Deductible by LLC; ordinary income to the member','Capital gains to the member','Never subject to self-employment tax'],correct:1,exp:'Guaranteed payments are deductible by the LLC and treated as ordinary income to the member, generally subject to SE tax.'},
+    {q:'The "kiddie tax" applies to unearned income of children under age:',choices:['14','17','19 (or 24 if full-time student)','21'],correct:2,exp:'The kiddie tax taxes unearned income of children under 19 (or full-time students under 24) at the parent\'s marginal rate.'},
+    {q:'A C corporation\'s charitable contribution deduction is limited to:',choices:['5% of taxable income','10% of taxable income before the contribution deduction','25% of taxable income','Unlimited for qualifying organizations'],correct:1,exp:'Corporate charitable contributions are limited to 10% of taxable income before the deduction; excess carries forward 5 years.'},
+    {q:'Under UCC, risk of loss in a shipment contract passes to the buyer:',choices:['When the buyer physically receives the goods','When the seller delivers goods to the carrier','When the buyer pays for the goods','At the time of contract formation'],correct:1,exp:'In a shipment contract (e.g., FOB shipping point), risk of loss passes when the seller duly delivers to the carrier.'},
+    {q:'A tax return preparer who recklessly disregards rules resulting in an understatement faces a minimum penalty of:',choices:['$250','$1,000 or 50% of fee (whichever is greater)','$5,000 or 75% of fee (whichever is greater)','No penalty without proven fraud'],correct:2,exp:'IRC \u00a76694(b): reckless or intentional disregard of rules carries a penalty of the greater of $5,000 or 75% of income derived from the return.'},
+    {q:'Under the assignment of rights in contract law, the assignee:',choices:['Takes the rights subject to any defenses the obligor has against the assignor','Gets greater rights than the assignor','Is not bound by original contract terms','Must obtain obligor consent for assignment to be valid'],correct:0,exp:'An assignee takes the rights as they existed \u2014 subject to any defenses the obligor had against the original assignor.'},
+    {q:'A taxpayer has a $20,000 casualty loss from a non-federally declared disaster. Deductibility under TCJA:',choices:['Fully deductible as miscellaneous itemized deduction','Only deductible for federally declared disasters, subject to 10% AGI floor','Deductible in full against ordinary income','Deductible as a capital loss'],correct:1,exp:'Post-TCJA, personal casualty losses are only deductible if from a federally declared disaster and only to the extent they exceed $100 per event plus 10% of AGI.'},
+    {q:'Which of the following is a characteristic of a general partnership?',choices:['Partners have limited liability','All partners have unlimited personal liability for partnership debts','Requires formal written agreement to form','Partners are not agents of the partnership'],correct:1,exp:'In a general partnership, all general partners have unlimited personal liability for the debts and obligations of the partnership.'},
+    {q:'The wash sale rule disallows a loss when substantially identical securities are repurchased within:',choices:['15 days before or after the sale','30 days before or after the sale','60 days after the sale','90 days before or after the sale'],correct:1,exp:'The wash sale rule (IRC \u00a71091) disallows a loss if substantially identical securities are purchased within 30 days before or after the sale date.'},
+    {q:'Under the Sarbanes-Oxley Act, the CEO and CFO must certify quarterly and annual reports. Knowingly false certifications carry criminal penalties of up to:',choices:['$1 million and 10 years','$5 million and 20 years','$500,000 and 5 years','$2 million and 15 years'],correct:1,exp:'SOX Section 906: willfully false certifications carry penalties of up to $5 million in fines and 20 years in prison.'},
+    {q:'Which form of business organization best shields all owners from personal liability with a single level of taxation?',choices:['General partnership','C corporation','LLC taxed as partnership','S corporation with >100 shareholders'],correct:2,exp:'An LLC taxed as a partnership provides limited liability for all members and pass-through taxation, avoiding the double taxation of a C corp.'},
+    {q:'An offer is terminated by operation of law if:',choices:['Offeree asks a question about terms','Offeree makes a counter-offer','The subject matter is destroyed before acceptance','Offeror sends a better offer to someone else'],correct:2,exp:'Destruction of the subject matter, death or incapacity of a party, or intervening illegality terminates an offer by operation of law.'},
+    {q:'IRC Section 1031 like-kind exchange applies to:',choices:['All personal property','Real property held for productive use or investment only (post-TCJA)','Any business asset exchange','Publicly traded securities'],correct:1,exp:'Post-TCJA, Section 1031 deferral is limited to real property held for productive use in a trade/business or for investment. Personal property no longer qualifies.'},
+    {q:'Under CERCLA (Superfund), liability for environmental cleanup is:',choices:['Limited to current property owners only','Joint and several, and can apply to current owners, past owners, generators, and transporters','Only applicable to the original polluter','Limited to companies with over $10M in revenue'],correct:1,exp:'CERCLA imposes strict, joint and several, and retroactive liability on a broad range of potentially responsible parties (PRPs) regardless of fault.'},
+    {q:'In a Chapter 11 bankruptcy reorganization, the debtor-in-possession:',choices:['Loses all management control','Continues to operate the business under bankruptcy court supervision','Is replaced by a trustee immediately','Must liquidate assets within 30 days'],correct:1,exp:'In Chapter 11, the debtor typically continues operating as a debtor-in-possession under court supervision while restructuring its debts.'},
+    {q:'A partnership\'s tax year must generally conform to:',choices:['Calendar year unless business purpose exists','The fiscal year of the majority partner','A June 30 fiscal year','Any year the partners choose'],correct:0,exp:'Partnerships generally must use the tax year of the majority partners; if no majority, the principal partners\' year; if none applies, the calendar year, unless a business purpose exception applies.'},
+    {q:'The alternative minimum tax (AMT) preference item that most commonly affects individuals is:',choices:['Standard deduction','Accelerated depreciation on personal property','ISO stock option spread at exercise','Both B and C'],correct:3,exp:'Common AMT preference items include accelerated depreciation (vs. ADS) and ISO stock option spreads at exercise, among others.'},
   ],
   TCP: [
-    {q:'A single-member LLC is treated as a _____ by default for tax purposes.',choices:['C Corporation','S Corporation','Disregarded entity','Partnership'],correct:2,exp:'Domestic single-member LLCs are disregarded entities (sole proprietorships) by default unless an election is made.'},
-    {q:'The built-in gains (BIG) tax recognition period is:',choices:['2 years','3 years','5 years','10 years'],correct:2,exp:'Under Section 1374, the BIG tax recognition period is 5 years from the date of the S election.'},
-    {q:'Corporate charitable contribution: taxable income before deduction is $500,000 and contribution is $100,000. Deductible amount is:',choices:['$100,000','$50,000','$10,000','$25,000'],correct:1,exp:'10% × $500,000 = $50,000 deductible; $50,000 excess carries forward 5 years.'},
-    {q:'Tax-exempt interest income in relation to a corporation\'s E&P:',choices:['Excluded from E&P','Increases E&P','Decreases E&P','Has no effect on E&P'],correct:1,exp:'Tax-exempt interest is excluded from taxable income but included in E&P — E&P measures economic ability to pay dividends.'},
-    {q:'Intercompany sales in a consolidated return are:',choices:['Recognized immediately','Eliminated until sold to third parties','Double taxed','Taxed at corporate rates'],correct:1,exp:'Intercompany transactions are deferred until the goods/services are sold outside the consolidated group.'},
-    {q:'Section 351 non-recognition requires transferors to control ___% of corporation after transfer.',choices:['51%','67%','80%','100%'],correct:2,exp:'Section 351 requires ≥80% of voting stock and ≥80% of all other stock classes immediately after the transfer.'},
-    {q:'DRD for corporate shareholder owning 20%–79% of distributing corporation:',choices:['50%','65%','70%','100%'],correct:1,exp:'Ownership ≥20% but <80%: DRD is 65%. <20%: 50%. ≥80%: 100% (in consolidated return).'},
-    {q:'Accumulated earnings tax applies to C corporations that:',choices:['Have any retained earnings','Accumulate earnings beyond reasonable business needs to avoid dividends','Are not publicly traded','Have more than $250,000 in retained earnings'],correct:1,exp:'AET (20%) penalizes corporations that accumulate earnings beyond reasonable needs to avoid distributing dividends to shareholders.'},
-    {q:'At-risk rules limit loss deductions to:',choices:['Capital account balance','Share of liabilities plus cash contributed','Taxpayer\'s amount at risk — economic exposure','Outside basis only'],correct:2,exp:'Section 465 limits deductions to the taxpayer\'s amount at risk — generally cash invested plus personal-liability debt.'},
-    {q:'C corporation calendar-year income tax return due date:',choices:['March 15','April 15','March 15 with 6-month extension','April 15 with 6-month extension'],correct:3,exp:'C corps (Dec 31 year-end) file by April 15 with an automatic 6-month extension available (to Oct 15).'},
-    {q:'In a stock redemption treated as a dividend, the shareholder\'s basis in redeemed shares is:',choices:['Lost','Added to basis of remaining shares','Creates capital loss','Reduces E&P'],correct:1,exp:'When a redemption fails sale/exchange tests, the redeemed shares\' basis transfers to the shareholder\'s remaining shares.'},
-    {q:'Section 163(j) limits net business interest expense to:',choices:['30% of adjusted taxable income','50% of AGI','25% of business income','No limit'],correct:0,exp:'Section 163(j): business interest deduction limited to 30% of ATI; excess carries forward indefinitely.'},
-    {q:'A partnership\'s inside basis equals:',choices:['Sum of partners\' outside bases','FMV of partnership assets','Cost of assets to partnership','Book value of assets'],correct:0,exp:'Inside basis (entity\'s basis in assets) equals the sum of all partners\' outside bases in their partnership interests.'},
-    {q:'LIFO conformity rule requires that if LIFO is used for tax, it must also be used for:',choices:['Footnote disclosure','Financial reporting to shareholders','Payroll purposes','All business divisions only'],correct:1,exp:'The LIFO conformity rule requires that if a taxpayer uses LIFO for tax, it must also use LIFO in financial statements presented to shareholders.'},
-    {q:'A passive activity loss can be deducted against:',choices:['Ordinary income','Passive income only','Capital gains only','Any income'],correct:1,exp:'Passive activity losses can only offset passive activity income; suspended losses are released when the activity is disposed of.'},
-    {q:'Qualified Opportunity Zone investments: gain deferral lasts until:',choices:['5 years','7 years','10 years','December 31, 2026'],correct:3,exp:'Under TCJA, deferred gain from QOZ investments is recognized on the earlier of a disposition or December 31, 2026.'},
-    {q:'Net operating losses (post-2017 TCJA) can be carried:',choices:['Back 2 years, forward 20 years','Forward indefinitely, limited to 80% of taxable income','Back 3 years, forward 15 years','Forward 20 years only'],correct:1,exp:'Post-TCJA NOLs: no carryback (generally), carry forward indefinitely, deductible up to 80% of taxable income in the carryforward year.'},
-    {q:'The excess business loss limitation applies to:',choices:['C corporations','S corporations only','Non-corporate taxpayers','Partnerships only'],correct:2,exp:'Section 461(l) limits excess business losses for non-corporate taxpayers; amounts over the threshold are treated as an NOL carryforward.'},
-    {q:'A Section 338 election allows a stock acquisition to be treated as:',choices:['A partnership interest purchase','An asset purchase for tax purposes','A tax-free reorganization','A liquidation'],correct:1,exp:'A Section 338 election treats a qualifying stock purchase as a deemed asset acquisition, allowing a step-up in asset basis.'},
-    {q:'Under Section 1231, net gains are treated as:',choices:['Always ordinary income','Long-term capital gain (unless lookback recapture applies)','Short-term capital gain','Section 1245 recapture'],correct:1,exp:'Net Section 1231 gains are treated as LTCG; however, prior Section 1231 losses in the last 5 years are "recaptured" as ordinary income first.'},
+    {q:'A single-member LLC is treated as _____ by default for tax purposes.',choices:['C Corporation','S Corporation','Disregarded entity (sole proprietorship)','Partnership'],correct:2,exp:'Domestic SMLLCs are disregarded entities by default \u2014 income/expenses flow directly to the owner\'s return.'},
+    {q:'The built-in gains (BIG) tax recognition period after an S election is:',choices:['2 years','3 years','5 years','10 years'],correct:2,exp:'Under Section 1374, the BIG tax recognition period is 5 years from the date of the S election.'},
+    {q:'Corporate charitable deduction \u2014 taxable income before deduction is $500,000, contribution is $100,000. Deductible:',choices:['$100,000','$50,000','$10,000','$25,000'],correct:1,exp:'10% \u00d7 $500,000 = $50,000 deductible; the $50,000 excess carries forward 5 years.'},
+    {q:'Tax-exempt interest income in relation to a corporation\'s earnings and profits (E&P):',choices:['Excluded from E&P','Increases E&P despite being excluded from taxable income','Decreases E&P','Has no effect on E&P'],correct:1,exp:'Tax-exempt interest is excluded from taxable income but increases E&P \u2014 E&P measures the economic capacity to pay dividends.'},
+    {q:'Intercompany sales in a consolidated return are:',choices:['Recognized immediately','Deferred/eliminated until goods are sold to parties outside the consolidated group','Subject to double taxation','Taxed at each entity\'s applicable rate'],correct:1,exp:'Intercompany transactions are eliminated until the goods/services are sold to non-members of the consolidated group.'},
+    {q:'Section 351 non-recognition requires transferors to control ___% of the corporation immediately after the exchange.',choices:['51%','67%','80%','100%'],correct:2,exp:'Section 351: transferors must control \u226580% of voting stock and \u226580% of all other stock classes immediately after the transfer.'},
+    {q:'Dividends received deduction (DRD) for a corporate shareholder owning 20\u201379% of the distributing corporation:',choices:['50%','65%','70%','100%'],correct:1,exp:'Ownership \u226520% but <80%: DRD is 65%. <20% ownership: 50%. \u226580% ownership: 100% (if consolidated return requirements met).'},
+    {q:'The accumulated earnings tax is a penalty tax on:',choices:['All retained earnings','Unreasonable accumulations beyond reasonable business needs to avoid paying dividends','C corporations only if publicly traded','Retained earnings exceeding $250,000'],correct:1,exp:'The AET (20%) penalizes C corporations that accumulate earnings beyond reasonable needs to avoid distributing dividends.'},
+    {q:'At-risk rules limit loss deductions to the taxpayer\'s:',choices:['Capital account balance','Share of partnership liabilities + cash contributed','Amount at risk \u2014 actual economic exposure in the activity','Outside basis only'],correct:2,exp:'Section 465 limits deductions to the amount at risk \u2014 generally cash invested plus personally liable debt.'},
+    {q:'C corporation with December 31 year-end: income tax return due date is:',choices:['March 15','April 15 with no extension possible','March 15 with 6-month extension to September 15','April 15 with automatic 6-month extension to October 15'],correct:3,exp:'C corps (Dec 31 year-end) file by April 15; they can get an automatic 6-month extension to October 15.'},
+    {q:'Section 163(j) limits net business interest expense deduction to:',choices:['30% of adjusted taxable income','50% of AGI','25% of business income','No limit \u2014 all deductible'],correct:0,exp:'Section 163(j): business interest deduction limited to 30% of ATI; disallowed excess carries forward indefinitely.'},
+    {q:'A partnership\'s inside basis equals:',choices:['Sum of all partners\' outside bases in their interests','FMV of partnership assets','Cost of assets to the partnership at formation','Book value of assets per financial statements'],correct:0,exp:'Inside basis (entity\'s tax basis in assets) equals the sum of all partners\' outside bases in their partnership interests.'},
+    {q:'Passive activity losses can offset:',choices:['Ordinary income from employment','Passive activity income only','Capital gains','Any income with proper election'],correct:1,exp:'Passive activity losses can only offset passive activity income; suspended losses are released when the activity is fully disposed of.'},
+    {q:'Post-2017 TCJA, net operating losses can be:',choices:['Carried back 2 years and forward 20 years','Carried forward indefinitely, limited to 80% of taxable income','Carried back 3 years and forward 15 years','Carried forward 20 years without limitation'],correct:1,exp:'Post-TCJA: no carryback (generally); carry forward indefinitely; deductible up to 80% of taxable income in the carryforward year.'},
+    {q:'A Section 338 election allows a qualifying stock purchase to be treated as:',choices:['A tax-free reorganization','An asset purchase for tax purposes with a step-up in basis','A partnership interest acquisition','A liquidation of the target'],correct:1,exp:'A Section 338 election treats a qualifying stock purchase as a deemed asset acquisition, allowing a step-up in the target\'s asset basis.'},
+    {q:'Under Section 1231, net gains are treated as:',choices:['Always ordinary income','Long-term capital gain (subject to lookback recapture)','Short-term capital gain','Section 1245 ordinary recapture income'],correct:1,exp:'Net Section 1231 gains are LTCG; however, prior Section 1231 losses in the past 5 years are "recaptured" as ordinary income first.'},
+    {q:'LIFO conformity rule requires that if LIFO is used for tax:',choices:['It is only disclosed in footnotes','It must be used in financial statements presented to shareholders','It applies to payroll records too','It applies only to the filing entity'],correct:1,exp:'The LIFO conformity rule requires that if a taxpayer elects LIFO for tax purposes, it must also use LIFO in financial statements presented to shareholders, creditors, or the public.'},
+    {q:'Excess business loss limitation under Section 461(l) applies to:',choices:['C corporations','S corporations only','Non-corporate taxpayers','Partnerships only at the entity level'],correct:2,exp:'Section 461(l) limits non-corporate taxpayers from deducting business losses that exceed the applicable threshold; excess is treated as an NOL carryforward.'},
+    {q:'The QBI (qualified business income) deduction under Section 199A is up to ___% of QBI.',choices:['10%','15%','20%','25%'],correct:2,exp:'Section 199A provides a deduction of up to 20% of qualified business income from pass-through entities and sole proprietorships, subject to limitations.'},
+    {q:'In a complete liquidation of a corporation, shareholders recognize:',choices:['Ordinary income equal to distributions received','Capital gain or loss equal to FMV received minus their stock basis','No gain or loss','Dividend income to the extent of E&P'],correct:1,exp:'Upon complete liquidation, shareholders treat amounts received as full payment for their stock \u2014 recognizing capital gain or loss.'},
+    {q:'A corporation pays a property distribution to shareholders. The distributing corporation recognizes:',choices:['No gain','Gain (but not loss) as if the property were sold at FMV','Loss equal to the decline in value','Gain only if the property is appreciated'],correct:1,exp:'Under Section 311(b), a corporation recognizes gain (but not loss) on a non-liquidating distribution of appreciated property, as if sold at FMV.'},
+    {q:'The transfer pricing rules of Section 482 allow the IRS to:',choices:['Set prices on all intercompany transactions','Reallocate income and deductions among commonly controlled entities to reflect arm\'s-length pricing','Prohibit intercompany transactions','Tax both entities on the same transaction'],correct:1,exp:'Section 482 gives the IRS authority to reallocate income, deductions, and credits between commonly controlled entities to clearly reflect income at arm\'s-length prices.'},
+    {q:'Under the check-the-box regulations, a two-member LLC is classified as _____ by default.',choices:['C Corporation','S Corporation','Partnership','Disregarded entity'],correct:2,exp:'A domestic multi-member LLC defaults to partnership classification for tax purposes unless it elects to be treated as a corporation.'},
+    {q:'Which of the following triggers Section 1245 ordinary income recapture?',choices:['Sale of land at a gain','Sale of depreciable personal property at a gain, to the extent of accumulated depreciation','Sale of a building using straight-line depreciation','Sale of stock in a C corporation'],correct:1,exp:'Section 1245 recaptures prior depreciation deductions on tangible personal property as ordinary income upon sale, to the extent of accumulated depreciation.'},
+    {q:'The dividends-paid deduction (DPD) is available to:',choices:['C corporations to reduce corporate income tax','Regulated investment companies (RICs) and REITs to reduce entity-level tax','S corporations to avoid double taxation','Partnerships distributing cash to partners'],correct:1,exp:'RICs (mutual funds) and REITs can deduct dividends paid to shareholders, effectively eliminating entity-level tax on distributed income.'},
+    {q:'An S corporation election is made on Form 2553 and must be filed:',choices:['By March 15 of the election year','By April 15 of the election year','No later than March 15 of the election year or March 15 of the prior year','By the end of the first month of the tax year'],correct:2,exp:'Form 2553 must be filed no later than the 15th day of the third month of the tax year for which the election is to apply, or March 15 of the prior year.'},
+    {q:'The earnings stripping rules (now codified at Section 163(j)) were primarily designed to prevent:',choices:['Excessive dividend payments','Thin capitalization / excessive interest deductions that shift income out of the US','Passive activity abuses','S corporation losses exceeding basis'],correct:1,exp:'Section 163(j) was designed to prevent earnings stripping \u2014 the use of excessive intercompany debt to shift income to lower-tax jurisdictions.'},
+    {q:'A deferred compensation plan that meets the requirements of Section 409A must:',choices:['Be funded and taxable immediately','Defer the inclusion of income in the year of deferral and comply with distribution timing rules','Allow withdrawal at any time without penalty','Be established only by public companies'],correct:1,exp:'Section 409A governs non-qualified deferred comp plans, requiring compliance with deferral elections, permissible distribution events, and timing rules to avoid immediate taxation and penalties.'},
+    {q:'Under Section 382, a net operating loss carryforward is limited after:',choices:['A change in accounting method','An ownership change (>50 percentage point shift among 5%+ shareholders in 3 years)','Any acquisition of stock','A bankruptcy filing'],correct:1,exp:'Section 382 limits NOL use following an ownership change \u2014 defined as a >50 percentage-point shift in ownership among 5%-or-more shareholders within a 3-year period.'},
+    {q:'Rev. Proc. 2002-39 allows a corporation to change its tax year without IRS approval if it meets:',choices:['The natural business year test','The 25% gross receipts test','Either the natural business year or ownership tax year test','None \u2014 IRS approval is always required'],correct:2,exp:'Automatic approval to change a tax year is available under Rev. Proc. 2002-39 if the entity qualifies under the natural business year or ownership tax year tests.'},
   ],
   BAR: [
-    {q:'The DuPont formula expresses ROE as:',choices:['Net income / Total assets','(Net profit margin) × (Asset turnover) × (Equity multiplier)','EBIT / Total equity','Revenue / Equity'],correct:1,exp:'DuPont: ROE = Net profit margin × Asset turnover × Financial leverage (equity multiplier).'},
-    {q:'Which ratio measures a company\'s ability to pay current obligations?',choices:['Debt-to-equity','Current ratio','P/E ratio','Gross margin'],correct:1,exp:'Current ratio = Current assets / Current liabilities — measures short-term liquidity.'},
-    {q:'Free cash flow is calculated as:',choices:['Net income + depreciation','Operating cash flow – capital expenditures','EBITDA – interest','Revenue – operating expenses'],correct:1,exp:'FCF = Operating cash flow – Capital expenditures; represents cash available after maintaining/expanding assets.'},
-    {q:'Horizontal analysis compares:',choices:['Different companies in same period','One company\'s results across periods','Line items as % of revenue','Industry benchmarks'],correct:1,exp:'Horizontal analysis compares financial data across time periods to identify trends.'},
-    {q:'Vertical analysis expresses each line item as a percentage of:',choices:['Total assets or total revenue','Prior year amount','Industry average','Number of shares'],correct:0,exp:'Vertical (common-size) analysis presents each item as a % of a base figure (revenue for P&L; total assets for balance sheet).'},
-    {q:'EBITDA is most useful for comparing companies because it:',choices:['Ignores taxes','Eliminates effects of financing, accounting, and tax decisions','Includes working capital','Measures net cash flow'],correct:1,exp:'EBITDA normalizes earnings by removing interest, tax, depreciation, and amortization, enabling cross-company comparison.'},
-    {q:'Which financing option has the lowest after-tax cost for a profitable corporation?',choices:['Common equity','Preferred stock','Debt (interest deductible)','Retained earnings'],correct:2,exp:'Debt has the lowest after-tax cost because interest expense is tax-deductible, reducing its effective cost.'},
-    {q:'The weighted average cost of capital (WACC) is used to:',choices:['Measure profitability','Discount future cash flows in valuation','Calculate book value','Assess liquidity'],correct:1,exp:'WACC represents the overall required return and is used as the discount rate in DCF valuations.'},
-    {q:'Operating leverage measures:',choices:['Ratio of debt to equity','Sensitivity of operating income to changes in revenue','Degree of financial risk','Asset utilization efficiency'],correct:1,exp:'Degree of Operating Leverage (DOL) = % change in EBIT / % change in revenue. High fixed costs = high operating leverage.'},
-    {q:'A positive EVA (Economic Value Added) indicates that:',choices:['The firm has positive net income','The firm is creating value above its cost of capital','The stock price is rising','The firm has no debt'],correct:1,exp:'EVA = NOPAT – (WACC × Invested Capital). Positive EVA means the firm earns more than its cost of capital, creating shareholder value.'},
-    {q:'The quick ratio excludes _____ from current assets.',choices:['Cash','Marketable securities','Inventory','Receivables'],correct:2,exp:'Quick ratio = (Current assets – Inventory – Prepaid expenses) / Current liabilities. Inventory is excluded as it\'s least liquid.'},
-    {q:'Days Sales Outstanding (DSO) measures:',choices:['Days to sell inventory','Average collection period for receivables','Days to pay suppliers','Operating cycle length'],correct:1,exp:'DSO = (Accounts Receivable / Revenue) × 365. Measures how quickly a company collects on credit sales.'},
-    {q:'A company with high fixed costs relative to variable costs has:',choices:['High financial leverage','Low operating leverage','High operating leverage','Low break-even point'],correct:2,exp:'High fixed costs relative to variable costs = high operating leverage. Profits are more sensitive to revenue changes.'},
-    {q:'The Gordon Growth Model values a stock as:',choices:['EPS / discount rate','Dividend / (required return – growth rate)','Book value per share','FCF / WACC'],correct:1,exp:'Gordon Growth Model: P = D1 / (r – g), where D1 is next dividend, r is required return, g is constant growth rate.'},
-    {q:'Accounts payable days (DPO) increasing means:',choices:['Company is collecting faster','Company is paying suppliers more slowly','More inventory on hand','Lower liquidity'],correct:1,exp:'Higher DPO = company is taking longer to pay suppliers, potentially preserving cash (or experiencing cash flow stress).'},
+    {q:'The DuPont formula expresses ROE as:',choices:['Net income / Total assets','Net profit margin \u00d7 Asset turnover \u00d7 Equity multiplier','EBIT / Total equity','Revenue / Equity'],correct:1,exp:'DuPont: ROE = Net profit margin \u00d7 Asset turnover \u00d7 Financial leverage (equity multiplier).'},
+    {q:'Free cash flow equals:',choices:['Net income + depreciation','Operating cash flow \u2013 capital expenditures','EBITDA \u2013 interest expense','Revenue \u2013 total operating expenses'],correct:1,exp:'FCF = Operating cash flow \u2013 Capital expenditures; the cash available after maintaining/expanding asset base.'},
+    {q:'The quick ratio excludes _____ from the numerator.',choices:['Cash','Marketable securities','Inventory','Accounts receivable'],correct:2,exp:'Quick ratio = (Cash + Marketable securities + AR) / Current liabilities. Inventory is excluded as the least liquid current asset.'},
+    {q:'EBITDA is used to compare companies because it:',choices:['Measures net cash flow directly','Eliminates effects of financing, accounting, and tax differences','Includes working capital changes','Equals free cash flow'],correct:1,exp:'EBITDA normalizes earnings by removing interest, taxes, depreciation, and amortization, enabling cross-company and cross-industry comparison.'},
+    {q:'Which financing source has the lowest after-tax cost for a profitable C corporation?',choices:['Common equity','Preferred stock','Debt (interest is tax-deductible)','Retained earnings'],correct:2,exp:'Debt has the lowest after-tax cost because interest expense is tax-deductible, reducing its effective cost vs. equity.'},
+    {q:'Weighted average cost of capital (WACC) is used as:',choices:['A profitability metric','The discount rate in DCF valuations to represent the overall required return','A measure of liquidity','An indication of leverage'],correct:1,exp:'WACC is the blended required return on a firm\'s capital (debt + equity) and serves as the discount rate in DCF analysis.'},
+    {q:'Operating leverage measures the sensitivity of:',choices:['Debt-to-equity ratio','Operating income to changes in revenue','Financial risk','Asset utilization efficiency'],correct:1,exp:'Degree of Operating Leverage (DOL) = % change in EBIT / % change in revenue. High fixed costs = high operating leverage.'},
+    {q:'The Gordon Growth Model values a stock as:',choices:['EPS / discount rate','D1 / (required return \u2013 sustainable growth rate)','Book value per share','FCF / WACC'],correct:1,exp:'Gordon Growth Model: P = D1 / (r \u2013 g), where D1 is next year\'s dividend, r is the required return, and g is the constant growth rate.'},
+    {q:'A positive EVA (Economic Value Added) indicates:',choices:['The firm has positive net income','The firm earns above its cost of capital, creating value','Stock price is rising','The firm has no financial leverage'],correct:1,exp:'EVA = NOPAT \u2013 (WACC \u00d7 Invested Capital). Positive EVA means returns exceed the cost of capital, creating shareholder value.'},
+    {q:'Days Sales Outstanding (DSO) measures:',choices:['Days to sell inventory','Average collection period for accounts receivable','Days payable to suppliers','Length of operating cycle'],correct:1,exp:'DSO = (AR / Revenue) \u00d7 365. Measures how quickly a company collects its receivables.'},
+    {q:'Horizontal analysis compares:',choices:['Different companies in the same period','One company\'s results across multiple time periods','Line items as percentage of base figure in same period','Company results to industry benchmarks'],correct:1,exp:'Horizontal (trend) analysis compares financial data across periods to identify trends and growth rates.'},
+    {q:'A company with high fixed costs relative to variable costs has:',choices:['High financial leverage and low operating leverage','Low operating leverage','High operating leverage, meaning profits are more sensitive to revenue changes','Low break-even point'],correct:2,exp:'High fixed costs relative to variable costs = high operating leverage \u2014 profits accelerate (or decline) more dramatically with revenue changes.'},
+    {q:'Accounts payable days (DPO) increasing suggests:',choices:['Company is collecting receivables faster','Company is taking longer to pay suppliers','Higher inventory turnover','Lower liquidity always'],correct:1,exp:'Rising DPO means the company is taking longer to pay suppliers \u2014 which may conserve cash but could strain supplier relationships.'},
+    {q:'The price/earnings (P/E) ratio is defined as:',choices:['Market price per share / book value per share','Market price per share / earnings per share','Dividends per share / earnings per share','Net income / total equity'],correct:1,exp:'P/E = Market price per share / Earnings per share. It reflects how much investors are paying for each dollar of earnings.'},
+    {q:'Net present value (NPV) > 0 means:',choices:['Project earns exactly the required return','Project returns more than the cost of capital \u2014 it creates value','Project has a short payback period','Project has low risk'],correct:1,exp:'NPV > 0 means the present value of future cash flows exceeds the initial investment, meaning the project generates a return above the discount rate.'},
+    {q:'The internal rate of return (IRR) is:',choices:['The discount rate that maximizes NPV','The discount rate at which NPV = 0','The rate of return on equity','Annual cash flow / initial investment'],correct:1,exp:'IRR is the discount rate at which the present value of future cash flows equals the initial investment (NPV = 0).'},
+    {q:'A leveraged buyout (LBO) is characterized by:',choices:['Acquisition funded primarily with common equity','Acquisition funded with a significant portion of debt using the target\'s assets as collateral','A merger of equals with no debt','A government-funded acquisition'],correct:1,exp:'An LBO uses a large proportion of debt (often 60-90%), secured by the target\'s assets and cash flows, to acquire a company.'},
+    {q:'Enterprise value (EV) equals:',choices:['Market capitalization only','Market cap + debt \u2013 cash and equivalents','Total assets \u2013 total liabilities','Revenue \u00d7 P/E multiple'],correct:1,exp:'EV = Market cap + total debt \u2013 cash. It represents the total value of the firm to all capital providers, independent of capital structure.'},
+    {q:'The payback period method ignores:',choices:['Initial investment','Cash flows after the payback period and the time value of money','Operating costs','Annual cash inflows'],correct:1,exp:'The payback period ignores the time value of money and all cash flows beyond the payback period \u2014 a significant limitation.'},
+    {q:'Vertical (common-size) analysis expresses each line item as a percentage of:',choices:['Prior year\'s total','Industry average','A base figure (revenue for P&L; total assets for balance sheet)','Number of shares outstanding'],correct:2,exp:'Vertical analysis converts dollar amounts to percentages of a base: revenue for the income statement, total assets for the balance sheet.'},
+    {q:'Which ratio best measures short-term liquidity including only the most liquid assets?',choices:['Current ratio','Quick ratio','Cash ratio (cash + equivalents / current liabilities)','Debt-to-equity ratio'],correct:2,exp:'The cash ratio is the most conservative liquidity measure, using only cash and cash equivalents relative to current liabilities.'},
+    {q:'The sustainable growth rate formula is:',choices:['ROE \u00d7 dividend payout ratio','ROE \u00d7 (1 \u2013 dividend payout ratio) = ROE \u00d7 retention ratio','Net income / total assets','EBITDA / interest expense'],correct:1,exp:'Sustainable growth rate = ROE \u00d7 retention ratio (1 \u2013 dividend payout ratio). It represents the maximum growth achievable without external equity financing.'},
+    {q:'In discounted cash flow (DCF) analysis, the terminal value typically represents:',choices:['The value of fixed assets at the end of the forecast period','The present value of all cash flows beyond the explicit forecast period','The net salvage value of assets','Total dividends paid during the forecast period'],correct:1,exp:'Terminal value captures the present value of all cash flows beyond the explicit forecast period, often the largest component of a DCF valuation.'},
+    {q:'The Altman Z-score is a model that predicts:',choices:['Stock price appreciation','Probability of corporate bankruptcy within 2 years','Optimal capital structure','Earnings quality'],correct:1,exp:'The Altman Z-score uses five financial ratios to predict the probability of a company filing for bankruptcy within two years.'},
+    {q:'A company\'s operating cash flow is negative but net income is positive. The most likely cause is:',choices:['Large dividend payments','Significant increase in working capital (AR, inventory)','High capital expenditures','Large debt repayments'],correct:1,exp:'Growing working capital (AR, inventory increasing faster than AP) consumes cash, making OCF negative despite positive net income.'},
+    {q:'Interest coverage ratio = EBIT / Interest expense. A ratio below 1.0 means:',choices:['Strong debt capacity','The company cannot cover interest from operating income','Low leverage','Excellent credit rating'],correct:1,exp:'Interest coverage < 1.0 means EBIT is insufficient to cover interest expense \u2014 a significant financial distress signal.'},
+    {q:'Which valuation multiple is most appropriate when comparing companies with different capital structures?',choices:['P/E ratio','EV/EBITDA','Price/book value','Dividend yield'],correct:1,exp:'EV/EBITDA is capital-structure neutral because it uses enterprise value (all providers) and EBITDA (pre-interest) \u2014 making it ideal for cross-company comparison regardless of leverage.'},
+    {q:'Break-even analysis determines the sales volume at which:',choices:['Net income equals the prior year','Total revenue equals total costs (fixed + variable)','Gross margin equals 50%','Operating leverage equals 1'],correct:1,exp:'Break-even = Fixed costs / Contribution margin per unit. At this point, total revenue = total costs and net income = $0.'},
+    {q:'Return on invested capital (ROIC) measures:',choices:['Return to common shareholders only','How efficiently a company generates returns on all capital employed (debt + equity)','Dividend yield','Annual revenue growth'],correct:1,exp:'ROIC = NOPAT / Invested Capital. It measures operational efficiency in generating returns on all the capital a company has deployed.'},
+    {q:'A higher asset turnover ratio (Revenue / Average Total Assets) generally indicates:',choices:['The company has too little debt','The company generates more revenue per dollar of assets \u2014 higher efficiency','The company is over-leveraged','The company has excess cash'],correct:1,exp:'Higher asset turnover indicates the company is generating more revenue from its asset base, reflecting greater operational efficiency.'},
   ],
   ISC: [
-    {q:'The CIA triad in information security stands for:',choices:['Control, Integrity, Authentication','Confidentiality, Integrity, Availability','Compliance, Integration, Access','Certification, Identity, Authorization'],correct:1,exp:'CIA triad: Confidentiality (protect data from unauthorized access), Integrity (ensure data accuracy), Availability (ensure access when needed).'},
-    {q:'A SOC 1 report focuses on:',choices:['Security of customer data','Controls relevant to financial reporting','IT infrastructure quality','Vendor management'],correct:1,exp:'SOC 1 (SSAE 18) reports on internal controls relevant to user entities\' financial reporting.'},
-    {q:'Which control is a preventive control?',choices:['Audit trail','Error report','Password policy','Exception report'],correct:2,exp:'Password policies prevent unauthorized access (preventive). Audit trails and exception reports are detective controls.'},
-    {q:'Encryption at rest protects data:',choices:['While transmitted over a network','Stored on disk or database','In active memory','During processing'],correct:1,exp:'Encryption at rest protects stored data; encryption in transit protects data moving across networks.'},
-    {q:'A phishing attack targets:',choices:['Network infrastructure','Database servers','Human users via deceptive messages','Physical security'],correct:2,exp:'Phishing exploits human behavior by tricking users into revealing credentials or clicking malicious links.'},
-    {q:'Segregation of duties prevents:',choices:['System downtime','One person from both authorizing and recording a transaction','Network breaches','Data corruption'],correct:1,exp:'SoD ensures no single person can both initiate/authorize and record/reconcile transactions, reducing fraud risk.'},
-    {q:'A general control in IT differs from an application control because it:',choices:['Applies to one specific application','Is manual only','Applies to the overall IT environment supporting multiple applications','Requires user interaction'],correct:2,exp:'General IT controls (access controls, change management, operations) apply across the IT environment. Application controls are specific to individual systems.'},
-    {q:'The purpose of a disaster recovery plan is to:',choices:['Prevent all system failures','Restore IT operations after a disruption','Train users on new systems','Comply with SOX'],correct:1,exp:'A disaster recovery plan (DRP) outlines steps to restore IT systems and operations following a disruption or disaster.'},
-    {q:'Multi-factor authentication (MFA) requires:',choices:['Two passwords','Something you know + something you have/are (2+ factors)','Biometrics only','PIN + password'],correct:1,exp:'MFA combines two or more factors: knowledge (password), possession (token), or inherence (biometric).'},
-    {q:'A SQL injection attack exploits:',choices:['Weak passwords','Unsanitized input fields in database applications','Physical access to servers','Social engineering'],correct:1,exp:'SQL injection inserts malicious SQL code through input fields, potentially exposing or corrupting a database.'},
-    {q:'Change management controls ensure that:',choices:['Users cannot change passwords','System changes are authorized, tested, and documented','Data backups run daily','Access logs are reviewed'],correct:1,exp:'IT change management ensures all system changes are properly authorized, tested in non-production, documented, and approved before deployment.'},
-    {q:'A SOC 2 report evaluates controls related to:',choices:['Financial statement controls','Security, availability, processing integrity, confidentiality, and/or privacy','Physical facility security','Hardware performance'],correct:1,exp:'SOC 2 reports assess controls against the AICPA Trust Service Criteria: security, availability, processing integrity, confidentiality, privacy.'},
-    {q:'Data masking is used to:',choices:['Encrypt data in transit','Protect sensitive data by replacing with realistic but fictitious data','Back up production data','Monitor user access'],correct:1,exp:'Data masking replaces sensitive data with realistic test data, allowing developers to work with non-production systems safely.'},
-    {q:'An intrusion detection system (IDS) is classified as what type of control?',choices:['Preventive','Detective','Corrective','Compensating'],correct:1,exp:'An IDS detects suspicious activity and alerts administrators — it\'s a detective control, not preventive.'},
-    {q:'RPO (Recovery Point Objective) defines:',choices:['How fast systems must be restored','Maximum acceptable data loss measured in time','Cost of recovery','Personnel needed for recovery'],correct:1,exp:'RPO defines the maximum acceptable amount of data loss, measured in time (e.g., "we can lose up to 4 hours of data").'},
+    {q:'The CIA triad in information security stands for:',choices:['Control, Integrity, Authentication','Confidentiality, Integrity, Availability','Compliance, Integration, Access','Certification, Identity, Authorization'],correct:1,exp:'CIA: Confidentiality (protect from unauthorized access), Integrity (ensure accuracy/completeness), Availability (ensure timely access).'},
+    {q:'A SOC 1 report focuses on:',choices:['Customer data security posture','Internal controls relevant to user entities\' financial reporting','IT infrastructure performance metrics','Third-party vendor management'],correct:1,exp:'SOC 1 (SSAE 18) reports on internal controls relevant to the user entity\'s financial reporting.'},
+    {q:'Which is a preventive control?',choices:['Audit trail logging','Exception reporting','Password complexity policy','Daily reconciliation reports'],correct:2,exp:'Password policies prevent unauthorized access (preventive). Audit trails and exception reports are detective controls.'},
+    {q:'Encryption at rest protects data:',choices:['While transmitted over a network','Stored on disk, database, or other storage media','In active memory during processing','During backup transmission'],correct:1,exp:'Encryption at rest protects stored data; encryption in transit protects data moving across networks.'},
+    {q:'Segregation of duties prevents:',choices:['System downtime','One person from initiating, authorizing, and recording the same transaction','Network security breaches','Database corruption'],correct:1,exp:'SoD ensures no single person can both authorize and record a transaction, reducing fraud and error risk.'},
+    {q:'A general IT control differs from an application control because it:',choices:['Applies to one specific application only','Is performed manually','Applies across the overall IT environment supporting multiple applications','Requires end-user interaction'],correct:2,exp:'General IT controls (access management, change control, operations) apply across the IT environment. Application controls are specific to individual systems.'},
+    {q:'Multi-factor authentication (MFA) requires:',choices:['Two different passwords','Something you know + something you have or are (two or more independent factors)','Biometrics only','PIN plus password (both knowledge factors)'],correct:1,exp:'MFA combines two or more factor types: knowledge (password), possession (token/phone), or inherence (biometric).'},
+    {q:'A SQL injection attack exploits:',choices:['Weak network firewall configuration','Unsanitized user input fields in database-connected applications','Physical access to database servers','Social engineering of database administrators'],correct:1,exp:'SQL injection inserts malicious code through input fields, potentially allowing attackers to read, modify, or delete database content.'},
+    {q:'Change management controls ensure that:',choices:['Users cannot change their own passwords','System changes are authorized, tested in non-production, and documented before deployment','Daily backups run without fail','Access logs are reviewed monthly'],correct:1,exp:'IT change management ensures all changes are properly authorized, tested, documented, and approved before going into production.'},
+    {q:'A SOC 2 report evaluates controls related to:',choices:['Financial statement controls only','Security, availability, processing integrity, confidentiality, and/or privacy (Trust Service Criteria)','Physical facility security','Hardware and network performance'],correct:1,exp:'SOC 2 reports assess controls against the AICPA Trust Service Criteria: security, availability, processing integrity, confidentiality, privacy.'},
+    {q:'RPO (Recovery Point Objective) defines:',choices:['How quickly systems must be restored after failure','The maximum acceptable amount of data loss, measured in time','The cost of the recovery process','The number of staff needed for recovery operations'],correct:1,exp:'RPO defines the maximum acceptable data loss measured in time (e.g., "we can tolerate losing up to 4 hours of data").'},
+    {q:'An intrusion detection system (IDS) is classified as which type of control?',choices:['Preventive','Detective','Corrective','Compensating'],correct:1,exp:'An IDS detects and alerts on suspicious activity \u2014 it is a detective control, not preventive.'},
+    {q:'Data masking is used to:',choices:['Encrypt data in transit between systems','Replace sensitive production data with realistic but fictitious data for non-production use','Create daily backups of production data','Monitor who accesses sensitive records'],correct:1,exp:'Data masking substitutes real sensitive data with realistic test data, allowing development/testing without exposing production data.'},
+    {q:'The purpose of a disaster recovery plan (DRP) is to:',choices:['Prevent all system failures from occurring','Restore IT operations and systems to a functional state after a disruption','Train users on new applications','Ensure SOX compliance'],correct:1,exp:'A DRP outlines the steps to restore IT systems, applications, and data after a disaster or significant disruption.'},
+    {q:'RTO (Recovery Time Objective) defines:',choices:['Maximum acceptable data loss','The maximum tolerable downtime \u2014 how quickly systems must be restored','Cost to restore systems','Data backup frequency'],correct:1,exp:'RTO is the maximum acceptable time to restore systems after a failure. RPO covers data loss; RTO covers downtime.'},
+    {q:'A phishing attack primarily targets:',choices:['Network infrastructure vulnerabilities','Human users through deceptive messages to steal credentials','Database servers directly','Physical security perimeters'],correct:1,exp:'Phishing exploits human psychology by tricking users into revealing credentials or installing malware via deceptive emails/messages.'},
+    {q:'A business continuity plan (BCP) differs from a DRP in that a BCP:',choices:['Focuses only on IT systems','Addresses the continuation of ALL critical business functions, not just IT','Is required only by public companies','Covers only natural disaster scenarios'],correct:1,exp:'A BCP covers all critical business processes (people, facilities, suppliers, communications), while a DRP focuses specifically on IT system recovery.'},
+    {q:'Which is a characteristic of a hot site in disaster recovery?',choices:['An empty facility with power and connectivity only','A facility with some equipment but no current data','A fully equipped, live-data backup facility that can be activated immediately','A mobile data center on a truck'],correct:2,exp:'A hot site is a fully operational backup facility with mirrored data that can take over operations almost immediately. Cold sites have space/utilities; warm sites have some equipment.'},
+    {q:'COBIT (Control Objectives for Information and Related Technologies) is primarily a framework for:',choices:['Network security protocols','IT governance and management of enterprise IT','Software development methodologies','Cloud infrastructure management'],correct:1,exp:'COBIT is a framework created by ISACA for IT governance, enabling organizations to align IT strategy with business goals and manage IT risks and resources.'},
+    {q:'A key control for preventing unauthorized access to a database would be:',choices:['Daily backup procedures','Role-based access control (RBAC) limiting access by job function','Antivirus software on workstations','Regular server hardware maintenance'],correct:1,exp:'Role-based access control (RBAC) restricts database access based on defined job roles, ensuring employees can only access data necessary for their function.'},
+    {q:'Penetration testing (pen testing) is a security practice that:',choices:['Monitors network traffic in real time','Simulates cyberattacks to identify and exploit vulnerabilities before attackers do','Updates software patches across all systems','Trains employees to identify phishing attempts'],correct:1,exp:'Pen testing involves authorized simulated attacks to discover and exploit security vulnerabilities before malicious actors can.'},
+    {q:'Which of the following BEST describes a zero-day exploit?',choices:['An attack using outdated malware','A vulnerability that is unknown to the software vendor and has no patch available','A denial-of-service attack','An attack occurring on the first day of system deployment'],correct:1,exp:'A zero-day exploit targets a vulnerability that is unknown to the vendor (zero days of patch availability), making it especially dangerous.'},
+    {q:'Under NIST\'s Cybersecurity Framework, the five core functions are:',choices:['Plan, Test, Deploy, Monitor, Respond','Identify, Protect, Detect, Respond, Recover','Assess, Plan, Implement, Review, Report','Audit, Control, Monitor, Remediate, Document'],correct:1,exp:'The NIST CSF\'s five functions: Identify (understand risks), Protect (implement safeguards), Detect (identify events), Respond (act on incidents), Recover (restore capabilities).'},
+    {q:'The concept of "least privilege" in access control means:',choices:['All users get the same minimum level of access','Users are granted only the permissions necessary to perform their job functions','Admin accounts are shared to minimize user counts','Access is granted only during business hours'],correct:1,exp:'Least privilege: users get the minimum access rights needed to perform their duties, reducing the attack surface and limiting damage from compromised accounts.'},
+    {q:'Data integrity controls ensure that:',choices:['Data is confidential and encrypted','Data is accurate, complete, and has not been altered without authorization','Data is available 24/7','Data is backed up hourly'],correct:1,exp:'Data integrity controls detect and prevent unauthorized modification of data, ensuring it remains accurate and complete throughout its lifecycle.'},
+    {q:'An audit log (audit trail) is an example of which type of control?',choices:['Preventive','Detective','Corrective','Directive'],correct:1,exp:'Audit logs are detective controls \u2014 they record events so that unauthorized activity can be identified and investigated after the fact.'},
+    {q:'Tokenization replaces sensitive data (e.g., credit card numbers) with:',choices:['Encrypted versions of the original data','A non-sensitive placeholder (token) with no exploitable mathematical relationship to the original','A hash of the original data','Compressed data'],correct:1,exp:'Tokenization substitutes sensitive data with a random, non-sensitive token stored in a token vault. Unlike encryption, tokens have no mathematical relationship to the original data.'},
+    {q:'The COSO Internal Control framework\'s five components are:',choices:['Plan, Act, Check, Do, Review','Control Environment, Risk Assessment, Control Activities, Information & Communication, Monitoring','Identify, Assess, Control, Monitor, Improve','Governance, Risk, Compliance, Audit, Technology'],correct:1,exp:'COSO 2013: Control Environment, Risk Assessment, Control Activities, Information & Communication, and Monitoring Activities.'},
+    {q:'Which type of malware encrypts a victim\'s files and demands payment for decryption?',choices:['Spyware','Ransomware','Adware','Trojan horse'],correct:1,exp:'Ransomware encrypts files or locks systems, demanding ransom (usually cryptocurrency) for decryption keys. It\'s one of the most prevalent cyber threats today.'},
+    {q:'The primary risk addressed by a data loss prevention (DLP) solution is:',choices:['Malware infiltration','Unauthorized transfer or exfiltration of sensitive data outside the organization','System availability during attacks','Credential theft'],correct:1,exp:'DLP solutions monitor, detect, and block the unauthorized transfer or exfiltration of sensitive data, protecting against insider threats and accidental data leakage.'},
   ],
-};
+}
 
 // ── Quiz engine state ──
 let _quiz = {
@@ -5464,71 +5531,130 @@ function _finishQuiz() {
     '</div>';
 }
 
+function openQBSection(code) {
+  const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
+  if (!sec) return;
+  const pro = isPro();
+  const prog = (S.qbProgress || {})[code] || {mcqDone:0, simsDone:0};
+
+  let overlay = document.getElementById('qb-section-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'qb-section-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:650;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) closeQBSection(); });
+    document.body.appendChild(overlay);
+  }
+
+  const modes = [
+    {type:'mcq',    icon:'\u{1F4DD}', label:'MCQ Practice',      desc: pro ? 'Work through all ' + sec.mcqTotal + '+ questions' : 'Try 5 free questions', free:true},
+    {type:'random', icon:'\u{1F500}', label:'Random Quiz',        desc:'Shuffled questions, any order',  free:false},
+    {type:'timed',  icon:'\u23F1', label:'Timed Set',          desc:'10 questions, beat the clock',   free:false},
+    {type:'sims',   icon:'\u{1F4CB}', label:'Task-Based SIMs',   desc:'Scenario-focused practice',       free:false},
+  ];
+
+  const modeCards = modes.map(function(m) {
+    const locked = !pro && !m.free;
+    return '<div onclick="' + (locked ? 'openUpgradeModal(\'Question Bank \u2014 ' + m.label + '\')' : 'closeQBSection();openQuizModal(\'' + code + '\',\'' + m.type + '\')') + '" ' +
+      'style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:13px;border:1.5px solid ' + (locked ? 'var(--bdr)' : 'var(--bdr)') + ';background:var(--surf2);cursor:pointer;transition:all .15s;margin-bottom:10px" ' +
+      'onmouseover="if(' + (!locked) + '){this.style.borderColor=\'' + sec.color + '\';this.style.background=\'' + sec.color + '12\'}" ' +
+      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.background=\'var(--surf2)\'">' +
+      '<span style="font-size:24px;width:36px;text-align:center;flex-shrink:0">' + m.icon + '</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:14px;font-weight:700;color:' + (locked ? 'var(--mut)' : 'var(--txt)') + '">' + m.label + (locked ? ' <span style="font-size:10px;font-weight:800;color:var(--ora);background:var(--ora-bg);padding:2px 7px;border-radius:20px;margin-left:4px">PRO</span>' : '') + '</div>' +
+        '<div style="font-size:12px;color:var(--mut);margin-top:2px">' + m.desc + '</div>' +
+      '</div>' +
+      '<span style="font-size:18px;color:' + (locked ? 'var(--bdr2)' : sec.color) + '">' + (locked ? '\uD83D\uDD12' : '\u203A') + '</span>' +
+    '</div>';
+  }).join('');
+
+  const pct = Math.min(100, Math.round((prog.mcqDone || 0) / sec.mcqTotal * 100));
+
+  overlay.innerHTML =
+    '<div style="background:var(--surf);border-radius:20px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);overflow:hidden">' +
+    // Header
+    '<div style="background:' + sec.color + ';padding:24px 24px 20px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<span style="font-size:13px;font-weight:900;color:#fff;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;letter-spacing:.02em">' + code + '</span>' +
+        '</div>' +
+        '<button onclick="closeQBSection()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">\u00d7</button>' +
+      '</div>' +
+      '<div style="font-size:20px;font-weight:800;color:#fff;margin-top:10px">' + sec.full + '</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">' + sec.mcqTotal + '+ MCQs \u00b7 ' + sec.simsTotal + ' SIMs \u00b7 Progress: ' + (prog.mcqDone||0) + ' questions answered</div>' +
+      // Progress bar
+      '<div style="margin-top:14px;height:5px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden">' +
+        '<div style="height:100%;width:' + pct + '%;background:#fff;border-radius:4px;transition:width .5s"></div>' +
+      '</div>' +
+    '</div>' +
+    // Modes
+    '<div style="padding:20px 24px 24px">' +
+      '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:14px">Choose a practice mode</div>' +
+      modeCards +
+    '</div>' +
+    '</div>';
+
+  overlay.style.display = 'flex';
+}
+
+function closeQBSection() {
+  const overlay = document.getElementById('qb-section-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
 function buildQuestionBank() {
   S.qbProgress = S.qbProgress || {};
   const pro = isPro();
 
   const cards = QB_SECTIONS.map(function(sec) {
     const prog = S.qbProgress[sec.code] || {mcqDone:0, simsDone:0};
-    const mcqTotal = pro ? sec.mcqTotal : 20;
-    const mcqDone = Math.min(prog.mcqDone || 0, mcqTotal);
-    const mcqPct = mcqTotal > 0 ? Math.min(100, Math.round(mcqDone / mcqTotal * 100)) : 0;
-    const simsDone = prog.simsDone || 0;
+    const mcqDone = prog.mcqDone || 0;
+    const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
 
-    const btnStyle = 'display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;border:1.5px solid var(--bdr);background:var(--surf2);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--sub)';
-    const btnActiveStyle = 'display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;color:#fff;background:' + sec.color;
-
-    const mcqLabel = pro ? '500+ MCQs' : '20 Free MCQs';
-    const mcqBtn = '<button style="' + btnActiveStyle + '" onclick="openQuizModal(\'' + sec.code + '\',\'mcq\')">📝 MCQ Practice<span style="font-size:10px;opacity:.75">' + mcqLabel + '</span></button>';
-
-    const simsBtn = pro
-      ? '<button style="' + btnStyle + '" onclick="openQuizModal(\'' + sec.code + '\',\'sims\')">📋 Task-Based SIMs</button>'
-      : '<button style="' + btnStyle + ';opacity:.6" onclick="openUpgradeModal(\'Task-Based SIMs\')">🔒 Task-Based SIMs</button>';
-
-    const timedBtn = pro
-      ? '<button style="' + btnStyle + '" onclick="openQuizModal(\'' + sec.code + '\',\'timed\')">⏱ Timed Set</button>'
-      : '<button style="' + btnStyle + ';opacity:.6" onclick="openUpgradeModal(\'Timed Set\')">🔒 Timed Set</button>';
-
-    const randomBtn = pro
-      ? '<button style="' + btnStyle + '" onclick="openQuizModal(\'' + sec.code + '\',\'random\')">🎲 Random Quiz</button>'
-      : '<button style="' + btnStyle + ';opacity:.6" onclick="openUpgradeModal(\'Random Quiz\')">🔒 Random Quiz</button>';
-
-    return '<div class="card card-pad" style="margin-bottom:12px;border-left:4px solid ' + sec.color + '">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
-        '<div style="display:flex;align-items:center;gap:10px">' +
-          '<span class="badge badge-' + sec.code + '" style="font-size:12px;padding:4px 10px">' + sec.code + '</span>' +
-          '<div><div style="font-size:13px;font-weight:800">' + sec.full + '</div>' +
-          '<div style="font-size:11px;color:var(--mut);margin-top:2px">' + mcqDone + ' MCQs done · ' + simsDone + ' SIMs done</div></div>' +
+    return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
+      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden" ' +
+      'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
+      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+      '<div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:' + sec.color + ';border-radius:14px 0 0 14px"></div>' +
+      '<div style="padding-left:8px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+          '<span style="font-size:11px;font-weight:900;color:' + sec.color + ';background:' + sec.color + '18;padding:3px 10px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
+          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' / ' + sec.mcqTotal + ' done</span>' +
         '</div>' +
-        (pro ? '<span style="font-size:10px;font-weight:700;color:' + sec.color + ';background:' + sec.color + '18;padding:3px 9px;border-radius:20px">' + sec.mcqTotal + '+ questions</span>' : '<span style="font-size:10px;font-weight:700;color:var(--mut)">20 free</span>') +
-      '</div>' +
-      '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">' +
-        mcqBtn + simsBtn + timedBtn + randomBtn +
-      '</div>' +
-      '<div style="margin-top:4px">' +
-        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px">' +
-          '<span>Progress</span><span>' + mcqDone + ' / ' + mcqTotal + ' MCQs</span>' +
+        '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;line-height:1.4">' + sec.full + '</div>' +
+        '<div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-bottom:10px">' +
+          '<div style="height:100%;width:' + pct + '%;background:' + sec.color + ';border-radius:4px;transition:width .5s"></div>' +
         '</div>' +
-        '<div class="prog-bar" style="height:7px"><div class="prog-fill" style="width:' + mcqPct + '%;background:' + sec.color + '"></div></div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">' + sec.mcqTotal + '+ MCQ</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">' + sec.simsTotal + ' SIMs</span>' +
+            (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 8px;border-radius:6px;font-weight:700">5 free</span>') +
+          '</div>' +
+          '<span style="font-size:18px;color:var(--mut)">\u203a</span>' +
+        '</div>' +
       '</div>' +
     '</div>';
   }).join('');
 
   const freeNote = pro ? '' :
-    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:18px;cursor:pointer" onclick="openUpgradeModal(\'Full Question Bank\')">' +
-      '<span style="font-size:20px">🔒</span>' +
-      '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ora)">Unlock the Full Question Bank</div>' +
-      '<div style="font-size:11px;color:var(--sub);margin-top:1px">Pro unlocks 500+ MCQs, all TBS SIMs, timed sets, and random quizzes per section.</div></div>' +
+    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px;cursor:pointer" onclick="openUpgradeModal(\'Full Question Bank\')">' +
+      '<div style="flex:1">' +
+        '<div style="font-size:13px;font-weight:800;color:var(--ora)">Unlock the Full Question Bank</div>' +
+        '<div style="font-size:12px;color:var(--sub);margin-top:2px">Pro unlocks 500+ MCQs, all TBS SIMs, timed sets, and random quizzes per section.</div>' +
+      '</div>' +
       '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openUpgradeModal(\'Full Question Bank\')">Upgrade</button>' +
     '</div>';
 
-  return '<div style="max-width:800px;margin:0 auto">' +
-    '<div style="margin-bottom:20px">' +
-      '<h1 style="font-size:24px;font-weight:900;letter-spacing:-.02em">📚 Question Bank</h1>' +
-      '<p style="color:var(--sub);font-size:13px;margin-top:4px">Practice MCQs and Task-Based SIMs for every CPA exam section.</p>' +
+  return '<div style="max-width:860px;margin:0 auto">' +
+    '<div style="margin-bottom:24px">' +
+      '<h1 style="font-size:22px;font-weight:900;letter-spacing:-.02em">Question Bank</h1>' +
+      '<p style="color:var(--mut);font-size:13px;margin-top:4px">Select a section to start practicing.</p>' +
     '</div>' +
     freeNote +
-    cards +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">' +
+      cards +
+    '</div>' +
   '</div>';
 }
 
