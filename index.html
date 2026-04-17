@@ -58,6 +58,7 @@ a:hover{opacity:.75}
 ::-webkit-scrollbar-thumb{background:rgba(249,115,22,.28);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(249,115,22,.45)}
 ::-webkit-scrollbar-track{background:transparent}
+@keyframes ledger-dot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 
 /* ── LAYOUT ── */
 .app-wrap{display:flex;flex-direction:column;min-height:100vh}
@@ -1239,7 +1240,7 @@ function navProLabel(){
 
 // PRO FEATURES MAP — what requires pro
 const PRO_FEATURES={
-  aiStudyCoach:     {label:'AI Study Coach',icon:'🤖',desc:'Personalized daily study plans powered by AI, adapting to your pace and weak spots.'},
+  aiStudyCoach:     {label:'Ask Ledger',icon:'🤖',desc:'Personalized daily study plans powered by AI, adapting to your pace and weak spots.'},
   advancedAnalytics:{label:'Advanced Analytics',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and predicted pass probability.'},
   examSimulator:    {label:'Full Exam Simulator',icon:'🎯',desc:'Timed mock exams with score tracking, section-by-section analysis, and adaptive question sets.'},
   studySchedule:    {label:'Smart Study Schedule',icon:'📅',desc:'Auto-generated daily schedule that syncs with your exam dates and available hours.'},
@@ -1294,7 +1295,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'1 Study Club'},
     {on:true,text:'Weekly Leaderboard'},
     {on:true,text:'Basic Achievements (12)'},
-    {on:false,text:'AI Study Coach'},
+    {on:false,text:'Ask Ledger'},
     {on:false,text:'Advanced Analytics & Heatmaps'},
     {on:false,text:'Exam Simulator'},
     {on:false,text:'Streak Shield'},
@@ -1302,7 +1303,7 @@ function renderUpgradeModal(featureHint){
   ];
   const pro=[
     {on:true,text:'Everything in Free'},
-    {on:true,text:'AI Study Coach 🤖'},
+    {on:true,text:'Ask Ledger 🤖'},
     {on:true,text:'Advanced Analytics & Heatmaps'},
     {on:true,text:'Full Exam Simulator'},
     {on:true,text:'Smart Study Schedule'},
@@ -1549,7 +1550,7 @@ function showPostOnboardingOffer(){
   '</div>'+
   // What you get bullets
   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">'+
-  ['🤖 AI Study Coach','📊 Advanced Analytics','🎯 Exam Simulator','📅 Smart Schedule','🛡️ Streak Shield','📝 Weekly Reports'].map(f=>'<div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--sub)"><span style="color:var(--grn);font-weight:900">✓</span>'+f+'</div>').join('')+
+  ['🤖 Ask Ledger','📊 Advanced Analytics','🎯 Exam Simulator','📅 Smart Schedule','🛡️ Streak Shield','📝 Weekly Reports'].map(f=>'<div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--sub)"><span style="color:var(--grn);font-weight:900">✓</span>'+f+'</div>').join('')+
   '</div>'+
   // Skip
   '<button onclick="document.getElementById(\'post-ob-offer\').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">Continue with Free Plan →</button>'+
@@ -2185,7 +2186,8 @@ function renderApp(){
           {id:'dashboard',icon:'▦',label:'Dashboard'},
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
-          {id:'tips',icon:'◆',label:'Exam Tips'},
+          {id:'flashcards',icon:'⬡',label:'AI Flashcards'},
+          {id:'tips',icon:'◆',label:'Inspire'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -2207,8 +2209,8 @@ function renderApp(){
 function switchTab(tab){
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','profile','explore','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',tips:'Tips'};
+  const tabOrder=['feed','dashboard','profile','explore','flashcards','tips'];
+  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',flashcards:'AI Flashcards',tips:'Inspire'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -2234,6 +2236,7 @@ function renderTab(){
   else if(currentTab==='dashboard')el.innerHTML=buildDashboard();
   else if(currentTab==='profile')el.innerHTML=buildProfile();
   else if(currentTab==='explore')el.innerHTML=buildExplore();
+  else if(currentTab==='flashcards')el.innerHTML=buildAIFlashcards();
   else if(currentTab==='tips')el.innerHTML=buildTips();
   attachTabHandlers();
 }
@@ -2841,6 +2844,14 @@ function buildExplore(){
   const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
 
+  // Show-more for discover clubs (limit initial to 3)
+  const discoverRowItems=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id));
+  const discoverVisible=discoverRowItems.slice(0,3);
+  const discoverHidden=discoverRowItems.slice(3);
+  const discoverVisibleHtml=discoverVisible.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
+  const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
+  const clubSectionNew=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverVisibleHtml+discoverHiddenHtml;
+
   return`
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto">
   <div>
@@ -2849,14 +2860,21 @@ function buildExplore(){
       <div style="font-size:11px;color:var(--mut);margin-bottom:10px">Hours logged in the last 7 days</div>
       ${lbRows}
     </div>
-    <div class="card card-pad">
+    <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="section-title" style="margin-bottom:0">Study Clubs</div>
         <button class="btn btn-ind btn-xs" onclick="${isPro()?'createClubModal()':'openUpgradeModal(\'Unlimited Study Clubs\')'}">+ Create</button>
       </div>
       ${!isPro()&&myAllClubs.length>=1?'<div class="free-limit-banner" onclick="openUpgradeModal(\'Unlimited Study Clubs\')"><span style="font-size:20px">🔒</span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--ora)">Free plan: 1 club limit</div><div style="font-size:11px;color:var(--sub)">Upgrade to Pro for unlimited clubs + priority channels</div></div><span style="font-size:11px;font-weight:700;color:var(--ora)">Upgrade →</span></div>':''}
-      ${clubSection}
+      ${clubSectionNew}
       <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openMessagesModal()">My Clubs & Messages →</button>
+    </div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="margin-bottom:0">Find CPA Candidates</div>
+        <span style="font-size:10px;color:var(--mut)">${MOCK_FRIENDS.length} nearby</span>
+      </div>
+      ${friendCards}
     </div>
   </div>
   <div>
@@ -2868,10 +2886,6 @@ function buildExplore(){
       <div style="max-height:520px;overflow-y:auto;padding-right:2px">${challengeCards}</div>
     </div>
     <div style="margin-bottom:16px">${buildQuestionBank()}</div>
-    <div class="card card-pad">
-      <div class="section-title">Find CPA Candidates</div>
-      ${friendCards}
-    </div>
   </div>
 </div>`;
 }
@@ -4238,50 +4252,39 @@ function submitScore(section){
 // EXAM TIPS TAB
 // ═══════════════════════════════════════════════
 function buildTips(){
-  const TIPS_DATA={
-    strategy:[
-      {icon:'🏁',title:'Best Exam Order',body:'Becker recommends FAR first — its content underpins REG and AUD. Many candidates do REG first for a confidence boost (63% pass rate). Take your discipline right after the related core for maximum knowledge overlap. Don\'t leave FAR last — it\'s the hardest and you\'ll be burned out.'},
-      {icon:'⏱️',title:'Study Window Per Section',body:'Don\'t study longer than 6–8 weeks per section. Information decay is real. The sweet spot is 6 weeks of focused study then schedule immediately. Candidates who wait longer do NOT score higher on average. Cram it in, take the exam, move on.'},
-      {icon:'📅',title:'30-Month Score Window',body:'Once you pass your first section, you have 30 months to pass all remaining sections. Scores expire on a rolling basis — the first score you earned expires first. Many candidates fail not because of knowledge but because of poor timing. Plan your order carefully around the window.'},
-      {icon:'🔄',title:'Retake Strategy',body:'Wait for your score before retaking the same section — you can\'t take it again until scores release. On a retake, focus heavily on the area that failed you. Retakers pass at 39% vs 51% for first-timers. Don\'t retake without a different strategy.'},
-    ],
-    mcqtbs:[
-      {icon:'📝',title:'MCQ vs TBS Split',body:'MCQs and TBSs are worth 50%/50% of your score (40%/60% for ISC). Most candidates over-practice MCQs and underprepare for TBSs. In TBSs you navigate real authoritative literature — FASB Codification for FAR, Internal Revenue Code for REG, PCAOB/AU standards for AUD. Practice navigating the actual source documents.'},
-      {icon:'🎯',title:'MCQ Strategy',body:'On the real exam, the first testlet is medium difficulty. If you do well, testlet 2 gets harder (good sign — harder = more points available). Never change a MCQ answer unless you have a specific reason. Eliminate 2 wrong answers first, then choose. Don\'t spend more than 90 seconds per MCQ.'},
-      {icon:'🔍',title:'TBS Research Tab',body:'Every TBS has a Research tab with authoritative literature search. For FAR, you search the FASB Codification. For REG, the IRC. Practice using these before your exam — the search tool is specific and slow if you\'re not used to it. Bookmark likely sections in practice.'},
-      {icon:'📊',title:'Scaled Scoring',body:'A 75 scaled score does NOT mean 75% raw correct. Scaled scoring adjusts for question difficulty. Harder questions are worth more points. A candidate answering 65% of questions correctly on a hard testlet may score higher than one answering 75% correctly on easy questions. Consistency matters more than perfection.'},
-    ],
-    section:[
-      {icon:'📊',title:'FAR — What to Know',body:'FAR is the hardest section (43% pass rate). Government accounting (GASB) and not-for-profit account for ~36% of the exam — candidates who underweight these fail. US GAAP is foundational but not enough alone. Budget 170+ hours. The fund types (governmental, proprietary, fiduciary) must be instinctive.'},
-      {icon:'🔍',title:'AUD — What to Know',body:'AUD is about professional judgment, not formulas. Multiple-choice questions are designed to test your reasoning in ambiguous situations. The answer "it depends on the auditor\'s judgment" is often wrong — they want you to know WHEN that judgment applies. PCAOB vs AICPA standards matter: PCAOB for public companies, AICPA for non-public.'},
-      {icon:'⚖️',title:'REG — What to Know',body:'REG splits ~60% tax / ~40% business law. Individual taxation (Schedule items, credits, AMT) and entity taxation (C-Corps, S-Corps, Partnerships) are the highest-weighted areas. Business law (contracts, agency, secured transactions) is often underprepared. The IRC research TBS is giveable if you practice the search tool.'},
-      {icon:'📈',title:'BAR — What to Know',body:'BAR has the lowest discipline pass rate (42%) because it combines financial reporting depth with business analysis. Candidates underestimate the data analytics and business analysis content. If you passed FAR, the technical accounting content won\'t shock you — but the analytical modeling questions will if you didn\'t prepare for them.'},
-      {icon:'💻',title:'ISC — What to Know',body:'ISC is 82 MCQ + 6 TBS (more MCQs than any other section). SOC engagements (SOC 1, SOC 2, SOC 3) are heavily tested and underpreparation is the #1 failure cause. Security concepts (CIA triad, access controls, disaster recovery) are foundational. IT audit candidates often underestimate the SOC depth required.'},
-      {icon:'🧮',title:'TCP — What to Know',body:'TCP has the highest pass rate (78%) but don\'t get complacent. Individual and entity tax compliance is tested at depth beyond REG. The planning component (tax minimization strategies, entity choice) is the differentiator. If you passed REG solidly, TCP builds directly on that foundation. Budget 110 hours minimum.'},
-    ],
-    mental:[
-      {icon:'🧠',title:'Mindset: It\'s a Marathon',body:'The average CPA candidate takes 16–18 months to pass all four sections. You will have bad study days, failed mocks, and moments of doubt. Every CPA who passed felt exactly what you feel right now. The difference between those who pass and those who don\'t is almost never intelligence — it\'s showing up consistently.'},
-      {icon:'😴',title:'Sleep is Non-Negotiable',body:'Sleep is when your brain consolidates what you studied. Studying an extra 2 hours instead of sleeping 8 is a net negative. The night before your exam: do nothing new, sleep 8 hours, eat breakfast. Candidates who sleep well before exams statistically score higher. You can\'t study your way out of exhaustion.'},
-      {icon:'💪',title:'Burnout Prevention',body:'Burnout is the #1 reason candidates abandon their CPA journey. Schedule one completely study-free day per week — non-negotiable. Every 4th week, cut your study hours in half (deload week). Tell people close to you what you\'re doing — social support is a documented predictor of exam success.'},
-      {icon:'📱',title:'Study Smarter, Not Longer',body:'Active recall (testing yourself) beats passive reading by 3x for retention. Do MCQs first, then read the explanation — not the other way around. Spaced repetition (reviewing material at increasing intervals) is the most evidence-based study method available. Becker\'s adaptive learning is built on this principle.'},
-    ],
-  };
+  const QUOTES=[
+    {author:'Warren Buffett',role:'Investor & Businessman',quote:'The more you learn, the more you earn. Accounting is the language of business — master it and you master everything.',color:'#f59e0b'},
+    {author:'Charlie Munger',role:'Vice Chairman, Berkshire Hathaway',quote:'You have to know accounting. It\'s the language of practical business life.',color:'#0ea574'},
+    {author:'Steve Jobs',role:'Co-founder, Apple',quote:'The people who are crazy enough to think they can change the world are the ones who do. Don\'t let anyone tell you what you can and can\'t achieve.',color:'#5a5fcf'},
+    {author:'Maya Angelou',role:'Poet & Author',quote:'Nothing will work unless you do. Every hour you put in compounds — trust the process.',color:'#e84040'},
+    {author:'Winston Churchill',role:'Former Prime Minister, UK',quote:'Success is not final, failure is not fatal: it is the courage to continue that counts.',color:'#9333ea'},
+    {author:'Elon Musk',role:'CEO, Tesla & SpaceX',quote:'Work like hell. If other people are putting in 40-hour workweeks and you\'re putting in 100-hour workweeks, you will achieve in 4 months what takes them a year.',color:'#0fb5aa'},
+    {author:'J.K. Rowling',role:'Author',quote:'Rock bottom became the solid foundation on which I rebuilt my life. The hard moments build the person who passes.',color:'#f97316'},
+    {author:'Nelson Mandela',role:'Former President, South Africa',quote:'It always seems impossible until it\'s done. Your CPA license is no different.',color:'#0ea574'},
+    {author:'Albert Einstein',role:'Theoretical Physicist',quote:'Genius is 1% talent and 99% percent hard work. The exam doesn\'t test talent — it tests preparation.',color:'#5a5fcf'},
+    {author:'Theodore Roosevelt',role:'26th U.S. President',quote:'Believe you can and you\'re halfway there. The other half is showing up every single day.',color:'#f59e0b'},
+    {author:'Jeff Bezos',role:'Founder, Amazon',quote:'I knew that if I failed I wouldn\'t regret that, but I knew the one thing I might regret is not trying.',color:'#e84040'},
+    {author:'Oprah Winfrey',role:'Media Executive',quote:'The biggest adventure you can take is to live the life of your dreams. Your CPA is the foundation.',color:'#9333ea'},
+    {author:'Kobe Bryant',role:'NBA Champion',quote:'The most important thing is to try and inspire people so that they can be great in whatever they want to do. That includes you, grinding through FAR.',color:'#e84040'},
+    {author:'Thomas Edison',role:'Inventor',quote:'I have not failed. I\'ve just found 10,000 ways that won\'t work. Every exam retake is data.',color:'#f59e0b'},
+    {author:'Abraham Lincoln',role:'16th U.S. President',quote:'Give me six hours to chop down a tree and I will spend the first four sharpening the axe. Preparation is everything.',color:'#0ea574'},
+    {author:'Serena Williams',role:'Tennis Champion',quote:'I really think a champion is defined not by their wins but by how they can recover when they fall. Retake, learn, pass.',color:'#9333ea'},
+    {author:'Benjamin Franklin',role:'Founding Father & Polymath',quote:'An investment in knowledge pays the best interest. You\'re making the right investment.',color:'#0fb5aa'},
+    {author:'Michael Jordan',role:'NBA Champion',quote:'I\'ve missed more than 9,000 shots in my career. I\'ve failed over and over and over again in my life. And that is why I succeed.',color:'#5a5fcf'},
+    {author:'Angela Duckworth',role:'Psychologist, Author of Grit',quote:'Enthusiasm is common. Endurance is rare. The CPA exam rewards endurance above all else.',color:'#f97316'},
+    {author:'Marcus Aurelius',role:'Roman Emperor & Philosopher',quote:'You have power over your mind — not outside events. Realize this and you will find strength.',color:'#e84040'},
+    {author:'Brené Brown',role:'Research Professor & Author',quote:'Vulnerability is not winning or losing. It\'s having the courage to show up when you can\'t control the outcome.',color:'#0ea574'},
+    {author:'Denzel Washington',role:'Actor & Filmmaker',quote:'Without commitment, you\'ll never start. Without consistency, you\'ll never finish. Study every day.',color:'#5a5fcf'},
+    {author:'Sam Walton',role:'Founder, Walmart',quote:'High expectations are the key to everything. Set the bar high for yourself — 75 is the floor, not the ceiling.',color:'#f59e0b'},
+    {author:'Ray Dalio',role:'Founder, Bridgewater Associates',quote:'Pain plus reflection equals progress. Hard study sessions are the price of the license.',color:'#9333ea'},
+  ];
 
-  const catLabels={strategy:'Strategy & Planning',mcqtbs:'MCQ & TBS Tactics',section:'Section Deep-Dives',mental:'Mindset & Wellbeing'};
-  const cats=Object.keys(TIPS_DATA);
-  const tipHTML=cats.map(cat=>`
-  <div style="margin-bottom:28px">
-    <div style="font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px">${catLabels[cat]}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-      ${TIPS_DATA[cat].map(t=>`
-      <div class="card card-pad" style="border-left:3px solid var(--ora)">
-        <div style="font-size:20px;margin-bottom:6px">${t.icon}</div>
-        <div style="font-size:14px;font-weight:800;margin-bottom:8px">${t.title}</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.75">${t.body}</div>
-      </div>`).join('')}
-    </div>
-  </div>`).join('');
+  // Today's quote (rotates daily)
+  const today=new Date();
+  const dayIndex=(today.getFullYear()*365+today.getMonth()*30+today.getDate())%QUOTES.length;
+  const todayQ=QUOTES[dayIndex];
 
+  // Pass rate chart
   const passRateChart=Object.entries(EXAMS).map(([k,ex])=>{
     const pct=ex.passRate;
     return`<div style="margin-bottom:10px">
@@ -4294,23 +4297,55 @@ function buildTips(){
     </div>`;
   }).join('');
 
+  const allQuoteCards=QUOTES.map((q,i)=>`
+  <div class="card card-pad" style="border-left:4px solid ${q.color};${i===dayIndex?'background:var(--ora-bg);border-color:var(--ora)':''}">
+    <div style="font-size:13px;font-style:italic;color:var(--sub);line-height:1.7;margin-bottom:10px">"${q.quote}"</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:50%;background:${q.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">${q.author.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div>
+        <div style="font-size:12px;font-weight:800">${q.author}</div>
+        <div style="font-size:10px;color:var(--mut)">${q.role}</div>
+      </div>
+      ${i===dayIndex?'<span style="margin-left:auto;font-size:9px;font-weight:800;background:var(--ora);color:#fff;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">Today</span>':''}
+    </div>
+  </div>`).join('');
+
   return`
 <div style="max-width:960px;margin:0 auto">
   <div style="margin-bottom:24px">
-    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">💡 CPA Exam Tips</h1>
-    <p style="color:var(--sub);font-size:13px">Everything the top prep providers don't put in their marketing. Sourced from AICPA data, Becker, Gleim, Another71, and 300hours.com.</p>
+    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">Daily Inspiration</h1>
+    <p style="color:var(--sub);font-size:13px">Words from great minds to fuel your CPA journey.</p>
   </div>
 
+  <!-- Today's Quote Hero -->
+  <div class="card" style="margin-bottom:24px;overflow:hidden;background:linear-gradient(135deg,${todayQ.color}18,${todayQ.color}08);border-color:${todayQ.color}44">
+    <div style="padding:28px 28px 24px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:${todayQ.color};margin-bottom:14px">Today's Inspiration · ${today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+      <div style="font-size:20px;font-style:italic;font-weight:600;line-height:1.6;color:var(--txt);margin-bottom:18px;max-width:640px">"${todayQ.quote}"</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:50%;background:${todayQ.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff">${todayQ.author.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">${todayQ.author}</div>
+          <div style="font-size:12px;color:var(--mut)">${todayQ.role}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pass Rate Chart -->
   <div class="card card-pad" style="margin-bottom:24px">
     <div style="font-size:14px;font-weight:800;margin-bottom:14px">📈 2025 Pass Rates (AICPA / NASBA)</div>
     ${passRateChart}
-    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75/99 scaled. First-time pass rate ~51%, retakers ~39%. Discipline sections: first month of each quarter only.</div>
+    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75/99 scaled.</div>
   </div>
 
-  ${tipHTML}
+  <!-- All Quotes -->
+  <div style="font-size:14px;font-weight:800;margin-bottom:14px">All Quotes</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
+    ${allQuoteCards}
+  </div>
 </div>`;
 }
-
 // ═══════════════════════════════════════════════
 // SETTINGS MODAL
 // ═══════════════════════════════════════════════
@@ -4339,28 +4374,19 @@ function openEditProfile(){
     <span class="badge badge-${s}" style="min-width:46px;justify-content:center">${s}</span>
     <input type="date" id="ep-date-${s}" value="${S.examDates?.[s]||''}" min="${new Date().toISOString().slice(0,10)}" style="flex:1;padding:6px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:12px;outline:none">
   </div>`).join('');
-  const avatarOpts=['🎓','👤','💼','📚','⚡','🦊','🐻','🦁','🐯','🦅','🌟','🔥','💎','🚀','🎯','🏆'];
-  const currentAvatar=S.avatar||'🎓';
   const hasPic=!!S.profilePic;
   document.getElementById('edit-profile-body').innerHTML=`
 <!-- Profile Photo -->
 <div style="text-align:center;margin-bottom:22px">
   <div style="position:relative;display:inline-block">
-    <div id="ep-avatar-preview" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:3px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;cursor:pointer;margin:0 auto" onclick="document.getElementById('ep-file-input').click()">
-      ${hasPic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:`<span id="ep-emoji-preview">${currentAvatar}</span>`}
+    <div id="ep-avatar-preview" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:3px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;overflow:hidden;cursor:pointer;margin:0 auto;letter-spacing:-.03em" onclick="document.getElementById('ep-file-input').click()">
+      ${hasPic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:`<span>${initials}</span>`}
     </div>
-    <div onclick="document.getElementById('ep-file-input').click()" style="position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:50%;background:var(--ora);border:2px solid var(--surf);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px">📷</div>
+    <div onclick="document.getElementById('ep-file-input').click()" style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;border-radius:50%;background:var(--ora);border:2.5px solid var(--surf);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px">📷</div>
   </div>
   <input type="file" id="ep-file-input" accept="image/*" style="display:none" onchange="handleProfilePicUpload(this)">
-  <div style="font-size:11px;color:var(--mut);margin-top:8px">Click photo to upload · JPG, PNG, GIF up to 5MB</div>
+  <div style="font-size:11px;color:var(--mut);margin-top:8px">Click to upload a photo · JPG or PNG, up to 5MB</div>
   ${hasPic?`<button onclick="removeProfilePic()" style="margin-top:6px;background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;font-weight:600">✕ Remove photo</button>`:''}
-  <div style="margin-top:12px">
-    <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Or choose an avatar</div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center">
-      ${avatarOpts.map(e=>`<div onclick="selectEpAvatar('${e}',this)" class="ep-av-opt" style="width:34px;height:34px;border-radius:8px;border:2px solid ${currentAvatar===e&&!hasPic?'var(--ora)':'var(--bdr)'};background:${currentAvatar===e&&!hasPic?'var(--ora-bg)':'var(--surf2)'};display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .15s">${e}</div>`).join('')}
-    </div>
-    <input type="hidden" id="ep-avatar-val" value="${currentAvatar}">
-  </div>
 </div>
 
 <div style="height:1px;background:var(--bdr);margin:0 0 18px"></div>
@@ -4427,19 +4453,93 @@ function handleProfilePicUpload(input){
   if(!file)return;
   if(file.size>5*1024*1024){showToast('Image must be under 5MB','err');return;}
   const reader=new FileReader();
-  reader.onload=e=>{
-    const dataUrl=e.target.result;
-    // Update preview
-    const preview=document.getElementById('ep-avatar-preview');
-    if(preview){
-      preview.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover">`;
-      // Add remove button below if not present
-    }
-    // Store temporarily
-    window._pendingProfilePic=dataUrl;
-    showToast('Photo ready — click Save Profile to apply ✓','ok');
-  };
+  reader.onload=e=>{ openCropModal(e.target.result); };
   reader.readAsDataURL(file);
+}
+
+function openCropModal(dataUrl){
+  let cropEl=document.getElementById('crop-modal');
+  if(cropEl) cropEl.remove();
+  cropEl=document.createElement('div');
+  cropEl.id='crop-modal';
+  cropEl.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center';
+  cropEl.innerHTML=`
+  <div style="background:var(--surf);border-radius:20px;padding:24px;max-width:400px;width:90%;box-shadow:var(--shadow-lg)">
+    <div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>
+    <div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Pinch or scroll to zoom</div>
+    <div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">
+      <img id="crop-img" src="${dataUrl}" style="position:absolute;left:0;top:0;transform-origin:center;cursor:move;max-width:none;user-select:none;-webkit-user-drag:none">
+    </div>
+    <div style="margin-top:14px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;color:var(--mut);flex-shrink:0">Zoom</span>
+      <input type="range" id="crop-zoom" min="50" max="300" value="100" style="flex:1;accent-color:var(--ora)">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Apply</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('crop-modal').remove()">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(cropEl);
+  // Set up drag + zoom
+  const img=document.getElementById('crop-img');
+  const circle=document.getElementById('crop-circle');
+  const zoomSlider=document.getElementById('crop-zoom');
+  let scale=1, ox=0, oy=0, dragging=false, startX=0, startY=0, baseOx=0, baseOy=0;
+  function clampPos(){
+    const cw=260,ch=260;
+    const iw=img.naturalWidth*scale, ih=img.naturalHeight*scale;
+    ox=Math.min(0,Math.max(cw-iw,ox));
+    oy=Math.min(0,Math.max(ch-ih,oy));
+  }
+  function applyTransform(){
+    img.style.left=ox+'px';img.style.top=oy+'px';
+    img.style.width=(img.naturalWidth*scale)+'px';img.style.height=(img.naturalHeight*scale)+'px';
+  }
+  img.onload=function(){
+    // Fit image to fill circle on load
+    const minScale=Math.max(260/img.naturalWidth,260/img.naturalHeight);
+    scale=minScale;
+    ox=(260-img.naturalWidth*scale)/2;
+    oy=(260-img.naturalHeight*scale)/2;
+    zoomSlider.min=Math.round(minScale*100);
+    zoomSlider.value=Math.round(minScale*100);
+    applyTransform();
+  };
+  zoomSlider.oninput=function(){
+    const ns=parseInt(this.value)/100;
+    const cx=260/2,cy=260/2;
+    ox=cx-(cx-ox)*(ns/scale);
+    oy=cy-(cy-oy)*(ns/scale);
+    scale=ns;
+    clampPos();applyTransform();
+  };
+  circle.onmousedown=function(e){dragging=true;startX=e.clientX;startY=e.clientY;baseOx=ox;baseOy=oy;e.preventDefault();};
+  document.addEventListener('mousemove',function(e){if(!dragging)return;ox=baseOx+(e.clientX-startX);oy=baseOy+(e.clientY-startY);clampPos();applyTransform();});
+  document.addEventListener('mouseup',function(){dragging=false;});
+  circle.ontouchstart=function(e){if(e.touches.length===1){dragging=true;startX=e.touches[0].clientX;startY=e.touches[0].clientY;baseOx=ox;baseOy=oy;e.preventDefault();}};
+  circle.ontouchmove=function(e){if(dragging&&e.touches.length===1){ox=baseOx+(e.touches[0].clientX-startX);oy=baseOy+(e.touches[0].clientY-startY);clampPos();applyTransform();e.preventDefault();}};
+  circle.ontouchend=function(){dragging=false;};
+  circle.onwheel=function(e){e.preventDefault();const delta=e.deltaY<0?1.05:.95;const ns=Math.max(parseInt(zoomSlider.min)/100,Math.min(3,scale*delta));const cx=260/2,cy=260/2;ox=cx-(cx-ox)*(ns/scale);oy=cy-(cy-oy)*(ns/scale);scale=ns;zoomSlider.value=Math.round(ns*100);clampPos();applyTransform();};
+  window._cropData={img,scale,ox:function(){return ox;},oy:function(){return oy;}};
+}
+
+function applyCrop(){
+  const cd=window._cropData;
+  if(!cd)return;
+  const canvas=document.createElement('canvas');
+  canvas.width=260;canvas.height=260;
+  const ctx=canvas.getContext('2d');
+  ctx.beginPath();ctx.arc(130,130,130,0,Math.PI*2);ctx.clip();
+  const img=cd.img;
+  const ox=cd.ox(),oy=cd.oy();
+  ctx.drawImage(img,ox,oy,img.naturalWidth*cd.scale,img.naturalHeight*cd.scale);
+  const dataUrl=canvas.toDataURL('image/jpeg',.88);
+  // Update preview in edit profile
+  const preview=document.getElementById('ep-avatar-preview');
+  if(preview) preview.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  window._pendingProfilePic=dataUrl;
+  document.getElementById('crop-modal')?.remove();
+  showToast('Photo cropped — click Save Profile to apply ✓','ok');
 }
 
 function removeProfilePic(){
@@ -4460,7 +4560,7 @@ function saveEditProfile(){
   S.bio=document.getElementById('ep-bio')?.value?.trim()||'';
   S.school=document.getElementById('ep-school')?.value?.trim()||'';
   S.classYear=document.getElementById('ep-classyear')?.value||'';
-  S.avatar=document.getElementById('ep-avatar-val')?.value||S.avatar||'🎓';
+  // avatar field removed — no longer used
   if(window._pendingProfilePic){S.profilePic=window._pendingProfilePic;window._pendingProfilePic=null;}
   (S.sections||[]).forEach(s=>{
     const d=document.getElementById('ep-date-'+s)?.value;
@@ -5821,17 +5921,24 @@ function renderProgressReport() {
 }
 
 // ═══════════════════════════════════════════════
-// AI STUDY COACH
+// ASK LEDGER
 // ═══════════════════════════════════════════════
 const _coachResponses = [
-  {k:['behind','pace','slow'],r:'Based on your current pace, you should add at least one extra session per week on your weakest section. Even 45 minutes of focused MCQ practice compounds fast.'},
-  {k:['far','financial'],r:'FAR has the lowest pass rate. Prioritize governmental accounting, leases (ASC 842), and pensions — those topics are heavily tested and candidates consistently underestimate them.'},
-  {k:['aud','audit'],r:'AUD rewards professional skepticism thinking. Practice reading answer choices from the auditor\'s perspective, not the client\'s. Focus on risk assessment and evidence standards.'},
-  {k:['reg','tax'],r:'REG requires memorization AND application. Create a quick-reference sheet for entity taxation rules, SE tax, and the most-tested deduction limits. Test yourself daily.'},
-  {k:['streak','motivation'],r:'Streaks create momentum, but what matters more is session quality. A focused 90-minute session beats 3 distracted hours. Protect your deep work time.'},
-  {k:['exam','date','schedule'],r:'Set your exam date before you feel ready — it creates urgency. Most candidates who pass schedule first, then study. Aim for 6–8 focused weeks per section.'},
-  {k:['tired','burnout','rest'],r:'Rest is part of your study plan. If your energy is low, a 30-minute review is better than a burned-out 4-hour session. Recovery prevents long-term burnout.'},
-  {k:['score','pass','probability'],r:'Scoring consistently 70%+ on practice MCQs is the strongest predictor of passing. Focus on understanding wrong answers more than celebrating right ones.'},
+  {k:['behind','pace','slow','falling behind'],r:'Looking at your data: the most effective recovery strategy is two focused 90-minute sessions per day — one in the morning for new material, one in the evening for MCQ review. Candidates who study in two shorter sessions retain 40% more than single long sessions.'},
+  {k:['far','financial accounting','governmental','gasb','nonprofit'],r:'FAR is the hardest section at a 43% pass rate — but the candidates who fail almost always underestimate governmental accounting. GASB vs. GAAP differences, fund types, and the modified accrual basis are tested hard. Spend at least 30% of your FAR time there. Budget 170+ hours total.'},
+  {k:['aud','audit','attestation','pcaob','internal control'],r:'AUD is about professional judgment under uncertainty. The exam tests whether you think like an auditor, not an accountant. When you see an answer choice mentioning "discuss with management," it\'s almost always wrong — auditors verify independently. Focus on risk assessment (AU-C 315) and the report types.'},
+  {k:['reg','regulation','tax','irs','partnership','s-corp','c-corp'],r:'REG splits 60% tax, 40% business law. Entity taxation (partnerships, S-corps, C-corps) is the highest-weighted area and the most commonly underprepared. Create a comparison chart of basis rules, distribution rules, and built-in gains for each entity type — you\'ll use it constantly.'},
+  {k:['tcp','tax compliance','tax planning','planning'],r:'TCP builds directly on REG but goes deeper into tax minimization strategy. The key differentiator is the planning component — entity selection, timing of income/deductions, and tax credit optimization. If you scored well on REG, leverage that foundation. Aim for 110+ hours.'},
+  {k:['bar','business analysis','reporting','analytics','data'],r:'BAR combines financial reporting depth with business analysis. Candidates who passed FAR often underestimate the data analytics questions — think variance analysis, trend identification, regression basics. The financial modeling scenarios are unlike anything in traditional CPA prep. Budget 140+ hours.'},
+  {k:['isc','information systems','controls','soc','cybersecurity','it audit'],r:'ISC has 82 MCQs — more than any other section. SOC engagements (SOC 1 vs. SOC 2 vs. SOC 3) are the most tested area and the #1 failure cause. The CIA triad (Confidentiality, Integrity, Availability) underpins all security questions. If you\'re not in IT, spend extra time on access control frameworks.'},
+  {k:['streak','motivation','discipline','consistency'],r:'Consistency beats intensity every time. Research shows candidates who study 6 days per week at 2-3 hours outperform those who study 4 days at 5+ hours — the spacing effect is real. Your streak is valuable not because of the number, but because it builds the neural pathways that make studying automatic.'},
+  {k:['exam','date','schedule','when','ready'],r:'Schedule your exam before you feel ready. The research is clear: candidates who schedule first pass at higher rates than those who study indefinitely. The deadline creates productive urgency. For most sections, 6 weeks of focused study (daily practice, not just reading) is the right window.'},
+  {k:['tired','burnout','exhausted','overwhelmed','stress'],r:'Burnout is the #1 reason candidates abandon their CPA journey — not failure. Schedule one completely study-free day per week, non-negotiable. Every 4th week, cut your study hours by 50% (a deload week). Your brain consolidates learning during rest. Sleeping 8 hours is more valuable than an extra 2 hours of studying.'},
+  {k:['score','pass rate','75','probability','chance'],r:'A 75 is a scaled score, not a percentage correct. Answering 65% correctly on a hard testlet can score higher than 75% on an easy one. The strongest predictor of passing: scoring 70%+ on practice MCQs consistently for 2+ weeks. Focus on understanding wrong answers — that\'s where the points are.'},
+  {k:['mcq','multiple choice','testlet'],r:'MCQ strategy: the first testlet is medium difficulty. If testlet 2 gets harder, that\'s a good sign — you\'re being scored on harder questions worth more points. Never change an answer unless you have a specific reason. Eliminate the two obviously wrong answers first. 90 seconds per MCQ maximum.'},
+  {k:['tbs','task-based','simulation','research'],r:'TBSs are worth 50% of your score (60% for ISC) and most candidates underprepare for them. Every TBS has a Research tab — practice navigating FASB Codification for FAR, the IRC for REG, and PCAOB standards for AUD before your exam. Speed in the research tool is a skill, not luck.'},
+  {k:['flash','card','memorize','remember','retain'],r:'Use the AI Flashcards feature — paste your notes or prep material and Ledger will generate flashcards automatically. Active recall beats passive reading by 3x for retention. Spaced repetition is the most evidence-based study method available.'},
+  {k:['help','what','how','tips','advice','suggest'],r:'Here\'s my top advice based on your current progress: focus on your weakest section first each day, log every session (even short ones), and review your wrong answers before moving to new material. Consistency over 6-8 focused weeks beats marathon sessions.'},
 ];
 
 function _coachReply(msg) {
@@ -5841,20 +5948,25 @@ function _coachReply(msg) {
       return _coachResponses[i].r;
     }
   }
-  return 'Great question. The key to CPA success is consistency over intensity. Log your sessions daily, review your weak areas weekly, and trust the process. You\'re making progress.';
+  // Personalized fallback using real data
+  const secs = S.sections || [];
+  const focSec = secs[0] || 'FAR';
+  const hrs = Math.round(getTotalHours());
+  const streak = getStreak();
+  return 'Based on your ' + hrs + ' hours logged and ' + streak + '-day streak: you\'re on the right track. The single highest-impact thing you can do right now is spend 60 minutes reviewing your most recent wrong answers in ' + focSec + '. Understanding why you got something wrong is worth more than any new material. Keep going.';
 }
 
 function buildAIStudyCoach() {
   if (!isPro()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
-      '<div class="section-title">🤖 AI Study Coach</div>' +
+      '<div class="section-title">🤖 Ask Ledger</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.3;pointer-events:none;user-select:none">' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Today\'s Focus</div><div style="font-size:11px;color:var(--mut)">FAR — Gov. Accounting<br>Rec: 2.5 hrs today</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Weak Spot Alert</div><div style="font-size:11px;color:var(--mut)">Behind on REG by 12h<br>Need 2.5h/day to catch up</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Pass Probability</div><div style="font-size:22px;font-weight:900;color:var(--grn)">67%</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Next Milestone</div><div style="font-size:11px;color:var(--mut)">50h → Dedicated badge<br>Almost there!</div></div>' +
       '</div>' +
-      proLockHTML('AI Study Coach', 'Unlock AI Coach') +
+      proLockHTML('Ask Ledger', 'Unlock AI Coach') +
     '</div>';
   }
 
@@ -5925,7 +6037,7 @@ function buildAIStudyCoach() {
   return '<div class="card card-pad" style="margin-bottom:16px">' +
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
       '<div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>' +
-      '<div><div style="font-size:15px;font-weight:800">AI Study Coach</div>' +
+      '<div><div style="font-size:15px;font-weight:800">Ask Ledger</div>' +
       '<div style="font-size:11px;color:var(--mut)">Personalized insights based on your data</div></div>' +
     '</div>' +
 
@@ -5965,7 +6077,7 @@ function buildAIStudyCoach() {
     '</div>' +
 
     '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px">' +
-      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Ask Coach</div>' +
+      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Ask Ledger</div>' +
       '<div id="coach-chat-msgs" style="min-height:60px;max-height:200px;overflow-y:auto;margin-bottom:10px">' +
         (chatMsgs || '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">Ask me anything about your CPA prep...</div>') +
       '</div>' +
@@ -5988,17 +6100,436 @@ function sendCoachMessage() {
   if (!window._coachChat) window._coachChat = [];
   window._coachChat.push({mine:true, text:msg});
   const reply = _coachReply(msg);
+  const msgsEl = document.getElementById('coach-chat-msgs');
+  if (!msgsEl) return;
+  if (msgsEl.querySelector('[style*="Ask me anything"]')) msgsEl.innerHTML = '';
+  // Add user message immediately
+  const mineDiv = '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="max-width:80%;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:12px;line-height:1.55;background:var(--ind);color:#fff">' + msg + '</div></div>';
+  msgsEl.innerHTML += mineDiv;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  // Show typing indicator
+  const typingId = 'ledger-typing-' + Date.now();
+  const typingDiv = '<div id="' + typingId + '" style="display:flex;margin-bottom:8px"><div style="padding:10px 14px;border-radius:16px 16px 16px 4px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .2s;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .4s;display:inline-block"></span></div></div>';
+  msgsEl.innerHTML += typingDiv;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  // Reveal reply with typewriter effect after delay
+  const delay = 600 + Math.min(reply.length * 8, 1400);
   setTimeout(function() {
     window._coachChat.push({mine:false, text:reply});
-    const msgsEl = document.getElementById('coach-chat-msgs');
-    if (msgsEl) {
-      const mineDiv = '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="max-width:80%;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:12px;line-height:1.55;background:var(--ind);color:#fff">' + msg + '</div></div>';
-      const replyDiv = '<div style="display:flex;margin-bottom:8px"><div style="max-width:80%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:12px;line-height:1.55;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt)">' + reply + '</div></div>';
-      if (msgsEl.querySelector('[style*="Ask me anything"]')) msgsEl.innerHTML = '';
-      msgsEl.innerHTML += mineDiv + replyDiv;
-      msgsEl.scrollTop = msgsEl.scrollHeight;
+    const typingEl = document.getElementById(typingId);
+    if (typingEl) typingEl.remove();
+    const replyWrap = document.createElement('div');
+    replyWrap.style.cssText = 'display:flex;margin-bottom:8px';
+    const replyBub = document.createElement('div');
+    replyBub.style.cssText = 'max-width:82%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:12px;line-height:1.6;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt)';
+    replyWrap.appendChild(replyBub);
+    msgsEl.appendChild(replyWrap);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    // Typewriter
+    let i = 0;
+    const speed = Math.max(8, Math.min(22, Math.round(8000 / reply.length)));
+    function typeNext() {
+      if (i <= reply.length) {
+        replyBub.textContent = reply.slice(0, i);
+        i++;
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+        if (i <= reply.length) setTimeout(typeNext, speed);
+      }
     }
+    typeNext();
+  }, delay);
+}
+
+// ═══════════════════════════════════════════════
+// AI FLASHCARDS + AUTO-GENERATED QUIZZES
+// ═══════════════════════════════════════════════
+// State
+let _fc = { cards:[], current:0, flipped:false, mode:'flashcard', quizQ:[], quizCur:0, quizSel:null, quizAns:false, quizScore:0, summaryText:'' };
+
+function buildAIFlashcards() {
+  const hasCards = _fc.cards.length > 0;
+  const hasQuiz = _fc.quizQ.length > 0;
+
+  return '<div style="max-width:900px;margin:0 auto">' +
+    '<div style="margin-bottom:24px">' +
+      '<h1 style="font-size:26px;font-weight:900;margin-bottom:4px;letter-spacing:-.04em">AI Flashcards</h1>' +
+      '<p style="color:var(--sub);font-size:13px">Paste your notes, Becker/Gleim material, or any CPA prep text — Ledger turns it into flashcards, quizzes, and summaries instantly.</p>' +
+    '</div>' +
+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">' +
+
+      // LEFT: input panel
+      '<div>' +
+        '<div class="card card-pad" style="margin-bottom:16px">' +
+          '<div class="section-title">Input Material</div>' +
+          '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+            '<button id="fc-mode-text" class="btn btn-primary btn-sm" onclick="fcSetInputMode(\'text\')">Paste Text</button>' +
+            '<button id="fc-mode-pdf" class="btn btn-ghost btn-sm" onclick="document.getElementById(\'fc-pdf-input\').click()">Upload PDF</button>' +
+            '<input id="fc-pdf-input" type="file" accept=".pdf,application/pdf" style="display:none" onchange="fcLoadPdf(this)">' +
+          '</div>' +
+          '<textarea id="fc-input-text" placeholder="Paste your study notes, Becker MCQ explanations, Gleim outlines, or any CPA prep material here…&#10;&#10;Example:&#10;Revenue recognition under ASC 606 requires five steps: 1) Identify the contract, 2) Identify performance obligations, 3) Determine transaction price, 4) Allocate price, 5) Recognize revenue when obligation satisfied." style="width:100%;min-height:220px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit" onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'"></textarea>' +
+          '<div id="fc-pdf-status" style="display:none;margin-top:8px;font-size:11px;color:var(--grn);font-weight:600"></div>' +
+          '<div style="display:flex;gap:8px;margin-top:12px">' +
+            '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="fcGenerate(\'flashcard\')">⚡ Generate Flashcards</button>' +
+            '<button class="btn btn-ind" style="flex:1;justify-content:center" onclick="fcGenerate(\'quiz\')">📝 Generate Quiz</button>' +
+          '</div>' +
+          '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate(\'summary\')">📄 Generate Summary</button>' +
+          '<div id="fc-gen-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:var(--mut)"></div>' +
+        '</div>' +
+
+        // Summary panel
+        ((_fc.summaryText) ? '<div class="card card-pad"><div class="section-title">Summary</div><div style="font-size:12px;color:var(--sub);line-height:1.75;white-space:pre-wrap">' + _fc.summaryText + '</div></div>' : '') +
+      '</div>' +
+
+      // RIGHT: flashcard/quiz viewer
+      '<div>' +
+        (hasCards && _fc.mode === 'flashcard' ? _buildFlashcardViewer() : '') +
+        (hasQuiz && _fc.mode === 'quiz' ? _buildQuizViewer() : '') +
+        (!hasCards && !hasQuiz ? '<div class="card card-pad" style="text-align:center;padding:48px 24px">' +
+          '<div style="font-size:48px;margin-bottom:16px;opacity:.25">⬡</div>' +
+          '<div style="font-size:15px;font-weight:800;margin-bottom:8px;color:var(--sub)">Nothing generated yet</div>' +
+          '<div style="font-size:12px;color:var(--mut);line-height:1.65">Paste your study material on the left and click<br><strong>Generate Flashcards</strong> or <strong>Generate Quiz</strong> to get started.</div>' +
+        '</div>' : '') +
+      '</div>' +
+
+    '</div>' +
+  '</div>';
+}
+
+function _buildFlashcardViewer() {
+  const card = _fc.cards[_fc.current];
+  if (!card) return '';
+  const total = _fc.cards.length;
+  const pct = Math.round((_fc.current + 1) / total * 100);
+  return '<div class="card card-pad">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+      '<div class="section-title" style="margin-bottom:0">Flashcards</div>' +
+      '<span style="font-size:11px;color:var(--mut)">' + (_fc.current+1) + ' / ' + total + '</span>' +
+    '</div>' +
+    '<div style="height:5px;background:var(--surf3);border-radius:4px;margin-bottom:18px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:var(--ind);border-radius:4px;transition:width .3s"></div></div>' +
+    // Card flip area
+    '<div onclick="fcFlipCard()" style="cursor:pointer;min-height:180px;border-radius:14px;border:1.5px solid ' + (_fc.flipped ? 'var(--grn)' : 'var(--ind)') + ';background:' + (_fc.flipped ? 'var(--grn-bg)' : 'var(--ind-bg)') + ';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transition:all .25s;position:relative">' +
+      '<div style="position:absolute;top:10px;right:12px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:' + (_fc.flipped ? 'var(--grn)' : 'var(--ind)') + '">' + (_fc.flipped ? 'Answer' : 'Question') + '</div>' +
+      '<div style="font-size:14px;font-weight:700;line-height:1.6;color:var(--txt)">' + (_fc.flipped ? card.a : card.q) + '</div>' +
+      '<div style="font-size:11px;color:var(--mut);margin-top:12px">' + (_fc.flipped ? '' : 'Tap to reveal answer') + '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;margin-top:14px">' +
+      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(-1)" ' + (_fc.current===0?'disabled':'') + '>← Prev</button>' +
+      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcFlipCard()">Flip</button>' +
+      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(1)" ' + (_fc.current===total-1?'disabled':'') + '>Next →</button>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;margin-top:8px">' +
+      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcShuffle()">🔀 Shuffle</button>' +
+      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcRestart()">↺ Restart</button>' +
+    '</div>' +
+    // Mini index
+    '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:4px">' +
+      _fc.cards.map(function(c,i){ return '<div onclick="fcGoto('+i+')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;background:' + (i===_fc.current?'var(--ind)':'var(--surf3)') + ';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:' + (i===_fc.current?'#fff':'var(--mut)') + ';transition:background .15s">' + (i+1) + '</div>'; }).join('') +
+    '</div>' +
+  '</div>';
+}
+
+function _buildQuizViewer() {
+  if (_fc.quizCur >= _fc.quizQ.length) return _buildQuizResults();
+  const q = _fc.quizQ[_fc.quizCur];
+  const total = _fc.quizQ.length;
+  const pct = Math.round(_fc.quizCur / total * 100);
+  return '<div class="card card-pad">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+      '<div class="section-title" style="margin-bottom:0">Generated Quiz</div>' +
+      '<span style="font-size:11px;color:var(--mut)">Q' + (_fc.quizCur+1) + ' / ' + total + '</span>' +
+    '</div>' +
+    '<div style="height:5px;background:var(--surf3);border-radius:4px;margin-bottom:18px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:var(--grn);border-radius:4px;transition:width .3s"></div></div>' +
+    '<div style="font-size:14px;font-weight:700;line-height:1.6;margin-bottom:16px">' + q.q + '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">' +
+      q.choices.map(function(ch, ci) {
+        const isSelected = _fc.quizSel === ci;
+        const isCorrect = ci === q.correct;
+        let bg = 'var(--surf2)', border = 'var(--bdr)', color = 'var(--txt)';
+        if (_fc.quizAns) {
+          if (isCorrect) { bg='var(--grn-bg)'; border='var(--grn)'; color='var(--grn)'; }
+          else if (isSelected && !isCorrect) { bg='var(--red-bg)'; border='var(--red)'; color='var(--red)'; }
+        } else if (isSelected) { bg='var(--ind-bg)'; border='var(--ind)'; color='var(--ind)'; }
+        return '<div onclick="fcSelectAnswer(' + ci + ')" style="padding:11px 14px;border-radius:10px;border:1.5px solid ' + border + ';background:' + bg + ';cursor:pointer;font-size:13px;font-weight:600;color:' + color + ';transition:all .15s">' +
+          '<span style="font-weight:800;margin-right:8px">' + String.fromCharCode(65+ci) + '.</span>' + ch +
+          (_fc.quizAns && isCorrect ? ' <span style="float:right;font-weight:900">✓</span>' : '') +
+          (_fc.quizAns && isSelected && !isCorrect ? ' <span style="float:right;font-weight:900">✗</span>' : '') +
+        '</div>';
+      }).join('') +
+    '</div>' +
+    (_fc.quizAns && q.exp ? '<div style="padding:12px 14px;border-radius:10px;background:var(--amb-bg);border:1px solid rgba(245,158,11,.25);font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:14px"><strong style="color:var(--amb)">Explanation:</strong> ' + q.exp + '</div>' : '') +
+    '<div style="display:flex;gap:8px">' +
+      (!_fc.quizAns ? '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="fcSubmitAnswer()" ' + (_fc.quizSel===null?'disabled':'') + '>Submit Answer</button>' :
+       '<button class="btn btn-ind" style="flex:1;justify-content:center" onclick="fcNextQuizQ()">' + (_fc.quizCur===total-1?'See Results →':'Next Question →') + '</button>') +
+    '</div>' +
+  '</div>';
+}
+
+function _buildQuizResults() {
+  const total = _fc.quizQ.length;
+  const pct = Math.round(_fc.quizScore / total * 100);
+  const color = pct >= 75 ? 'var(--grn)' : pct >= 55 ? 'var(--amb)' : 'var(--red)';
+  return '<div class="card card-pad" style="text-align:center">' +
+    '<div style="font-size:48px;font-weight:900;color:' + color + ';letter-spacing:-.04em">' + pct + '%</div>' +
+    '<div style="font-size:16px;font-weight:800;margin-top:4px">' + _fc.quizScore + ' / ' + total + ' correct</div>' +
+    '<div style="font-size:12px;color:var(--mut);margin-top:6px;margin-bottom:20px">' + (pct>=75?'Great work! You\'re exam-ready on this material.':pct>=55?'Good progress. Review the missed questions.':'Keep studying — paste more material and try again.') + '</div>' +
+    '<button class="btn btn-primary btn-sm" onclick="fcRestartQuiz()" style="margin:0 auto">↺ Retake Quiz</button>' +
+  '</div>';
+}
+
+// ── AI GENERATION ENGINE ──
+function fcGenerate(type) {
+  const text = (document.getElementById('fc-input-text')?.value || '').trim();
+  if (!text || text.length < 30) {
+    showToast('Paste at least a sentence of study material first', 'err');
+    return;
+  }
+  const statusEl = document.getElementById('fc-gen-status');
+  if (statusEl) { statusEl.style.display='block'; statusEl.textContent='Generating…'; }
+
+  // Client-side NLP generation
+  setTimeout(function() {
+    if (type === 'flashcard') {
+      _fc.cards = _generateFlashcards(text);
+      _fc.current = 0; _fc.flipped = false; _fc.mode = 'flashcard';
+      showToast(_fc.cards.length + ' flashcards generated! ✓', 'ok');
+    } else if (type === 'quiz') {
+      _fc.quizQ = _generateQuiz(text);
+      _fc.quizCur = 0; _fc.quizSel = null; _fc.quizAns = false; _fc.quizScore = 0; _fc.mode = 'quiz';
+      showToast(_fc.quizQ.length + ' quiz questions generated! ✓', 'ok');
+    } else if (type === 'summary') {
+      _fc.summaryText = _generateSummary(text);
+      showToast('Summary generated! ✓', 'ok');
+    }
+    if (statusEl) statusEl.style.display = 'none';
+    // Re-render the flashcards tab
+    const el = document.getElementById('page-content');
+    if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
   }, 420);
+}
+
+function _generateFlashcards(text) {
+  const cards = [];
+  // Split by common sentence delimiters and numbered lists
+  const sentences = text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n{2,}/).filter(s=>s.trim().length>20);
+
+  sentences.forEach(function(sent) {
+    sent = sent.trim();
+    // Definition pattern: "X is/are Y" or "X — Y"
+    const defMatch = sent.match(/^(.{8,60}?)\s+(?:is|are|refers? to|defined as|means?)\s+(.{10,})/i);
+    if (defMatch) {
+      cards.push({q:'What ' + (defMatch[1].toLowerCase().startsWith('the ')?'is':'is') + ' ' + defMatch[1].replace(/^\d+\.\s*/,'').trim() + '?', a: defMatch[2].replace(/\.$/, '').trim() + '.'});
+      return;
+    }
+    // Numbered list items
+    const listMatch = sent.match(/^(\d+[\.\)]\s*)(.+)/);
+    if (listMatch && sent.length < 200) {
+      cards.push({q:'What is step ' + listMatch[1].replace(/[.\)]/,'').trim() + ' in the process described?', a: listMatch[2].trim()});
+      return;
+    }
+    // "X requires Y" / "X must Y" / "X should Y"
+    const reqMatch = sent.match(/^(.{8,80}?)\s+(?:requires?|must|should|shall)\s+(.{10,})/i);
+    if (reqMatch) {
+      cards.push({q:'What does ' + reqMatch[1].trim() + ' require?', a: reqMatch[2].replace(/\.$/, '').trim() + '.'});
+      return;
+    }
+    // Key terms with colon
+    const colonMatch = sent.match(/^([^:]{5,50}):\s+(.{15,})/);
+    if (colonMatch) {
+      cards.push({q: colonMatch[1].trim() + ':', a: colonMatch[2].trim()});
+      return;
+    }
+    // Generic: turn sentence into fill-in or question
+    if (sent.length > 40 && sent.length < 300) {
+      // Extract subject + predicate for fill-in-blank style
+      const words = sent.split(' ');
+      if (words.length > 8) {
+        const blankIdx = Math.floor(words.length * 0.55);
+        const blank = words[blankIdx];
+        if (blank.length > 3) {
+          const withBlank = words.map(function(w,i){ return i===blankIdx?'______':w; }).join(' ');
+          cards.push({q:'Complete: ' + withBlank, a:'The missing term is: <strong>' + blank + '</strong>. Full: ' + sent});
+        }
+      }
+    }
+  });
+
+  // Deduplicate and limit
+  const unique = [];
+  const seen = new Set();
+  cards.forEach(function(c){ const k=c.q.slice(0,40); if(!seen.has(k)){seen.add(k);unique.push(c);} });
+  return unique.slice(0, 40);
+}
+
+function _generateQuiz(text) {
+  const flashcards = _generateFlashcards(text);
+  const questions = [];
+
+  // Turn each flashcard into an MCQ
+  flashcards.slice(0, 15).forEach(function(fc, idx) {
+    // Strip HTML from answer
+    const correctAnswer = fc.a.replace(/<[^>]+>/g,'').replace('The missing term is: ','').replace(/Full: .*/,'').trim();
+    if (correctAnswer.length < 5) return;
+
+    // Generate distractors from other flashcard answers
+    const otherAnswers = flashcards
+      .filter(function(o,i){ return i !== idx; })
+      .map(function(o){ return o.a.replace(/<[^>]+>/g,'').replace('The missing term is: ','').replace(/Full: .*/,'').trim(); })
+      .filter(function(a){ return a.length > 4 && a.length < 120; });
+
+    // Pick 3 distractors
+    const shuffled = otherAnswers.sort(function(){ return Math.random()-.5; }).slice(0,3);
+    if (shuffled.length < 2) return;
+
+    // Build choices array (correct + distractors, shuffled)
+    const allChoices = [correctAnswer].concat(shuffled).sort(function(){ return Math.random()-.5; });
+    const correctIdx = allChoices.indexOf(correctAnswer);
+
+    questions.push({
+      q: fc.q,
+      choices: allChoices.map(function(c){ return c.slice(0,120); }),
+      correct: correctIdx,
+      exp: 'The correct answer is based on the material you provided. Review the relevant section for more context.'
+    });
+  });
+
+  return questions.slice(0, 12);
+}
+
+function _generateSummary(text) {
+  // Extract key sentences using a simple scoring heuristic
+  const sentences = text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n+/).filter(s=>s.trim().length>25);
+  const keywords = ['must','requires','defined','means','important','critical','note','key','remember','under','rule','standard','regulation','percent','%','hours','section','exam'];
+
+  const scored = sentences.map(function(s) {
+    let score = 0;
+    const lower = s.toLowerCase();
+    keywords.forEach(function(k){ if(lower.includes(k)) score+=1.5; });
+    // Prefer sentences with numbers (stats, rules)
+    if (/\d/.test(s)) score += 1;
+    // Prefer shorter sentences (more concise)
+    if (s.length < 120) score += 0.5;
+    // Penalize very long sentences
+    if (s.length > 300) score -= 2;
+    return {s: s.trim(), score: score};
+  });
+
+  scored.sort(function(a,b){ return b.score - a.score; });
+  const topSentences = scored.slice(0, 8).map(function(x){ return '• ' + x.s; });
+  return 'Key Points:\n\n' + topSentences.join('\n\n');
+}
+
+function fcSetInputMode(mode) {
+  document.getElementById('fc-mode-text').className = mode==='text'?'btn btn-primary btn-sm':'btn btn-ghost btn-sm';
+  document.getElementById('fc-mode-pdf').className = mode==='pdf'?'btn btn-primary btn-sm':'btn btn-ghost btn-sm';
+}
+
+function fcLoadPdf(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  const statusEl = document.getElementById('fc-pdf-status');
+  if (statusEl) { statusEl.style.display='block'; statusEl.textContent='Reading PDF…'; }
+  // Use FileReader to read PDF as text via a simple approach
+  // Note: true PDF text extraction requires pdf.js — we'll use jsPDF's read or show a message
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      // Try to extract text from PDF binary (very basic — works for text PDFs)
+      const binary = new Uint8Array(e.target.result);
+      let text = '';
+      // Extract readable ASCII from PDF binary
+      let chunk = '';
+      for (let i = 0; i < binary.length; i++) {
+        const c = binary[i];
+        if (c >= 32 && c < 127) {
+          chunk += String.fromCharCode(c);
+        } else {
+          if (chunk.length > 4) text += chunk + ' ';
+          chunk = '';
+        }
+      }
+      // Clean up PDF artifacts
+      text = text.replace(/\(([^)]{3,})\)/g,'$1').replace(/\/[A-Za-z]+\s+/g,' ').replace(/\s{3,}/g,' ').trim();
+      if (text.length > 100) {
+        const inputEl = document.getElementById('fc-input-text');
+        if (inputEl) inputEl.value = text.slice(0, 8000);
+        if (statusEl) { statusEl.textContent = '✓ PDF loaded — ' + Math.round(text.length/1000) + 'k chars extracted. Click Generate to process.'; }
+        showToast('PDF loaded successfully ✓', 'ok');
+      } else {
+        if (statusEl) { statusEl.textContent = 'PDF loaded but text is image-based. Please copy-paste the text manually.'; statusEl.style.color='var(--amb)'; }
+        showToast('PDF appears to be image-based — paste text instead', 'info');
+      }
+    } catch(err) {
+      if (statusEl) { statusEl.textContent = 'Could not extract PDF text. Please paste text manually.'; statusEl.style.color='var(--red)'; }
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function fcFlipCard() {
+  _fc.flipped = !_fc.flipped;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcNav(dir) {
+  _fc.current = Math.max(0, Math.min(_fc.cards.length-1, _fc.current + dir));
+  _fc.flipped = false;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcGoto(idx) {
+  _fc.current = idx; _fc.flipped = false;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcShuffle() {
+  for (let i = _fc.cards.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [_fc.cards[i],_fc.cards[j]] = [_fc.cards[j],_fc.cards[i]];
+  }
+  _fc.current = 0; _fc.flipped = false;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+  showToast('Deck shuffled! ✓','ok');
+}
+
+function fcRestart() {
+  _fc.current = 0; _fc.flipped = false;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcSelectAnswer(idx) {
+  if (_fc.quizAns) return;
+  _fc.quizSel = idx;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcSubmitAnswer() {
+  if (_fc.quizSel === null) return;
+  _fc.quizAns = true;
+  const q = _fc.quizQ[_fc.quizCur];
+  if (_fc.quizSel === q.correct) _fc.quizScore++;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcNextQuizQ() {
+  _fc.quizCur++;
+  _fc.quizSel = null;
+  _fc.quizAns = false;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
+}
+
+function fcRestartQuiz() {
+  _fc.quizCur = 0; _fc.quizSel = null; _fc.quizAns = false; _fc.quizScore = 0;
+  const el = document.getElementById('page-content');
+  if (el && currentTab === 'flashcards') el.innerHTML = buildAIFlashcards();
 }
 
 // ═══════════════════════════════════════════════
