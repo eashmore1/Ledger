@@ -77,10 +77,10 @@ a:hover{opacity:.75}
 
 /* ── CARDS ── */
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow)}
-.card-pad{padding:18px 20px}
+.card-pad{padding:20px 22px}
 .card+.card{margin-top:var(--sp-4)}
-.section-title{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-* + .section-title{margin-top:var(--sp-5)}
+.section-title{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+* + .section-title{margin-top:var(--sp-6)}
 
 /* ── BUTTONS ── */
 .btn{padding:8px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-weight:600;font-size:13px;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;letter-spacing:-.01em}
@@ -160,8 +160,8 @@ a:hover{opacity:.75}
 .profile-stat-lbl{font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
 
 /* ── STATS GRID ── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4)}
-.stat-box{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:var(--sp-5) var(--sp-4) var(--sp-4);text-align:left;animation:fadeIn .4s cubic-bezier(.22,.61,.36,1) both}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3);margin-bottom:var(--sp-4)}
+.stat-box{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:var(--sp-5);text-align:left;animation:fadeIn .4s cubic-bezier(.22,.61,.36,1) both}
 .stats-grid .stat-box:nth-child(1){animation-delay:0ms}
 .stats-grid .stat-box:nth-child(2){animation-delay:65ms}
 .stats-grid .stat-box:nth-child(3){animation-delay:130ms}
@@ -228,8 +228,8 @@ a:hover{opacity:.75}
 .exam-pill.active-TCP{border-color:#0d9488;background:#f0fdfa;color:#0d9488}
 
 /* ── DASH PACING CARD ── */
-.pacing-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:var(--sp-4) var(--sp-4);display:flex;align-items:center;gap:var(--sp-4);transition:box-shadow .2s;margin-bottom:var(--sp-3)}
-.pacing-card:hover{box-shadow:var(--shadow-md)}
+.pacing-card{padding:var(--sp-4) 0;display:flex;align-items:center;gap:var(--sp-4);border-bottom:1px solid var(--bdr)}
+.pacing-card:last-of-type{border-bottom:none;padding-bottom:0}
 .pc-bar-wrap{flex:1;min-width:0}
 .pc-name{font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
 .pc-pace{font-size:11px;color:var(--mut);margin-top:6px}
@@ -274,9 +274,9 @@ a:hover{opacity:.75}
 
 /* ── AUTH SCREEN ── */
 .auth-wrap{min-height:100vh;display:flex;background:var(--bg)}
-.auth-left{flex:1;background:linear-gradient(150deg,#07060f,#110f2a,#1e1b4b,#2d2a72,#4338ca);display:flex;flex-direction:column;justify-content:center;padding:64px 56px;position:relative;overflow:hidden}
-.auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(249,115,22,.22),transparent 50%),radial-gradient(ellipse at 85% 10%,rgba(99,102,241,.28),transparent 48%),radial-gradient(ellipse at 50% 50%,rgba(168,85,247,.08),transparent 70%)}
-.auth-left::after{content:'';position:absolute;bottom:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.15),transparent 70%)}
+.auth-left{flex:1;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);display:flex;flex-direction:column;justify-content:center;padding:64px 56px;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 80%,rgba(249,115,22,.5),transparent 45%),radial-gradient(ellipse at 90% 10%,rgba(90,95,207,.2),transparent 40%)}
+.auth-left::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(249,115,22,.4),transparent 60%)}
 .auth-left-inner{position:relative;z-index:1}
 .auth-brand{font-size:40px;font-weight:900;color:#fff;letter-spacing:-1.5px;margin-bottom:6px;line-height:1}
 .auth-brand-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:48px;line-height:1.6}
@@ -536,7 +536,7 @@ a:hover{opacity:.75}
 .nav-pro-chip-free:hover{background:var(--ind-bg)}
 /* Upgrade modal */
 .upgrade-modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:26px;width:100%;max-width:940px;max-height:94vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .25s cubic-bezier(.22,.61,.36,1);position:relative}
-.upgrade-hero{background:linear-gradient(150deg,#07060f,#110f2a,#1e1b4b,#2d2a72,#4338ca);padding:44px 44px 36px;border-radius:26px 26px 0 0;position:relative;overflow:hidden;text-align:center}
+.upgrade-hero{background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);padding:44px 44px 36px;border-radius:26px 26px 0 0;position:relative;overflow:hidden;text-align:center}
 .upgrade-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(249,115,22,.38),transparent 52%),radial-gradient(ellipse at 85% 100%,rgba(99,102,241,.22),transparent 48%)}
 .upgrade-hero-inner{position:relative;z-index:1}
 .billing-toggle{display:inline-flex;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:30px;padding:4px;margin-top:20px;gap:0}
@@ -1531,7 +1531,7 @@ function showPostOnboardingOffer(){
   el.innerHTML=
   '<div style="background:var(--surf);border-radius:24px;width:100%;max-width:560px;overflow:hidden;animation:modalIn .3s ease;box-shadow:0 40px 100px rgba(0,0,0,.4)">'+
   // Hero
-  '<div style="background:linear-gradient(145deg,#0a0820,#1e1b4b,#4338ca);padding:36px 36px 28px;text-align:center;position:relative;overflow:hidden">'+
+  '<div style="background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:36px 36px 28px;text-align:center;position:relative;overflow:hidden">'+
   '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(249,115,22,.4),transparent 60%)"></div>'+
   '<div style="position:relative;z-index:1">'+
   '<div style="font-size:46px;margin-bottom:12px">🎓</div>'+
@@ -2270,7 +2270,7 @@ function buildFeed(){
 
   const leftSidebar=`
 <div class="sidebar-left">
-  <div class="card card-pad" style="margin-bottom:14px">
+  <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <div class="avatar av-md" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;overflow:hidden;padding:0;cursor:pointer" onclick="switchTab('profile')" title="View profile">
         ${S.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:`<span>${S.name.slice(0,2).toUpperCase()}</span>`}
@@ -2301,12 +2301,12 @@ function buildFeed(){
 
   const rightSidebar=`
 <div class="sidebar-right">
-  <div class="card card-pad" style="margin-bottom:14px">
+  <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div class="section-title">Today's Tip</div>
     <p style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:8px">"${tip.text}"</p>
     <div style="font-size:10px;color:var(--mut);font-weight:600">${tip.src}</div>
   </div>
-  <div class="card card-pad" style="margin-bottom:14px">
+  <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div class="section-title">This Week</div>
     ${buildMiniLeaderboard()}
   </div>
@@ -2360,7 +2360,7 @@ function buildActivityCard(a){
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const passedBadge=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId)?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${MOCK_FRIENDS.find(f=>f.id===a.userId).passedSections.length} Passed</span>`:'':'';
 
-  return`<div class="activity-card" style="margin-bottom:14px" data-aid="${a.id}" data-uid="${a.userId}">
+  return`<div class="activity-card" style="margin-bottom:16px" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header">
     <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${a.userInitials}</div>
     <div style="flex:1;min-width:0">
@@ -2479,12 +2479,12 @@ function buildDashboard(){
 
   return`
 <div style="max-width:880px;margin:0 auto">
-  <div style="margin-bottom:24px">
+  <div style="margin-bottom:36px">
     <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">Hey, ${S.name}.</h1>
     <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
   </div>
 
-  <div class="stats-grid" style="margin-bottom:20px">
+  <div class="stats-grid" style="margin-bottom:var(--sp-5)">
     ${[
       {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)'},
       {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)'},
@@ -2493,7 +2493,7 @@ function buildDashboard(){
     ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:16px">
+  <div class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
         <div class="section-title" style="margin-bottom:2px">Weekly Pacing</div>
@@ -2506,22 +2506,22 @@ function buildDashboard(){
     <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> = today</div>
   </div>
 
-  <div class="card card-pad" style="margin-bottom:16px">
+  <div class="card card-pad" style="margin-bottom:36px">
     <div class="section-title">Exam Pacing</div>
     ${pacingCards}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:16px">
+  <div class="card card-pad" style="margin-bottom:20px">
     <div class="section-title">Study Calendar</div>
     ${calHTML}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:16px">
+  <div class="card card-pad" style="margin-bottom:20px">
     <div class="section-title">Study Heat Map — Last 16 Weeks</div>
     ${buildHeatMap()}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:16px">
+  <div class="card card-pad" style="margin-bottom:40px">
     <div class="section-title">Score Tracker</div>
     ${buildScoreTracker()}
   </div>
@@ -2632,7 +2632,7 @@ function buildProfile(){
   return`
 <div style="max-width:700px;margin:0 auto">
   <!-- HERO -->
-  <div class="profile-hero" style="margin-bottom:16px">
+  <div class="profile-hero" style="margin-bottom:24px">
     <div class="profile-hero-inner">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:16px">
@@ -2680,7 +2680,7 @@ function buildProfile(){
   </div>
 
   <!-- PROGRESS + WEEK -->
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px">
     <div class="card card-pad">
       <div class="section-title">Exam Progress</div>
       ${sectionProgress||'<div style="color:var(--mut);font-size:12px">No sections added yet.</div>'}
@@ -2842,7 +2842,7 @@ function buildExplore(){
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
 
   return`
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:960px;margin:0 auto">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto">
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
       <div class="section-title">Weekly Leaderboard</div>
