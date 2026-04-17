@@ -704,7 +704,7 @@ a:hover{opacity:.75}
 <div class="modal-overlay" id="post-modal" onclick="if(event.target===this)closePostModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-hdr">
-      <div class="modal-title">📝 Log Study Session</div>
+      <div class="modal-title">Log Study Session</div>
       <button class="modal-close" onclick="closePostModal()">×</button>
     </div>
     <div class="modal-body" id="post-modal-body"></div>
@@ -714,7 +714,7 @@ a:hover{opacity:.75}
 <div class="modal-overlay" id="comments-modal" onclick="if(event.target===this)closeCommentsModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-hdr">
-      <div class="modal-title">💬 Comments</div>
+      <div class="modal-title">Comments</div>
       <button class="modal-close" onclick="closeCommentsModal()">×</button>
     </div>
     <div class="modal-body" id="comments-modal-body"></div>
@@ -1314,14 +1314,14 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Exclusive Pro Badges'},
     {on:false,text:'1-on-1 Coaching (monthly)'},
     {on:false,text:'AI Mnemonic Generator'},
-    {on:false,text:'Score Predictor ML'},
+    {on:false,text:'Score Predictor'},
     {on:false,text:'Accountability Partner Sync'},
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
     {on:true,text:'1-on-1 CPA Mentor (45 min/mo) 👨‍🏫'},
     {on:true,text:'AI Mnemonic Generator 🧠'},
-    {on:true,text:'Score Predictor ML 🔮'},
+    {on:true,text:'Score Predictor 🔮'},
     {on:true,text:'Accountability Partner Sync 🤝'},
     {on:true,text:'Unlimited Streak Shields'},
     {on:true,text:'Priority Support (response <2h)'},
@@ -1824,8 +1824,8 @@ async function handleEmailAuth(){
   const displayName=authMode==='signup'?name:(email.split('@')[0]);
   const accounts=getGoogleAccounts();
   let existing=accounts.find(a=>a.email===email);
-  if(authMode==='signin'&&!existing){showToast('No account found. Create one first.','err');return;}
-  if(authMode==='signup'&&existing){showToast('Account already exists. Sign in instead.','err');return;}
+  if(authMode==='signin'&&!existing){showToast('No account with that email — sign up instead','err');return;}
+  if(authMode==='signup'&&existing){showToast('An account with that email already exists — sign in instead','err');return;}
   if(authMode==='signup'){
     accounts.push({displayName,email,googleId:'e_'+Date.now()});
     saveGoogleAccounts(accounts);
@@ -1944,7 +1944,7 @@ function renderOnboarding(){
 function renderObStep0(){
   return`
 <div class="ob-card">
-  <h3>👤 Tell us about yourself</h3>
+  <h3>Tell us about yourself</h3>
   <div class="form-row">
     <div class="form-grp">
       <label>Your Name</label>
@@ -2002,7 +2002,7 @@ function renderObStep1(){
   const colors={BAR:'#d97706',ISC:'#9333ea',TCP:'#0d9488'};
   return`
 <div class="ob-card">
-  <h3>🎯 Choose your discipline section <span style="font-size:11px;color:var(--mut);font-weight:400">(choose 1 — required)</span></h3>
+  <h3>Choose your discipline section <span style="font-size:11px;color:var(--mut);font-weight:400">(choose 1 — required)</span></h3>
   <div class="disc-opts">
     ${['BAR','ISC','TCP'].map(d=>`
     <div class="disc-opt${obData.disc===d?' sel':''}" data-disc="${d}">
@@ -2023,7 +2023,7 @@ function renderObStep2(){
   const sections=['FAR','AUD','REG',obData.disc];
   return`
 <div class="ob-card">
-  <h3>🗓 Set your target exam dates</h3>
+  <h3>Set your target exam dates</h3>
   <div style="font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.6">Set realistic target dates for each section. We'll calculate your pacing — how many hours/week you need to be ready on time.</div>
   ${sections.map(s=>`
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;padding:11px 13px;background:var(--surf2);border-radius:9px">
@@ -2440,12 +2440,12 @@ function buildDashboard(){
       const weeksLeft=Math.max(0.5,daysLeft/7);
       const needed=Math.max(0,ex.studyHours-logged);
       const hrsPerWeek=(needed/weeksLeft).toFixed(1);
-      if(daysLeft<0){paceMsg='⚠️ Exam date passed';paceClass='behind';}
-      else if(parseFloat(hrsPerWeek)>(S.hoursPerWeek||15)*1.2){paceMsg=`⚡ ${hrsPerWeek} hrs/wk needed — push harder`;paceClass='behind';}
-      else if(parseFloat(hrsPerWeek)<(S.hoursPerWeek||15)*0.7){paceMsg=`✅ ${hrsPerWeek} hrs/wk — on track`;paceClass='on-pace';}
-      else{paceMsg=`📈 ${hrsPerWeek} hrs/wk — steady pace`;paceClass='ahead';}
-    } else if(passed){paceMsg='🎯 Passed!';}
-    else{paceMsg='Set a target date in Exam Plan';}
+      if(daysLeft<0){paceMsg='Exam date passed';paceClass='behind';}
+      else if(parseFloat(hrsPerWeek)>(S.hoursPerWeek||15)*1.2){paceMsg=`${hrsPerWeek} hrs/wk needed — you're behind`;paceClass='behind';}
+      else if(parseFloat(hrsPerWeek)<(S.hoursPerWeek||15)*0.7){paceMsg=`${hrsPerWeek} hrs/wk — on track`;paceClass='on-pace';}
+      else{paceMsg=`${hrsPerWeek} hrs/wk — steady pace`;paceClass='ahead';}
+    } else if(passed){paceMsg='Passed!';}
+    else{paceMsg='Add a target date to see your pace';}
 
     return`<div class="pacing-card">
       <div style="width:44px;height:44px;flex-shrink:0">
@@ -2503,7 +2503,7 @@ function buildDashboard(){
     </div>
     <div class="prog-bar" style="height:10px;margin-bottom:14px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ind)'}"></div></div>
     <div class="week-chart">${chartBars}</div>
-    <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> Today</div>
+    <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> = today</div>
   </div>
 
   <div class="card card-pad" style="margin-bottom:16px">
@@ -2869,7 +2869,7 @@ function buildExplore(){
     </div>
     <div style="margin-bottom:16px">${buildQuestionBank()}</div>
     <div class="card card-pad">
-      <div class="section-title">👥 Find CPA Candidates</div>
+      <div class="section-title">Find CPA Candidates</div>
       ${friendCards}
     </div>
   </div>
@@ -2906,7 +2906,7 @@ function openPostModal(prefSection=''){
   <input id="pm-material" type="text" placeholder="e.g. Governmental Accounting — Fund Structure">
 </div>
 <div class="form-grp">
-  <label>Caption / Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
+  <label>Session Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
   <textarea id="pm-caption" placeholder="How did it go? What clicked? What's still tricky?"></textarea>
 </div>
 <div class="form-row">
@@ -2940,7 +2940,7 @@ function submitPost(){
   const material=document.getElementById('pm-material')?.value?.trim()||'';
   const caption=document.getElementById('pm-caption')?.value?.trim()||'';
   if(!section){showToast('Select a section','err');return;}
-  if(hours<=0){showToast('Enter valid hours','err');return;}
+  if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
   const act={id:'u'+Date.now(),date:date+'T'+new Date().toTimeString().slice(0,8),section,hours,material,caption,difficulty:postDiff,feeling:postFeeling,kudos:[],comments:[]};
   S.activities.push(act);
   saveState();
@@ -2961,7 +2961,7 @@ function giveProps(actId,userId){
   const friend=MOCK_FRIENDS.find(f=>f.id===userId);
   let act=null;
   if(friend)act=friend.activities.find(a=>a.id===actId);
-  if(!act){showToast("Activity not found",'err');return;}
+  if(!act){showToast("Something went wrong — try reloading",'err');return;}
   const hasProps=act.kudos.includes('you');
   if(hasProps){act.kudos=act.kudos.filter(k=>k!=='you');}
   else{act.kudos.push('you');S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();}
@@ -3121,7 +3121,7 @@ function renderSessCard(){
     box.innerHTML=`
     <div class="sess-color-bar" style="background:linear-gradient(90deg,${col},${col}88)"></div>
     <div class="sess-hdr">
-      <div class="sess-status sess-st-setup">📚 New Session</div>
+      <div class="sess-status sess-st-setup">New Session</div>
       <button class="sess-close-btn" onclick="closeSessOverlay()">×</button>
     </div>
     <div class="sess-body">
@@ -3213,7 +3213,7 @@ function renderSessCard(){
       </div>
       <div class="sess-divider"></div>
       <div class="sess-fgrp">
-        <label>📖 Concepts Covered</label>
+        <label>Concepts Covered</label>
         <div class="concept-inp-wrap">
           <input class="concept-inp" id="concept-inp" placeholder="Type concept, press Enter…" onkeydown="if(event.key==='Enter'){event.preventDefault();addConceptTag();}">
           <button class="concept-add-btn" onclick="addConceptTag()">Add</button>
@@ -3221,7 +3221,7 @@ function renderSessCard(){
         <div class="concept-tags-wrap" id="concept-tags-wrap">${conceptTagsHTML||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>'}</div>
       </div>
       <div class="sess-fgrp">
-        <label>💬 Notes / Caption</label>
+        <label>Session Notes</label>
         <textarea class="sess-notes-ta" id="sess-notes-ta" placeholder="How did it go? What clicked? What's still tricky?">${TS.notes}</textarea>
       </div>
       <div class="form-row" style="margin-bottom:14px">
@@ -3366,7 +3366,7 @@ function saveSession(){
   const date=document.getElementById('recap-date')?.value||TS.date||todayStr();
   const hours=parseFloat((TS.elapsed/3600).toFixed(2));
   if(!section){showToast('No section selected','err');return;}
-  if(TS.elapsed<30){showToast('Session too short (< 30s)','err');return;}
+  if(TS.elapsed<30){showToast('Sessions must be at least 30 seconds to save','err');return;}
   const act={
     id:'u'+Date.now(),
     date:date+'T'+new Date().toTimeString().slice(0,8),
@@ -3675,7 +3675,7 @@ function openClubsModal(){
     el=document.createElement('div');
     el.id='clubs-modal';
     el.className='modal-overlay';
-    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:480px"><div class="modal-hdr"><div class="modal-title">🏛️ My Study Clubs</div><button class="modal-close" onclick="closeClubsModal()">×</button></div><div class="modal-body" id="clubs-modal-body"></div></div>`;
+    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:480px"><div class="modal-hdr"><div class="modal-title">My Study Clubs</div><button class="modal-close" onclick="closeClubsModal()">×</button></div><div class="modal-body" id="clubs-modal-body"></div></div>`;
     el.addEventListener('click',e=>{if(e.target===el)closeClubsModal();});
     document.body.appendChild(el);
   }
@@ -3728,7 +3728,7 @@ function createClubModal(){
     el=document.createElement('div');
     el.id='create-club-modal';
     el.className='modal-overlay';
-    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:460px"><div class="modal-hdr"><div class="modal-title">✨ Create Study Club</div><button class="modal-close" onclick="closeCreateClubModal()">×</button></div><div class="modal-body" id="create-club-body"></div></div>`;
+    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:460px"><div class="modal-hdr"><div class="modal-title">Create Study Club</div><button class="modal-close" onclick="closeCreateClubModal()">×</button></div><div class="modal-body" id="create-club-body"></div></div>`;
     el.addEventListener('click',e=>{if(e.target===el)closeCreateClubModal();});
     document.body.appendChild(el);
   }
@@ -4196,7 +4196,7 @@ ${rows}`;
 }
 
 function openScoreModal(section){
-  document.getElementById('post-modal').querySelector('.modal-title').textContent=`📊 Log Practice Score — ${section}`;
+  document.getElementById('post-modal').querySelector('.modal-title').textContent=`Log Practice Score — ${section}`;
   document.getElementById('post-modal-body').innerHTML=`
 <div style="margin-bottom:14px;padding:11px 13px;background:var(--surf2);border-radius:9px;font-size:12px;color:var(--sub)">
   Log your Becker, Gleim, Wiley, or UWorld practice exam score for <strong>${section}</strong>.<br>
@@ -4325,7 +4325,7 @@ function openEditProfile(){
     el.className='modal-overlay';
     el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:480px;max-height:90vh;display:flex;flex-direction:column">
       <div class="modal-hdr" style="flex-shrink:0">
-        <div class="modal-title">✏️ Edit Profile</div>
+        <div class="modal-title">Edit Profile</div>
         <button class="modal-close" onclick="closeEditProfile()">×</button>
       </div>
       <div class="modal-body" id="edit-profile-body" style="overflow-y:auto;flex:1"></div>
