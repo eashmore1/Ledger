@@ -2280,14 +2280,7 @@ function buildFeed(){
         <div style="font-size:11px;color:var(--mut)">${S.state} · ${S.disc} Discipline</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-      ${[
-        {v:Math.round(getTotalHours()),l:'Total Hrs',c:'var(--ora)'},
-        {v:getStreak(),l:'Day Streak',c:'var(--ind)'},
-        {v:(S.sectionPassed||[]).length+'/4',l:'Passed',c:'var(--grn)'},
-      ].map(s=>`<div style="background:var(--surf2);border-radius:9px;padding:12px 6px"><div style="font-size:26px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;font-weight:600">${s.l}</div></div>`).join('')}
-    </div>
-    <button class="btn btn-primary" style="width:100%;margin-top:12px;justify-content:center" onclick="openSessionModal()">▶ Start Session</button>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;justify-content:center" onclick="openSessionModal()">▶ Start Session</button>
   </div>
   <div class="card card-pad">
     <div class="section-title">My Sections</div>
@@ -2309,12 +2302,12 @@ function buildFeed(){
   const rightSidebar=`
 <div class="sidebar-right">
   <div class="card card-pad" style="margin-bottom:14px">
-    <div class="section-title">💡 Today's Tip</div>
+    <div class="section-title">Today's Tip</div>
     <p style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:8px">"${tip.text}"</p>
-    <div style="font-size:10px;color:var(--mut);font-weight:600">📚 ${tip.src}</div>
+    <div style="font-size:10px;color:var(--mut);font-weight:600">${tip.src}</div>
   </div>
   <div class="card card-pad" style="margin-bottom:14px">
-    <div class="section-title">🔥 This Week</div>
+    <div class="section-title">This Week</div>
     ${buildMiniLeaderboard()}
   </div>
   <div class="card card-pad">
@@ -2726,7 +2719,7 @@ function buildProfile(){
   <!-- MY CLUBS -->
   <div class="card card-pad" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="section-title" style="margin-bottom:0">🏛️ My Study Clubs (${(S.clubs||[]).filter(c=>!c.isDM).length})</div>
+      <div class="section-title" style="margin-bottom:0">My Study Clubs (${(S.clubs||[]).filter(c=>!c.isDM).length})</div>
       <button class="btn btn-ghost btn-xs" onclick="createClubModal()">+ Create Club</button>
     </div>
     ${(()=>{
@@ -2752,7 +2745,7 @@ function buildProfile(){
   ${isPro()?
     '<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">📝 Progress Report</div><span class="pro-plan-badge badge-pro">Pro</span></div><div style="background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📊</span><div style="flex:1"><div style="font-size:13px;font-weight:700">Week of '+new Date(Date.now()-7*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">'+Math.round(getWeekHours())+'h studied · '+getStreak()+' day streak · '+(S.activities||[]).filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).length+' sessions</div></div><button class="btn btn-ind btn-sm" onclick="openProgressReport()">📊 View Report</button></div></div>'
     :
-    '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">📝 Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
+    '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
   }
 
   <!-- SOCIAL CONNECT -->
@@ -2852,13 +2845,13 @@ function buildExplore(){
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:960px;margin:0 auto">
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
-      <div class="section-title">📈 Weekly Leaderboard</div>
+      <div class="section-title">Weekly Leaderboard</div>
       <div style="font-size:11px;color:var(--mut);margin-bottom:10px">Hours logged in the last 7 days</div>
       ${lbRows}
     </div>
     <div class="card card-pad">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">🏛️ Study Clubs</div>
+        <div class="section-title" style="margin-bottom:0">Study Clubs</div>
         <button class="btn btn-ind btn-xs" onclick="${isPro()?'createClubModal()':'openUpgradeModal(\'Unlimited Study Clubs\')'}">+ Create</button>
       </div>
       ${!isPro()&&myAllClubs.length>=1?'<div class="free-limit-banner" onclick="openUpgradeModal(\'Unlimited Study Clubs\')"><span style="font-size:20px">🔒</span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--ora)">Free plan: 1 club limit</div><div style="font-size:11px;color:var(--sub)">Upgrade to Pro for unlimited clubs + priority channels</div></div><span style="font-size:11px;font-weight:700;color:var(--ora)">Upgrade →</span></div>':''}
@@ -2869,7 +2862,7 @@ function buildExplore(){
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">⚡ Challenges</div>
+        <div class="section-title" style="margin-bottom:0">Challenges</div>
         <span style="font-size:10px;color:var(--mut)">${(S.challenges||[]).length} joined · ${(S.challengeCompleted||[]).length} done</span>
       </div>
       <div style="max-height:520px;overflow-y:auto;padding-right:2px">${challengeCards}</div>
@@ -5818,7 +5811,7 @@ function renderProgressReport() {
       '</div>' +
 
       '<div class="card card-pad">' +
-        '<div class="section-title">💡 Study Insights</div>' +
+        '<div class="section-title">Study Insights</div>' +
         insights.map(function(ins){ return '<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">' +
           '<span style="color:var(--ora);font-size:16px;flex-shrink:0">→</span>' +
           '<p style="font-size:13px;color:var(--sub);line-height:1.65;margin:0">' + ins + '</p>' +
@@ -6014,7 +6007,7 @@ function sendCoachMessage() {
 function buildAdvancedAnalytics() {
   if (!isPro()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
-      '<div class="section-title">📊 Advanced Analytics</div>' +
+      '<div class="section-title">Analytics</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;opacity:.3;pointer-events:none;user-select:none">' +
         '<div class="stat-box"><div class="stat-val" style="color:var(--ind)">—</div><div class="stat-lbl">Best Study Day</div></div>' +
         '<div class="stat-box"><div class="stat-val" style="color:var(--grn)">—</div><div class="stat-lbl">Avg Session</div></div>' +
@@ -6073,7 +6066,7 @@ function buildAdvancedAnalytics() {
   }).join('');
 
   return '<div class="card card-pad" style="margin-bottom:16px">' +
-    '<div class="section-title">📊 Advanced Analytics</div>' +
+    '<div class="section-title">Analytics</div>' +
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">' +
       '<div class="stat-box" style="border-top:3px solid var(--ind)"><div class="stat-val" style="color:var(--ind)">' + bestDay + '</div><div class="stat-lbl">Best Study Day</div></div>' +
       '<div class="stat-box" style="border-top:3px solid var(--grn)"><div class="stat-val" style="color:var(--grn)">' + avgSession + 'h</div><div class="stat-lbl">Avg Session</div></div>' +
@@ -6217,7 +6210,7 @@ function buildStudySchedule() {
     '<div class="card card-pad">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
         '<div>' +
-          '<div class="section-title" style="margin-bottom:2px">📅 Smart Study Schedule</div>' +
+          '<div class="section-title" style="margin-bottom:2px">Study Schedule</div>' +
           '<div style="font-size:11px;color:var(--mut)">' + totalPlanned.toFixed(1) + 'h planned this week</div>' +
         '</div>' +
         (pro
