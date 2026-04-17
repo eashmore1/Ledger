@@ -381,14 +381,6 @@ a:hover{opacity:.75}
   .auth-left{display:none}
   .auth-right{width:100%;padding:32px 24px;min-height:100vh}
 }
-@media(max-width:640px){
-  .page{padding:var(--sp-4) var(--sp-3) 80px}
-  .nav-tabs{gap:0}
-  .nav-tab{padding:6px 10px;font-size:12px}
-  .form-row{grid-template-columns:1fr}
-  .disc-opts{grid-template-columns:1fr 1fr 1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
-}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .2s ease}
 @keyframes props-bounce{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
@@ -641,16 +633,37 @@ a:hover{opacity:.75}
   .auth-right{width:100%;padding:var(--sp-6) var(--sp-5);min-height:100vh}
 }
 @media(max-width:640px){
-  .page{padding:var(--sp-4) var(--sp-3) 90px}
-  .nav-tabs{gap:0}
-  .nav-tab{padding:6px 10px;font-size:12px}
+  .page{padding:var(--sp-4) var(--sp-3) calc(88px + env(safe-area-inset-bottom,0px))}
+  .nav-tabs{display:none}
+  .topnav-inner{height:56px;padding:0 var(--sp-3)}
+  #nav-log-btn,.nav-btn-msg,.nav-btn-set{display:none!important}
   .form-row{grid-template-columns:1fr}
   .disc-opts{grid-template-columns:1fr 1fr 1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
+  .toast-wrap{bottom:calc(72px + env(safe-area-inset-bottom,0px));right:var(--sp-3);left:var(--sp-3)}
+  .toast{max-width:100%}
+  .modal-overlay.open{align-items:flex-end;padding:0}
+  .modal-box{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:92vh}
+  .cal-day{min-height:58px;padding:4px}
   .testimonials-grid{grid-template-columns:1fr;padding:0 var(--sp-4) var(--sp-4)}
   .plan-cards-row{padding:var(--sp-4) var(--sp-4) var(--sp-3)}
   .cram-section,.student-section{margin:0 var(--sp-4) var(--sp-3)}
   .auth-right{padding:var(--sp-5) var(--sp-4)}
+}
+/* ── MOBILE BOTTOM NAV ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);z-index:200;padding:5px 0;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))}
+.mob-nav-inner{display:flex;justify-content:space-around;align-items:stretch}
+.mob-nav-btn{background:none;border:none;cursor:pointer;padding:5px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--mut);font-size:10px;font-weight:700;letter-spacing:.03em;min-width:54px;border-radius:var(--r-sm);transition:color var(--transition);-webkit-tap-highlight-color:transparent}
+.mob-nav-btn.active{color:var(--ora)}
+.mob-nav-btn:active{opacity:.6}
+.mob-nav-icon{font-size:17px;line-height:1.1}
+/* ── SESSION FAB ── */
+.session-fab{display:none;position:fixed;z-index:150;right:var(--sp-4);bottom:calc(80px + env(safe-area-inset-bottom,0px));width:50px;height:50px;border-radius:50%;background:var(--ora);color:#fff;border:none;cursor:pointer;font-size:16px;font-weight:800;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(249,115,22,.45),0 1px 4px rgba(0,0,0,.15);transition:transform var(--transition),box-shadow var(--transition);-webkit-tap-highlight-color:transparent}
+.session-fab:hover{transform:scale(1.08);box-shadow:0 6px 22px rgba(249,115,22,.55)}
+.session-fab:active{transform:scale(.93)}
+@media(max-width:640px){
+  .mob-nav{display:block}
+  .session-fab{display:flex}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .22s cubic-bezier(.22,.61,.36,1) both}
@@ -2155,8 +2168,8 @@ function renderApp(){
         <button class="post-btn" id="nav-log-btn" onclick="openSessionModal()">▶ Start Session</button>
         <button class="nav-pro-chip ${navProClass()}" onclick="openUpgradeModal(null)">${navProLabel()}</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" style="font-size:15px;padding:7px 9px;border-radius:9px" title="Toggle theme">${isDark?'☀️':'🌙'}</button>
-        <button onclick="openMessagesModal()" title="Messages" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
-        <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
+        <button onclick="openMessagesModal()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
+        <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
         <button onclick="openEditProfile()" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
       </div>
     </div>
@@ -2174,8 +2187,7 @@ function switchTab(tab){
   });
   // mobile nav
   document.querySelectorAll('[data-mnav]').forEach(b=>{
-    const active=b.dataset.mnav===tab;
-    b.style.color=active?'var(--ora)':'var(--mut)';
+    b.classList.toggle('active',b.dataset.mnav===tab);
   });
   const page=document.getElementById('page-content');
   if(page){page.classList.remove('fade-in');void page.offsetWidth;page.classList.add('fade-in');}
@@ -4983,19 +4995,27 @@ function confirmReset(){
 // ═══════════════════════════════════════════════
 function injectMobileNav(){
   if(document.getElementById('mobile-nav'))return;
-  const nav=document.createElement('div');
+  const tabs=[
+    {id:'feed',icon:'◈',label:'Feed'},
+    {id:'dashboard',icon:'▦',label:'Dash'},
+    {id:'profile',icon:'◉',label:'You'},
+    {id:'explore',icon:'◎',label:'Explore'},
+    {id:'tips',icon:'◆',label:'Tips'}
+  ];
+  const nav=document.createElement('nav');
   nav.id='mobile-nav';
-  nav.style.cssText='display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);z-index:200;padding:6px 0 env(safe-area-inset-bottom,6px)';
-  nav.innerHTML=`<div style="display:flex;justify-content:space-around">
-    ${[{id:'feed',icon:'🏠',label:'Feed'},{id:'dashboard',icon:'📊',label:'Dash'},{id:'profile',icon:'👤',label:'Profile'},{id:'explore',icon:'🔍',label:'Explore'},{id:'tips',icon:'💡',label:'Tips'}].map(t=>`
-    <button onclick="switchTab('${t.id}')" data-mnav="${t.id}" style="background:none;border:none;cursor:pointer;padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--mut);font-size:11px;font-weight:600;border-radius:8px">
-      <span style="font-size:20px">${t.icon}</span>${t.label}
-    </button>`).join('')}
-  </div>`;
+  nav.className='mob-nav';
+  nav.innerHTML=`<div class="mob-nav-inner">${tabs.map(t=>`<button class="mob-nav-btn${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')" data-mnav="${t.id}"><span class="mob-nav-icon">${t.icon}</span>${t.label}</button>`).join('')}</div>`;
   document.body.appendChild(nav);
-  const style=document.createElement('style');
-  style.textContent='@media(max-width:640px){#mobile-nav{display:block!important}.page{padding-bottom:100px!important}}';
-  document.head.appendChild(style);
+  if(!document.getElementById('session-fab')){
+    const fab=document.createElement('button');
+    fab.id='session-fab';
+    fab.className='session-fab';
+    fab.title='Start Session';
+    fab.innerHTML='▶';
+    fab.addEventListener('click',openSessionModal);
+    document.body.appendChild(fab);
+  }
 }
 injectMobileNav();
 
