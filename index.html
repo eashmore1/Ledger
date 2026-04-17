@@ -124,7 +124,7 @@ a:hover{opacity:.75}
 .ac-body{padding:var(--sp-3) var(--sp-4) 0}
 .ac-section-row{display:flex;align-items:center;gap:10px;margin-bottom:var(--sp-2)}
 .ac-section-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
-.ac-hours{font-size:28px;font-weight:900;color:var(--txt);line-height:1}
+.ac-hours{font-size:40px;font-weight:900;color:var(--txt);line-height:1;letter-spacing:-.04em}
 .ac-hours-lbl{font-size:10px;color:var(--mut);margin-top:2px}
 .ac-caption{font-size:13px;color:var(--sub);margin:var(--sp-2) 0 var(--sp-3);line-height:1.65}
 .ac-stats-row{display:flex;gap:var(--sp-4);padding:var(--sp-3) 0;border-top:1px solid var(--bdr)}
@@ -145,24 +145,28 @@ a:hover{opacity:.75}
 .feeling-chip{font-size:13px}
 
 /* ── PROGRESS BAR ── */
-.prog-bar{height:6px;background:var(--surf2);border-radius:6px;overflow:hidden;border:1px solid var(--bdr)}
-.prog-fill{height:100%;border-radius:6px;transition:width .4s ease}
+.prog-bar{height:9px;background:var(--surf2);border-radius:9px;overflow:hidden}
+.prog-fill{height:100%;border-radius:9px;transition:width .55s cubic-bezier(.4,0,.2,1)}
 
 /* ── PROFILE HERO ── */
-.profile-hero{background:linear-gradient(135deg,#1e1b4b,#312e81,#4338ca);border-radius:var(--r);padding:var(--sp-6);color:#fff;position:relative;overflow:hidden;margin-bottom:var(--sp-5)}
-.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(249,115,22,.3),transparent 60%)}
+.profile-hero{background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:var(--r);padding:var(--sp-6);color:#fff;position:relative;overflow:hidden;margin-bottom:var(--sp-5)}
+.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(249,115,22,.65),transparent 48%),radial-gradient(ellipse at 95% 5%,rgba(90,95,207,.22),transparent 40%)}
 .profile-hero-inner{position:relative;z-index:1}
-.profile-name{font-size:26px;font-weight:900;margin:var(--sp-3) 0 4px;letter-spacing:-.03em}
-.profile-state{font-size:13px;opacity:.8;margin-bottom:var(--sp-4)}
+.profile-name{font-size:34px;font-weight:900;margin:var(--sp-3) 0 4px;letter-spacing:-.05em}
+.profile-state{font-size:13px;opacity:.75;margin-bottom:var(--sp-4)}
 .profile-stats{display:flex;gap:var(--sp-6);flex-wrap:wrap}
-.profile-stat-val{font-size:24px;font-weight:800;letter-spacing:-.02em}
-.profile-stat-lbl{font-size:10px;opacity:.65;text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.profile-stat-val{font-size:38px;font-weight:900;letter-spacing:-.05em;line-height:1}
+.profile-stat-lbl{font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
 
 /* ── STATS GRID ── */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-4)}
-.stat-box{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:var(--sp-4) var(--sp-4) var(--sp-3);text-align:left}
-.stat-val{font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em}
-.stat-lbl{font-size:10px;color:var(--mut);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.stat-box{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:var(--sp-5) var(--sp-4) var(--sp-4);text-align:left;animation:fadeIn .4s cubic-bezier(.22,.61,.36,1) both}
+.stats-grid .stat-box:nth-child(1){animation-delay:0ms}
+.stats-grid .stat-box:nth-child(2){animation-delay:65ms}
+.stats-grid .stat-box:nth-child(3){animation-delay:130ms}
+.stats-grid .stat-box:nth-child(4){animation-delay:195ms}
+.stat-val{font-size:44px;font-weight:900;line-height:1;letter-spacing:-.05em}
+.stat-lbl{font-size:11px;color:var(--mut);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 
 /* ── ACHIEVEMENTS ── */
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
@@ -177,10 +181,10 @@ a:hover{opacity:.75}
 /* ── LEADERBOARD ── */
 .lb-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--bdr)}
 .lb-row:last-child{border-bottom:none}
-.lb-rank{font-size:13px;font-weight:800;color:var(--mut);width:24px;text-align:center;flex-shrink:0}
-.lb-rank.gold{color:#f59e0b;font-size:16px}
-.lb-rank.silver{color:#94a3b8;font-size:15px}
-.lb-rank.bronze{color:#d97706;font-size:14px}
+.lb-rank{font-size:16px;font-weight:900;color:var(--mut);width:28px;text-align:center;flex-shrink:0;letter-spacing:-.02em}
+.lb-rank.gold{color:#f59e0b;font-size:20px}
+.lb-rank.silver{color:#94a3b8;font-size:18px}
+.lb-rank.bronze{color:#d97706;font-size:17px}
 .lb-name{flex:1;font-size:13px;font-weight:600}
 .lb-hrs{font-size:13px;font-weight:800;color:var(--ora)}
 .lb-you{background:var(--ora-bg);border-radius:8px;padding:var(--sp-3);margin:-2px}
@@ -233,7 +237,7 @@ a:hover{opacity:.75}
 .pc-pace.ahead{color:var(--ind)}
 
 /* ── WEEKLY CHART ── */
-.week-chart{display:flex;align-items:flex-end;gap:5px;height:68px;margin:var(--sp-3) 0 var(--sp-2)}
+.week-chart{display:flex;align-items:flex-end;gap:5px;height:104px;margin:var(--sp-3) 0 var(--sp-2)}
 .week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
 .week-bar{width:100%;background:var(--ora);border-radius:3px 3px 0 0;transition:height .3s ease;min-height:2px}
 .week-bar.today-bar{background:var(--ind)}
@@ -413,8 +417,8 @@ a:hover{opacity:.75}
 .fol-user-sub{font-size:11px;color:var(--mut);margin-top:1px}
 
 /* ── USER PROFILE MODAL ── */
-.uprofile-hero{background:linear-gradient(135deg,#1e1b4b,#312e81,#4338ca);border-radius:18px 18px 0 0;padding:24px 24px 20px;color:#fff;position:relative;overflow:hidden}
-.uprofile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(249,115,22,.35),transparent 60%)}
+.uprofile-hero{background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:18px 18px 0 0;padding:24px 24px 20px;color:#fff;position:relative;overflow:hidden}
+.uprofile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(249,115,22,.6),transparent 45%),radial-gradient(ellipse at 95% 5%,rgba(90,95,207,.2),transparent 40%)}
 .uprofile-body{padding:20px 22px 24px}
 
 /* ── CLUBS ── */
@@ -481,7 +485,7 @@ a:hover{opacity:.75}
 .sess-recap-sub{font-size:13px;color:var(--sub)}
 .sess-rstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
 .sess-rstat{background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:12px;text-align:center}
-.sess-rstat-val{font-size:20px;font-weight:900;line-height:1;margin-bottom:3px}
+.sess-rstat-val{font-size:30px;font-weight:900;line-height:1;margin-bottom:4px;letter-spacing:-.04em}
 .sess-rstat-lbl{font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em}
 .sess-divider{height:1px;background:var(--bdr);margin:18px 0}
 .concept-inp-wrap{display:flex;gap:8px;margin-bottom:9px}
@@ -606,11 +610,12 @@ a:hover{opacity:.75}
 .pro-lock-cta{background:linear-gradient(135deg,#f97316,#e05c00);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:12px;font-weight:800;cursor:pointer;transition:all var(--transition);box-shadow:0 3px 12px rgba(249,115,22,.35);letter-spacing:-.01em}
 .pro-lock-cta:hover{transform:translateY(-1px) scale(1.04);box-shadow:0 6px 18px rgba(249,115,22,.45)}
 /* ── ACTIVITY CARD ── */
-.activity-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow var(--transition),transform var(--transition)}
-.activity-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.activity-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .22s,transform .22s,border-color .22s}
+.activity-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--bdr2)}
 /* ── PROFILE HERO ── */
-.profile-hero{background:linear-gradient(145deg,#07060f,#1a1742,#312e81,#4338ca);border-radius:var(--r);padding:var(--sp-6);color:#fff;position:relative;overflow:hidden;margin-bottom:var(--sp-5)}
-.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 10%,rgba(249,115,22,.28),transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(168,85,247,.18),transparent 50%)}
+.profile-hero{background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:var(--r);padding:var(--sp-6);color:#fff;position:relative;overflow:hidden;margin-bottom:var(--sp-5)}
+.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(249,115,22,.65),transparent 48%),radial-gradient(ellipse at 95% 5%,rgba(90,95,207,.22),transparent 40%)}
+.profile-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(249,115,22,.5),transparent 60%)}
 .profile-hero-inner{position:relative;z-index:1}
 /* ── SETTINGS ── */
 .settings-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:all var(--transition);font-size:13px;font-weight:500;color:var(--sub)}
@@ -2252,7 +2257,7 @@ function buildFeed(){
         {v:Math.round(getTotalHours()),l:'Total Hrs',c:'var(--ora)'},
         {v:getStreak(),l:'Day Streak',c:'var(--ind)'},
         {v:(S.sectionPassed||[]).length+'/4',l:'Passed',c:'var(--grn)'},
-      ].map(s=>`<div style="background:var(--surf2);border-radius:8px;padding:10px 6px"><div style="font-size:18px;font-weight:900;color:${s.c}">${s.v}</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">${s.l}</div></div>`).join('')}
+      ].map(s=>`<div style="background:var(--surf2);border-radius:9px;padding:12px 6px"><div style="font-size:26px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;font-weight:600">${s.l}</div></div>`).join('')}
     </div>
     <button class="btn btn-primary" style="width:100%;margin-top:12px;justify-content:center" onclick="openSessionModal()">▶ Start Session</button>
   </div>
@@ -2396,7 +2401,7 @@ function buildDashboard(){
   const maxHrs=Math.max(...last7.map(d=>d.hrs),1);
   const chartBars=last7.map(d=>`
   <div class="week-bar-wrap">
-    <div class="week-bar${d.isToday?' today-bar':''}" style="height:${Math.max(4,Math.round(d.hrs/maxHrs*56))}px" title="${d.hrs}h"></div>
+    <div class="week-bar${d.isToday?' today-bar':''}" style="height:${Math.max(4,Math.round(d.hrs/maxHrs*88))}px" title="${d.hrs}h"></div>
     <div class="week-day-lbl">${d.day.slice(0,1)}</div>
   </div>`).join('');
 
@@ -2453,9 +2458,9 @@ function buildDashboard(){
 
   return`
 <div style="max-width:880px;margin:0 auto">
-  <div style="margin-bottom:20px">
-    <h1 style="font-size:26px;font-weight:900;line-height:1">Hey, ${S.name} 👋</h1>
-    <p style="color:var(--sub);font-size:13px;margin-top:3px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+  <div style="margin-bottom:24px">
+    <h1 style="font-size:42px;font-weight:900;line-height:1;letter-spacing:-.05em">Hey, ${S.name}.</h1>
+    <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
   </div>
 
   <div class="stats-grid" style="margin-bottom:20px">
@@ -2468,11 +2473,14 @@ function buildDashboard(){
   </div>
 
   <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div class="section-title" style="margin-bottom:0">Weekly Pacing — ${weekHrs.toFixed(1)} / ${weekGoal} hrs</div>
-      <span style="font-size:12px;font-weight:700;color:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--red)'}">${weekPct}%</span>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div>
+        <div class="section-title" style="margin-bottom:2px">Weekly Pacing</div>
+        <div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${weekGoal} hrs</div>
+      </div>
+      <div style="font-size:42px;font-weight:900;letter-spacing:-.05em;line-height:1;color:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ora)'}">${weekPct}<span style="font-size:20px;font-weight:700;opacity:.6">%</span></div>
     </div>
-    <div class="prog-bar" style="height:10px;margin-bottom:12px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ind)'}"></div></div>
+    <div class="prog-bar" style="height:10px;margin-bottom:14px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ind)'}"></div></div>
     <div class="week-chart">${chartBars}</div>
     <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> Today</div>
   </div>
@@ -2625,26 +2633,26 @@ function buildProfile(){
       </div>
 
       <!-- SOCIAL STATS -->
-      <div style="display:flex;gap:24px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15)">
+      <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
         <button onclick="openFollowModal('followers')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
-          <div style="font-size:20px;font-weight:900;color:#fff">${followersCount}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em">Followers</div>
+          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div>
         </button>
         <button onclick="openFollowModal('following')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
-          <div style="font-size:20px;font-weight:900;color:#fff">${followingCount}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em">Following</div>
+          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followingCount}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div>
         </button>
         <div>
-          <div style="font-size:20px;font-weight:900;color:#fff">${Math.round(totalHrs)}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em">Total Hrs</div>
+          <div style="font-size:30px;font-weight:900;color:rgba(249,115,22,.95);letter-spacing:-.04em;line-height:1">${Math.round(totalHrs)}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div>
         </div>
         <div>
-          <div style="font-size:20px;font-weight:900;color:#fff">${streak}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em">Day Streak</div>
+          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${streak}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div>
         </div>
         <div>
-          <div style="font-size:20px;font-weight:900;color:#fff">${(S.activities||[]).length}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em">Sessions</div>
+          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${(S.activities||[]).length}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div>
         </div>
       </div>
     </div>
@@ -5366,8 +5374,8 @@ function _finishQuiz() {
   overlay.innerHTML =
     '<div style="max-width:720px;margin:0 auto;padding:32px 16px 80px">' +
     // Score hero
-    '<div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:20px;padding:36px 28px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden">' +
-      '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(249,115,22,.3),transparent 60%)"></div>' +
+    '<div style="background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:20px;padding:36px 28px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden">' +
+      '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(249,115,22,.6),transparent 50%),radial-gradient(ellipse at 100% 0%,rgba(90,95,207,.2),transparent 40%)"></div>' +
       '<div style="position:relative;z-index:1">' +
         '<div style="font-size:44px;margin-bottom:10px">' + grade.icon + '</div>' +
         '<div style="font-size:68px;font-weight:900;color:' + grade.c + ';line-height:1;letter-spacing:-3px">' + pct + '%</div>' +
