@@ -4361,6 +4361,7 @@ function openEditProfile(){
     document.body.appendChild(el);
   }
   const sections=(S.sections||[]);
+  const initials=(S.name||'CPA').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const datesHTML=sections.map(s=>`
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
     <span class="badge badge-${s}" style="min-width:46px;justify-content:center">${s}</span>
