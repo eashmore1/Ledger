@@ -239,7 +239,7 @@ a:hover{opacity:.75}
 /* ── WEEKLY CHART ── */
 .week-chart{display:flex;align-items:flex-end;gap:5px;height:104px;margin:var(--sp-3) 0 var(--sp-2)}
 .week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.week-bar{width:100%;background:var(--ora);border-radius:3px 3px 0 0;transition:height .3s ease;min-height:2px}
+.week-bar{width:100%;background:var(--ora);border-radius:3px 3px 0 0;transition:height .5s cubic-bezier(.22,.61,.36,1)}
 .week-bar.today-bar{background:var(--ind)}
 .week-day-lbl{font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase}
 
@@ -387,8 +387,8 @@ a:hover{opacity:.75}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .2s ease}
-@keyframes props-bounce{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
-.props-anim{animation:props-bounce .3s ease}
+@keyframes props-bounce{0%{transform:scale(1)}28%{transform:scale(1.6) rotate(-7deg)}52%{transform:scale(.88)}72%{transform:scale(1.18) rotate(3deg)}88%{transform:scale(.97)}100%{transform:scale(1) rotate(0deg)}}
+.props-anim{animation:props-bounce .52s cubic-bezier(.22,.61,.36,1)}
 
 /* ── SCORE BLOCKS ── */
 .score-block{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
@@ -672,6 +672,28 @@ a:hover{opacity:.75}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .22s cubic-bezier(.22,.61,.36,1) both}
+/* ── TAB DIRECTIONAL TRANSITIONS ── */
+@keyframes tabSlideRight{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+@keyframes tabSlideLeft{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.tab-right{animation:tabSlideRight .28s cubic-bezier(.22,.61,.36,1) both}
+.tab-left{animation:tabSlideLeft .28s cubic-bezier(.22,.61,.36,1) both}
+/* ── PACING CARDS STAGGER ── */
+.pacing-card{animation:fadeIn .38s cubic-bezier(.22,.61,.36,1) both}
+.pacing-card:nth-child(1){animation-delay:0ms}
+.pacing-card:nth-child(2){animation-delay:80ms}
+.pacing-card:nth-child(3){animation-delay:160ms}
+.pacing-card:nth-child(4){animation-delay:240ms}
+.pacing-card:nth-child(5){animation-delay:240ms}
+.pacing-card:nth-child(6){animation-delay:240ms}
+/* ── SESSION FAB IDLE RING ── */
+@keyframes fab-ring{0%{transform:scale(1);opacity:.65}65%{transform:scale(1.75);opacity:0}100%{transform:scale(1.75);opacity:0}}
+.session-fab::before{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--ora);opacity:0;animation:fab-ring 3s cubic-bezier(.16,1,.3,1) infinite 1.5s;pointer-events:none}
+/* ── ACTIVITY CARD ENTER ── */
+.activity-card{animation:fadeIn .3s cubic-bezier(.22,.61,.36,1) both}
+/* ── ACCESSIBILITY ── */
+@media(prefers-reduced-motion:reduce){
+  *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
@@ -2185,17 +2207,25 @@ function renderApp(){
 }
 
 function switchTab(tab){
+  const prevTab=currentTab;
   currentTab=tab;
+  const tabOrder=['feed','dashboard','profile','explore','tips'];
   const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',tips:'Tips'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
-  // mobile nav
   document.querySelectorAll('[data-mnav]').forEach(b=>{
     b.classList.toggle('active',b.dataset.mnav===tab);
   });
   const page=document.getElementById('page-content');
-  if(page){page.classList.remove('fade-in');void page.offsetWidth;page.classList.add('fade-in');}
+  if(page){
+    const prevIdx=tabOrder.indexOf(prevTab);
+    const nextIdx=tabOrder.indexOf(tab);
+    const dir=nextIdx>=prevIdx?'tab-right':'tab-left';
+    page.classList.remove('fade-in','tab-right','tab-left');
+    void page.offsetWidth;
+    page.classList.add(dir);
+  }
   renderTab();
 }
 
@@ -4039,7 +4069,45 @@ function closeClubView(){document.getElementById('club-view-modal')?.classList.r
 // MISC HANDLERS
 // ═══════════════════════════════════════════════
 function attachTabHandlers(){
-  // No-op — all handlers are inline onclick
+  // Animate progress bars from 0 → target width
+  document.querySelectorAll('.prog-fill').forEach(el=>{
+    const target=el.style.width;
+    if(!target||target==='0%')return;
+    el.style.width='0%';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.width=target;}));
+  });
+
+  // Animate weekly chart bars from 0 → target height
+  document.querySelectorAll('.week-bar').forEach(el=>{
+    const target=el.style.height;
+    if(!target||target==='0px')return;
+    el.style.height='0px';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.height=target;}));
+  });
+
+  // Count-up animation for dashboard stat numbers
+  if(currentTab==='dashboard'){
+    document.querySelectorAll('.stat-val').forEach(el=>{
+      const text=el.textContent.trim();
+      if(text.includes('/')||text===''||text==='0')return;
+      const num=parseFloat(text);
+      if(isNaN(num))return;
+      const isDecimal=text.includes('.');
+      const duration=680;
+      let startTime=null;
+      el.textContent=isDecimal?'0.0':'0';
+      const tick=(t)=>{
+        if(!startTime)startTime=t;
+        const p=Math.min((t-startTime)/duration,1);
+        const eased=1-Math.pow(1-p,4);
+        const val=num*eased;
+        el.textContent=isDecimal?val.toFixed(1):String(Math.round(val));
+        if(p<1)requestAnimationFrame(tick);
+        else el.textContent=isDecimal?num.toFixed(1):String(num);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
 }
 
 document.addEventListener('keydown',e=>{
@@ -5508,7 +5576,7 @@ function renderProgressReport() {
   const maxHrs = Math.max(...last7.map(function(d){ return d.hrs; }), 1);
   const chartBars = last7.map(function(d) {
     return '<div class="week-bar-wrap">' +
-      '<div class="week-bar' + (d.isToday?' today-bar':'') + '" style="height:' + Math.max(4,Math.round(d.hrs/maxHrs*56)) + 'px" title="' + d.hrs.toFixed(1) + 'h"></div>' +
+      '<div class="week-bar' + (d.isToday?' today-bar':'') + '" style="height:' + Math.max(4,Math.round(d.hrs/maxHrs*88)) + 'px" title="' + d.hrs.toFixed(1) + 'h"></div>' +
       '<div class="week-day-lbl">' + d.day.slice(0,1) + '</div>' +
     '</div>';
   }).join('');
