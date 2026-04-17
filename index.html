@@ -933,19 +933,29 @@ const EXAMS = {
 };
 
 // ═══════════════════════════════════════════════
-// CPA TIPS (rotating daily)
+// DAILY QUOTES (rotating — shown in Feed sidebar)
 // ═══════════════════════════════════════════════
 const CPA_TIPS = [
-  {text:"Study within 6–8 weeks per section. Info decay is real — cram it, take the exam, move on.",src:"Another71 · NINJA CPA"},
-  {text:"MCQs and TBSs are worth 50% each. Most candidates over-index on MCQ practice. Don't neglect TBSs.",src:"AICPA Exam Blueprints"},
-  {text:"FAR is foundational — its content underpins REG and AUD. Many prep providers recommend FAR first.",src:"Becker CPA Review"},
-  {text:"TCP has the highest pass rate (78%). BAR has the lowest (42%). Choose your discipline based on career path, not pass rate.",src:"NASBA 2025 Data"},
-  {text:"A 75 scaled score ≠ 75% raw correct. Scaled scoring means harder questions count more.",src:"AICPA Score Release"},
-  {text:"Core sections (FAR, AUD, REG) test year-round. Discipline sections (BAR, ISC, TCP) are only in the first month of each quarter.",src:"NASBA Testing Windows"},
-  {text:"You have 30 months from your first passing score to pass all four. The clock starts with the first pass — plan your order carefully.",src:"AICPA 18-Month Window"},
-  {text:"Practice exams scoring consistently above 70 are a strong predictor of passing. Focus on weak areas, not total hours.",src:"300hours.com Research"},
-  {text:"First-time pass rates (51%) are significantly higher than retaker rates (39%). Aim to pass on the first attempt.",src:"AICPA Pass Rate Analysis"},
-  {text:"Notice to Schedule (NTS) processing takes 4–6 weeks. Apply early — don't let admin delays eat your study time.",src:"NASBA Application Guide"},
+  {text:"The more you learn, the more you earn. Accounting is the language of business — master it.",src:"Warren Buffett"},
+  {text:"You have to know accounting. It's the language of practical business life.",src:"Charlie Munger"},
+  {text:"The people who are crazy enough to think they can change the world are the ones who do.",src:"Steve Jobs"},
+  {text:"Nothing will work unless you do. Every hour you put in compounds.",src:"Maya Angelou"},
+  {text:"Success is not final, failure is not fatal: it is the courage to continue that counts.",src:"Winston Churchill"},
+  {text:"Work like hell. If other people are putting in 40-hour weeks and you're putting in 100, you achieve in 4 months what takes them a year.",src:"Elon Musk"},
+  {text:"It always seems impossible until it's done. Your CPA license is no different.",src:"Nelson Mandela"},
+  {text:"Believe you can and you're halfway there. The other half is showing up every day.",src:"Theodore Roosevelt"},
+  {text:"I knew the one thing I might regret is not trying.",src:"Jeff Bezos"},
+  {text:"The most important thing is to try and inspire people so that they can be great in whatever they want to do.",src:"Kobe Bryant"},
+  {text:"I have not failed. I've just found 10,000 ways that won't work. Every retake is data.",src:"Thomas Edison"},
+  {text:"Give me six hours to chop down a tree and I will spend the first four sharpening the axe. Preparation is everything.",src:"Abraham Lincoln"},
+  {text:"An investment in knowledge pays the best interest.",src:"Benjamin Franklin"},
+  {text:"I've missed more than 9,000 shots. I've failed over and over. And that is why I succeed.",src:"Michael Jordan"},
+  {text:"Enthusiasm is common. Endurance is rare. The CPA exam rewards endurance above all else.",src:"Angela Duckworth"},
+  {text:"You have power over your mind — not outside events. Realize this and you will find strength.",src:"Marcus Aurelius"},
+  {text:"Without commitment, you'll never start. Without consistency, you'll never finish.",src:"Denzel Washington"},
+  {text:"Pain plus reflection equals progress. Hard study sessions are the price of the license.",src:"Ray Dalio"},
+  {text:"Rock bottom became the solid foundation on which I rebuilt my life.",src:"J.K. Rowling"},
+  {text:"High expectations are the key to everything. Set the bar high for yourself.",src:"Sam Walton"},
 ];
 
 // ═══════════════════════════════════════════════
@@ -2187,7 +2197,7 @@ function renderApp(){
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
           {id:'flashcards',icon:'⬡',label:'AI Flashcards'},
-          {id:'tips',icon:'◆',label:'Inspire'},
+          {id:'tips',icon:'◆',label:'Exam Tips'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -2210,7 +2220,7 @@ function switchTab(tab){
   const prevTab=currentTab;
   currentTab=tab;
   const tabOrder=['feed','dashboard','profile','explore','flashcards','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',flashcards:'AI Flashcards',tips:'Inspire'};
+  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',flashcards:'AI Flashcards',tips:'Exam Tips'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -2304,10 +2314,13 @@ function buildFeed(){
 
   const rightSidebar=`
 <div class="sidebar-right">
-  <div class="card card-pad" style="margin-bottom:var(--sp-4)">
-    <div class="section-title">Today's Tip</div>
-    <p style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:8px">"${tip.text}"</p>
-    <div style="font-size:10px;color:var(--mut);font-weight:600">${tip.src}</div>
+  <div class="card card-pad" style="margin-bottom:var(--sp-4);border-left:3px solid var(--ora)">
+    <div class="section-title" style="margin-bottom:8px">Today's Quote</div>
+    <p style="font-size:12px;color:var(--sub);line-height:1.75;margin-bottom:10px;font-style:italic">"${tip.text}"</p>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0">${tip.src.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div style="font-size:10px;color:var(--mut);font-weight:700">${tip.src}</div>
+    </div>
   </div>
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div class="section-title">This Week</div>
@@ -4252,39 +4265,50 @@ function submitScore(section){
 // EXAM TIPS TAB
 // ═══════════════════════════════════════════════
 function buildTips(){
-  const QUOTES=[
-    {author:'Warren Buffett',role:'Investor & Businessman',quote:'The more you learn, the more you earn. Accounting is the language of business — master it and you master everything.',color:'#f59e0b'},
-    {author:'Charlie Munger',role:'Vice Chairman, Berkshire Hathaway',quote:'You have to know accounting. It\'s the language of practical business life.',color:'#0ea574'},
-    {author:'Steve Jobs',role:'Co-founder, Apple',quote:'The people who are crazy enough to think they can change the world are the ones who do. Don\'t let anyone tell you what you can and can\'t achieve.',color:'#5a5fcf'},
-    {author:'Maya Angelou',role:'Poet & Author',quote:'Nothing will work unless you do. Every hour you put in compounds — trust the process.',color:'#e84040'},
-    {author:'Winston Churchill',role:'Former Prime Minister, UK',quote:'Success is not final, failure is not fatal: it is the courage to continue that counts.',color:'#9333ea'},
-    {author:'Elon Musk',role:'CEO, Tesla & SpaceX',quote:'Work like hell. If other people are putting in 40-hour workweeks and you\'re putting in 100-hour workweeks, you will achieve in 4 months what takes them a year.',color:'#0fb5aa'},
-    {author:'J.K. Rowling',role:'Author',quote:'Rock bottom became the solid foundation on which I rebuilt my life. The hard moments build the person who passes.',color:'#f97316'},
-    {author:'Nelson Mandela',role:'Former President, South Africa',quote:'It always seems impossible until it\'s done. Your CPA license is no different.',color:'#0ea574'},
-    {author:'Albert Einstein',role:'Theoretical Physicist',quote:'Genius is 1% talent and 99% percent hard work. The exam doesn\'t test talent — it tests preparation.',color:'#5a5fcf'},
-    {author:'Theodore Roosevelt',role:'26th U.S. President',quote:'Believe you can and you\'re halfway there. The other half is showing up every single day.',color:'#f59e0b'},
-    {author:'Jeff Bezos',role:'Founder, Amazon',quote:'I knew that if I failed I wouldn\'t regret that, but I knew the one thing I might regret is not trying.',color:'#e84040'},
-    {author:'Oprah Winfrey',role:'Media Executive',quote:'The biggest adventure you can take is to live the life of your dreams. Your CPA is the foundation.',color:'#9333ea'},
-    {author:'Kobe Bryant',role:'NBA Champion',quote:'The most important thing is to try and inspire people so that they can be great in whatever they want to do. That includes you, grinding through FAR.',color:'#e84040'},
-    {author:'Thomas Edison',role:'Inventor',quote:'I have not failed. I\'ve just found 10,000 ways that won\'t work. Every exam retake is data.',color:'#f59e0b'},
-    {author:'Abraham Lincoln',role:'16th U.S. President',quote:'Give me six hours to chop down a tree and I will spend the first four sharpening the axe. Preparation is everything.',color:'#0ea574'},
-    {author:'Serena Williams',role:'Tennis Champion',quote:'I really think a champion is defined not by their wins but by how they can recover when they fall. Retake, learn, pass.',color:'#9333ea'},
-    {author:'Benjamin Franklin',role:'Founding Father & Polymath',quote:'An investment in knowledge pays the best interest. You\'re making the right investment.',color:'#0fb5aa'},
-    {author:'Michael Jordan',role:'NBA Champion',quote:'I\'ve missed more than 9,000 shots in my career. I\'ve failed over and over and over again in my life. And that is why I succeed.',color:'#5a5fcf'},
-    {author:'Angela Duckworth',role:'Psychologist, Author of Grit',quote:'Enthusiasm is common. Endurance is rare. The CPA exam rewards endurance above all else.',color:'#f97316'},
-    {author:'Marcus Aurelius',role:'Roman Emperor & Philosopher',quote:'You have power over your mind — not outside events. Realize this and you will find strength.',color:'#e84040'},
-    {author:'Brené Brown',role:'Research Professor & Author',quote:'Vulnerability is not winning or losing. It\'s having the courage to show up when you can\'t control the outcome.',color:'#0ea574'},
-    {author:'Denzel Washington',role:'Actor & Filmmaker',quote:'Without commitment, you\'ll never start. Without consistency, you\'ll never finish. Study every day.',color:'#5a5fcf'},
-    {author:'Sam Walton',role:'Founder, Walmart',quote:'High expectations are the key to everything. Set the bar high for yourself — 75 is the floor, not the ceiling.',color:'#f59e0b'},
-    {author:'Ray Dalio',role:'Founder, Bridgewater Associates',quote:'Pain plus reflection equals progress. Hard study sessions are the price of the license.',color:'#9333ea'},
-  ];
+  const TIPS_DATA={
+    strategy:[
+      {icon:'🏁',title:'Best Exam Order',body:'Becker recommends FAR first — its content underpins REG and AUD. Many candidates do REG first for a confidence boost (63% pass rate). Take your discipline right after the related core for maximum knowledge overlap. Don\'t leave FAR last — it\'s the hardest and you\'ll be burned out.'},
+      {icon:'⏱️',title:'Study Window Per Section',body:'Don\'t study longer than 6–8 weeks per section. Information decay is real. The sweet spot is 6 weeks of focused study then schedule immediately. Candidates who wait longer do NOT score higher on average. Cram it in, take the exam, move on.'},
+      {icon:'📅',title:'30-Month Score Window',body:'Once you pass your first section, you have 30 months to pass all remaining sections. Scores expire on a rolling basis — the first score you earned expires first. Many candidates fail not because of knowledge but because of poor timing. Plan your order carefully around the window.'},
+      {icon:'🔄',title:'Retake Strategy',body:'Wait for your score before retaking the same section — you can\'t take it again until scores release. On a retake, focus heavily on the area that failed you. Retakers pass at 39% vs 51% for first-timers. Don\'t retake without a different strategy.'},
+    ],
+    mcqtbs:[
+      {icon:'📝',title:'MCQ vs TBS Split',body:'MCQs and TBSs are worth 50%/50% of your score (40%/60% for ISC). Most candidates over-practice MCQs and underprepare for TBSs. In TBSs you navigate real authoritative literature — FASB Codification for FAR, Internal Revenue Code for REG, PCAOB/AU standards for AUD. Practice navigating the actual source documents.'},
+      {icon:'🎯',title:'MCQ Strategy',body:'On the real exam, the first testlet is medium difficulty. If you do well, testlet 2 gets harder (good sign — harder = more points available). Never change a MCQ answer unless you have a specific reason. Eliminate 2 wrong answers first, then choose. Don\'t spend more than 90 seconds per MCQ.'},
+      {icon:'🔍',title:'TBS Research Tab',body:'Every TBS has a Research tab with authoritative literature search. For FAR, you search the FASB Codification. For REG, the IRC. Practice using these before your exam — the search tool is specific and slow if you\'re not used to it. Bookmark likely sections in practice.'},
+      {icon:'📊',title:'Scaled Scoring',body:'A 75 scaled score does NOT mean 75% raw correct. Scaled scoring adjusts for question difficulty. Harder questions are worth more points. A candidate answering 65% of questions correctly on a hard testlet may score higher than one answering 75% correctly on easy questions. Consistency matters more than perfection.'},
+    ],
+    section:[
+      {icon:'📊',title:'FAR — What to Know',body:'FAR is the hardest section (43% pass rate). Government accounting (GASB) and not-for-profit account for ~36% of the exam — candidates who underweight these fail. US GAAP is foundational but not enough alone. Budget 170+ hours. The fund types (governmental, proprietary, fiduciary) must be instinctive.'},
+      {icon:'🔍',title:'AUD — What to Know',body:'AUD is about professional judgment, not formulas. Multiple-choice questions are designed to test your reasoning in ambiguous situations. The answer "it depends on the auditor\'s judgment" is often wrong — they want you to know WHEN that judgment applies. PCAOB vs AICPA standards matter: PCAOB for public companies, AICPA for non-public.'},
+      {icon:'⚖️',title:'REG — What to Know',body:'REG splits ~60% tax / ~40% business law. Individual taxation (Schedule items, credits, AMT) and entity taxation (C-Corps, S-Corps, Partnerships) are the highest-weighted areas. Business law (contracts, agency, secured transactions) is often underprepared. The IRC research TBS is giveable if you practice the search tool.'},
+      {icon:'📈',title:'BAR — What to Know',body:'BAR has the lowest discipline pass rate (42%) because it combines financial reporting depth with business analysis. Candidates underestimate the data analytics and business analysis content. If you passed FAR, the technical accounting content won\'t shock you — but the analytical modeling questions will if you didn\'t prepare for them.'},
+      {icon:'💻',title:'ISC — What to Know',body:'ISC is 82 MCQ + 6 TBS (more MCQs than any other section). SOC engagements (SOC 1, SOC 2, SOC 3) are heavily tested and underpreparation is the #1 failure cause. Security concepts (CIA triad, access controls, disaster recovery) are foundational. IT audit candidates often underestimate the SOC depth required.'},
+      {icon:'🧮',title:'TCP — What to Know',body:'TCP has the highest pass rate (78%) but don\'t get complacent. Individual and entity tax compliance is tested at depth beyond REG. The planning component (tax minimization strategies, entity choice) is the differentiator. If you passed REG solidly, TCP builds directly on that foundation. Budget 110 hours minimum.'},
+    ],
+    mental:[
+      {icon:'🧠',title:'Mindset: It\'s a Marathon',body:'The average CPA candidate takes 16–18 months to pass all four sections. You will have bad study days, failed mocks, and moments of doubt. Every CPA who passed felt exactly what you feel right now. The difference between those who pass and those who don\'t is almost never intelligence — it\'s showing up consistently.'},
+      {icon:'😴',title:'Sleep is Non-Negotiable',body:'Sleep is when your brain consolidates what you studied. Studying an extra 2 hours instead of sleeping 8 is a net negative. The night before your exam: do nothing new, sleep 8 hours, eat breakfast. Candidates who sleep well before exams statistically score higher. You can\'t study your way out of exhaustion.'},
+      {icon:'💪',title:'Burnout Prevention',body:'Burnout is the #1 reason candidates abandon their CPA journey. Schedule one completely study-free day per week — non-negotiable. Every 4th week, cut your study hours in half (deload week). Tell people close to you what you\'re doing — social support is a documented predictor of exam success.'},
+      {icon:'📱',title:'Study Smarter, Not Longer',body:'Active recall (testing yourself) beats passive reading by 3x for retention. Do MCQs first, then read the explanation — not the other way around. Spaced repetition (reviewing material at increasing intervals) is the most evidence-based study method available. Becker\'s adaptive learning is built on this principle.'},
+    ],
+  };
 
-  // Today's quote (rotates daily)
-  const today=new Date();
-  const dayIndex=(today.getFullYear()*365+today.getMonth()*30+today.getDate())%QUOTES.length;
-  const todayQ=QUOTES[dayIndex];
+  const catLabels={strategy:'Strategy & Planning',mcqtbs:'MCQ & TBS Tactics',section:'Section Deep-Dives',mental:'Mindset & Wellbeing'};
+  const cats=Object.keys(TIPS_DATA);
+  const tipHTML=cats.map(cat=>`
+  <div style="margin-bottom:28px">
+    <div style="font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px">${catLabels[cat]}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      ${TIPS_DATA[cat].map(t=>`
+      <div class="card card-pad" style="border-left:3px solid var(--ora)">
+        <div style="font-size:20px;margin-bottom:6px">${t.icon}</div>
+        <div style="font-size:14px;font-weight:800;margin-bottom:8px">${t.title}</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.75">${t.body}</div>
+      </div>`).join('')}
+    </div>
+  </div>`).join('');
 
-  // Pass rate chart
   const passRateChart=Object.entries(EXAMS).map(([k,ex])=>{
     const pct=ex.passRate;
     return`<div style="margin-bottom:10px">
@@ -4297,53 +4321,20 @@ function buildTips(){
     </div>`;
   }).join('');
 
-  const allQuoteCards=QUOTES.map((q,i)=>`
-  <div class="card card-pad" style="border-left:4px solid ${q.color};${i===dayIndex?'background:var(--ora-bg);border-color:var(--ora)':''}">
-    <div style="font-size:13px;font-style:italic;color:var(--sub);line-height:1.7;margin-bottom:10px">"${q.quote}"</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:50%;background:${q.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">${q.author.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
-      <div>
-        <div style="font-size:12px;font-weight:800">${q.author}</div>
-        <div style="font-size:10px;color:var(--mut)">${q.role}</div>
-      </div>
-      ${i===dayIndex?'<span style="margin-left:auto;font-size:9px;font-weight:800;background:var(--ora);color:#fff;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">Today</span>':''}
-    </div>
-  </div>`).join('');
-
   return`
 <div style="max-width:960px;margin:0 auto">
   <div style="margin-bottom:24px">
-    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">Daily Inspiration</h1>
-    <p style="color:var(--sub);font-size:13px">Words from great minds to fuel your CPA journey.</p>
+    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">💡 CPA Exam Tips</h1>
+    <p style="color:var(--sub);font-size:13px">Everything the top prep providers don't put in their marketing. Sourced from AICPA data, Becker, Gleim, Another71, and 300hours.com.</p>
   </div>
 
-  <!-- Today's Quote Hero -->
-  <div class="card" style="margin-bottom:24px;overflow:hidden;background:linear-gradient(135deg,${todayQ.color}18,${todayQ.color}08);border-color:${todayQ.color}44">
-    <div style="padding:28px 28px 24px">
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:${todayQ.color};margin-bottom:14px">Today's Inspiration · ${today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
-      <div style="font-size:20px;font-style:italic;font-weight:600;line-height:1.6;color:var(--txt);margin-bottom:18px;max-width:640px">"${todayQ.quote}"</div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:50%;background:${todayQ.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff">${todayQ.author.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
-        <div>
-          <div style="font-size:14px;font-weight:800">${todayQ.author}</div>
-          <div style="font-size:12px;color:var(--mut)">${todayQ.role}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pass Rate Chart -->
   <div class="card card-pad" style="margin-bottom:24px">
     <div style="font-size:14px;font-weight:800;margin-bottom:14px">📈 2025 Pass Rates (AICPA / NASBA)</div>
     ${passRateChart}
-    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75/99 scaled.</div>
+    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75/99 scaled. First-time pass rate ~51%, retakers ~39%. Discipline sections: first month of each quarter only.</div>
   </div>
 
-  <!-- All Quotes -->
-  <div style="font-size:14px;font-weight:800;margin-bottom:14px">All Quotes</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
-    ${allQuoteCards}
-  </div>
+  ${tipHTML}
 </div>`;
 }
 // ═══════════════════════════════════════════════
@@ -4463,81 +4454,113 @@ function openCropModal(dataUrl){
   cropEl=document.createElement('div');
   cropEl.id='crop-modal';
   cropEl.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center';
-  cropEl.innerHTML=`
-  <div style="background:var(--surf);border-radius:20px;padding:24px;max-width:400px;width:90%;box-shadow:var(--shadow-lg)">
-    <div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>
-    <div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Pinch or scroll to zoom</div>
-    <div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">
-      <img id="crop-img" src="${dataUrl}" style="position:absolute;left:0;top:0;transform-origin:center;cursor:move;max-width:none;user-select:none;-webkit-user-drag:none">
-    </div>
-    <div style="margin-top:14px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:11px;color:var(--mut);flex-shrink:0">Zoom</span>
-      <input type="range" id="crop-zoom" min="50" max="300" value="100" style="flex:1;accent-color:var(--ora)">
-    </div>
-    <div style="display:flex;gap:8px;margin-top:18px">
-      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Apply</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('crop-modal').remove()">Cancel</button>
-    </div>
-  </div>`;
+  // Note: img src is NOT set here — we set it after onload is wired (fixes data URL onload timing)
+  cropEl.innerHTML=
+    '<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:400px;width:90%;box-shadow:var(--shadow-lg)">' +
+      '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>' +
+      '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Scroll to zoom</div>' +
+      '<div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">' +
+        '<img id="crop-img" style="position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;cursor:move">' +
+      '</div>' +
+      '<div style="margin-top:14px;display:flex;align-items:center;gap:10px">' +
+        '<span style="font-size:11px;color:var(--mut);flex-shrink:0">Zoom</span>' +
+        '<input type="range" id="crop-zoom" min="1" max="300" value="100" style="flex:1;accent-color:var(--ora)">' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:18px">' +
+        '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Apply</button>' +
+        '<button class="btn btn-ghost" onclick="document.getElementById('crop-modal').remove()">Cancel</button>' +
+      '</div>' +
+    '</div>';
   document.body.appendChild(cropEl);
-  // Set up drag + zoom
+
   const img=document.getElementById('crop-img');
   const circle=document.getElementById('crop-circle');
   const zoomSlider=document.getElementById('crop-zoom');
   let scale=1, ox=0, oy=0, dragging=false, startX=0, startY=0, baseOx=0, baseOy=0;
+
   function clampPos(){
-    const cw=260,ch=260;
     const iw=img.naturalWidth*scale, ih=img.naturalHeight*scale;
-    ox=Math.min(0,Math.max(cw-iw,ox));
-    oy=Math.min(0,Math.max(ch-ih,oy));
+    ox=Math.min(0,Math.max(260-iw,ox));
+    oy=Math.min(0,Math.max(260-ih,oy));
   }
   function applyTransform(){
-    img.style.left=ox+'px';img.style.top=oy+'px';
-    img.style.width=(img.naturalWidth*scale)+'px';img.style.height=(img.naturalHeight*scale)+'px';
+    img.style.width=(img.naturalWidth*scale)+'px';
+    img.style.height=(img.naturalHeight*scale)+'px';
+    img.style.left=ox+'px';
+    img.style.top=oy+'px';
   }
-  img.onload=function(){
-    // Fit image to fill circle on load
+  function initCrop(){
+    // Scale image to fill 260×260 circle (cover, not contain)
     const minScale=Math.max(260/img.naturalWidth,260/img.naturalHeight);
     scale=minScale;
     ox=(260-img.naturalWidth*scale)/2;
     oy=(260-img.naturalHeight*scale)/2;
-    zoomSlider.min=Math.round(minScale*100);
-    zoomSlider.value=Math.round(minScale*100);
+    const minVal=Math.max(1,Math.round(minScale*100));
+    zoomSlider.min=minVal;
+    zoomSlider.max=Math.max(300,minVal*3);
+    zoomSlider.value=minVal;
     applyTransform();
-  };
+    // Store live getters so applyCrop always gets current values
+    window._cropData={img, getScale:function(){return scale;}, getOx:function(){return ox;}, getOy:function(){return oy;}};
+  }
+
+  // Wire onload BEFORE setting src to guarantee it fires for data URLs
+  img.onload=initCrop;
+  img.src=dataUrl;
+
   zoomSlider.oninput=function(){
     const ns=parseInt(this.value)/100;
-    const cx=260/2,cy=260/2;
+    const cx=130,cy=130;
     ox=cx-(cx-ox)*(ns/scale);
     oy=cy-(cy-oy)*(ns/scale);
     scale=ns;
     clampPos();applyTransform();
   };
   circle.onmousedown=function(e){dragging=true;startX=e.clientX;startY=e.clientY;baseOx=ox;baseOy=oy;e.preventDefault();};
-  document.addEventListener('mousemove',function(e){if(!dragging)return;ox=baseOx+(e.clientX-startX);oy=baseOy+(e.clientY-startY);clampPos();applyTransform();});
-  document.addEventListener('mouseup',function(){dragging=false;});
+  window._cropMouseMove=function(e){if(!dragging)return;ox=baseOx+(e.clientX-startX);oy=baseOy+(e.clientY-startY);clampPos();applyTransform();};
+  window._cropMouseUp=function(){dragging=false;};
+  document.addEventListener('mousemove',window._cropMouseMove);
+  document.addEventListener('mouseup',window._cropMouseUp);
   circle.ontouchstart=function(e){if(e.touches.length===1){dragging=true;startX=e.touches[0].clientX;startY=e.touches[0].clientY;baseOx=ox;baseOy=oy;e.preventDefault();}};
   circle.ontouchmove=function(e){if(dragging&&e.touches.length===1){ox=baseOx+(e.touches[0].clientX-startX);oy=baseOy+(e.touches[0].clientY-startY);clampPos();applyTransform();e.preventDefault();}};
   circle.ontouchend=function(){dragging=false;};
-  circle.onwheel=function(e){e.preventDefault();const delta=e.deltaY<0?1.05:.95;const ns=Math.max(parseInt(zoomSlider.min)/100,Math.min(3,scale*delta));const cx=260/2,cy=260/2;ox=cx-(cx-ox)*(ns/scale);oy=cy-(cy-oy)*(ns/scale);scale=ns;zoomSlider.value=Math.round(ns*100);clampPos();applyTransform();};
-  window._cropData={img,scale,ox:function(){return ox;},oy:function(){return oy;}};
+  circle.onwheel=function(e){
+    e.preventDefault();
+    const delta=e.deltaY<0?1.08:0.93;
+    const ns=Math.max(parseInt(zoomSlider.min)/100,Math.min(parseInt(zoomSlider.max)/100,scale*delta));
+    const cx=130,cy=130;
+    ox=cx-(cx-ox)*(ns/scale);
+    oy=cy-(cy-oy)*(ns/scale);
+    scale=ns;
+    zoomSlider.value=Math.round(ns*100);
+    clampPos();applyTransform();
+  };
 }
 
 function applyCrop(){
   const cd=window._cropData;
-  if(!cd)return;
-  const canvas=document.createElement('canvas');
-  canvas.width=260;canvas.height=260;
-  const ctx=canvas.getContext('2d');
-  ctx.beginPath();ctx.arc(130,130,130,0,Math.PI*2);ctx.clip();
+  if(!cd||!cd.img){showToast('No image to crop','err');return;}
   const img=cd.img;
-  const ox=cd.ox(),oy=cd.oy();
-  ctx.drawImage(img,ox,oy,img.naturalWidth*cd.scale,img.naturalHeight*cd.scale);
-  const dataUrl=canvas.toDataURL('image/jpeg',.88);
-  // Update preview in edit profile
+  const currentScale=cd.getScale();
+  const ox=cd.getOx();
+  const oy=cd.getOy();
+  // Output at 2x for retina
+  const OUT=520;
+  const canvas=document.createElement('canvas');
+  canvas.width=OUT;canvas.height=OUT;
+  const ctx=canvas.getContext('2d');
+  // Circular clip
+  ctx.beginPath();ctx.arc(OUT/2,OUT/2,OUT/2,0,Math.PI*2);ctx.clip();
+  // Draw image scaled up 2x
+  ctx.drawImage(img, ox*2, oy*2, img.naturalWidth*currentScale*2, img.naturalHeight*currentScale*2);
+  const dataUrl=canvas.toDataURL('image/jpeg',0.9);
   const preview=document.getElementById('ep-avatar-preview');
-  if(preview) preview.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  if(preview) preview.innerHTML='<img src="'+dataUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   window._pendingProfilePic=dataUrl;
+  // Clean up event listeners
+  if(window._cropMouseMove) document.removeEventListener('mousemove',window._cropMouseMove);
+  if(window._cropMouseUp) document.removeEventListener('mouseup',window._cropMouseUp);
+  window._cropData=null;
   document.getElementById('crop-modal')?.remove();
   showToast('Photo cropped — click Save Profile to apply ✓','ok');
 }
