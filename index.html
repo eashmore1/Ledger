@@ -18,9 +18,9 @@
 <style>
 /* ── TOKENS ── */
 :root{
-  --bg:#f0f2f7;--surf:#ffffff;--surf2:#f7f8fc;--surf3:#eef0f6;
-  --bdr:#e4e7ef;--bdr2:#cdd2e0;
-  --txt:#0d1117;--sub:#4a5568;--mut:#8a96a8;
+  --bg:#f2ede6;--surf:#ffffff;--surf2:#f7f2eb;--surf3:#ede7df;
+  --bdr:#e2dbd2;--bdr2:#c9c0b4;
+  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
   --ora:#f97316;--ora-dk:#e8620a;--ora-bg:#fff7ed;--ora-bdr:#fdba74;
   --ind:#5a5fcf;--ind-bg:#eef0ff;
   --grn:#0ea574;--grn-bg:#ecfdf5;
@@ -38,10 +38,10 @@
   --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;
 }
 body.dark{
-  --bg:#080b12;--surf:#111520;--surf2:#171c2b;--surf3:#1d2335;
-  --bdr:#202840;--bdr2:#293250;
-  --txt:#edf0f7;--sub:#8a96b8;--mut:#404d68;
-  --ora-bg:#1e1000;--ora-bdr:#6b2f00;
+  --bg:#0c0905;--surf:#15100b;--surf2:#1e1812;--surf3:#261f17;
+  --bdr:#2e2519;--bdr2:#3d3124;
+  --txt:#edf0f7;--sub:#8a96b8;--mut:#4a4540;
+  --ora-bg:#221200;--ora-bdr:#7a3500;
   --ind-bg:#191d42;--grn-bg:#021c14;--red-bg:#1e0808;
   --amb-bg:#1a1200;--pur-bg:#160a28;--tea-bg:#031a18;
   --shadow:0 1px 4px rgba(0,0,0,.5),0 1px 2px rgba(0,0,0,.3);
@@ -55,7 +55,8 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 a{color:var(--ind);text-decoration:none;transition:opacity var(--transition)}
 a:hover{opacity:.75}
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px}
+::-webkit-scrollbar-thumb{background:rgba(249,115,22,.28);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(249,115,22,.45)}
 ::-webkit-scrollbar-track{background:transparent}
 
 /* ── LAYOUT ── */
@@ -2494,9 +2495,9 @@ function buildDashboard(){
     ${[
       {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)'},
       {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)'},
-      {v:streak,l:'Day Streak',c:'#f59e0b'},
+      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1},
       {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
-    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}"><div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
+    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
   </div>
 
   <div class="card card-pad" style="margin-bottom:16px">
@@ -4140,8 +4141,8 @@ function buildHeatMap(){
       const key=cur.toISOString().slice(0,10);
       const hrs=logMap[key]||0;
       const intensity=hrs===0?0:hrs<1?1:hrs<2?2:hrs<3?3:4;
-      const colors=['var(--surf2)','#fde68a','#fbbf24','#f59e0b','#d97706'];
-      const dark_colors=['#1c2030','#4d3800','#7c5e00','#b38600','#d4a000'];
+      const colors=['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#f97316'];
+      const dark_colors=['var(--surf2)','#2e1200','#4f2000','#803600','#f97316'];
       const bg=isDark?dark_colors[intensity]:colors[intensity];
       cells.push(`<div style="width:11px;height:11px;border-radius:2px;background:${bg};cursor:default" title="${key}: ${hrs.toFixed(1)}h"></div>`);
     }
@@ -4159,7 +4160,7 @@ function buildHeatMap(){
   <div style="display:flex;gap:2px">${cols.join('')}</div>
   <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:var(--mut)">
     Less
-    ${['var(--surf2)','#fde68a','#fbbf24','#f59e0b','#d97706'].map(c=>`<div style="width:11px;height:11px;border-radius:2px;background:${c}"></div>`).join('')}
+    ${['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#f97316'].map(c=>`<div style="width:11px;height:11px;border-radius:2px;background:${c}"></div>`).join('')}
     More &nbsp;·&nbsp; ${totalDays} active days in last 16 weeks
   </div>
 </div>`;
