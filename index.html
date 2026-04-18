@@ -6,15 +6,13 @@
 <title>Ledger — Social CPA Study</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
-<!-- PDF Generation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<!-- Firebase Auth -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<!-- Stripe.js -->
-<script src="https://js.stripe.com/v3/"></script>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<!-- Stripe.js (deferred — app uses payment links, not embedded Stripe elements) -->
+<script defer src="https://js.stripe.com/v3/"></script>
 <style>
 /* ── TOKENS ── */
 :root{
@@ -5379,7 +5377,19 @@ function closeAppSettings(){document.getElementById('app-settings-modal')?.class
 // PDF REPORT GENERATION (jsPDF)
 // ═══════════════════════════════════════════════
 function generatePDFReport(){
-  if(typeof window.jspdf==='undefined'){showToast('PDF library loading, try again','err');return;}
+  if(typeof window.jspdf==='undefined'){
+    showToast('Loading PDF library…','info');
+    const s1=document.createElement('script');
+    s1.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s1.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+      s2.onload=()=>generatePDFReport();
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+    return;
+  }
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const W=210,margin=18;
@@ -7709,9 +7719,9 @@ function buildStudySchedule() {
 }
 
 // ═══════════════════════════════════════════════
-// START
+// START — wait for deferred Firebase/Stripe scripts
 // ═══════════════════════════════════════════════
-init();
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
