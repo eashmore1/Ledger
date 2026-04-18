@@ -1323,6 +1323,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Weekly PDF Progress Reports'},
     {on:true,text:'Custom Per-Section Goals'},
     {on:true,text:'Data Export (CSV/PDF)'},
+    {on:true,text:'Exam Day Protocol 📋'},
     {on:true,text:'Exclusive Pro Badges'},
     {on:false,text:'1-on-1 Coaching (monthly)'},
     {on:false,text:'AI Mnemonic Generator'},
@@ -1339,7 +1340,6 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Priority Support (response <2h)'},
     {on:true,text:'Early Access to New Features'},
     {on:true,text:'Elite-only Badge + Leaderboard Flair'},
-    {on:true,text:'Exam Day Prep Protocol'},
   ];
 
   const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
@@ -1368,7 +1368,7 @@ function renderUpgradeModal(featureHint){
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
     '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">6.1 wks</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">avg time to pass</div></div>' +
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
-    '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">$2,800</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">saved vs. Becker</div></div>' +
+    '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">$344</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">saved per avoided retake</div></div>' +
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
     '<div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">8,400+</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">active candidates</div></div>' +
   '</div>'+
@@ -2244,7 +2244,7 @@ function renderApp(){
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
-          {id:'tips',icon:'◆',label:'Exam Tips'},
+          {id:'tips',icon:'◆',label:'Exam Hub'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -2267,7 +2267,7 @@ function switchTab(tab){
   const prevTab=currentTab;
   currentTab=tab;
   const tabOrder=['feed','dashboard','profile','explore','studylab','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Tips'};
+  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -4361,76 +4361,101 @@ function submitScore(section){
 // EXAM TIPS TAB
 // ═══════════════════════════════════════════════
 function buildTips(){
-  const TIPS_DATA={
-    strategy:[
-      {icon:'🏁',title:'Best Exam Order',body:'Becker recommends FAR first — its content underpins REG and AUD. Many candidates do REG first for a confidence boost (63% pass rate). Take your discipline right after the related core for maximum knowledge overlap. Don\'t leave FAR last — it\'s the hardest and you\'ll be burned out.'},
-      {icon:'⏱️',title:'Study Window Per Section',body:'Don\'t study longer than 6–8 weeks per section. Information decay is real. The sweet spot is 6 weeks of focused study then schedule immediately. Candidates who wait longer do NOT score higher on average. Cram it in, take the exam, move on.'},
-      {icon:'📅',title:'30-Month Score Window',body:'Once you pass your first section, you have 30 months to pass all remaining sections. Scores expire on a rolling basis — the first score you earned expires first. Many candidates fail not because of knowledge but because of poor timing. Plan your order carefully around the window.'},
-      {icon:'🔄',title:'Retake Strategy',body:'Wait for your score before retaking the same section — you can\'t take it again until scores release. On a retake, focus heavily on the area that failed you. Retakers pass at 39% vs 51% for first-timers. Don\'t retake without a different strategy.'},
-    ],
-    mcqtbs:[
-      {icon:'📝',title:'MCQ vs TBS Split',body:'MCQs and TBSs are worth 50%/50% of your score (40%/60% for ISC). Most candidates over-practice MCQs and underprepare for TBSs. In TBSs you navigate real authoritative literature — FASB Codification for FAR, Internal Revenue Code for REG, PCAOB/AU standards for AUD. Practice navigating the actual source documents.'},
-      {icon:'🎯',title:'MCQ Strategy',body:'On the real exam, the first testlet is medium difficulty. If you do well, testlet 2 gets harder (good sign — harder = more points available). Never change a MCQ answer unless you have a specific reason. Eliminate 2 wrong answers first, then choose. Don\'t spend more than 90 seconds per MCQ.'},
-      {icon:'🔍',title:'TBS Research Tab',body:'Every TBS has a Research tab with authoritative literature search. For FAR, you search the FASB Codification. For REG, the IRC. Practice using these before your exam — the search tool is specific and slow if you\'re not used to it. Bookmark likely sections in practice.'},
-      {icon:'📊',title:'Scaled Scoring',body:'A 75 scaled score does NOT mean 75% raw correct. Scaled scoring adjusts for question difficulty. Harder questions are worth more points. A candidate answering 65% of questions correctly on a hard testlet may score higher than one answering 75% correctly on easy questions. Consistency matters more than perfection.'},
-    ],
-    section:[
-      {icon:'📊',title:'FAR — What to Know',body:'FAR is the hardest section (43% pass rate). Government accounting (GASB) and not-for-profit account for ~36% of the exam — candidates who underweight these fail. US GAAP is foundational but not enough alone. Budget 170+ hours. The fund types (governmental, proprietary, fiduciary) must be instinctive.'},
-      {icon:'🔍',title:'AUD — What to Know',body:'AUD is about professional judgment, not formulas. Multiple-choice questions are designed to test your reasoning in ambiguous situations. The answer "it depends on the auditor\'s judgment" is often wrong — they want you to know WHEN that judgment applies. PCAOB vs AICPA standards matter: PCAOB for public companies, AICPA for non-public.'},
-      {icon:'⚖️',title:'REG — What to Know',body:'REG splits ~60% tax / ~40% business law. Individual taxation (Schedule items, credits, AMT) and entity taxation (C-Corps, S-Corps, Partnerships) are the highest-weighted areas. Business law (contracts, agency, secured transactions) is often underprepared. The IRC research TBS is giveable if you practice the search tool.'},
-      {icon:'📈',title:'BAR — What to Know',body:'BAR has the lowest discipline pass rate (42%) because it combines financial reporting depth with business analysis. Candidates underestimate the data analytics and business analysis content. If you passed FAR, the technical accounting content won\'t shock you — but the analytical modeling questions will if you didn\'t prepare for them.'},
-      {icon:'💻',title:'ISC — What to Know',body:'ISC is 82 MCQ + 6 TBS (more MCQs than any other section). SOC engagements (SOC 1, SOC 2, SOC 3) are heavily tested and underpreparation is the #1 failure cause. Security concepts (CIA triad, access controls, disaster recovery) are foundational. IT audit candidates often underestimate the SOC depth required.'},
-      {icon:'🧮',title:'TCP — What to Know',body:'TCP has the highest pass rate (78%) but don\'t get complacent. Individual and entity tax compliance is tested at depth beyond REG. The planning component (tax minimization strategies, entity choice) is the differentiator. If you passed REG solidly, TCP builds directly on that foundation. Budget 110 hours minimum.'},
-    ],
-    mental:[
-      {icon:'🧠',title:'Mindset: It\'s a Marathon',body:'The average CPA candidate takes 16–18 months to pass all four sections. You will have bad study days, failed mocks, and moments of doubt. Every CPA who passed felt exactly what you feel right now. The difference between those who pass and those who don\'t is almost never intelligence — it\'s showing up consistently.'},
-      {icon:'😴',title:'Sleep is Non-Negotiable',body:'Sleep is when your brain consolidates what you studied. Studying an extra 2 hours instead of sleeping 8 is a net negative. The night before your exam: do nothing new, sleep 8 hours, eat breakfast. Candidates who sleep well before exams statistically score higher. You can\'t study your way out of exhaustion.'},
-      {icon:'💪',title:'Burnout Prevention',body:'Burnout is the #1 reason candidates abandon their CPA journey. Schedule one completely study-free day per week — non-negotiable. Every 4th week, cut your study hours in half (deload week). Tell people close to you what you\'re doing — social support is a documented predictor of exam success.'},
-      {icon:'📱',title:'Study Smarter, Not Longer',body:'Active recall (testing yourself) beats passive reading by 3x for retention. Do MCQs first, then read the explanation — not the other way around. Spaced repetition (reviewing material at increasing intervals) is the most evidence-based study method available. Becker\'s adaptive learning is built on this principle.'},
-    ],
+  // ── Section blueprint data ─────────────────────────────────────────────────
+  const BLUEPRINT = {
+    FAR:{topAreas:['Gov\'t & NFP Accounting (~36%)','Financial Statements & Reporting','Leases, Revenue Recognition & Fair Value','Governmental Fund Types (GRaSPP)'],note:'Budget 170+ hrs. GASB/NFP alone decides most FAR scores.'},
+    AUD:{topAreas:['Risk Assessment & Audit Planning','Audit Reports & Opinions','Professional Responsibilities & Ethics','Internal Controls & Substantive Testing'],note:'It\'s about professional judgment, not formulas. PCAOB applies to public company audits.'},
+    REG:{topAreas:['Individual Income Tax (~30%)','Entity Taxation (C-Corp, S-Corp, Partnership)','Business Law (Contracts, Agency, UCC)','Property Transactions & Credits'],note:'~60% tax / ~40% business law. Business law is consistently underprepared.'},
+    BAR:{topAreas:['Financial Statement Analysis & Ratios','Business Data Analytics & Modeling','Technical Accounting (ASC depth)','Budgeting, Forecasting & Variance Analysis'],note:'Hardest discipline section. Data analytics questions catch candidates off guard.'},
+    ISC:{topAreas:['SOC Engagements (SOC 1 / SOC 2 / SOC 3)','IT Audit Procedures & Controls','Security (CIA Triad, Access Controls)','Business Continuity & Disaster Recovery'],note:'82 MCQs — more than any section. SOC under-preparation is the #1 failure cause.'},
+    TCP:{topAreas:['Individual Tax Compliance & Credits','Entity Compliance (C-Corp, S-Corp, Partnership)','Tax Minimization & Planning Strategies','Estate, Gift & Trust Planning'],note:'Highest pass rate but tested at greater depth than REG. Builds directly on REG.'},
   };
 
-  const catLabels={strategy:'Strategy & Planning',mcqtbs:'MCQ & TBS Tactics',section:'Section Deep-Dives',mental:'Mindset & Wellbeing'};
-  const cats=Object.keys(TIPS_DATA);
-  const tipHTML=cats.map(cat=>`
-  <div style="margin-bottom:28px">
-    <div style="font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px">${catLabels[cat]}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-      ${TIPS_DATA[cat].map(t=>`
-      <div class="card card-pad" style="border-left:3px solid var(--ora)">
-        <div style="font-size:20px;margin-bottom:6px">${t.icon}</div>
-        <div style="font-size:14px;font-weight:800;margin-bottom:8px">${t.title}</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.75">${t.body}</div>
-      </div>`).join('')}
-    </div>
-  </div>`).join('');
-
+  // ── Pass rate bars ─────────────────────────────────────────────────────────
   const passRateChart=Object.entries(EXAMS).map(([k,ex])=>{
     const pct=ex.passRate;
-    return`<div style="margin-bottom:10px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <span class="badge badge-${k}">${k}</span>
+    return`<div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+        <span class="badge badge-${k}" style="min-width:42px;justify-content:center">${k}</span>
+        <span style="font-size:12px;font-weight:700;flex:1">${ex.full}</span>
         <span style="font-size:11px;color:var(--mut)">${ex.difficulty} · ${ex.format}</span>
-        <span style="font-size:14px;font-weight:800;color:${ex.color}">${pct}%</span>
+        <span style="font-size:16px;font-weight:900;color:${ex.color};min-width:38px;text-align:right">${pct}%</span>
       </div>
-      <div class="prog-bar" style="height:10px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
+      <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
     </div>`;
   }).join('');
+
+  // ── Section blueprint cards ────────────────────────────────────────────────
+  const blueprintCards=Object.entries(EXAMS).map(([k,ex])=>{
+    const bp=BLUEPRINT[k];
+    return`<div class="card card-pad" style="border-top:3px solid ${ex.color}">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+        <span style="font-size:24px">${ex.icon}</span>
+        <div>
+          <div style="font-size:13px;font-weight:900">${k} — ${ex.full}</div>
+          <div style="font-size:10px;color:var(--mut);margin-top:1px">${ex.format} · 4 hrs · ~${ex.studyHours} hrs recommended · ${ex.passRate}% pass rate</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Highest-Weighted Topics</div>
+      ${bp.topAreas.map(a=>`<div style="font-size:11px;color:var(--sub);padding:2px 0;display:flex;align-items:flex-start;gap:6px"><span style="color:${ex.color};margin-top:1px;flex-shrink:0">▸</span>${a}</div>`).join('')}
+      <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr);font-size:11px;color:var(--sub);line-height:1.6;font-style:italic">${bp.note}</div>
+    </div>`;
+  }).join('');
+
+  // ── Exam Day Protocol (Pro gate) ───────────────────────────────────────────
+  const protocolSection = isPro()
+    ? `<div class="card card-pad" style="border-top:3px solid var(--amb)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
+          <div>
+            <div style="font-size:15px;font-weight:800">Exam Day Protocol</div>
+            <div style="font-size:11px;color:var(--mut)">Your 5-phase pre-exam playbook — check off each milestone as you go</div>
+          </div>
+        </div>
+        ${_buildExamDayProtocol()}
+      </div>`
+    : `<div class="card card-pad" style="text-align:center;padding:44px 24px;border:2px dashed var(--bdr2)">
+        <div style="font-size:48px;margin-bottom:14px">📋</div>
+        <div style="font-size:18px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em">Exam Day Protocol</div>
+        <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 8px;line-height:1.7">A structured 5-phase checklist — 14 days out through exam morning — so nothing falls through the cracks before you sit.</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:22px">
+          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">14 days out</span>
+          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">7 days out</span>
+          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">3 days out</span>
+          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">Day before</span>
+          <span style="font-size:11px;background:var(--amb-bg,var(--ora-bg));border:1px solid var(--amb,var(--ora));border-radius:20px;padding:3px 10px;color:var(--amb,var(--ora));font-weight:700">Exam day</span>
+        </div>
+        <button class="btn btn-primary" style="font-size:13px;padding:10px 26px" onclick="openUpgradeModal('Exam Day Protocol')">Unlock with Pro — 7 days free</button>
+        <div style="font-size:10px;color:var(--mut);margin-top:8px">Cancel anytime · No commitment</div>
+      </div>`;
 
   return`
 <div style="max-width:960px;margin:0 auto">
   <div style="margin-bottom:24px">
-    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">💡 CPA Exam Tips</h1>
-    <p style="color:var(--sub);font-size:13px">Everything the top prep providers don't put in their marketing. Sourced from AICPA data, Becker, Gleim, Another71, and 300hours.com.</p>
+    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">◆ Exam Hub</h1>
+    <p style="color:var(--sub);font-size:13px">Real data, real section breakdowns, and your personal exam-day playbook — everything to go in prepared and come out passing.</p>
   </div>
 
+  <!-- Pass Rates -->
   <div class="card card-pad" style="margin-bottom:24px">
-    <div style="font-size:14px;font-weight:800;margin-bottom:14px">📈 2025 Pass Rates (AICPA / NASBA)</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:800">📈 2025 Pass Rates — AICPA / NASBA</div>
+      <div style="font-size:10px;color:var(--mut)">First-time ~51% · Retakers ~39%</div>
+    </div>
     ${passRateChart}
-    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75/99 scaled. First-time pass rate ~51%, retakers ~39%. Discipline sections: first month of each quarter only.</div>
+    <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75 on a 0–99 scaled score. Discipline sections available in first 2 months of each quarter.</div>
   </div>
 
-  ${tipHTML}
+  <!-- Section Blueprint -->
+  <div style="margin-bottom:8px;font-size:16px;font-weight:800">🗺 Section Blueprint</div>
+  <div style="margin-bottom:6px;font-size:12px;color:var(--sub)">Format, recommended hours, and the highest-weighted topics for each section — use this alongside your study materials.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:28px">
+    ${blueprintCards}
+  </div>
+
+  <!-- Exam Day Protocol -->
+  <div style="margin-bottom:12px;font-size:16px;font-weight:800">📋 Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle;margin-left:6px">Pro</span></div>
+  ${protocolSection}
 </div>`;
 }
 // ═══════════════════════════════════════════════
@@ -6458,8 +6483,8 @@ function _buildAIToolsPanel() {
     return '<div style="text-align:center;padding:60px 24px">' +
       '<div style="font-size:52px;margin-bottom:18px">✦</div>' +
       '<div style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-.03em">Elite AI Tools</div>' +
-      '<div style="font-size:13px;color:var(--sub);max-width:400px;margin:0 auto 24px;line-height:1.7">AI Mnemonic Generator, Score Predictor, and Exam Day Protocol — purpose-built for candidates who need every edge.</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:540px;margin:0 auto 28px">' +
+      '<div style="font-size:13px;color:var(--sub);max-width:400px;margin:0 auto 24px;line-height:1.7">AI Mnemonic Generator and Score Predictor — purpose-built for candidates who need every edge.</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:360px;margin:0 auto 28px">' +
         '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:16px 12px;text-align:center">' +
           '<div style="font-size:26px;margin-bottom:6px">🧠</div>' +
           '<div style="font-size:12px;font-weight:800">Mnemonic<br>Generator</div>' +
@@ -6467,10 +6492,6 @@ function _buildAIToolsPanel() {
         '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:16px 12px;text-align:center">' +
           '<div style="font-size:26px;margin-bottom:6px">🔮</div>' +
           '<div style="font-size:12px;font-weight:800">Score<br>Predictor</div>' +
-        '</div>' +
-        '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:16px 12px;text-align:center">' +
-          '<div style="font-size:26px;margin-bottom:6px">📋</div>' +
-          '<div style="font-size:12px;font-weight:800">Exam Day<br>Protocol</div>' +
         '</div>' +
       '</div>' +
       '<button class="btn btn-primary" style="font-size:14px;padding:12px 32px" onclick="openUpgradeModal(\'Elite AI Tools\')">Unlock Elite — $22/mo</button>' +
@@ -6513,27 +6534,17 @@ function _buildAIToolsPanel() {
         '<div id="mnem-history" style="margin-top:14px"></div>' +
       '</div>' +
     '</div>' +
-    // RIGHT: Score Predictor + Exam Day Protocol
+    // RIGHT: Score Predictor
     '<div>' +
-      '<div class="card card-pad" style="margin-bottom:16px;border-top:3px solid var(--grn)">' +
+      '<div class="card card-pad" style="border-top:3px solid var(--grn)">' +
         '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">' +
           '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--grn),#059669);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🔮</div>' +
           '<div>' +
             '<div style="font-size:14px;font-weight:800">Score Predictor</div>' +
-            '<div style="font-size:11px;color:var(--mut)">ML-estimated scaled score per section</div>' +
+            '<div style="font-size:11px;color:var(--mut)">Estimated scaled score per section</div>' +
           '</div>' +
         '</div>' +
         predData +
-      '</div>' +
-      '<div class="card card-pad" style="border-top:3px solid var(--amb)">' +
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
-          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>' +
-          '<div>' +
-            '<div style="font-size:14px;font-weight:800">Exam Day Protocol</div>' +
-            '<div style="font-size:11px;color:var(--mut)">Your personalized pre-exam playbook</div>' +
-          '</div>' +
-        '</div>' +
-        _buildExamDayProtocol() +
       '</div>' +
     '</div>' +
   '</div>';
