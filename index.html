@@ -2962,13 +2962,6 @@ function buildExplore(){
       ${clubSectionNew}
       <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openMessagesModal()">My Clubs & Messages →</button>
     </div>
-    <div class="card card-pad">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">Find CPA Candidates</div>
-        <span style="font-size:10px;color:var(--mut)">${MOCK_FRIENDS.length} nearby</span>
-      </div>
-      ${friendCards}
-    </div>
   </div>
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
@@ -2977,6 +2970,13 @@ function buildExplore(){
         <span style="font-size:10px;color:var(--mut)">${(S.challenges||[]).length} joined · ${(S.challengeCompleted||[]).length} done</span>
       </div>
       <div style="max-height:520px;overflow-y:auto;padding-right:2px">${challengeCards}</div>
+    </div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="margin-bottom:0">Find CPA Candidates</div>
+        <span style="font-size:10px;color:var(--mut)">${MOCK_FRIENDS.length} nearby</span>
+      </div>
+      ${friendCards}
     </div>
   </div>
 </div>`;
