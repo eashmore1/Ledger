@@ -1130,8 +1130,9 @@ let TS = {
   section: '', material: '', goalHours: 0,
   startTime: null, elapsed: 0, date: '',
   concepts: [], notes: '', feeling: '💪', difficulty: 3,
+  sessionPhoto: null, // base64 image attached at recap
 };
-function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3};}
+function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null};}
 function fmtElapsed(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
 function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?`${h}h ${m}m`:`${m}m ${s%60}s`;}
 
@@ -2514,6 +2515,7 @@ function buildActivityCard(a){
     ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:4px">📖 ${a.material}</div>`:''}
     ${a.caption?`<div class="ac-caption">${a.caption}</div>`:''}
     ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0">${a.concepts.slice(0,5).map(c=>`<span style="font-size:10px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);color:var(--ora);padding:2px 9px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>5?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-5} more</span>`:''}</div>`:''}
+    ${a.photo?`<div style="margin:8px 0 4px;border-radius:10px;overflow:hidden;max-height:300px"><img src="${a.photo}" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy" alt="Study session photo"></div>`:''}
     ${a.elapsed?`<div style="font-size:10px;color:var(--mut);margin-top:4px">⏱ ${fmtDur(a.elapsed)} actual timer</div>`:''}
   </div>
   <div class="ac-actions">
@@ -3181,8 +3183,105 @@ function addComment(actId,userId){
 }
 
 function shareActivity(actId){
-  if(navigator.share){navigator.share({title:'Ledger Study Session',text:`Check out my CPA study session on Ledger!`,url:window.location.href});}
-  else{navigator.clipboard?.writeText(window.location.href);showToast('Link copied to clipboard!','info');}
+  const url = window.location.href;
+  if(navigator.share){
+    navigator.share({title:'My CPA Study Session — Ledger',text:'Check out my study session on Ledger!',url})
+      .catch(e=>{ if(e.name!=='AbortError') _fallbackShare(url); });
+    return;
+  }
+  _fallbackShare(url);
+}
+function _fallbackShare(url){
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(url)
+      .then(()=>showToast('Link copied! 📋','ok'))
+      .catch(()=>_execCommandShare(url));
+    return;
+  }
+  _execCommandShare(url);
+}
+function _execCommandShare(url){
+  // Works on iOS Safari, older Android, and browsers without Clipboard API
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=url;
+    ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    // iOS Safari needs this extra selection step
+    const range=document.createRange();
+    range.selectNodeContents(ta);
+    const sel=window.getSelection();
+    if(sel){sel.removeAllRanges();sel.addRange(range);}
+    ta.setSelectionRange(0,99999);
+    const ok=document.execCommand('copy');
+    document.body.removeChild(ta);
+    if(ok){showToast('Link copied! 📋','ok');return;}
+  }catch(e){}
+  _showShareDialog(url);
+}
+function _showShareDialog(url){
+  let overlay=document.getElementById('_share-overlay');
+  if(overlay)overlay.remove();
+  overlay=document.createElement('div');
+  overlay.id='_share-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML=
+    '<div style="background:var(--surf);border-radius:18px;padding:24px;max-width:380px;width:100%;box-shadow:var(--shadow-lg)">' +
+      '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Share Session</div>' +
+      '<div style="font-size:12px;color:var(--sub);margin-bottom:14px">Tap to select, then copy the link below</div>' +
+      '<input id="_share-url-inp" value="'+url+'" readonly ' +
+        'style="width:100%;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:9px;color:var(--txt);font-size:12px;outline:none;box-sizing:border-box" ' +
+        'onclick="this.select();this.setSelectionRange(0,9999)" ' +
+        'onfocus="this.select();this.setSelectionRange(0,9999)">' +
+      '<div style="display:flex;gap:8px;margin-top:14px">' +
+        '<button onclick="const i=document.getElementById(\'_share-url-inp\');i.select();i.setSelectionRange(0,9999);try{document.execCommand(\'copy\');showToast(\'Copied! 📋\',\'ok\');}catch(e){}document.getElementById(\'_share-overlay\').remove();" ' +
+          'style="flex:1;padding:11px;background:var(--ind);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer">Copy Link</button>' +
+        '<button onclick="document.getElementById(\'_share-overlay\').remove()" ' +
+          'style="padding:11px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;color:var(--txt)">Close</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  setTimeout(()=>{const inp=document.getElementById('_share-url-inp');if(inp){inp.focus();inp.select();inp.setSelectionRange(0,9999);}},80);
+}
+
+// ── Session photo helpers ──────────────────────────────────────────────────
+function _compressImage(dataURL, maxW, maxH, quality, cb){
+  const img=new Image();
+  img.onload=function(){
+    let w=img.width,h=img.height;
+    const ratio=Math.min(1, maxW/w, maxH/h);
+    const cw=Math.round(w*ratio), ch=Math.round(h*ratio);
+    const canvas=document.createElement('canvas');
+    canvas.width=cw; canvas.height=ch;
+    canvas.getContext('2d').drawImage(img,0,0,cw,ch);
+    cb(canvas.toDataURL('image/jpeg',quality));
+  };
+  img.src=dataURL;
+}
+function handleSessionPhotoUpload(input){
+  const file=input.files?.[0];
+  if(!file)return;
+  if(file.size>15*1024*1024){showToast('Image must be under 15 MB','err');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    _compressImage(e.target.result, 1200, 1200, 0.72, function(compressed){
+      TS.sessionPhoto=compressed;
+      const area=document.getElementById('sess-photo-area');
+      if(area){
+        area.innerHTML=
+          '<div style="position:relative;display:inline-block;width:100%">' +
+            '<img src="'+compressed+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block">' +
+            '<button onclick="TS.sessionPhoto=null;document.getElementById(\'sess-photo-area\').innerHTML=\'<label for=\\"sess-photo-inp\\" style=\\"display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box\\"><span style=\\"font-size:20px\\">📷</span>Add photo from camera or library<input type=\\"file\\" id=\\"sess-photo-inp\\" accept=\\"image/*\\" style=\\"display:none\\" onchange=\\"handleSessionPhotoUpload(this)\\"></label>\'" ' +
+              'style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>' +
+          '</div>';
+      }
+    });
+  };
+  reader.readAsDataURL(file);
 }
 
 function toggleFollow(fId,btn){
@@ -3379,6 +3478,15 @@ function renderSessCard(){
         <label>Session Notes</label>
         <textarea class="sess-notes-ta" id="sess-notes-ta" placeholder="How did it go? What clicked? What's still tricky?">${TS.notes}</textarea>
       </div>
+      <div class="sess-fgrp">
+        <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional — share your setup or whiteboard</span></label>
+        <div id="sess-photo-area">
+          ${TS.sessionPhoto
+            ? `<div style="position:relative;display:inline-block;width:100%"><img src="${TS.sessionPhoto}" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block"><button onclick="TS.sessionPhoto=null;document.getElementById('sess-photo-area').innerHTML='<label for=\\'sess-photo-inp\\' style=\\'display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box\\'><span style=\\'font-size:20px\\'>📷</span>Add photo<input type=\\'file\\' id=\\'sess-photo-inp\\' accept=\\'image/*\\' style=\\'display:none\\' onchange=\\'handleSessionPhotoUpload(this)\\'></label>'" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
+            : `<label for="sess-photo-inp" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box"><span style="font-size:20px">📷</span>Add photo from camera or library<input type="file" id="sess-photo-inp" accept="image/*" style="display:none" onchange="handleSessionPhotoUpload(this)"></label>`
+          }
+        </div>
+      </div>
       <div class="form-row" style="margin-bottom:14px">
         <div class="sess-fgrp" style="margin-bottom:0">
           <label>How'd it feel?</label>
@@ -3532,6 +3640,7 @@ function saveSession(){
     feeling:TS.feeling,
     concepts:[...TS.concepts],
     elapsed:TS.elapsed,
+    photo:TS.sessionPhoto||null,
     kudos:[],comments:[]
   };
   S.activities.push(act);
