@@ -1356,14 +1356,13 @@ function renderUpgradeModal(featureHint){
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
-    {on:true,text:'1-on-1 CPA Mentor (45 min/mo) 👨‍🏫'},
+    {on:true,text:'Monthly 45-min Mentor Session 👨‍🏫'},
     {on:true,text:'AI Mnemonic Generator 🧠'},
     {on:true,text:'Score Predictor 🔮'},
-    {on:true,text:'Accountability Partner Sync 🤝'},
+    {on:true,text:'Study Partner Pairing 🤝'},
     {on:true,text:'Unlimited Streak Shields'},
-    {on:true,text:'Priority Support (response <2h)'},
-    {on:true,text:'Early Access to New Features'},
-    {on:true,text:'Elite-only Badge + Leaderboard Flair'},
+    {on:true,text:'Priority Support (response <2h) 🎧'},
+    {on:true,text:'Elite Badge + Leaderboard Flair ✦'},
   ];
 
   const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
@@ -1434,7 +1433,7 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-price" style="color:var(--pur)"><sup>$</sup>'+eliteDisplay+'</div>'+
   '<div class="plan-period">per month'+(isAnnual?' · billed $'+(eliteAnnual*12)+'/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+eliteMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">✦ AI Tools + 1-on-1 CPA mentor</div>'+
+  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">✦ AI Tools + Monthly Mentor Session</div>'+
   '<div class="plan-sep"></div>'+
   elite.map(fRow).join('')+
   eliteCTA+
@@ -2444,7 +2443,7 @@ function buildMiniLeaderboard(){
   <div style="display:flex;align-items:center;gap:8px;padding:5px ${e.isYou?'8px':'0'};margin-bottom:2px;background:${e.isYou?'var(--ora-bg)':'transparent'};border-radius:8px">
     <div style="font-size:13px;width:20px;text-align:center">${medals[i]||`${i+1}`}</div>
     <div class="avatar" style="width:26px;height:26px;font-size:9px;background:${e.color};color:#fff">${e.initials}</div>
-    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}</div>
+    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}${e.isYou&&isElite()?'<span style="font-size:9px;color:var(--pur);font-weight:800;margin-left:4px">✦ Elite</span>':''}</div>
     <div style="font-size:12px;font-weight:800;color:var(--ora)">${e.hrs.toFixed(1)}h</div>
   </div>`).join('');
 }
@@ -2887,6 +2886,65 @@ function buildProfile(){
     '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
   }
 
+  <!-- ELITE: 1-on-1 Mentor Sessions -->
+  ${isElite()?`
+  <div class="card card-pad" style="margin-bottom:16px;border-top:3px solid var(--pur)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:22px">👨‍🏫</div>
+        <div>
+          <div class="section-title" style="margin-bottom:0">Monthly Mentor Session</div>
+          <div style="font-size:11px;color:var(--mut)">45 min · 1-on-1 with a licensed CPA</div>
+        </div>
+      </div>
+      <span style="font-size:11px;font-weight:700;background:var(--pur-bg);color:var(--pur);border:1px solid rgba(147,51,234,.25);border-radius:20px;padding:2px 9px">Elite</span>
+    </div>
+    ${(()=>{
+      const reqs=(S.mentorRequests||[]);
+      const latest=reqs.slice(-1)[0];
+      if(latest&&latest.status==='pending'){
+        return '<div style="background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:12px 14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--pur);margin-bottom:3px">✓ Session Requested</div><div style="font-size:11px;color:var(--sub)">Topics: '+latest.topics.join(', ')+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">Submitted '+timeAgo(latest.requestedAt)+' · Expect a calendar invite at '+AUTH.email+' within 24 hrs</div></div>';
+      }
+      return '<div style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:12px">Use your monthly 45-min session to go deep on anything — a tricky concept, exam strategy, career questions, or a section review. A licensed CPA will meet you on Zoom.</div>';
+    })()}
+    <button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,var(--pur),#7c3aed)" onclick="openMentorBookingModal()">📅 Request a Session</button>
+    ${(S.mentorRequests||[]).filter(r=>r.status==='completed').length?'<button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="openMentorHistoryModal()">View Past Sessions</button>':''}
+  </div>`:''}
+
+  <!-- PRO+: Accountability Partner -->
+  ${isPro()?`
+  <div class="card card-pad" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:20px">🤝</div>
+        <div>
+          <div class="section-title" style="margin-bottom:0">Study Partner</div>
+          <div style="font-size:11px;color:var(--mut)">Keep each other accountable</div>
+        </div>
+      </div>
+    </div>
+    ${(()=>{
+      const partnerId=S.accountabilityPartner;
+      const partner=partnerId?MOCK_FRIENDS.find(f=>f.id===partnerId):null;
+      if(partner){
+        const weekAgo=new Date(Date.now()-7*86400000);
+        const theirHrs=partner.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
+        const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'+
+          '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--mut);margin-bottom:4px">YOU</div><div style="font-size:22px;font-weight:900;color:var(--ora)">'+myHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
+          '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--mut);margin-bottom:4px">'+partner.name.split(' ')[0].toUpperCase()+'</div><div style="font-size:22px;font-weight:900;color:var(--ind)">'+theirHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;align-items:center"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:'+partner.color+';color:#fff">'+partner.initials+'</div><div style="font-size:12px;font-weight:600">'+partner.name+'</div><button class="btn btn-ghost btn-xs" style="margin-left:auto;color:var(--mut)" onclick="removeStudyPartner()">Remove</button></div>';
+      }
+      const candidates=(S.following||[]).map(id=>MOCK_FRIENDS.find(f=>f.id===id)).filter(Boolean);
+      if(!candidates.length) return '<div style="font-size:12px;color:var(--sub)">Follow someone first to add them as your study partner.</div>';
+      return '<div style="font-size:12px;color:var(--sub);margin-bottom:10px">Pick someone to pair with — you\'ll see each other\'s weekly hours side-by-side.</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
+        candidates.map(function(f){return '<button onclick="setStudyPartner(\''+f.id+'\')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600"><div class="avatar" style="width:20px;height:20px;font-size:8px;background:'+f.color+';color:#fff">'+f.initials+'</div>'+f.name.split(' ')[0]+'</button>';}).join('')+
+        '</div>';
+    })()}
+  </div>`:''}
+
   <!-- SOCIAL CONNECT -->
   <div class="card card-pad">
     <div class="section-title">Connect Your Socials</div>
@@ -3262,21 +3320,31 @@ function _compressImage(dataURL, maxW, maxH, quality, cb){
   };
   img.src=dataURL;
 }
+function _sessPhotoPickerHTML(){
+  return '<label for="sess-photo-inp" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box">' +
+    '<span style="font-size:20px">📷</span>Add photo from camera or library' +
+    '<input type="file" id="sess-photo-inp" accept="image/*" style="display:none" onchange="handleSessionPhotoUpload(this)">' +
+  '</label>';
+}
+function clearSessionPhoto(){
+  TS.sessionPhoto=null;
+  const area=document.getElementById('sess-photo-area');
+  if(area) area.innerHTML=_sessPhotoPickerHTML();
+}
 function handleSessionPhotoUpload(input){
   const file=input.files?.[0];
   if(!file)return;
   if(file.size>15*1024*1024){showToast('Image must be under 15 MB','err');return;}
   const reader=new FileReader();
   reader.onload=e=>{
-    _compressImage(e.target.result, 1200, 1200, 0.72, function(compressed){
+    _compressImage(e.target.result,1200,1200,0.72,function(compressed){
       TS.sessionPhoto=compressed;
       const area=document.getElementById('sess-photo-area');
       if(area){
         area.innerHTML=
           '<div style="position:relative;display:inline-block;width:100%">' +
             '<img src="'+compressed+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block">' +
-            '<button onclick="TS.sessionPhoto=null;document.getElementById(\'sess-photo-area\').innerHTML=\'<label for=\\"sess-photo-inp\\" style=\\"display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box\\"><span style=\\"font-size:20px\\">📷</span>Add photo from camera or library<input type=\\"file\\" id=\\"sess-photo-inp\\" accept=\\"image/*\\" style=\\"display:none\\" onchange=\\"handleSessionPhotoUpload(this)\\"></label>\'" ' +
-              'style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>' +
+            '<button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>' +
           '</div>';
       }
     });
@@ -3482,8 +3550,8 @@ function renderSessCard(){
         <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional — share your setup or whiteboard</span></label>
         <div id="sess-photo-area">
           ${TS.sessionPhoto
-            ? `<div style="position:relative;display:inline-block;width:100%"><img src="${TS.sessionPhoto}" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block"><button onclick="TS.sessionPhoto=null;document.getElementById('sess-photo-area').innerHTML='<label for=\\'sess-photo-inp\\' style=\\'display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box\\'><span style=\\'font-size:20px\\'>📷</span>Add photo<input type=\\'file\\' id=\\'sess-photo-inp\\' accept=\\'image/*\\' style=\\'display:none\\' onchange=\\'handleSessionPhotoUpload(this)\\'></label>'" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
-            : `<label for="sess-photo-inp" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;width:100%;box-sizing:border-box"><span style="font-size:20px">📷</span>Add photo from camera or library<input type="file" id="sess-photo-inp" accept="image/*" style="display:none" onchange="handleSessionPhotoUpload(this)"></label>`
+            ? '<div style="position:relative;display:inline-block;width:100%"><img src="'+TS.sessionPhoto+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>'
+            : _sessPhotoPickerHTML()
           }
         </div>
       </div>
@@ -3721,6 +3789,130 @@ function showAchInfo(id){
 // ═══════════════════════════════════════════════
 // FOLLOWERS / FOLLOWING MODAL
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// ELITE FEATURES — MENTOR BOOKING + SUPPORT
+// ═══════════════════════════════════════════════
+function openMentorBookingModal(){
+  const TOPICS=['FAR deep-dive','AUD concepts','REG / Tax strategy','BAR / ISC / TCP','Exam order & timing','Study plan review','Career & licensing','Score below 75 — retake plan'];
+  let el=document.getElementById('mentor-book-modal');
+  if(el)el.remove();
+  el=document.createElement('div');
+  el.id='mentor-book-modal';
+  el.className='modal-overlay';
+  el.innerHTML=
+    '<div class="modal-box" style="max-width:460px" onclick="event.stopPropagation()">' +
+      '<div class="modal-hdr">' +
+        '<div class="modal-title">👨‍🏫 Request Mentor Session</div>' +
+        '<button class="modal-close" onclick="document.getElementById(\'mentor-book-modal\').classList.remove(\'open\')">×</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div style="font-size:13px;color:var(--sub);margin-bottom:16px;line-height:1.65">Select the topics you\'d like to cover in your 45-min session. A licensed CPA will reach out to you at <strong>'+AUTH.email+'</strong> with a calendar invite within 24 hours.</div>' +
+        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Topics (select all that apply)</div>' +
+        '<div id="mentor-topic-wrap" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">' +
+          TOPICS.map(t=>'<button onclick="this.classList.toggle(\'active\')" style="font-size:12px;padding:5px 13px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:20px;cursor:pointer;font-weight:600;color:var(--sub);transition:all .15s" onmouseover="this.style.borderColor=\'var(--pur)\'" onmouseout="if(!this.classList.contains(\'active\'))this.style.borderColor=\'var(--bdr)\'" class="mentor-topic-btn">'+t+'</button>').join('') +
+        '</div>' +
+        '<div class="form-grp" style="margin-bottom:16px">' +
+          '<label>Anything specific you want to work on?</label>' +
+          '<textarea id="mentor-notes-ta" style="min-height:80px" placeholder="e.g. I keep failing the governmental accounting TBSs on FAR…"></textarea>' +
+        '</div>' +
+        '<div class="form-grp" style="margin-bottom:20px">' +
+          '<label>Preferred availability</label>' +
+          '<select id="mentor-avail-sel" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">' +
+            '<option value="">Choose a preference…</option>' +
+            '<option>Weekday mornings (8am–12pm)</option>' +
+            '<option>Weekday afternoons (12pm–5pm)</option>' +
+            '<option>Weekday evenings (5pm–9pm)</option>' +
+            '<option>Weekend mornings</option>' +
+            '<option>Weekend afternoons</option>' +
+            '<option>Flexible — any time works</option>' +
+          '</select>' +
+        '</div>' +
+        '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;background:linear-gradient(135deg,var(--pur),#7c3aed)" onclick="submitMentorRequest()">Submit Request</button>' +
+        '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">You\'ll receive a calendar invite at your email within 24 hours</div>' +
+      '</div>' +
+    '</div>';
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+  document.body.appendChild(el);
+  el.classList.add('open');
+}
+function submitMentorRequest(){
+  const selected=Array.from(document.querySelectorAll('.mentor-topic-btn.active')).map(b=>b.textContent);
+  const notes=document.getElementById('mentor-notes-ta')?.value?.trim()||'';
+  const avail=document.getElementById('mentor-avail-sel')?.value||'';
+  if(!selected.length&&!notes){showToast('Select at least one topic first','err');return;}
+  if(!S.mentorRequests)S.mentorRequests=[];
+  S.mentorRequests.push({
+    requestedAt:new Date().toISOString(),
+    topics:selected.length?selected:['General CPA guidance'],
+    notes,availability:avail,
+    status:'pending'
+  });
+  saveState();
+  document.getElementById('mentor-book-modal')?.classList.remove('open');
+  renderTab();
+  showToast('Session request submitted! 📅 Check your email for a calendar invite within 24 hrs','ok');
+}
+function openMentorHistoryModal(){
+  const reqs=(S.mentorRequests||[]).filter(r=>r.status==='completed');
+  if(!reqs.length){showToast('No completed sessions yet','info');return;}
+  // Simple toast for now
+  showToast('Coming soon: view past session notes','info');
+}
+
+function openPrioritySupport(){
+  let el=document.getElementById('support-modal');
+  if(el)el.remove();
+  el=document.createElement('div');
+  el.id='support-modal';
+  el.className='modal-overlay';
+  el.innerHTML=
+    '<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">' +
+      '<div class="modal-hdr">' +
+        '<div class="modal-title">🎧 Elite Priority Support</div>' +
+        '<button class="modal-close" onclick="document.getElementById(\'support-modal\').classList.remove(\'open\')">×</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div style="display:flex;align-items:center;gap:10px;background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:11px 14px;margin-bottom:16px">' +
+          '<span style="font-size:20px">⚡</span>' +
+          '<div style="font-size:12px;color:var(--pur);font-weight:600">Elite members get responses within 2 hours during business hours (9am–6pm CT, Mon–Fri)</div>' +
+        '</div>' +
+        '<div class="form-grp" style="margin-bottom:8px"><label>What do you need help with?</label><textarea id="support-msg-ta" style="min-height:100px" placeholder="Describe your issue, bug, or question…"></textarea></div>' +
+        '<div class="form-grp" style="margin-bottom:16px"><label>Your email</label><input type="email" id="support-email-inp" value="'+(AUTH?.email||'')+'" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none"></div>' +
+        '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="sendSupportMessage()">Send Message</button>' +
+      '</div>' +
+    '</div>';
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+  document.body.appendChild(el);
+  el.classList.add('open');
+}
+function sendSupportMessage(){
+  const msg=document.getElementById('support-msg-ta')?.value?.trim()||'';
+  const email=document.getElementById('support-email-inp')?.value?.trim()||'';
+  if(!msg){showToast('Please describe your issue','err');return;}
+  // Save to state + open mailto as the real delivery mechanism
+  if(!S.supportTickets)S.supportTickets=[];
+  S.supportTickets.push({sentAt:new Date().toISOString(),message:msg,email,status:'sent'});
+  saveState();
+  const subject=encodeURIComponent('[Ledger Elite Support] '+msg.slice(0,60));
+  const body=encodeURIComponent('From: '+email+'\n\n'+msg);
+  window.location.href='mailto:support@ledgercpa.com?subject='+subject+'&body='+body;
+  document.getElementById('support-modal')?.classList.remove('open');
+  showToast('Message sent — expect a reply within 2 hours ⚡','ok');
+}
+
+function setStudyPartner(id){
+  const f=MOCK_FRIENDS.find(f=>f.id===id);
+  S.accountabilityPartner=id;
+  saveState();
+  renderTab();
+  showToast((f?f.name.split(' ')[0]:'Partner')+' is now your study partner 🤝','ok');
+}
+function removeStudyPartner(){
+  S.accountabilityPartner=null;
+  saveState();
+  renderTab();
+}
+
 function openFollowModal(type){
   let el=document.getElementById('follow-modal');
   if(!el){
@@ -5235,6 +5427,22 @@ function buildSettingsData(){
     <input type="checkbox" ${isDark?'checked':''} onchange="toggleTheme()" style="accent-color:var(--ind);width:16px;height:16px">
   </label>
 </div>
+
+${isElite()?`
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
+  <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
+    <div class="section-title" style="margin-bottom:0">Elite</div>
+    <span style="font-size:10px;font-weight:700;background:var(--pur-bg);color:var(--pur);border:1px solid rgba(147,51,234,.25);border-radius:20px;padding:2px 8px">Active</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <button onclick="openMentorBookingModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt);font-size:13px;font-weight:600;text-align:left">
+      <span style="font-size:18px">👨‍🏫</span><div style="flex:1"><div>Book Mentor Session</div><div style="font-size:11px;color:var(--mut);font-weight:400">Monthly 45-min 1-on-1 with a licensed CPA</div></div><span style="color:var(--mut)">›</span>
+    </button>
+    <button onclick="openPrioritySupport()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt);font-size:13px;font-weight:600;text-align:left">
+      <span style="font-size:18px">🎧</span><div style="flex:1"><div>Priority Support</div><div style="font-size:11px;color:var(--mut);font-weight:400">Responses within 2 hours (business hours)</div></div><span style="color:var(--mut)">›</span>
+    </button>
+  </div>
+</div>`:''}
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div class="section-title" style="color:var(--red)">Danger Zone</div>
