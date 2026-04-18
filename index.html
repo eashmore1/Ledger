@@ -1103,7 +1103,11 @@ function loadState(uid){
     return null;
   }catch{return null;}
 }
-function saveState(){ if(S) localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S)); }
+function saveState(){
+  if(!S)return;
+  try{localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S));}
+  catch(e){showToast('Storage full — clear old data in Settings','err');}
+}
 
 let S = loadState(AUTH?.uid) || null;
 let currentTab = 'feed';
@@ -1135,6 +1139,9 @@ function timeAgo(isoStr){
   if(diff<3600)return Math.floor(diff/60)+'m ago';
   if(diff<86400)return Math.floor(diff/3600)+'h ago';
   return Math.floor(diff/86400)+'d ago';
+}
+function esc(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 function showToast(msg,type='ok'){
   const wrap=document.getElementById('toast-wrap');
@@ -1988,7 +1995,7 @@ function renderObStep0(){
   <div class="form-row">
     <div class="form-grp">
       <label>Your Name</label>
-      <input id="ob-name" type="text" placeholder="e.g. Tyler" value="${obData.name}" autocomplete="given-name">
+      <input id="ob-name" type="text" maxlength="50" placeholder="e.g. Tyler" value="${esc(obData.name||'')}" autocomplete="given-name">
     </div>
     <div class="form-grp">
       <label>Licensing State</label>
@@ -2121,15 +2128,15 @@ function selectEmoji(emoji, el){
 }
 function obNext(){
   if(obStep===0){
-    const name=document.getElementById('ob-name')?.value?.trim();
+    const name=(document.getElementById('ob-name')?.value?.trim()||'').slice(0,50);
     const state=document.getElementById('ob-state')?.value;
-    const hrs=parseInt(document.getElementById('ob-hrs')?.value)||15;
+    const hrs=Math.min(40,Math.max(1,parseInt(document.getElementById('ob-hrs')?.value)||15));
     if(!name){showToast('Enter your name','err');return;}
     if(!state){showToast('Select your state','err');return;}
     obData.name=name;obData.state=state;obData.hoursPerWeek=hrs;
-    obData.school = document.getElementById('ob-school')?.value?.trim()||'';
+    obData.school = (document.getElementById('ob-school')?.value?.trim()||'').slice(0,80);
     obData.classYear = document.getElementById('ob-classyear')?.value||'';
-    obData.bio = document.getElementById('ob-bio')?.value?.trim()||'';
+    obData.bio = (document.getElementById('ob-bio')?.value?.trim()||'').slice(0,200);
     // avatar already set by selectEmoji
     obStep=1;renderOnboarding();
   } else if(obStep===1){
@@ -3068,11 +3075,11 @@ function openPostModal(prefSection=''){
 </div>
 <div class="form-grp">
   <label>Material Covered <span style="color:var(--mut);font-weight:400">(optional)</span></label>
-  <input id="pm-material" type="text" placeholder="e.g. Governmental Accounting — Fund Structure">
+  <input id="pm-material" type="text" maxlength="120" placeholder="e.g. Governmental Accounting — Fund Structure">
 </div>
 <div class="form-grp">
   <label>Session Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
-  <textarea id="pm-caption" placeholder="How did it go? What clicked? What's still tricky?"></textarea>
+  <textarea id="pm-caption" maxlength="500" placeholder="How did it go? What clicked? What's still tricky?"></textarea>
 </div>
 <div class="form-row">
   <div class="form-grp">
@@ -3106,13 +3113,17 @@ function selectDiff(d,el){
   el.classList.add('selected');
 }
 function submitPost(){
+  const btn=document.querySelector('#post-modal .btn-primary');
+  if(btn?.disabled)return;
   const section=document.getElementById('pm-section')?.value;
   const hours=parseFloat(document.getElementById('pm-hours')?.value)||0;
   const date=document.getElementById('pm-date')?.value||todayStr();
-  const material=document.getElementById('pm-material')?.value?.trim()||'';
-  const caption=document.getElementById('pm-caption')?.value?.trim()||'';
+  const material=(document.getElementById('pm-material')?.value?.trim()||'').slice(0,120);
+  const caption=(document.getElementById('pm-caption')?.value?.trim()||'').slice(0,500);
   if(!section){showToast('Select a section','err');return;}
   if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
+  if(hours>16){showToast('Hours capped at 16 per session','err');return;}
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
   const isPrivate=document.getElementById('pm-private')?.checked||false;
   const act={id:'u'+Date.now(),date:date+'T'+new Date().toTimeString().slice(0,8),section,hours,material,caption,difficulty:postDiff,feeling:postFeeling,kudos:[],comments:[],private:isPrivate};
   S.activities.push(act);
@@ -3161,10 +3172,10 @@ function openComments(actId,userId){
     const comments=act.comments||[];
     const commentsHTML=comments.length?comments.map(c=>`
     <div class="comment-row">
-      <div class="avatar" style="width:28px;height:28px;font-size:9px;border-radius:50%;background:var(--ind);color:#fff;flex-shrink:0">${c.user.slice(0,2)}</div>
+      <div class="avatar" style="width:28px;height:28px;font-size:9px;border-radius:50%;background:var(--ind);color:#fff;flex-shrink:0">${esc(c.user).slice(0,2)}</div>
       <div class="comment-body">
-        <div class="comment-author">${c.user}</div>
-        <div class="comment-text">${c.text}</div>
+        <div class="comment-author">${esc(c.user)}</div>
+        <div class="comment-text">${esc(c.text)}</div>
       </div>
     </div>`).join(''):`<div style="text-align:center;padding:20px;color:var(--mut);font-size:13px">No comments yet. Be the first!</div>`;
     document.getElementById('comments-modal-body').innerHTML=`
@@ -3174,7 +3185,7 @@ function openComments(actId,userId){
 </div>
 <div class="comments-wrap" style="background:transparent;padding:0;border:none">${commentsHTML}</div>
 <div class="add-comment">
-  <input id="comment-input" type="text" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addComment('${actId}','${userId}')">
+  <input id="comment-input" type="text" maxlength="300" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addComment('${actId}','${userId}')">
   <button class="btn btn-ind btn-sm" onclick="addComment('${actId}','${userId}')">Post</button>
 </div>`;
   };
@@ -3184,7 +3195,7 @@ function openComments(actId,userId){
 function closeCommentsModal(){document.getElementById('comments-modal').classList.remove('open');}
 function addComment(actId,userId){
   const input=document.getElementById('comment-input');
-  const text=input?.value?.trim();
+  const text=(input?.value?.trim()||'').slice(0,300);
   if(!text)return;
   let act=null;
   if(userId==='you'){act=S.activities.find(a=>a.id===actId);}
@@ -3650,12 +3661,15 @@ function setSessDiff(d){
 }
 
 function saveSession(){
-  const notes=document.getElementById('sess-notes-ta')?.value?.trim()||'';
+  const saveBtn=document.querySelector('.sess-save-btn');
+  if(saveBtn?.disabled)return;
+  const notes=(document.getElementById('sess-notes-ta')?.value?.trim()||'').slice(0,500);
   const section=document.getElementById('recap-sec')?.value||TS.section;
   const date=document.getElementById('recap-date')?.value||TS.date||todayStr();
   const hours=parseFloat((TS.elapsed/3600).toFixed(2));
   if(!section){showToast('No section selected','err');return;}
   if(TS.elapsed<30){showToast('Sessions must be at least 30 seconds to save','err');return;}
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving…';}
   const act={
     id:'u'+Date.now(),
     date:date+'T'+new Date().toTimeString().slice(0,8),
@@ -4730,11 +4744,11 @@ function openEditProfile(){
 
 <div class="form-grp">
   <label>Display Name</label>
-  <input id="ep-name" type="text" value="${S.name||''}" placeholder="Your name">
+  <input id="ep-name" type="text" maxlength="50" value="${esc(S.name||'')}" placeholder="Your name">
 </div>
 <div class="form-grp">
   <label>Bio <span style="color:var(--mut);font-weight:400">(shown on your public profile)</span></label>
-  <textarea id="ep-bio" style="min-height:64px" placeholder="e.g. Big 4 associate grinding toward CPA 💪 · FAR next">${(S.bio||'')}</textarea>
+  <textarea id="ep-bio" maxlength="200" style="min-height:64px" placeholder="e.g. Big 4 associate grinding toward CPA 💪 · FAR next">${esc(S.bio||'')}</textarea>
 </div>
 <div class="form-row">
   <div class="form-grp">
@@ -4751,7 +4765,7 @@ function openEditProfile(){
 <div class="form-row">
   <div class="form-grp">
     <label>School / University</label>
-    <input id="ep-school" type="text" placeholder="e.g. University of Texas" value="${S.school||''}">
+    <input id="ep-school" type="text" maxlength="80" placeholder="e.g. University of Texas" value="${esc(S.school||'')}">
   </div>
   <div class="form-grp">
     <label>Class / Status</label>
@@ -4921,7 +4935,7 @@ function removeProfilePic(){
 }
 
 function saveEditProfile(){
-  const name=document.getElementById('ep-name')?.value?.trim();
+  const name=(document.getElementById('ep-name')?.value?.trim()||'').slice(0,50);
   if(!name){showToast('Enter your name','err');return;}
   S.name=name;
   S.state=document.getElementById('ep-state')?.value||S.state;
