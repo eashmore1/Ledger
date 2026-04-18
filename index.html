@@ -1286,8 +1286,7 @@ const PRO_FEATURES={
   exportData:       {label:'Export Your Data',icon:'📤',desc:'Export all your sessions, scores, and progress to CSV or PDF at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'🎯',desc:'Set custom per-section weekly hour goals with smart reminders.'},
   // Elite only
-  privateCoaching:  {label:'1-on-1 Coaching Session',icon:'👨‍🏫',desc:'Monthly 45-min video call with a licensed CPA mentor. Included with Elite.'},
-  partnerSync:      {label:'Accountability Partner Sync',icon:'🤝',desc:'Link with a study partner for real-time shared dashboards and mutual check-ins.'},
+  partnerSync:      {label:'Study Partner Pairing',icon:'🤝',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
   mnemonicGen:      {label:'AI Mnemonic Generator',icon:'🧠',desc:'Generate custom mnemonics and memory tricks for any CPA topic instantly.'},
   scorePredictor:   {label:'Score Predictor',icon:'🔮',desc:'ML-based score predictor that estimates your pass probability from practice data.'},
 };
@@ -1349,14 +1348,12 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Data Export (CSV/PDF)'},
     {on:true,text:'Exam Day Protocol 📋'},
     {on:true,text:'Exclusive Pro Badges'},
-    {on:false,text:'1-on-1 Coaching (monthly)'},
     {on:false,text:'AI Mnemonic Generator'},
     {on:false,text:'Score Predictor'},
-    {on:false,text:'Accountability Partner Sync'},
+    {on:false,text:'Study Partner Pairing'},
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
-    {on:true,text:'Monthly 45-min Mentor Session 👨‍🏫'},
     {on:true,text:'AI Mnemonic Generator 🧠'},
     {on:true,text:'Score Predictor 🔮'},
     {on:true,text:'Study Partner Pairing 🤝'},
@@ -1433,7 +1430,7 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-price" style="color:var(--pur)"><sup>$</sup>'+eliteDisplay+'</div>'+
   '<div class="plan-period">per month'+(isAnnual?' · billed $'+(eliteAnnual*12)+'/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+eliteMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">✦ AI Tools + Monthly Mentor Session</div>'+
+  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">✦ AI Tools + Priority Support + Study Partner</div>'+
   '<div class="plan-sep"></div>'+
   elite.map(fRow).join('')+
   eliteCTA+
@@ -2886,31 +2883,6 @@ function buildProfile(){
     '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
   }
 
-  <!-- ELITE: 1-on-1 Mentor Sessions -->
-  ${isElite()?`
-  <div class="card card-pad" style="margin-bottom:16px;border-top:3px solid var(--pur)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="font-size:22px">👨‍🏫</div>
-        <div>
-          <div class="section-title" style="margin-bottom:0">Monthly Mentor Session</div>
-          <div style="font-size:11px;color:var(--mut)">45 min · 1-on-1 with a licensed CPA</div>
-        </div>
-      </div>
-      <span style="font-size:11px;font-weight:700;background:var(--pur-bg);color:var(--pur);border:1px solid rgba(147,51,234,.25);border-radius:20px;padding:2px 9px">Elite</span>
-    </div>
-    ${(()=>{
-      const reqs=(S.mentorRequests||[]);
-      const latest=reqs.slice(-1)[0];
-      if(latest&&latest.status==='pending'){
-        return '<div style="background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:12px 14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--pur);margin-bottom:3px">✓ Session Requested</div><div style="font-size:11px;color:var(--sub)">Topics: '+latest.topics.join(', ')+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">Submitted '+timeAgo(latest.requestedAt)+' · Expect a calendar invite at '+AUTH.email+' within 24 hrs</div></div>';
-      }
-      return '<div style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:12px">Use your monthly 45-min session to go deep on anything — a tricky concept, exam strategy, career questions, or a section review. A licensed CPA will meet you on Zoom.</div>';
-    })()}
-    <button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,var(--pur),#7c3aed)" onclick="openMentorBookingModal()">📅 Request a Session</button>
-    ${(S.mentorRequests||[]).filter(r=>r.status==='completed').length?'<button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="openMentorHistoryModal()">View Past Sessions</button>':''}
-  </div>`:''}
-
   <!-- PRO+: Accountability Partner -->
   ${isPro()?`
   <div class="card card-pad" style="margin-bottom:16px">
@@ -3790,75 +3762,8 @@ function showAchInfo(id){
 // FOLLOWERS / FOLLOWING MODAL
 // ═══════════════════════════════════════════════
 // ═══════════════════════════════════════════════
-// ELITE FEATURES — MENTOR BOOKING + SUPPORT
+// ELITE FEATURES — SUPPORT
 // ═══════════════════════════════════════════════
-function openMentorBookingModal(){
-  const TOPICS=['FAR deep-dive','AUD concepts','REG / Tax strategy','BAR / ISC / TCP','Exam order & timing','Study plan review','Career & licensing','Score below 75 — retake plan'];
-  let el=document.getElementById('mentor-book-modal');
-  if(el)el.remove();
-  el=document.createElement('div');
-  el.id='mentor-book-modal';
-  el.className='modal-overlay';
-  el.innerHTML=
-    '<div class="modal-box" style="max-width:460px" onclick="event.stopPropagation()">' +
-      '<div class="modal-hdr">' +
-        '<div class="modal-title">👨‍🏫 Request Mentor Session</div>' +
-        '<button class="modal-close" onclick="document.getElementById(\'mentor-book-modal\').classList.remove(\'open\')">×</button>' +
-      '</div>' +
-      '<div class="modal-body">' +
-        '<div style="font-size:13px;color:var(--sub);margin-bottom:16px;line-height:1.65">Select the topics you\'d like to cover in your 45-min session. A licensed CPA will reach out to you at <strong>'+AUTH.email+'</strong> with a calendar invite within 24 hours.</div>' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Topics (select all that apply)</div>' +
-        '<div id="mentor-topic-wrap" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">' +
-          TOPICS.map(t=>'<button onclick="this.classList.toggle(\'active\')" style="font-size:12px;padding:5px 13px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:20px;cursor:pointer;font-weight:600;color:var(--sub);transition:all .15s" onmouseover="this.style.borderColor=\'var(--pur)\'" onmouseout="if(!this.classList.contains(\'active\'))this.style.borderColor=\'var(--bdr)\'" class="mentor-topic-btn">'+t+'</button>').join('') +
-        '</div>' +
-        '<div class="form-grp" style="margin-bottom:16px">' +
-          '<label>Anything specific you want to work on?</label>' +
-          '<textarea id="mentor-notes-ta" style="min-height:80px" placeholder="e.g. I keep failing the governmental accounting TBSs on FAR…"></textarea>' +
-        '</div>' +
-        '<div class="form-grp" style="margin-bottom:20px">' +
-          '<label>Preferred availability</label>' +
-          '<select id="mentor-avail-sel" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">' +
-            '<option value="">Choose a preference…</option>' +
-            '<option>Weekday mornings (8am–12pm)</option>' +
-            '<option>Weekday afternoons (12pm–5pm)</option>' +
-            '<option>Weekday evenings (5pm–9pm)</option>' +
-            '<option>Weekend mornings</option>' +
-            '<option>Weekend afternoons</option>' +
-            '<option>Flexible — any time works</option>' +
-          '</select>' +
-        '</div>' +
-        '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;background:linear-gradient(135deg,var(--pur),#7c3aed)" onclick="submitMentorRequest()">Submit Request</button>' +
-        '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">You\'ll receive a calendar invite at your email within 24 hours</div>' +
-      '</div>' +
-    '</div>';
-  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
-  document.body.appendChild(el);
-  el.classList.add('open');
-}
-function submitMentorRequest(){
-  const selected=Array.from(document.querySelectorAll('.mentor-topic-btn.active')).map(b=>b.textContent);
-  const notes=document.getElementById('mentor-notes-ta')?.value?.trim()||'';
-  const avail=document.getElementById('mentor-avail-sel')?.value||'';
-  if(!selected.length&&!notes){showToast('Select at least one topic first','err');return;}
-  if(!S.mentorRequests)S.mentorRequests=[];
-  S.mentorRequests.push({
-    requestedAt:new Date().toISOString(),
-    topics:selected.length?selected:['General CPA guidance'],
-    notes,availability:avail,
-    status:'pending'
-  });
-  saveState();
-  document.getElementById('mentor-book-modal')?.classList.remove('open');
-  renderTab();
-  showToast('Session request submitted! 📅 Check your email for a calendar invite within 24 hrs','ok');
-}
-function openMentorHistoryModal(){
-  const reqs=(S.mentorRequests||[]).filter(r=>r.status==='completed');
-  if(!reqs.length){showToast('No completed sessions yet','info');return;}
-  // Simple toast for now
-  showToast('Coming soon: view past session notes','info');
-}
-
 function openPrioritySupport(){
   let el=document.getElementById('support-modal');
   if(el)el.remove();
@@ -5167,7 +5072,7 @@ ${isFreePlan?`
 ${[
   {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
   {name:'Pro',price:'$20/mo',desc:'AI Coach, Analytics, Simulator, Unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
-  {name:'Elite',price:'$29/mo',desc:'Everything Pro + 1-on-1 mentor, Score Predictor',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
+  {name:'Elite',price:'$29/mo',desc:'Everything Pro + AI Tools, Study Partner, Priority Support',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
   {name:'6-Month Cram','price':'$99 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
@@ -5435,9 +5340,6 @@ ${isElite()?`
     <span style="font-size:10px;font-weight:700;background:var(--pur-bg);color:var(--pur);border:1px solid rgba(147,51,234,.25);border-radius:20px;padding:2px 8px">Active</span>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
-    <button onclick="openMentorBookingModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt);font-size:13px;font-weight:600;text-align:left">
-      <span style="font-size:18px">👨‍🏫</span><div style="flex:1"><div>Book Mentor Session</div><div style="font-size:11px;color:var(--mut);font-weight:400">Monthly 45-min 1-on-1 with a licensed CPA</div></div><span style="color:var(--mut)">›</span>
-    </button>
     <button onclick="openPrioritySupport()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt);font-size:13px;font-weight:600;text-align:left">
       <span style="font-size:18px">🎧</span><div style="flex:1"><div>Priority Support</div><div style="font-size:11px;color:var(--mut);font-weight:400">Responses within 2 hours (business hours)</div></div><span style="color:var(--mut)">›</span>
     </button>
