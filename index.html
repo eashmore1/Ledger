@@ -771,6 +771,8 @@ function initFirebase(){
           created: Date.now()
         };
         saveAuth(AUTH);
+        // Restore this user's saved state (survives signout)
+        if(!S) S = loadState(AUTH.uid) || null;
         if(!S) renderOnboarding();
         else renderApp();
       }
@@ -799,6 +801,8 @@ async function signInWithGoogle(){
       created: Date.now()
     };
     saveAuth(AUTH);
+    // Restore this user's saved state (survives signout)
+    S = loadState(AUTH.uid) || null;
     if(!S) renderOnboarding();
     else renderApp();
   } catch(e){
@@ -861,6 +865,7 @@ function signOut(){
   if(FIREBASE_ENABLED && firebaseAuth){
     firebaseAuth.signOut().catch(()=>{});
   }
+  if(S) saveState(); // persist latest state under UID key before clearing auth
   clearAuth();
   AUTH=null; S=null;
   SUB={tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
@@ -1085,18 +1090,36 @@ const PUBLIC_CLUBS = [
 const AUTH_KEY = 'pf2:auth';
 function loadAuth(){try{const r=localStorage.getItem(AUTH_KEY);return r?JSON.parse(r):null;}catch{return null;}}
 function saveAuth(a){localStorage.setItem(AUTH_KEY,JSON.stringify(a));}
-function clearAuth(){localStorage.removeItem(AUTH_KEY);localStorage.removeItem(KEY);}
+// clearAuth only removes the auth token — never deletes state data
+function clearAuth(){localStorage.removeItem(AUTH_KEY);}
 
 let AUTH = loadAuth() || null;
 
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-const KEY = 'pf2:state';
-function loadState(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch{return null;}}
-function saveState(){localStorage.setItem(KEY,JSON.stringify(S));}
+const KEY = 'pf2:state'; // legacy key (pre-per-user)
+// Per-user state keys so multiple accounts on the same device stay separate
+// and logout never loses data
+function getStateKey(uid){ return uid ? 'pf2:state:u:'+uid : KEY; }
+function loadState(uid){
+  try{
+    const userKey = uid ? getStateKey(uid) : null;
+    // Try per-user key first (new)
+    if(userKey){ const r=localStorage.getItem(userKey); if(r) return JSON.parse(r); }
+    // Fall back to legacy key and migrate it to the user-scoped key
+    const legacy=localStorage.getItem(KEY);
+    if(legacy){
+      const parsed=JSON.parse(legacy);
+      if(userKey){ localStorage.setItem(userKey,legacy); localStorage.removeItem(KEY); }
+      return parsed;
+    }
+    return null;
+  }catch{return null;}
+}
+function saveState(){ if(S) localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S)); }
 
-let S = loadState() || null;
+let S = loadState(AUTH?.uid) || null;
 let currentTab = 'feed';
 let isDark = localStorage.getItem('pf2-theme')==='dark';
 
@@ -1800,9 +1823,12 @@ function selectGoogleAccount(idx){
 }
 
 function selectGoogleAccountByEmail(email,displayName,googleId){
-  AUTH={googleId:googleId||'g_'+Date.now(),email,displayName,method:'google',createdAt:Date.now()};
+  const uid=googleId||'g_'+Date.now();
+  AUTH={uid,googleId:uid,email,displayName,method:'google',createdAt:Date.now()};
   saveAuth(AUTH);
   closeGooglePicker();
+  // Restore this user's saved state (survives signout)
+  S = loadState(AUTH.uid) || null;
   // Pre-fill onboarding name
   obData.name=displayName.split(' ')[0]||displayName;
   showToast(`Signed in as ${displayName} ✓`,'ok');
@@ -1839,6 +1865,8 @@ async function handleEmailAuth(){
       if(result==='unverified'){
         renderEmailVerificationScreen(email,true);
       } else if(result===true){
+        // Restore this user's saved state (survives signout)
+        S = loadState(AUTH?.uid) || null;
         if(!S) renderOnboarding(); else renderApp();
       }
     }
@@ -1856,8 +1884,11 @@ async function handleEmailAuth(){
     saveGoogleAccounts(accounts);
     existing=accounts[accounts.length-1];
   }
-  AUTH={googleId:existing?.googleId||'e_'+Date.now(),email,displayName,method:'email',createdAt:Date.now()};
+  const uid=existing?.googleId||'e_'+Date.now();
+  AUTH={uid,googleId:uid,email,displayName,method:'email',createdAt:Date.now()};
   saveAuth(AUTH);
+  // Restore this user's saved state (survives signout)
+  S = loadState(AUTH.uid) || null;
   obData.name=displayName.split(' ')[0]||displayName;
   showToast(`${authMode==='signup'?'Account created':'Signed in'} as ${displayName} ✓`,'ok');
   setTimeout(()=>{if(!S){renderOnboarding();}else{renderApp();}},300);
@@ -1933,6 +1964,7 @@ function renderEmailVerificationScreen(email, isResend){
 
 function signOut(){
   if(!confirm('Sign out of Ledger?'))return;
+  if(S) saveState(); // persist latest state under UID key before clearing auth
   clearAuth();
   AUTH=null;S=null;
   tsReset();clearInterval(timerInterval);timerInterval=null;
