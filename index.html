@@ -6283,7 +6283,7 @@ function buildStudyLab() {
   const subNav =
     '<div style="display:flex;gap:6px;margin-bottom:28px;background:var(--surf2);padding:5px;border-radius:12px;border:1px solid var(--bdr);width:fit-content">' +
     tabs.map(t =>
-      '<button onclick="openStudyLabTab('' + t.id + '')" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .18s;' +
+      '<button onclick="openStudyLabTab(\'' + t.id + '\')" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .18s;' +
       (_studyLabTab === t.id
         ? 'background:var(--surf);color:var(--txt);box-shadow:var(--shadow);'
         : 'background:transparent;color:var(--mut);') +
@@ -6319,10 +6319,10 @@ function _buildQBankPanel() {
     const prog = S.qbProgress[sec.code] || {mcqDone:0, simsDone:0};
     const mcqDone = prog.mcqDone || 0;
     const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
-    return '<div onclick="openQBSection('' + sec.code + '')" ' +
+    return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
       'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:16px;padding:22px 22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden" ' +
-      'onmouseover="this.style.borderColor='' + sec.color + '';this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" ' +
-      'onmouseout="this.style.borderColor='var(--bdr)';this.style.transform='';this.style.boxShadow=''">' +
+      'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
+      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
       '<div style="position:absolute;top:0;left:0;bottom:0;width:5px;background:' + sec.color + ';border-radius:16px 0 0 16px"></div>' +
       '<div style="padding-left:10px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
@@ -6346,13 +6346,13 @@ function _buildQBankPanel() {
   }).join('');
 
   const freeNote = pro ? '' :
-    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:24px;cursor:pointer" onclick="openUpgradeModal('Full Question Bank')">' +
+    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:24px;cursor:pointer" onclick="openUpgradeModal(\'Full Question Bank\')">' +
       '<div style="font-size:28px">🔓</div>' +
       '<div style="flex:1">' +
         '<div style="font-size:13px;font-weight:800;color:var(--ora)">Unlock the Full Question Bank</div>' +
         '<div style="font-size:12px;color:var(--sub);margin-top:2px">Pro unlocks 500+ MCQs, all TBS SIMs, timed sets, and random quizzes per section.</div>' +
       '</div>' +
-      '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openUpgradeModal('Full Question Bank')">Upgrade</button>' +
+      '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openUpgradeModal(\'Full Question Bank\')">Upgrade</button>' +
     '</div>';
 
   const totalDone = QB_SECTIONS.reduce(function(a,s){ return a + ((S.qbProgress[s.code]||{}).mcqDone||0); }, 0);
@@ -6389,19 +6389,19 @@ function _buildStudyToolsPanel() {
     '<div>' +
       '<div class="card card-pad" style="margin-bottom:16px">' +
         '<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Study Material</div>' +
-        '<div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste your notes, Becker/Gleim text, or any CPA prep material — Ledger turns it into flashcards, quizzes, and summaries instantly.</div>' +
+        '<div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste notes, Becker/Gleim text, or any CPA prep material — Ledger turns it into flashcards, quizzes, and summaries instantly.</div>' +
         '<div style="display:flex;gap:8px;margin-bottom:12px">' +
-          '<button id="fc-mode-text" class="btn btn-primary btn-sm" onclick="fcSetInputMode('text')">Paste Text</button>' +
-          '<button id="fc-mode-pdf" class="btn btn-ghost btn-sm" onclick="document.getElementById('fc-pdf-input').click()">Upload PDF</button>' +
+          '<button id="fc-mode-text" class="btn btn-primary btn-sm" onclick="fcSetInputMode(\'text\')">Paste Text</button>' +
+          '<button id="fc-mode-pdf" class="btn btn-ghost btn-sm" onclick="document.getElementById(\'fc-pdf-input\').click()">Upload PDF</button>' +
           '<input id="fc-pdf-input" type="file" accept=".pdf,application/pdf" style="display:none" onchange="fcLoadPdf(this)">' +
         '</div>' +
-        '<textarea id="fc-input-text" placeholder="Paste your study notes, Becker MCQ explanations, Gleim outlines, or any CPA prep material here…&#10;&#10;Example:&#10;Revenue recognition under ASC 606 requires five steps: 1) Identify the contract, 2) Identify performance obligations, 3) Determine transaction price, 4) Allocate price, 5) Recognize revenue when obligation satisfied." style="width:100%;min-height:200px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--ind)'" onblur="this.style.borderColor='var(--bdr)'"></textarea>' +
+        '<textarea id="fc-input-text" placeholder="Paste your study notes, Becker MCQ explanations, Gleim outlines, or any CPA prep material here…" style="width:100%;min-height:200px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit" onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'"></textarea>' +
         '<div id="fc-pdf-status" style="display:none;margin-top:8px;font-size:11px;color:var(--grn);font-weight:600"></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">' +
-          '<button class="btn btn-primary" style="justify-content:center" onclick="fcGenerate('flashcard')">⚡ Flashcards</button>' +
-          '<button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate('quiz')">📝 Quiz</button>' +
+          '<button class="btn btn-primary" style="justify-content:center" onclick="fcGenerate(\'flashcard\')">⚡ Flashcards</button>' +
+          '<button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate(\'quiz\')">📝 Quiz</button>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate('summary')">📄 Summary</button>' +
+        '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate(\'summary\')">📄 Summary</button>' +
         '<div id="fc-gen-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:var(--mut)"></div>' +
       '</div>' +
       (_fc.summaryText ?
@@ -6419,7 +6419,6 @@ function _buildStudyToolsPanel() {
     '</div>' +
   '</div>';
 }
-
 // ─── Ask Ledger coach panel (full experience) ─────────────────────────────────
 function _buildCoachPanel() {
   return buildAIStudyCoach();
