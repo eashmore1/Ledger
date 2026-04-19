@@ -2273,6 +2273,8 @@ function renderApp(){
         <span id="nav-sess-chip" style="display:none"></span>
         <button class="post-btn" id="nav-log-btn" onclick="openSessionModal()">▶ Start Session</button>
         <button class="nav-pro-chip ${navProClass()}" onclick="openUpgradeModal(null)">${navProLabel()}</button>
+        <button onclick="openSearchModal()" title="Search Users" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">🔍</button>
+        <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" style="font-size:15px;padding:7px 9px;border-radius:9px" title="Toggle theme">${isDark?'☀️':'🌙'}</button>
         <button onclick="openMessagesModal()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
         <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
@@ -2771,6 +2773,7 @@ function buildProfile(){
           <div>
             <div class="profile-name" style="margin-top:0">${S.name}</div>
             <div class="profile-state">${S.state}${S.classYear?' · '+S.classYear:''}${S.school?' @ '+S.school:''}</div>
+            ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
             ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${S.bio}"</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="openEditProfile()">+ Add a bio…</div>`}
             <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
               <span class="badge" style="background:rgba(255,255,255,.15);color:#fff">${S.disc} Discipline</span>
@@ -2778,7 +2781,10 @@ function buildProfile(){
             </div>
           </div>
         </div>
-        <button onclick="openEditProfile()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <button onclick="openEditProfile()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
+          <button onclick="openQRModal()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer">⬛ My QR Code</button>
+        </div>
       </div>
 
       <!-- SOCIAL STATS -->
@@ -4265,6 +4271,208 @@ function joinPublicClub(pubId){
 }
 
 // ═══════════════════════════════════════════════
+// NOTIFICATION CENTER
+// ═══════════════════════════════════════════════
+function _defaultNotifications(){
+  return [
+    {id:'n1',type:'props',icon:'👏',text:'Sarah Chen gave you props on your last session!',from:'f1',time:new Date(Date.now()-2*3600000).toISOString(),read:false},
+    {id:'n2',type:'follow',icon:'👤',text:'Marcus Johnson started following you.',from:'f2',time:new Date(Date.now()-5*3600000).toISOString(),read:false},
+    {id:'n3',type:'comment',icon:'💬',text:'Ashley Park commented on your session: "Keep grinding!"',from:'f5',time:new Date(Date.now()-24*3600000).toISOString(),read:false},
+    {id:'n4',type:'achievement',icon:'🏆',text:'You earned the "Early Bird" achievement!',from:null,time:new Date(Date.now()-48*3600000).toISOString(),read:true},
+    {id:'n5',type:'props',icon:'👏',text:'Tyler Williams and 2 others gave you props.',from:'f4',time:new Date(Date.now()-72*3600000).toISOString(),read:true},
+  ];
+}
+
+function openNotificationCenter(){
+  if(!S.notifications) S.notifications=_defaultNotifications();
+  const notifs=S.notifications;
+  // Mark all as read after opening
+  function markAllRead(){
+    (S.notifications||[]).forEach(n=>n.read=true);
+    saveState();
+    // Update badge
+    const badge=document.querySelector('#notif-bell-btn span');
+    if(badge) badge.style.display='none';
+  }
+  let el=document.getElementById('notif-modal');
+  if(el) el.remove();
+  el=document.createElement('div');
+  el.id='notif-modal';
+  el.className='modal-overlay open';
+  const unread=notifs.filter(n=>!n.read).length;
+  const notifRows=notifs.length?notifs.map(n=>{
+    const f=n.from?MOCK_FRIENDS.find(x=>x.id===n.from):null;
+    const avatarBg=f?f.color:'#6366f1';
+    const avatarInit=f?f.initials:'🔔';
+    return `<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bdr);cursor:pointer;opacity:${n.read?'.6':'1'}" onclick="closeNotifModal()">
+      <div style="width:40px;height:40px;border-radius:50%;background:${avatarBg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">${f?avatarInit:n.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:${n.read?'500':'700'};color:var(--txt);line-height:1.4">${n.text}</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:3px">${timeAgo(n.time)}</div>
+      </div>
+      ${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:6px"></div>':''}
+    </div>`;
+  }).join(''):`<div style="text-align:center;padding:40px 20px;color:var(--mut)"><div style="font-size:36px;margin-bottom:12px">🔔</div><div style="font-size:14px;font-weight:600">No notifications yet</div><div style="font-size:12px;margin-top:6px">Interactions on your posts will appear here</div></div>`;
+  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:420px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="modal-hdr" style="flex-shrink:0">
+      <div class="modal-title">🔔 Notifications${unread>0?` <span style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 7px;font-size:11px;font-weight:700;margin-left:6px">${unread}</span>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${notifs.length?`<button onclick="clearAllNotifs()" style="background:none;border:none;color:var(--mut);font-size:11px;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:6px;hover:background:var(--surf2)">Clear all</button>`:''}
+        <button class="modal-close" onclick="closeNotifModal()">×</button>
+      </div>
+    </div>
+    <div style="overflow-y:auto;flex:1;padding:0 22px">${notifRows}</div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeNotifModal();});
+  document.body.appendChild(el);
+  // Mark all read after a short delay so user can see the unread state briefly
+  setTimeout(markAllRead, 800);
+}
+
+function closeNotifModal(){document.getElementById('notif-modal')?.remove();}
+
+function clearAllNotifs(){
+  S.notifications=[];
+  saveState();
+  closeNotifModal();
+  showToast('Notifications cleared','info');
+}
+
+function addNotification(type, icon, text, fromId){
+  if(!S.notifications) S.notifications=_defaultNotifications();
+  S.notifications.unshift({
+    id:'n'+Date.now(),type,icon,text,from:fromId||null,
+    time:new Date().toISOString(),read:false
+  });
+  if(S.notifications.length>50) S.notifications=S.notifications.slice(0,50);
+  saveState();
+}
+
+// ═══════════════════════════════════════════════
+// SEARCH MODAL
+// ═══════════════════════════════════════════════
+function openSearchModal(){
+  let el=document.getElementById('search-modal');
+  if(el) el.remove();
+  el=document.createElement('div');
+  el.id='search-modal';
+  el.className='modal-overlay open';
+  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:460px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-hdr" style="flex-shrink:0">
+      <div class="modal-title">🔍 Find CPA Candidates</div>
+      <button class="modal-close" onclick="closeSearchModal()">×</button>
+    </div>
+    <div style="padding:0 22px 12px;flex-shrink:0">
+      <input id="search-input" type="text" placeholder="Search by name…" style="width:100%;padding:10px 14px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:10px;color:var(--txt);font-size:14px;outline:none;box-sizing:border-box" oninput="renderSearchResults()" autofocus>
+    </div>
+    <div id="search-results" style="overflow-y:auto;flex:1;padding:0 22px 16px"></div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeSearchModal();});
+  document.body.appendChild(el);
+  renderSearchResults();
+  setTimeout(()=>document.getElementById('search-input')?.focus(),80);
+}
+
+function closeSearchModal(){document.getElementById('search-modal')?.remove();}
+
+function renderSearchResults(){
+  const q=(document.getElementById('search-input')?.value||'').trim().toLowerCase();
+  const container=document.getElementById('search-results');
+  if(!container) return;
+  const following=S.following||[];
+  let candidates=MOCK_FRIENDS.filter(f=>!q||f.name.toLowerCase().includes(q)||f.state.toLowerCase().includes(q));
+  const suggested=candidates.filter(f=>!following.includes(f.id));
+  const following_list=candidates.filter(f=>following.includes(f.id));
+  function userCard(f){
+    const isFollowing=following.includes(f.id);
+    const passed=(f.passedSections||[]).length;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
+      <div style="width:44px;height:44px;border-radius:50%;background:${f.color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">${f.initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--txt)">${f.name}</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">📍 ${f.state} · ${f.currentSection?'Studying '+f.currentSection:'All done 🏆'}${passed?' · ✅ '+passed+' passed':''}</div>
+        ${f.bio?`<div style="font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${f.bio}</div>`:''}
+      </div>
+      <button onclick="toggleFollowSearch('${f.id}')" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>
+    </div>`;
+  }
+  let html='';
+  if(!q){
+    html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:8px 0 4px">Suggested Candidates</div>`;
+    html+=suggested.length?suggested.map(userCard).join(''):`<div style="color:var(--mut);font-size:12px;padding:10px 0">You\'re following everyone! 🎉</div>`;
+    if(following_list.length){
+      html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:14px 0 4px">Following</div>`;
+      html+=following_list.map(userCard).join('');
+    }
+  } else {
+    html+=candidates.length?candidates.map(userCard).join(''):`<div style="text-align:center;padding:32px 0;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font-size:14px;font-weight:600">No candidates found</div><div style="font-size:12px;margin-top:4px">Try a different name or state</div></div>`;
+  }
+  container.innerHTML=html;
+}
+
+function toggleFollowSearch(id){
+  if(!S.following) S.following=[];
+  const idx=S.following.indexOf(id);
+  if(idx>=0){
+    S.following.splice(idx,1);
+    showToast('Unfollowed','info');
+  } else {
+    S.following.push(id);
+    const f=MOCK_FRIENDS.find(x=>x.id===id);
+    if(f) addNotification('follow','👤',f.name+' is now in your network!',f.id);
+    showToast('Following! 🎉','ok');
+  }
+  saveState();
+  renderSearchResults();
+}
+
+// ═══════════════════════════════════════════════
+// QR CODE MODAL
+// ═══════════════════════════════════════════════
+function openQRModal(){
+  let el=document.getElementById('qr-modal');
+  if(el) el.remove();
+  el=document.createElement('div');
+  el.id='qr-modal';
+  el.className='modal-overlay open';
+  const userName=encodeURIComponent(S.name||'CPA Candidate');
+  const uid=AUTH?.uid||'demo';
+  const profileUrl='https://ledgercpa.app/u/'+uid+'?ref=qr';
+  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(profileUrl);
+  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
+    <div class="modal-hdr">
+      <div class="modal-title">⬛ My QR Code</div>
+      <button class="modal-close" onclick="closeQRModal()">×</button>
+    </div>
+    <div style="padding:24px 22px">
+      <div style="font-size:13px;color:var(--mut);margin-bottom:20px">Share this code so others can find and follow you instantly on Ledger.</div>
+      <div style="background:#fff;border-radius:16px;padding:18px;display:inline-block;margin-bottom:18px;box-shadow:0 4px 20px rgba(0,0,0,.12)">
+        <img src="${qrUrl}" alt="QR Code" style="width:200px;height:200px;border-radius:8px;display:block">
+      </div>
+      <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:4px">${esc(S.name||'CPA Candidate')}</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:20px">${S.currentSection||'CPA Candidate'} · ${S.state||''}</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="shareQRProfile('${profileUrl}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Share Profile Link</button>
+        <button onclick="closeQRModal()" style="padding:11px 16px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:10px;color:var(--txt);font-size:13px;font-weight:600;cursor:pointer">Done</button>
+      </div>
+    </div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeQRModal();});
+  document.body.appendChild(el);
+}
+
+function closeQRModal(){document.getElementById('qr-modal')?.remove();}
+
+function shareQRProfile(url){
+  if(navigator.share){
+    navigator.share({title:(S.name||'CPA Candidate')+' on Ledger',text:'Follow my CPA journey on Ledger!',url}).catch(e=>{if(e.name!=='AbortError')_fallbackShare(url);});
+    return;
+  }
+  _fallbackShare(url);
+}
+
+// ═══════════════════════════════════════════════
 // MESSAGES MODAL
 // ═══════════════════════════════════════════════
 let _msgTab='dms';
@@ -4752,6 +4960,19 @@ function openEditProfile(){
 </div>
 <div class="form-row">
   <div class="form-grp">
+    <label>City <span style="color:var(--mut);font-weight:400">(where you live)</span></label>
+    <input id="ep-city" type="text" maxlength="60" placeholder="e.g. Austin" value="${esc(S.city||'')}">
+  </div>
+  <div class="form-grp">
+    <label>State <span style="color:var(--mut);font-weight:400">(location)</span></label>
+    <select id="ep-locstate">
+      <option value="">Select…</option>
+      ${['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map(s=>`<option value="${s}"${S.locationState===s?' selected':''}>${s}</option>`).join('')}
+    </select>
+  </div>
+</div>
+<div class="form-row">
+  <div class="form-grp">
     <label>Licensing State</label>
     <select id="ep-state">
       ${['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map(s=>`<option value="${s}"${S.state===s?' selected':''}>${s}</option>`).join('')}
@@ -4939,6 +5160,8 @@ function saveEditProfile(){
   if(!name){showToast('Enter your name','err');return;}
   S.name=name;
   S.state=document.getElementById('ep-state')?.value||S.state;
+  S.city=(document.getElementById('ep-city')?.value?.trim()||'').slice(0,60);
+  S.locationState=document.getElementById('ep-locstate')?.value||'';
   S.hoursPerWeek=parseInt(document.getElementById('ep-hrs')?.value)||S.hoursPerWeek||15;
   S.bio=document.getElementById('ep-bio')?.value?.trim()||'';
   S.school=document.getElementById('ep-school')?.value?.trim()||'';
