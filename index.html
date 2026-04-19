@@ -15,6 +15,7 @@
 <!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <!-- Stripe.js (deferred — app uses payment links, not embedded Stripe elements) -->
 <script defer src="https://js.stripe.com/v3/"></script>
 <style>
@@ -736,12 +737,14 @@ const FIREBASE_ENABLED = true;
 
 let firebaseApp = null;
 let firebaseAuth = null;
+let firebaseDb = null;
 function initFirebase(){
   if(!FIREBASE_ENABLED) return;
   try {
     if(!firebase.apps.length) firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
     else firebaseApp = firebase.app();
     firebaseAuth = firebase.auth();
+    try{ firebaseDb = firebase.firestore(); }catch(e){ firebaseDb=null; }
     // Persist auth across page reloads
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     // Listen for auth state changes from Google sign-in
@@ -766,7 +769,7 @@ function initFirebase(){
         // Restore this user's saved state (survives signout)
         if(!S) S = loadState(AUTH.uid) || null;
         if(!S) renderOnboarding();
-        else renderApp();
+        else { renderApp(); writeUserProfile(); }
       }
     });
   } catch(e){ console.warn('Firebase init failed:', e.message); }
@@ -1113,6 +1116,65 @@ function saveState(){
   if(!S)return;
   try{localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S));}
   catch(e){showToast('Storage full — clear old data in Settings','err');}
+}
+
+// ── FIRESTORE HELPERS ──
+async function writeUserProfile(){
+  if(!firebaseDb||!AUTH?.uid||!S) return;
+  try{
+    const doc={
+      uid: AUTH.uid,
+      displayName: S.name||'',
+      displayNameLower: (S.name||'').toLowerCase(),
+      email: AUTH.email||'',
+      state: S.state||'',
+      city: S.city||'',
+      locationState: S.locationState||'',
+      bio: S.bio||'',
+      school: S.school||'',
+      classYear: S.classYear||'',
+      disc: S.disc||'',
+      sections: S.sections||[],
+      sectionPassed: S.sectionPassed||[],
+      firmName: S.firmName||'',
+      firmCode: S.firmCode||'',
+      tier: (()=>{const t=localStorage.getItem('pf2-tier');return t||'free';})(),
+      hoursTotal: parseFloat((()=>{try{return(S.activities||[]).reduce((s,a)=>s+(a.hours||0),0).toFixed(1);}catch{return 0;}})()),
+      avatar: S.avatar||'',
+      profilePic: S.profilePic||'',
+      updatedAt: Date.now(),
+      createdAt: S.created||Date.now()
+    };
+    await firebaseDb.collection('users').doc(AUTH.uid).set(doc,{merge:true});
+  }catch(e){ /* non-blocking — local state is source of truth */ }
+}
+
+async function searchFirestoreUsers(q){
+  if(!firebaseDb) return [];
+  try{
+    const ql=q.toLowerCase().trim();
+    let snap;
+    if(ql){
+      snap=await firebaseDb.collection('users')
+        .where('displayNameLower','>=',ql)
+        .where('displayNameLower','<=',ql+'\uf8ff')
+        .limit(20).get();
+    } else {
+      snap=await firebaseDb.collection('users')
+        .orderBy('createdAt','desc').limit(30).get();
+    }
+    return snap.docs.map(d=>d.data()).filter(d=>d.uid!==AUTH?.uid);
+  }catch(e){return [];}
+}
+
+async function saveFollowToFirestore(){
+  if(!firebaseDb||!AUTH?.uid||!S) return;
+  try{
+    await firebaseDb.collection('users').doc(AUTH.uid).update({
+      following: S.following||[],
+      updatedAt: Date.now()
+    });
+  }catch(e){}
 }
 
 let S = loadState(AUTH?.uid) || null;
@@ -2180,6 +2242,7 @@ function obFinish(){
     created:Date.now()
   };
   saveState();
+  writeUserProfile();
   showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
   renderApp();
   // Show upgrade offer after a short delay so the app renders first
@@ -4417,42 +4480,69 @@ function openSearchModal(){
 
 function closeSearchModal(){document.getElementById('search-modal')?.remove();}
 
-function renderSearchResults(){
-  const q=(document.getElementById('search-input')?.value||'').trim().toLowerCase();
-  const container=document.getElementById('search-results');
-  if(!container) return;
+function _searchUserCard(u, isReal){
   const following=S.following||[];
-  let candidates=MOCK_FRIENDS.filter(f=>!q||f.name.toLowerCase().includes(q)||f.state.toLowerCase().includes(q));
-  const suggested=candidates.filter(f=>!following.includes(f.id));
-  const following_list=candidates.filter(f=>following.includes(f.id));
-  function userCard(f){
-    const isFollowing=following.includes(f.id);
-    const passed=(f.passedSections||[]).length;
-    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
-      <div style="width:44px;height:44px;border-radius:50%;background:${f.color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">${f.initials}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;color:var(--txt)">${f.name}</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:2px">📍 ${f.state} · ${f.currentSection?'Studying '+f.currentSection:'All done 🏆'}${passed?' · ✅ '+passed+' passed':''}</div>
-        ${f.bio?`<div style="font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${f.bio}</div>`:''}
-      </div>
-      <button onclick="toggleFollowSearch('${f.id}')" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>
-    </div>`;
-  }
-  let html='';
-  if(!q){
-    html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:8px 0 4px">Suggested Candidates</div>`;
-    html+=suggested.length?suggested.map(userCard).join(''):`<div style="color:var(--mut);font-size:12px;padding:10px 0">You\'re following everyone! 🎉</div>`;
-    if(following_list.length){
-      html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:14px 0 4px">Following</div>`;
-      html+=following_list.map(userCard).join('');
-    }
-  } else {
-    html+=candidates.length?candidates.map(userCard).join(''):`<div style="text-align:center;padding:32px 0;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font-size:14px;font-weight:600">No candidates found</div><div style="font-size:12px;margin-top:4px">Try a different name or state</div></div>`;
-  }
-  container.innerHTML=html;
+  const uid=isReal?u.uid:u.id;
+  const isFollowing=following.includes(uid);
+  const passed=(u.sectionPassed||u.passedSections||[]).length;
+  const name=u.displayName||u.name||'';
+  const state=u.state||'';
+  const bio=u.bio||'';
+  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
+  const colors=['#e85d04','#5a5fcf','#0ea574','#9333ea','#0fb5aa','#f59e0b'];
+  const colorIdx=name.charCodeAt(0)%colors.length;
+  const avatarHtml=u.profilePic
+    ?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    :(u.avatar&&u.avatar.length<=2?`<span style="font-size:22px">${u.avatar}</span>`
+    :`<span style="font-size:15px;font-weight:800;color:#fff">${initials}</span>`);
+  const studyLine=u.disc?`Studying ${u.disc}`:(u.currentSection?'Studying '+u.currentSection:'');
+  return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
+    <div style="width:44px;height:44px;border-radius:50%;background:${u.color||colors[colorIdx]};display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarHtml}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700;color:var(--txt)">${name}</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:2px">${state?'📍 '+state+' · ':''}${studyLine||'CPA Candidate'}${passed?' · ✅ '+passed+' passed':''}</div>
+      ${bio?`<div style="font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${bio}</div>`:''}
+    </div>
+    <button onclick="toggleFollowSearch('${uid}',${isReal})" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>
+  </div>`;
 }
 
-function toggleFollowSearch(id){
+let _searchDebounce=null;
+function renderSearchResults(){
+  const q=(document.getElementById('search-input')?.value||'').trim();
+  const container=document.getElementById('search-results');
+  if(!container) return;
+  // Show skeleton while we fetch
+  container.innerHTML=`<div style="text-align:center;padding:28px 0;color:var(--mut);font-size:13px">Searching…</div>`;
+  clearTimeout(_searchDebounce);
+  _searchDebounce=setTimeout(async()=>{
+    const following=S.following||[];
+    let realUsers=await searchFirestoreUsers(q);
+    // Dedupe MOCK_FRIENDS by uid in case a real user matches a mock id
+    const realUids=new Set(realUsers.map(u=>u.uid));
+    const mockFallback=q
+      ? MOCK_FRIENDS.filter(f=>!realUids.has(f.id)&&(f.name.toLowerCase().includes(q.toLowerCase())||f.state.toLowerCase().includes(q.toLowerCase())))
+      : MOCK_FRIENDS.filter(f=>!realUids.has(f.id));
+    if(!container.isConnected) return;
+    const allUsers=[...realUsers.map(u=>({...u,_real:true})),...mockFallback.map(f=>({...f,_real:false}))];
+    const suggested=allUsers.filter(u=>!following.includes(u._real?u.uid:u.id));
+    const followingList=allUsers.filter(u=>following.includes(u._real?u.uid:u.id));
+    let html='';
+    if(!q){
+      html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:8px 0 4px">Suggested Candidates</div>`;
+      html+=suggested.length?suggested.map(u=>_searchUserCard(u,u._real)).join(''):`<div style="color:var(--mut);font-size:12px;padding:10px 0">You're following everyone! 🎉</div>`;
+      if(followingList.length){
+        html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:14px 0 4px">Following</div>`;
+        html+=followingList.map(u=>_searchUserCard(u,u._real)).join('');
+      }
+    } else {
+      html+=allUsers.length?allUsers.map(u=>_searchUserCard(u,u._real)).join(''):`<div style="text-align:center;padding:32px 0;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font-size:14px;font-weight:600">No candidates found</div><div style="font-size:12px;margin-top:4px">Try a different name or state</div></div>`;
+    }
+    if(container.isConnected) container.innerHTML=html;
+  }, 280);
+}
+
+function toggleFollowSearch(id, isReal){
   if(!S.following) S.following=[];
   const idx=S.following.indexOf(id);
   if(idx>=0){
@@ -4460,11 +4550,14 @@ function toggleFollowSearch(id){
     showToast('Unfollowed','info');
   } else {
     S.following.push(id);
-    const f=MOCK_FRIENDS.find(x=>x.id===id);
-    if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
+    if(!isReal){
+      const f=MOCK_FRIENDS.find(x=>x.id===id);
+      if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
+    }
     showToast('Following! 🎉','ok');
   }
   saveState();
+  saveFollowToFirestore();
   renderSearchResults();
 }
 
@@ -5214,6 +5307,7 @@ function saveEditProfile(){
     if(d){if(!S.examDates)S.examDates={};S.examDates[s]=d;}
   });
   saveState();
+  writeUserProfile();
   closeEditProfile();
   showToast('Profile saved! ✓','ok');
   renderApp();
