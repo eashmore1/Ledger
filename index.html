@@ -2275,7 +2275,6 @@ function renderApp(){
         <button class="nav-pro-chip ${navProClass()}" onclick="openUpgradeModal(null)">${navProLabel()}</button>
         <button onclick="openSearchModal()" title="Search Users" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">🔍</button>
         <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" style="font-size:15px;padding:7px 9px;border-radius:9px" title="Toggle theme">${isDark?'☀️':'🌙'}</button>
         <button onclick="openMessagesModal()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
         <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
         <button onclick="openEditProfile()" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
@@ -4275,11 +4274,11 @@ function joinPublicClub(pubId){
 // ═══════════════════════════════════════════════
 function _defaultNotifications(){
   return [
-    {id:'n1',type:'props',icon:'👏',text:'Sarah Chen gave you props on your last session!',from:'f1',time:new Date(Date.now()-2*3600000).toISOString(),read:false},
-    {id:'n2',type:'follow',icon:'👤',text:'Marcus Johnson started following you.',from:'f2',time:new Date(Date.now()-5*3600000).toISOString(),read:false},
-    {id:'n3',type:'comment',icon:'💬',text:'Ashley Park commented on your session: "Keep grinding!"',from:'f5',time:new Date(Date.now()-24*3600000).toISOString(),read:false},
-    {id:'n4',type:'achievement',icon:'🏆',text:'You earned the "Early Bird" achievement!',from:null,time:new Date(Date.now()-48*3600000).toISOString(),read:true},
-    {id:'n5',type:'props',icon:'👏',text:'Tyler Williams and 2 others gave you props.',from:'f4',time:new Date(Date.now()-72*3600000).toISOString(),read:true},
+    {id:'n1',type:'props',icon:'👏',text:'Sarah Chen gave you props on your last session!',from:'f1',targetType:'activity',targetId:'a1',time:new Date(Date.now()-2*3600000).toISOString(),read:false},
+    {id:'n2',type:'follow',icon:'👤',text:'Marcus Johnson started following you.',from:'f2',targetType:'user',targetId:'f2',time:new Date(Date.now()-5*3600000).toISOString(),read:false},
+    {id:'n3',type:'comment',icon:'💬',text:'Ashley Park commented on your session: "Keep grinding!"',from:'f5',targetType:'activity',targetId:'a9',time:new Date(Date.now()-24*3600000).toISOString(),read:false},
+    {id:'n4',type:'achievement',icon:'🏆',text:'You earned the "Early Bird" achievement!',from:null,targetType:'profile',targetId:null,time:new Date(Date.now()-48*3600000).toISOString(),read:true},
+    {id:'n5',type:'props',icon:'👏',text:'Tyler Williams and 2 others gave you props.',from:'f4',targetType:'activity',targetId:'a8',time:new Date(Date.now()-72*3600000).toISOString(),read:true},
   ];
 }
 
@@ -4304,11 +4303,16 @@ function openNotificationCenter(){
     const f=n.from?MOCK_FRIENDS.find(x=>x.id===n.from):null;
     const avatarBg=f?f.color:'#6366f1';
     const avatarInit=f?f.initials:'🔔';
-    return `<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bdr);cursor:pointer;opacity:${n.read?'.6':'1'}" onclick="closeNotifModal()">
+    const hasNav=!!(n.targetType);
+    const navLabel=n.targetType==='user'?'View profile':n.targetType==='activity'?'View post':n.targetType==='profile'?'View achievements':'';
+    return `<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bdr);cursor:${hasNav?'pointer':'default'};opacity:${n.read?'.65':'1'}" onclick="handleNotifNav('${n.targetType||''}','${n.targetId||''}')">
       <div style="width:40px;height:40px;border-radius:50%;background:${avatarBg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">${f?avatarInit:n.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:${n.read?'500':'700'};color:var(--txt);line-height:1.4">${n.text}</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:3px">${timeAgo(n.time)}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span style="font-size:11px;color:var(--mut)">${timeAgo(n.time)}</span>
+          ${hasNav?`<span style="font-size:11px;color:var(--ind);font-weight:600">${navLabel} →</span>`:''}
+        </div>
       </div>
       ${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:6px"></div>':''}
     </div>`;
@@ -4332,6 +4336,33 @@ function openNotificationCenter(){
 
 function closeNotifModal(){document.getElementById('notif-modal')?.remove();}
 
+function handleNotifNav(targetType, targetId){
+  closeNotifModal();
+  if(!targetType) return;
+  if(targetType==='user' && targetId){
+    // Open the user's profile card
+    openUserProfile(targetId);
+  } else if(targetType==='activity' && targetId){
+    // Go to feed and scroll to the post
+    switchTab('feed');
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        const card=document.querySelector(`.activity-card[data-aid="${targetId}"]`);
+        if(card){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          card.style.transition='box-shadow .4s, outline .4s';
+          card.style.outline='2px solid var(--ora)';
+          card.style.boxShadow='0 0 0 4px rgba(249,115,22,.18)';
+          setTimeout(()=>{card.style.outline='';card.style.boxShadow='';},2200);
+        }
+      });
+    });
+  } else if(targetType==='profile'){
+    // Go to profile/achievements
+    switchTab('profile');
+  }
+}
+
 function clearAllNotifs(){
   S.notifications=[];
   saveState();
@@ -4339,10 +4370,11 @@ function clearAllNotifs(){
   showToast('Notifications cleared','info');
 }
 
-function addNotification(type, icon, text, fromId){
+function addNotification(type, icon, text, fromId, targetType, targetId){
   if(!S.notifications) S.notifications=_defaultNotifications();
   S.notifications.unshift({
     id:'n'+Date.now(),type,icon,text,from:fromId||null,
+    targetType:targetType||null,targetId:targetId||null,
     time:new Date().toISOString(),read:false
   });
   if(S.notifications.length>50) S.notifications=S.notifications.slice(0,50);
@@ -4420,7 +4452,7 @@ function toggleFollowSearch(id){
   } else {
     S.following.push(id);
     const f=MOCK_FRIENDS.find(x=>x.id===id);
-    if(f) addNotification('follow','👤',f.name+' is now in your network!',f.id);
+    if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
     showToast('Following! 🎉','ok');
   }
   saveState();
