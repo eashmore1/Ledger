@@ -7854,27 +7854,75 @@ function buildAdvancedAnalytics() {
 // + BASIC SCHEDULE (Pro/Free)
 // ═══════════════════════════════════════════════
 
-const STUDY_TOPICS = {
-  FAR:['Conceptual Framework & Financial Reporting','Revenue Recognition (ASC 606)','Leases (ASC 842)','Business Combinations','Consolidated Financial Statements','Governmental Accounting — Fund Types','GASB Standards & CAFR','Not-for-Profit Accounting','Pensions & Post-Retirement Benefits','Derivatives & Hedging','Equity & Earnings Per Share','Cash Flow Statement','Interim & Segment Reporting','Bonds & Long-Term Debt','Inventory & Cost of Goods Sold'],
-  AUD:['Professional Ethics & Independence','Engagement Planning & Strategy','Risk Assessment — COSO Framework','Internal Controls Testing','Evidence & Substantive Procedures','Audit Sampling Methods','IT Auditing & Systems','Audit Reports & Opinions','Review & Compilation Engagements','Government Auditing (Yellow Book)','Fraud Risk & Forensic Auditing','Group Audits & Using Others'],
-  REG:['Individual Federal Tax — Income','Individual Federal Tax — Deductions','Corporate Taxation','Partnership Taxation','S-Corporation Taxation','Estate & Gift Tax','Business Law — Contracts','Business Law — Agency & Employment','Federal Tax Procedures & Penalties','Property Transactions & Basis','Like-Kind Exchanges & Capital Gains','Tax Credits & Alternative Minimum Tax'],
-  BAR:['Financial Statement Analysis','Managerial Accounting & Cost Analysis','Variance Analysis & Budgeting','Data Analytics & Reporting','Business Valuation Methods','Financial Risk Management','Planning, Budgeting & Forecasting','Working Capital Management','ERM & Internal Controls','Capital Structure & Financing'],
-  ISC:['Information Security Controls','IT Infrastructure & Operations','Software Development Life Cycle','Business Continuity & Disaster Recovery','SOC Engagements (SOC 1, 2, 3)','Data Privacy & Compliance (GDPR, CCPA)','Network Security & Access Controls','Cybersecurity Frameworks (NIST, ISO 27001)','Cloud Computing & Emerging Tech','IT Governance & Policies'],
-  TCP:['Individual Tax — Advanced Planning','Corporate Tax Planning Strategies','Partnership & Pass-Through Planning','International Tax Concepts','Tax Credits & Incentives','Multi-State Taxation','Consolidated Returns','Tax Research & Compliance','Exempt Organizations','Compensation & Benefits Taxation'],
+// Activity modes — what type of work to do each day.
+// We deliberately do NOT specify topics — that comes from the user's
+// Becker / Gleim / Roger / Wiley material. We tell them HOW to study
+// and WHICH section needs attention most, based on actual progress data.
+const ACTIVITY_MODES = {
+  new_material:{
+    label:'New Material',icon:'📖',color:'#6366f1',
+    desc:'Follow your study material (Becker/Gleim/etc.) — pick up wherever you left off.',
+    tips:[
+      'Don\'t rush chapters just to feel productive. Comprehension > volume.',
+      'Write down 3 things you learned at the end of the session.',
+      'Watch lecture video first, then do the chapter MCQs while it\'s fresh.',
+    ],
+  },
+  mcq_practice:{
+    label:'MCQ Practice',icon:'⚡',color:'#e85d04',
+    desc:'Drill 40–60 MCQs from your study platform. Review every wrong answer fully.',
+    tips:[
+      'Speed is a skill — volume builds pattern recognition. Don\'t just check answers.',
+      'Missed an MCQ? Read the full explanation, not just the correct answer.',
+      'Group similar wrong answers — patterns reveal your actual weak spots.',
+    ],
+  },
+  tbs_practice:{
+    label:'TBS Simulations',icon:'🎯',color:'#059669',
+    desc:'Work through 2–3 task-based simulations. Read the requirement before the data.',
+    tips:[
+      'TBS points are often easier than they look — don\'t skip them on exam day.',
+      'Allocate 10–15 min per sim. If you\'re stuck, move on and come back.',
+      'Partial credit exists. Always attempt every simulation, even if unsure.',
+    ],
+  },
+  mock_exam:{
+    label:'Mock Exam',icon:'📝',color:'#9333ea',
+    desc:'Full timed practice exam. Exam conditions — no phone, no notes, no breaks.',
+    tips:[
+      'Simulate the real thing. Your score today shows exactly what needs work.',
+      'Don\'t grade yourself mid-exam. Complete it fully first.',
+      'After: analyze wrong answers by category to find patterns.',
+    ],
+  },
+  final_review:{
+    label:'Final Review',icon:'🔍',color:'#dc2626',
+    desc:'Hit your weakest MCQ categories and highest-tested topics only.',
+    tips:[
+      'Don\'t try to learn new material this close to exam day.',
+      'Mnemonics, flashcards, quick-fire MCQs — retention mode only.',
+      'Sleep > cramming the night before. Seriously.',
+    ],
+  },
+  rest:{
+    label:'Rest Day',icon:'🛌',color:'var(--mut)',
+    desc:'Scheduled rest. Recovery is part of the plan.',
+    tips:['Rest is productive. Your brain consolidates memory during sleep.'],
+  },
 };
 
-const PLAN_TIPS = {
-  'MCQ Blitz':['Aim for 50+ MCQs per session. Speed is a skill.','Wrong answers are your best teachers — review every miss.','Pattern recognition beats memorization. Volume builds instinct.'],
-  'TBS Focus':['Read the requirement first, then the data.','TBS points are often easier than they look — don\'t skip them.','Practice allocating time: 10-15 min per sim.'],
-  'Final Sprint':['Sleep > cramming the night before. Seriously.','Run a full timed mock — simulate exam conditions exactly.','Your weak areas from Phase 2 are your highest ROI right now.'],
-  'default':['Consistency beats intensity. Show up every day.','Connect new concepts to what you already know.','Take a 5-min break every 45 min. It actually improves retention.'],
-};
+function _getPlanTip(mode){
+  const m=ACTIVITY_MODES[mode]||ACTIVITY_MODES.new_material;
+  return m.tips[Math.floor(Math.random()*m.tips.length)];
+}
 
-function _getPlanTip(phase, topic){
-  if(phase===2) return PLAN_TIPS['MCQ Blitz'][Math.floor(Math.random()*3)];
-  if(phase===3) return PLAN_TIPS['TBS Focus'][Math.floor(Math.random()*3)];
-  if(phase===4) return PLAN_TIPS['Final Sprint'][Math.floor(Math.random()*3)];
-  return PLAN_TIPS['default'][Math.floor(Math.random()*3)];
+// Returns sections ranked by urgency (most behind = highest priority)
+function _sectionPriority(activeSections){
+  return activeSections.slice().sort((a,b)=>{
+    const urgA=(EXAMS[a]?.studyHours||150-getSectionHours(a))/(EXAMS[a]?.studyHours||150);
+    const urgB=(EXAMS[b]?.studyHours||150-getSectionHours(b))/(EXAMS[b]?.studyHours||150);
+    return urgB-urgA; // highest urgency first
+  });
 }
 
 function generateAIPlan(){
@@ -7882,13 +7930,14 @@ function generateAIPlan(){
   const sections=S.sections||[];
   const passed=S.sectionPassed||[];
   const active=sections.filter(s=>!passed.includes(s));
-  const targetSec=active.length?active[0]:sections[0]||'FAR';
+  if(!active.length && !sections.length){ showToast('Add exam sections in your profile first','err'); return; }
+  const allActive=active.length?active:sections;
 
-  // Find nearest exam date
-  let daysLeft=60; let nearestDate=null;
-  active.forEach(s=>{
+  // Find nearest exam date across all active sections
+  let daysLeft=60; let nearestDate=null; let primarySec=allActive[0]||'FAR';
+  allActive.forEach(s=>{
     const d=S.examDates?.[s];
-    if(d){const dl=Math.ceil((new Date(d+' 00:00')-new Date())/86400000);if(dl>0&&dl<daysLeft){daysLeft=dl;nearestDate=d;}}
+    if(d){const dl=Math.ceil((new Date(d+' 00:00')-new Date())/86400000);if(dl>0&&(nearestDate===null||dl<daysLeft)){daysLeft=dl;nearestDate=d;primarySec=s;}}
   });
   if(!nearestDate){
     nearestDate=new Date(Date.now()+60*86400000).toISOString().slice(0,10);
@@ -7896,36 +7945,48 @@ function generateAIPlan(){
   }
   const planDays=Math.max(7,Math.min(daysLeft,84));
   const hrsPerWeek=S.hoursPerWeek||15;
-  const hrsLogged=getSectionHours(targetSec);
-  const hrsTarget=EXAMS[targetSec]?.studyHours||150;
-  const hrsRemaining=Math.max(10,hrsTarget-hrsLogged);
 
-  // Build phases
+  // Section urgency — rank by % of recommended hours remaining
+  // This is Option C: data-driven section priority
+  const ranked=_sectionPriority(allActive);
+  const sectionStats={};
+  allActive.forEach(s=>{
+    const logged=getSectionHours(s);
+    const target=EXAMS[s]?.studyHours||150;
+    const pct=Math.min(100,Math.round(logged/target*100));
+    sectionStats[s]={logged,target,pct,remaining:Math.max(0,target-logged)};
+  });
+
+  // Build phases based on days remaining
   let phases=[];
   if(planDays>=28){
     const p1=Math.floor(planDays*.45),p2=Math.floor(planDays*.72),p3=Math.floor(planDays*.88);
     phases=[
-      {n:1,name:'Phase 1 · Foundation',icon:'📚',start:1,end:p1,focus:'Systematic topic coverage — build the knowledge base',color:'#6366f1'},
-      {n:2,name:'Phase 2 · MCQ Blitz',icon:'⚡',start:p1+1,end:p2,focus:'500+ practice questions — build speed & pattern recognition',color:'#e85d04'},
-      {n:3,name:'Phase 3 · TBS Focus',icon:'🎯',start:p2+1,end:p3,focus:'Task-based simulations & targeted weak-area drilling',color:'#059669'},
-      {n:4,name:'Phase 4 · Final Sprint',icon:'🚀',start:p3+1,end:planDays,focus:'Full mock exams, mnemonics review & mental preparation',color:'#9333ea'},
+      {n:1,mode:'new_material',name:'Phase 1 · New Material',icon:'📖',start:1,end:p1,focus:'Work through your study material section by section',color:'#6366f1'},
+      {n:2,mode:'mcq_practice',name:'Phase 2 · MCQ Blitz',icon:'⚡',start:p1+1,end:p2,focus:'500+ practice questions — build speed & pattern recognition',color:'#e85d04'},
+      {n:3,mode:'tbs_practice',name:'Phase 3 · TBS Focus',icon:'🎯',start:p2+1,end:p3,focus:'Task-based simulations & targeted weak-area drilling',color:'#059669'},
+      {n:4,mode:'final_review',name:'Phase 4 · Final Sprint',icon:'🚀',start:p3+1,end:planDays,focus:'Mock exams, weak areas, and mental preparation',color:'#9333ea'},
     ];
   } else if(planDays>=14){
     const p1=Math.floor(planDays*.55);
     phases=[
-      {n:1,name:'Phase 1 · Rapid Review',icon:'⚡',start:1,end:p1,focus:'Hit all high-yield topics fast',color:'#e85d04'},
-      {n:2,name:'Phase 2 · Final Sprint',icon:'🚀',start:p1+1,end:planDays,focus:'MCQ blitz + TBS practice + mock exam',color:'#9333ea'},
+      {n:1,mode:'mcq_practice',name:'Phase 1 · MCQ Blitz',icon:'⚡',start:1,end:p1,focus:'Drill practice questions fast — identify weak areas',color:'#e85d04'},
+      {n:2,mode:'final_review',name:'Phase 2 · Final Sprint',icon:'🚀',start:p1+1,end:planDays,focus:'TBS practice, mock exam, and targeted review',color:'#9333ea'},
     ];
   } else {
-    phases=[{n:1,name:'Exam Crunch 🔥',icon:'🔥',start:1,end:planDays,focus:'High-yield topics and practice questions only',color:'#ef4444'}];
+    phases=[{n:1,mode:'final_review',name:'Exam Crunch',icon:'🔥',start:1,end:planDays,focus:'High-yield MCQs and TBS only — no new material',color:'#ef4444'}];
   }
 
-  // Build day-by-day
-  const topics=STUDY_TOPICS[targetSec]||STUDY_TOPICS['FAR'];
-  const studyMask=[false,true,true,true,true,true,true]; // Mon-Sat
+  // Build day-by-day plan
+  // Section assigned each day = highest-urgency section that still has hours remaining
+  // We rotate so no section gets neglected
+  const studyMask=[false,true,true,true,true,true,true]; // Sun off, Mon-Sat on
   const today=new Date();today.setHours(0,0,0,0);
-  const days=[];let topicIdx=0;let studyCount=0;
-  const finalTopics=['Full Mock Exam','Weak Areas Deep Dive','MCQ Speed Drill','Score Analysis & Mnemonics','High-Yield Final Review','Rest & Mental Prep'];
+  const days=[];
+  let studyDayNum=0;
+
+  // Final sprint days alternate mock exam & final review
+  const sprintModes=['mock_exam','final_review','mcq_practice','final_review','mock_exam','final_review'];
 
   for(let i=0;i<planDays;i++){
     const dt=new Date(today);dt.setDate(today.getDate()+i);
@@ -7934,26 +7995,41 @@ function generateAIPlan(){
     const dateStr=dt.toISOString().slice(0,10);
     const dayNum=i+1;
     const phase=phases.find(p=>dayNum>=p.start&&dayNum<=p.end)||phases[phases.length-1];
-    let hrs=0,topic='';
+
+    let hrs=0,section=primarySec,mode=phase.mode;
     if(isStudy){
       const base=hrsPerWeek/6;
-      hrs=Math.min(8,Math.max(1.5,parseFloat((base*(1+phase.n*.08)).toFixed(1))));
-      if(phase.n===1){topic=topics[topicIdx%topics.length];topicIdx++;}
-      else if(phase.n===2){topic='MCQ Practice — '+(topics[topicIdx%Math.min(topics.length,10)]);topicIdx++;}
-      else if(phase.n===3){topic='TBS Simulations — '+(topics[topicIdx%Math.min(topics.length,8)]);topicIdx++;}
-      else{topic=finalTopics[studyCount%finalTopics.length];}
-      studyCount++;
+      // Ramp hours slightly as exam approaches
+      const rampFactor=1+Math.min(0.3,(planDays-dayNum)/planDays*0.4);
+      hrs=Math.min(8,Math.max(1.5,parseFloat((base*rampFactor).toFixed(1))));
+
+      // Pick section: rotate through ranked sections, weighted by remaining hours
+      // Simple round-robin weighted — most urgent section gets more days
+      if(allActive.length>1){
+        const slot=studyDayNum%allActive.length;
+        // Extra day for most urgent section every other rotation
+        section=studyDayNum%(allActive.length*2)<allActive.length?ranked[slot%ranked.length]:ranked[Math.min(1,slot)%ranked.length];
+      } else {
+        section=allActive[0]||primarySec;
+      }
+
+      // Final sprint: mix mock exams and targeted review
+      if(phase.n===phases[phases.length-1].n && phases.length>1){
+        mode=sprintModes[studyDayNum%sprintModes.length];
+      }
+
+      studyDayNum++;
     }
-    days.push({dayNum,date:dateStr,section:targetSec,topic,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,done:false});
+
+    days.push({dayNum,date:dateStr,section,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,done:false});
   }
 
   S.aiStudyPlan={
     generated:new Date().toISOString(),
-    section:targetSec,
+    primarySec,
     examDate:nearestDate,
     daysLeft:planDays,
-    hrsLogged,
-    hrsRemaining,
+    sectionStats,
     phases,
     days,
   };
@@ -7996,9 +8072,10 @@ function _buildAIPlanUI(){
   if(!plan) return '<div class="card card-pad" style="text-align:center;padding:36px 20px">'+
     '<div style="font-size:52px;margin-bottom:14px">🤖</div>'+
     '<div style="font-size:20px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px">AI Study Plan</div>'+
-    '<div style="font-size:13px;color:var(--mut);max-width:320px;margin:0 auto 24px;line-height:1.65">Your Elite plan analyzes your exam date, sections, hours logged, and weekly goal to build a personalized day-by-day roadmap to passing.</div>'+
+    '<div style="font-size:13px;color:var(--mut);max-width:340px;margin:0 auto 10px;line-height:1.65">Ledger analyzes your exam date, hours logged per section, and weekly goal to build a personalized time-blocking plan.</div>'+
+    '<div style="font-size:12px;color:var(--sub);max-width:300px;margin:0 auto 24px;line-height:1.6;background:var(--surf2);border-radius:10px;padding:10px 14px">📖 Your Becker, Gleim, or Roger material tells you <em>what</em> to study. This plan tells you <em>when</em>, <em>how long</em>, and <em>which mode</em> to be in each day.</div>'+
     '<button onclick="runGeneratePlan()" style="padding:14px 36px;background:linear-gradient(135deg,var(--ora),#c44d00);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(232,93,4,.38);animation:pulse-glow 2s infinite">✨ Generate My Plan</button>'+
-    '<div style="font-size:11px;color:var(--mut);margin-top:14px">Takes about 2 seconds · Regenerate any time</div>'+
+    '<div style="font-size:11px;color:var(--mut);margin-top:14px">Takes ~2 seconds · Regenerate any time</div>'+
     '</div>';
 
   const today=new Date().toISOString().slice(0,10);
@@ -8007,42 +8084,62 @@ function _buildAIPlanUI(){
   const doneDays=studyDays.filter(d=>d.done).length;
   const pct=studyDays.length?Math.round(doneDays/studyDays.length*100):0;
   const daysLeft=Math.max(0,Math.ceil((new Date(plan.examDate+' 00:00')-new Date())/86400000));
-  const ex=EXAMS[plan.section]||{};
+
+  // Section urgency strip
+  const stats=plan.sectionStats||{};
+  const secStrip=Object.keys(stats).map(s=>{
+    const st=stats[s];
+    const ex=EXAMS[s]||{};
+    const behind=st.pct<50;
+    return '<div style="flex:1;min-width:100px;background:var(--surf2);border-radius:10px;padding:10px 12px;border:1px solid '+(behind?ex.color+'44':'var(--bdr)')+'">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">'+
+        '<span class="badge badge-'+s+'">'+s+'</span>'+
+        '<span style="font-size:11px;font-weight:800;color:'+(behind?ex.color:'var(--grn)')+'">'+st.pct+'%</span>'+
+      '</div>'+
+      '<div style="height:4px;background:var(--surf);border-radius:2px;overflow:hidden"><div style="height:4px;background:'+ex.color+';width:'+st.pct+'%;border-radius:2px"></div></div>'+
+      '<div style="font-size:10px;color:var(--mut);margin-top:4px">'+st.logged.toFixed(0)+'h / '+st.target+'h'+( behind?' · needs attention':'')+'</div>'+
+    '</div>';
+  }).join('');
 
   // Today block
   let todayBlock='';
   if(todayEntry&&todayEntry.isStudy){
-    todayBlock='<div style="background:linear-gradient(135deg,var(--ora-bg),rgba(232,93,4,.06));border:2px solid var(--ora);border-radius:14px;padding:18px;margin-bottom:20px">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'+
+    const m=ACTIVITY_MODES[todayEntry.mode]||ACTIVITY_MODES.new_material;
+    const exCol=EXAMS[todayEntry.section]?.color||'var(--ora)';
+    todayBlock='<div style="background:linear-gradient(135deg,var(--ora-bg),rgba(232,93,4,.04));border:2px solid var(--ora);border-radius:14px;padding:18px;margin-bottom:20px">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
         '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.1em">📍 Today — Day '+todayEntry.dayNum+' of '+plan.daysLeft+'</div>'+
         (todayEntry.done
           ?'<span style="background:#10b981;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">✓ Done</span>'
           :'<button onclick="markPlanDayDone(\''+today+'\')" style="background:var(--ora);color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer">Mark Done ✓</button>')+
       '</div>'+
-      '<div style="font-size:16px;font-weight:900;color:var(--txt);margin-bottom:8px;letter-spacing:-.02em">'+todayEntry.topic+'</div>'+
-      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+      // Mode pill + section
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
+        '<div style="background:'+m.color+';color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px">'+m.icon+' '+m.label+'</div>'+
         '<span class="badge badge-'+todayEntry.section+'">'+todayEntry.section+'</span>'+
-        '<span style="font-size:12px;color:var(--sub);font-weight:600">'+todayEntry.hours+'h target</span>'+
-        '<span style="font-size:11px;color:var(--mut)">· '+_getPlanTip(todayEntry.phase,'')+'</span>'+
+        '<span style="font-size:13px;font-weight:700;color:var(--sub)">'+todayEntry.hours+'h</span>'+
       '</div>'+
+      // What to actually do
+      '<div style="font-size:13px;color:var(--txt);line-height:1.55;margin-bottom:8px">'+m.desc+'</div>'+
+      '<div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid var(--bdr);padding-top:8px">💡 '+_getPlanTip(todayEntry.mode)+'</div>'+
     '</div>';
   } else if(todayEntry&&!todayEntry.isStudy){
     todayBlock='<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">'+
       '<div style="font-size:28px">🛌</div>'+
-      '<div><div style="font-size:13px;font-weight:700;color:var(--txt)">Rest Day</div><div style="font-size:11px;color:var(--mut)">Recovery is part of the plan. Back at it tomorrow.</div></div>'+
+      '<div><div style="font-size:13px;font-weight:700">Rest Day</div><div style="font-size:11px;color:var(--mut)">Recovery is part of the plan. Your brain consolidates memory during rest.</div></div>'+
     '</div>';
   }
 
-  // Phase cards
+  // Phase roadmap cards
   const phaseCards=plan.phases.map(p=>{
     const pd=plan.days.filter(d=>d.phase===p.n&&d.isStudy);
     const done=pd.filter(d=>d.done).length;
     const pp=pd.length?Math.round(done/pd.length*100):0;
     const isCurrent=todayEntry&&todayEntry.phase===p.n;
-    return '<div style="flex:1;min-width:130px;background:var(--surf);border:1.5px solid '+(isCurrent?p.color:'var(--bdr)')+';border-radius:12px;padding:12px 14px">'+
-      '<div style="font-size:22px;margin-bottom:4px">'+p.icon+'</div>'+
-      '<div style="font-size:11px;font-weight:800;color:'+p.color+';margin-bottom:2px">'+p.name+'</div>'+
-      '<div style="font-size:10px;color:var(--mut);margin-bottom:8px;line-height:1.4">'+p.focus+'</div>'+
+    return '<div style="flex:1;min-width:120px;background:var(--surf);border:1.5px solid '+(isCurrent?p.color:'var(--bdr)')+';border-radius:12px;padding:12px 13px;'+(isCurrent?'box-shadow:0 2px 12px '+p.color+'28;':'')+'">'+
+      '<div style="font-size:20px;margin-bottom:3px">'+p.icon+'</div>'+
+      '<div style="font-size:10px;font-weight:800;color:'+p.color+';margin-bottom:2px">'+p.name+'</div>'+
+      '<div style="font-size:10px;color:var(--mut);margin-bottom:7px;line-height:1.4">'+p.focus+'</div>'+
       '<div style="font-size:10px;color:var(--sub);margin-bottom:4px">'+done+'/'+pd.length+' days</div>'+
       '<div style="height:4px;background:var(--surf2);border-radius:2px"><div style="height:4px;background:'+p.color+';border-radius:2px;width:'+pp+'%;transition:width .6s"></div></div>'+
     '</div>';
@@ -8054,18 +8151,27 @@ function _buildAIPlanUI(){
     const dt=new Date(d.date+'T12:00:00');
     const lbl=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     const isT=d.date===today;
-    const col=d.isStudy&&EXAMS[d.section]?EXAMS[d.section].color:'var(--mut)';
+    const m=ACTIVITY_MODES[d.mode]||ACTIVITY_MODES.new_material;
+    const exCol=d.isStudy&&EXAMS[d.section]?EXAMS[d.section].color:'var(--mut)';
     return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);'+(isT?'background:var(--ora-bg);border-radius:8px;padding:10px 8px;margin:0 -4px;':'')+'">'+
-      '<div style="width:88px;flex-shrink:0;font-size:11px;font-weight:'+(isT?'800':'600')+';color:'+(isT?'var(--ora)':'var(--sub)')+'">'+lbl+(isT?' 📍':'')+'</div>'+
+      '<div style="width:86px;flex-shrink:0;font-size:11px;font-weight:'+(isT?'800':'600')+';color:'+(isT?'var(--ora)':'var(--sub)')+'">'+lbl+(isT?' 📍':'')+'</div>'+
       (d.isStudy
-        ?'<div style="flex:1;min-width:0;background:'+col+'14;border:1px solid '+col+'28;border-radius:8px;padding:7px 11px">'+
-            '<div style="font-size:12px;font-weight:700;color:'+col+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.topic+'</div>'+
-            '<div style="font-size:10px;color:var(--mut);margin-top:2px">'+d.hours+'h · Phase '+d.phase+'</div>'+
+        ?'<div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">'+
+            '<span style="font-size:14px;flex-shrink:0">'+m.icon+'</span>'+
+            '<div style="flex:1;min-width:0">'+
+              '<div style="font-size:12px;font-weight:700;color:var(--txt)">'+m.label+'</div>'+
+              '<div style="display:flex;align-items:center;gap:6px;margin-top:1px">'+
+                '<span class="badge badge-'+d.section+'" style="font-size:9px;padding:1px 6px">'+d.section+'</span>'+
+                '<span style="font-size:10px;color:var(--mut)">'+d.hours+'h</span>'+
+              '</div>'+
+            '</div>'+
           '</div>'+
-          (d.done?'<span style="font-size:16px;flex-shrink:0">✅</span>':'<span style="font-size:16px;flex-shrink:0;opacity:.25">⬜</span>')
-        :'<div style="flex:1;font-size:11px;color:var(--mut);font-style:italic;padding:6px 0">Rest day 🛌</div>')+
+          (d.done?'<span style="font-size:15px;flex-shrink:0">✅</span>':'<span style="font-size:15px;flex-shrink:0;opacity:.2">⬜</span>')
+        :'<div style="flex:1;font-size:11px;color:var(--mut);font-style:italic">Rest day 🛌</div>')+
     '</div>';
   }).join('');
+
+  const totalHrsPlanned=studyDays.reduce((sum,d)=>sum+d.hours,0);
 
   return '<div class="card card-pad">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'+
@@ -8074,25 +8180,39 @@ function _buildAIPlanUI(){
           '<div class="section-title" style="margin-bottom:0">🤖 AI Study Plan</div>'+
           '<span style="background:linear-gradient(135deg,var(--ora),#c44d00);color:#fff;font-size:9px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>'+
         '</div>'+
-        '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+plan.section+' · '+daysLeft+' days to exam · '+pct+'% complete</div>'+
+        '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+daysLeft+' days to exam · '+Math.round(totalHrsPlanned)+'h planned · '+pct+'% done</div>'+
       '</div>'+
-      '<button onclick="regeneratePlan()" style="padding:6px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer" title="Regenerate plan">↺ Redo</button>'+
+      '<button onclick="regeneratePlan()" style="padding:6px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer">↺ Redo</button>'+
     '</div>'+
+
+    // Progress bar
     '<div style="margin-bottom:18px">'+
       '<div style="height:7px;background:var(--surf2);border-radius:4px;overflow:hidden"><div style="height:7px;background:linear-gradient(90deg,var(--ora),#c44d00);border-radius:4px;width:'+pct+'%;transition:width .6s"></div></div>'+
-      '<div style="display:flex;justify-content:space-between;margin-top:5px">'+
+      '<div style="display:flex;justify-content:space-between;margin-top:4px">'+
         '<span style="font-size:10px;color:var(--mut)">'+doneDays+' days done</span>'+
         '<span style="font-size:10px;color:var(--mut)">'+daysLeft+' days to exam</span>'+
       '</div>'+
     '</div>'+
+
+    // Section priority
+    (Object.keys(stats).length>0?
+      '<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Section Priority · Based on Your Hours</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">'+secStrip+'</div>'
+    :'')+
+
+    // Today
     todayBlock+
+
+    // Roadmap
     '<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Your Roadmap</div>'+
     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">'+phaseCards+'</div>'+
+
+    // Week ahead
     '<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Next 7 Days</div>'+
     weekRows+
-    '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between">'+
-      '<span style="font-size:10px;color:var(--mut)">Generated '+timeAgo(plan.generated)+' · Based on '+plan.hrsLogged.toFixed(0)+'h logged</span>'+
-      '<button onclick="openUpgradeModal(null)" style="font-size:10px;color:var(--ora);background:none;border:none;cursor:pointer;font-weight:600">Elite ✦</button>'+
+
+    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut);text-align:center">'+
+      'Generated '+timeAgo(plan.generated)+' · Your study material (Becker/Gleim/etc.) guides the <em>what</em> — this plan guides the <em>when</em>'+
     '</div>'+
   '</div>';
 }
