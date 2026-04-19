@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ledger — Social CPA Study</title>
+<title>Ledger — Pass the CPA.</title>
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <link rel="manifest" href="/manifest.json">
@@ -1621,6 +1621,7 @@ let authMode = 'signin'; // 'signin' | 'signup'
 let authEmailInput = '';
 
 function renderAuth(){
+  document.title='Join Ledger Today';
   applyTheme();
   document.getElementById('root').innerHTML=`
 <div class="auth-wrap">
@@ -2256,6 +2257,7 @@ function checkChallengeAchievements(){
 // MAIN APP SHELL
 // ═══════════════════════════════════════════════
 function renderApp(){
+  document.title='Ledger — Pass the CPA.';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
   const avatarBorder = S?.profilePic ? '2px solid var(--bdr)' : 'none';
   const avatarContent = S?.profilePic
