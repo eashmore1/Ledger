@@ -3942,10 +3942,8 @@ function closeFollowModal(){document.getElementById('follow-modal')?.classList.r
 // ═══════════════════════════════════════════════
 // USER PROFILE VIEW
 // ═══════════════════════════════════════════════
-function openUserProfile(userId){
-  if(userId==='you'){switchTab('profile');return;}
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);
-  if(!f)return;
+async function openUserProfile(userId){
+  if(userId==='you'||userId===AUTH?.uid){switchTab('profile');return;}
   let el=document.getElementById('uprofile-modal');
   if(!el){
     el=document.createElement('div');
@@ -3955,8 +3953,20 @@ function openUserProfile(userId){
     el.addEventListener('click',e=>{if(e.target===el)closeUserProfile();});
     document.body.appendChild(el);
   }
-  renderUserProfile(userId);
   el.classList.add('open');
+  const content=document.getElementById('uprofile-content');
+  content.innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
+  // Try mock friends first
+  const mock=MOCK_FRIENDS.find(x=>x.id===userId);
+  if(mock){renderUserProfile(userId);return;}
+  // Try Firestore for real users
+  if(firebaseDb){
+    try{
+      const snap=await firebaseDb.collection('users').doc(userId).get();
+      if(snap.exists){renderUserProfileFromFirestore(snap.data());return;}
+    }catch(e){}
+  }
+  content.innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="closeUserProfile()">Close</button></div>`;
 }
 
 function renderUserProfile(userId){
@@ -4025,7 +4035,76 @@ function renderUserProfile(userId){
 </div>`;
 }
 
+function renderUserProfileFromFirestore(u){
+  const content=document.getElementById('uprofile-content');
+  if(!content)return;
+  const uid=u.uid;
+  const isFollowing=(S.following||[]).includes(uid);
+  const name=u.displayName||'CPA Candidate';
+  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
+  const colors=['#e85d04','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
+  const color=colors[name.charCodeAt(0)%colors.length];
+  const avatarInner=u.profilePic
+    ?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover">`
+    :(u.avatar&&u.avatar.length<=2?`<span style="font-size:32px">${u.avatar}</span>`:`<span style="font-size:20px;font-weight:900;color:#fff">${initials}</span>`);
+  const passed=u.sectionPassed||[];
+  const sections=u.sections||[];
+  const sectionProgress=sections.map(s=>{
+    const ex=EXAMS[s];if(!ex)return'';
+    const isPassed=passed.includes(s);
+    return`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:7px"><span class="badge badge-${s}">${s}</span>${isPassed?`<span class="badge badge-passed">Passed ✅</span>`:''}</div>
+        <span style="font-size:11px;color:var(--mut)">${isPassed?'Complete':'In progress'}</span>
+      </div>
+      <div class="prog-bar" style="height:6px"><div class="prog-fill" style="width:${isPassed?100:15}%;background:${ex.color}"></div></div>
+    </div>`;
+  }).join('');
+  const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
+  const tierBadge=u.tier==='elite'?'<span class="badge" style="background:linear-gradient(135deg,#e85d04,#9333ea);color:#fff;margin-left:6px">✦ Elite</span>':u.tier==='pro'?'<span class="badge" style="background:var(--ind);color:#fff;margin-left:6px">Pro</span>':'';
+  content.innerHTML=`
+<div class="uprofile-hero" style="background:linear-gradient(135deg,${color},${color}99)">
+  <div style="position:relative;z-index:1">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="avatar av-xl" style="background:${color};border:3px solid rgba(255,255,255,.4);overflow:hidden;display:flex;align-items:center;justify-content:center">${avatarInner}</div>
+        <div>
+          <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:3px">${name}${passed.length===4?'🏆':''}${tierBadge}</div>
+          ${locationLine?`<div style="font-size:12px;color:rgba(255,255,255,.75)">📍 ${locationLine}</div>`:''}
+          ${u.school?`<div style="font-size:12px;color:rgba(255,255,255,.65)">${u.school}${u.classYear?' · '+u.classYear:''}</div>`:''}
+          ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;max-width:300px;line-height:1.5;font-style:italic">"${u.bio}"</div>`:''}
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeUserProfile()" style="color:rgba(255,255,255,.7);font-size:26px">×</button>
+    </div>
+    <div style="display:flex;gap:22px">
+      ${[{v:(u.hoursTotal||0).toFixed(0)+'h',l:'Total Hrs'},{v:passed.length+'/4',l:'Passed'},{v:u.firmName||'—',l:'Firm'}].map(s=>`<div><div style="font-size:18px;font-weight:900;color:#fff">${s.v}</div><div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em">${s.l}</div></div>`).join('')}
+    </div>
+  </div>
+</div>
+<div class="uprofile-body">
+  <div style="display:flex;gap:8px;margin-bottom:18px">
+    <button class="btn ${isFollowing?'btn-ghost':'btn-primary'}" style="flex:1;justify-content:center" onclick="toggleFollowProfileReal('${uid}',this)">${isFollowing?'✓ Following':'+ Follow'}</button>
+    <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeUserProfile()">💬 Message</button>
+  </div>
+  ${sectionProgress?`<div style="margin-bottom:18px"><div class="section-title">Exam Sections</div>${sectionProgress}</div>`:''}
+  <div style="text-align:center;padding:12px 0;color:var(--mut);font-size:11px">Activity feed coming soon</div>
+</div>`;
+}
+
 function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+
+function toggleFollowProfileReal(uid,btn){
+  if(!S.following)S.following=[];
+  const idx=S.following.indexOf(uid);
+  if(idx>=0){S.following.splice(idx,1);}else{S.following.push(uid);}
+  saveState();saveFollowToFirestore();checkAchievements();
+  const isNow=S.following.includes(uid);
+  btn.textContent=isNow?'✓ Following':'+ Follow';
+  btn.className=`btn ${isNow?'btn-ghost':'btn-primary'}`;
+  btn.style.flex='1';btn.style.justifyContent='center';
+  showToast(isNow?'Following!':'Unfollowed','ok');
+}
 
 function toggleFollowProfile(userId,btn){
   const following=S.following||[];
@@ -4503,7 +4582,7 @@ function _searchUserCard(u, isReal){
     :(u.avatar&&u.avatar.length<=2?`<span style="font-size:22px">${u.avatar}</span>`
     :`<span style="font-size:15px;font-weight:800;color:#fff">${initials}</span>`);
   const studyLine=u.disc?`Studying ${u.disc}`:(u.currentSection?'Studying '+u.currentSection:'');
-  return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
+  return `<div onclick="openUserProfile('${uid}')" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr);cursor:pointer" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background=''">
     <div style="width:44px;height:44px;border-radius:50%;background:${u.color||colors[colorIdx]};display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarHtml}</div>
     <div style="flex:1;min-width:0">
       <div style="font-size:13px;font-weight:700;color:var(--txt)">${name}</div>
@@ -4512,7 +4591,7 @@ function _searchUserCard(u, isReal){
     </div>
     ${uid===AUTH?.uid
       ? `<span style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;background:var(--surf2);color:var(--mut);border:1.5px solid var(--bdr)">You</span>`
-      : `<button onclick="toggleFollowSearch('${uid}',${isReal})" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>`
+      : `<button onclick="event.stopPropagation();toggleFollowSearch('${uid}',${isReal})" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>`
     }
   </div>`;
 }
