@@ -71,16 +71,11 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── LAYOUT ── */
 .app-wrap{display:flex;flex-direction:column;min-height:100vh}
-.topnav{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.25)}
+.topnav{background:var(--surf);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
 .topnav-inner{max-width:1160px;margin:0 auto;padding:0 var(--sp-5);height:64px;display:flex;align-items:center;gap:var(--sp-5)}
 .nav-logo{font-size:22px;font-weight:900;color:var(--ora);letter-spacing:0;font-family:var(--font-display);flex-shrink:0;cursor:pointer;transition:opacity var(--transition)}
 .nav-logo:hover{opacity:.85}
 .nav-logo span{color:var(--ind)}
-.nav-tab{color:rgba(255,255,255,.55)!important}
-.nav-tab:hover{background:rgba(255,255,255,.08)!important;color:rgba(255,255,255,.9)!important}
-.nav-tab.active{background:rgba(212,64,0,.25)!important;color:var(--ora)!important;font-weight:700;box-shadow:0 0 0 1px rgba(212,64,0,.3)!important}
-.nav-right .btn-ghost{color:rgba(255,255,255,.7)!important;border-color:rgba(255,255,255,.15)!important;background:transparent!important}
-.nav-right .btn-ghost:hover{background:rgba(255,255,255,.1)!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}
 .nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
 .nav-tab{padding:7px 16px;border-radius:9px;border:none;background:transparent;color:var(--mut);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:5px;white-space:nowrap;letter-spacing:-.01em}
 .nav-tab:hover{background:var(--surf2);color:var(--sub)}
@@ -282,7 +277,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── AUTH SCREEN ── */
 .auth-wrap{min-height:100vh;display:flex;background:var(--bg)}
-.auth-left{flex:1;background:linear-gradient(155deg,#0a0618,#18103a,#1e1540,#0a0618);display:flex;flex-direction:column;justify-content:center;padding:64px 56px;position:relative;overflow:hidden}
+.auth-left{flex:1;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);display:flex;flex-direction:column;justify-content:center;padding:64px 56px;position:relative;overflow:hidden}
 .auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 80%,rgba(212,64,0,.5),transparent 45%),radial-gradient(ellipse at 90% 10%,rgba(90,95,207,.2),transparent 40%)}
 .auth-left::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(212,64,0,.4),transparent 60%)}
 .auth-left-inner{position:relative;z-index:1}
