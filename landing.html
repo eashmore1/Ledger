@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ledger — Pass the CPA.</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='26' y='55' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='80' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='105' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='130' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23e85d04'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='26' y='55' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='80' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='105' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='130' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23d44000'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ora:#e85d04;--ora-dk:#c44d00;
+  --ora:#d44000;--ora-dk:#b03500;
   --navy:#18103a;--navy-dk:#0a0618;
   --bg:#f2ede6;--surf:#fff;
   --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
@@ -22,29 +22,29 @@ html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--txt);overflow-x:hidden}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(24,16,58,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)}
 .nav-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
 .nav-brand-text{font-family:var(--display);font-size:22px;font-weight:900;color:var(--ora);letter-spacing:0}
 .nav-links{display:flex;align-items:center;gap:6px}
-.nav-link{font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
-.nav-link:hover{background:rgba(0,0,0,.05);color:var(--txt)}
+.nav-link{font-size:13px;font-weight:600;color:rgba(255,255,255,.65);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
 .nav-link.active{color:var(--ora)}
 .nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:8px 18px;border-radius:9px;transition:all .15s;margin-left:8px}
 .nav-cta:hover{background:var(--ora-dk);transform:translateY(-1px)}
 
 /* ── HERO ── */
-.hero{min-height:100vh;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 28px 80px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(232,93,4,.35),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(90,95,207,.15),transparent 50%)}
+.hero{min-height:100vh;background:linear-gradient(155deg,#0a0618,#18103a,#1e1540,#0a0618);display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 28px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(212,64,0,.35),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(90,95,207,.15),transparent 50%)}
 .hero-ruled{position:absolute;inset:0;pointer-events:none;opacity:.04}
 .hero-inner{position:relative;z-index:1;max-width:780px}
-.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(232,93,4,.12);border:1px solid rgba(232,93,4,.25);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;color:#e85d04;letter-spacing:.04em;text-transform:uppercase;margin-bottom:28px}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(212,64,0,.12);border:1px solid rgba(212,64,0,.25);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;color:#d44000;letter-spacing:.04em;text-transform:uppercase;margin-bottom:28px}
 .hero-h1{font-family:var(--display);font-size:clamp(52px,8vw,96px);font-weight:900;color:#fff;line-height:.95;letter-spacing:-.02em;margin-bottom:24px}
 .hero-h1 span{color:var(--ora)}
 .hero-sub{font-size:clamp(16px,2.5vw,20px);color:rgba(255,255,255,.55);line-height:1.6;max-width:520px;margin:0 auto 40px}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .btn-hero-primary{font-size:15px;font-weight:800;color:#fff;background:var(--ora);text-decoration:none;padding:14px 32px;border-radius:12px;transition:all .18s;letter-spacing:-.01em}
-.btn-hero-primary:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,93,4,.4)}
+.btn-hero-primary:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,64,0,.4)}
 .btn-hero-ghost{font-size:15px;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;padding:14px 28px;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);transition:all .18s}
 .btn-hero-ghost:hover{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.06)}
 .hero-proof{margin-top:56px;display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.35);font-size:12px}
@@ -68,16 +68,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .feat-icon{width:48px;height:48px;border-radius:14px;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px}
 .feat-title{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px;letter-spacing:-.01em}
 .feat-desc{font-size:14px;color:var(--sub);line-height:1.65}
-.feat-tag{display:inline-block;margin-top:14px;font-size:10px;font-weight:800;color:var(--ora);background:rgba(232,93,4,.08);border-radius:6px;padding:4px 10px;text-transform:uppercase;letter-spacing:.07em}
+.feat-tag{display:inline-block;margin-top:14px;font-size:10px;font-weight:800;color:var(--ora);background:rgba(212,64,0,.08);border-radius:6px;padding:4px 10px;text-transform:uppercase;letter-spacing:.07em}
 
 /* ── ABOUT ── */
-.about{padding:96px 28px;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510)}
+.about{padding:96px 28px;background:linear-gradient(155deg,#0a0618,#18103a,#1e1540)}
 .about-inner{max-width:760px;margin:0 auto;text-align:center}
 .about-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px}
 .about-logo-text{font-family:var(--display);font-size:32px;font-weight:900;color:#fff}
 .about-h2{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:900;color:#fff;margin-bottom:24px;letter-spacing:-.02em}
 .about-p{font-size:16px;color:rgba(255,255,255,.65);line-height:1.8;margin-bottom:20px}
-.about-mission{margin-top:36px;padding:28px 32px;background:rgba(232,93,4,.08);border:1px solid rgba(232,93,4,.2);border-radius:16px}
+.about-mission{margin-top:36px;padding:28px 32px;background:rgba(212,64,0,.08);border:1px solid rgba(212,64,0,.2);border-radius:16px}
 .about-mission-label{font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px}
 .about-mission-text{font-size:15px;color:rgba(255,255,255,.8);line-height:1.75;font-style:italic}
 
@@ -93,13 +93,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .quote-meta{font-size:11px;color:var(--mut);margin-top:1px}
 
 /* ── BOTTOM CTA ── */
-.cta-section{padding:100px 28px;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);text-align:center;position:relative;overflow:hidden}
-.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(232,93,4,.3),transparent 60%)}
+.cta-section{padding:100px 28px;background:linear-gradient(155deg,#0a0618,#18103a,#1e1540,#0a0618);text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(212,64,0,.3),transparent 60%)}
 .cta-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
 .cta-h2{font-family:var(--display);font-size:clamp(36px,6vw,64px);font-weight:900;color:#fff;line-height:1;margin-bottom:16px;letter-spacing:-.02em}
 .cta-sub{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:36px;line-height:1.6}
 .btn-cta{display:inline-block;font-size:16px;font-weight:800;color:#fff;background:var(--ora);text-decoration:none;padding:16px 40px;border-radius:14px;transition:all .18s;letter-spacing:-.01em}
-.btn-cta:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,93,4,.45)}
+.btn-cta:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 10px 32px rgba(212,64,0,.45)}
 
 /* ── FOOTER ── */
 footer{background:#0a0805;padding:28px;text-align:center}
@@ -128,7 +128,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
         <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
         <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
         <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
-        <circle cx="142" cy="44" r="13" fill="#e85d04"/>
+        <circle cx="142" cy="44" r="13" fill="#d44000"/>
       </svg>
       <span class="nav-brand-text">Ledger</span>
     </a>
@@ -158,7 +158,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
   </svg>
   <div class="hero-inner">
     <div class="hero-chip">
-      <svg width="12" height="12" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="#e85d04"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/></svg>
+      <svg width="12" height="12" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="#d44000"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/></svg>
       The CPA Study Platform Built Differently
     </div>
     <h1 class="hero-h1">Stop Studying.<br><span>Start Passing.</span></h1>
@@ -169,10 +169,10 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
     </div>
     <div class="hero-proof">
       <div class="hero-proof-avatars">
-        <div class="hero-proof-av" style="background:linear-gradient(135deg,#e85d04,#c44d00)">E</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#d44000,#b03500)">E</div>
         <div class="hero-proof-av" style="background:linear-gradient(135deg,#5a5fcf,#9333ea)">M</div>
         <div class="hero-proof-av" style="background:linear-gradient(135deg,#0ea574,#0fb5aa)">S</div>
-        <div class="hero-proof-av" style="background:linear-gradient(135deg,#f59e0b,#e85d04)">J</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#f59e0b,#d44000)">J</div>
         <div class="hero-proof-av" style="background:linear-gradient(135deg,#9333ea,#5a5fcf)">A</div>
       </div>
       <span>Joined by 12,400+ CPA candidates this year</span>
@@ -259,7 +259,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
         <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
         <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
         <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
-        <circle cx="142" cy="44" r="13" fill="#e85d04"/>
+        <circle cx="142" cy="44" r="13" fill="#d44000"/>
       </svg>
       <span class="about-logo-text">About Ledger</span>
     </div>
@@ -282,7 +282,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
       <div class="quote-stars">★★★★★</div>
       <div class="quote-text">"I passed FAR on my first attempt after two prior failures. The pacing dashboard was the difference — I finally stopped guessing how many hours I needed and just followed the plan."</div>
       <div class="quote-author">
-        <div class="quote-av" style="background:linear-gradient(135deg,#e85d04,#c44d00)">JM</div>
+        <div class="quote-av" style="background:linear-gradient(135deg,#d44000,#b03500)">JM</div>
         <div>
           <div class="quote-name">Jordan M.</div>
           <div class="quote-meta">FAR Passed · Dallas, TX</div>
@@ -315,7 +315,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
       <div class="quote-stars">★★★★★</div>
       <div class="quote-text">"Our entire firm study group uses Ledger now. Seeing each other's sessions in the feed creates more accountability than any group chat ever did. We've had 4 people pass in the last six months."</div>
       <div class="quote-author">
-        <div class="quote-av" style="background:linear-gradient(135deg,#f59e0b,#e85d04)">AP</div>
+        <div class="quote-av" style="background:linear-gradient(135deg,#f59e0b,#d44000)">AP</div>
         <div>
           <div class="quote-name">Alyssa P.</div>
           <div class="quote-meta">All 4 Passed · New York, NY</div>
@@ -337,7 +337,7 @@ footer p{font-size:12px;color:rgba(255,255,255,.2)}
       <div class="quote-stars">★★★★★</div>
       <div class="quote-text">"I tried four different study apps before Ledger. This is the only one that made me feel like other people were grinding alongside me. The community aspect is underrated."</div>
       <div class="quote-author">
-        <div class="quote-av" style="background:linear-gradient(135deg,#e85d04,#9333ea)">MH</div>
+        <div class="quote-av" style="background:linear-gradient(135deg,#d44000,#9333ea)">MH</div>
         <div>
           <div class="quote-name">Maya H.</div>
           <div class="quote-meta">REG Passed · Austin, TX</div>
