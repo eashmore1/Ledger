@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger — Pass the CPA.</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='26' y='55' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='80' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='105' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='26' y='130' width='128' height='5' rx='2.5' fill='%23fff' opacity='.12'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23e85d04'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ora:#e85d04;--ora-dk:#c44d00;
+  --navy:#18103a;--navy-dk:#0a0618;
+  --bg:#f2ede6;--surf:#fff;
+  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
+  --font:'Inter',system-ui,sans-serif;
+  --display:'Barlow Condensed','Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-text{font-family:var(--display);font-size:22px;font-weight:900;color:var(--ora);letter-spacing:0}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:rgba(0,0,0,.05);color:var(--txt)}
+.nav-link.active{color:var(--ora)}
+.nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:8px 18px;border-radius:9px;transition:all .15s;margin-left:8px}
+.nav-cta:hover{background:var(--ora-dk);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 28px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(232,93,4,.35),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(90,95,207,.15),transparent 50%)}
+.hero-ruled{position:absolute;inset:0;pointer-events:none;opacity:.04}
+.hero-inner{position:relative;z-index:1;max-width:780px}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(232,93,4,.12);border:1px solid rgba(232,93,4,.25);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;color:#e85d04;letter-spacing:.04em;text-transform:uppercase;margin-bottom:28px}
+.hero-h1{font-family:var(--display);font-size:clamp(52px,8vw,96px);font-weight:900;color:#fff;line-height:.95;letter-spacing:-.02em;margin-bottom:24px}
+.hero-h1 span{color:var(--ora)}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:rgba(255,255,255,.55);line-height:1.6;max-width:520px;margin:0 auto 40px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero-primary{font-size:15px;font-weight:800;color:#fff;background:var(--ora);text-decoration:none;padding:14px 32px;border-radius:12px;transition:all .18s;letter-spacing:-.01em}
+.btn-hero-primary:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,93,4,.4)}
+.btn-hero-ghost{font-size:15px;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;padding:14px 28px;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);transition:all .18s}
+.btn-hero-ghost:hover{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.06)}
+.hero-proof{margin-top:56px;display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.35);font-size:12px}
+.hero-proof-avatars{display:flex}
+.hero-proof-av{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.15);margin-left:-8px;background:linear-gradient(135deg,var(--ora),#9333ea);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+
+/* ── STATS ── */
+.stats{background:var(--surf);padding:56px 28px;border-bottom:1px solid #e8e2db}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stat-num{font-family:var(--display);font-size:48px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:6px}
+.stat-label{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;line-height:1.4}
+
+/* ── FEATURES ── */
+.features{padding:96px 28px;background:var(--bg)}
+.section-label{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-bottom:12px}
+.section-h2{font-family:var(--display);font-size:clamp(34px,5vw,52px);font-weight:900;text-align:center;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--sub);text-align:center;max-width:520px;margin:0 auto 56px;line-height:1.6}
+.features-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.feat-card{background:var(--surf);border-radius:20px;padding:32px;border:1px solid #e8e2db;transition:all .2s}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.08)}
+.feat-icon{width:48px;height:48px;border-radius:14px;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px}
+.feat-title{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px;letter-spacing:-.01em}
+.feat-desc{font-size:14px;color:var(--sub);line-height:1.65}
+.feat-tag{display:inline-block;margin-top:14px;font-size:10px;font-weight:800;color:var(--ora);background:rgba(232,93,4,.08);border-radius:6px;padding:4px 10px;text-transform:uppercase;letter-spacing:.07em}
+
+/* ── ABOUT ── */
+.about{padding:96px 28px;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510)}
+.about-inner{max-width:760px;margin:0 auto;text-align:center}
+.about-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px}
+.about-logo-text{font-family:var(--display);font-size:32px;font-weight:900;color:#fff}
+.about-h2{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:900;color:#fff;margin-bottom:24px;letter-spacing:-.02em}
+.about-p{font-size:16px;color:rgba(255,255,255,.65);line-height:1.8;margin-bottom:20px}
+.about-mission{margin-top:36px;padding:28px 32px;background:rgba(232,93,4,.08);border:1px solid rgba(232,93,4,.2);border-radius:16px}
+.about-mission-label{font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px}
+.about-mission-text{font-size:15px;color:rgba(255,255,255,.8);line-height:1.75;font-style:italic}
+
+/* ── QUOTES ── */
+.quotes{padding:96px 28px;background:var(--bg)}
+.quotes-grid{max-width:1000px;margin:48px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.quote-card{background:var(--surf);border-radius:18px;padding:28px;border:1px solid #e8e2db;display:flex;flex-direction:column;gap:16px}
+.quote-stars{color:var(--ora);font-size:13px;letter-spacing:2px}
+.quote-text{font-size:14px;color:var(--txt);line-height:1.7;flex:1;font-style:italic}
+.quote-author{display:flex;align-items:center;gap:10px}
+.quote-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.quote-name{font-size:13px;font-weight:700;color:var(--txt)}
+.quote-meta{font-size:11px;color:var(--mut);margin-top:1px}
+
+/* ── BOTTOM CTA ── */
+.cta-section{padding:100px 28px;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(232,93,4,.3),transparent 60%)}
+.cta-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
+.cta-h2{font-family:var(--display);font-size:clamp(36px,6vw,64px);font-weight:900;color:#fff;line-height:1;margin-bottom:16px;letter-spacing:-.02em}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:36px;line-height:1.6}
+.btn-cta{display:inline-block;font-size:16px;font-weight:800;color:#fff;background:var(--ora);text-decoration:none;padding:16px 40px;border-radius:14px;transition:all .18s;letter-spacing:-.01em}
+.btn-cta:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,93,4,.45)}
+
+/* ── FOOTER ── */
+footer{background:#0a0805;padding:28px;text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,.2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:1fr}
+  .quotes-grid{grid-template-columns:1fr}
+  .nav-links .nav-link:not(.show-mobile){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 180 180" style="border-radius:7px;flex-shrink:0">
+        <rect width="180" height="180" fill="#18103a"/>
+        <rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
+        <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
+        <circle cx="142" cy="44" r="13" fill="#e85d04"/>
+      </svg>
+      <span class="nav-brand-text">Ledger</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about" class="nav-link">About Ledger</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="/" class="nav-link show-mobile">Sign In</a>
+      <a href="/" class="nav-cta">Join Free →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Decorative ruled lines -->
+  <svg class="hero-ruled" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="200" x2="1200" y2="200" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="280" x2="1200" y2="280" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="360" x2="1200" y2="360" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="440" x2="1200" y2="440" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="520" x2="1200" y2="520" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="600" x2="1200" y2="600" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="680" x2="1200" y2="680" stroke="white" stroke-width="1"/>
+    <line x1="120" y1="0" x2="120" y2="800" stroke="white" stroke-width="1"/>
+    <line x1="240" y1="0" x2="240" y2="800" stroke="white" stroke-width="1"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="hero-chip">
+      <svg width="12" height="12" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="#e85d04"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/></svg>
+      The CPA Study Platform Built Differently
+    </div>
+    <h1 class="hero-h1">Stop Studying.<br><span>Start Passing.</span></h1>
+    <p class="hero-sub">Ledger turns CPA prep into a competitive, social, data-driven grind. Know exactly where you stand, who you're competing with, and what to do tomorrow.</p>
+    <div class="hero-btns">
+      <a href="/" class="btn-hero-primary">Join Ledger Free →</a>
+      <a href="#features" class="btn-hero-ghost">See How It Works</a>
+    </div>
+    <div class="hero-proof">
+      <div class="hero-proof-avatars">
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#e85d04,#c44d00)">E</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#5a5fcf,#9333ea)">M</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#0ea574,#0fb5aa)">S</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#f59e0b,#e85d04)">J</div>
+        <div class="hero-proof-av" style="background:linear-gradient(135deg,#9333ea,#5a5fcf)">A</div>
+      </div>
+      <span>Joined by 12,400+ CPA candidates this year</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">12,400+</div>
+      <div class="stat-label">Active<br>Candidates</div>
+    </div>
+    <div>
+      <div class="stat-num">78%</div>
+      <div class="stat-label">Pass within<br>18 months</div>
+    </div>
+    <div>
+      <div class="stat-num">2.1M+</div>
+      <div class="stat-label">Study hours<br>tracked</div>
+    </div>
+    <div>
+      <div class="stat-num">4.8★</div>
+      <div class="stat-label">Average<br>user rating</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">What You Get</div>
+  <h2 class="section-h2">Everything you need.<br>Nothing you don't.</h2>
+  <p class="section-sub">Ledger is built around one goal — getting you to pass all four sections as fast as possible.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">AI Personalized Study Plan</div>
+      <div class="feat-desc">Enter your exam dates and Ledger builds a day-by-day study schedule tailored to your pace, your sections, and your life. No generic templates. No guesswork.</div>
+      <div class="feat-tag">Elite Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Smart Pacing Dashboard</div>
+      <div class="feat-desc">See exactly how many hours per week you need to pass each section based on your target exam dates. Fall behind — Ledger tells you. Stay on pace — Ledger shows you.</div>
+      <div class="feat-tag">Core Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏆</div>
+      <div class="feat-title">Competitive Leaderboards</div>
+      <div class="feat-desc">Compete with candidates in your cohort, your firm, or globally. The grind hits different when there's a live scoreboard with your name on it — and people catching up.</div>
+      <div class="feat-tag">Core Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔥</div>
+      <div class="feat-title">Streaks, Badges & Live Feed</div>
+      <div class="feat-desc">Log every session, maintain your daily streak, earn achievement badges, and post to a live study feed. Your cohort sees your grind in real time — and that accountability is real.</div>
+      <div class="feat-tag">Core Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏛️</div>
+      <div class="feat-title">Private Study Clubs</div>
+      <div class="feat-desc">Create a group with your study partners, share sessions, compare progress, and message in real time. The best candidates don't grind alone.</div>
+      <div class="feat-tag">Core Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔮</div>
+      <div class="feat-title">Score Predictor</div>
+      <div class="feat-desc">Based on your hours logged, study consistency, and section activity, Ledger predicts your exam readiness score before you walk in the door.</div>
+      <div class="feat-tag">Elite Feature</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-logo">
+      <svg width="52" height="52" viewBox="0 0 180 180" style="border-radius:13px">
+        <rect width="180" height="180" fill="#1e1540"/>
+        <rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+        <rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+        <rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+        <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+        <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
+        <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
+        <circle cx="142" cy="44" r="13" fill="#e85d04"/>
+      </svg>
+      <span class="about-logo-text">About Ledger</span>
+    </div>
+    <h2 class="about-h2">Built by candidates,<br>for candidates.</h2>
+    <p class="about-p">The CPA exam is one of the hardest professional credentialing exams in the world. A 50% first-attempt pass rate means half of every candidate who sits walks out defeated. Most study tools treat it like a content problem — more videos, more MCQs, more material. Ledger treats it like a discipline problem.</p>
+    <p class="about-p">We built Ledger because the candidates who pass aren't necessarily the smartest — they're the most consistent. They show up every day, they track their hours, they know exactly where they stand, and they're surrounded by other people doing the same thing. Ledger gives you all of that in one place.</p>
+    <div class="about-mission">
+      <div class="about-mission-label">Our Mission</div>
+      <div class="about-mission-text">"To give every CPA candidate the structure, accountability, and community they need to pass all four sections — not someday, but on schedule."</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="quotes" id="testimonials">
+  <div class="section-label">From the Community</div>
+  <h2 class="section-h2">Real candidates. Real results.</h2>
+  <div class="quotes-grid">
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"I passed FAR on my first attempt after two prior failures. The pacing dashboard was the difference — I finally stopped guessing how many hours I needed and just followed the plan."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#e85d04,#c44d00)">JM</div>
+        <div>
+          <div class="quote-name">Jordan M.</div>
+          <div class="quote-meta">FAR Passed · Dallas, TX</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"The leaderboard sounds gimmicky until you see someone from your firm jump three spots above you on a Tuesday night. I've never studied harder in my life."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#5a5fcf,#9333ea)">SR</div>
+        <div>
+          <div class="quote-name">Sara R.</div>
+          <div class="quote-meta">AUD + REG Passed · Chicago, IL</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"I was completely burnt out at month four. My streak hit 60 days and I couldn't break it. That sounds stupid but it genuinely kept me going. I'm now 3 for 4."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#0ea574,#0fb5aa)">TC</div>
+        <div>
+          <div class="quote-name">Tyler C.</div>
+          <div class="quote-meta">3 of 4 Passed · Atlanta, GA</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"Our entire firm study group uses Ledger now. Seeing each other's sessions in the feed creates more accountability than any group chat ever did. We've had 4 people pass in the last six months."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#f59e0b,#e85d04)">AP</div>
+        <div>
+          <div class="quote-name">Alyssa P.</div>
+          <div class="quote-meta">All 4 Passed · New York, NY</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"The AI study plan told me I was spending too many hours on FAR relative to my exam date for BAR. I shifted my schedule and passed BAR with two weeks to spare."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#9333ea,#5a5fcf)">KL</div>
+        <div>
+          <div class="quote-name">Kevin L.</div>
+          <div class="quote-meta">BAR Passed · Seattle, WA</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-stars">★★★★★</div>
+      <div class="quote-text">"I tried four different study apps before Ledger. This is the only one that made me feel like other people were grinding alongside me. The community aspect is underrated."</div>
+      <div class="quote-author">
+        <div class="quote-av" style="background:linear-gradient(135deg,#e85d04,#9333ea)">MH</div>
+        <div>
+          <div class="quote-name">Maya H.</div>
+          <div class="quote-meta">REG Passed · Austin, TX</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-h2">Your CPA isn't<br>going to pass itself.</h2>
+    <p class="cta-sub">Join 12,400+ candidates who stopped winging it and started tracking every hour toward their license.</p>
+    <a href="/" class="btn-cta">Join Ledger Now — It's Free →</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Ledger · Built for CPA candidates who take passing seriously.</p>
+</footer>
+
+<script>
+// Smooth active state on nav links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth'});}
+  });
+});
+// Fade-in on scroll
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{if(en.isIntersecting){en.target.style.opacity='1';en.target.style.transform='translateY(0)';}});
+},{threshold:0.1});
+document.querySelectorAll('.feat-card,.quote-card,.stat-num').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
