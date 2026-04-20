@@ -4030,162 +4030,142 @@ async function openUserProfile(userId){
     el=document.createElement('div');
     el.id='uprofile-modal';
     el.className='modal-overlay';
-    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:540px;padding:0;overflow:hidden;border-radius:18px"><div id="uprofile-content"></div></div>`;
+    el.style.cssText='align-items:flex-start;padding:0';
+    el.innerHTML=`<div id="uprofile-page" onclick="event.stopPropagation()" style="width:100%;max-width:700px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column"><div id="uprofile-content" style="flex:1"></div></div>`;
     el.addEventListener('click',e=>{if(e.target===el)closeUserProfile();});
     document.body.appendChild(el);
   }
   el.classList.add('open');
-  const content=document.getElementById('uprofile-content');
-  content.innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
-  // Try mock friends first
+  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
   const mock=MOCK_FRIENDS.find(x=>x.id===userId);
-  if(mock){renderUserProfile(userId);return;}
-  // Try Firestore for real users
+  if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
   if(firebaseDb){
     try{
       const snap=await firebaseDb.collection('users').doc(userId).get();
-      if(snap.exists){renderUserProfileFromFirestore(snap.data());return;}
+      if(snap.exists){_renderFullUserProfile(_normProfileFirestore(snap.data()));return;}
     }catch(e){}
   }
-  content.innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="closeUserProfile()">Close</button></div>`;
+  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="closeUserProfile()">Close</button></div>`;
 }
 
-function renderUserProfile(userId){
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);
-  if(!f)return;
-  const isFollowing=(S.following||[]).includes(userId);
-  const weekAgo=new Date(Date.now()-7*86400000);
-  const wHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-  const sectionHrsMap={};
-  f.activities.forEach(a=>{sectionHrsMap[a.section]=(sectionHrsMap[a.section]||0)+(a.hours||0);});
-  const allSecs=[...new Set([...f.passedSections,f.currentSection].filter(Boolean))];
-  const sectionProgress=allSecs.map(s=>{
+function _normProfileMock(f){
+  const allSecs=[...new Set([...(f.passedSections||[]),(f.currentSection||null)].filter(Boolean))];
+  return{uid:f.id,name:f.name,initials:f.initials,color:f.color,bio:f.bio||'',state:f.state,city:'',locationState:'',school:'',classYear:'',disc:f.currentSection||'',sections:allSecs,sectionPassed:f.passedSections||[],hoursTotal:f.totalHours||0,streak:f.streak||0,sessionCount:f.activities.length,weekHrs:f.activities.filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).reduce((s,a)=>s+(a.hours||0),0),activities:f.activities||[],achievements:[],avatar:'',profilePic:'',tier:'free',firmName:'',isMock:true};
+}
+function _normProfileFirestore(u){
+  const name=u.displayName||'CPA Candidate';
+  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
+  const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
+  const color=colors[name.charCodeAt(0)%colors.length];
+  return{uid:u.uid,name,initials,color:u.color||color,bio:u.bio||'',state:u.state||'',city:u.city||'',locationState:u.locationState||'',school:u.school||'',classYear:u.classYear||'',disc:u.disc||'',sections:u.sections||[],sectionPassed:u.sectionPassed||[],hoursTotal:u.hoursTotal||0,streak:0,sessionCount:0,weekHrs:0,activities:[],achievements:u.achievements||[],avatar:u.avatar||'',profilePic:u.profilePic||'',tier:u.tier||'free',firmName:u.firmName||'',isMock:false};
+}
+
+function _renderFullUserProfile(u){
+  const isFollowing=(S.following||[]).includes(u.uid);
+  const avatarInner=u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,var(--ora),#9333ea);color:#fff">✦ Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:var(--ind);color:#fff">Pro</span>`:'';
+  const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
+
+  const sectionProgress=u.sections.map(s=>{
     const ex=EXAMS[s];if(!ex)return'';
-    const hrs=f.passedSections.includes(s)?ex.studyHours:(sectionHrsMap[s]||0);
-    const pct=Math.min(100,Math.round(hrs/ex.studyHours*100));
-    const passed=f.passedSections.includes(s);
-    return`<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    const passed=u.sectionPassed.includes(s);
+    const hrs=passed?ex.studyHours:0;
+    const pct=passed?100:0;
+    return`<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
         <div style="display:flex;align-items:center;gap:7px"><span class="badge badge-${s}">${s}</span>${passed?`<span class="badge badge-passed">Passed ✅</span>`:''}</div>
-        <span style="font-size:11px;color:var(--mut)">${hrs.toFixed(0)}h / ${ex.studyHours}h</span>
+        <span style="font-size:11px;color:var(--mut)">${passed?ex.studyHours+'h / '+ex.studyHours+'h · 100%':'In progress'}</span>
       </div>
-      <div class="prog-bar" style="height:6px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
+      <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
     </div>`;
   }).join('');
-  const recentActs=f.activities.slice(0,3).map(a=>{
-    const ex=EXAMS[a.section];
-    return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);align-items:flex-start">
-      <div style="width:34px;height:34px;border-radius:8px;background:${ex.color}20;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${ex.icon}</div>
+
+  const achHTML=ACHIEVEMENTS.map(a=>{
+    const earned=u.achievements.includes(a.id);
+    return`<div class="ach-item${earned?' earned':''}"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`;
+  }).join('');
+
+  const recentActs=u.activities.slice(0,8).map(a=>{
+    const ex=EXAMS[a.section];if(!ex)return'';
+    return`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);align-items:center">
+      <div style="width:40px;height:40px;border-radius:10px;background:${ex.color}20;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${ex.icon}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700">${a.section} — ${a.hours}h</div>
+        <div style="font-size:13px;font-weight:700">${a.section} — ${a.hours}h</div>
         ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📖 ${a.material}</div>`:''}
         ${a.caption?`<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${a.caption}"</div>`:''}
       </div>
       <div style="font-size:10px;color:var(--mut);flex-shrink:0">${timeAgo(a.date)}</div>
     </div>`;
   }).join('');
-  const doc=document.getElementById('uprofile-content');
-  if(!doc)return;
-  doc.innerHTML=`
-<div class="uprofile-hero">
-  <div style="position:relative;z-index:1">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="avatar av-xl" style="background:${f.color};color:#fff;border:3px solid rgba(255,255,255,.4)">${f.initials}</div>
-        <div>
-          <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:3px">${f.name} ${f.passedSections.length===4?'🏆':''}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.75)">${f.state}${f.passedSections.length?' · ✅ '+f.passedSections.join(', ')+' Passed':''}</div>
-          ${f.bio?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:8px;max-width:300px;line-height:1.5;font-style:italic">"${f.bio}"</div>`:''}
+
+  document.getElementById('uprofile-content').innerHTML=`
+<div style="max-width:700px;margin:0 auto;padding:0 0 40px">
+  <div class="profile-hero" style="border-radius:0 0 var(--r) var(--r);margin-bottom:20px">
+    <div class="profile-hero-inner">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="width:80px;height:80px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarInner}</div>
+          <div>
+            <div class="profile-name" style="margin-top:0;color:#fff">${u.name} ${u.sectionPassed.length===4?'🏆':''}</div>
+            <div class="profile-state">${u.state}${u.classYear?' · '+u.classYear:''}${u.school?' @ '+u.school:''}</div>
+            ${locationLine?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${locationLine}</div>`:''}
+            ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${u.bio}"</div>`:''}
+            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              ${u.disc?`<span class="badge" style="background:rgba(255,255,255,.15);color:#fff">${u.disc} Discipline</span>`:''}
+              ${u.sectionPassed.length>0?`<span class="badge" style="background:rgba(16,185,129,.3);color:#6ee7b7">✅ ${u.sectionPassed.length} Passed</span>`:''}
+              ${tierBadge}
+              ${u.firmName?`<span class="badge" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)">${u.firmName}</span>`:''}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <button onclick="closeUserProfile()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">← Back</button>
         </div>
       </div>
-      <button class="modal-close" onclick="closeUserProfile()" style="color:rgba(255,255,255,.7);font-size:26px">×</button>
-    </div>
-    <div style="display:flex;gap:22px">
-      ${[{v:f.totalHours,l:'Total Hrs'},{v:f.streak+'d',l:'Streak'},{v:f.activities.length,l:'Sessions'},{v:wHrs.toFixed(1)+'h',l:'This Week'}].map(s=>`<div><div style="font-size:18px;font-weight:900;color:#fff">${s.v}</div><div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em">${s.l}</div></div>`).join('')}
+      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+        <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'rgba(255,255,255,.15)':'var(--ora)'};border:1px solid ${isFollowing?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':'+ Follow'}</button>
+        <button style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
+      </div>
+      <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
+        <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
+        ${u.streak?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.streak}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div></div>`:''}
+        ${u.sessionCount?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.sessionCount}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div></div>`:''}
+        ${u.weekHrs?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.weekHrs.toFixed(1)}h</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">This Week</div></div>`:''}
+      </div>
     </div>
   </div>
-</div>
-<div class="uprofile-body">
-  <div style="display:flex;gap:8px;margin-bottom:18px">
-    <button class="btn ${isFollowing?'btn-ghost':'btn-primary'}" style="flex:1;justify-content:center" onclick="toggleFollowProfile('${userId}',this)">${isFollowing?'✓ Following':'+ Follow'}</button>
-    <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeUserProfile();openDirectMessage('${userId}')">💬 Message</button>
-    ${isFollowing?`<button class="btn btn-ghost btn-sm" onclick="closeUserProfile();promptInviteToClub('${userId}')">🏛️ Invite to Club</button>`:''}
+
+  <div style="padding:0 16px">
+    ${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
+
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="margin-bottom:0">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
+        <span style="font-size:10px;color:var(--mut);font-style:italic">View only</span>
+      </div>
+      <div class="ach-grid">${achHTML||ACHIEVEMENTS.map(a=>`<div class="ach-item"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`).join('')}</div>
+    </div>
+
+    ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Sessions</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-size:13px;font-weight:700;color:var(--sub)">Activity is private</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Follow to see their sessions in your feed</div></div>`}
   </div>
-  ${allSecs.length?`<div style="margin-bottom:18px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
-  ${recentActs?`<div><div class="section-title">Recent Sessions</div>${recentActs}</div>`:''}
 </div>`;
 }
 
-function renderUserProfileFromFirestore(u){
-  const content=document.getElementById('uprofile-content');
-  if(!content)return;
-  const uid=u.uid;
-  const isFollowing=(S.following||[]).includes(uid);
-  const name=u.displayName||'CPA Candidate';
-  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
-  const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
-  const color=colors[name.charCodeAt(0)%colors.length];
-  const avatarInner=u.profilePic
-    ?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover">`
-    :(u.avatar&&u.avatar.length<=2?`<span style="font-size:32px">${u.avatar}</span>`:`<span style="font-size:20px;font-weight:900;color:#fff">${initials}</span>`);
-  const passed=u.sectionPassed||[];
-  const sections=u.sections||[];
-  const sectionProgress=sections.map(s=>{
-    const ex=EXAMS[s];if(!ex)return'';
-    const isPassed=passed.includes(s);
-    return`<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <div style="display:flex;align-items:center;gap:7px"><span class="badge badge-${s}">${s}</span>${isPassed?`<span class="badge badge-passed">Passed ✅</span>`:''}</div>
-        <span style="font-size:11px;color:var(--mut)">${isPassed?'Complete':'In progress'}</span>
-      </div>
-      <div class="prog-bar" style="height:6px"><div class="prog-fill" style="width:${isPassed?100:15}%;background:${ex.color}"></div></div>
-    </div>`;
-  }).join('');
-  const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
-  const tierBadge=u.tier==='elite'?'<span class="badge" style="background:linear-gradient(135deg,#d44000,#9333ea);color:#fff;margin-left:6px">✦ Elite</span>':u.tier==='pro'?'<span class="badge" style="background:var(--ind);color:#fff;margin-left:6px">Pro</span>':'';
-  content.innerHTML=`
-<div class="uprofile-hero" style="background:linear-gradient(135deg,${color},${color}99)">
-  <div style="position:relative;z-index:1">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="avatar av-xl" style="background:${color};border:3px solid rgba(255,255,255,.4);overflow:hidden;display:flex;align-items:center;justify-content:center">${avatarInner}</div>
-        <div>
-          <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:3px">${name}${passed.length===4?'🏆':''}${tierBadge}</div>
-          ${locationLine?`<div style="font-size:12px;color:rgba(255,255,255,.75)">📍 ${locationLine}</div>`:''}
-          ${u.school?`<div style="font-size:12px;color:rgba(255,255,255,.65)">${u.school}${u.classYear?' · '+u.classYear:''}</div>`:''}
-          ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:6px;max-width:300px;line-height:1.5;font-style:italic">"${u.bio}"</div>`:''}
-        </div>
-      </div>
-      <button class="modal-close" onclick="closeUserProfile()" style="color:rgba(255,255,255,.7);font-size:26px">×</button>
-    </div>
-    <div style="display:flex;gap:22px">
-      ${[{v:(u.hoursTotal||0).toFixed(0)+'h',l:'Total Hrs'},{v:passed.length+'/4',l:'Passed'},{v:u.firmName||'—',l:'Firm'}].map(s=>`<div><div style="font-size:18px;font-weight:900;color:#fff">${s.v}</div><div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em">${s.l}</div></div>`).join('')}
-    </div>
-  </div>
-</div>
-<div class="uprofile-body">
-  <div style="display:flex;gap:8px;margin-bottom:18px">
-    <button class="btn ${isFollowing?'btn-ghost':'btn-primary'}" style="flex:1;justify-content:center" onclick="toggleFollowProfileReal('${uid}',this)">${isFollowing?'✓ Following':'+ Follow'}</button>
-    <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeUserProfile()">💬 Message</button>
-  </div>
-  ${sectionProgress?`<div style="margin-bottom:18px"><div class="section-title">Exam Sections</div>${sectionProgress}</div>`:''}
-  <div style="text-align:center;padding:12px 0;color:var(--mut);font-size:11px">Activity feed coming soon</div>
-</div>`;
-}
-
-function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
-
-function toggleFollowProfileReal(uid,btn){
+function toggleFollowViewProfile(uid){
   if(!S.following)S.following=[];
   const idx=S.following.indexOf(uid);
   if(idx>=0){S.following.splice(idx,1);}else{S.following.push(uid);}
   saveState();saveFollowToFirestore();checkAchievements();
   const isNow=S.following.includes(uid);
-  btn.textContent=isNow?'✓ Following':'+ Follow';
-  btn.className=`btn ${isNow?'btn-ghost':'btn-primary'}`;
-  btn.style.flex='1';btn.style.justifyContent='center';
+  const btn=document.getElementById('vp-follow-btn');
+  if(btn){btn.textContent=isNow?'✓ Following':'+ Follow';btn.style.background=isNow?'rgba(255,255,255,.15)':'var(--ora)';btn.style.border=isNow?'1px solid rgba(255,255,255,.25)':'1px solid transparent';}
   showToast(isNow?'Following!':'Unfollowed','ok');
 }
+
+
+
+function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+
 
 function toggleFollowProfile(userId,btn){
   const following=S.following||[];
