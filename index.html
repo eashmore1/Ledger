@@ -2866,6 +2866,32 @@ function buildCalendar(){
 // ═══════════════════════════════════════════════
 // PROFILE
 // ═══════════════════════════════════════════════
+function _achPreviewHTML(earnedIds, sectionId, showInfoBtn){
+  const earned=new Set(earnedIds);
+  const sorted=[...ACHIEVEMENTS].sort((a,b)=>(earned.has(a.id)?0:1)-(earned.has(b.id)?0:1));
+  const makeItem=a=>{
+    const e=earned.has(a.id);
+    return`<div class="ach-item${e?' earned':''}"${showInfoBtn?' style="position:relative"':''}>
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      ${showInfoBtn?`<button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>`:''}
+    </div>`;
+  };
+  const preview=sorted.slice(0,8);
+  const rest=sorted.slice(8);
+  return`<div class="ach-grid" id="${sectionId}-preview">${preview.map(makeItem).join('')}</div>
+    ${rest.length?`<div class="ach-grid" id="${sectionId}-rest" style="display:none;margin-top:8px">${rest.map(makeItem).join('')}</div>
+    <button onclick="toggleAchSection('${sectionId}',${ACHIEVEMENTS.length})" id="${sectionId}-btn" style="margin-top:10px;width:100%;padding:9px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">View all ${ACHIEVEMENTS.length} achievements ↓</button>`:''}`;
+}
+function toggleAchSection(id,total){
+  const rest=document.getElementById(id+'-rest');
+  const btn=document.getElementById(id+'-btn');
+  if(!rest)return;
+  const open=rest.style.display!=='none';
+  rest.style.display=open?'none':'grid';
+  if(btn)btn.textContent=open?`View all ${total} achievements ↓`:'Show less ↑';
+}
+
 function buildProfile(){
   const totalHrs=getTotalHours();
   const streak=getStreak();
@@ -2876,14 +2902,7 @@ function buildProfile(){
   const followersCount=followers.length;
   const followingCount=following.length;
 
-  const achHTML=ACHIEVEMENTS.map(a=>{
-    const earned=(S.achievements||[]).includes(a.id);
-    return`<div class="ach-item${earned?' earned':''}" style="position:relative">
-      <div class="ach-icon">${a.icon}</div>
-      <div class="ach-name">${a.name}</div>
-      <button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>
-    </div>`;
-  }).join('');
+  const achHTML=_achPreviewHTML(S.achievements||[],'own-ach',true);
 
   const recentActs=(S.activities||[]).slice().reverse().slice(0,8).map(a=>{
     const ex=EXAMS[a.section];
@@ -2987,19 +3006,19 @@ function buildProfile(){
     </div>
   </div>
 
-  <!-- ACHIEVEMENTS -->
-  <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="section-title" style="margin-bottom:0">Achievements (${(S.achievements||[]).length}/${ACHIEVEMENTS.length})</div>
-      <span style="font-size:10px;color:var(--mut)">Click <strong>i</strong> on any badge to see how to unlock it</span>
-    </div>
-    <div class="ach-grid">${achHTML}</div>
-  </div>
-
   <!-- RECENT SESSIONS -->
   <div class="card card-pad" style="margin-bottom:16px">
     <div class="section-title">Recent Sessions (${(S.activities||[]).length} total)</div>
     ${recentActs||`<div class="empty-state" style="padding:24px 0"><div class="empty-icon">📖</div><div class="empty-msg">No sessions logged yet.<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="openSessionModal()">▶ Start First Session</button></div></div>`}
+  </div>
+
+  <!-- ACHIEVEMENTS -->
+  <div class="card card-pad" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="section-title" style="margin-bottom:0">Achievements (${(S.achievements||[]).length}/${ACHIEVEMENTS.length})</div>
+      <span style="font-size:10px;color:var(--mut)">Click <strong>i</strong> to see how to unlock</span>
+    </div>
+    ${achHTML}
   </div>
 
   <!-- DIRECT MESSAGES -->
@@ -4080,11 +4099,6 @@ function _renderFullUserProfile(u){
     </div>`;
   }).join('');
 
-  const achHTML=ACHIEVEMENTS.map(a=>{
-    const earned=u.achievements.includes(a.id);
-    return`<div class="ach-item${earned?' earned':''}"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`;
-  }).join('');
-
   const recentActs=u.activities.slice(0,8).map(a=>{
     const ex=EXAMS[a.section];if(!ex)return'';
     return`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);align-items:center">
@@ -4138,14 +4152,12 @@ function _renderFullUserProfile(u){
   <div style="padding:0 16px">
     ${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
 
-    <div class="card card-pad" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
-      </div>
-      <div class="ach-grid">${achHTML||ACHIEVEMENTS.map(a=>`<div class="ach-item"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`).join('')}</div>
-    </div>
+    ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Activity</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-size:13px;font-weight:700;color:var(--sub)">Activity is private</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Follow to see their sessions in your feed</div></div>`}
 
-    ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Sessions</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-size:13px;font-weight:700;color:var(--sub)">Activity is private</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Follow to see their sessions in your feed</div></div>`}
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:12px">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
+      ${_achPreviewHTML(u.achievements,'view-ach',false)}
+    </div>
   </div>
 </div>`;
 }
