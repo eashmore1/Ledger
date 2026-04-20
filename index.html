@@ -968,18 +968,52 @@ const CPA_TIPS = [
 // ACHIEVEMENTS
 // ═══════════════════════════════════════════════
 const ACHIEVEMENTS = [
+  // ── FIRST STEPS ──
   {id:'first_session',icon:'🔥',name:'First Step',desc:'Log your first study session'},
-  {id:'streak_7',icon:'📅',name:'Week Warrior',desc:'7-day study streak'},
-  {id:'streak_30',icon:'🗓️',name:'Month Machine',desc:'30-day study streak'},
-  {id:'hrs_50',icon:'⚡',name:'50 Hours In',desc:'Log 50 total hours'},
+  {id:'sessions_5',icon:'👣',name:'Getting Started',desc:'Log 5 study sessions'},
+  {id:'sessions_10',icon:'🎯',name:'In the Zone',desc:'Log 10 study sessions'},
+  {id:'sessions_25',icon:'🎖️',name:'Quarter Century',desc:'Log 25 study sessions'},
+  {id:'sessions_50',icon:'🏅',name:'Fifty Strong',desc:'Log 50 study sessions'},
+  {id:'sessions_100',icon:'💪',name:'Centurion',desc:'Log 100 study sessions'},
+  // ── HOURS ──
+  {id:'hrs_10',icon:'⚡',name:'First 10',desc:'Log 10 total study hours'},
+  {id:'hrs_25',icon:'📈',name:'Gaining Ground',desc:'Log 25 total study hours'},
+  {id:'hrs_50',icon:'💡',name:'50 Hours In',desc:'Log 50 total hours'},
   {id:'hrs_100',icon:'💯',name:'Century Club',desc:'Log 100 total hours'},
+  {id:'hrs_150',icon:'🔩',name:'Iron Candidate',desc:'Log 150 total study hours'},
   {id:'hrs_250',icon:'🏔️',name:'Summit Seeker',desc:'Log 250 total hours'},
-  {id:'marathon',icon:'🧠',name:'Marathon',desc:'Log 5+ hrs in one session'},
-  {id:'section_pass',icon:'🎯',name:'Section Slayer',desc:'Pass your first section'},
-  {id:'all_pass',icon:'🏆',name:'CPA Achieved',desc:'Pass all 4 sections'},
-  {id:'social',icon:'🌟',name:'Study Crew',desc:'Follow 5 or more friends'},
-  {id:'props_10',icon:'👏',name:'Hype Machine',desc:'Give Props 10 times'},
+  {id:'hrs_500',icon:'🦾',name:'500 Strong',desc:'Log 500 total study hours'},
+  // ── STREAKS ──
+  {id:'streak_3',icon:'🔥',name:'3-Day Spark',desc:'3-day study streak'},
+  {id:'streak_7',icon:'📅',name:'Week Warrior',desc:'7-day study streak'},
+  {id:'streak_14',icon:'✊',name:'Two Weeks',desc:'14-day study streak'},
+  {id:'streak_30',icon:'🗓️',name:'Month Machine',desc:'30-day study streak'},
+  {id:'streak_60',icon:'💥',name:'Unstoppable',desc:'60-day study streak'},
+  {id:'streak_100',icon:'👑',name:'Legend',desc:'100-day study streak'},
+  // ── INTENSITY ──
   {id:'consistent',icon:'💎',name:'Consistent',desc:'Study 5 days in a week'},
+  {id:'perfect_week',icon:'⭐',name:'Perfect Week',desc:'Study all 7 days in a week'},
+  {id:'big_week',icon:'🚀',name:'Big Week',desc:'Log 20+ hours in a single week'},
+  {id:'daily_double',icon:'🎲',name:'Daily Double',desc:'Log 2 sessions in one day'},
+  {id:'marathon',icon:'🧠',name:'Marathon',desc:'Log 5+ hrs in one session'},
+  {id:'deep_work',icon:'🧘',name:'Deep Work',desc:'Log 6+ hours in one session'},
+  {id:'all_day',icon:'🦁',name:'All-Day Grind',desc:'Log 8+ hours in one session'},
+  // ── TIME OF DAY ──
+  {id:'early_bird',icon:'☀️',name:'Early Bird',desc:'Log a session starting before 6am'},
+  {id:'night_owl',icon:'🦉',name:'Night Owl',desc:'Log a session after midnight'},
+  // ── SECTIONS ──
+  {id:'section_diverse',icon:'📚',name:'Well-Rounded',desc:'Log hours on all 4 sections'},
+  {id:'section_pass',icon:'🎯',name:'Section Slayer',desc:'Pass your first section'},
+  {id:'two_sections',icon:'✌️',name:'Double Down',desc:'Pass 2 CPA sections'},
+  {id:'three_sections',icon:'🔱',name:'Almost There',desc:'Pass 3 CPA sections'},
+  {id:'all_pass',icon:'🏆',name:'CPA Achieved',desc:'Pass all 4 sections'},
+  // ── SOCIAL ──
+  {id:'first_follow',icon:'🤝',name:'First Connection',desc:'Follow your first CPA candidate'},
+  {id:'social',icon:'🌟',name:'Study Crew',desc:'Follow 5 or more candidates'},
+  {id:'social_10',icon:'🏟️',name:'Squad Goals',desc:'Follow 10 or more candidates'},
+  {id:'props_10',icon:'👏',name:'Hype Machine',desc:'Give Props 10 times'},
+  {id:'props_25',icon:'📣',name:'Props Machine',desc:'Give Props 25 times'},
+  {id:'props_50',icon:'🎺',name:'Hype Legend',desc:'Give Props 50 times'},
 ];
 
 // ═══════════════════════════════════════════════
@@ -1262,29 +1296,75 @@ function checkAchievements(){
   const newOnes=[];
 
   const check=(id,cond)=>{if(cond&&!earned.has(id)){earned.add(id);newOnes.push(id);}};
-  check('first_session',S.activities.length>=1);
-  check('streak_7',streak>=7);
-  check('streak_30',streak>=30);
+  const sessionCount=S.activities.length;
+  check('first_session',sessionCount>=1);
+  check('sessions_5',sessionCount>=5);
+  check('sessions_10',sessionCount>=10);
+  check('sessions_25',sessionCount>=25);
+  check('sessions_50',sessionCount>=50);
+  check('sessions_100',sessionCount>=100);
+
+  // Hours
+  check('hrs_10',totalHrs>=10);
+  check('hrs_25',totalHrs>=25);
   check('hrs_50',totalHrs>=50);
   check('hrs_100',totalHrs>=100);
+  check('hrs_150',totalHrs>=150);
   check('hrs_250',totalHrs>=250);
-  check('marathon',S.activities.some(a=>a.hours>=5));
-  check('section_pass',passedCount>=1);
-  check('all_pass',passedCount>=4);
-  check('social',followCount>=5);
-  check('props_10',propCount>=10);
+  check('hrs_500',totalHrs>=500);
 
-  // Check consistent (5 days this week)
+  // Streaks
+  check('streak_3',streak>=3);
+  check('streak_7',streak>=7);
+  check('streak_14',streak>=14);
+  check('streak_30',streak>=30);
+  check('streak_60',streak>=60);
+  check('streak_100',streak>=100);
+
+  // Session intensity
+  check('marathon',S.activities.some(a=>a.hours>=5));
+  check('deep_work',S.activities.some(a=>a.hours>=6));
+  check('all_day',S.activities.some(a=>a.hours>=8));
+
+  // Time of day
+  check('early_bird',S.activities.some(a=>{const h=new Date(a.date).getHours();return h<6;}));
+  check('night_owl',S.activities.some(a=>{const h=new Date(a.date).getHours();return h===0||h===1||h===2||h===3;}));
+
+  // Section progress
+  check('section_pass',passedCount>=1);
+  check('two_sections',passedCount>=2);
+  check('three_sections',passedCount>=3);
+  check('all_pass',passedCount>=4);
+
+  // Social
+  check('first_follow',followCount>=1);
+  check('social',followCount>=5);
+  check('social_10',followCount>=10);
+  check('props_10',propCount>=10);
+  check('props_25',propCount>=25);
+  check('props_50',propCount>=50);
+
+  // Weekly patterns
+  const now=new Date();
+  const startOfWeek=new Date(now);
+  startOfWeek.setDate(now.getDate()-now.getDay());
+  startOfWeek.setHours(0,0,0,0);
   const thisWeekDates=new Set();
-  S.activities.forEach(a=>{
-    const d=new Date(a.date);
-    const now=new Date();
-    const startOfWeek=new Date(now);
-    startOfWeek.setDate(now.getDate()-now.getDay());
-    startOfWeek.setHours(0,0,0,0);
-    if(d>=startOfWeek)thisWeekDates.add(a.date.slice(0,10));
-  });
+  const thisWeekHrs=S.activities.filter(a=>new Date(a.date)>=startOfWeek).reduce((s,a)=>s+(a.hours||0),0);
+  S.activities.forEach(a=>{if(new Date(a.date)>=startOfWeek)thisWeekDates.add(a.date.slice(0,10));});
   check('consistent',thisWeekDates.size>=5);
+  check('perfect_week',thisWeekDates.size>=7);
+  check('big_week',thisWeekHrs>=20);
+
+  // Daily double (2 sessions same day)
+  const byDay={};
+  S.activities.forEach(a=>{const d=a.date.slice(0,10);byDay[d]=(byDay[d]||0)+1;});
+  check('daily_double',Object.values(byDay).some(v=>v>=2));
+
+  // All 4 sections studied
+  const studiedSections=new Set(S.activities.map(a=>a.section));
+  const allFour=['FAR','AUD','REG'].every(s=>studiedSections.has(s))&&[...studiedSections].some(s=>['BAR','ISC','TCP','UDP'].includes(s));
+  check('section_diverse',allFour);
 
   S.achievements=Array.from(earned);
   saveState();
