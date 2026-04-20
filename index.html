@@ -2754,6 +2754,344 @@ function buildActivityCard(a){
 }
 
 // ═══════════════════════════════════════════════
+// READINESS SCORE
+// ═══════════════════════════════════════════════
+function calcReadinessScore(){
+  const activeSections=(S.sections||[]).filter(s=>!(S.sectionPassed||[]).includes(s));
+  if(!activeSections.length) return {score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[]};
+
+  let totalScore=0;let breakdown=[];
+  activeSections.forEach(s=>{
+    const ex=EXAMS[s];
+    const logged=getSectionHours(s);
+    const volumePts=Math.min(50,Math.round(logged/ex.studyHours*50));
+
+    // Pacing pts
+    const targetDate=S.examDates?.[s];
+    let pacingPts=15;
+    if(targetDate){
+      const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
+      const weeksLeft=Math.max(0.5,daysLeft/7);
+      const needed=Math.max(0,ex.studyHours-logged);
+      const hrsPerWeek=needed/weeksLeft;
+      if(daysLeft<0) pacingPts=0;
+      else if(hrsPerWeek>(S.hoursPerWeek||15)*1.3) pacingPts=5;
+      else if(hrsPerWeek<(S.hoursPerWeek||15)*0.8) pacingPts=20;
+      else pacingPts=15;
+    }
+
+    // Practice score pts (most recent mock for this section)
+    const scores=(S.practiceScores||[]).filter(sc=>sc.section===s);
+    let scorePts=0;
+    if(scores.length){
+      const latest=scores.slice(-1)[0].score;
+      scorePts=Math.min(30,Math.round(latest/75*30));
+    }
+
+    // Streak bonus
+    const streakPts=Math.min(10,Math.round(getStreak()/10*10));
+
+    const sectionScore=Math.round((volumePts+pacingPts+scorePts+streakPts));
+    totalScore+=sectionScore;
+    breakdown.push({section:s,score:sectionScore,volumePts,pacingPts,scorePts,streakPts});
+  });
+
+  const score=Math.min(99,Math.round(totalScore/activeSections.length));
+  let label,color,tier;
+  if(score<35){label='Just Getting Started';color:'#ef4444';tier='start';}
+  else if(score<50){label='Building Foundation';color='#f59e0b';tier='building';}
+  else if(score<65){label='On Track';color='var(--ind)';tier='track';}
+  else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
+  else{label='Exam Ready 🎯';color='var(--grn)';tier='ready';}
+  if(score<35) color='#ef4444';
+  return{score,label,color,tier,breakdown};
+}
+
+function buildReadinessCard(){
+  const r=calcReadinessScore();
+  const circumference=2*Math.PI*52;
+  const dash=circumference*(1-r.score/100);
+  const glowStyle=r.tier==='ready'?'box-shadow:0 0 0 1.5px rgba(34,197,94,.25),var(--shadow)':'';
+  return`<div class="card card-pad" style="margin-bottom:20px;${glowStyle}">
+  <div style="display:flex;align-items:center;gap:20px">
+    <div style="position:relative;flex-shrink:0">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surf3)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="${r.color}" stroke-width="8"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${dash}"
+          stroke-linecap="round" transform="rotate(-90 60 60)"
+          style="transition:stroke-dashoffset .8s ease"/>
+        <text x="60" y="55" text-anchor="middle" font-size="28" font-weight="900" fill="var(--txt)">${r.score}</text>
+        <text x="60" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="var(--mut)">/ 100</text>
+      </svg>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:6px">CPA Readiness Score</div>
+      <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${r.breakdown.map(b=>`<div style="display:flex;align-items:center;gap:8px">
+          <span class="badge badge-${b.section}" style="font-size:9px;flex-shrink:0">${b.section}</span>
+          <div style="flex:1;height:6px;background:var(--surf3);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(100,b.score)}%;background:${EXAMS[b.section]?.color||'var(--ind)'};border-radius:4px;transition:width .6s ease"></div>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:var(--sub);width:28px;text-align:right">${b.score}</span>
+        </div>`).join('')}
+      </div>
+      <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Score factors: study volume · pacing · practice scores · consistency</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap">
+    <span style="font-size:11px;color:var(--mut)">Log more sessions and add practice scores to improve your score</span>
+    <button class="btn btn-ghost btn-xs" onclick="openPacingTipsModal()">How is this calculated? →</button>
+  </div>
+</div>`;
+}
+
+function openPacingTipsModal(){
+  const r=calcReadinessScore();
+  let tips=[];
+  r.breakdown.forEach(b=>{
+    if(b.volumePts<30) tips.push(`📚 Log more study hours for <strong>${b.section}</strong> — you're under 60% of the recommended volume`);
+    if(b.pacingPts<10) tips.push(`⚡ You're behind pace on <strong>${b.section}</strong> — increase your weekly hours or adjust your exam date`);
+    if(b.scorePts===0) tips.push(`📝 Add a practice exam score for <strong>${b.section}</strong> to boost your readiness score`);
+    if(b.scorePts<15&&b.scorePts>0) tips.push(`📈 Your latest <strong>${b.section}</strong> practice score is below 75 — keep drilling MCQs`);
+  });
+  if(getStreak()<7) tips.push('🔥 Build a 7+ day streak for a consistency bonus');
+  if(!tips.length) tips=['✅ You\'re doing great — keep your current pace!'];
+
+  const el=document.createElement('div');
+  el.className='modal-overlay open';
+  el.style.cssText='z-index:9999';
+  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:800">How Your Readiness Score Works</div>
+      <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
+    </div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:16px">Your score (0–99) is calculated from four factors across each active exam section:</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      ${[['📚','Study Volume (50pts)','Hours logged vs. recommended for your section'],
+         ['📅','Pacing (20pts)','Are you on track for your target exam date?'],
+         ['📝','Practice Scores (30pts)','Your latest practice exam score vs. the 75 passing threshold'],
+         ['🔥','Streak Bonus (10pts)','Daily study consistency — 10+ day streak = full bonus']
+      ].map(([i,t,d])=>`<div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:20px;flex-shrink:0">${i}</div>
+        <div><div style="font-size:13px;font-weight:700">${t}</div><div style="font-size:11px;color:var(--mut)">${d}</div></div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:12px;font-weight:700;margin-bottom:10px">What to work on:</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${tips.map(t=>`<div style="font-size:12px;color:var(--sub);background:var(--surf2);border-radius:8px;padding:10px 12px;border-left:3px solid var(--ora)">${t}</div>`).join('')}
+    </div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+}
+
+// ═══════════════════════════════════════════════
+// PACING ALERT (behind alert banner)
+// ═══════════════════════════════════════════════
+function buildPacingAlert(){
+  const behind=[];
+  (S.sections||[]).forEach(s=>{
+    if((S.sectionPassed||[]).includes(s)) return;
+    const ex=EXAMS[s];
+    const logged=getSectionHours(s);
+    const targetDate=S.examDates?.[s];
+    if(!targetDate) return;
+    const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
+    if(daysLeft<=0) return;
+    const weeksLeft=Math.max(0.5,daysLeft/7);
+    const needed=Math.max(0,ex.studyHours-logged);
+    const hrsPerWeek=needed/weeksLeft;
+    if(hrsPerWeek>(S.hoursPerWeek||15)*1.25){
+      const catchUpHrsToday=(hrsPerWeek/7).toFixed(1);
+      behind.push({s,daysLeft,hrsPerWeek:hrsPerWeek.toFixed(1),catchUpHrsToday,needed:Math.round(needed)});
+    }
+  });
+
+  // Also check: hasn't studied in 2+ days with an upcoming exam
+  const lastActivity=(S.activities||[]).slice(-1)[0];
+  const daysSinceStudy=lastActivity?Math.round((Date.now()-new Date(lastActivity.date))/86400000):99;
+  const hasUpcomingExam=(S.sections||[]).some(s=>S.examDates?.[s]&&new Date(S.examDates[s]+' 00:00:00')>Date.now());
+  const inactiveAlert=daysSinceStudy>=2&&hasUpcomingExam;
+
+  if(!behind.length&&!inactiveAlert) return '';
+
+  const alerts=[];
+  if(inactiveAlert&&daysSinceStudy>=2){
+    alerts.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;margin-bottom:8px">
+      <div style="font-size:18px;flex-shrink:0">⏰</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:#92400e">You haven't studied in ${daysSinceStudy} days</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">Every day away from the material makes it harder to retain. Even 30 minutes today keeps the streak alive.</div>
+      </div>
+      <button class="btn btn-sm" style="background:#f59e0b;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openPostModal()">Log Session →</button>
+    </div>`);
+  }
+
+  behind.forEach(b=>{
+    alerts.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:10px;margin-bottom:8px">
+      <div style="font-size:18px;flex-shrink:0">📉</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>You're behind pace — ${b.daysLeft} days left, ${b.needed}h still needed</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">You need <strong>${b.hrsPerWeek}h/week</strong> to make your exam date. That's about <strong>${b.catchUpHrsToday}h today</strong> if you study daily.</div>
+      </div>
+      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>document.getElementById('schedule-section')?.scrollIntoView({behavior:'smooth'}),100)">Reschedule →</button>
+    </div>`);
+  });
+
+  return`<div style="margin-bottom:20px">${alerts.join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════════
+// WEEKLY COMMITMENT CONTRACT
+// ═══════════════════════════════════════════════
+function buildWeeklyCommitment(){
+  // Get start of this week (Monday)
+  const now=new Date();
+  const dayOfWeek=now.getDay()===0?6:now.getDay()-1; // 0=Mon
+  const weekStart=new Date(Date.now()-dayOfWeek*86400000);
+  weekStart.setHours(0,0,0,0);
+  const weekKey=weekStart.toISOString().slice(0,10);
+
+  if(!S.commitments) S.commitments={};
+  const commitment=S.commitments[weekKey];
+  const weekHrsLogged=S.activities.filter(a=>new Date(a.date)>=weekStart).reduce((acc,a)=>acc+(a.hours||0),0);
+
+  if(!commitment){
+    // Show "set your commitment" prompt
+    return`<div class="card card-pad" style="margin-bottom:20px;border-left:3px solid var(--ora)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:28px;flex-shrink:0">🤝</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:800;margin-bottom:3px">Set Your Weekly Commitment</div>
+          <div style="font-size:12px;color:var(--sub)">Candidates who set a weekly commitment are <strong>3× more likely</strong> to stay on track. What's your goal this week?</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        ${[5,10,15,20,25].map(h=>`<button class="btn btn-ghost btn-sm" onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:60px;justify-content:center">${h}h</button>`).join('')}
+        <button class="btn btn-ghost btn-sm" onclick="setCustomCommitment()" style="flex:1;min-width:60px;justify-content:center">Custom</button>
+      </div>
+    </div>`;
+  }
+
+  const pct=Math.min(100,Math.round(weekHrsLogged/commitment*100));
+  const remaining=Math.max(0,commitment-weekHrsLogged).toFixed(1);
+  const daysLeftInWeek=7-dayOfWeek;
+  const hrsPerDayNeeded=daysLeftInWeek>0?(parseFloat(remaining)/daysLeftInWeek).toFixed(1):'0';
+  const met=weekHrsLogged>=commitment;
+
+  return`<div class="card card-pad" style="margin-bottom:20px;${met?'border-left:3px solid var(--grn);background:var(--grn-bg)':'border-left:3px solid var(--ind)'}">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week's Commitment</div>
+        <div style="font-size:16px;font-weight:900;margin-top:2px">${met?'✅ Goal Crushed!':remaining+'h left to hit your '+commitment+'h goal'}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:28px;font-weight:900;color:${met?'var(--grn)':'var(--ind)'};line-height:1">${pct}<span style="font-size:14px">%</span></div>
+        <div style="font-size:10px;color:var(--mut)">${weekHrsLogged.toFixed(1)} / ${commitment}h</div>
+      </div>
+    </div>
+    <div class="prog-bar" style="height:8px;margin-bottom:${met?'0':'10px'}">
+      <div class="prog-fill" style="width:${pct}%;background:${met?'var(--grn)':'var(--ind)'}"></div>
+    </div>
+    ${!met?`<div style="font-size:11px;color:var(--sub)">${daysLeftInWeek} days left in week · needs <strong>${hrsPerDayNeeded}h/day</strong> to hit your commitment</div>`:''}
+    <div style="margin-top:10px;display:flex;gap:8px">
+      ${!met?`<button class="btn btn-primary btn-sm" onclick="openPostModal()" style="flex-shrink:0">+ Log Session</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="clearWeeklyCommitment('${weekKey}')" style="flex-shrink:0;margin-left:auto;color:var(--mut)">Change goal</button>
+    </div>
+  </div>`;
+}
+
+function setWeeklyCommitment(hrs){
+  const now=new Date();
+  const dayOfWeek=now.getDay()===0?6:now.getDay()-1;
+  const weekStart=new Date(Date.now()-dayOfWeek*86400000);
+  weekStart.setHours(0,0,0,0);
+  const weekKey=weekStart.toISOString().slice(0,10);
+  if(!S.commitments) S.commitments={};
+  S.commitments[weekKey]=hrs;
+  saveState();
+  switchTab('dashboard');
+  showToast(`Committed to ${hrs}h this week 🤝 Let's go!`,'ok');
+}
+
+function setCustomCommitment(){
+  const val=prompt('Enter your weekly hour goal (e.g. 12):');
+  const hrs=parseFloat(val);
+  if(!hrs||hrs<1||hrs>100){showToast('Enter a number between 1 and 100','err');return;}
+  setWeeklyCommitment(Math.round(hrs*2)/2);
+}
+
+function clearWeeklyCommitment(weekKey){
+  if(!S.commitments) return;
+  delete S.commitments[weekKey];
+  saveState();
+  switchTab('dashboard');
+}
+
+// ═══════════════════════════════════════════════
+// STRUGGLING SUPPORT MODAL
+// ═══════════════════════════════════════════════
+function openStrugglingModal(){
+  const el=document.createElement('div');
+  el.className='modal-overlay open';
+  el.style.cssText='z-index:9999';
+  const studyingNow=MOCK_FRIENDS.filter(f=>f.streak>0).length;
+  const quotes=[
+    {q:"The CPA exam is the hardest thing I've ever done — but passing FAR at 4am is also the best feeling I've ever had.",a:"Passed candidate, Texas"},
+    {q:"I failed REG twice. Third time I passed with an 87. Don't let a fail define your story.",a:"r/CPA community"},
+    {q:"Every single person who passed the CPA exam felt exactly what you're feeling right now. Keep going.",a:"Another71 forum"},
+    {q:"You're not studying for a grade. You're buying yourself freedom. Every hour is an investment.",a:"Ledger community"},
+  ];
+  const q=quotes[Math.floor(Math.random()*quotes.length)];
+  const streak=getStreak();
+  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+    <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
+    <div style="text-align:center;padding:8px 0 20px">
+      <div style="font-size:40px;margin-bottom:12px">💪</div>
+      <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're Not Alone</div>
+      <div style="font-size:13px;color:var(--sub);line-height:1.6">The CPA exam has a ~50% pass rate. Everyone who's passed felt exactly where you are now.</div>
+    </div>
+    <div style="background:var(--surf2);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--ora)">
+      <div style="font-size:13px;color:var(--sub);line-height:1.7;font-style:italic">"${q.q}"</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:8px;font-weight:700">— ${q.a}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="text-align:center;background:var(--surf2);border-radius:10px;padding:12px 8px">
+        <div style="font-size:22px;font-weight:900;color:var(--ora)">${studyingNow+1}</div>
+        <div style="font-size:10px;color:var(--mut)">people in your circle studying</div>
+      </div>
+      <div style="text-align:center;background:var(--surf2);border-radius:10px;padding:12px 8px">
+        <div style="font-size:22px;font-weight:900;color:var(--ind)">${streak}</div>
+        <div style="font-size:10px;color:var(--mut)">day streak — don't break it</div>
+      </div>
+      <div style="text-align:center;background:var(--surf2);border-radius:10px;padding:12px 8px">
+        <div style="font-size:22px;font-weight:900;color:var(--grn)">${Math.round(getTotalHours())}</div>
+        <div style="font-size:10px;color:var(--mut)">hours already invested</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">What do you need right now?</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();openPostModal()">
+        <span style="font-size:18px">⏱️</span> Log a short session — even 25 minutes counts
+      </button>
+      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();switchTab('explore')">
+        <span style="font-size:18px">👥</span> See who else is grinding right now
+      </button>
+      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)">
+        <span style="font-size:18px">🤖</span> Ask Ledger for a personalized game plan
+      </button>
+      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();openSupportModal()">
+        <span style="font-size:18px">💬</span> Talk to support — we actually read these
+      </button>
+    </div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+}
+
+// ═══════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════
 function buildDashboard(){
@@ -2829,12 +3167,23 @@ function buildDashboard(){
   // Calendar
   const calHTML=buildCalendar();
 
+  const pacingAlert=buildPacingAlert();
+  const readinessCard=buildReadinessCard();
+  const commitmentCard=buildWeeklyCommitment();
+
   return`
 <div style="max-width:880px;margin:0 auto">
-  <div style="margin-bottom:36px">
-    <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">Hey, ${S.name}.</h1>
-    <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">Hey, ${S.name}.</h1>
+      <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+    </div>
+    <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:7px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;flex-shrink:0" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
+      <span style="font-size:14px">💪</span> Feeling stuck?
+    </button>
   </div>
+
+  ${pacingAlert}
 
   <div class="stats-grid" style="margin-bottom:var(--sp-5)">
     ${[
@@ -2844,6 +3193,10 @@ function buildDashboard(){
       {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
     ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
   </div>
+
+  ${readinessCard}
+
+  ${commitmentCard}
 
   <div class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -3268,6 +3621,26 @@ function buildExplore(){
   const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
   const clubSectionNew=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverVisibleHtml+discoverHiddenHtml;
 
+  // Study buddy matching — people studying the same section as you
+  const myActiveSections=(S.sections||[]).filter(s=>!(S.sectionPassed||[]).includes(s));
+  const buddyMatches=MOCK_FRIENDS.filter(f=>{
+    const fSection=f.currentSection;
+    return myActiveSections.includes(fSection);
+  }).slice(0,6);
+  const buddyCards=buddyMatches.map(f=>{
+    const sharedSection=myActiveSections.find(s=>s===f.currentSection);
+    const fWeekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
+    const isFollowing=(S.following||[]).includes(f.id);
+    return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">
+      <div class="avatar av-sm" style="background:${f.color};color:#fff;cursor:pointer;flex-shrink:0" onclick="openUserProfile('${f.id}')">${f.initials}</div>
+      <div style="flex:1;min-width:0;cursor:pointer" onclick="openUserProfile('${f.id}')">
+        <div style="font-size:13px;font-weight:700">${f.name} <span class="badge badge-${sharedSection}" style="font-size:8px">${sharedSection}</span></div>
+        <div style="font-size:11px;color:var(--mut)">${f.state} · 🔥${f.streak}d streak · ${fWeekHrs.toFixed(1)}h this week</div>
+      </div>
+      <button class="follow-btn${isFollowing?' following':''}" style="flex-shrink:0" onclick="toggleFollow('${f.id}',this)">${isFollowing?'Following':'Follow'}</button>
+    </div>`;
+  }).join('');
+
   return`
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto">
   <div>
@@ -3276,6 +3649,17 @@ function buildExplore(){
       <div style="font-size:11px;color:var(--mut);margin-bottom:10px">Hours logged in the last 7 days</div>
       ${lbRows}
     </div>
+    ${buddyMatches.length?`<div class="card card-pad" style="margin-bottom:16px;border-left:3px solid var(--ind)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <div style="font-size:18px">🤝</div>
+        <div>
+          <div class="section-title" style="margin-bottom:0">Study Buddies</div>
+          <div style="font-size:11px;color:var(--mut)">People studying ${myActiveSections.join(' & ')} right now</div>
+        </div>
+      </div>
+      ${buddyCards}
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openSearchModal()">Search all candidates →</button>
+    </div>`:''}
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="section-title" style="margin-bottom:0">Study Clubs</div>
