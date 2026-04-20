@@ -1697,7 +1697,7 @@ function renderAuth(){
   <!-- LEFT PANEL — brand + features -->
   <div class="auth-left">
     <div class="auth-left-inner">
-      <div class="auth-brand">Ledger</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><svg width="42" height="42" viewBox="0 0 180 180" style="border-radius:10px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#e85d04"/></svg><div class="auth-brand">Ledger</div></div>
       <div class="auth-brand-sub">The social CPA study platform built for<br>candidates who take passing seriously.</div>
 
       <div class="auth-feature">
@@ -1737,7 +1737,7 @@ function renderAuth(){
 
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
-    <div class="auth-right-logo">Ledger</div>
+    <div class="auth-right-logo" style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#e85d04"/></svg>Ledger</div>
     <div id="auth-heading" style="margin-bottom:26px">
       <div style="font-size:26px;font-weight:900;margin-bottom:5px;letter-spacing:-.03em">${authMode==='signin'?'Welcome back':'Create your account'}</div>
       <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${authMode==='signin'?'Sign in to continue your CPA journey':'Join 12,400+ candidates grinding toward CPA'}</div>
@@ -2337,7 +2337,7 @@ function renderApp(){
 <div class="app-wrap">
   <nav class="topnav">
     <div class="topnav-inner">
-      <div class="nav-logo" onclick="switchTab('feed')">Ledger</div>
+      <div class="nav-logo" onclick="switchTab('feed')" style="display:flex;align-items:center;gap:7px"><svg width="22" height="22" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#e85d04"/></svg>Ledger</div>
       <div class="nav-tabs">
         ${[
           {id:'feed',icon:'◈',label:'Feed'},
