@@ -2757,13 +2757,16 @@ function buildActivityCard(a){
 // CURRENT SECTION HELPER
 // ═══════════════════════════════════════════════
 function getCurrentSection(){
-  // Returns the section the user is actively studying right now:
-  // 1. First section with status 'studying'
-  // 2. Fallback: first non-passed section
-  // 3. Fallback: first section in their list
+  // Returns the section whose exam date is soonest in the future (not yet passed).
+  // Fallback: first non-passed section. Fallback: first section in list.
   const passed=new Set(S.sectionPassed||[]);
-  const studying=(S.sections||[]).find(s=>(S.sectionStatus?.[s])==='studying'&&!passed.has(s));
-  if(studying) return studying;
+  const now=Date.now();
+  const withDates=(S.sections||[])
+    .filter(s=>!passed.has(s)&&S.examDates?.[s])
+    .map(s=>({s,t:new Date(S.examDates[s]+' 00:00:00').getTime()}))
+    .filter(x=>x.t>now)
+    .sort((a,b)=>a.t-b.t);
+  if(withDates.length) return withDates[0].s;
   const first=(S.sections||[]).find(s=>!passed.has(s));
   return first||(S.sections||[])[0]||'FAR';
 }
