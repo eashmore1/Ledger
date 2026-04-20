@@ -746,10 +746,8 @@ function initFirebase(){
     firebaseAuth = firebase.auth();
     try{
       firebaseDb = firebase.firestore();
-      console.log('[Ledger] Firestore ready:', !!firebaseDb);
     }catch(e){
-      console.warn('[Ledger] Firestore init failed:', e.message);
-      setTimeout(()=>{ try{ firebaseDb=firebase.firestore(); console.log('[Ledger] Firestore retry ok'); }catch(e2){ console.warn('[Ledger] Firestore retry failed:', e2.message); } },500);
+      setTimeout(()=>{ try{ firebaseDb=firebase.firestore(); }catch(e2){} },500);
     }
     // Persist auth across page reloads
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -1127,8 +1125,7 @@ function saveState(){
 // ── FIRESTORE HELPERS ──
 async function writeUserProfile(){
   if(!AUTH?.uid||!S) return;
-  if(!firebaseDb){ console.warn('[Ledger] writeUserProfile: firebaseDb null, retrying...'); setTimeout(writeUserProfile, 800); return; }
-  console.log('[Ledger] Writing profile for', AUTH.uid);
+  if(!firebaseDb){ setTimeout(writeUserProfile, 800); return; }
   try{
     const doc={
       uid: AUTH.uid,
@@ -1154,8 +1151,7 @@ async function writeUserProfile(){
       createdAt: S.created||Date.now()
     };
     await firebaseDb.collection('users').doc(AUTH.uid).set(doc,{merge:true});
-    console.log('[Ledger] Profile written to Firestore ✓');
-  }catch(e){ console.error('[Ledger] Firestore write failed:', e.code, e.message); }
+  }catch(e){}
 }
 
 async function searchFirestoreUsers(q){
