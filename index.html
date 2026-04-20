@@ -1457,6 +1457,79 @@ function closeUpgradeModal(){
   if(el)el.classList.remove('open');
 }
 
+function openLegalModal(type){
+  let el=document.getElementById('legal-modal');
+  if(!el){
+    el=document.createElement('div');
+    el.id='legal-modal';
+    el.className='modal-overlay';
+    el.addEventListener('click',e=>{if(e.target===el)closeLegalModal();});
+    document.body.appendChild(el);
+  }
+  const isPrivacy=type==='privacy';
+  const title=isPrivacy?'Privacy Policy':'Terms of Service';
+  const lastUpdated='April 2025';
+  const content=isPrivacy?`
+    <p>Ledger ("we," "our," or "us") is committed to protecting your privacy. This policy explains what data we collect, how we use it, and your rights.</p>
+    <h4>What We Collect</h4>
+    <ul>
+      <li><strong>Account info:</strong> name, email address, and password (stored securely via Firebase Authentication).</li>
+      <li><strong>Study data:</strong> session logs, hours studied, exam scores, and streak history you enter in the app.</li>
+      <li><strong>Profile data:</strong> bio, school, city, and any other optional profile fields you fill in.</li>
+      <li><strong>Usage data:</strong> how you interact with features (anonymous analytics to improve the product).</li>
+    </ul>
+    <h4>How We Use It</h4>
+    <ul>
+      <li>To provide and improve the Ledger service.</li>
+      <li>To power leaderboards, social features, and study recommendations.</li>
+      <li>To send product updates and study reminders (you can opt out any time).</li>
+      <li>We <strong>never</strong> sell your personal data to third parties.</li>
+    </ul>
+    <h4>Data Storage</h4>
+    <p>Your data is stored in Google Firebase (US servers). Study data is associated with your account and can be deleted by deleting your account.</p>
+    <h4>Your Rights</h4>
+    <p>You can access, export, or delete your data at any time via Settings → Account. For questions, email <strong>support@ledgercpa.com</strong>.</p>
+  `:`
+    <p>By creating an account or using Ledger, you agree to these Terms. Please read them carefully.</p>
+    <h4>Use of the Service</h4>
+    <ul>
+      <li>Ledger is a CPA exam study tool for personal, non-commercial use.</li>
+      <li>You must be at least 13 years old to create an account.</li>
+      <li>You're responsible for keeping your login credentials secure.</li>
+      <li>Don't use Ledger for anything illegal or harmful to other users.</li>
+    </ul>
+    <h4>Content</h4>
+    <ul>
+      <li>Your study data and profile content belong to you.</li>
+      <li>By posting in clubs or feeds, you grant Ledger a license to display that content to other users.</li>
+      <li>Don't post spam, harassment, or anything that violates others' rights.</li>
+    </ul>
+    <h4>Pro & Elite Plans</h4>
+    <p>Paid plans are billed monthly or annually. You can cancel before your renewal date to avoid future charges. Refunds are handled case-by-case — reach out to <strong>support@ledgercpa.com</strong>.</p>
+    <h4>Disclaimers</h4>
+    <p>Ledger is a study aid, not a guarantee of exam success. We make no warranty about pass rates or outcomes. The service is provided "as is."</p>
+    <h4>Changes</h4>
+    <p>We may update these Terms occasionally. Continued use after changes means you accept the updated Terms.</p>
+  `;
+  el.innerHTML=`
+    <div style="background:var(--surf);border-radius:20px;max-width:560px;width:calc(100% - 32px);max-height:80vh;display:flex;flex-direction:column;margin:auto">
+      <div style="padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="font-size:18px;font-weight:800">${title}</div>
+        <button onclick="closeLegalModal()" style="background:var(--surf2);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;color:var(--txt)">✕</button>
+      </div>
+      <div style="font-size:10px;color:var(--mut);padding:4px 28px 16px;flex-shrink:0">Last updated: ${lastUpdated}</div>
+      <div style="overflow-y:auto;padding:0 28px 28px;font-size:13px;color:var(--sub);line-height:1.8">
+        <style>#legal-modal h4{font-size:13px;font-weight:700;color:var(--txt);margin:16px 0 6px}#legal-modal ul{padding-left:18px;margin:0 0 8px}#legal-modal p{margin:0 0 10px}</style>
+        ${content}
+      </div>
+    </div>`;
+  el.classList.add('open');
+}
+function closeLegalModal(){
+  const el=document.getElementById('legal-modal');
+  if(el)el.classList.remove('open');
+}
+
 function renderUpgradeModal(featureHint){
   const el=document.getElementById('upgrade-modal');if(!el)return;
   const isAnnual=_upgradeBilling==='annual';
@@ -1623,7 +1696,7 @@ function renderUpgradeModal(featureHint){
   '<div class="testimonial-card"><div class="stars">★★★★★</div><div class="testimonial-text">"Got the Cram Plan 3 months before my FAR window. Passed. The exam protocol PDF is insanely well done — I followed it day-by-day the final two weeks."</div><div class="testimonial-author">Jasmine T.</div><div class="testimonial-meta">2× passer · Regional Firm</div></div>'+
   '</div>'+
   // Fine print
-  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our Terms of Service. Student discount requires verification. All prices in USD.</div>'+
+  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our <a href="#" onclick="openLegalModal(\'terms\');return false" style="color:var(--mut)">Terms of Service</a>. Student discount requires verification. All prices in USD.</div>'+
   '</div>';
 }
 
@@ -1845,7 +1918,7 @@ function renderAuth(){
     </div>
 
     <div class="auth-terms">
-      By continuing, you agree to Ledger's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+      By continuing, you agree to Ledger's <a href="#" onclick="openLegalModal('terms');return false">Terms of Service</a> and <a href="#" onclick="openLegalModal('privacy');return false">Privacy Policy</a>.<br>
       ${authMode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}
     </div>
   </div>
@@ -1911,7 +1984,7 @@ function switchAuthMode(mode){
   const fb=document.getElementById('auth-form-body');
   if(fb)fb.innerHTML=buildAuthForm();
   const terms=document.querySelector('.auth-terms');
-  if(terms)terms.innerHTML=`By continuing you agree to Ledger's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br>${mode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}`;
+  if(terms)terms.innerHTML=`By continuing you agree to Ledger's <a href="#" onclick="openLegalModal('terms');return false">Terms</a> and <a href="#" onclick="openLegalModal('privacy');return false">Privacy Policy</a>.<br>${mode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}`;
 }
 
 // Simulated Google accounts stored in localStorage
@@ -4138,7 +4211,7 @@ function _renderFullUserProfile(u){
       </div>
       <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
         <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'rgba(255,255,255,.15)':'var(--ora)'};border:1px solid ${isFollowing?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':'+ Follow'}</button>
-        <button style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
+        <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
       </div>
       <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
         <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
@@ -4191,19 +4264,22 @@ function toggleFollowProfile(userId,btn){
   renderUserProfile(userId);
 }
 
-function openDirectMessage(userId){
-  // Find or create a direct club with this user
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);if(!f)return;
+function openDirectMessage(userId, displayName, displayInitials){
+  const f=MOCK_FRIENDS.find(x=>x.id===userId);
+  const name=f?.name||displayName||'User';
+  const initials=f?.initials||displayInitials||(name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())||'??';
+  const color=f?.color||'#5a5fcf';
   if(!S.clubs)S.clubs=[];
-  let directClub=(S.clubs).find(c=>c.members.length===2&&c.members.includes('you')&&c.members.includes(userId));
+  let directClub=(S.clubs).find(c=>c.isDM&&c.members.includes(userId));
   if(!directClub){
     const clubId='c'+Date.now();
-    directClub={id:clubId,name:`${f.name}`,icon:f.initials[0]||'💬',desc:'Direct message',isPrivate:true,isDM:true,members:['you',userId],created:Date.now()};
+    directClub={id:clubId,name,icon:initials[0]||'💬',color,desc:'Direct message',isPrivate:true,isDM:true,members:['you',userId],created:Date.now()};
     S.clubs.push(directClub);
     if(!S.clubMessages)S.clubMessages={};
-    S.clubMessages[clubId]=[{author:'system',text:`Conversation started with ${f.name}`,time:new Date().toISOString(),isSystem:true}];
+    S.clubMessages[clubId]=[{author:'system',text:`Conversation started with ${name}`,time:new Date().toISOString(),isSystem:true}];
     saveState();
   }
+  closeUserProfile();
   openClubChat(directClub.id);
 }
 
@@ -5719,7 +5795,7 @@ ${isGoogle?`<div style="padding:12px 14px;background:var(--ind-bg);border:1px so
 </div>`;
 }
 
-function changePassword(){
+async function changePassword(){
   const cur=document.getElementById('sec-cur-pass')?.value;
   const nw=document.getElementById('sec-new-pass')?.value;
   const cf=document.getElementById('sec-conf-pass')?.value;
@@ -5727,6 +5803,24 @@ function changePassword(){
   if(nw.length<8){showToast('New password must be at least 8 characters','err');return;}
   if(nw!==cf){showToast('Passwords do not match','err');return;}
   if(!AUTH)return;
+  // Try Firebase first (real accounts)
+  if(firebaseAuth?.currentUser&&AUTH?.email){
+    try{
+      const cred=firebase.auth.EmailAuthProvider.credential(AUTH.email,cur);
+      await firebaseAuth.currentUser.reauthenticateWithCredential(cred);
+      await firebaseAuth.currentUser.updatePassword(nw);
+      showToast('Password updated successfully ✓','ok');
+      document.getElementById('sec-cur-pass').value='';
+      document.getElementById('sec-new-pass').value='';
+      document.getElementById('sec-conf-pass').value='';
+      return;
+    }catch(e){
+      if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'){showToast('Current password is incorrect','err');}
+      else{showToast('Could not update password. Try signing out and back in.','err');}
+      return;
+    }
+  }
+  // Demo mode fallback
   AUTH.passwordChanged=Date.now();
   saveAuth(AUTH);
   showToast('Password updated successfully ✓','ok');
@@ -5891,9 +5985,25 @@ function exportData(){
   showToast('Data exported ✓','ok');
 }
 
-function confirmDeleteAccount(){
+async function confirmDeleteAccount(){
   const input=prompt('Type DELETE to permanently delete your account and all data:');
   if(input==='DELETE'){
+    // Delete from Firebase if available
+    if(firebaseAuth?.currentUser){
+      try{
+        // Delete Firestore profile doc
+        if(firebaseDb&&AUTH?.uid){
+          try{await firebaseDb.collection('users').doc(AUTH.uid).delete();}catch(e){}
+        }
+        await firebaseAuth.currentUser.delete();
+      }catch(e){
+        // If requires re-auth, sign out and clear locally
+        if(e.code==='auth/requires-recent-login'){
+          showToast('Please sign out and sign back in, then try again.','err');
+          return;
+        }
+      }
+    }
     clearAuth();
     localStorage.clear();
     AUTH=null;S=null;
