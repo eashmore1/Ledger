@@ -1022,7 +1022,7 @@ const ACHIEVEMENTS = [
 const MOCK_FRIENDS = [
   {
     id:'f1',name:'Sarah Chen',initials:'SC',color:'#6366f1',state:'CA',
-    currentSection:'FAR',totalHours:87,streak:14,following:true,
+    currentSection:'FAR',totalHours:87,streak:14,following:true,tier:'pro',
     passedSections:[],
     bio:'Big 4 audit associate. FAR is humbling me daily 😤',
     activities:[
@@ -1033,7 +1033,7 @@ const MOCK_FRIENDS = [
   },
   {
     id:'f2',name:'Marcus Johnson',initials:'MJ',color:'#059669',state:'TX',
-    currentSection:'AUD',totalHours:134,streak:22,following:true,
+    currentSection:'AUD',totalHours:134,streak:22,following:true,tier:'elite',
     passedSections:['REG'],
     bio:'Passed REG first try ✅ — now locked in on AUD. Tax associate @KPMG',
     activities:[
@@ -1053,7 +1053,7 @@ const MOCK_FRIENDS = [
   },
   {
     id:'f4',name:'Tyler Williams',initials:'TW',color:'#d44000',state:'IL',
-    currentSection:'FAR',totalHours:112,streak:31,following:false,
+    currentSection:'FAR',totalHours:112,streak:31,following:false,tier:'pro',
     passedSections:['REG','AUD'],
     bio:'FAR retake. Not failing this time. 31-day streak and counting 🔥',
     activities:[
@@ -1062,7 +1062,7 @@ const MOCK_FRIENDS = [
   },
   {
     id:'f5',name:'Ashley Park',initials:'AP',color:'#14b8a6',state:'WA',
-    currentSection:'REG',totalHours:203,streak:8,following:true,
+    currentSection:'REG',totalHours:203,streak:8,following:true,tier:'elite',
     passedSections:['FAR','AUD'],
     bio:'FAR ✅ AUD ✅ | CPA candidate @Deloitte | Almost there 🎯',
     activities:[
@@ -1085,10 +1085,10 @@ const MOCK_FRIENDS = [
 // CHALLENGES
 // ═══════════════════════════════════════════════
 const CHALLENGES = [
-  {id:'first_session',icon:'📚',title:'First Study Session',desc:'Log your very first study session',difficulty:'Easy',diffColor:'#10b981',type:'sessions_total',target:1,reward:'First Step',participants:4820,endDate:'Ongoing'},
-  {id:'spark_3',icon:'🔥',title:'3-Day Spark',desc:'Study 3 days in a row',difficulty:'Easy',diffColor:'#10b981',type:'streak',target:3,reward:'Spark Starter',participants:3210,endDate:'Ongoing'},
-  {id:'hrs_10',icon:'⚡',title:'10-Hour Kickoff',desc:'Log your first 10 total study hours',difficulty:'Easy',diffColor:'#10b981',type:'hours_total',target:10,reward:'Hustler',participants:5400,endDate:'Ongoing'},
-  {id:'sessions_5',icon:'📖',title:'5-Session Builder',desc:'Complete 5 study sessions',difficulty:'Easy',diffColor:'#10b981',type:'sessions_total',target:5,reward:'Builder',participants:6100,endDate:'Ongoing'},
+  {id:'first_session',icon:'📚',title:'First Study Session',desc:'Log your very first study session',difficulty:'Easy',diffColor:'#10b981',type:'sessions_total',target:1,reward:'First Step',participants:4820,endDate:'Ongoing',free:true},
+  {id:'spark_3',icon:'🔥',title:'3-Day Spark',desc:'Study 3 days in a row',difficulty:'Easy',diffColor:'#10b981',type:'streak',target:3,reward:'Spark Starter',participants:3210,endDate:'Ongoing',free:true},
+  {id:'hrs_10',icon:'⚡',title:'10-Hour Kickoff',desc:'Log your first 10 total study hours',difficulty:'Easy',diffColor:'#10b981',type:'hours_total',target:10,reward:'Hustler',participants:5400,endDate:'Ongoing',free:true},
+  {id:'sessions_5',icon:'📖',title:'5-Session Builder',desc:'Complete 5 study sessions',difficulty:'Easy',diffColor:'#10b981',type:'sessions_total',target:5,reward:'Builder',participants:6100,endDate:'Ongoing',free:true},
   {id:'week_warrior',icon:'📅',title:'Week Warrior',desc:'Study every day for 7 days straight',difficulty:'Medium',diffColor:'#f59e0b',type:'streak',target:7,reward:'Week Warrior',participants:2180,endDate:'Ongoing'},
   {id:'hrs_50',icon:'💯',title:'50-Hour Club',desc:'Log 50 total study hours',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_total',target:50,reward:'Dedicated',participants:1890,endDate:'Ongoing'},
   {id:'far_sprint',icon:'📊',title:'FAR Weekly Sprint',desc:'Log 20+ hours on FAR this week',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_section_week',target:20,section:'FAR',reward:'FAR Warrior',participants:342,endDate:'Apr 30'},
@@ -1557,27 +1557,30 @@ function renderUpgradeModal(featureHint){
   ];
   const pro=[
     {on:true,text:'Everything in Free'},
-    {on:true,text:'Ask Ledger 🤖'},
-    {on:true,text:'Advanced Analytics & Heatmaps'},
+    {on:true,text:'Full Leaderboard + Profile Browsing'},
+    {on:true,text:'Full Session History & Heatmap'},
+    {on:true,text:'Study Partner Pairing 🤝'},
+    {on:true,text:'Advanced Analytics'},
     {on:true,text:'Full Exam Simulator'},
     {on:true,text:'Smart Study Schedule'},
-    {on:true,text:'Unlimited Study Clubs'},
+    {on:true,text:'Unlimited Study Clubs + All Challenges'},
     {on:true,text:'Streak Shield (3×/mo)'},
     {on:true,text:'Weekly PDF Progress Reports'},
     {on:true,text:'Custom Per-Section Goals'},
     {on:true,text:'Data Export (CSV/PDF)'},
     {on:true,text:'Exam Day Protocol 📋'},
-    {on:true,text:'Exclusive Pro Badges'},
+    {on:true,text:'Exclusive Pro Badge ✨'},
+    {on:false,text:'AI Study Coach'},
     {on:false,text:'AI Mnemonic Generator'},
     {on:false,text:'Score Predictor'},
-    {on:false,text:'Study Partner Pairing'},
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
-    {on:true,text:'AI Personalized Study Plan 📅'},
+    {on:true,text:'AI Study Coach 🤖'},
     {on:true,text:'AI Mnemonic Generator 🧠'},
     {on:true,text:'Score Predictor 🔮'},
-    {on:true,text:'Study Partner Pairing 🤝'},
+    {on:true,text:'Full Exam Simulator (Adaptive)'},
+    {on:true,text:'Create Custom Challenges ⚡'},
     {on:true,text:'Unlimited Streak Shields'},
     {on:true,text:'Priority Support (response <2h) 🎧'},
     {on:true,text:'Elite Badge + Leaderboard Flair ✦'},
@@ -2667,7 +2670,7 @@ function buildMiniLeaderboard(){
   <div style="display:flex;align-items:center;gap:8px;padding:5px ${e.isYou?'8px':'0'};margin-bottom:2px;background:${e.isYou?'var(--ora-bg)':'transparent'};border-radius:8px">
     <div style="font-size:13px;width:20px;text-align:center">${medals[i]||`${i+1}`}</div>
     <div class="avatar" style="width:26px;height:26px;font-size:9px;background:${e.color};color:#fff">${e.initials}</div>
-    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}${e.isYou&&isElite()?'<span style="font-size:9px;color:var(--pur);font-weight:800;margin-left:4px">✦ Elite</span>':''}</div>
+    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}${e.isYou&&isElite()?'<span style="font-size:9px;color:var(--pur);font-weight:800;margin-left:4px">✦ Elite</span>':e.isYou&&isPro()?'<span style="font-size:9px;color:var(--ora);font-weight:800;margin-left:4px">✨ Pro</span>':''}</div>
     <div style="font-size:12px;font-weight:800;color:var(--ora)">${e.hrs.toFixed(1)}h</div>
   </div>`).join('');
 }
@@ -2692,7 +2695,9 @@ function buildActivityCard(a){
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
   const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
-  const passedBadge=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId)?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${MOCK_FRIENDS.find(f=>f.id===a.userId).passedSections.length} Passed</span>`:'':'';
+  const _actFriend=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId):null;
+  const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
+  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;color:var(--pur);margin-left:4px" title="Elite member">✦</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;color:var(--ora);margin-left:4px" title="Pro member">✨</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
   if(a.private && a.isMine){
@@ -2716,7 +2721,7 @@ function buildActivityCard(a){
     <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${a.userInitials}</div>
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}</span>
+        <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}${tierBadgeAct}</span>
         ${passedBadge}
       </div>
       <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
@@ -3405,7 +3410,7 @@ function buildProfile(){
             <div class="profile-av-edit-overlay" style="font-size:12px;font-weight:700;letter-spacing:.02em">Edit</div>
           </div>
           <div>
-            <div class="profile-name" style="margin-top:0">${S.name}</div>
+            <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:13px;font-weight:800;color:rgba(200,150,255,.9);margin-left:8px" title="Elite member">✦</span>':isPro()?'<span style="font-size:13px;font-weight:800;color:rgba(255,180,100,.9);margin-left:8px" title="Pro member">✨</span>':''}</div>
             <div class="profile-state">${S.state}${S.classYear?' · '+S.classYear:''}${S.school?' @ '+S.school:''}</div>
             ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
             ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${S.bio}"</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="openEditProfile()">+ Add a bio…</div>`}
@@ -3593,28 +3598,54 @@ function buildExplore(){
   });
   entries.sort((a,b)=>b.hrs-a.hrs);
   const medals=['🥇','🥈','🥉'];
-  const lbRows=entries.map((e,i)=>`
-  <div class="lb-row${e.isYou?' lb-you':''}" style="${!e.isYou?'cursor:pointer;':''}" ${!e.isYou?`onclick="openUserProfile('${MOCK_FRIENDS.find(f=>f.name===e.name)?.id||'you'}')"`:''}>
-    <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
-    <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
-    <div class="lb-name">${e.name}${e.isYou?' (you)':''}</div>
-    <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
-    <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
-  </div>`).join('');
+  const myRank=entries.findIndex(e=>e.isYou)+1;
+  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:9px;font-weight:800;color:var(--pur);margin-left:4px">✦</span>':tier==='pro'?'<span style="font-size:9px;font-weight:800;color:var(--ora);margin-left:4px">✨</span>':'';
+  let lbRows;
+  if(!isPro()){
+    // Free: show only the user's own entry + paywall teaser
+    const youEntry=entries.find(e=>e.isYou);
+    lbRows=`<div class="lb-row lb-you">
+      <div class="lb-rank">${myRank}</div>
+      <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:#6366f1;color:#fff;flex-shrink:0">${youEntry?youEntry.initials:'?'}</div>
+      <div class="lb-name">You</div>
+      <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${youEntry?youEntry.streak:0}d</div>
+      <div class="lb-hrs">${youEntry?youEntry.hrs.toFixed(1):0}h</div>
+    </div>`+
+    `<div style="margin-top:10px;padding:14px 16px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:12px;text-align:center;cursor:pointer" onclick="openUpgradeModal('Full Leaderboard')">
+      <div style="font-size:14px;font-weight:800;margin-bottom:4px">You're ranked #${myRank}</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:10px">Upgrade Pro to see the full leaderboard and browse every candidate's profile.</div>
+      <button class="btn btn-primary btn-sm">Unlock Full Leaderboard →</button>
+    </div>`;
+  } else {
+    lbRows=entries.map((e,i)=>{
+      const friendTier=e.isYou?(SUB.tier||'free'):MOCK_FRIENDS.find(f=>f.name===e.name)?.tier||'free';
+      return`<div class="lb-row${e.isYou?' lb-you':''}" style="${!e.isYou?'cursor:pointer;':''}" ${!e.isYou?`onclick="openUserProfile('${MOCK_FRIENDS.find(f=>f.name===e.name)?.id||'you'}')"`:''}>
+      <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
+      <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
+      <div class="lb-name">${e.name}${e.isYou?' (you)':''}${tierBadge(friendTier)}</div>
+      <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
+      <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
+    </div>`;
+    }).join('');
+  }
 
   // Challenges
   const joinedChallengeIds=S.challenges||[];
   const challengeCards=CHALLENGES.map(c=>{
+    const canAccess=isPro()||c.free;
     const joined=joinedChallengeIds.includes(c.id);
     const prog=joined?getChallengeProgress(c):0;
     const done=(S.challengeCompleted||[]).includes(c.id)||(joined&&prog>=c.target);
     const pct=joined?Math.min(100,Math.round(prog/c.target*100)):0;
     let actionBtn;
-    if(done) actionBtn='<span style="font-size:11px;color:var(--grn);font-weight:700">✅ Complete</span>';
+    if(!canAccess) actionBtn='<button class="challenge-pro-badge" onclick="openUpgradeModal(\'All Challenges\')">🔒 Pro</button>';
+    else if(done) actionBtn='<span style="font-size:11px;color:var(--grn);font-weight:700">✅ Complete</span>';
     else if(joined) actionBtn='<button class="btn btn-ghost btn-xs" style="color:var(--mut);font-size:10px" onclick="leaveChallenge(\''+c.id+'\')">Leave</button>';
     else actionBtn='<button class="btn btn-ghost btn-xs" onclick="joinChallenge(\''+c.id+'\')">Join</button>';
-    return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+c.icon+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div><span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;background:'+c.diffColor+'22;color:'+c.diffColor+';text-transform:uppercase;letter-spacing:.05em;white-space:nowrap">'+c.difficulty+'</span></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div class="challenge-participants">👥 '+c.participants.toLocaleString()+' · Ends '+c.endDate+'</div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">🏅 '+c.reward+'</div></div></div></div>';
-  }).join('');
+    const lockedStyle=!canAccess?'opacity:.55;filter:grayscale(.4);':'';
+    return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+c.icon+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div><span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;background:'+c.diffColor+'22;color:'+c.diffColor+';text-transform:uppercase;letter-spacing:.05em;white-space:nowrap">'+c.difficulty+'</span></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div class="challenge-participants">👥 '+c.participants.toLocaleString()+' · Ends '+c.endDate+'</div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">🏅 '+c.reward+'</div></div></div></div>';
+  }).join('')+
+  (isElite()?'<div style="margin-top:6px;padding:12px 14px;background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(212,64,0,.05));border:1.5px solid rgba(147,51,234,.2);border-radius:12px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:800;color:var(--pur)">✦ Elite — Create Custom Challenge</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Set your own goal and invite your club members.</div></div><button class="btn btn-sm" style="background:var(--pur);color:#fff" onclick="showToast(\'Custom challenge creator coming soon! 🔮\',\'info\')">Create</button></div>':'');
 
   // Find friends
   const friendCards=MOCK_FRIENDS.map(f=>{
@@ -3623,7 +3654,7 @@ function buildExplore(){
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;color:var(--pur);margin-left:3px">✦</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;color:var(--ora);margin-left:3px">✨</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
         ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:8px">${s} ✓</span>`).join('')}</div>`:''}
@@ -4596,7 +4627,7 @@ function _normProfileFirestore(u){
 function _renderFullUserProfile(u){
   const isFollowing=(S.following||[]).includes(u.uid);
   const avatarInner=u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
-  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,var(--ora),#9333ea);color:#fff">✦ Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:var(--ind);color:#fff">Pro</span>`:'';
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#9333ea,#6366f1);color:#fff;font-size:10px">✦ Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:var(--ora);color:#fff;font-size:10px">✨ Pro</span>`:'';
   const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
 
   const sectionProgress=u.sections.map(s=>{
@@ -5499,7 +5530,7 @@ function buildHeatMap(){
     const d=a.date.slice(0,10);
     logMap[d]=(logMap[d]||0)+(a.hours||0);
   });
-  const weeks=16;
+  const weeks=isPro()?16:1;
   const today=new Date();today.setHours(0,0,0,0);
   // align to Sunday
   const startDay=new Date(today);
@@ -5535,8 +5566,9 @@ function buildHeatMap(){
   <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:var(--mut)">
     Less
     ${['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#d44000'].map(c=>`<div style="width:11px;height:11px;border-radius:2px;background:${c}"></div>`).join('')}
-    More &nbsp;·&nbsp; ${totalDays} active days in last 16 weeks
+    More &nbsp;·&nbsp; ${totalDays} active days in ${isPro()?'last 16 weeks':'this week'}
   </div>
+  ${!isPro()?`<div style="margin-top:10px;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="openUpgradeModal('Full Session History')"><div style="font-size:11px;color:var(--sub)">🔒 <strong>Pro</strong> unlocks your full 16-week history</div><button class="btn btn-primary btn-xs">Upgrade</button></div>`:''}
 </div>`;
 }
 
@@ -6106,9 +6138,9 @@ ${isFreePlan?`
 <div style="height:1px;background:var(--bdr);margin:16px 0"></div>
 <div class="section-title">All Plans</div>
 ${[
-  {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
-  {name:'Pro',price:'$20/mo',desc:'AI Coach, Analytics, Simulator, Unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
-  {name:'Elite',price:'$29/mo',desc:'Everything Pro + AI Tools, Study Partner, Priority Support',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
+  {name:'Free',price:'$0',desc:'Timer, feed, 4 starter challenges, 1 club, basic achievements',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
+  {name:'Pro',price:'$20/mo',desc:'Full leaderboard, all challenges, study partner, analytics, unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
+  {name:'Elite',price:'$29/mo',desc:'Everything Pro + AI Coach, Mnemonics, Score Predictor, custom challenges',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
   {name:'6-Month Cram','price':'$99 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
