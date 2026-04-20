@@ -1683,6 +1683,8 @@ function init(){
   if(!AUTH){renderAuth();return;}
   if(!S){renderOnboarding();return;}
   renderApp();
+  // Sync returning user's profile to Firestore (firebaseDb may not be ready yet, writeUserProfile retries)
+  setTimeout(writeUserProfile, 1200);
 }
 
 // ═══════════════════════════════════════════════
