@@ -1413,11 +1413,11 @@ function navProClass(){
   return'nav-pro-chip-free';
 }
 function navProLabel(){
-  if(SUB.tier==='elite')return'⚡ Elite';
+  if(SUB.tier==='elite')return'Elite';
   if(SUB.tier==='cram')return'📚 Cram Plan';
-  if(isOnTrial()){const d=getTrialDaysLeft();return'✨ Trial · '+d+'d left';}
-  if(SUB.tier==='pro')return'✨ Pro';
-  return'⬆ Upgrade';
+  if(isOnTrial()){const d=getTrialDaysLeft();return'Trial · '+d+'d left';}
+  if(SUB.tier==='pro')return'Pro';
+  return'Upgrade';
 }
 
 // PRO FEATURES MAP — what requires pro
@@ -1559,7 +1559,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Everything in Free'},
     {on:true,text:'Full Leaderboard + Profile Browsing'},
     {on:true,text:'Full Session History & Heatmap'},
-    {on:true,text:'Study Partner Pairing 🤝'},
+    {on:true,text:'Study Partner Pairing'},
     {on:true,text:'Advanced Analytics'},
     {on:true,text:'Full Exam Simulator'},
     {on:true,text:'Smart Study Schedule'},
@@ -1568,22 +1568,22 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Weekly PDF Progress Reports'},
     {on:true,text:'Custom Per-Section Goals'},
     {on:true,text:'Data Export (CSV/PDF)'},
-    {on:true,text:'Exam Day Protocol 📋'},
-    {on:true,text:'Exclusive Pro Badge ✨'},
+    {on:true,text:'Exam Day Protocol'},
+    {on:true,text:'Member Badge'},
     {on:false,text:'AI Study Coach'},
     {on:false,text:'AI Mnemonic Generator'},
     {on:false,text:'Score Predictor'},
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
-    {on:true,text:'AI Study Coach 🤖'},
-    {on:true,text:'AI Mnemonic Generator 🧠'},
-    {on:true,text:'Score Predictor 🔮'},
+    {on:true,text:'AI Study Coach'},
+    {on:true,text:'AI Mnemonic Generator'},
+    {on:true,text:'Score Predictor'},
     {on:true,text:'Full Exam Simulator (Adaptive)'},
-    {on:true,text:'Create Custom Challenges ⚡'},
+    {on:true,text:'Create Custom Challenges'},
     {on:true,text:'Unlimited Streak Shields'},
-    {on:true,text:'Priority Support (response <2h) 🎧'},
-    {on:true,text:'Elite Badge + Leaderboard Flair ✦'},
+    {on:true,text:'Priority Support (response <2h)'},
+    {on:true,text:'Member Badge'},
   ];
 
   const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
@@ -1643,7 +1643,7 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-price" style="color:var(--ora)"><sup>$</sup>'+proDisplay+'</div>'+
   '<div class="plan-period">per month'+(isAnnual?' · billed $'+(proAnnual*12)+'/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+proMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--grn);font-weight:700;margin-top:3px">✨ 7-day free trial included</div>'+
+  '<div style="font-size:10px;color:var(--grn);font-weight:700;margin-top:3px">7-day free trial included</div>'+
   '<div class="plan-sep"></div>'+
   pro.map(fRow).join('')+
   proCTA+
@@ -1654,7 +1654,7 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-price" style="color:var(--pur)"><sup>$</sup>'+eliteDisplay+'</div>'+
   '<div class="plan-period">per month'+(isAnnual?' · billed $'+(eliteAnnual*12)+'/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+eliteMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">✦ AI Tools + Priority Support + Study Partner</div>'+
+  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">AI Tools + Priority Support + Study Partner</div>'+
   '<div class="plan-sep"></div>'+
   elite.map(fRow).join('')+
   eliteCTA+
@@ -1725,7 +1725,7 @@ function activatePlan(tier){
     SUB={...SUB,tier:'pro',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('✨ Ledger Pro activated! Welcome to Pro.','ok');
+    showToast('Ledger Pro activated! Welcome to Pro.','ok');
   } else if(tier==='elite'){
     SUB={...SUB,tier:'elite',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
@@ -1810,7 +1810,7 @@ function showPostOnboardingOffer(){
   '<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ora);margin-bottom:6px">🎁 Special New User Offer</div>'+
   '<div style="font-size:22px;font-weight:900;margin-bottom:4px">7-Day Free Trial</div>'+
   '<div style="font-size:13px;color:var(--sub);margin-bottom:16px">Try everything. Cancel anytime. No credit card required to start.</div>'+
-  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.4)">Start Free Trial — No Card Needed ✨</button>'+
+  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.4)">Start Free Trial — No Card Needed</button>'+
   '</div>'+
   // What you get bullets
   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">'+
@@ -2670,7 +2670,7 @@ function buildMiniLeaderboard(){
   <div style="display:flex;align-items:center;gap:8px;padding:5px ${e.isYou?'8px':'0'};margin-bottom:2px;background:${e.isYou?'var(--ora-bg)':'transparent'};border-radius:8px">
     <div style="font-size:13px;width:20px;text-align:center">${medals[i]||`${i+1}`}</div>
     <div class="avatar" style="width:26px;height:26px;font-size:9px;background:${e.color};color:#fff">${e.initials}</div>
-    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}${e.isYou&&isElite()?'<span style="font-size:9px;color:var(--pur);font-weight:800;margin-left:4px">✦ Elite</span>':e.isYou&&isPro()?'<span style="font-size:9px;color:var(--ora);font-weight:800;margin-left:4px">✨ Pro</span>':''}</div>
+    <div style="flex:1;font-size:12px;font-weight:${e.isYou?700:500}">${e.name}${e.isYou?' (you)':''}${e.isYou&&isElite()?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':e.isYou&&isPro()?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':''}</div>
     <div style="font-size:12px;font-weight:800;color:var(--ora)">${e.hrs.toFixed(1)}h</div>
   </div>`).join('');
 }
@@ -2697,7 +2697,7 @@ function buildActivityCard(a){
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const _actFriend=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
-  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;color:var(--pur);margin-left:4px" title="Elite member">✦</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;color:var(--ora);margin-left:4px" title="Pro member">✨</span>':'';
+  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
   if(a.private && a.isMine){
@@ -3410,7 +3410,7 @@ function buildProfile(){
             <div class="profile-av-edit-overlay" style="font-size:12px;font-weight:700;letter-spacing:.02em">Edit</div>
           </div>
           <div>
-            <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:13px;font-weight:800;color:rgba(200,150,255,.9);margin-left:8px" title="Elite member">✦</span>':isPro()?'<span style="font-size:13px;font-weight:800;color:rgba(255,180,100,.9);margin-left:8px" title="Pro member">✨</span>':''}</div>
+            <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:9px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Elite</span>':isPro()?'<span style="font-size:9px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
             <div class="profile-state">${S.state}${S.classYear?' · '+S.classYear:''}${S.school?' @ '+S.school:''}</div>
             ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
             ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${S.bio}"</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="openEditProfile()">+ Add a bio…</div>`}
@@ -3599,7 +3599,7 @@ function buildExplore(){
   entries.sort((a,b)=>b.hrs-a.hrs);
   const medals=['🥇','🥈','🥉'];
   const myRank=entries.findIndex(e=>e.isYou)+1;
-  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:9px;font-weight:800;color:var(--pur);margin-left:4px">✦</span>':tier==='pro'?'<span style="font-size:9px;font-weight:800;color:var(--ora);margin-left:4px">✨</span>':'';
+  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
   let lbRows;
   if(!isPro()){
     // Free: show only the user's own entry + paywall teaser
@@ -3654,7 +3654,7 @@ function buildExplore(){
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;color:var(--pur);margin-left:3px">✦</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;color:var(--ora);margin-left:3px">✨</span>':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
         ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:8px">${s} ✓</span>`).join('')}</div>`:''}
@@ -4627,7 +4627,7 @@ function _normProfileFirestore(u){
 function _renderFullUserProfile(u){
   const isFollowing=(S.following||[]).includes(u.uid);
   const avatarInner=u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
-  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#9333ea,#6366f1);color:#fff;font-size:10px">✦ Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:var(--ora);color:#fff;font-size:10px">✨ Pro</span>`:'';
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
   const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
 
   const sectionProgress=u.sections.map(s=>{
@@ -6116,7 +6116,7 @@ function buildSettingsBilling(){
 
 <!-- Actions -->
 ${isFreePlan?`
-<button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px;font-size:14px;padding:13px" onclick="closeAppSettings();openUpgradeModal(null)">✨ Upgrade to Pro — 7-Day Free Trial</button>
+<button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px;font-size:14px;padding:13px" onclick="closeAppSettings();openUpgradeModal(null)">Upgrade to Pro — 7-Day Free Trial</button>
 `:isOnTrial()?`
 <div style="background:var(--tea-bg);border:1px solid rgba(20,184,166,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px">
   <div style="font-size:13px;font-weight:700;color:var(--tea);margin-bottom:4px">Your trial ends in ${getTrialDaysLeft()} days</div>
