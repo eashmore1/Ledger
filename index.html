@@ -4030,7 +4030,7 @@ async function openUserProfile(userId){
     el=document.createElement('div');
     el.id='uprofile-modal';
     el.className='modal-overlay';
-    el.style.cssText='align-items:flex-start;padding:0';
+    el.style.cssText='align-items:flex-start;padding:0;overflow-y:auto';
     el.innerHTML=`<div id="uprofile-page" onclick="event.stopPropagation()" style="width:100%;max-width:700px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column"><div id="uprofile-content" style="flex:1"></div></div>`;
     el.addEventListener('click',e=>{if(e.target===el)closeUserProfile();});
     document.body.appendChild(el);
@@ -4141,7 +4141,6 @@ function _renderFullUserProfile(u){
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="section-title" style="margin-bottom:0">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
-        <span style="font-size:10px;color:var(--mut);font-style:italic">View only</span>
       </div>
       <div class="ach-grid">${achHTML||ACHIEVEMENTS.map(a=>`<div class="ach-item"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`).join('')}</div>
     </div>
