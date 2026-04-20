@@ -2754,57 +2754,69 @@ function buildActivityCard(a){
 }
 
 // ═══════════════════════════════════════════════
+// CURRENT SECTION HELPER
+// ═══════════════════════════════════════════════
+function getCurrentSection(){
+  // Returns the section the user is actively studying right now:
+  // 1. First section with status 'studying'
+  // 2. Fallback: first non-passed section
+  // 3. Fallback: first section in their list
+  const passed=new Set(S.sectionPassed||[]);
+  const studying=(S.sections||[]).find(s=>(S.sectionStatus?.[s])==='studying'&&!passed.has(s));
+  if(studying) return studying;
+  const first=(S.sections||[]).find(s=>!passed.has(s));
+  return first||(S.sections||[])[0]||'FAR';
+}
+
+// ═══════════════════════════════════════════════
 // READINESS SCORE
 // ═══════════════════════════════════════════════
 function calcReadinessScore(){
-  const activeSections=(S.sections||[]).filter(s=>!(S.sectionPassed||[]).includes(s));
-  if(!activeSections.length) return {score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[]};
+  const passed=new Set(S.sectionPassed||[]);
+  if((S.sections||[]).every(s=>passed.has(s))) return {score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[]};
 
-  let totalScore=0;let breakdown=[];
-  activeSections.forEach(s=>{
-    const ex=EXAMS[s];
-    const logged=getSectionHours(s);
-    const volumePts=Math.min(50,Math.round(logged/ex.studyHours*50));
+  // Focus on just the current active section
+  const s=getCurrentSection();
+  const ex=EXAMS[s];
+  const logged=getSectionHours(s);
+  const volumePts=Math.min(50,Math.round(logged/ex.studyHours*50));
 
-    // Pacing pts
-    const targetDate=S.examDates?.[s];
-    let pacingPts=15;
-    if(targetDate){
-      const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
-      const weeksLeft=Math.max(0.5,daysLeft/7);
-      const needed=Math.max(0,ex.studyHours-logged);
-      const hrsPerWeek=needed/weeksLeft;
-      if(daysLeft<0) pacingPts=0;
-      else if(hrsPerWeek>(S.hoursPerWeek||15)*1.3) pacingPts=5;
-      else if(hrsPerWeek<(S.hoursPerWeek||15)*0.8) pacingPts=20;
-      else pacingPts=15;
-    }
+  // Pacing pts — compare required hrs/wk vs available hrs/wk
+  const targetDate=S.examDates?.[s];
+  let pacingPts=15;
+  if(targetDate){
+    const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
+    const weeksLeft=Math.max(0.5,daysLeft/7);
+    const needed=Math.max(0,ex.studyHours-logged);
+    const hrsPerWeek=needed/weeksLeft;
+    const available=S.hoursPerWeek||15;
+    if(daysLeft<0) pacingPts=0;
+    else if(hrsPerWeek>available) pacingPts=5;        // needs more than you have — behind
+    else if(hrsPerWeek<available*0.75) pacingPts=20;  // plenty of buffer — comfortable
+    else pacingPts=15;                                  // tight but doable
+  }
 
-    // Practice score pts (most recent mock for this section)
-    const scores=(S.practiceScores||[]).filter(sc=>sc.section===s);
-    let scorePts=0;
-    if(scores.length){
-      const latest=scores.slice(-1)[0].score;
-      scorePts=Math.min(30,Math.round(latest/75*30));
-    }
+  // Practice score pts — most recent mock for this section
+  const scores=(S.practiceScores||[]).filter(sc=>sc.section===s);
+  let scorePts=0;
+  if(scores.length){
+    const latest=scores.slice(-1)[0].score;
+    scorePts=Math.min(30,Math.round(latest/75*30));
+  }
 
-    // Streak bonus
-    const streakPts=Math.min(10,Math.round(getStreak()/10*10));
+  // Streak bonus
+  const streakPts=Math.min(10,Math.round(getStreak()/10*10));
 
-    const sectionScore=Math.round((volumePts+pacingPts+scorePts+streakPts));
-    totalScore+=sectionScore;
-    breakdown.push({section:s,score:sectionScore,volumePts,pacingPts,scorePts,streakPts});
-  });
+  const score=Math.min(99,volumePts+pacingPts+scorePts+streakPts);
+  const breakdown=[{section:s,score,volumePts,pacingPts,scorePts,streakPts}];
 
-  const score=Math.min(99,Math.round(totalScore/activeSections.length));
   let label,color,tier;
-  if(score<35){label='Just Getting Started';color:'#ef4444';tier='start';}
+  if(score<35){label='Just Getting Started';color='#ef4444';tier='start';}
   else if(score<50){label='Building Foundation';color='#f59e0b';tier='building';}
   else if(score<65){label='On Track';color='var(--ind)';tier='track';}
   else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
   else{label='Exam Ready 🎯';color='var(--grn)';tier='ready';}
-  if(score<35) color='#ef4444';
-  return{score,label,color,tier,breakdown};
+  return{score,label,color,tier,breakdown,section:s};
 }
 
 function buildReadinessCard(){
@@ -2826,16 +2838,22 @@ function buildReadinessCard(){
       </svg>
     </div>
     <div style="flex:1">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:6px">CPA Readiness Score</div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:4px">Readiness Score <span class="badge badge-${r.section}" style="font-size:9px;vertical-align:middle;margin-left:4px">${r.section}</span></div>
       <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        ${r.breakdown.map(b=>`<div style="display:flex;align-items:center;gap:8px">
-          <span class="badge badge-${b.section}" style="font-size:9px;flex-shrink:0">${b.section}</span>
-          <div style="flex:1;height:6px;background:var(--surf3);border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${Math.min(100,b.score)}%;background:${EXAMS[b.section]?.color||'var(--ind)'};border-radius:4px;transition:width .6s ease"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${r.breakdown.map(b=>[
+          ['📚','Volume',b.volumePts,50],
+          ['📅','Pacing',b.pacingPts,20],
+          ['📝','Practice',b.scorePts,30],
+          ['🔥','Streak',b.streakPts,10]
+        ].map(([icon,lbl,pts,max])=>`<div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;width:18px;text-align:center;flex-shrink:0">${icon}</span>
+          <span style="font-size:11px;color:var(--mut);width:52px;flex-shrink:0">${lbl}</span>
+          <div style="flex:1;height:5px;background:var(--surf3);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${Math.round(pts/max*100)}%;background:${EXAMS[b.section]?.color||'var(--ind)'};border-radius:4px"></div>
           </div>
-          <span style="font-size:11px;font-weight:700;color:var(--sub);width:28px;text-align:right">${b.score}</span>
-        </div>`).join('')}
+          <span style="font-size:11px;font-weight:700;color:var(--sub);width:36px;text-align:right">${pts}/${max}</span>
+        </div>`).join('')).join('')}
       </div>
       <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Score factors: study volume · pacing · practice scores · consistency</div>
     </div>
@@ -2892,22 +2910,27 @@ function openPacingTipsModal(){
 // ═══════════════════════════════════════════════
 function buildPacingAlert(){
   const behind=[];
-  (S.sections||[]).forEach(s=>{
-    if((S.sectionPassed||[]).includes(s)) return;
+  // Only alert for the current active section (one at a time)
+  const s=getCurrentSection();
+  const passed=new Set(S.sectionPassed||[]);
+  if(!passed.has(s)){
     const ex=EXAMS[s];
     const logged=getSectionHours(s);
     const targetDate=S.examDates?.[s];
-    if(!targetDate) return;
-    const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
-    if(daysLeft<=0) return;
-    const weeksLeft=Math.max(0.5,daysLeft/7);
-    const needed=Math.max(0,ex.studyHours-logged);
-    const hrsPerWeek=needed/weeksLeft;
-    if(hrsPerWeek>(S.hoursPerWeek||15)*1.25){
-      const catchUpHrsToday=(hrsPerWeek/7).toFixed(1);
-      behind.push({s,daysLeft,hrsPerWeek:hrsPerWeek.toFixed(1),catchUpHrsToday,needed:Math.round(needed)});
+    if(targetDate){
+      const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
+      if(daysLeft>0){
+        const weeksLeft=Math.max(0.5,daysLeft/7);
+        const needed=Math.max(0,ex.studyHours-logged);
+        const hrsPerWeek=needed/weeksLeft;
+        const available=S.hoursPerWeek||15;
+        if(hrsPerWeek>available){
+          const catchUpHrsToday=(hrsPerWeek/7).toFixed(1);
+          behind.push({s,daysLeft,hrsPerWeek:hrsPerWeek.toFixed(1),catchUpHrsToday,needed:Math.round(needed),available});
+        }
+      }
     }
-  });
+  }
 
   // Also check: hasn't studied in 2+ days with an upcoming exam
   const lastActivity=(S.activities||[]).slice(-1)[0];
@@ -2933,8 +2956,8 @@ function buildPacingAlert(){
     alerts.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:10px;margin-bottom:8px">
       <div style="font-size:18px;flex-shrink:0">📉</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>You're behind pace — ${b.daysLeft} days left, ${b.needed}h still needed</div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">You need <strong>${b.hrsPerWeek}h/week</strong> to make your exam date. That's about <strong>${b.catchUpHrsToday}h today</strong> if you study daily.</div>
+        <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">At your current ${b.available}h/wk pace you won't make it. You need <strong>${b.hrsPerWeek}h/week</strong> — about <strong>${b.catchUpHrsToday}h/day</strong>. Either increase your hours or push your exam date.</div>
       </div>
       <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>document.getElementById('schedule-section')?.scrollIntoView({behavior:'smooth'}),100)">Reschedule →</button>
     </div>`);
@@ -2958,14 +2981,17 @@ function buildWeeklyCommitment(){
   const commitment=S.commitments[weekKey];
   const weekHrsLogged=S.activities.filter(a=>new Date(a.date)>=weekStart).reduce((acc,a)=>acc+(a.hours||0),0);
 
+  const curSec=getCurrentSection();
+  const curEx=EXAMS[curSec];
+
   if(!commitment){
     // Show "set your commitment" prompt
     return`<div class="card card-pad" style="margin-bottom:20px;border-left:3px solid var(--ora)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="font-size:28px;flex-shrink:0">🤝</div>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:800;margin-bottom:3px">Set Your Weekly Commitment</div>
-          <div style="font-size:12px;color:var(--sub)">Candidates who set a weekly commitment are <strong>3× more likely</strong> to stay on track. What's your goal this week?</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:3px">Set Your <span class="badge badge-${curSec}" style="vertical-align:middle;margin:0 2px">${curSec}</span> Goal This Week</div>
+          <div style="font-size:12px;color:var(--sub)">Candidates who commit to a weekly goal are <strong>3× more likely</strong> to stay on track. How many hours of ${curEx?.full||curSec} this week?</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -2984,7 +3010,7 @@ function buildWeeklyCommitment(){
   return`<div class="card card-pad" style="margin-bottom:20px;${met?'border-left:3px solid var(--grn);background:var(--grn-bg)':'border-left:3px solid var(--ind)'}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div>
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week's Commitment</div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week — <span class="badge badge-${curSec}" style="font-size:9px;vertical-align:middle">${curSec}</span></div>
         <div style="font-size:16px;font-weight:900;margin-top:2px">${met?'✅ Goal Crushed!':remaining+'h left to hit your '+commitment+'h goal'}</div>
       </div>
       <div style="text-align:right">
@@ -3130,10 +3156,11 @@ function buildDashboard(){
       const weeksLeft=Math.max(0.5,daysLeft/7);
       const needed=Math.max(0,ex.studyHours-logged);
       const hrsPerWeek=(needed/weeksLeft).toFixed(1);
+      const available=S.hoursPerWeek||15;
       if(daysLeft<0){paceMsg='Exam date passed';paceClass='behind';}
-      else if(parseFloat(hrsPerWeek)>(S.hoursPerWeek||15)*1.2){paceMsg=`${hrsPerWeek} hrs/wk needed — you're behind`;paceClass='behind';}
-      else if(parseFloat(hrsPerWeek)<(S.hoursPerWeek||15)*0.7){paceMsg=`${hrsPerWeek} hrs/wk — on track`;paceClass='on-pace';}
-      else{paceMsg=`${hrsPerWeek} hrs/wk — steady pace`;paceClass='ahead';}
+      else if(parseFloat(hrsPerWeek)>available){paceMsg=`Need ${hrsPerWeek}h/wk — behind (you have ${available}h/wk)`;paceClass='behind';}
+      else if(parseFloat(hrsPerWeek)<available*0.75){paceMsg=`${hrsPerWeek}h/wk needed — comfortable pace`;paceClass='on-pace';}
+      else{paceMsg=`${hrsPerWeek}h/wk needed — tight but doable`;paceClass='ahead';}
     } else if(passed){paceMsg='Passed!';}
     else{paceMsg='Add a target date to see your pace';}
 
@@ -3621,14 +3648,11 @@ function buildExplore(){
   const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
   const clubSectionNew=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverVisibleHtml+discoverHiddenHtml;
 
-  // Study buddy matching — people studying the same section as you
-  const myActiveSections=(S.sections||[]).filter(s=>!(S.sectionPassed||[]).includes(s));
-  const buddyMatches=MOCK_FRIENDS.filter(f=>{
-    const fSection=f.currentSection;
-    return myActiveSections.includes(fSection);
-  }).slice(0,6);
+  // Study buddy matching — people studying the same section as you right now
+  const myCurrentSection=getCurrentSection();
+  const buddyMatches=MOCK_FRIENDS.filter(f=>f.currentSection===myCurrentSection).slice(0,6);
   const buddyCards=buddyMatches.map(f=>{
-    const sharedSection=myActiveSections.find(s=>s===f.currentSection);
+    const sharedSection=myCurrentSection;
     const fWeekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     const isFollowing=(S.following||[]).includes(f.id);
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">
@@ -3654,7 +3678,7 @@ function buildExplore(){
         <div style="font-size:18px">🤝</div>
         <div>
           <div class="section-title" style="margin-bottom:0">Study Buddies</div>
-          <div style="font-size:11px;color:var(--mut)">People studying ${myActiveSections.join(' & ')} right now</div>
+          <div style="font-size:11px;color:var(--mut)">Others currently studying <span class="badge badge-${myCurrentSection}" style="font-size:9px">${myCurrentSection}</span></div>
         </div>
       </div>
       ${buddyCards}
@@ -4405,6 +4429,36 @@ function showAchInfo(id){
 // ═══════════════════════════════════════════════
 // ELITE FEATURES — SUPPORT
 // ═══════════════════════════════════════════════
+function openSupportModal(){
+  // Works for all users; Elite get the priority label
+  let el=document.getElementById('support-modal');
+  if(el)el.remove();
+  el=document.createElement('div');
+  el.id='support-modal';
+  el.className='modal-overlay';
+  const isEliteUser=isElite();
+  el.innerHTML=
+    '<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">' +
+      '<div class="modal-hdr">' +
+        '<div class="modal-title">💬 Contact Support</div>' +
+        '<button class="modal-close" onclick="document.getElementById(\'support-modal\').classList.remove(\'open\')">×</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        (isEliteUser
+          ?'<div style="display:flex;align-items:center;gap:10px;background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:11px 14px;margin-bottom:16px"><span style="font-size:20px">⚡</span><div style="font-size:12px;color:var(--pur);font-weight:600">Elite members get responses within 2 hours (9am–6pm CT, Mon–Fri)</div></div>'
+          :'<div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.6">We read every message and reply within 1 business day. For bug reports, feature ideas, or anything on your mind.</div>'
+        ) +
+        '<div class="form-grp" style="margin-bottom:8px"><label>What\'s going on?</label><textarea id="support-msg-ta" style="min-height:100px" placeholder="Describe your issue, question, or feedback…"></textarea></div>' +
+        '<div class="form-grp" style="margin-bottom:16px"><label>Your email</label><input type="email" id="support-email-inp" value="'+(AUTH?.email||'')+'" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none"></div>' +
+        '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="sendSupportMessage()">Send Message</button>' +
+        '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">Or email us directly: support@ledgercpa.com</div>' +
+      '</div>' +
+    '</div>';
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+  document.body.appendChild(el);
+  el.classList.add('open');
+}
+
 function openPrioritySupport(){
   let el=document.getElementById('support-modal');
   if(el)el.remove();
