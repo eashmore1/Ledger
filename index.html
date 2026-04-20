@@ -1168,7 +1168,7 @@ async function searchFirestoreUsers(q){
       snap=await firebaseDb.collection('users')
         .orderBy('createdAt','desc').limit(30).get();
     }
-    return snap.docs.map(d=>d.data()).filter(d=>d.uid!==AUTH?.uid);
+    return snap.docs.map(d=>d.data());
   }catch(e){return [];}
 }
 
@@ -4510,7 +4510,10 @@ function _searchUserCard(u, isReal){
       <div style="font-size:11px;color:var(--mut);margin-top:2px">${state?'📍 '+state+' · ':''}${studyLine||'CPA Candidate'}${passed?' · ✅ '+passed+' passed':''}</div>
       ${bio?`<div style="font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${bio}</div>`:''}
     </div>
-    <button onclick="toggleFollowSearch('${uid}',${isReal})" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>
+    ${uid===AUTH?.uid
+      ? `<span style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;background:var(--surf2);color:var(--mut);border:1.5px solid var(--bdr)">You</span>`
+      : `<button onclick="toggleFollowSearch('${uid}',${isReal})" style="flex-shrink:0;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid ${isFollowing?'var(--bdr2)':'var(--ora)'};background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'}">${isFollowing?'Following':'Follow'}</button>`
+    }
   </div>`;
 }
 
