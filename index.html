@@ -4089,8 +4089,11 @@ function updateSectionStatus(section,status){
   S.sectionStatus[section]=status;
   if(status==='passed'){
     if(!S.sectionPassed)S.sectionPassed=[];
-    if(!S.sectionPassed.includes(section)){S.sectionPassed.push(section);showToast(`🎉 ${section} marked as PASSED!`,'ok');}
-    checkAchievements();
+    if(!S.sectionPassed.includes(section)){
+      const _priorAch=new Set(S.achievements||[]);
+      S.sectionPassed.push(section);showToast(`🎉 ${section} marked as PASSED!`,'ok');
+      checkAchievements();checkShareTrigger(_priorAch);
+    } else { checkAchievements(); }
   } else {
     S.sectionPassed=(S.sectionPassed||[]).filter(s=>s!==section);
   }
@@ -4436,11 +4439,13 @@ function saveSession(){
     kudos:[],comments:[]
   };
   S.activities.push(act);
+  const _priorAch=new Set(S.achievements||[]);
   saveState();checkAchievements();checkChallengeAchievements();
   document.getElementById('sess-overlay')?.classList.remove('open');
   tsReset();updateNavChip();
   showToast(`Session posted! ${fmtDur(act.elapsed)} for ${section} 🎉`,'ok');
   currentTab='feed';renderApp();
+  checkShareTrigger(_priorAch);
 }
 
 function discardSession(){
@@ -9214,6 +9219,135 @@ function buildStudySchedule(){
     '</div>'+editControls+dayRows+
     (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">🤖 Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Elite members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Elite ✦</button></div>':'') +
   '</div></div>';
+}
+
+// ═══════════════════════════════════════════════
+// SHAREABLE MILESTONE CARDS
+// ═══════════════════════════════════════════════
+const SHARE_MILESTONES={
+  streak_7:   {emoji:'🔥',headline:'7-Day Study Streak',sub:'Consistency beats motivation every time.',accent:'#f59e0b'},
+  streak_14:  {emoji:'🔥',headline:'14-Day Streak',sub:'Two weeks straight. No excuses.',accent:'#f59e0b'},
+  streak_30:  {emoji:'💥',headline:'30-Day Streak',sub:'A full month of showing up daily.',accent:'#ef4444'},
+  streak_60:  {emoji:'👑',headline:'60-Day Streak',sub:'Two months. Most candidates quit by now.',accent:'#a855f7'},
+  streak_100: {emoji:'🏆',headline:'100-Day Legend',sub:'1 in 100 candidates ever get here.',accent:'#d44000'},
+  hrs_50:     {emoji:'⏱️',headline:'50 Hours Studied',sub:'The foundation is being built.',accent:'#0ea574'},
+  hrs_100:    {emoji:'💪',headline:'100 Hours In',sub:'A third of the way to exam-ready.',accent:'#0ea574'},
+  hrs_250:    {emoji:'🚀',headline:'250 Hours Studied',sub:'Elite territory. Stay the course.',accent:'#5a5fcf'},
+  section_pass:{emoji:'✅',headline:'First Section Passed',sub:'One down. The CPA is real.',accent:'#0ea574'},
+  two_sections:{emoji:'🎯',headline:'Two Sections Passed',sub:'Halfway to the CPA license.',accent:'#0ea574'},
+  three_sections:{emoji:'🔑',headline:'Three Sections Passed',sub:"One left. You're going to make it.",accent:'#d44000'},
+  all_pass:   {emoji:'🏆',headline:'All Four Sections Passed',sub:'CPA licensed. You earned it.',accent:'#d44000'},
+};
+
+function drawShareCard(canvas, milestoneId, statLine){
+  const cfg=SHARE_MILESTONES[milestoneId];
+  if(!cfg)return;
+  const W=canvas.width,H=canvas.height;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#18103a');bg.addColorStop(1,'#06030f');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  // Subtle ledger lines
+  ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+  for(let y=44;y<H;y+=44){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // Left accent bar
+  const bar=ctx.createLinearGradient(0,0,0,H);
+  bar.addColorStop(0,cfg.accent);bar.addColorStop(1,cfg.accent+'55');
+  ctx.fillStyle=bar;ctx.fillRect(0,0,7,H);
+
+  // Ledger wordmark (top-left)
+  ctx.fillStyle='rgba(255,255,255,.45)';
+  ctx.font='700 13px Inter,system-ui,sans-serif';
+  ctx.fillText('LEDGER',28,34);
+
+  // Big emoji
+  ctx.font='76px serif';
+  ctx.fillText(cfg.emoji,28,138);
+
+  // Headline
+  ctx.fillStyle='#ffffff';
+  ctx.font='800 46px Inter,system-ui,sans-serif';
+  ctx.fillText(cfg.headline,28,216);
+
+  // Sub-text
+  ctx.fillStyle='rgba(255,255,255,.6)';
+  ctx.font='400 19px Inter,system-ui,sans-serif';
+  ctx.fillText(cfg.sub,28,256);
+
+  // Stat line
+  ctx.fillStyle='rgba(255,255,255,.38)';
+  ctx.font='600 14px Inter,system-ui,sans-serif';
+  ctx.fillText(statLine,28,H-44);
+
+  // URL (bottom-right, accent color)
+  ctx.fillStyle=cfg.accent;
+  ctx.font='700 14px Inter,system-ui,sans-serif';
+  const url='ledgercpa.vercel.app';
+  ctx.fillText(url,W-ctx.measureText(url).width-28,H-44);
+
+  // Bottom separator
+  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(28,H-28);ctx.lineTo(W-28,H-28);ctx.stroke();
+}
+
+function showShareModal(milestoneId){
+  const cfg=SHARE_MILESTONES[milestoneId];
+  if(!cfg)return;
+  // Don't show same milestone twice
+  const shownKey='share_shown_'+milestoneId;
+  if(localStorage.getItem(shownKey))return;
+  localStorage.setItem(shownKey,'1');
+
+  const streak=getStreak();
+  const totalHrs=Math.round(getTotalHours());
+  const passed=(S.sectionPassed||[]).join(', ')||'';
+  let statLine=S.name||'Ledger';
+  if(milestoneId.startsWith('streak'))statLine+=` · ${streak}-day streak`;
+  else if(milestoneId.startsWith('hrs'))statLine+=` · ${totalHrs} total hours logged`;
+  else if(passed)statLine+=` · Passed: ${passed}`;
+
+  const overlay=document.createElement('div');
+  overlay.id='share-card-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  overlay.innerHTML=`
+<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--shadow-lg)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <div style="font-size:16px;font-weight:800">Share your milestone</div>
+      <div style="font-size:12px;color:var(--mut);margin-top:2px">Download the card and post it wherever CPAs hang out</div>
+    </div>
+    <button onclick="document.getElementById('share-card-overlay').remove()" style="background:var(--surf2);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--mut)">×</button>
+  </div>
+  <canvas id="share-canvas" width="800" height="420" style="width:100%;border-radius:12px;display:block;margin-bottom:16px"></canvas>
+  <div style="display:flex;gap:10px">
+    <button id="share-download-btn" style="flex:1;padding:11px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Download Card</button>
+    <button onclick="navigator.clipboard.writeText('Just hit: ${cfg.headline.replace(/'/g,"\\'")} while studying for the CPA exam. Tracking every hour on Ledger — ledgercpa.vercel.app').then(()=>showToast('Caption copied!','ok'))" style="flex:1;padding:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy Caption</button>
+  </div>
+  <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--mut)">Great for LinkedIn · r/CPA · Twitter</div>
+</div>`;
+  document.body.appendChild(overlay);
+
+  document.fonts.ready.then(()=>{
+    const canvas=document.getElementById('share-canvas');
+    if(!canvas)return;
+    drawShareCard(canvas,milestoneId,statLine);
+    document.getElementById('share-download-btn').onclick=()=>{
+      const a=document.createElement('a');
+      a.download='ledger-milestone.png';
+      a.href=canvas.toDataURL('image/png');
+      a.click();
+    };
+  });
+}
+
+function checkShareTrigger(priorAchSet){
+  const newOnes=(S.achievements||[]).filter(id=>!priorAchSet.has(id));
+  const trigger=newOnes.find(id=>SHARE_MILESTONES[id]);
+  if(trigger)setTimeout(()=>showShareModal(trigger),1400);
 }
 
 // ═══════════════════════════════════════════════
