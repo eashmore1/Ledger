@@ -668,6 +668,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(212,64,0,.4)}50%{box-shadow:0 0 0 8px rgba(212,64,0,0)}}
+@keyframes slide-up-banner{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .fade-in{animation:fadeIn .22s cubic-bezier(.22,.61,.36,1) both}
 /* ── TAB DIRECTIONAL TRANSITIONS ── */
 @keyframes tabSlideRight{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
@@ -2520,6 +2521,10 @@ function renderApp(){
   <div class="page fade-in" id="page-content"></div>
 </div>`;
   renderTab();
+  setTimeout(checkStreakUrgency, 800);
+  if(!window._streakUrgencyInterval){
+    window._streakUrgencyInterval=setInterval(checkStreakUrgency, 60000);
+  }
 }
 
 function switchTab(tab){
@@ -5530,9 +5535,8 @@ function buildHeatMap(){
     const d=a.date.slice(0,10);
     logMap[d]=(logMap[d]||0)+(a.hours||0);
   });
-  const weeks=isPro()?16:1;
+  const weeks=16;
   const today=new Date();today.setHours(0,0,0,0);
-  // align to Sunday
   const startDay=new Date(today);
   startDay.setDate(today.getDate()-today.getDay()-(weeks-1)*7);
 
@@ -5559,16 +5563,36 @@ function buildHeatMap(){
     monthLabels.push(`<div style="flex:1;font-size:9px;color:var(--mut)">${d.toLocaleDateString('en-US',{month:'short'})}</div>`);
   }
   const totalDays=Object.keys(logMap).filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).length;
+
+  let gridHTML;
+  if(isPro()){
+    gridHTML=`<div style="display:flex;gap:2px">${cols.join('')}</div>`;
+  } else {
+    const historyCols=cols.slice(0,15).join('');
+    const currentCol=cols[15];
+    gridHTML=`<div style="display:flex;gap:2px;align-items:flex-start">
+  <div style="position:relative;display:inline-flex;gap:2px">
+    <div style="display:flex;gap:2px;filter:blur(2.5px);opacity:.45;pointer-events:none;user-select:none">${historyCols}</div>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Session History')">
+      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:7px 11px;text-align:center;box-shadow:var(--shadow-md)">
+        <div style="font-size:10px;font-weight:800;color:var(--ora);margin-bottom:1px">15 weeks hidden</div>
+        <div style="font-size:9px;color:var(--sub);font-weight:600">Unlock with Pro →</div>
+      </div>
+    </div>
+  </div>
+  ${currentCol}
+</div>`;
+  }
+
   return`
 <div style="overflow-x:auto">
   <div style="display:flex;gap:2px;margin-bottom:4px">${monthLabels.join('')}</div>
-  <div style="display:flex;gap:2px">${cols.join('')}</div>
+  ${gridHTML}
   <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:var(--mut)">
     Less
     ${['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#d44000'].map(c=>`<div style="width:11px;height:11px;border-radius:2px;background:${c}"></div>`).join('')}
     More &nbsp;·&nbsp; ${totalDays} active days in ${isPro()?'last 16 weeks':'this week'}
   </div>
-  ${!isPro()?`<div style="margin-top:10px;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="openUpgradeModal('Full Session History')"><div style="font-size:11px;color:var(--sub)">🔒 <strong>Pro</strong> unlocks your full 16-week history</div><button class="btn btn-primary btn-xs">Upgrade</button></div>`:''}
 </div>`;
 }
 
@@ -9142,6 +9166,45 @@ function buildStudySchedule(){
     '</div>'+editControls+dayRows+
     (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">🤖 Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Elite members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Elite ✦</button></div>':'') +
   '</div></div>';
+}
+
+// ═══════════════════════════════════════════════
+// STREAK URGENCY BANNER
+// ═══════════════════════════════════════════════
+function hasLoggedToday(){
+  if(!S||!S.activities)return false;
+  const today=new Date().toISOString().slice(0,10);
+  return S.activities.some(a=>a.date.slice(0,10)===today);
+}
+
+function checkStreakUrgency(){
+  if(!S||isPro())return;
+  const streak=getStreak();
+  if(streak<5)return;
+  if(hasLoggedToday())return;
+  const hour=new Date().getHours();
+  if(hour<20)return; // only after 8pm
+  if(document.getElementById('streak-urgency-banner'))return;
+  const dismissKey='streak_urgency_dismissed_'+new Date().toISOString().slice(0,10);
+  if(localStorage.getItem(dismissKey))return;
+
+  const banner=document.createElement('div');
+  banner.id='streak-urgency-banner';
+  banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:1200;max-width:420px;width:calc(100% - 32px);animation:slide-up-banner .3s ease forwards';
+  banner.innerHTML=`
+<div style="background:linear-gradient(135deg,#18103a,#1e1540);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,.45);display:flex;align-items:flex-start;gap:12px">
+  <div style="font-size:26px;flex-shrink:0;line-height:1;margin-top:2px">🔥</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13px;font-weight:800;margin-bottom:3px">Your ${streak}-day streak ends at midnight.</div>
+    <div style="font-size:11px;opacity:.7;margin-bottom:10px;line-height:1.5">Log a session to keep it alive. Pro members get Streak Shields — miss a day without losing your streak.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="document.getElementById('streak-urgency-banner').remove();openSessionModal()" style="padding:7px 14px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log Session Now</button>
+      <button onclick="document.getElementById('streak-urgency-banner').remove();openUpgradeModal('Streak Shield')" style="padding:7px 14px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Get Streak Shield</button>
+    </div>
+  </div>
+  <button onclick="document.getElementById('streak-urgency-banner').remove();localStorage.setItem('${dismissKey}','1')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1;margin-top:-2px" title="Dismiss">&times;</button>
+</div>`;
+  document.body.appendChild(banner);
 }
 
 // ═══════════════════════════════════════════════
