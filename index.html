@@ -2652,9 +2652,13 @@ function buildFeed(){
   </div>
 </div>`;
 
+  const actCards=allActivities.map(a=>buildActivityCard(a));
+  if(!isPro()&&actCards.length>0){
+    actCards.splice(Math.min(2,actCards.length),0,buildPartnerTeaserCard());
+  }
   const feedCenter = allActivities.length===0 ?
     `<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
-    allActivities.map(a=>buildActivityCard(a)).join('');
+    actCards.join('');
 
   return`<div class="feed-layout">${leftSidebar}<div class="feed-center">${feedCenter}</div>${rightSidebar}</div>`;
 }
@@ -2691,6 +2695,50 @@ function buildCohortCard(){
   </div>
   <div style="font-size:12px;color:var(--sub);margin-bottom:8px">Just you so far — share your invite link to add cohort members.</div>
   <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Copied!','ok'))" title="Click to copy">${inviteUrl}</div>
+</div>`;
+}
+
+function buildPartnerTeaserCard(){
+  const userSection=S.currentSection||(S.sections&&S.sections[0])||'FAR';
+  // Pick candidates studying the same section, then fill with others
+  const sameSection=MOCK_FRIENDS.filter(f=>f.currentSection===userSection&&!f.passedAll);
+  const others=MOCK_FRIENDS.filter(f=>f.currentSection!==userSection&&f.currentSection&&!f.passedAll);
+  const candidates=[...sameSection,...others].slice(0,3);
+  const matchCount=Math.max(sameSection.length,2)+Math.floor(Math.random()*4)+1;
+
+  const avatarRow=candidates.map(f=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;background:var(--surf2)">
+      <div class="avatar av-sm" style="background:${f.color};color:#fff;flex-shrink:0">${f.initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700">${f.name.split(' ')[0]}</div>
+        <div style="font-size:10px;color:var(--mut)">${f.currentSection} · ${f.totalHours}h total · ${f.streak}d streak</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--grn)"></div>
+        <span style="font-size:10px;color:var(--grn);font-weight:700">Open</span>
+      </div>
+    </div>`).join('');
+
+  return`<div class="activity-card" style="margin-bottom:16px;border:1.5px solid rgba(90,95,207,.25);background:linear-gradient(135deg,var(--surf),var(--ind-bg))">
+  <div style="padding:16px 18px 14px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤝</div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:var(--txt)">${matchCount} candidates studying ${userSection} want a study partner</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:1px">Pro members get matched — see who's in your section</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;position:relative">
+      <div style="filter:blur(3px);opacity:.55;pointer-events:none;user-select:none">${avatarRow}</div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;text-align:center;box-shadow:var(--shadow-md);cursor:pointer" onclick="openUpgradeModal('Study Partner Pairing')">
+          <div style="font-size:11px;font-weight:800;color:var(--ind);margin-bottom:1px">See who's available</div>
+          <div style="font-size:10px;color:var(--mut)">Unlock with Pro →</div>
+        </div>
+      </div>
+    </div>
+    <button onclick="openUpgradeModal('Study Partner Pairing')" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--ind),#4338ca);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(90,95,207,.35)">Find My Study Partner</button>
+  </div>
 </div>`;
 }
 
