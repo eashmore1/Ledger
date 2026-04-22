@@ -1855,40 +1855,41 @@ function renderAuth(){
   <!-- LEFT PANEL — brand + features -->
   <div class="auth-left">
     <div class="auth-left-inner">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><svg width="42" height="42" viewBox="0 0 180 180" style="border-radius:10px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg><div class="auth-brand">Ledger</div></div>
-      <div class="auth-brand-sub">The social CPA study platform built for<br>candidates who take passing seriously.</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><svg width="42" height="42" viewBox="0 0 180 180" style="border-radius:10px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg><div class="auth-brand">Ledger</div></div>
+      <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-.02em;margin-bottom:10px">Know exactly if you're<br>on pace to pass the CPA.</div>
+      <div class="auth-brand-sub" style="margin-bottom:24px">Most candidates fail because they don't know they're behind until it's too late. Ledger fixes that.</div>
 
-      <div class="auth-feature">
-        <div class="auth-feature-icon">📅</div>
-        <div class="auth-feature-text">
-          <strong>AI Personalized Study Plan</strong>
-          <span>Enter your exam dates and we build a day-by-day schedule around your life — not a generic template.</span>
-        </div>
-      </div>
       <div class="auth-feature">
         <div class="auth-feature-icon">📊</div>
         <div class="auth-feature-text">
-          <strong>Smart Pacing Dashboard</strong>
-          <span>Know exactly how many hours per week you need to pass each section. No guesswork, no falling behind.</span>
+          <strong>Pacing Dashboard</strong>
+          <span>See exactly how many hours per week you need — and whether you're hitting it. No guesswork, no falling behind.</span>
         </div>
       </div>
       <div class="auth-feature">
         <div class="auth-feature-icon">🏆</div>
         <div class="auth-feature-text">
           <strong>Competitive Leaderboards</strong>
-          <span>See who's grinding hardest in your cohort. Nothing sharpens focus like a scoreboard with your name on it.</span>
+          <span>See where you rank against other candidates in your section. Nothing sharpens focus like a scoreboard with your name on it.</span>
         </div>
       </div>
       <div class="auth-feature">
         <div class="auth-feature-icon">🔥</div>
         <div class="auth-feature-text">
-          <strong>Streaks, Badges & Accountability</strong>
-          <span>Daily streaks, achievement milestones, and a live study feed keep you showing up — even on the hard days.</span>
+          <strong>Streaks & Accountability</strong>
+          <span>Daily streaks and a live study feed keep you showing up — even on the hard days.</span>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon">📅</div>
+        <div class="auth-feature-text">
+          <strong>AI Study Plan</strong>
+          <span>Enter your exam date and get a day-by-day schedule built around your life and current hours.</span>
         </div>
       </div>
 
       <div class="auth-social-proof">
-        <strong>12,400+</strong> CPA candidates tracking their journey on Ledger &nbsp;·&nbsp; <strong>78%</strong> of active users pass within 18 months
+        Built for CPA candidates who take passing seriously &nbsp;·&nbsp; Free to start
       </div>
     </div>
   </div>
@@ -2522,6 +2523,7 @@ function renderApp(){
 </div>`;
   renderTab();
   setTimeout(checkStreakUrgency, 800);
+  setTimeout(checkTrialUrgency, 1600);
   if(!window._streakUrgencyInterval){
     window._streakUrgencyInterval=setInterval(checkStreakUrgency, 60000);
   }
@@ -3655,20 +3657,43 @@ function buildExplore(){
   const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
   let lbRows;
   if(!isPro()){
-    // Free: show only the user's own entry + paywall teaser
     const youEntry=entries.find(e=>e.isYou);
-    lbRows=`<div class="lb-row lb-you">
-      <div class="lb-rank">${myRank}</div>
-      <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:#6366f1;color:#fff;flex-shrink:0">${youEntry?youEntry.initials:'?'}</div>
-      <div class="lb-name">You</div>
-      <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${youEntry?youEntry.streak:0}d</div>
-      <div class="lb-hrs">${youEntry?youEntry.hrs.toFixed(1):0}h</div>
-    </div>`+
-    `<div style="margin-top:10px;padding:14px 16px;background:var(--surf2);border:1.5px dashed var(--bdr2);border-radius:12px;text-align:center;cursor:pointer" onclick="openUpgradeModal('Full Leaderboard')">
-      <div style="font-size:14px;font-weight:800;margin-bottom:4px">You're ranked #${myRank}</div>
-      <div style="font-size:12px;color:var(--sub);margin-bottom:10px">Upgrade Pro to see the full leaderboard and browse every candidate's profile.</div>
-      <button class="btn btn-primary btn-sm">Unlock Full Leaderboard →</button>
-    </div>`;
+    // Rows above the user — rendered but blurred
+    const aboveRows=entries.slice(0,myRank-1).map((e,i)=>`
+      <div class="lb-row" style="filter:blur(4px);user-select:none;pointer-events:none">
+        <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
+        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
+        <div class="lb-name">${e.name}</div>
+        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
+        <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
+      </div>`).join('');
+    // Rows below the user — visible
+    const belowRows=entries.slice(myRank).map((e,i)=>`
+      <div class="lb-row">
+        <div class="lb-rank">${myRank+i+1}</div>
+        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
+        <div class="lb-name">${e.name}</div>
+        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
+        <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
+      </div>`).join('');
+    lbRows=`
+      <div style="position:relative">
+        ${aboveRows}
+        ${myRank>1?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Leaderboard')">
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;text-align:center;box-shadow:var(--shadow-md)">
+            <div style="font-size:11px;font-weight:800;color:var(--ora);margin-bottom:1px">${myRank-1} candidate${myRank>2?'s':''} ranked above you</div>
+            <div style="font-size:10px;color:var(--sub);font-weight:600">Unlock with Pro →</div>
+          </div>
+        </div>`:''}
+      </div>
+      <div class="lb-row lb-you">
+        <div class="lb-rank">${myRank}</div>
+        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:#6366f1;color:#fff;flex-shrink:0">${youEntry?youEntry.initials:'?'}</div>
+        <div class="lb-name">You</div>
+        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${youEntry?youEntry.streak:0}d</div>
+        <div class="lb-hrs">${youEntry?youEntry.hrs.toFixed(1):0}h</div>
+      </div>
+      ${belowRows}`;
   } else {
     lbRows=entries.map((e,i)=>{
       const friendTier=e.isYou?(SUB.tier||'free'):MOCK_FRIENDS.find(f=>f.name===e.name)?.tier||'free';
@@ -9348,6 +9373,51 @@ function checkShareTrigger(priorAchSet){
   const newOnes=(S.achievements||[]).filter(id=>!priorAchSet.has(id));
   const trigger=newOnes.find(id=>SHARE_MILESTONES[id]);
   if(trigger)setTimeout(()=>showShareModal(trigger),1400);
+}
+
+// ═══════════════════════════════════════════════
+// TRIAL URGENCY MODAL
+// ═══════════════════════════════════════════════
+function checkTrialUrgency(){
+  if(!isOnTrial())return;
+  const daysLeft=getTrialDaysLeft();
+  if(daysLeft>3)return;
+  const shownKey='trial_urgency_shown_d'+daysLeft;
+  if(localStorage.getItem(shownKey))return;
+  localStorage.setItem(shownKey,'1');
+
+  // Build usage stats from actual session data
+  const weekAgo=new Date(Date.now()-7*86400000);
+  const weekSessions=S.activities.filter(a=>new Date(a.date)>weekAgo);
+  const weekHrs=weekSessions.reduce((a,b)=>a+(b.hours||0),0).toFixed(1);
+  const leaderboardUses=parseInt(localStorage.getItem('lb_views')||'0');
+  const heatmapNote=weekSessions.length>0?`${weekSessions.length} sessions logged this week`:'';
+
+  const urgencyColor=daysLeft===1?'var(--red)':daysLeft===2?'var(--ora)':'var(--amb)';
+  const urgencyMsg=daysLeft===1?'Last day of your trial.':daysLeft===2?'2 days left in your trial.':'3 days left in your trial.';
+
+  const overlay=document.createElement('div');
+  overlay.id='trial-urgency-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  overlay.innerHTML=`
+<div style="background:var(--surf);border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:var(--shadow-lg)">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <div style="width:10px;height:10px;border-radius:50%;background:${urgencyColor};box-shadow:0 0 0 3px ${urgencyColor}33"></div>
+    <div style="font-size:12px;font-weight:800;color:${urgencyColor};text-transform:uppercase;letter-spacing:.06em">${urgencyMsg}</div>
+  </div>
+  <div style="font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px">Don't lose what you've built.</div>
+  <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px">When your trial ends, you lose access to everything you've been using this week.</div>
+  <div style="background:var(--surf2);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+    <div style="font-size:11px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">What you've used on trial</div>
+    ${weekHrs>0?`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Full heatmap + session history</span><span style="font-size:13px;font-weight:800">${weekHrs}h logged</span></div>`:''}
+    ${heatmapNote?`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Study sessions tracked</span><span style="font-size:13px;font-weight:800">${heatmapNote}</span></div>`:''}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Full leaderboard + rankings</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Reverts to blurred</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0"><span style="font-size:13px;color:var(--sub)">Streak Shield protection</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Goes away</span></div>
+  </div>
+  <button onclick="document.getElementById('trial-urgency-overlay').remove();activatePlan('pro')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ora),var(--ora-dk));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.35);margin-bottom:10px">Keep Pro Access — $20/mo</button>
+  <button onclick="document.getElementById('trial-urgency-overlay').remove()" style="width:100%;padding:11px;background:transparent;border:none;color:var(--mut);font-size:13px;cursor:pointer">Not now — I'll lose access in ${daysLeft} day${daysLeft>1?'s':''}</button>
+</div>`;
+  document.body.appendChild(overlay);
 }
 
 // ═══════════════════════════════════════════════
