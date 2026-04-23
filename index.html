@@ -7959,7 +7959,36 @@ function sendCoachMessage() {
 // ═══════════════════════════════════════════════
 let _studyLabTab = 'qbank'; // 'qbank' | 'tools' | 'coach'
 // Study Tools (flashcard/quiz generator) state
-let _fc = { cards:[], current:0, flipped:false, mode:'flashcard', quizQ:[], quizCur:0, quizSel:null, quizAns:false, quizScore:0, summaryText:'' };
+let _fc = {
+  cards:[], current:0, flipped:false, mode:'flashcard',
+  quizQ:[], quizCur:0, quizSel:null, quizAns:false, quizScore:0,
+  summaryText:'', lastInput:'', generating:false,
+  view:'generate', // 'generate' | 'decks'
+  activeDeckId:null,
+  genCount:15, genType:'mixed' // 'mixed'|'definitions'|'rules'|'applied'
+};
+let _fcDecks=null;
+
+function _fcGetDecks(){if(!_fcDecks){try{_fcDecks=JSON.parse(localStorage.getItem('ledger_fc_decks')||'{}');}catch(e){_fcDecks={};}}return _fcDecks;}
+function _fcSaveDecks(){try{localStorage.setItem('ledger_fc_decks',JSON.stringify(_fcDecks||{}));}catch(e){}}
+function _fcGetApiKey(){return localStorage.getItem('ledger_ai_key')||'';}
+function _fcSetApiKey(k){localStorage.setItem('ledger_ai_key',k.trim());}
+
+async function _fcCallAI(userMsg,maxTok){
+  const key=_fcGetApiKey();
+  if(!key)return null;
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:maxTok||4096,
+      system:'You are an expert CPA exam tutor with deep knowledge of FAR, AUD, REG, BAR, ISC, and TCP. You create precise, exam-focused study material.',
+      messages:[{role:'user',content:userMsg}]})
+  });
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e?.error?.message||'API error '+resp.status);}
+  const d=await resp.json();
+  return d.content?.[0]?.text||'';
+}
+function _fcParseJSON(t){const m=t&&t.match(/\[[\s\S]*\]/);if(m){try{return JSON.parse(m[0]);}catch(e){}}try{return JSON.parse(t);}catch(e){return null;}}
 
 function openStudyLabTab(tab) {
   _studyLabTab = tab;
@@ -8079,64 +8108,152 @@ function _buildQBankPanel() {
 }
 
 // ─── Study Tools panel (AI flashcards/quizzes/summaries) ─────────────────────
-function _buildStudyToolsPanel() {
-  const hasCards = _fc.cards.length > 0;
-  const hasQuiz = _fc.quizQ.length > 0;
-  // Free users get a preview with upgrade gate after first use
-  if (!isPro() && !hasCards && !hasQuiz) {
-    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">' +
-      '<div class="card card-pad">' +
-        '<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Study Material</div>' +
-        '<div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste notes, Becker/Gleim text, or any CPA prep material — Ledger turns it into flashcards, quizzes, and summaries.</div>' +
-        '<textarea disabled placeholder="Upgrade to Pro to use the AI Study Tools generator…" style="width:100%;min-height:120px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--mut);font-size:12px;resize:none;opacity:.5"></textarea>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;opacity:.4;pointer-events:none">' +
-          '<button class="btn btn-primary" style="justify-content:center" disabled>⚡ Flashcards</button>' +
-          '<button class="btn btn-ind" style="justify-content:center" disabled>📝 Quiz</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card card-pad" style="text-align:center;padding:40px 24px">' +
-        '<div style="font-size:40px;margin-bottom:14px">⚡</div>' +
-        '<div style="font-size:15px;font-weight:800;margin-bottom:8px">Unlock AI Study Tools</div>' +
-        '<div style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:20px">Paste your notes or Becker material and instantly get flashcards, quizzes, and summaries. Pro and above.</div>' +
-        '<button class="btn btn-primary" style="font-size:13px;padding:11px 28px;margin:0 auto" onclick="openUpgradeModal(\'AI Study Tools\')">Start Free Trial →</button>' +
-        '<div style="font-size:10px;color:var(--mut);margin-top:8px">7 days free · Cancel anytime</div>' +
-      '</div>' +
-    '</div>';
+function _buildStudyToolsPanel(){
+  const hasCards=_fc.cards.length>0;
+  const hasQuiz=_fc.quizQ.length>0;
+  const hasKey=!!_fcGetApiKey();
+
+  if(!isPro()&&!hasCards&&!hasQuiz){
+    return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">
+      <div class="card card-pad">
+        <div style="font-size:15px;font-weight:800;margin-bottom:4px">AI Flashcard Generator</div>
+        <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste any CPA prep material — Ledger generates precise flashcards, MCQ quizzes, and summaries.</div>
+        <textarea disabled placeholder="Upgrade to Pro to use AI Study Tools…" style="width:100%;min-height:120px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--mut);font-size:12px;resize:none;opacity:.5"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;opacity:.4;pointer-events:none">
+          <button class="btn btn-primary" style="justify-content:center" disabled>⚡ Flashcards</button>
+          <button class="btn btn-ind" style="justify-content:center" disabled>📝 Quiz</button>
+        </div>
+      </div>
+      <div class="card card-pad" style="text-align:center;padding:40px 24px">
+        <div style="font-size:40px;margin-bottom:14px">⚡</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:8px">Unlock AI Study Tools</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:20px">Powered by Claude AI — paste your Becker/Gleim notes and get exam-quality flashcards instantly.</div>
+        <button class="btn btn-primary" style="font-size:13px;padding:11px 28px;margin:0 auto" onclick="openUpgradeModal('AI Study Tools')">Start Free Trial →</button>
+        <div style="font-size:10px;color:var(--mut);margin-top:8px">7 days free · Cancel anytime</div>
+      </div>
+    </div>`;
   }
-  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">' +
-    '<div>' +
-      '<div class="card card-pad" style="margin-bottom:16px">' +
-        '<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Study Material</div>' +
-        '<div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste notes, Becker/Gleim text, or any CPA prep material — Ledger turns it into flashcards, quizzes, and summaries instantly.</div>' +
-        '<div style="display:flex;gap:8px;margin-bottom:12px">' +
-          '<button id="fc-mode-text" class="btn btn-primary btn-sm" onclick="fcSetInputMode(\'text\')">Paste Text</button>' +
-          '<button id="fc-mode-pdf" class="btn btn-ghost btn-sm" onclick="document.getElementById(\'fc-pdf-input\').click()">Upload PDF</button>' +
-          '<input id="fc-pdf-input" type="file" accept=".pdf,application/pdf" style="display:none" onchange="fcLoadPdf(this)">' +
-        '</div>' +
-        '<textarea id="fc-input-text" placeholder="Paste your study notes, Becker MCQ explanations, Gleim outlines, or any CPA prep material here…" style="width:100%;min-height:200px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit" onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'"></textarea>' +
-        '<div id="fc-pdf-status" style="display:none;margin-top:8px;font-size:11px;color:var(--grn);font-weight:600"></div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">' +
-          '<button class="btn btn-primary" style="justify-content:center" onclick="fcGenerate(\'flashcard\')">⚡ Flashcards</button>' +
-          '<button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate(\'quiz\')">📝 Quiz</button>' +
-        '</div>' +
-        '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate(\'summary\')">📄 Summary</button>' +
-        '<div id="fc-gen-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:var(--mut)"></div>' +
-      '</div>' +
-      (_fc.summaryText ?
-        '<div class="card card-pad"><div class="section-title">Summary</div><div style="font-size:12px;color:var(--sub);line-height:1.75;white-space:pre-wrap">' + _fc.summaryText + '</div></div>' : '') +
-    '</div>' +
-    '<div>' +
-      (hasCards && _fc.mode === 'flashcard' ? _buildFlashcardViewer() : '') +
-      (hasQuiz && _fc.mode === 'quiz' ? _buildQuizViewer() : '') +
-      (!hasCards && !hasQuiz ?
-        '<div class="card card-pad" style="text-align:center;padding:48px 24px">' +
-          '<div style="font-size:48px;margin-bottom:16px;opacity:.2">⚡</div>' +
-          '<div style="font-size:15px;font-weight:800;margin-bottom:8px;color:var(--sub)">Ready to generate</div>' +
-          '<div style="font-size:12px;color:var(--mut);line-height:1.7">Paste your study material on the left,<br>then click <strong>Flashcards</strong> or <strong>Quiz</strong>.</div>' +
-        '</div>' : '') +
-    '</div>' +
-  '</div>';
+
+  if(_fc.view==='decks') return _buildDecksView();
+
+  const decks=_fcGetDecks();
+  const deckCount=Object.keys(decks).length;
+
+  // Tab bar
+  const tabBar=`<div style="display:flex;gap:0;border-bottom:2px solid var(--bdr);margin-bottom:16px">
+    <button onclick="_fc.view='generate';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:${_fc.view==='generate'?800:600};cursor:pointer;border-bottom:2px solid ${_fc.view==='generate'?'var(--ind)':'transparent'};color:${_fc.view==='generate'?'var(--ind)':'var(--mut)'};margin-bottom:-2px">Generate</button>
+    <button onclick="_fc.view='decks';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--mut);margin-bottom:-2px">My Decks${deckCount?` <span style="background:var(--ind);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px">${deckCount}</span>`:''}</button>
+  </div>`;
+
+  // API key banner
+  const apiBanner=!hasKey
+    ?`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(90deg,var(--pur-bg),var(--ind-bg));border:1px solid rgba(147,51,234,.2);border-radius:10px;margin-bottom:14px">
+        <div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--pur)">Add Anthropic API key for true AI generation</div><div style="font-size:11px;color:var(--mut)">Without it: smart local parsing. With it: Claude understands your material precisely.</div></div>
+        <button onclick="openFcApiKeyModal()" style="padding:7px 14px;background:linear-gradient(135deg,var(--pur),#7c3aed);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Add Key →</button>
+      </div>`
+    :`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--grn-bg);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:14px">
+        <span style="font-size:11px;font-weight:700;color:var(--grn)">✓ Claude AI active — cards generated by AI</span>
+        <button onclick="openFcApiKeyModal()" style="margin-left:auto;padding:3px 10px;background:transparent;border:1px solid var(--grn);border-radius:6px;cursor:pointer;font-size:10px;color:var(--grn)">Change</button>
+      </div>`;
+
+  const genOptions=`<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:100px">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:5px">Cards</label>
+      <div style="display:flex;align-items:center;gap:7px">
+        <input type="range" id="fc-count" min="5" max="30" step="5" value="${_fc.genCount}" oninput="document.getElementById('fc-count-lbl').textContent=this.value;_fc.genCount=parseInt(this.value)" style="flex:1;accent-color:var(--ind)">
+        <span id="fc-count-lbl" style="font-size:14px;font-weight:900;color:var(--ind);min-width:22px">${_fc.genCount}</span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:130px">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:5px">Focus</label>
+      <select id="fc-type" onchange="_fc.genType=this.value" style="width:100%;padding:7px 9px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;outline:none">
+        <option value="mixed"${_fc.genType==='mixed'?' selected':''}>Mixed (recommended)</option>
+        <option value="definitions"${_fc.genType==='definitions'?' selected':''}>Definitions</option>
+        <option value="rules"${_fc.genType==='rules'?' selected':''}>Rules & Requirements</option>
+        <option value="applied"${_fc.genType==='applied'?' selected':''}>Applied Scenarios</option>
+      </select>
+    </div>
+  </div>`;
+
+  const leftPanel=`<div>
+    ${tabBar}${apiBanner}
+    <div class="card card-pad" style="margin-bottom:12px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Study Material</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">Paste Becker/Gleim notes, AICPA standards, MCQ explanations, or any CPA prep text.</div>
+      ${genOptions}
+      <textarea id="fc-input-text" placeholder="Paste your CPA study material here…&#10;&#10;Works great with:&#10;• Becker / Gleim lecture notes&#10;• AICPA standards text&#10;• MCQ answer explanations&#10;• Chapter outlines&#10;• Your own handwritten notes"
+        style="width:100%;min-height:180px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"
+        onfocus="this.style.borderColor='var(--ind)'" onblur="this.style.borderColor='var(--bdr)'">${_fc.lastInput||''}</textarea>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-ghost btn-xs" onclick="document.getElementById('fc-pdf-input').click()">📄 PDF</button>
+        <input id="fc-pdf-input" type="file" accept=".pdf,application/pdf" style="display:none" onchange="fcLoadPdf(this)">
+      </div>
+      <div id="fc-pdf-status" style="display:none;margin-top:6px;font-size:11px;color:var(--grn);font-weight:600"></div>
+      <div id="fc-gen-status" style="display:none;margin-top:10px;padding:10px 12px;background:var(--ind-bg);border-radius:8px;font-size:12px;font-weight:600;color:var(--ind)"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <button class="btn btn-primary" style="justify-content:center" onclick="fcGenerate('flashcard')" ${_fc.generating?'disabled':''}>
+          ${_fc.generating?'<span style="animation:spin 1s linear infinite;display:inline-block;margin-right:4px">⟳</span> Generating…':'⚡ Flashcards'}
+        </button>
+        <button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate('quiz')" ${_fc.generating?'disabled':''}>📝 Quiz</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate('summary')" ${_fc.generating?'disabled':''}>📄 Summary</button>
+    </div>
+    ${_fc.summaryText?`<div class="card card-pad"><div class="section-title">Summary</div><div style="font-size:12px;color:var(--sub);line-height:1.75;white-space:pre-wrap">${_fc.summaryText}</div></div>`:''}
+  </div>`;
+
+  const rightPanel=`<div>
+    ${hasCards&&_fc.mode==='flashcard'?_buildFlashcardViewer():''}
+    ${hasQuiz&&_fc.mode==='quiz'?_buildQuizViewer():''}
+    ${hasCards?`<div class="card card-pad" style="margin-top:12px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px">Save deck</div>
+      <div style="display:flex;gap:8px">
+        <input id="fc-save-name" type="text" placeholder="Deck name (e.g. FAR — Revenue Recognition)" style="flex:1;padding:8px 11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;outline:none">
+        <button class="btn btn-grn btn-sm" style="white-space:nowrap" onclick="fcSaveDeck()">Save →</button>
+      </div>
+    </div>`:''}
+    ${!hasCards&&!hasQuiz?`<div class="card card-pad" style="text-align:center;padding:48px 24px">
+      <div style="font-size:48px;margin-bottom:16px;opacity:.18">⚡</div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:8px;color:var(--sub)">Ready to generate</div>
+      <div style="font-size:12px;color:var(--mut);line-height:1.7">Paste your study material on the left,<br>then click <strong>Flashcards</strong> or <strong>Quiz</strong>.</div>
+    </div>`:''}
+  </div>`;
+
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">${leftPanel}${rightPanel}</div>`;
 }
+
+function _buildDecksView(){
+  const decks=_fcGetDecks();
+  const deckArr=Object.values(decks).sort((a,b)=>b.created-a.created);
+  const tabBar=`<div style="display:flex;gap:0;border-bottom:2px solid var(--bdr);margin-bottom:20px">
+    <button onclick="_fc.view='generate';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--mut);margin-bottom:-2px">Generate</button>
+    <button onclick="_fc.view='decks';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:800;cursor:pointer;border-bottom:2px solid var(--ind);color:var(--ind);margin-bottom:-2px">My Decks <span style="background:var(--ind);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px">${deckArr.length}</span></button>
+  </div>`;
+  if(!deckArr.length)return tabBar+`<div style="text-align:center;padding:60px 24px"><div style="font-size:48px;margin-bottom:16px;opacity:.2">📚</div><div style="font-size:15px;font-weight:800;margin-bottom:8px;color:var(--sub)">No saved decks yet</div><div style="font-size:12px;color:var(--mut)">Generate flashcards and click "Save deck" to build your library.</div></div>`;
+  return tabBar+`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">`+
+    deckArr.map(d=>{
+      const now=Date.now();
+      const due=d.cards.filter(c=>(c.nextReview||0)<=now).length;
+      const mastered=d.cards.filter(c=>(c.timesCorrect||0)>=3).length;
+      const pct=d.cards.length?Math.round(mastered/d.cards.length*100):0;
+      return `<div class="card card-pad" style="cursor:pointer" onclick="fcLoadDeck('${d.id}')">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+          <div style="flex:1;min-width:0">
+            ${d.section?`<span class="badge badge-${d.section}" style="font-size:9px;margin-bottom:5px;display:inline-flex">${d.section}</span><br>`:''}
+            <div style="font-size:13px;font-weight:800;line-height:1.3;margin-top:2px">${d.name}</div>
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">${d.cards.length} cards · ${new Date(d.created).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+          </div>
+          <button onclick="event.stopPropagation();fcDeleteDeck('${d.id}')" style="background:transparent;border:none;cursor:pointer;font-size:16px;color:var(--mut);padding:0 4px;line-height:1">×</button>
+        </div>
+        <div style="height:4px;background:var(--surf3);border-radius:4px;margin-bottom:8px"><div style="height:100%;width:${pct}%;background:var(--grn);border-radius:4px"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;color:var(--mut)">${mastered}/${d.cards.length} mastered</span>
+          ${due>0?`<span style="font-size:11px;font-weight:700;color:var(--ora)">${due} due today</span>`:`<span style="font-size:11px;color:var(--grn)">✓ Up to date</span>`}
+        </div>
+      </div>`;
+    }).join('')+'</div>';
+}
+
+function _fcRender(){const el=document.getElementById('page-content');if(el&&currentTab==='studylab')el.innerHTML=buildStudyLab();}
 // ─── AI Tools panel (Elite) ──────────────────────────────────────────────────
 function _buildAIToolsPanel() {
   if (!isElite()) {
@@ -8570,37 +8687,68 @@ function _buildAIFlashcardsLegacy() {
   '</div>';
 }
 
-function _buildFlashcardViewer() {
-  const card = _fc.cards[_fc.current];
-  if (!card) return '';
-  const total = _fc.cards.length;
-  const pct = Math.round((_fc.current + 1) / total * 100);
-  return '<div class="card card-pad">' +
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
-      '<div class="section-title" style="margin-bottom:0">Flashcards</div>' +
-      '<span style="font-size:11px;color:var(--mut)">' + (_fc.current+1) + ' / ' + total + '</span>' +
-    '</div>' +
-    '<div style="height:5px;background:var(--surf3);border-radius:4px;margin-bottom:18px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:var(--ind);border-radius:4px;transition:width .3s"></div></div>' +
-    // Card flip area
-    '<div onclick="fcFlipCard()" style="cursor:pointer;min-height:180px;border-radius:14px;border:1.5px solid ' + (_fc.flipped ? 'var(--grn)' : 'var(--ind)') + ';background:' + (_fc.flipped ? 'var(--grn-bg)' : 'var(--ind-bg)') + ';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transition:all .25s;position:relative">' +
-      '<div style="position:absolute;top:10px;right:12px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:' + (_fc.flipped ? 'var(--grn)' : 'var(--ind)') + '">' + (_fc.flipped ? 'Answer' : 'Question') + '</div>' +
-      '<div style="font-size:14px;font-weight:700;line-height:1.6;color:var(--txt)">' + (_fc.flipped ? card.a : card.q) + '</div>' +
-      '<div style="font-size:11px;color:var(--mut);margin-top:12px">' + (_fc.flipped ? '' : 'Tap to reveal answer') + '</div>' +
-    '</div>' +
-    '<div style="display:flex;gap:8px;margin-top:14px">' +
-      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(-1)" ' + (_fc.current===0?'disabled':'') + '>← Prev</button>' +
-      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcFlipCard()">Flip</button>' +
-      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(1)" ' + (_fc.current===total-1?'disabled':'') + '>Next →</button>' +
-    '</div>' +
-    '<div style="display:flex;gap:8px;margin-top:8px">' +
-      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcShuffle()">🔀 Shuffle</button>' +
-      '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcRestart()">↺ Restart</button>' +
-    '</div>' +
-    // Mini index
-    '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:4px">' +
-      _fc.cards.map(function(c,i){ return '<div onclick="fcGoto('+i+')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;background:' + (i===_fc.current?'var(--ind)':'var(--surf3)') + ';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:' + (i===_fc.current?'#fff':'var(--mut)') + ';transition:background .15s">' + (i+1) + '</div>'; }).join('') +
-    '</div>' +
-  '</div>';
+function _buildFlashcardViewer(){
+  const card=_fc.cards[_fc.current];
+  if(_fc.current>=_fc.cards.length) return _buildFlashcardComplete();
+  if(!card) return '';
+  const total=_fc.cards.length;
+  const pct=Math.round((_fc.current+1)/total*100);
+  const correct=_fc.cards.filter(c=>(c.timesCorrect||0)>0).length;
+  const missed=_fc.cards.filter(c=>(c.timesMissed||0)>0).length;
+  const hasStats=((card.timesCorrect||0)+(card.timesMissed||0))>0;
+  return `<div class="card card-pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="section-title" style="margin-bottom:0">Flashcards</div>
+      <span style="font-size:11px;color:var(--mut)">${_fc.current+1} / ${total}</span>
+    </div>
+    <div style="height:5px;background:var(--surf3);border-radius:4px;margin-bottom:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--ind);border-radius:4px;transition:width .3s"></div></div>
+    <div style="display:flex;gap:14px;font-size:10px;font-weight:700;margin-bottom:12px">
+      <span style="color:var(--grn)">✓ ${correct} known</span>
+      <span style="color:var(--red)">✗ ${missed} missed</span>
+      <span style="color:var(--mut);margin-left:auto">Tap card to flip</span>
+    </div>
+    <div onclick="fcFlipCard()" style="cursor:pointer;min-height:160px;border-radius:14px;border:2px solid ${_fc.flipped?'var(--grn)':'var(--ind)'};background:${_fc.flipped?'var(--grn-bg)':'var(--ind-bg)'};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 24px;text-align:center;transition:all .2s;position:relative">
+      <div style="position:absolute;top:10px;left:14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:${_fc.flipped?'var(--grn)':'var(--ind)'}">${_fc.flipped?'Answer':'Question'}</div>
+      ${hasStats?`<div style="position:absolute;top:8px;right:12px;font-size:9px;color:var(--mut)">${(card.timesCorrect||0)>0?`<span style="color:var(--grn)">✓${card.timesCorrect}</span> `:''}${(card.timesMissed||0)>0?`<span style="color:var(--red)">✗${card.timesMissed}</span>`:''}</div>`:''}
+      <div style="font-size:14px;font-weight:700;line-height:1.65;color:var(--txt);white-space:pre-line">${_fc.flipped?card.a:card.q}</div>
+      ${!_fc.flipped?'<div style="font-size:11px;color:var(--mut);margin-top:10px">Tap to reveal</div>':''}
+    </div>
+    ${_fc.flipped
+      ?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
+          <button onclick="fcSRSGrade(0)" style="padding:10px 4px;background:var(--red-bg);border:1.5px solid var(--red);border-radius:10px;cursor:pointer;font-size:11px;font-weight:800;color:var(--red)">✗ Missed</button>
+          <button onclick="fcSRSGrade(1)" style="padding:10px 4px;background:var(--amb-bg);border:1.5px solid var(--amb);border-radius:10px;cursor:pointer;font-size:11px;font-weight:800;color:var(--amb)">~ Almost</button>
+          <button onclick="fcSRSGrade(2)" style="padding:10px 4px;background:var(--grn-bg);border:1.5px solid var(--grn);border-radius:10px;cursor:pointer;font-size:11px;font-weight:800;color:var(--grn)">✓ Got it!</button>
+        </div>`
+      :`<div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(-1)"${_fc.current===0?' disabled':''}>← Prev</button>
+          <button class="btn btn-primary btn-sm" style="flex:2;justify-content:center" onclick="fcFlipCard()">Reveal Answer</button>
+          <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(1)"${_fc.current===total-1?' disabled':''}>Next →</button>
+        </div>`}
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcShuffle()">🔀 Shuffle</button>
+      <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcRestart()">↺ Restart</button>
+    </div>
+    <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:3px">
+      ${_fc.cards.map((c,i)=>{
+        const bg=i===_fc.current?'var(--ind)':(c.timesCorrect||0)>=2?'var(--grn)':(c.timesMissed||0)>0?'#fca5a5':'var(--surf3)';
+        const fc=i===_fc.current||((c.timesCorrect||0)>=2)?'#fff':'var(--mut)';
+        return `<div onclick="fcGoto(${i})" style="width:22px;height:22px;border-radius:5px;cursor:pointer;background:${bg};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${fc}">${i+1}</div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function _buildFlashcardComplete(){
+  const total=_fc.cards.length;
+  const correct=_fc.cards.filter(c=>(c.timesCorrect||0)>0).length;
+  const pct=total?Math.round(correct/total*100):0;
+  const color=pct>=80?'var(--grn)':pct>=60?'var(--amb)':'var(--red)';
+  return `<div class="card card-pad" style="text-align:center">
+    <div style="font-size:42px;font-weight:900;color:${color};letter-spacing:-.04em">${pct}%</div>
+    <div style="font-size:15px;font-weight:800;margin-top:4px">${correct} / ${total} known</div>
+    <div style="font-size:12px;color:var(--mut);margin:8px 0 20px">${pct>=80?'Great session! Review the missed cards tomorrow.':pct>=60?'Good progress. Focus on the red cards.':'Keep drilling — repetition is how this sticks.'}</div>
+    <button class="btn btn-primary btn-sm" onclick="fcRestart()" style="margin:0 auto">↺ Study Again</button>
+  </div>`;
 }
 
 function _buildQuizViewer() {
@@ -8652,145 +8800,250 @@ function _buildQuizResults() {
 }
 
 // ── AI GENERATION ENGINE ──
-function fcGenerate(type) {
-  const text = (document.getElementById('fc-input-text')?.value || '').trim();
-  if (!text || text.length < 30) {
-    showToast('Paste at least a sentence of study material first', 'err');
-    return;
-  }
-  const statusEl = document.getElementById('fc-gen-status');
-  if (statusEl) { statusEl.style.display='block'; statusEl.textContent='Generating…'; }
-
-  // Client-side NLP generation
-  setTimeout(function() {
-    if (type === 'flashcard') {
-      _fc.cards = _generateFlashcards(text);
-      _fc.current = 0; _fc.flipped = false; _fc.mode = 'flashcard';
-      showToast(_fc.cards.length + ' flashcards generated! ✓', 'ok');
-    } else if (type === 'quiz') {
-      _fc.quizQ = _generateQuiz(text);
-      _fc.quizCur = 0; _fc.quizSel = null; _fc.quizAns = false; _fc.quizScore = 0; _fc.mode = 'quiz';
-      showToast(_fc.quizQ.length + ' quiz questions generated! ✓', 'ok');
-    } else if (type === 'summary') {
-      _fc.summaryText = _generateSummary(text);
-      showToast('Summary generated! ✓', 'ok');
-    }
-    if (statusEl) statusEl.style.display = 'none';
-    // Re-render the flashcards tab
-    const el = document.getElementById('page-content');
-    if (el && currentTab === 'studylab') el.innerHTML = buildStudyLab();
-  }, 420);
+function fcGenerate(type){
+  _fcGenerateAsync(type).catch(e=>{ _fc.generating=false; _fcRender(); showToast('Generation error: '+e.message,'err'); });
 }
 
-function _generateFlashcards(text) {
-  const cards = [];
-  // Split by common sentence delimiters and numbered lists
-  const sentences = text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n{2,}/).filter(s=>s.trim().length>20);
+async function _fcGenerateAsync(type){
+  const text=(document.getElementById('fc-input-text')?.value||'').trim();
+  if(!text||text.length<20){showToast('Paste study material first','err');return;}
+  _fc.lastInput=text;
+  _fc.generating=true;
+  const statusEl=document.getElementById('fc-gen-status');
+  if(statusEl){statusEl.style.display='block';statusEl.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block;margin-right:5px">⟳</span>Generating with AI…';}
+  _fcRender();
 
-  sentences.forEach(function(sent) {
-    sent = sent.trim();
-    // Definition pattern: "X is/are Y" or "X — Y"
-    const defMatch = sent.match(/^(.{8,60}?)\s+(?:is|are|refers? to|defined as|means?)\s+(.{10,})/i);
-    if (defMatch) {
-      cards.push({q:'What ' + (defMatch[1].toLowerCase().startsWith('the ')?'is':'is') + ' ' + defMatch[1].replace(/^\d+\.\s*/,'').trim() + '?', a: defMatch[2].replace(/\.$/, '').trim() + '.'});
-      return;
-    }
-    // Numbered list items
-    const listMatch = sent.match(/^(\d+[\.\)]\s*)(.+)/);
-    if (listMatch && sent.length < 200) {
-      cards.push({q:'What is step ' + listMatch[1].replace(/[.\)]/,'').trim() + ' in the process described?', a: listMatch[2].trim()});
-      return;
-    }
-    // "X requires Y" / "X must Y" / "X should Y"
-    const reqMatch = sent.match(/^(.{8,80}?)\s+(?:requires?|must|should|shall)\s+(.{10,})/i);
-    if (reqMatch) {
-      cards.push({q:'What does ' + reqMatch[1].trim() + ' require?', a: reqMatch[2].replace(/\.$/, '').trim() + '.'});
-      return;
-    }
-    // Key terms with colon
-    const colonMatch = sent.match(/^([^:]{5,50}):\s+(.{15,})/);
-    if (colonMatch) {
-      cards.push({q: colonMatch[1].trim() + ':', a: colonMatch[2].trim()});
-      return;
-    }
-    // Generic: turn sentence into fill-in or question
-    if (sent.length > 40 && sent.length < 300) {
-      // Extract subject + predicate for fill-in-blank style
-      const words = sent.split(' ');
-      if (words.length > 8) {
-        const blankIdx = Math.floor(words.length * 0.55);
-        const blank = words[blankIdx];
-        if (blank.length > 3) {
-          const withBlank = words.map(function(w,i){ return i===blankIdx?'______':w; }).join(' ');
-          cards.push({q:'Complete: ' + withBlank, a:'The missing term is: <strong>' + blank + '</strong>. Full: ' + sent});
-        }
+  const hasKey=!!_fcGetApiKey();
+  const count=parseInt(document.getElementById('fc-count')?.value)||_fc.genCount||15;
+  const ftype=document.getElementById('fc-type')?.value||_fc.genType||'mixed';
+  _fc.genCount=count; _fc.genType=ftype;
+
+  try{
+    if(type==='flashcard'){
+      let cards=null;
+      if(hasKey){
+        const focusInstr=ftype==='definitions'?'Focus exclusively on defining key terms and concepts.':
+          ftype==='rules'?'Focus exclusively on rules, requirements, thresholds, and standards.':
+          ftype==='applied'?'Focus on applied scenarios, calculations, comparisons, and journal entries.':
+          'Cover a balanced mix: definitions (40%), rules/requirements (35%), applied scenarios (25%).';
+        const raw=await _fcCallAI(`Generate exactly ${count} high-quality CPA exam flashcards from the material below.
+
+${focusInstr}
+
+Requirements:
+- Questions must be precise and specific — no vague or overly broad questions
+- Answers must be accurate, complete, and concise (1-4 sentences)
+- Cover the most testable, exam-relevant concepts
+- For lists/steps: format answers with numbered items
+- Questions should test genuine understanding, not just surface recall
+- Do NOT repeat very similar questions
+
+Output ONLY a valid JSON array, no other text:
+[{"q":"question","a":"answer"},...]
+
+Material:
+${text.slice(0,6000)}`);
+        const parsed=_fcParseJSON(raw);
+        if(Array.isArray(parsed)) cards=parsed.filter(c=>c.q&&c.a).slice(0,count).map(c=>({q:String(c.q).trim(),a:String(c.a).trim()}));
       }
+      if(!cards||!cards.length) cards=_generateFlashcards(text,count,ftype);
+      _fc.cards=cards.map((c,i)=>({id:'c'+i+Date.now(),q:c.q,a:c.a,ease:2.5,interval:1,nextReview:Date.now(),timesCorrect:0,timesMissed:0}));
+      _fc.current=0;_fc.flipped=false;_fc.mode='flashcard';
+      showToast(_fc.cards.length+' flashcards ready! ✓','ok');
+
+    }else if(type==='quiz'){
+      let qs=null;
+      if(hasKey){
+        const raw=await _fcCallAI(`Generate exactly ${Math.min(count,12)} CPA exam MCQ questions from the material below.
+
+Requirements:
+- Each question must have exactly 4 answer choices with ONE correct answer
+- Distractors must be plausible — not obviously wrong
+- Questions should test genuine understanding
+- Include a 1-2 sentence explanation of why the correct answer is right
+
+Output ONLY a valid JSON array, no other text:
+[{"q":"question","choices":["choice A","choice B","choice C","choice D"],"correct":0,"exp":"explanation"},...]
+
+The "correct" field is the 0-based index of the correct choice.
+
+Material:
+${text.slice(0,6000)}`);
+        const parsed=_fcParseJSON(raw);
+        if(Array.isArray(parsed)) qs=parsed.filter(q=>q.q&&Array.isArray(q.choices)&&q.choices.length===4&&typeof q.correct==='number').slice(0,12);
+      }
+      if(!qs||!qs.length) qs=_generateQuiz(text);
+      _fc.quizQ=qs;_fc.quizCur=0;_fc.quizSel=null;_fc.quizAns=false;_fc.quizScore=0;_fc.mode='quiz';
+      showToast(qs.length+' quiz questions ready! ✓','ok');
+
+    }else if(type==='summary'){
+      let summary=null;
+      if(hasKey){
+        summary=await _fcCallAI(`Create a structured CPA study summary of the material below.
+
+Format with these sections (only include sections that apply to the material):
+
+## Key Concepts
+- [most important concepts as bullet points]
+
+## Rules & Requirements
+- [specific rules, thresholds, requirements]
+
+## Quick Reference
+- [formulas, key numbers, ratios, acronyms]
+
+## Common Exam Traps
+- [frequently tested nuances and mistakes to avoid]
+
+Be precise and concise. Cover everything exam-relevant.
+
+Material:
+${text.slice(0,6000)}`,2048);
+      }
+      _fc.summaryText=summary||_generateSummary(text);
+      showToast('Summary ready! ✓','ok');
     }
-  });
+  }catch(err){
+    showToast('AI error: '+err.message+'. Falling back to local generation.','info');
+    if(type==='flashcard'){_fc.cards=_generateFlashcards(text,count,ftype).map((c,i)=>({id:'c'+i+Date.now(),q:c.q,a:c.a,ease:2.5,interval:1,nextReview:Date.now(),timesCorrect:0,timesMissed:0}));_fc.current=0;_fc.flipped=false;_fc.mode='flashcard';}
+    else if(type==='quiz'){_fc.quizQ=_generateQuiz(text);_fc.quizCur=0;_fc.quizSel=null;_fc.quizAns=false;_fc.quizScore=0;_fc.mode='quiz';}
+    else{_fc.summaryText=_generateSummary(text);}
+  }
 
-  // Deduplicate and limit
-  const unique = [];
-  const seen = new Set();
-  cards.forEach(function(c){ const k=c.q.slice(0,40); if(!seen.has(k)){seen.add(k);unique.push(c);} });
-  return unique.slice(0, 40);
+  _fc.generating=false;
+  _fcRender();
 }
 
-function _generateQuiz(text) {
-  const flashcards = _generateFlashcards(text);
-  const questions = [];
+function _generateFlashcards(text,maxCount,focusType){
+  maxCount=maxCount||15;
+  const cards=[];
+  const seenQ=new Set();
+  const add=(q,a)=>{
+    q=(q||'').trim();a=(a||'').trim();
+    if(!q||!a||q.length<8||a.length<4)return;
+    const k=q.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,35);
+    if(seenQ.has(k))return;
+    seenQ.add(k);
+    cards.push({q,a});
+  };
 
-  // Turn each flashcard into an MCQ
-  flashcards.slice(0, 15).forEach(function(fc, idx) {
-    // Strip HTML from answer
-    const correctAnswer = fc.a.replace(/<[^>]+>/g,'').replace('The missing term is: ','').replace(/Full: .*/,'').trim();
-    if (correctAnswer.length < 5) return;
+  const lines=text.replace(/\r\n/g,'\n').split('\n');
+  let currentHeader='';
 
-    // Generate distractors from other flashcard answers
-    const otherAnswers = flashcards
-      .filter(function(o,i){ return i !== idx; })
-      .map(function(o){ return o.a.replace(/<[^>]+>/g,'').replace('The missing term is: ','').replace(/Full: .*/,'').trim(); })
-      .filter(function(a){ return a.length > 4 && a.length < 120; });
+  // Pass 1: detect headers and grouped lists
+  const listGroups=[];
+  let curList=null;
+  lines.forEach(line=>{
+    const l=line.trim();
+    if(!l)return;
+    // Header detection
+    if(/^#{1,4}\s/.test(l)){currentHeader=l.replace(/^#+\s*/,'');curList=null;return;}
+    if(l.length<60&&l.length>4&&/^[A-Z][^.!?]*$/.test(l)&&!/[,;:]/.test(l)){currentHeader=l;curList=null;return;}
+    // Numbered list
+    const nm=l.match(/^(\d+)[\.\)]\s+(.{5,200})$/);
+    if(nm){
+      if(!curList)curList={header:currentHeader,type:'numbered',items:[]};
+      curList.items.push(nm[2].trim());
+      return;
+    }
+    // Bullet list
+    const bm=l.match(/^[•\-\*\u2022]\s+(.{5,200})$/);
+    if(bm){
+      if(!curList)curList={header:currentHeader,type:'bullet',items:[]};
+      curList.items.push(bm[1].trim());
+      return;
+    }
+    // End of list
+    if(curList&&curList.items.length>=3){listGroups.push({...curList});curList=null;}
+    else curList=null;
+  });
+  if(curList&&curList.items.length>=3)listGroups.push({...curList});
 
-    // Pick 3 distractors
-    const shuffled = otherAnswers.sort(function(){ return Math.random()-.5; }).slice(0,3);
-    if (shuffled.length < 2) return;
-
-    // Build choices array (correct + distractors, shuffled)
-    const allChoices = [correctAnswer].concat(shuffled).sort(function(){ return Math.random()-.5; });
-    const correctIdx = allChoices.indexOf(correctAnswer);
-
-    questions.push({
-      q: fc.q,
-      choices: allChoices.map(function(c){ return c.slice(0,120); }),
-      correct: correctIdx,
-      exp: 'The correct answer is based on the material you provided. Review the relevant section for more context.'
+  // Build cards from list groups
+  if(focusType!=='definitions'){
+    listGroups.forEach(lg=>{
+      if(lg.header&&lg.items.length>=3){
+        const q=`What are the ${lg.type==='numbered'?'steps/items in':'key points of'} ${lg.header}?`;
+        const a=lg.items.map((item,i)=>lg.type==='numbered'?`${i+1}) ${item}`:`• ${item}`).join('\n');
+        add(q,a);
+      }
     });
+  }
+
+  // Pass 2: sentence-level patterns
+  const sentences=text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n{2,}/).filter(s=>s.trim().length>15&&s.trim().length<600);
+  sentences.forEach(raw=>{
+    const s=raw.trim();
+
+    // Pattern: "X is/are/means/defined as Y"
+    const def=/^(.{5,70}?)\s+(is|are|refers? to|is defined as|means?|represents?)\s+(.{10,300})/i.exec(s);
+    if(def&&!/^(this|that|it|they|we|you|there)\b/i.test(def[1])&&focusType!=='rules'&&focusType!=='applied'){
+      const term=def[1].replace(/^\d+[\.\)]\s*/,'').trim();
+      add(`What is ${term}?`,def[3].replace(/\.$/,'').trim()+'.');
+    }
+
+    // Pattern: "X requires/must/shall/cannot Y"
+    const req=/^(.{5,80}?)\s+(requires?|must|shall|should|cannot|may not|is required to)\s+(.{10,300})/i.exec(s);
+    if(req&&focusType!=='definitions'){
+      const subj=req[1].replace(/^\d+[\.\)]\s*/,'').trim();
+      add(`What does ${subj} ${req[2].toLowerCase()}?`,req[3].replace(/\.$/,'').trim()+'.');
+    }
+
+    // Pattern: Colon "Term: definition"
+    const colon=/^([A-Z][^:]{3,60}):\s+(.{15,300})/.exec(s);
+    if(colon){add(colon[1].trim()+':',colon[2].trim());}
+
+    // Pattern: "Under/Per [standard], X"
+    const under=/^(?:Under|Per|According to|Pursuant to)\s+(.{3,60}?),\s+(.{15,300})/i.exec(s);
+    if(under&&focusType!=='definitions'){add(`Under ${under[1]}, what applies?`,under[2].trim());}
+
+    // Pattern: "X consists of/includes N [things]"
+    const list=/^(.{5,70}?)\s+(?:consists? of|includes?|contains?)\s+(\d+)\s+(.{5,60})/i.exec(s);
+    if(list){add(`What are the ${list[2]} ${list[3].split(' ').slice(0,5).join(' ')}?`,s.replace(/\.$/,'').trim()+'.');}
+
+    // Pattern: difference/comparison
+    const comp=/(?:difference between|compared to|in contrast to)\s+(.{3,50}?)\s+and\s+(.{3,50})/i.exec(s);
+    if(comp&&focusType!=='definitions'){add(`What is the difference between ${comp[1].trim()} and ${comp[2].trim()}?`,s.trim());}
+
+    // Pattern: percentage/threshold rules
+    const num=/^(.{5,70}?)\s+(?:is|equals?|of)\s+(\d+(?:\.\d+)?%|\$[\d,]+)/i.exec(s);
+    if(num&&s.length<200){add(`What is the ${num[1].trim()} threshold or amount?`,s.trim());}
   });
 
-  return questions.slice(0, 12);
+  return cards.slice(0,maxCount);
 }
 
-function _generateSummary(text) {
-  // Extract key sentences using a simple scoring heuristic
-  const sentences = text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n+/).filter(s=>s.trim().length>25);
-  const keywords = ['must','requires','defined','means','important','critical','note','key','remember','under','rule','standard','regulation','percent','%','hours','section','exam'];
-
-  const scored = sentences.map(function(s) {
-    let score = 0;
-    const lower = s.toLowerCase();
-    keywords.forEach(function(k){ if(lower.includes(k)) score+=1.5; });
-    // Prefer sentences with numbers (stats, rules)
-    if (/\d/.test(s)) score += 1;
-    // Prefer shorter sentences (more concise)
-    if (s.length < 120) score += 0.5;
-    // Penalize very long sentences
-    if (s.length > 300) score -= 2;
-    return {s: s.trim(), score: score};
+function _generateQuiz(text){
+  const cards=_generateFlashcards(text,20,'mixed');
+  if(cards.length<3)return[];
+  const questions=[];
+  cards.slice(0,12).forEach((fc,idx)=>{
+    const correct=fc.a.trim();
+    if(correct.length<5||correct.length>200)return;
+    const others=cards.filter((_,i)=>i!==idx).map(o=>o.a.trim()).filter(a=>a.length>=5&&a.length<=200&&a!==correct).sort(()=>Math.random()-.5).slice(0,3);
+    if(others.length<2)return;
+    while(others.length<3)others.push('None of the above');
+    const choices=[correct,...others].sort(()=>Math.random()-.5).slice(0,4);
+    // ensure correct is still in choices
+    if(!choices.includes(correct)){choices[0]=correct;}
+    questions.push({q:fc.q,choices:choices.map(c=>c.slice(0,140)),correct:choices.indexOf(correct),exp:`Based on the material: "${fc.a.slice(0,120)}"${fc.a.length>120?'…':''}`});
   });
+  return questions.slice(0,10);
+}
 
-  scored.sort(function(a,b){ return b.score - a.score; });
-  const topSentences = scored.slice(0, 8).map(function(x){ return '• ' + x.s; });
-  return 'Key Points:\n\n' + topSentences.join('\n\n');
+function _generateSummary(text){
+  const sentences=text.replace(/\r\n/g,'\n').split(/(?<=[.!?])\s+|\n+/).filter(s=>s.trim().length>25);
+  const kw=['must','requires','defined','means','critical','key','under','rule','standard','percent','%','section','exam','shall','cannot','prohibited'];
+  const scored=sentences.map(s=>{
+    let score=0;const low=s.toLowerCase();
+    kw.forEach(k=>{if(low.includes(k))score+=1.5;});
+    if(/\d/.test(s))score+=1;
+    if(s.length<120)score+=0.5;
+    if(s.length>300)score-=2;
+    return{s:s.trim(),score};
+  });
+  scored.sort((a,b)=>b.score-a.score);
+  return'Key Points:\n\n'+scored.slice(0,8).map(x=>'• '+x.s).join('\n\n');
 }
 
 function fcSetInputMode(mode) {
@@ -8904,6 +9157,117 @@ function fcRestartQuiz() {
   _fc.quizCur = 0; _fc.quizSel = null; _fc.quizAns = false; _fc.quizScore = 0;
   const el = document.getElementById('page-content');
   if (el && currentTab === 'studylab') el.innerHTML = buildStudyLab();
+}
+
+// ── SRS GRADING ──
+function fcSRSGrade(grade){ // 0=missed, 1=almost, 2=correct
+  const card=_fc.cards[_fc.current];
+  if(!card)return;
+  if(!card.ease)card.ease=2.5;
+  if(!card.interval)card.interval=1;
+  if(!card.timesCorrect)card.timesCorrect=0;
+  if(!card.timesMissed)card.timesMissed=0;
+
+  if(grade===2){
+    card.timesCorrect++;
+    card.ease=Math.max(1.3,card.ease+0.1);
+    card.interval=Math.max(1,Math.round(card.interval*card.ease));
+  } else if(grade===1){
+    card.interval=Math.max(1,Math.round(card.interval*0.8));
+  } else {
+    card.timesMissed++;
+    card.ease=Math.max(1.3,card.ease-0.2);
+    card.interval=1;
+  }
+  card.nextReview=Date.now()+card.interval*86400000;
+
+  // Persist to saved deck
+  if(_fc.activeDeckId){
+    const decks=_fcGetDecks();
+    const deck=decks[_fc.activeDeckId];
+    if(deck){
+      const ci=deck.cards.findIndex(c=>c.id===card.id);
+      if(ci>=0)Object.assign(deck.cards[ci],{ease:card.ease,interval:card.interval,nextReview:card.nextReview,timesCorrect:card.timesCorrect,timesMissed:card.timesMissed});
+      _fcDecks=decks;_fcSaveDecks();
+    }
+  }
+
+  _fc.current++;
+  _fc.flipped=false;
+  _fcRender();
+}
+
+// ── DECK MANAGEMENT ──
+function fcSaveDeck(){
+  if(!_fc.cards.length){showToast('No cards to save','err');return;}
+  const name=(document.getElementById('fc-save-name')?.value||'').trim()||'Deck '+new Date().toLocaleDateString();
+  const decks=_fcGetDecks();
+  const id='d'+Date.now();
+  decks[id]={id,name,section:_fc.genType||'',created:Date.now(),
+    cards:_fc.cards.map(c=>({...c,id:c.id||'c'+Math.random().toString(36).slice(2)}))};
+  _fcDecks=decks;_fcSaveDecks();
+  _fc.activeDeckId=id;
+  showToast('"'+name+'" saved — '+_fc.cards.length+' cards','ok');
+  _fcRender();
+}
+
+function fcLoadDeck(id){
+  const deck=_fcGetDecks()[id];
+  if(!deck)return;
+  _fc.cards=deck.cards.map(c=>({...c}));
+  _fc.current=0;_fc.flipped=false;_fc.mode='flashcard';
+  _fc.activeDeckId=id;_fc.view='generate';
+  _fcRender();
+}
+
+function fcDeleteDeck(id){
+  const decks=_fcGetDecks();
+  if(!decks[id])return;
+  const name=decks[id].name;
+  delete decks[id];
+  _fcDecks=decks;_fcSaveDecks();
+  showToast('"'+name+'" deleted','ok');
+  _fcRender();
+}
+
+// ── API KEY MODAL ──
+function openFcApiKeyModal(){
+  const cur=_fcGetApiKey();
+  const el=document.createElement('div');
+  el.className='modal-overlay open';
+  el.style.cssText='z-index:9999';
+  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:800">Configure AI Generation</div>
+      <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
+    </div>
+    <div style="padding:12px 14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--sub);line-height:1.65">
+      Ledger uses the <strong>Anthropic API</strong> (Claude) to generate precise, exam-quality flashcards from your material. Your key is stored only in this browser — never sent to any server.
+      <br><br>
+      Get a free API key at <strong>console.anthropic.com</strong>. Flashcard generation costs ~$0.001 per deck (claude-haiku).
+    </div>
+    <div class="form-grp">
+      <label>Anthropic API Key</label>
+      <input id="fc-apikey-input" type="password" placeholder="sk-ant-api03-…" value="${cur}" style="font-family:monospace;font-size:12px">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="fcSaveApiKey()">Save Key</button>
+      ${cur?`<button class="btn btn-red btn-sm" onclick="_fcSetApiKey('');showToast('API key removed','ok');this.closest('.modal-overlay').remove();_fcRender()">Remove</button>`:''}
+    </div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+  setTimeout(()=>document.getElementById('fc-apikey-input')?.focus(),60);
+}
+
+function fcSaveApiKey(){
+  const k=(document.getElementById('fc-apikey-input')?.value||'').trim();
+  if(!k){showToast('Enter an API key','err');return;}
+  if(!k.startsWith('sk-')){showToast('Key should start with sk-ant-…','err');return;}
+  _fcSetApiKey(k);
+  document.querySelector('.modal-overlay[style*="z-index:9999"]')?.remove();
+  showToast('API key saved — AI generation active ✓','ok');
+  _fcRender();
 }
 
 // ═══════════════════════════════════════════════
