@@ -3028,9 +3028,9 @@ function openHourGoalsModal(){
   const el=document.createElement('div');
   el.className='modal-overlay open';
   el.style.cssText='z-index:9999';
-  el.innerHTML=`<div class="modal-box" style="max-width:500px" onclick="event.stopPropagation()">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div style="font-size:16px;font-weight:800">Customize Hour Goals</div>
+  el.innerHTML=`<div class="modal-box" style="max-width:580px;padding:28px" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:17px;font-weight:800">Customize Hour Goals</div>
       <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
     </div>
     <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.55">Your readiness score and pacing alerts use these goals. Set them to match how you actually study — not a generic average.</div>
@@ -3054,7 +3054,7 @@ function openHourGoalsModal(){
         </div>
       </div>`;}).join('')}
     </div>
-    <button onclick="saveHourGoals();this.closest('.modal-overlay').remove()" style="width:100%;padding:12px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Save Hour Goals</button>
+    <button onclick="saveHourGoals();this.closest('.modal-overlay').remove()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer">Save Hour Goals</button>
   </div>`;
   el.addEventListener('click',e=>{if(e.target===el)el.remove();});
   document.body.appendChild(el);
@@ -3121,9 +3121,9 @@ function openPacingTipsModal(){
   const el=document.createElement('div');
   el.className='modal-overlay open';
   el.style.cssText='z-index:9999';
-  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+  el.innerHTML=`<div class="modal-box" style="max-width:580px;padding:28px" onclick="event.stopPropagation()">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:800">How Your Readiness Score Works</div>
+      <div style="font-size:17px;font-weight:800">How Your Readiness Score Works</div>
       <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
     </div>
     <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:16px">Your score (0–99) reflects four signals. Each is calibrated against your timeline and actual study pace — not just a raw count.</div>
@@ -3315,7 +3315,7 @@ function openStrugglingModal(){
   ];
   const q=quotes[Math.floor(Math.random()*quotes.length)];
   const streak=getStreak();
-  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+  el.innerHTML=`<div class="modal-box" style="max-width:560px;padding:28px" onclick="event.stopPropagation()">
     <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
     <div style="text-align:center;padding:8px 0 20px">
       <div style="font-size:40px;margin-bottom:12px">💪</div>
@@ -9374,9 +9374,9 @@ function openFcApiKeyModal(){
   const el=document.createElement('div');
   el.className='modal-overlay open';
   el.style.cssText='z-index:9999';
-  el.innerHTML=`<div class="modal-box" style="max-width:480px" onclick="event.stopPropagation()">
+  el.innerHTML=`<div class="modal-box" style="max-width:540px;padding:28px" onclick="event.stopPropagation()">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:800">Configure AI Generation</div>
+      <div style="font-size:17px;font-weight:800">Configure AI Generation</div>
       <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
     </div>
     <div style="padding:12px 14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--sub);line-height:1.65">
