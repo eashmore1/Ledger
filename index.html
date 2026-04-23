@@ -7725,7 +7725,76 @@ function renderProgressReport() {
           '<p style="font-size:13px;color:var(--sub);line-height:1.65;margin:0">' + ins + '</p>' +
         '</div>'; }).join('') +
       '</div>' +
+
+      '<div class="card card-pad" id="pr-ai-advice-card">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:14px">🤖</div>' +
+            '<div class="section-title" style="margin:0">AI Study Advice</div>' +
+          '</div>' +
+          (_fcGetApiKey()
+            ? '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>Powered by Claude</div>'
+            : '<button onclick="openFcApiKeyModal()" style="font-size:10px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer;padding:0">+ Add API key</button>') +
+        '</div>' +
+        '<div id="pr-ai-advice-body">' +
+          (_fcGetApiKey()
+            ? '<div style="display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:var(--ind);animation:ledger-dot 1.2s infinite;display:inline-block"></span>Analyzing your progress...</div>'
+            : '<div style="font-size:12px;color:var(--mut);line-height:1.6">Add your Claude API key to get personalized AI advice based on your actual study data — specific next steps, weak areas to focus on, and a realistic path to your exam dates.</div>') +
+        '</div>' +
+      '</div>' +
     '</div>';
+
+  if (_fcGetApiKey()) {
+    _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, days);
+  }
+}
+
+function _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, rangeDays) {
+  const secs = S.sections || [];
+  const sectionLines = secs.map(function(s) {
+    const logged = getSectionHours(s);
+    const goal = getHourGoal(s);
+    const examDate = S.examDates && S.examDates[s];
+    const daysLeft = examDate ? Math.max(0, Math.round((new Date(examDate+' 00:00:00') - Date.now()) / 86400000)) : null;
+    const scores = (S.practiceScores||{})[s]||[];
+    const avgScore = scores.length ? Math.round(scores.slice(-5).reduce(function(a,b){return a+(b.score||0);},0)/Math.min(5,scores.length)) : null;
+    return '- ' + s + ': ' + logged.toFixed(1) + '/' + goal + 'h' +
+      (daysLeft !== null ? ', ' + daysLeft + 'd to exam' : '') +
+      (avgScore !== null ? ', avg score ' + avgScore + '%' : ', no practice scores yet');
+  }).join('\n');
+  const readiness = calcReadinessScore();
+  const prompt = 'A CPA candidate has the following study data for the last ' + rangeDays + ' days:\n\n' +
+    'Total hours logged: ' + totalHrs.toFixed(1) + 'h\n' +
+    'Sessions: ' + sessions + '\n' +
+    'Active streak: ' + streak + ' days\n' +
+    'Habit score: ' + habitScore + '% (' + daysStudied30 + '/30 days studied)\n' +
+    'Readiness score: ' + readiness.score + '/100\n' +
+    'Section progress:\n' + sectionLines + '\n\n' +
+    'Give 4-5 specific, actionable bullet points of advice. Be direct and concrete — name specific sections, concepts, or exam areas they should focus on. Mention any red flags you see in the data. End with one motivating sentence. Format as bullet points starting with •.';
+
+  _fcCallAI(prompt, 500).then(function(advice) {
+    const body = document.getElementById('pr-ai-advice-body');
+    if (!body) return;
+    if (!advice) {
+      body.innerHTML = '<div style="font-size:12px;color:var(--mut)">Could not load AI advice. Check your API key in Study Tools.</div>';
+      return;
+    }
+    const bullets = advice.split('\n').filter(function(l){ return l.trim(); });
+    body.innerHTML = bullets.map(function(line) {
+      const clean = line.replace(/^[•\-\*]\s*/, '');
+      const isBullet = /^[•\-\*]/.test(line.trim());
+      if (!isBullet && bullets.indexOf(line) === bullets.length - 1) {
+        return '<p style="font-size:12px;color:var(--ind);font-weight:700;margin:12px 0 0;line-height:1.55">' + clean + '</p>';
+      }
+      return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)">' +
+        '<span style="color:var(--ind);font-size:14px;flex-shrink:0;margin-top:1px">•</span>' +
+        '<p style="font-size:12px;color:var(--sub);line-height:1.65;margin:0">' + clean + '</p>' +
+      '</div>';
+    }).join('');
+  }).catch(function() {
+    const body = document.getElementById('pr-ai-advice-body');
+    if (body) body.innerHTML = '<div style="font-size:12px;color:var(--mut)">Could not load AI advice.</div>';
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -7756,12 +7825,64 @@ function _coachReply(msg) {
       return _coachResponses[i].r;
     }
   }
-  // Personalized fallback using real data
   const secs = S.sections || [];
   const focSec = secs[0] || 'FAR';
   const hrs = Math.round(getTotalHours());
   const streak = getStreak();
   return 'Based on your ' + hrs + ' hours logged and ' + streak + '-day streak: you\'re on the right track. The single highest-impact thing you can do right now is spend 60 minutes reviewing your most recent wrong answers in ' + focSec + '. Understanding why you got something wrong is worth more than any new material. Keep going.';
+}
+
+function _coachBuildContext() {
+  const secs = S.sections || [];
+  const streak = getStreak();
+  const totalHrs = Math.round(getTotalHours());
+  const weekHrs = getWeekHours().toFixed(1);
+  const readiness = calcReadinessScore();
+  const sectionData = secs.map(function(s) {
+    const logged = getSectionHours(s);
+    const goal = getHourGoal(s);
+    const examDate = S.examDates && S.examDates[s];
+    const daysLeft = examDate ? Math.max(0, Math.round((new Date(examDate+' 00:00:00') - Date.now()) / 86400000)) : null;
+    const scores = (S.practiceScores||{})[s]||[];
+    const avgScore = scores.length ? Math.round(scores.slice(-5).reduce(function(a,b){return a+(b.score||0);},0)/Math.min(5,scores.length)) : null;
+    return s + ': ' + logged + '/' + goal + 'h logged' +
+      (daysLeft !== null ? ', ' + daysLeft + ' days to exam' : '') +
+      (avgScore !== null ? ', avg practice score ' + avgScore + '%' : '');
+  }).join('\n');
+  return 'Student context:\n' +
+    'Sections: ' + secs.join(', ') + '\n' +
+    'Total hours: ' + totalHrs + 'h\n' +
+    'This week: ' + weekHrs + 'h\n' +
+    'Streak: ' + streak + ' days\n' +
+    'Readiness score: ' + readiness.score + '/100\n' +
+    'Section progress:\n' + sectionData;
+}
+
+async function _coachAskAI(msg) {
+  const key = _fcGetApiKey();
+  if (!key) return null;
+  const ctx = _coachBuildContext();
+  const systemPrompt = 'You are Ledger, an expert CPA exam tutor and study coach with deep knowledge of all CPA exam sections: FAR (Financial Accounting & Reporting), AUD (Auditing & Attestation), REG (Regulation/Tax), ISC (Information Systems & Controls), TCP (Tax Compliance & Planning), and BAR (Business Analysis & Reporting).\n\nYou have expert-level knowledge of:\n- GAAP, IFRS, GASB, FASB Codification\n- Federal taxation (individual, corporate, partnership, S-corp, estate/gift)\n- Auditing standards (GAAS, PCAOB, SSARS, SSAE)\n- Business law, contracts, secured transactions, bankruptcy\n- IT controls, SOC reports, cybersecurity frameworks\n- CPA exam structure, scoring, and test-taking strategy\n- Spaced repetition, active recall, and adult learning science\n\nYou have access to the student\'s real study data shown below. Give specific, accurate, actionable answers. When answering accounting/tax/audit questions, give the technically correct answer with the relevant standard or code section when applicable. Be direct and concise — no filler. If the student asks a specific accounting question, answer it precisely. If they ask for study advice, make it specific to their data.\n\n' + ctx;
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 600,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return (data.content && data.content[0] && data.content[0].text) || null;
+  } catch(e) { return null; }
 }
 
 function buildAIStudyCoach() {
@@ -7888,12 +8009,17 @@ function buildAIStudyCoach() {
     '</div>' +
 
     '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px">' +
-      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Ask Ledger</div>' +
-      '<div id="coach-chat-msgs" style="min-height:60px;max-height:200px;overflow-y:auto;margin-bottom:10px">' +
-        (chatMsgs || '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">Ask me anything about your CPA prep...</div>') +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+        '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Ask Ledger</div>' +
+        (_fcGetApiKey()
+          ? '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>'
+          : '<button onclick="openFcApiKeyModal()" style="font-size:10px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer;padding:0">+ Add API key for real AI</button>') +
+      '</div>' +
+      '<div id="coach-chat-msgs" style="min-height:60px;max-height:220px;overflow-y:auto;margin-bottom:10px">' +
+        (chatMsgs || '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">Ask me anything — CPA concepts, exam strategy, study advice...</div>') +
       '</div>' +
       '<div style="display:flex;gap:8px">' +
-        '<input id="coach-input" type="text" placeholder="e.g. I\'m behind on REG, what should I do?" ' +
+        '<input id="coach-input" type="text" placeholder="' + (_fcGetApiKey() ? 'e.g. How does partnership basis work under IRC 705?' : 'e.g. I\'m behind on REG, what should I do?') + '" ' +
           'style="flex:1;padding:9px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:12px;outline:none" ' +
           'onkeydown="if(event.key===\'Enter\')sendCoachMessage()" ' +
           'onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'">' +
@@ -7910,35 +8036,30 @@ function sendCoachMessage() {
   inp.value = '';
   if (!window._coachChat) window._coachChat = [];
   window._coachChat.push({mine:true, text:msg});
-  const reply = _coachReply(msg);
   const msgsEl = document.getElementById('coach-chat-msgs');
   if (!msgsEl) return;
   if (msgsEl.querySelector('[style*="Ask me anything"]')) msgsEl.innerHTML = '';
-  // Add user message immediately
   const mineDiv = '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="max-width:80%;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:12px;line-height:1.55;background:var(--ind);color:#fff">' + msg + '</div></div>';
   msgsEl.innerHTML += mineDiv;
   msgsEl.scrollTop = msgsEl.scrollHeight;
-  // Show typing indicator
   const typingId = 'ledger-typing-' + Date.now();
   const typingDiv = '<div id="' + typingId + '" style="display:flex;margin-bottom:8px"><div style="padding:10px 14px;border-radius:16px 16px 16px 4px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .2s;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .4s;display:inline-block"></span></div></div>';
   msgsEl.innerHTML += typingDiv;
   msgsEl.scrollTop = msgsEl.scrollHeight;
-  // Reveal reply with typewriter effect after delay
-  const delay = 600 + Math.min(reply.length * 8, 1400);
-  setTimeout(function() {
+
+  function _showReply(reply) {
     window._coachChat.push({mine:false, text:reply});
     const typingEl = document.getElementById(typingId);
     if (typingEl) typingEl.remove();
     const replyWrap = document.createElement('div');
     replyWrap.style.cssText = 'display:flex;margin-bottom:8px';
     const replyBub = document.createElement('div');
-    replyBub.style.cssText = 'max-width:82%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:12px;line-height:1.6;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt)';
+    replyBub.style.cssText = 'max-width:82%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:12px;line-height:1.6;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);white-space:pre-wrap';
     replyWrap.appendChild(replyBub);
     msgsEl.appendChild(replyWrap);
     msgsEl.scrollTop = msgsEl.scrollHeight;
-    // Typewriter
     let i = 0;
-    const speed = Math.max(8, Math.min(22, Math.round(8000 / reply.length)));
+    const speed = Math.max(6, Math.min(18, Math.round(6000 / reply.length)));
     function typeNext() {
       if (i <= reply.length) {
         replyBub.textContent = reply.slice(0, i);
@@ -7948,7 +8069,24 @@ function sendCoachMessage() {
       }
     }
     typeNext();
-  }, delay);
+  }
+
+  const hasKey = !!_fcGetApiKey();
+  if (hasKey) {
+    _coachAskAI(msg).then(function(aiReply) {
+      if (aiReply) {
+        _showReply(aiReply);
+      } else {
+        _showReply(_coachReply(msg));
+      }
+    }).catch(function() {
+      _showReply(_coachReply(msg));
+    });
+  } else {
+    const fallback = _coachReply(msg);
+    const delay = 600 + Math.min(fallback.length * 8, 1400);
+    setTimeout(function() { _showReply(fallback); }, delay);
+  }
 }
 
 // ═══════════════════════════════════════════════
