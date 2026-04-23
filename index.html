@@ -940,6 +940,34 @@ const EXAMS = {
 };
 
 // ═══════════════════════════════════════════════
+// HOUR GOAL PRESETS
+// ═══════════════════════════════════════════════
+const HOUR_GOAL_PRESETS={
+  fast:{
+    label:'Ambitious',
+    tag:'Strong background or retaker',
+    desc:'You have solid accounting foundations or are retaking. You study efficiently and can hit high focus for shorter sprints.',
+    goals:{FAR:140,AUD:110,REG:100,BAR:110,ISC:85,TCP:85}
+  },
+  standard:{
+    label:'Standard',
+    tag:'AICPA-recommended ranges',
+    desc:'Works for most first-time candidates. Balanced between thoroughness and time efficiency.',
+    goals:{FAR:170,AUD:140,REG:130,BAR:130,ISC:110,TCP:110}
+  },
+  thorough:{
+    label:'Thorough',
+    tag:'Deep mastery / less background',
+    desc:'Less accounting background, first-time studying this material, or you prefer to over-prepare. More repetition and review cycles.',
+    goals:{FAR:200,AUD:165,REG:150,BAR:155,ISC:130,TCP:130}
+  }
+};
+
+function getHourGoal(section){
+  return (S?.hourGoals?.[section]) || EXAMS[section]?.studyHours || 150;
+}
+
+// ═══════════════════════════════════════════════
 // DAILY QUOTES (rotating — shown in Feed sidebar)
 // ═══════════════════════════════════════════════
 const CPA_TIPS = [
@@ -2202,7 +2230,7 @@ function signOut(){
 // ONBOARDING
 // ═══════════════════════════════════════════════
 let obStep=0;
-let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},school:'',classYear:'',bio:'',avatar:'🎓',firmCode:'',firmName:''};
+let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},school:'',classYear:'',bio:'',avatar:'🎓',firmCode:'',firmName:'',studyIntensity:'standard'};
 function initObData(){obData.name=(AUTH?.displayName||'').split(' ')[0]||'';}
 initObData();
 
@@ -2274,8 +2302,15 @@ function renderObStep0(){
     <label>Bio <span style="color:var(--mut);font-weight:400">(optional)</span></label>
     <input id="ob-bio" type="text" placeholder="e.g. Big 4 associate grinding toward CPA 💪">
   </div>
-  <div class="form-grp">
-    <div style="font-size:12px;color:var(--mut)">Your initials will be used as your avatar.</div>
+  <div class="form-grp" style="margin-bottom:0">
+    <label>Study Intensity <span style="color:var(--mut);font-weight:400">— sets your hour goals per section</span></label>
+    <div style="display:flex;gap:8px">
+      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];return`<button type="button" id="ob-intensity-${k}" onclick="obSetIntensity('${k}')" style="flex:1;padding:10px 6px;border-radius:10px;border:2px solid ${k==='standard'?'var(--ora)':'var(--bdr)'};background:${k==='standard'?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:all .15s">
+        <div style="font-size:12px;font-weight:800;color:${k==='standard'?'var(--ora)':'var(--txt)'};margin-bottom:2px">${p.label}</div>
+        <div style="font-size:9px;color:var(--mut);line-height:1.4">${p.tag}</div>
+      </button>`;}).join('')}
+    </div>
+    <div id="ob-intensity-desc" style="margin-top:8px;font-size:11px;color:var(--sub);background:var(--surf2);border-radius:8px;padding:8px 11px;line-height:1.55">${HOUR_GOAL_PRESETS.standard.desc}</div>
   </div>
 </div>
 <button class="ob-big-btn" onclick="obNext()">Continue →</button>`;
@@ -2311,7 +2346,7 @@ function renderObStep2(){
   ${sections.map(s=>`
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;padding:11px 13px;background:var(--surf2);border-radius:9px">
     <span class="badge badge-${s}" style="flex-shrink:0;min-width:46px;justify-content:center">${s}</span>
-    <div style="flex:1;font-size:12px;color:var(--sub)">${EXAMS[s].full}<br><span style="color:var(--mut)">~${EXAMS[s].studyHours} hrs recommended · ${EXAMS[s].passRate}% pass rate</span></div>
+    <div style="flex:1;font-size:12px;color:var(--sub)">${EXAMS[s].full}<br><span style="color:var(--mut)">~${(()=>{const p=HOUR_GOAL_PRESETS[obData.studyIntensity||'standard'];return p?p.goals[s]:EXAMS[s].studyHours})()} hrs goal · ${EXAMS[s].passRate}% pass rate</span></div>
     <input type="date" id="date-${s}" value="${obData.examDates[s]||''}" min="${new Date().toISOString().slice(0,10)}" style="padding:6px 9px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:12px;outline:none;max-width:140px">
   </div>`).join('')}
   <div style="margin-top:4px;padding:11px 13px;background:var(--amb-bg);border:1px solid #fde68a;border-radius:9px;font-size:11px;color:var(--sub);line-height:1.65">
@@ -2344,6 +2379,20 @@ function renderObStep3(){
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obFinish()">Build My Plan 🚀</button>`;
+}
+
+function obSetIntensity(key){
+  obData.studyIntensity=key;
+  ['fast','standard','thorough'].forEach(k=>{
+    const btn=document.getElementById('ob-intensity-'+k);
+    if(!btn)return;
+    const active=k===key;
+    btn.style.borderColor=active?'var(--ora)':'var(--bdr)';
+    btn.style.background=active?'var(--ora-bg)':'var(--surf2)';
+    btn.querySelector('div').style.color=active?'var(--ora)':'var(--txt)';
+  });
+  const desc=document.getElementById('ob-intensity-desc');
+  if(desc)desc.textContent=HOUR_GOAL_PRESETS[key].desc;
 }
 
 function attachObHandlers(){
@@ -2396,6 +2445,10 @@ function obFinish(){
   sectionStatus['FAR']='studying';
   const urlJoinCode=new URLSearchParams(window.location.search).get('join')||'';
   const firmCode=urlJoinCode||obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
+  const intensity=obData.studyIntensity||'standard';
+  const preset=HOUR_GOAL_PRESETS[intensity]||HOUR_GOAL_PRESETS.standard;
+  const hourGoals={};
+  sections.forEach(s=>{hourGoals[s]=preset.goals[s]||EXAMS[s]?.studyHours||150;});
   S={
     name:obData.name,state:obData.state,hoursPerWeek:obData.hoursPerWeek,
     disc:obData.disc,sections,examDates,sectionStatus,
@@ -2405,6 +2458,7 @@ function obFinish(){
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],
     firmCode,firmName,
+    studyIntensity:intensity,hourGoals,
     created:Date.now()
   };
   saveState();
@@ -2612,12 +2666,12 @@ function buildFeed(){
     <div class="section-title">My Sections</div>
     ${(S.sections||[]).map(s=>{
       const hrs=getSectionHours(s);
-      const pct=Math.min(100,Math.round(hrs/EXAMS[s].studyHours*100));
+      const pct=Math.min(100,Math.round(hrs/getHourGoal(s)*100));
       const status=S.sectionStatus?.[s]||'planned';
       return`<div style="margin-bottom:10px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
           <span class="badge badge-${s}">${s}</span>
-          <span style="font-size:10px;color:var(--mut)">${hrs}h / ${EXAMS[s].studyHours}h</span>
+          <span style="font-size:10px;color:var(--mut)">${hrs}h / ${getHourGoal(s)}h</span>
         </div>
         <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${EXAMS[s].color}"></div></div>
       </div>`;
@@ -2842,7 +2896,7 @@ function calcReadinessScore(){
   const s=getCurrentSection();
   const ex=EXAMS[s];
   const logged=getSectionHours(s);
-  const volumePts=Math.min(50,Math.round(logged/ex.studyHours*50));
+  const volumePts=Math.min(50,Math.round(logged/getHourGoal(s)*50));
 
   // Pacing pts — compare required hrs/wk vs available hrs/wk
   const targetDate=S.examDates?.[s];
@@ -2850,7 +2904,7 @@ function calcReadinessScore(){
   if(targetDate){
     const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
     const weeksLeft=Math.max(0.5,daysLeft/7);
-    const needed=Math.max(0,ex.studyHours-logged);
+    const needed=Math.max(0,getHourGoal(s)-logged);
     const hrsPerWeek=needed/weeksLeft;
     const available=S.hoursPerWeek||15;
     if(daysLeft<0) pacingPts=0;
@@ -2928,6 +2982,87 @@ function buildReadinessCard(){
 </div>`;
 }
 
+function openHourGoalsModal(){
+  const sections=S.sections||['FAR','AUD','REG','TCP'];
+  const currentIntensity=S.studyIntensity||'standard';
+  const el=document.createElement('div');
+  el.className='modal-overlay open';
+  el.style.cssText='z-index:9999';
+  el.innerHTML=`<div class="modal-box" style="max-width:500px" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="font-size:16px;font-weight:800">Customize Hour Goals</div>
+      <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
+    </div>
+    <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.55">Your readiness score and pacing alerts use these goals. Set them to match how you actually study — not a generic average.</div>
+    <div style="display:flex;gap:7px;margin-bottom:16px">
+      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];const active=currentIntensity===k;return`<button type="button" onclick="applyHourGoalPreset('${k}',this)" style="flex:1;padding:9px 6px;border-radius:9px;border:2px solid ${active?'var(--ora)':'var(--bdr)'};background:${active?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:all .15s">
+        <div style="font-size:11px;font-weight:800;color:${active?'var(--ora)':'var(--txt)'};margin-bottom:2px">${p.label}</div>
+        <div style="font-size:9px;color:var(--mut)">${p.tag}</div>
+      </button>`;}).join('')}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      ${sections.map(s=>{const ex=EXAMS[s];const preset=HOUR_GOAL_PRESETS[currentIntensity]||HOUR_GOAL_PRESETS.standard;const fast=HOUR_GOAL_PRESETS.fast.goals[s]||ex.studyHours;const std=HOUR_GOAL_PRESETS.standard.goals[s]||ex.studyHours;const thorough=HOUR_GOAL_PRESETS.thorough.goals[s]||ex.studyHours;return`<div style="display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--surf2);border-radius:10px">
+        <span class="badge badge-${s}" style="min-width:46px;justify-content:center;flex-shrink:0">${s}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;margin-bottom:2px">${ex.full.split(' ').slice(0,3).join(' ')}</div>
+          <div style="font-size:10px;color:var(--mut)">Ambitious: ${fast}h · Standard: ${std}h · Thorough: ${thorough}h</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <button onclick="adjustHourGoal('${s}',-5,this)" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--bdr);background:var(--surf);cursor:pointer;font-size:14px;font-weight:700;color:var(--sub)">−</button>
+          <span id="hg-${s}" style="font-size:14px;font-weight:900;min-width:38px;text-align:center;color:var(--txt)">${getHourGoal(s)}h</span>
+          <button onclick="adjustHourGoal('${s}',5,this)" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--bdr);background:var(--surf);cursor:pointer;font-size:14px;font-weight:700;color:var(--sub)">+</button>
+        </div>
+      </div>`;}).join('')}
+    </div>
+    <button onclick="saveHourGoals();this.closest('.modal-overlay').remove()" style="width:100%;padding:12px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Save Hour Goals</button>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+  // Store working copy in closure
+  window._tempHourGoals={...(S.hourGoals||{})};
+  S.sections.forEach(s=>{if(!window._tempHourGoals[s])window._tempHourGoals[s]=getHourGoal(s);});
+}
+
+function adjustHourGoal(section,delta,btn){
+  if(!window._tempHourGoals)window._tempHourGoals={};
+  const cur=window._tempHourGoals[section]||getHourGoal(section);
+  const next=Math.max(50,Math.min(400,cur+delta));
+  window._tempHourGoals[section]=next;
+  const lbl=document.getElementById('hg-'+section);
+  if(lbl)lbl.textContent=next+'h';
+}
+
+function applyHourGoalPreset(key,btn){
+  const preset=HOUR_GOAL_PRESETS[key];
+  if(!preset)return;
+  S.studyIntensity=key;
+  // Update buttons
+  btn.parentElement.querySelectorAll('button').forEach((b,i)=>{
+    const k=['fast','standard','thorough'][i];
+    const active=k===key;
+    b.style.borderColor=active?'var(--ora)':'var(--bdr)';
+    b.style.background=active?'var(--ora-bg)':'var(--surf2)';
+    b.querySelector('div').style.color=active?'var(--ora)':'var(--txt)';
+  });
+  // Apply preset values
+  (S.sections||[]).forEach(s=>{
+    const v=preset.goals[s]||EXAMS[s]?.studyHours||150;
+    if(!window._tempHourGoals)window._tempHourGoals={};
+    window._tempHourGoals[s]=v;
+    const lbl=document.getElementById('hg-'+s);
+    if(lbl)lbl.textContent=v+'h';
+  });
+}
+
+function saveHourGoals(){
+  if(!S)return;
+  if(!S.hourGoals)S.hourGoals={};
+  Object.assign(S.hourGoals,window._tempHourGoals||{});
+  saveState();
+  showToast('Hour goals saved','ok');
+  renderTab();
+}
+
 function openPacingTipsModal(){
   const r=calcReadinessScore();
   let tips=[];
@@ -2984,7 +3119,7 @@ function buildPacingAlert(){
       const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
       if(daysLeft>0){
         const weeksLeft=Math.max(0.5,daysLeft/7);
-        const needed=Math.max(0,ex.studyHours-logged);
+        const needed=Math.max(0,getHourGoal(s)-logged);
         const hrsPerWeek=needed/weeksLeft;
         const available=S.hoursPerWeek||15;
         if(hrsPerWeek>available){
@@ -3209,7 +3344,7 @@ function buildDashboard(){
   const pacingCards=(S.sections||[]).map(s=>{
     const ex=EXAMS[s];
     const logged=getSectionHours(s);
-    const pct=Math.min(100,Math.round(logged/ex.studyHours*100));
+    const pct=Math.min(100,Math.round(logged/getHourGoal(s)*100));
     const targetDate=S.examDates?.[s];
     const status=S.sectionStatus?.[s]||'planned';
     const passed=(S.sectionPassed||[]).includes(s);
@@ -3217,7 +3352,7 @@ function buildDashboard(){
     if(targetDate&&!passed){
       const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
       const weeksLeft=Math.max(0.5,daysLeft/7);
-      const needed=Math.max(0,ex.studyHours-logged);
+      const needed=Math.max(0,getHourGoal(s)-logged);
       const hrsPerWeek=(needed/weeksLeft).toFixed(1);
       const available=S.hoursPerWeek||15;
       if(daysLeft<0){paceMsg='Exam date passed';paceClass='behind';}
@@ -3238,7 +3373,7 @@ function buildDashboard(){
       <div class="pc-bar-wrap">
         <div class="pc-name">
           <span><span class="badge badge-${s}" style="margin-right:5px">${s}</span>${ex.full}</span>
-          <span style="font-size:11px;color:var(--mut);font-weight:400">${logged}/${ex.studyHours}h</span>
+          <span style="font-size:11px;color:var(--mut);font-weight:400">${logged}/${getHourGoal(s)}h</span>
         </div>
         <div class="prog-bar" style="margin:4px 0"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
         <div class="pc-pace ${paceClass}">${paceMsg}</div>
@@ -3439,7 +3574,7 @@ function buildProfile(){
   const sectionProgress=(S.sections||[]).map(s=>{
     const ex=EXAMS[s];
     const hrs=getSectionHours(s);
-    const pct=Math.min(100,Math.round(hrs/ex.studyHours*100));
+    const pct=Math.min(100,Math.round(hrs/getHourGoal(s)*100));
     const passed=(S.sectionPassed||[]).includes(s);
     return`<div style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -3447,7 +3582,7 @@ function buildProfile(){
           <span class="badge badge-${s}">${s}</span>
           ${passed?`<span class="badge badge-passed">Passed ✅</span>`:''}
         </div>
-        <span style="font-size:11px;color:var(--mut)">${hrs}h / ${ex.studyHours}h · ${pct}%</span>
+        <span style="font-size:11px;color:var(--mut)">${hrs}h / ${getHourGoal(s)}h · ${pct}%</span>
       </div>
       <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
     </div>`;
@@ -6287,6 +6422,15 @@ ${buildLinkedAccountsRow('facebook','Facebook','#1877f2','f')}
 ${buildLinkedAccountsRow('linkedin','LinkedIn','#0077b5','in')}
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
+  <div class="section-title" style="margin-bottom:10px">Study Goals</div>
+  <button onclick="closeAppSettings();openHourGoalsModal()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--txt);text-align:left;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
+    <span style="font-size:20px">🎯</span>
+    <div style="flex:1">
+      <div style="font-weight:700">Customize Hour Goals</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:2px">Set target study hours per section to calibrate your Readiness Score</div>
+    </div>
+    <span style="font-size:12px;color:var(--ora)">→</span>
+  </button>
   <button onclick="closeAppSettings();signOut()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;text-align:left;transition:all .15s" onmouseover="this.style.borderColor='var(--bdr2)';this.style.background='var(--surf2)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.background='transparent'">
     <span style="font-size:16px">→</span> Sign Out
   </button>
@@ -7418,7 +7562,7 @@ function renderProgressReport() {
 
   // Section breakdown
   const sectionRows = (S.sections || []).map(function(s) {
-    const target = EXAMS[s].studyHours;
+    const target = getHourGoal(s);
     const logged = getSectionHours(s);
     const rangeHrs = acts.filter(function(a){ return a.section===s; }).reduce(function(sum,a){ return sum+(a.hours||0); },0);
     const pct = Math.min(100, Math.round(logged / target * 100));
@@ -7586,7 +7730,7 @@ function buildAIStudyCoach() {
   }
 
   const sections = S.sections || [];
-  const totalTarget = sections.reduce(function(sum,s){ return sum + EXAMS[s].studyHours; }, 0);
+  const totalTarget = sections.reduce(function(sum,s){ return sum + getHourGoal(s); }, 0);
   const totalLogged = getTotalHours();
 
   // Find section most needing attention (biggest gap relative to target)
@@ -7595,7 +7739,7 @@ function buildAIStudyCoach() {
   let focusSection = sections[0] || 'FAR';
   let focusGap = 0;
   sections.forEach(function(s) {
-    const target = EXAMS[s].studyHours;
+    const target = getHourGoal(s);
     const logged = getSectionHours(s);
     const gap = target - logged;
     if (gap > worstGap) { worstGap = gap; worstSection = s; }
