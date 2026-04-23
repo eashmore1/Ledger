@@ -1082,7 +1082,7 @@ const MOCK_FRIENDS = [
   },
   {
     id:'f4',name:'Tyler Williams',initials:'TW',color:'#d44000',state:'IL',
-    currentSection:'FAR',totalHours:112,streak:31,following:false,tier:'pro',
+    currentSection:'FAR',totalHours:112,streak:31,following:false,tier:'pro',isPrivate:true,
     passedSections:['REG','AUD'],
     bio:'FAR retake. Not failing this time. 31-day streak and counting 🔥',
     activities:[
@@ -1101,7 +1101,7 @@ const MOCK_FRIENDS = [
   },
   {
     id:'f6',name:'Jordan Kim',initials:'JK',color:'#f59e0b',state:'GA',
-    currentSection:null,totalHours:487,streak:0,following:false,
+    currentSection:null,totalHours:487,streak:0,following:false,isPrivate:true,
     passedSections:['FAR','AUD','REG','TCP'],
     bio:'🏆 LICENSED CPA — Atlanta, GA. It took 14 months. You can do it too.',
     activities:[
@@ -2457,6 +2457,8 @@ function obFinish(){
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],
+    isPrivate:false,pendingRequests:[],followers:['f1','f2','f5'],
+    followRequests:[{uid:'f4',name:'Tyler Williams',initials:'TW',color:'#d44000'}],
     firmCode,firmName,
     studyIntensity:intensity,hourGoals,
     created:Date.now()
@@ -3593,10 +3595,10 @@ function buildProfile(){
   const streak=getStreak();
   const weekHrs=getWeekHours();
   const initials=(S.name||'CPA').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  const followers=MOCK_FRIENDS.filter(f=>['f1','f2','f5'].includes(f.id)); // mock followers
   const following=MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id));
-  const followersCount=followers.length;
+  const followersCount=(S.followers||['f1','f2','f5']).length;
   const followingCount=following.length;
+  const pendingRequestCount=(S.followRequests||[]).length;
 
   const achHTML=_achPreviewHTML(S.achievements||[],'own-ach',true);
 
@@ -3663,9 +3665,10 @@ function buildProfile(){
 
       <!-- SOCIAL STATS -->
       <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
-        <button onclick="openFollowModal('followers')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
+        <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:left;padding:0;position:relative">
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
           <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div>
+          ${(S.followRequests||[]).length?`<span style="position:absolute;top:-4px;right:-10px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center">${(S.followRequests||[]).length}</span>`:''}
         </button>
         <button onclick="openFollowModal('following')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followingCount}</div>
@@ -3908,16 +3911,17 @@ function buildExplore(){
   // Find friends
   const friendCards=MOCK_FRIENDS.map(f=>{
     const isFollowing=(S.following||[]).includes(f.id);
+    const isPending=!isFollowing&&(S.pendingRequests||[]).includes(f.id);
     const weekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}${f.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
         ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:8px">${s} ✓</span>`).join('')}</div>`:''}
       </div>
-      <button class="follow-btn${isFollowing?' following':''}" onclick="event.stopPropagation();toggleFollow('${f.id}',this)">${isFollowing?'Following':'Follow'}</button>
+      <button class="follow-btn${isFollowing?' following':''}" style="${isPending?'background:var(--surf2);color:var(--sub);border-color:var(--bdr)':''}" onclick="event.stopPropagation();toggleFollow('${f.id}',this)">${isFollowing?'Following':isPending?'Requested':'Follow'}</button>
     </div>`;
   }).join('');
 
@@ -3947,13 +3951,14 @@ function buildExplore(){
     const sharedSection=myCurrentSection;
     const fWeekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     const isFollowing=(S.following||[]).includes(f.id);
+    const isBuddyPending=!isFollowing&&(S.pendingRequests||[]).includes(f.id);
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">
       <div class="avatar av-sm" style="background:${f.color};color:#fff;cursor:pointer;flex-shrink:0" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div style="flex:1;min-width:0;cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div style="font-size:13px;font-weight:700">${f.name} <span class="badge badge-${sharedSection}" style="font-size:8px">${sharedSection}</span></div>
+        <div style="font-size:13px;font-weight:700">${f.name} ${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}<span class="badge badge-${sharedSection}" style="font-size:8px;margin-left:4px">${sharedSection}</span></div>
         <div style="font-size:11px;color:var(--mut)">${f.state} · 🔥${f.streak}d streak · ${fWeekHrs.toFixed(1)}h this week</div>
       </div>
-      <button class="follow-btn${isFollowing?' following':''}" style="flex-shrink:0" onclick="toggleFollow('${f.id}',this)">${isFollowing?'Following':'Follow'}</button>
+      <button class="follow-btn${isFollowing?' following':''}" style="flex-shrink:0${isBuddyPending?';background:var(--surf2);color:var(--sub);border-color:var(--bdr)':''}" onclick="toggleFollow('${f.id}',this)">${isFollowing?'Following':isBuddyPending?'Requested':'Follow'}</button>
     </div>`;
   }).join('');
 
@@ -4278,15 +4283,58 @@ function handleSessionPhotoUpload(input){
   reader.readAsDataURL(file);
 }
 
+function _isUserPrivate(uid){
+  const mock=MOCK_FRIENDS.find(f=>f.id===uid);
+  if(mock) return !!mock.isPrivate;
+  return !!(window._cachedPrivacy&&window._cachedPrivacy[uid]);
+}
+
+function toggleAccountPrivacy(val){
+  S.isPrivate=val;
+  const track=document.getElementById('privacy-toggle-track');
+  if(track){
+    track.style.background=val?'var(--ind)':'var(--surf3)';
+    const dot=track.querySelector('span');
+    if(dot) dot.style.left=val?'21px':'3px';
+  }
+  saveState();
+  showToast(val?'Account set to private — only followers can see your activity':'Account is now public','ok');
+}
+
+function _sendFollowRequest(uid, btn){
+  if(!S.pendingRequests) S.pendingRequests=[];
+  if(S.pendingRequests.includes(uid)){
+    // Cancel request
+    S.pendingRequests=S.pendingRequests.filter(id=>id!==uid);
+    if(btn){btn.textContent='Follow';btn.classList.remove('following');btn.style.background='';btn.style.color='';}
+    saveState();
+    showToast('Follow request cancelled','info');
+  } else {
+    S.pendingRequests.push(uid);
+    if(btn){btn.textContent='Requested';btn.classList.remove('following');btn.style.background='var(--surf2)';btn.style.color='var(--sub)';}
+    saveState();
+    showToast('Follow request sent','ok');
+  }
+}
+
 function toggleFollow(fId,btn){
   const following=S.following||[];
   const idx=following.indexOf(fId);
-  if(idx>=0){following.splice(idx,1);btn.textContent='Follow';btn.classList.remove('following');}
-  else{following.push(fId);btn.textContent='Following';btn.classList.add('following');}
-  S.following=following;
-  saveState();
-  checkAchievements();
-  showToast(idx>=0?'Unfollowed':'Following! Their sessions will now appear in your feed.','ok');
+  if(idx>=0){
+    following.splice(idx,1);
+    S.following=following;
+    if(btn){btn.textContent='Follow';btn.classList.remove('following');btn.style.background='';btn.style.color='';}
+    saveState();checkAchievements();
+    showToast('Unfollowed','info');
+  } else if(_isUserPrivate(fId)){
+    _sendFollowRequest(fId,btn);
+  } else {
+    following.push(fId);
+    S.following=following;
+    if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';}
+    saveState();checkAchievements();saveFollowToFirestore();
+    showToast('Following! Their sessions will now appear in your feed.','ok');
+  }
 }
 
 function updateSectionStatus(section,status){
@@ -4851,6 +4899,90 @@ function openFollowModal(type){
 }
 function closeFollowModal(){document.getElementById('follow-modal')?.classList.remove('open');}
 
+function openFollowRequestsModal(){
+  let el=document.getElementById('follow-req-modal');
+  if(el) el.remove();
+  el=document.createElement('div');
+  el.id='follow-req-modal';
+  el.className='modal-overlay open';
+  el.style.cssText='z-index:9999';
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+  _renderFollowRequestsModal();
+}
+
+function _renderFollowRequestsModal(){
+  const el=document.getElementById('follow-req-modal');
+  if(!el) return;
+  const requests=S.followRequests||[];
+  const rows=requests.length ? requests.map(r=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
+      <div class="avatar av-md" style="background:${r.color||'#6366f1'};color:#fff;flex-shrink:0">${r.initials||'?'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700">${r.name||'CPA Candidate'}</div>
+        <div style="font-size:11px;color:var(--mut)">Wants to follow you</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="acceptFollowRequest('${r.uid}')" style="padding:6px 12px;background:var(--ind);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Confirm</button>
+        <button onclick="denyFollowRequest('${r.uid}')" style="padding:6px 12px;background:var(--surf2);color:var(--sub);border:1px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Delete</button>
+      </div>
+    </div>`).join('')
+    : `<div class="empty-state" style="padding:32px 0"><div class="empty-icon">👤</div><div class="empty-msg">No pending follow requests</div></div>`;
+  el.innerHTML=`<div class="modal-box" style="max-width:480px;padding:24px" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:17px;font-weight:800">Follow Requests${requests.length?` <span style="font-size:12px;background:var(--red);color:#fff;padding:1px 7px;border-radius:20px;font-weight:700">${requests.length}</span>`:''}
+      </div>
+      <button onclick="document.getElementById('follow-req-modal').remove()" class="modal-close">×</button>
+    </div>
+    <div>${rows}</div>
+    ${requests.length?`<div style="display:flex;gap:8px;margin-top:16px">
+      <button onclick="acceptAllFollowRequests()" style="flex:1;padding:10px;background:var(--ind);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer">Confirm All</button>
+      <button onclick="denyAllFollowRequests()" style="flex:1;padding:10px;background:var(--surf2);color:var(--sub);border:1px solid var(--bdr);border-radius:9px;font-size:12px;font-weight:700;cursor:pointer">Delete All</button>
+    </div>`:''}
+  </div>`;
+}
+
+function acceptFollowRequest(uid){
+  if(!S.followRequests) return;
+  const req=S.followRequests.find(r=>r.uid===uid);
+  if(!req) return;
+  S.followRequests=S.followRequests.filter(r=>r.uid!==uid);
+  if(!S.followers) S.followers=[];
+  if(!S.followers.includes(uid)) S.followers.push(uid);
+  saveState();
+  showToast('Follow request accepted — '+req.name+' can now see your activity','ok');
+  _renderFollowRequestsModal();
+  renderTab();
+}
+
+function denyFollowRequest(uid){
+  if(!S.followRequests) return;
+  S.followRequests=S.followRequests.filter(r=>r.uid!==uid);
+  saveState();
+  _renderFollowRequestsModal();
+  renderTab();
+}
+
+function acceptAllFollowRequests(){
+  const reqs=S.followRequests||[];
+  reqs.forEach(r=>{
+    if(!S.followers) S.followers=[];
+    if(!S.followers.includes(r.uid)) S.followers.push(r.uid);
+  });
+  S.followRequests=[];
+  saveState();
+  showToast('All follow requests accepted','ok');
+  _renderFollowRequestsModal();
+  renderTab();
+}
+
+function denyAllFollowRequests(){
+  S.followRequests=[];
+  saveState();
+  _renderFollowRequestsModal();
+  renderTab();
+}
+
 // ═══════════════════════════════════════════════
 // USER PROFILE VIEW
 // ═══════════════════════════════════════════════
@@ -4881,7 +5013,7 @@ async function openUserProfile(userId){
 
 function _normProfileMock(f){
   const allSecs=[...new Set([...(f.passedSections||[]),(f.currentSection||null)].filter(Boolean))];
-  return{uid:f.id,name:f.name,initials:f.initials,color:f.color,bio:f.bio||'',state:f.state,city:'',locationState:'',school:'',classYear:'',disc:f.currentSection||'',sections:allSecs,sectionPassed:f.passedSections||[],hoursTotal:f.totalHours||0,streak:f.streak||0,sessionCount:f.activities.length,weekHrs:f.activities.filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).reduce((s,a)=>s+(a.hours||0),0),activities:f.activities||[],achievements:[],avatar:'',profilePic:'',tier:'free',firmName:'',isMock:true};
+  return{uid:f.id,name:f.name,initials:f.initials,color:f.color,bio:f.bio||'',state:f.state,city:'',locationState:'',school:'',classYear:'',disc:f.currentSection||'',sections:allSecs,sectionPassed:f.passedSections||[],hoursTotal:f.totalHours||0,streak:f.streak||0,sessionCount:f.activities.length,weekHrs:f.activities.filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).reduce((s,a)=>s+(a.hours||0),0),activities:f.activities||[],achievements:[],avatar:'',profilePic:'',tier:'free',firmName:'',isMock:true,isPrivate:!!f.isPrivate};
 }
 function _normProfileFirestore(u){
   const name=u.displayName||'CPA Candidate';
@@ -4893,6 +5025,8 @@ function _normProfileFirestore(u){
 
 function _renderFullUserProfile(u){
   const isFollowing=(S.following||[]).includes(u.uid);
+  const isPendingRequest=!isFollowing&&(S.pendingRequests||[]).includes(u.uid);
+  const isLocked=!!(u.isPrivate)&&!isFollowing;
   const avatarInner=u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
   const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
   const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
@@ -4932,7 +5066,7 @@ function _renderFullUserProfile(u){
         <div style="display:flex;align-items:center;gap:16px">
           <div style="width:80px;height:80px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarInner}</div>
           <div>
-            <div class="profile-name" style="margin-top:0;color:#fff">${u.name} ${u.sectionPassed.length===4?'🏆':''}</div>
+            <div class="profile-name" style="margin-top:0;color:#fff">${u.name} ${u.sectionPassed.length===4?'🏆':''}${u.isPrivate?'<span style="font-size:14px;opacity:.8">🔒</span>':''}</div>
             <div class="profile-state">${u.state}${u.classYear?' · '+u.classYear:''}${u.school?' @ '+u.school:''}</div>
             ${locationLine?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${locationLine}</div>`:''}
             ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${u.bio}"</div>`:''}
@@ -4949,7 +5083,7 @@ function _renderFullUserProfile(u){
         </div>
       </div>
       <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-        <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'rgba(255,255,255,.15)':'var(--ora)'};border:1px solid ${isFollowing?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':'+ Follow'}</button>
+        <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'rgba(255,255,255,.15)':isPendingRequest?'rgba(255,255,255,.1)':'var(--ora)'};border:1px solid ${(isFollowing||isPendingRequest)?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':isPendingRequest?'⏳ Requested':'+ Follow'}</button>
         <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
       </div>
       <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
@@ -4962,27 +5096,50 @@ function _renderFullUserProfile(u){
   </div>
 
   <div style="padding:0 16px">
-    ${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
-
-    ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Activity</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-size:13px;font-weight:700;color:var(--sub)">Activity is private</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Follow to see their sessions in your feed</div></div>`}
-
-    <div class="card card-pad" style="margin-bottom:16px">
-      <div class="section-title" style="margin-bottom:12px">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
-      ${_achPreviewHTML(u.achievements,'view-ach',false)}
-    </div>
+    ${isLocked
+      ? `<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px">🔒</div>
+          <div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px">This account is private</div>
+          <div style="font-size:13px;color:var(--sub);line-height:1.6;max-width:280px;margin:0 auto">${isPendingRequest?'Your follow request is pending. Once approved you\'ll see their activity and progress.':'Follow this account to see their study activity, progress, and achievements.'}</div>
+          ${!isPendingRequest?`<button onclick="toggleFollowViewProfile('${u.uid}')" style="margin-top:20px;padding:10px 24px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Request to Follow</button>`:''}
+        </div>`
+      : `${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
+        ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Activity</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">📭</div><div style="font-size:13px;font-weight:700;color:var(--sub)">No activity yet</div></div>`}
+        <div class="card card-pad" style="margin-bottom:16px">
+          <div class="section-title" style="margin-bottom:12px">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
+          ${_achPreviewHTML(u.achievements,'view-ach',false)}
+        </div>`
+    }
   </div>
 </div>`;
 }
 
 function toggleFollowViewProfile(uid){
   if(!S.following)S.following=[];
-  const idx=S.following.indexOf(uid);
-  if(idx>=0){S.following.splice(idx,1);}else{S.following.push(uid);}
-  saveState();saveFollowToFirestore();checkAchievements();
-  const isNow=S.following.includes(uid);
   const btn=document.getElementById('vp-follow-btn');
-  if(btn){btn.textContent=isNow?'✓ Following':'+ Follow';btn.style.background=isNow?'rgba(255,255,255,.15)':'var(--ora)';btn.style.border=isNow?'1px solid rgba(255,255,255,.25)':'1px solid transparent';}
-  showToast(isNow?'Following!':'Unfollowed','ok');
+  const idx=S.following.indexOf(uid);
+  if(idx>=0){
+    S.following.splice(idx,1);
+    saveState();saveFollowToFirestore();checkAchievements();
+    if(btn){btn.textContent='+ Follow';btn.style.background='var(--ora)';btn.style.border='1px solid transparent';}
+    showToast('Unfollowed','info');
+  } else if(_isUserPrivate(uid)){
+    if(!S.pendingRequests)S.pendingRequests=[];
+    if(S.pendingRequests.includes(uid)){
+      S.pendingRequests=S.pendingRequests.filter(id=>id!==uid);
+      if(btn){btn.textContent='+ Follow';btn.style.background='var(--ora)';btn.style.border='1px solid transparent';}
+      saveState();showToast('Follow request cancelled','info');
+    } else {
+      S.pendingRequests.push(uid);
+      if(btn){btn.textContent='Requested';btn.style.background='rgba(255,255,255,.15)';btn.style.border='1px solid rgba(255,255,255,.25)';}
+      saveState();showToast('Follow request sent','ok');
+    }
+  } else {
+    S.following.push(uid);
+    saveState();saveFollowToFirestore();checkAchievements();
+    if(btn){btn.textContent='✓ Following';btn.style.background='rgba(255,255,255,.15)';btn.style.border='1px solid rgba(255,255,255,.25)';}
+    showToast('Following!','ok');
+  }
 }
 
 
@@ -5524,6 +5681,17 @@ function toggleFollowSearch(id, isReal){
   if(idx>=0){
     S.following.splice(idx,1);
     showToast('Unfollowed','info');
+    saveState();saveFollowToFirestore();renderSearchResults();
+  } else if(_isUserPrivate(id)){
+    if(!S.pendingRequests) S.pendingRequests=[];
+    if(S.pendingRequests.includes(id)){
+      S.pendingRequests=S.pendingRequests.filter(x=>x!==id);
+      showToast('Follow request cancelled','info');
+    } else {
+      S.pendingRequests.push(id);
+      showToast('Follow request sent','ok');
+    }
+    saveState();renderSearchResults();
   } else {
     S.following.push(id);
     if(!isReal){
@@ -5531,10 +5699,8 @@ function toggleFollowSearch(id, isReal){
       if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
     }
     showToast('Following! 🎉','ok');
+    saveState();saveFollowToFirestore();renderSearchResults();
   }
-  saveState();
-  saveFollowToFirestore();
-  renderSearchResults();
 }
 
 // ═══════════════════════════════════════════════
@@ -6480,6 +6646,33 @@ ${buildLinkedAccountsRow('linkedin','LinkedIn','#0077b5','in')}
     </div>
     <span style="font-size:12px;color:var(--ora)">→</span>
   </button>
+</div>
+
+<div style="margin-top:4px;padding-top:20px;border-top:1px solid var(--bdr)">
+  <div class="section-title" style="margin-bottom:10px">Privacy</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">🔒</span>
+      <div>
+        <div style="font-size:13px;font-weight:700">Private Account</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">Only approved followers can see your activity and progress</div>
+      </div>
+    </div>
+    <label style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0">
+      <input type="checkbox" id="privacy-toggle" ${S?.isPrivate?'checked':''} onchange="toggleAccountPrivacy(this.checked)" style="opacity:0;width:0;height:0;position:absolute">
+      <span id="privacy-toggle-track" style="position:absolute;cursor:pointer;inset:0;background:${S?.isPrivate?'var(--ind)':'var(--surf3)'};border-radius:24px;transition:background .2s">
+        <span style="position:absolute;content:'';height:18px;width:18px;left:${S?.isPrivate?'21px':'3px'};bottom:3px;background:#fff;border-radius:50%;transition:left .2s;display:block"></span>
+      </span>
+    </label>
+  </div>
+  ${S?.followRequests?.length ? `<button onclick="closeAppSettings();openFollowRequestsModal()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:var(--ind-bg);border:1.5px solid rgba(99,102,241,.3);border-radius:10px;cursor:pointer;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--txt);text-align:left">
+    <span style="font-size:20px">👤</span>
+    <div style="flex:1">
+      <div style="font-weight:700">Follow Requests</div>
+      <div style="font-size:11px;color:var(--ind);margin-top:2px">${S.followRequests.length} pending request${S.followRequests.length!==1?'s':''}</div>
+    </div>
+    <span style="background:var(--ind);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px">${S.followRequests.length}</span>
+  </button>` : ''}
   <button onclick="closeAppSettings();signOut()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;text-align:left;transition:all .15s" onmouseover="this.style.borderColor='var(--bdr2)';this.style.background='var(--surf2)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.background='transparent'">
     <span style="font-size:16px">→</span> Sign Out
   </button>
