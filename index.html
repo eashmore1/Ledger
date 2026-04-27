@@ -1856,12 +1856,19 @@ function showPostOnboardingOffer(){
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
+let _pendingInvite=null; // {code, fromName, fromUid}
 function init(){
   initFirebase();
-  // Pre-populate invite code from URL so new users join an existing cohort
-  const urlJoinCode=new URLSearchParams(window.location.search).get('join');
-  if(urlJoinCode&&obData){obData.firmCode=urlJoinCode.toUpperCase();}
-  if(urlJoinCode&&S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
+  const _p=new URLSearchParams(window.location.search);
+  const urlJoinCode=_p.get('join');
+  if(urlJoinCode){
+    const fromName=decodeURIComponent(_p.get('from')||'');
+    const fromUid=_p.get('uid')||'';
+    _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid};
+    if(obData)obData.firmCode=urlJoinCode.toUpperCase();
+    if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
+    history.replaceState({},'',window.location.pathname);
+  }
   if(!AUTH){renderAuth();return;}
   if(!S){renderOnboarding();return;}
   renderApp();
@@ -1925,8 +1932,12 @@ function renderAuth(){
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
     <div class="auth-right-logo" style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div>
+    ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:12px 14px;margin-bottom:18px">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_pendingInvite.fromName)} invited you to study together</div><div style="font-size:11px;color:var(--mut);margin-top:1px">Create your account to join their study group on Ledger</div></div>
+    </div>`:''}
     <div id="auth-heading" style="margin-bottom:26px">
-      <div style="font-size:26px;font-weight:900;margin-bottom:5px;letter-spacing:-.03em">${authMode==='signin'?'Welcome back':'Create your account'}</div>
+      <div style="font-size:26px;font-weight:900;margin-bottom:5px;letter-spacing:-.03em">${_pendingInvite?.fromName?'Join '+esc(_pendingInvite.fromName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
       <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${authMode==='signin'?'Sign in to continue your CPA journey':'Join 12,400+ candidates grinding toward CPA'}</div>
     </div>
 
@@ -2241,6 +2252,7 @@ function renderOnboarding(){
 <div class="onboard-wrap">
   <div class="onboard-box fade-in">
     <div class="onboard-logo">Ledger</div>
+    ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:11px 14px;margin-bottom:14px;text-align:left"><div style="width:30px;height:30px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div><div style="font-size:12px;color:var(--ind);font-weight:600">${esc(_pendingInvite.fromName)} invited you — you'll be connected once you finish setup</div></div>`:''}
     ${AUTH?`<div style="display:inline-flex;align-items:center;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:var(--grn);font-weight:600"><div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">${(AUTH.displayName||'?').charAt(0).toUpperCase()}</div>Signed in as ${AUTH.email}</div>`:''}
     <div class="onboard-sub">Tell us about yourself so we can build your personalized CPA study plan.</div>
     <div class="steps">
@@ -2349,9 +2361,6 @@ function renderObStep2(){
     <div style="flex:1;font-size:12px;color:var(--sub)">${EXAMS[s].full}<br><span style="color:var(--mut)">~${(()=>{const p=HOUR_GOAL_PRESETS[obData.studyIntensity||'standard'];return p?p.goals[s]:EXAMS[s].studyHours})()} hrs goal · ${EXAMS[s].passRate}% pass rate</span></div>
     <input type="date" id="date-${s}" value="${obData.examDates[s]||''}" min="${new Date().toISOString().slice(0,10)}" style="padding:6px 9px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:12px;outline:none;max-width:140px">
   </div>`).join('')}
-  <div style="margin-top:4px;padding:11px 13px;background:var(--amb-bg);border:1px solid #fde68a;border-radius:9px;font-size:11px;color:var(--sub);line-height:1.65">
-    <strong style="color:var(--amb)">⚠️ 30-Month Window:</strong> Once you pass your first section, you have 30 months to pass all remaining sections. Plan your order carefully.
-  </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obNext()">Continue →</button>`;
@@ -2359,7 +2368,9 @@ function renderObStep2(){
 
 function renderObStep3(){
   const inviteCode=obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
-  const inviteUrl=window.location.origin+window.location.pathname+'?join='+inviteCode;
+  const _invName=encodeURIComponent(obData.name||S?.name||'');
+  const _invUid=AUTH?.uid||'';
+  const inviteUrl=window.location.origin+window.location.pathname+'?join='+inviteCode+'&from='+_invName+'&uid='+_invUid;
   return`
 <div class="ob-card">
   <h3>Invite your study group</h3>
@@ -2453,7 +2464,7 @@ function obFinish(){
     name:obData.name,state:obData.state,hoursPerWeek:obData.hoursPerWeek,
     disc:obData.disc,sections,examDates,sectionStatus,
     school:obData.school,classYear:obData.classYear,bio:obData.bio,avatar:obData.avatar,
-    activities:[],following:['f1','f2','f3','f5'],
+    activities:[],following:['f1','f2','f3','f5',...(_pendingInvite?.fromUid&&!['f1','f2','f3','f4','f5','f6'].includes(_pendingInvite.fromUid)?[_pendingInvite.fromUid]:[])],
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],
@@ -2465,7 +2476,12 @@ function obFinish(){
   };
   saveState();
   writeUserProfile();
-  showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
+  if(_pendingInvite?.fromName){
+    showToast(`Welcome! You're now connected with ${_pendingInvite.fromName} 🎉`,'ok');
+    _pendingInvite=null;
+  } else {
+    showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
+  }
   renderApp();
   // Show upgrade offer after a short delay so the app renders first
   if(!SUB.trialUsed) setTimeout(showPostOnboardingOffer, 1200);
