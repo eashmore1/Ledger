@@ -1568,7 +1568,7 @@ function renderUpgradeModal(featureHint){
   const proDisplay=isAnnual?proAnnual:proMonthly;
   const eliteDisplay=isAnnual?eliteAnnual:eliteMonthly;
 
-  const hintHTML=featureHint?('<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--ora)"><span style="font-size:18px">🔒</span><span>Unlock <strong>'+featureHint+'</strong> and all Pro features below</span></div>'):'';
+  const hintHTML=featureHint?('<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--ora)"><span style="font-size:18px">🔒</span><span>Unlock <strong>'+featureHint+'</strong> and all Pro features</span></div>'):'';
 
   // Feature rows per plan
   const free=[
@@ -8569,7 +8569,7 @@ function _buildStudyToolsPanel(){
       <div class="card card-pad">
         <div style="font-size:15px;font-weight:800;margin-bottom:4px">AI Flashcard Generator</div>
         <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste any CPA prep material — Ledger generates precise flashcards, MCQ quizzes, and summaries.</div>
-        <textarea disabled placeholder="Upgrade to Pro to use AI Study Tools…" style="width:100%;min-height:120px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--mut);font-size:12px;resize:none;opacity:.5"></textarea>
+        <textarea disabled placeholder="Upgrade to Pro to unlock AI Study Tools" style="width:100%;min-height:120px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--mut);font-size:12px;resize:none;opacity:.5"></textarea>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;opacity:.4;pointer-events:none">
           <button class="btn btn-primary" style="justify-content:center" disabled>⚡ Flashcards</button>
           <button class="btn btn-ind" style="justify-content:center" disabled>📝 Quiz</button>

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ledger-logos",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "/Users/ethanashmore/Claude/Projects/Ledger"],
+      "port": 4400,
+      "autoPort": true
+    }
+  ]
+}
