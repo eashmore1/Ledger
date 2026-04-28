@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Ledger</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23d44000'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ora:#d44000;--ora-dk:#b03500;--ora-bg:#fff7ed;
+  --navy:#18103a;
+  --bg:#f2ede6;--surf:#fff;--surf2:#f7f2eb;
+  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
+  --bdr:#e2dbd2;
+  --font:'Inter',system-ui,sans-serif;
+  --display:'Barlow Condensed','Inter',system-ui,sans-serif;
+  --shadow-md:0 4px 20px rgba(0,0,0,.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-text{font-family:var(--display);font-size:22px;font-weight:800;color:var(--ora)}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:rgba(0,0,0,.05);color:var(--txt)}
+.nav-link.active{color:var(--ora)}
+.nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:8px 18px;border-radius:9px;transition:all .15s;margin-left:8px}
+.nav-cta:hover{background:var(--ora-dk);transform:translateY(-1px)}
+
+/* HERO — dark */
+.hero{background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:120px 28px 96px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(212,64,0,.18),transparent 55%)}
+.hero-inner{position:relative;z-index:1;max-width:720px;margin:0 auto}
+.hero-eyebrow{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.14em;margin-bottom:16px}
+.hero-h1{font-family:var(--display);font-size:clamp(44px,7vw,72px);font-weight:800;color:#fff;line-height:.96;letter-spacing:-.02em;margin-bottom:28px}
+.hero-h1 em{color:var(--ora);font-style:normal}
+.hero-p{font-size:17px;color:rgba(255,255,255,.6);line-height:1.75;max-width:56ch}
+
+/* STAT ROW */
+.stats{background:var(--surf);padding:52px 28px;border-bottom:1px solid #e8e2db}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stat-num{font-family:var(--display);font-size:44px;font-weight:700;color:var(--ora);line-height:1;margin-bottom:6px}
+.stat-label{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;line-height:1.4}
+
+/* STORY */
+.story{padding:96px 28px;background:var(--bg)}
+.story-inner{max-width:680px;margin:0 auto}
+.section-eyebrow{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+.story-h2{font-family:var(--display);font-size:clamp(30px,4.5vw,44px);font-weight:800;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:32px}
+.story-p{font-size:15px;color:var(--sub);line-height:1.85;margin-bottom:20px;max-width:65ch}
+.story-p strong{color:var(--txt);font-weight:700}
+
+/* MISSION CALLOUT */
+.mission{background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:80px 28px;text-align:center}
+.mission-inner{max-width:640px;margin:0 auto}
+.mission-label{font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.14em;margin-bottom:20px}
+.mission-quote{font-family:var(--display);font-size:clamp(24px,4vw,36px);font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.01em}
+.mission-quote em{color:var(--ora);font-style:normal}
+
+/* VALUES */
+.values{padding:96px 28px;background:var(--surf2)}
+.values-inner{max-width:900px;margin:0 auto}
+.values-h2{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--txt);letter-spacing:-.02em;margin-bottom:52px;text-align:center}
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.value-card{background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:28px 24px}
+.value-num{font-family:var(--display);font-size:36px;font-weight:900;color:var(--ora);opacity:.35;line-height:1;margin-bottom:12px}
+.value-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:8px;letter-spacing:-.01em}
+.value-desc{font-size:13px;color:var(--sub);line-height:1.7}
+
+/* CTA */
+.cta-section{padding:96px 28px;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(212,64,0,.28),transparent 60%)}
+.cta-inner{position:relative;z-index:1;max-width:560px;margin:0 auto}
+.cta-h2{font-family:var(--display);font-size:clamp(32px,5.5vw,54px);font-weight:800;color:#fff;line-height:1;margin-bottom:14px;letter-spacing:-.02em}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:32px;line-height:1.65}
+.btn-cta{display:inline-block;font-size:15px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:14px 32px;border-radius:12px;transition:all .18s}
+.btn-cta:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 6px 16px rgba(212,64,0,.22)}
+
+footer{background:#0a0805;padding:28px;text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,.2)}
+footer a{color:rgba(255,255,255,.3);text-decoration:none}
+footer a:hover{color:rgba(255,255,255,.55)}
+
+@media(max-width:680px){
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .values-grid{grid-template-columns:1fr}
+  .nav-links .nav-link:not(.show-mobile){display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 180 180" fill="none"><rect width="180" height="180" rx="40" fill="#18103a"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>
+      <span class="nav-brand-text">Ledger</span>
+    </a>
+    <div class="nav-links">
+      <a href="/landing" class="nav-link">Home</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <a href="/contact" class="nav-link">Contact</a>
+      <a href="/" class="nav-cta show-mobile">Open App →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">About Ledger</p>
+    <h1 class="hero-h1">Built by candidates,<br>for <em>candidates.</em></h1>
+    <p class="hero-p">The CPA exam doesn't have a study problem. It has a consistency problem. Ledger exists to fix that — one logged session at a time.</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">50%</div>
+      <div class="stat-label">First-attempt pass rate across all four sections</div>
+    </div>
+    <div>
+      <div class="stat-num">18mo</div>
+      <div class="stat-label">Average time candidates spend completing all four sections</div>
+    </div>
+    <div>
+      <div class="stat-num">300+</div>
+      <div class="stat-label">Study hours the AICPA recommends across all sections</div>
+    </div>
+    <div>
+      <div class="stat-num">1</div>
+      <div class="stat-label">Thing that separates candidates who pass from those who don't: consistency</div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story">
+  <div class="story-inner">
+    <p class="section-eyebrow">The Story</p>
+    <h2 class="story-h2">Why Ledger exists</h2>
+    <p class="story-p">The CPA exam is one of the hardest professional credentialing exams in the world. A <strong>50% first-attempt pass rate</strong> means half of every candidate who sits walks out defeated — not because they weren't smart enough, but because they ran out of time, lost momentum, or studied in isolation without any sense of whether they were actually on track.</p>
+    <p class="story-p">Most study tools treat the CPA as a content problem. More videos. More MCQs. More material. They compete on library size while ignoring the real reason people fail: <strong>candidates don't know how many hours they've put in, which sections are lagging, or whether they're on pace to pass before their exam window closes.</strong></p>
+    <p class="story-p">Ledger treats it like a discipline problem. We give you one place to log every session, see your real progress, set goals by section, and stay accountable alongside a study group that knows where you stand. The candidates who pass aren't necessarily the smartest — they're the most consistent. Ledger gives you the infrastructure to be that person.</p>
+    <p class="story-p">We're not affiliated with Becker, Roger, or any official exam provider. We don't sell study material. We do one thing: <strong>keep you honest about your hours and on track to finish.</strong></p>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="mission">
+  <div class="mission-inner">
+    <p class="mission-label">Our Mission</p>
+    <p class="mission-quote">"To give every CPA candidate the structure, accountability, and community they need to pass all four sections — not someday, but <em>on schedule.</em>"</p>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values">
+  <div class="values-inner">
+    <h2 class="values-h2">What we believe</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-num">01</div>
+        <div class="value-title">Consistency beats intensity</div>
+        <div class="value-desc">Three hours every day beats a twelve-hour cram session the week before. Ledger is built around daily habits, not panic sprints.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">02</div>
+        <div class="value-title">Accountability is a feature</div>
+        <div class="value-desc">Knowing your study group can see your sessions is a surprisingly powerful motivator. That's not a side effect — it's the point.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">03</div>
+        <div class="value-title">Data over feelings</div>
+        <div class="value-desc">"I think I'm ready" is not a study strategy. Hours logged, readiness scores, and section progress give you something concrete to act on.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">04</div>
+        <div class="value-title">The exam window is real</div>
+        <div class="value-desc">You have 30 months to pass all four sections once you start. Ledger helps you treat that deadline seriously before it sneaks up on you.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">05</div>
+        <div class="value-title">Community, not competition</div>
+        <div class="value-desc">We don't rank candidates against each other. Study groups exist to pull people forward, not make anyone feel behind. Rising tide.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">06</div>
+        <div class="value-title">Simple by design</div>
+        <div class="value-desc">Log your session, see your progress, stay on track. We resist every temptation to add complexity that doesn't serve those three things.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-h2">Ready to get serious?</h2>
+    <p class="cta-sub">Join 12,400+ candidates who track every hour toward their license.</p>
+    <a href="/" class="btn-cta">Start for Free →</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Ledger &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/pricing">Pricing</a> &nbsp;·&nbsp; <a href="/contact">Contact</a></p>
+</footer>
+
+</body>
+</html>
