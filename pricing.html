@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Ledger</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23d44000'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ora:#d44000;--ora-dk:#b03500;--ora-bg:#fff7ed;
+  --navy:#18103a;
+  --ind:#5a5fcf;--ind-bg:#eef0ff;
+  --grn:#0ea574;--grn-bg:#ecfdf5;
+  --pur:#9333ea;--pur-bg:#faf5ff;
+  --bg:#f2ede6;--surf:#fff;--surf2:#f7f2eb;
+  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
+  --bdr:#e2dbd2;
+  --font:'Inter',system-ui,sans-serif;
+  --display:'Barlow Condensed','Inter',system-ui,sans-serif;
+  --shadow:0 1px 4px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 20px rgba(0,0,0,.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-text{font-family:var(--display);font-size:22px;font-weight:800;color:var(--ora);letter-spacing:0}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:rgba(0,0,0,.05);color:var(--txt)}
+.nav-link.active{color:var(--ora)}
+.nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:8px 18px;border-radius:9px;transition:all .15s;margin-left:8px}
+.nav-cta:hover{background:var(--ora-dk);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{padding:120px 28px 72px;text-align:center;background:var(--bg)}
+.hero-label{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+.hero-h1{font-family:var(--display);font-size:clamp(38px,6vw,64px);font-weight:800;color:var(--txt);line-height:1.0;letter-spacing:-.02em;margin-bottom:16px}
+.hero-sub{font-size:16px;color:var(--sub);line-height:1.65;max-width:480px;margin:0 auto 36px}
+
+/* ── BILLING TOGGLE ── */
+.billing-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:52px}
+.billing-toggle{display:flex;background:var(--surf);border:1px solid var(--bdr);border-radius:11px;padding:4px;gap:0}
+.bill-opt{padding:8px 20px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-radius:8px;transition:all .15s;font-family:var(--font)}
+.bill-opt.active{background:var(--txt);color:#fff}
+.save-badge{background:var(--grn-bg);color:var(--grn);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #a7f3d0}
+
+/* ── PLAN GRID ── */
+.plans-wrap{max-width:1040px;margin:0 auto;padding:0 28px 80px}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start;margin-bottom:24px}
+
+.plan-card{background:var(--surf);border:1.5px solid var(--bdr);border-radius:20px;padding:32px 28px;position:relative;transition:box-shadow .2s}
+.plan-card:hover{box-shadow:var(--shadow-md)}
+.plan-card.popular{border-color:var(--ora);background:linear-gradient(160deg,var(--surf),var(--ora-bg))}
+.plan-card.elite{border-color:var(--pur);background:linear-gradient(160deg,var(--surf),var(--pur-bg))}
+
+.popular-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:9px;font-weight:700;padding:4px 18px;border-radius:20px;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(212,64,0,.22)}
+
+.plan-name{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.plan-name.ora{color:var(--ora)}
+.plan-name.pur{color:var(--pur)}
+.plan-price{font-family:var(--display);font-size:48px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--txt);margin-bottom:4px}
+.plan-price sup{font-size:20px;font-weight:700;vertical-align:super;margin-right:1px}
+.plan-price.ora{color:var(--ora)}
+.plan-price.pur{color:var(--pur)}
+.plan-period{font-size:12px;color:var(--mut);margin-bottom:4px}
+.plan-was{font-size:11px;color:var(--mut);text-decoration:line-through}
+.plan-trial{font-size:11px;color:var(--grn);font-weight:700;margin-top:3px}
+
+.plan-sep{height:1px;background:var(--bdr);margin:22px 0}
+
+.feat-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px;font-size:13px;color:var(--sub);line-height:1.4}
+.feat-check{color:var(--grn);font-weight:700;flex-shrink:0;margin-top:1px}
+.feat-x{color:var(--bdr);font-weight:700;flex-shrink:0;margin-top:1px}
+.feat-dim{color:var(--mut)}
+
+.plan-cta{display:block;width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;transition:all .15s;margin-top:24px;font-family:var(--font)}
+.plan-cta.free{background:var(--surf2);color:var(--txt);border:1.5px solid var(--bdr)}
+.plan-cta.free:hover{background:var(--bdr);color:var(--txt)}
+.plan-cta.pro{background:var(--ora);color:#fff}
+.plan-cta.pro:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.22)}
+.plan-cta.elite-cta{background:var(--pur);color:#fff}
+.plan-cta.elite-cta:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ── CRAM ── */
+.cram-card{background:linear-gradient(135deg,#0a0805,#15100b,#1c1510);border-radius:20px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:40px;margin-bottom:20px;position:relative;overflow:hidden}
+.cram-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 100%,rgba(212,64,0,.2),transparent 50%);pointer-events:none}
+.cram-left{position:relative;z-index:1}
+.cram-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px}
+.cram-title{font-family:var(--display);font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.01em}
+.cram-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;max-width:500px}
+.cram-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.cram-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px}
+.cram-right{position:relative;z-index:1;flex-shrink:0;text-align:center}
+.cram-price{font-family:var(--display);font-size:52px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.02em}
+.cram-price sup{font-size:22px;vertical-align:super;margin-right:2px}
+.cram-price-sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px;margin-top:2px}
+.cram-vs{font-size:11px;color:rgba(16,185,129,.7);margin-top:4px}
+.cram-cta{display:block;padding:13px 32px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;transition:all .15s;font-family:var(--font);white-space:nowrap}
+.cram-cta:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.22)}
+
+/* ── STUDENT ── */
+.student-card{background:var(--surf);border:1.5px solid var(--bdr);border-radius:16px;padding:22px 28px;display:flex;align-items:center;gap:18px;margin-bottom:72px;cursor:pointer;transition:all .15s}
+.student-card:hover{border-color:var(--ind);box-shadow:var(--shadow-md)}
+
+/* ── FAQ ── */
+.faq-section{max-width:680px;margin:0 auto;padding:0 28px 96px}
+.faq-label{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-bottom:12px}
+.faq-h2{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:800;text-align:center;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:48px}
+.faq-item{border-bottom:1px solid var(--bdr);padding:20px 0}
+.faq-q{font-size:15px;font-weight:700;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;line-height:1.4}
+.faq-q::after{content:'+';font-size:20px;font-weight:400;color:var(--mut);flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{font-size:14px;color:var(--sub);line-height:1.7;padding-top:12px;display:none}
+.faq-item.open .faq-a{display:block}
+
+/* ── FOOTER ── */
+footer{background:#0a0805;padding:28px;text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,.2)}
+footer a{color:rgba(255,255,255,.35);text-decoration:none}
+footer a:hover{color:rgba(255,255,255,.6)}
+
+@media(max-width:860px){
+  .plans-grid{grid-template-columns:1fr}
+  .cram-card{flex-direction:column;text-align:center}
+  .cram-chips{justify-content:center}
+  .nav-links .nav-link:not(.show-mobile){display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/landing" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 180 180" style="border-radius:7px;flex-shrink:0">
+        <rect width="180" height="180" fill="#18103a"/>
+        <rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/>
+        <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
+        <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
+        <circle cx="142" cy="44" r="13" fill="#d44000"/>
+      </svg>
+      <span class="nav-brand-text">Ledger</span>
+    </a>
+    <div class="nav-links">
+      <a href="/landing#about" class="nav-link">About</a>
+      <a href="/landing#features" class="nav-link">Features</a>
+      <a href="/pricing" class="nav-link active show-mobile">Pricing</a>
+      <a href="/" class="nav-link show-mobile">Sign In</a>
+      <a href="/" class="nav-cta">Join Free →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Pricing</div>
+  <h1 class="hero-h1">Simple pricing.<br>No surprises.</h1>
+  <p class="hero-sub">Start free. Upgrade when you're ready. Every paid plan includes a 7-day free trial.</p>
+
+  <div class="billing-wrap">
+    <div class="billing-toggle">
+      <button class="bill-opt active" id="bill-monthly" onclick="setBilling('monthly')">Monthly</button>
+      <button class="bill-opt" id="bill-annual" onclick="setBilling('annual')">Annual</button>
+    </div>
+    <span class="save-badge" id="save-badge" style="display:none">Save 20%</span>
+  </div>
+</div>
+
+<div class="plans-wrap">
+  <div class="plans-grid">
+
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price"><sup>$</sup>0</div>
+      <div class="plan-period">Forever free</div>
+      <div class="plan-sep"></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Session logging &amp; study timer</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Pacing dashboard &amp; section progress</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Study feed &amp; community</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Streaks &amp; achievement badges</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>1 study club</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Personal challenges &amp; milestones</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">AI coaching (Ask Ledger)</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Smart study schedule</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Streak Shield</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Weekly progress reports</span></div>
+      <a href="/" class="plan-cta free">Get Started Free</a>
+    </div>
+
+    <!-- PRO -->
+    <div class="plan-card popular">
+      <div class="popular-badge">MOST POPULAR</div>
+      <div class="plan-name ora">Pro</div>
+      <div class="plan-price ora" id="pro-price"><sup>$</sup>20</div>
+      <div class="plan-period" id="pro-period">per month</div>
+      <div class="plan-was" id="pro-was" style="display:none">$20/mo without annual</div>
+      <div class="plan-trial">7-day free trial included</div>
+      <div class="plan-sep"></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Free</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Ask Ledger — AI CPA coach</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Smart study schedule</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Advanced analytics &amp; heatmaps</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Weekly progress reports (PDF)</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Streak Shield — 3/month</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited study clubs</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Data export (CSV/PDF)</span></div>
+      <a href="/" class="plan-cta pro">Start Free Trial →</a>
+    </div>
+
+    <!-- ELITE -->
+    <div class="plan-card elite">
+      <div class="plan-name pur">Elite</div>
+      <div class="plan-price pur" id="elite-price"><sup>$</sup>29</div>
+      <div class="plan-period" id="elite-period">per month</div>
+      <div class="plan-was" id="elite-was" style="display:none">$29/mo without annual</div>
+      <div class="plan-trial" style="color:var(--pur)">AI Tools + Priority Support</div>
+      <div class="plan-sep"></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Pro</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Score Predictor</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>AI Mnemonic Generator</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Study Partner Pairing</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Full Exam Simulator</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Exclusive Elite badges</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Priority support</span></div>
+      <a href="/" class="plan-cta elite-cta">Start Free Trial →</a>
+    </div>
+
+  </div>
+
+  <!-- CRAM -->
+  <div class="cram-card">
+    <div class="cram-left">
+      <div class="cram-eyebrow">Limited Offer</div>
+      <div class="cram-title">📚 6-Month CPA Cram Plan</div>
+      <div class="cram-sub">Everything in Pro for 6 months, a structured exam-day protocol, and a personal milestone check-in. Perfect if your exam window is fixed. No recurring charges — ever.</div>
+      <div class="cram-chips">
+        <span class="cram-chip">✓ Full Pro Features</span>
+        <span class="cram-chip">✓ 6 Months Access</span>
+        <span class="cram-chip">✓ Exam Protocol PDF</span>
+        <span class="cram-chip">✓ Score Predictor</span>
+        <span class="cram-chip">✓ No Subscription</span>
+      </div>
+    </div>
+    <div class="cram-right">
+      <div class="cram-price"><sup>$</sup>99</div>
+      <div class="cram-price-sub">one-time · 6 months</div>
+      <div class="cram-vs">vs $120 for 6 × Pro monthly</div>
+      <a href="/" class="cram-cta" style="margin-top:16px;display:block">Get the Cram Plan →</a>
+    </div>
+  </div>
+
+  <!-- STUDENT -->
+  <div class="student-card" onclick="window.location='/'">
+    <span style="font-size:30px">🎓</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:#0d9488;margin-bottom:3px">Student Discount — 35% off Pro</div>
+      <div style="font-size:13px;color:var(--sub)">Verify your .edu email or enrollment status for $13/mo Pro. Takes 30 seconds.</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:#0d9488;flex-shrink:0">Verify →</div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-label">FAQ</div>
+  <h2 class="faq-h2">Common questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need a credit card for the free trial?</div>
+    <div class="faq-a">No. The 7-day free trial for Pro and Elite requires no payment information. You only enter billing details if you decide to keep your subscription after the trial ends.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+    <div class="faq-a">Yes. Cancel before the trial ends and you won't be charged. Cancel a paid subscription at any time — you keep access through the end of your billing period.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What's the difference between Pro and Elite?</div>
+    <div class="faq-a">Pro covers everything most candidates need — AI coaching, smart scheduling, advanced analytics, streak protection, and PDF reports. Elite adds the Score Predictor, AI Mnemonic Generator, Study Partner Pairing, and the full Exam Simulator. If you're not sure, start with Pro.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the 6-Month Cram Plan?</div>
+    <div class="faq-a">It's a one-time purchase (not a subscription) that gives you full Pro-tier access for 6 months, plus an exam-day protocol PDF and a personal milestone check-in. It's designed for candidates with a fixed exam window who want everything for less than 6 months of Pro billed monthly.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does the annual plan auto-renew?</div>
+    <div class="faq-a">Yes, annual plans renew automatically unless cancelled. You can manage or cancel your subscription at any time from your account settings.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How does the student discount work?</div>
+    <div class="faq-a">Verify your student status with a .edu email address or proof of enrollment and receive 35% off the Pro plan ($13/mo instead of $20/mo). The discount applies for as long as your enrollment is active.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later?</div>
+    <div class="faq-a">Yes. Upgrade or downgrade at any time. Upgrades take effect immediately. Downgrades take effect at the end of your current billing period.</div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Ledger · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a></p>
+</footer>
+
+<script>
+let billing = 'monthly';
+
+function setBilling(type) {
+  billing = type;
+  document.getElementById('bill-monthly').classList.toggle('active', type === 'monthly');
+  document.getElementById('bill-annual').classList.toggle('active', type === 'annual');
+  document.getElementById('save-badge').style.display = type === 'annual' ? 'inline-flex' : 'none';
+
+  if (type === 'annual') {
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>16';
+    document.getElementById('pro-period').textContent = 'per month · billed $192/yr';
+    document.getElementById('pro-was').style.display = 'block';
+    document.getElementById('pro-was').textContent = '$20/mo without annual';
+    document.getElementById('elite-price').innerHTML = '<sup>$</sup>23';
+    document.getElementById('elite-period').textContent = 'per month · billed $276/yr';
+    document.getElementById('elite-was').style.display = 'block';
+    document.getElementById('elite-was').textContent = '$29/mo without annual';
+  } else {
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>20';
+    document.getElementById('pro-period').textContent = 'per month';
+    document.getElementById('pro-was').style.display = 'none';
+    document.getElementById('elite-price').innerHTML = '<sup>$</sup>29';
+    document.getElementById('elite-period').textContent = 'per month';
+    document.getElementById('elite-was').style.display = 'none';
+  }
+}
+
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

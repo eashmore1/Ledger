@@ -1728,7 +1728,7 @@ function renderUpgradeModal(featureHint){
   '<div class="testimonial-card"><div class="stars">★★★★★</div><div class="testimonial-text">"Got the Cram Plan 3 months before my FAR window. Passed. The exam protocol PDF is insanely well done — I followed it day-by-day the final two weeks."</div><div class="testimonial-author">Jasmine T.</div><div class="testimonial-meta">2× passer · Regional Firm</div></div>'+
   '</div>'+
   // Fine print
-  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our <a href="#" onclick="openLegalModal(\'terms\');return false" style="color:var(--mut)">Terms of Service</a>. Student discount requires verification. All prices in USD.</div>'+
+  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our <a href="/terms" target="_blank" style="color:var(--mut)">Terms of Service</a>. Student discount requires verification. All prices in USD.</div>'+
   '</div>';
 }
 
@@ -1962,7 +1962,7 @@ function renderAuth(){
     </div>
 
     <div class="auth-terms">
-      By continuing, you agree to Ledger's <a href="#" onclick="openLegalModal('terms');return false">Terms of Service</a> and <a href="#" onclick="openLegalModal('privacy');return false">Privacy Policy</a>.<br>
+      By continuing, you agree to Ledger's <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.<br>
       ${authMode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}
     </div>
   </div>
@@ -2028,7 +2028,7 @@ function switchAuthMode(mode){
   const fb=document.getElementById('auth-form-body');
   if(fb)fb.innerHTML=buildAuthForm();
   const terms=document.querySelector('.auth-terms');
-  if(terms)terms.innerHTML=`By continuing you agree to Ledger's <a href="#" onclick="openLegalModal('terms');return false">Terms</a> and <a href="#" onclick="openLegalModal('privacy');return false">Privacy Policy</a>.<br>${mode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}`;
+  if(terms)terms.innerHTML=`By continuing you agree to Ledger's <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.<br>${mode==='signin'?`Don't have an account? <a href="#" onclick="switchAuthMode('signup');return false">Sign up free →</a>`:`Already have an account? <a href="#" onclick="switchAuthMode('signin');return false">Sign in →</a>`}`;
 }
 
 // Simulated Google accounts stored in localStorage
