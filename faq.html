@@ -41,10 +41,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .hero-sub{font-size:15px;color:var(--sub);line-height:1.65;max-width:44ch;margin:0 auto 36px}
 
 /* SEARCH */
-.search-wrap{max-width:520px;margin:0 auto 64px;position:relative}
-.search-input{width:100%;background:var(--surf);border:1.5px solid var(--bdr);border-radius:12px;padding:13px 18px 13px 44px;font-size:14px;color:var(--txt);font-family:var(--font);outline:none;transition:border-color .15s}
+.search-wrap{max-width:520px;margin:0 auto 56px;padding:0 28px;position:relative}
+.search-input{width:100%;background:var(--surf);border:1.5px solid var(--bdr);border-radius:12px;padding:13px 18px 13px 46px;font-size:14px;color:var(--txt);font-family:var(--font);outline:none;transition:border-color .15s}
 .search-input:focus{border-color:var(--ora)}
-.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:16px;pointer-events:none}
+.search-icon{position:absolute;left:43px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none;display:flex;align-items:center}
 
 /* CATEGORIES */
 .faq-wrap{max-width:760px;margin:0 auto;padding:0 28px 96px}
@@ -114,8 +114,8 @@ footer a:hover{color:rgba(255,255,255,.55)}
 </div>
 
 <!-- SEARCH -->
-<div class="search-wrap" style="max-width:520px;margin:0 auto 56px;padding:0 28px;position:relative">
-  <span class="search-icon">🔍</span>
+<div class="search-wrap">
+  <span class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
   <input class="search-input" type="text" id="faq-search" placeholder="Search questions..." oninput="filterFaq(this.value)">
 </div>
 
