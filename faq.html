@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Ledger</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2318103a'/%3E%3Crect x='34' y='40' width='26' height='96' rx='6' fill='%23fff'/%3E%3Crect x='34' y='116' width='82' height='26' rx='6' fill='%23fff'/%3E%3Ccircle cx='142' cy='44' r='13' fill='%23d44000'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ora:#d44000;--ora-dk:#b03500;--ora-bg:#fff7ed;
+  --navy:#18103a;
+  --bg:#f2ede6;--surf:#fff;--surf2:#f7f2eb;
+  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
+  --bdr:#e2dbd2;
+  --font:'Inter',system-ui,sans-serif;
+  --display:'Barlow Condensed','Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-text{font-family:var(--display);font-size:22px;font-weight:800;color:var(--ora)}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:rgba(0,0,0,.05);color:var(--txt)}
+.nav-link.active{color:var(--ora)}
+.nav-cta{font-size:13px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:8px 18px;border-radius:9px;transition:all .15s;margin-left:8px}
+.nav-cta:hover{background:var(--ora-dk);transform:translateY(-1px)}
+
+/* HERO */
+.hero{padding:110px 28px 64px;text-align:center;background:var(--bg)}
+.hero-eyebrow{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+.hero-h1{font-family:var(--display);font-size:clamp(36px,6vw,60px);font-weight:800;color:var(--txt);line-height:1.0;letter-spacing:-.02em;margin-bottom:14px}
+.hero-sub{font-size:15px;color:var(--sub);line-height:1.65;max-width:44ch;margin:0 auto 36px}
+
+/* SEARCH */
+.search-wrap{max-width:520px;margin:0 auto 64px;position:relative}
+.search-input{width:100%;background:var(--surf);border:1.5px solid var(--bdr);border-radius:12px;padding:13px 18px 13px 44px;font-size:14px;color:var(--txt);font-family:var(--font);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--ora)}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:16px;pointer-events:none}
+
+/* CATEGORIES */
+.faq-wrap{max-width:760px;margin:0 auto;padding:0 28px 96px}
+.faq-category{margin-bottom:56px}
+.cat-label{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+.cat-h2{font-family:var(--display);font-size:clamp(22px,3.5vw,30px);font-weight:800;color:var(--txt);letter-spacing:-.02em;margin-bottom:24px}
+
+.faq-item{border-bottom:1px solid var(--bdr)}
+.faq-q{font-size:15px;font-weight:700;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;line-height:1.4;padding:18px 0;user-select:none}
+.faq-chevron{flex-shrink:0;width:20px;height:20px;color:var(--mut);transition:transform .22s}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-a{font-size:14px;color:var(--sub);line-height:1.75;padding-bottom:18px;display:none}
+.faq-a a{color:var(--ora);text-decoration:none}
+.faq-a a:hover{text-decoration:underline}
+.faq-item.open .faq-a{display:block}
+
+/* NO RESULTS */
+.no-results{text-align:center;padding:48px 0;display:none}
+.no-results p{font-size:15px;color:var(--mut)}
+
+/* STILL STUCK */
+.still-stuck{background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);border-radius:20px;padding:48px 40px;text-align:center;margin:0 28px 80px;position:relative;overflow:hidden}
+.still-stuck::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(212,64,0,.2),transparent 60%)}
+.still-stuck-inner{position:relative;z-index:1}
+.still-stuck h2{font-family:var(--display);font-size:clamp(26px,4vw,38px);font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:10px}
+.still-stuck p{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.65}
+.still-stuck-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{font-size:14px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:12px 24px;border-radius:10px;transition:all .18s}
+.btn-primary:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.22)}
+.btn-ghost{font-size:14px;font-weight:600;color:rgba(255,255,255,.6);text-decoration:none;padding:12px 20px;border-radius:10px;border:1.5px solid rgba(255,255,255,.14);transition:all .18s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.06)}
+
+footer{background:#0a0805;padding:28px;text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,.2)}
+footer a{color:rgba(255,255,255,.3);text-decoration:none}
+footer a:hover{color:rgba(255,255,255,.55)}
+
+@media(max-width:600px){
+  .nav-links .nav-link:not(.show-mobile){display:none}
+  .still-stuck{margin:0 0 64px;border-radius:0}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 180 180" fill="none"><rect width="180" height="180" rx="40" fill="#18103a"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>
+      <span class="nav-brand-text">Ledger</span>
+    </a>
+    <div class="nav-links">
+      <a href="/landing" class="nav-link">Home</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+      <a href="/" class="nav-cta show-mobile">Open App →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">FAQ</p>
+  <h1 class="hero-h1">Frequently asked questions</h1>
+  <p class="hero-sub">Everything candidates ask before signing up, and a few things they ask after.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap" style="max-width:520px;margin:0 auto 56px;padding:0 28px;position:relative">
+  <span class="search-icon">🔍</span>
+  <input class="search-input" type="text" id="faq-search" placeholder="Search questions..." oninput="filterFaq(this.value)">
+</div>
+
+<div id="no-results" class="no-results" style="max-width:760px;margin:0 auto">
+  <p>No results for that. Try a different keyword or <a href="/contact" style="color:var(--ora)">ask us directly</a>.</p>
+</div>
+
+<!-- QUESTIONS -->
+<div class="faq-wrap" id="faq-wrap">
+
+  <!-- GETTING STARTED -->
+  <div class="faq-category" data-cat>
+    <p class="cat-label">Getting started</p>
+    <h2 class="cat-h2">The basics</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is Ledger?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Ledger is a study-tracking and accountability app built specifically for CPA exam candidates. You log your study sessions by section, track your total hours, monitor your readiness score, and stay accountable alongside a study group. It's not a study material provider — we don't sell MCQs or videos. We help you stay on track with whatever study materials you're already using.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is Ledger affiliated with Becker, Roger, Wiley, or the AICPA?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">No. Ledger is completely independent. We're not affiliated with any exam prep provider, the AICPA, or NASBA. You can use Ledger alongside any study materials — Becker, Roger, Wiley, Surgent, Gleim, or anything else.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does Ledger guarantee I'll pass the CPA exam?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">No, and we'd never claim that. Passing depends on your effort, your study materials, and a lot of factors outside our control. What Ledger does is give you the structure and accountability that research consistently shows improves exam outcomes — consistent hours, progress visibility, and a community keeping you honest.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does Ledger work on mobile?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes. Ledger is a web app that works on any device — phone, tablet, or desktop. No download required. Open <a href="/">ledgercpa.com</a> in your mobile browser and it works. You can also add it to your home screen from your browser menu for an app-like experience.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do I get started?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Create a free account at <a href="/">ledgercpa.com</a>. During onboarding you'll set your exam sections, target exam date, and weekly hour goals. After that, log your first study session. The whole setup takes about two minutes.</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="faq-category" data-cat>
+    <p class="cat-label">Features</p>
+    <h2 class="cat-h2">How it works</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a readiness score?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Your readiness score is a 0–100 number that estimates how prepared you are for each CPA section based on your logged hours, your self-reported confidence after sessions, and your pace relative to your goal. It's not a guarantee — it's a signal. A score above 75 generally means you're on track. Below 50 is a warning that something needs to change.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What are study groups and how do they work?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Study groups let you connect with other candidates — usually classmates, coworkers, or people from your accounting firm. Each group has a firm code. Share the code or an invite link, and anyone who joins can see each other's logged sessions and progress in a shared activity feed. You can make your account private if you want to control who sees your activity.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I make my account private?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes. Go to Settings → Privacy and toggle your account to private. Private accounts require follow approval — only people you accept can see your study activity. Your profile still exists, but your sessions and progress are hidden from anyone you haven't approved.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What sections does Ledger track?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">All four CPA exam sections: AUD (Auditing and Attestation), FAR (Financial Accounting and Reporting), REG (Taxation and Regulation), and TCP (Tax Compliance and Planning) or the discipline section you've chosen. You can track all four simultaneously or focus on one at a time.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the 30-month window and how does Ledger help?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Once you pass your first CPA section, you have 30 months (under the current rules) to pass the remaining three. Ledger tracks your exam window so you can see how much time you have left and whether your current pace puts you on track to finish all sections in time.</div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="faq-category" data-cat>
+    <p class="cat-label">Pricing & billing</p>
+    <h2 class="cat-h2">Plans and payments</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Do I need a credit card for the free trial?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">No. The 7-day free trial for Pro and Elite requires no payment information. You only enter billing details if you decide to keep your subscription after the trial ends.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes. Cancel before the trial ends and you won't be charged. Cancel a paid subscription at any time — you keep access through the end of your billing period. No questions asked.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What's the difference between Pro and Elite?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Pro covers everything most candidates need — AI coaching, smart scheduling, advanced analytics, streak protection, and PDF reports. Elite adds the Score Predictor, AI Mnemonic Generator, Study Partner Pairing, and the full Exam Simulator. If you're not sure, start with Pro. You can upgrade to Elite at any time.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the Cram Plan?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">The Cram Plan is a one-time purchase (not a subscription) that gives you full Pro-tier access for 6 months, plus an exam-day protocol PDF and a personal milestone check-in. It's designed for candidates with a fixed exam window who want everything at a lower total cost than 6 months of Pro billed monthly.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How does the student discount work?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Verify your student status with a .edu email or proof of enrollment and receive 35% off the Pro plan ($13/mo instead of $20/mo). Email <a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a> to get verified. The discount applies for as long as your enrollment is active.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does the annual plan auto-renew?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes, annual plans renew automatically unless cancelled. You can manage or cancel your subscription at any time from Settings → Account in the app.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes. Upgrade or downgrade at any time. Upgrades take effect immediately. Downgrades take effect at the end of your current billing period.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Do you offer refunds?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">We offer a 30-day money-back guarantee on first-time purchases of any paid plan. Email <a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a> within 30 days of your first charge and we'll take care of it.</div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT & DATA -->
+  <div class="faq-category" data-cat>
+    <p class="cat-label">Account & data</p>
+    <h2 class="cat-h2">Your information</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What happens to my data if I cancel?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Cancelling your paid subscription downgrades you to the free tier — your data stays intact. If you delete your account entirely, your data is permanently removed from our systems within 30 days. We don't sell your data or keep it after account deletion.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I export my study data?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes. Email <a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a> to request a full export of your study logs and account data. Pro and Elite users can also download PDF progress reports directly from the app.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do I delete my account?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Go to Settings → Account → Delete Account. This is permanent and cannot be undone. All your data will be removed within 30 days.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is my study data private by default?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">By default, your profile is public to other Ledger users — your display name, streak, and logged hours are visible in the community feed. You can switch to a private account in Settings → Privacy at any time. Private accounts require follow approval before anyone can see your activity.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- STILL STUCK -->
+<div class="still-stuck" style="max-width:760px;margin:0 auto 80px">
+  <div class="still-stuck-inner">
+    <h2>Still have a question?</h2>
+    <p>We read every message. Usually reply within 24 hours.</p>
+    <div class="still-stuck-btns">
+      <a href="/contact" class="btn-primary">Contact Us →</a>
+      <a href="mailto:support@ledgercpa.com" class="btn-ghost">support@ledgercpa.com</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Ledger &nbsp;·&nbsp; <a href="/about">About</a> &nbsp;·&nbsp; <a href="/pricing">Pricing</a> &nbsp;·&nbsp; <a href="/contact">Contact</a> &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a></p>
+</footer>
+
+<script>
+function toggleFaq(el){
+  const item=el.closest('.faq-item');
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+
+function filterFaq(val){
+  const q=val.trim().toLowerCase();
+  let anyVisible=false;
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    const text=item.textContent.toLowerCase();
+    const match=!q||text.includes(q);
+    item.style.display=match?'':'none';
+    if(match)anyVisible=true;
+  });
+  document.querySelectorAll('[data-cat]').forEach(cat=>{
+    const visible=Array.from(cat.querySelectorAll('.faq-item')).some(i=>i.style.display!=='none');
+    cat.style.display=visible?'':'none';
+  });
+  document.getElementById('no-results').style.display=anyVisible?'none':'block';
+}
+</script>
+
+</body>
+</html>
