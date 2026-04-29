@@ -3482,7 +3482,8 @@ function buildDashboard(){
         ${retakeInfo}
       </div>
       <div style="text-align:right;flex-shrink:0">
-        ${targetDate?`<div style="font-size:10px;color:var(--mut)">Target</div><div style="font-size:12px;font-weight:700">${new Date(targetDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`:''}
+        <div style="font-size:10px;color:var(--mut);margin-bottom:2px">Target</div>
+        <input type="date" value="${targetDate||''}" onchange="setPacingTargetDate('${s}',this.value)" style="padding:3px 5px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:${targetDate?'var(--txt)':'var(--mut)'};font-size:10px;outline:none;cursor:pointer;max-width:110px">
         <select onchange="updateSectionStatus('${s}',this.value)" style="margin-top:6px;padding:3px 6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;outline:none;cursor:pointer">
           <option value="planned"${status==='planned'?' selected':''}>Planned</option>
           <option value="studying"${status==='studying'?' selected':''}>Studying</option>
@@ -4497,6 +4498,16 @@ function toggleFollow(fId,btn){
     saveState();checkAchievements();saveFollowToFirestore();
     showToast('Following! Their sessions will now appear in your feed.','ok');
   }
+}
+
+function setPacingTargetDate(section,date){
+  if(!S.examDates)S.examDates={};
+  if(date){S.examDates[section]=date;}else{delete S.examDates[section];}
+  saveState();
+  if(firebaseDb&&AUTH?.uid){
+    try{firebaseDb.collection('users').doc(AUTH.uid).update({examDates:S.examDates,updatedAt:Date.now()});}catch(e){}
+  }
+  renderTab();
 }
 
 function updateSectionStatus(section,status){
@@ -10586,7 +10597,7 @@ function showPassCelebration(section,score,hours){
   const hrs=hours||Math.round(getSectionHours(sec));
   const scoreText=score!=null?` with a ${score}`:'';
   const shareText=`Just passed ${sec}${scoreText}! ${hrs} hours logged on Ledger.`;
-  const liUrl=`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent('https://ledgercpa.app')}&title=${encodeURIComponent(shareText)}`;
+  const liUrl=`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://ledgercpa.app')}&summary=${encodeURIComponent(shareText)}`;
   let el=document.getElementById('pass-celebration-overlay');
   if(el)el.remove();
   el=document.createElement('div');
