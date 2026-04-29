@@ -694,6 +694,20 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 @media(prefers-reduced-motion:reduce){
   *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+/* ── PACING CARD RIGHT COLUMN ── */
+.pc-right{text-align:right;flex-shrink:0}
+@media(max-width:520px){
+  .pc-right{width:100%;text-align:left;display:flex;flex-direction:row;align-items:center;gap:8px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--bdr)}
+  .pc-right-label{display:none}
+  .pc-right select{margin-top:0!important;flex-shrink:0}
+  .pc-right .pc-log-btn{margin-left:auto}
+}
+/* ── DASHBOARD 2-COL ROW (tablet) ── */
+.dash-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.dash-row-2col>.card{margin-bottom:0!important}
+@media(max-width:700px){
+  .dash-row-2col{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -3481,8 +3495,8 @@ function buildDashboard(){
         <div class="pc-pace ${paceClass}">${paceMsg}</div>
         ${retakeInfo}
       </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:10px;color:var(--mut)">Target</div>
+      <div class="pc-right">
+        <div class="pc-right-label" style="font-size:10px;color:var(--mut)">Target</div>
         <div style="position:relative;display:inline-block">
           <div style="font-size:12px;font-weight:700;color:${targetDate?'var(--txt)':'var(--mut)'};pointer-events:none">${targetDate?new Date(targetDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Set date'}</div>
           <input type="date" value="${targetDate||''}" onchange="setPacingTargetDate('${s}',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%">
@@ -3492,7 +3506,7 @@ function buildDashboard(){
           <option value="studying"${status==='studying'?' selected':''}>Studying</option>
           <option value="passed"${(S.sectionPassed||[]).includes(s)?' selected':''}>Passed ✓</option>
         </select>
-        ${!passed?`<div><button onclick="openLogResultModal('${s}')" style="margin-top:5px;padding:3px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap">📝 Log Result</button></div>`:''}
+        ${!passed?`<div class="pc-log-btn"><button onclick="openLogResultModal('${s}')" style="margin-top:5px;padding:3px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap">📝 Log Result</button></div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -3536,9 +3550,10 @@ function buildDashboard(){
   </div>
   ${streakRecovery}
 
-  ${readinessCard}
-
-  ${commitmentCard}
+  <div class="dash-row-2col">
+    ${readinessCard}
+    ${commitmentCard}
+  </div>
 
   <div class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -3558,14 +3573,16 @@ function buildDashboard(){
     ${pacingCards}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:20px">
-    <div class="section-title">Study Calendar</div>
-    ${calHTML}
-  </div>
+  <div class="dash-row-2col">
+    <div class="card card-pad">
+      <div class="section-title">Study Calendar</div>
+      ${calHTML}
+    </div>
 
-  <div class="card card-pad" style="margin-bottom:20px">
-    <div class="section-title">Study Heat Map — Last 16 Weeks</div>
-    ${buildHeatMap()}
+    <div class="card card-pad">
+      <div class="section-title">Study Heat Map — Last 16 Weeks</div>
+      ${buildHeatMap()}
+    </div>
   </div>
 
   <div class="card card-pad" style="margin-bottom:40px">
