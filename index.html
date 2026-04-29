@@ -708,6 +708,38 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 @media(max-width:700px){
   .dash-row-2col{grid-template-columns:1fr}
 }
+/* ── ACTIVITY CARD FEED STAGGER ── */
+.activity-card:nth-child(1){animation-delay:0ms}
+.activity-card:nth-child(2){animation-delay:55ms}
+.activity-card:nth-child(3){animation-delay:110ms}
+.activity-card:nth-child(4){animation-delay:165ms}
+.activity-card:nth-child(5){animation-delay:220ms}
+.activity-card:nth-child(6){animation-delay:270ms}
+.activity-card:nth-child(7){animation-delay:320ms}
+.activity-card:nth-child(8){animation-delay:370ms}
+.activity-card:nth-child(n+9){animation-delay:400ms}
+/* ── LEADERBOARD ROW STAGGER ── */
+.lb-row{animation:fadeIn .38s cubic-bezier(.22,.61,.36,1) both}
+.lb-row:nth-child(1){animation-delay:0ms}
+.lb-row:nth-child(2){animation-delay:45ms}
+.lb-row:nth-child(3){animation-delay:90ms}
+.lb-row:nth-child(4){animation-delay:135ms}
+.lb-row:nth-child(5){animation-delay:180ms}
+.lb-row:nth-child(6){animation-delay:225ms}
+.lb-row:nth-child(7){animation-delay:270ms}
+.lb-row:nth-child(8){animation-delay:315ms}
+.lb-row:nth-child(9){animation-delay:360ms}
+.lb-row:nth-child(10){animation-delay:400ms}
+/* ── PROPS FLOAT PARTICLE ── */
+@keyframes propsFloat{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(-46px)}}
+/* ── FOLLOW BUTTON CONFIRM ── */
+@keyframes followConfirm{0%{transform:scale(1)}35%{transform:scale(1.14)}100%{transform:scale(1)}}
+.follow-btn.just-followed{animation:followConfirm .3s cubic-bezier(.22,.61,.36,1)}
+/* ── SESSION CLOCK BREATHING ── */
+@keyframes clockBreath{0%,100%{opacity:1}50%{opacity:.6}}
+.sess-clock.breathing{animation:clockBreath 2.4s ease-in-out infinite}
+/* ── PROFILE STAT COUNT-UP ── */
+.profile-stat-val{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -4297,9 +4329,19 @@ function giveProps(actId,userId){
   // Animate button
   const btn=document.querySelector(`[data-aid="${actId}"][data-uid="${userId}"] .ac-action`)||
     document.querySelector(`.activity-card[data-aid="${actId}"] .ac-action`);
-  if(btn)btn.classList.add('props-anim');
+  if(btn){
+    btn.classList.add('props-anim');
+    if(!hasProps){
+      const r=btn.getBoundingClientRect();
+      const p=document.createElement('div');
+      p.textContent='+1 👏';
+      p.style.cssText=`position:fixed;left:${r.left+r.width/2}px;top:${r.top-6}px;font-size:12px;font-weight:800;color:var(--ora);pointer-events:none;z-index:1000;animation:propsFloat .65s cubic-bezier(.22,.61,.36,1) forwards;white-space:nowrap`;
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),650);
+    }
+  }
   if(!hasProps)showToast('Props given! 👏','ok');
-  renderTab();
+  setTimeout(()=>renderTab(), hasProps?0:480);
 }
 
 function openComments(actId,userId){
@@ -4514,7 +4556,7 @@ function toggleFollow(fId,btn){
   } else {
     following.push(fId);
     S.following=following;
-    if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';}
+    if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';btn.classList.remove('just-followed');void btn.offsetWidth;btn.classList.add('just-followed');}
     saveState();checkAchievements();saveFollowToFirestore();
     showToast('Following! Their sessions will now appear in your feed.','ok');
   }
@@ -4660,7 +4702,7 @@ function renderSessCard(){
       <div style="text-align:center;margin-bottom:6px">
         <span class="sess-exam-pill" style="background:${ex?.color+'18'||'rgba(212,64,0,.1)'};color:${col}">${TS.section}${ex?' · '+ex.full:''}</span>
       </div>
-      <div class="sess-clock" id="sess-clock" style="color:${paused?'var(--mut)':col}">${fmtElapsed(TS.elapsed)}</div>
+      <div class="sess-clock${!paused?' breathing':''}" id="sess-clock" style="color:${paused?'var(--mut)':col}">${fmtElapsed(TS.elapsed)}</div>
       <div class="sess-clock-lbl">${paused?'Paused':'Study Time'}</div>
       <div class="sess-topic-row">
         <div class="sess-topic-lbl">Currently studying:</div>
@@ -6113,27 +6155,29 @@ function attachTabHandlers(){
   });
 
   // Count-up animation for dashboard stat numbers
+  function _countUpEl(el,duration){
+    const text=el.textContent.trim();
+    if(text.includes('/')||text===''||text==='0')return;
+    const num=parseFloat(text);
+    if(isNaN(num))return;
+    const isDecimal=text.includes('.');
+    let startTime=null;
+    el.textContent=isDecimal?'0.0':'0';
+    const tick=(t)=>{
+      if(!startTime)startTime=t;
+      const p=Math.min((t-startTime)/duration,1);
+      const eased=1-Math.pow(1-p,4);
+      el.textContent=isDecimal?(num*eased).toFixed(1):String(Math.round(num*eased));
+      if(p<1)requestAnimationFrame(tick);
+      else el.textContent=isDecimal?num.toFixed(1):String(num);
+    };
+    requestAnimationFrame(tick);
+  }
   if(currentTab==='dashboard'){
-    document.querySelectorAll('.stat-val').forEach(el=>{
-      const text=el.textContent.trim();
-      if(text.includes('/')||text===''||text==='0')return;
-      const num=parseFloat(text);
-      if(isNaN(num))return;
-      const isDecimal=text.includes('.');
-      const duration=680;
-      let startTime=null;
-      el.textContent=isDecimal?'0.0':'0';
-      const tick=(t)=>{
-        if(!startTime)startTime=t;
-        const p=Math.min((t-startTime)/duration,1);
-        const eased=1-Math.pow(1-p,4);
-        const val=num*eased;
-        el.textContent=isDecimal?val.toFixed(1):String(Math.round(val));
-        if(p<1)requestAnimationFrame(tick);
-        else el.textContent=isDecimal?num.toFixed(1):String(num);
-      };
-      requestAnimationFrame(tick);
-    });
+    document.querySelectorAll('.stat-val').forEach(el=>_countUpEl(el,680));
+  }
+  if(currentTab==='profile'){
+    document.querySelectorAll('.profile-stat-val').forEach(el=>_countUpEl(el,600));
   }
 }
 
