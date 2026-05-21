@@ -7122,6 +7122,17 @@ function buildSettingsData(){
   ${[{v:actCount,l:'Sessions'},{v:Math.round(totalHrs)+'h',l:'Hours Logged'},{v:clubCount,l:'Clubs'}].map(s=>`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">${s.v}</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">${s.l}</div></div>`).join('')}
 </div>
 
+<div style="background:linear-gradient(135deg,#0a0618,#18103a);border-radius:14px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px">
+  <div style="width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2.5C6.306 2.5 2.5 6.306 2.5 11S6.306 19.5 11 19.5 19.5 15.694 19.5 11 15.694 2.5 11 2.5zM9.47 6.97a.75.75 0 011.06 0l4 4a.75.75 0 010 1.06l-4 4a.75.75 0 01-1.06-1.06L12.44 12H7a.75.75 0 010-1.5h5.44L9.47 8.03a.75.75 0 010-1.06z" fill="white"/></svg>
+  </div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">Ledger App — Coming to iOS</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Be the first to know when we launch on the App Store. First 500 get 60 days Pro free.</div>
+  </div>
+  <a href="/landing#appstore-notify" target="_blank" style="background:#d44000;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0">Notify Me</a>
+</div>
+
 <div class="section-title">Export</div>
 <button onclick="exportData()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
   <span style="font-size:18px">📥</span>
