@@ -1999,8 +1999,8 @@ function renderAuth(){
       <button class="auth-tab${authMode==='signup'?' active':''}" onclick="switchAuthMode('signup')">Create Account</button>
     </div>
 
-    <!-- Google SSO -->
-    <button class="google-btn" onclick="FIREBASE_ENABLED?signInWithGoogle():openGooglePicker()">
+    <!-- Google SSO — hidden on native app (Capacitor doesn't support redirect) -->
+    <button class="google-btn" onclick="FIREBASE_ENABLED?signInWithGoogle():openGooglePicker()" id="google-signin-btn">
       <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -10873,7 +10873,22 @@ function checkStreakUrgency(){
 // ═══════════════════════════════════════════════
 // START — wait for deferred Firebase/Stripe scripts
 // ═══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', ()=>{
+  init();
+  // Hide Google sign-in on native app — redirect auth doesn't work in Capacitor WebView
+  const isNative = window.Capacitor?.isNativePlatform?.() || window.Capacitor?.platform === 'ios' || window.Capacitor?.platform === 'android';
+  if(isNative){
+    const googleBtn = document.getElementById('google-signin-btn');
+    if(googleBtn){
+      googleBtn.style.display = 'none';
+      // Add a note so users know to use email
+      const note = document.createElement('div');
+      note.style.cssText = 'font-size:11px;color:var(--mut);text-align:center;margin-bottom:14px';
+      note.textContent = 'Use email & password to sign in on the app.';
+      googleBtn.parentNode.insertBefore(note, googleBtn.nextSibling);
+    }
+  }
+});
 </script>
 </body>
 </html>
