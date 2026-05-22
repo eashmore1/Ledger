@@ -867,7 +867,7 @@ async function signUpWithEmailFirebase(email, password, name){
     await cred.user.updateProfile({ displayName: name });
     // Send verification email — user must verify before accessing the app
     await cred.user.sendEmailVerification({
-      url: 'https://ledgercpa.vercel.app'
+      url: 'https://ledgercpa.app'
     });
     // Don't set AUTH yet — wait for verification
     return 'verify';
@@ -882,7 +882,7 @@ async function resendVerificationEmail(){
   try {
     const user = firebaseAuth.currentUser;
     if(!user){ showToast('Please sign in first','err'); return; }
-    await user.sendEmailVerification({ url: 'https://ledgercpa.vercel.app' });
+    await user.sendEmailVerification({ url: 'https://ledgercpa.app' });
     showToast('Verification email sent — check your inbox ✓','ok');
   } catch(e){
     showToast('Could not send email: '+e.message,'err');
@@ -2445,7 +2445,7 @@ function submitPasswordReset(){
 }
 function submitPasswordResetForEmail(email){
   if(FIREBASE_ENABLED && firebaseAuth){
-    firebaseAuth.sendPasswordResetEmail(email,{url:'https://ledgercpa.vercel.app'}).catch(()=>{});
+    firebaseAuth.sendPasswordResetEmail(email,{url:'https://ledgercpa.app'}).catch(()=>{});
   }
   const fb=document.getElementById('auth-form-body');
   if(fb){fb.innerHTML=`<div style="text-align:center;padding:20px 0">
@@ -10822,7 +10822,7 @@ function drawShareCard(canvas, milestoneId, statLine){
   // URL (bottom-right, accent color)
   ctx.fillStyle=cfg.accent;
   ctx.font='700 14px Inter,system-ui,sans-serif';
-  const url='ledgercpa.vercel.app';
+  const url='ledgercpa.app';
   ctx.fillText(url,W-ctx.measureText(url).width-28,H-44);
 
   // Bottom separator
@@ -10861,7 +10861,7 @@ function showShareModal(milestoneId){
   <canvas id="share-canvas" width="800" height="420" style="width:100%;border-radius:12px;display:block;margin-bottom:16px"></canvas>
   <div style="display:flex;gap:10px">
     <button id="share-download-btn" style="flex:1;padding:11px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Download Card</button>
-    <button onclick="navigator.clipboard.writeText('Just hit: ${cfg.headline.replace(/'/g,"\\'")} while studying for the CPA exam. Tracking every hour on Ledger — ledgercpa.vercel.app').then(()=>showToast('Caption copied!','ok'))" style="flex:1;padding:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy Caption</button>
+    <button onclick="navigator.clipboard.writeText('Just hit: ${cfg.headline.replace(/'/g,"\\'")} while studying for the CPA exam. Tracking every hour on Ledger — ledgercpa.app').then(()=>showToast('Caption copied!','ok'))" style="flex:1;padding:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy Caption</button>
   </div>
   <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--mut)">Great for LinkedIn · r/CPA · Twitter</div>
 </div>`;
