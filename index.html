@@ -801,31 +801,7 @@ function initFirebase(){
     }
     // Persist auth across page reloads
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    // Listen for auth state changes from Google sign-in
-    firebaseAuth.onAuthStateChanged(user=>{
-      if(user && !AUTH){
-        // Email/password users must verify their email before accessing the app
-        const isEmailUser = user.providerData.some(p=>p.providerId==='password');
-        if(isEmailUser && !user.emailVerified){
-          // Silently wait — they'll sign in manually after verifying
-          return;
-        }
-        const method = user.providerData[0]?.providerId==='google.com' ? 'google' : 'email';
-        AUTH = {
-          uid: user.uid,
-          displayName: user.displayName || user.email.split('@')[0],
-          email: user.email,
-          method,
-          photoURL: user.photoURL || null,
-          created: Date.now()
-        };
-        saveAuth(AUTH);
-        // Restore this user's saved state (survives signout)
-        if(!S) S = loadState(AUTH.uid) || null;
-        if(!S) renderOnboarding();
-        else { renderApp(); writeUserProfile(); }
-      }
-    });
+    // Auth state changes handled in init() via onAuthStateChanged
   } catch(e){ console.warn('Firebase init failed:', e.message); }
 }
 
@@ -1909,7 +1885,7 @@ function showPostOnboardingOffer(){
 // ═══════════════════════════════════════════════
 let _pendingInvite=null; // {code, fromName, fromUid}
 function init(){
-  initFirebase();
+  // Handle invite URL params
   const _p=new URLSearchParams(window.location.search);
   const urlJoinCode=_p.get('join');
   if(urlJoinCode){
@@ -1920,13 +1896,76 @@ function init(){
     if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
     history.replaceState({},'',window.location.pathname);
   }
-  if(!AUTH){renderAuth();return;}
-  if(!S){renderOnboarding();return;}
-  renderApp();
-  // Sync returning user's profile to Firestore (firebaseDb may not be ready yet, writeUserProfile retries)
-  setTimeout(writeUserProfile, 1200);
-  setTimeout(backfillLongestStreak, 2000);
-  setTimeout(checkStudyNudge, 1800);
+
+  const isNative = !!(window.Capacitor?.isNativePlatform?.() || window.Capacitor?.platform);
+
+  if(FIREBASE_ENABLED){
+    // Show splash while Firebase confirms auth state — prevents showing
+    // dashboard before login is verified (critical on native iOS app)
+    _showSplash();
+    initFirebase();
+    // onAuthStateChanged fires once on load — use it as the single source of truth
+    const unsub = firebaseAuth.onAuthStateChanged(user => {
+      unsub(); // only need first event
+      _hideSplash();
+      if(user){
+        const isEmailUser = user.providerData.some(p=>p.providerId==='password');
+        if(isEmailUser && !user.emailVerified){ renderAuth(); return; }
+        const method = user.providerData[0]?.providerId==='google.com' ? 'google' : 'email';
+        AUTH = { uid:user.uid, displayName:user.displayName||user.email.split('@')[0], email:user.email, method, photoURL:user.photoURL||null, created:Date.now() };
+        saveAuth(AUTH);
+        if(!S) S = loadState(AUTH.uid)||null;
+        if(!S){ renderOnboarding(); return; }
+        renderApp();
+        setTimeout(writeUserProfile, 1200);
+        setTimeout(backfillLongestStreak, 2000);
+        setTimeout(checkStudyNudge, 1800);
+      } else {
+        AUTH=null;
+        renderAuth();
+      }
+    });
+    // Fallback — if Firebase takes too long (offline), fall through after 4s
+    setTimeout(()=>{
+      if(document.getElementById('splash-screen')){
+        _hideSplash();
+        if(!AUTH){ renderAuth(); return; }
+        if(!S){ renderOnboarding(); return; }
+        renderApp();
+      }
+    }, 4000);
+  } else {
+    // Demo mode — use localStorage directly
+    if(!AUTH){ renderAuth(); return; }
+    if(!S){ renderOnboarding(); return; }
+    renderApp();
+  }
+}
+
+function _showSplash(){
+  const root = document.getElementById('root');
+  root.innerHTML = `<div id="splash-screen" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);gap:20px">
+    <svg width="72" height="72" viewBox="0 0 180 180" style="border-radius:18px">
+      <rect width="180" height="180" fill="#18103a"/>
+      <rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+      <rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+      <rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+      <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/>
+      <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
+      <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
+      <circle cx="142" cy="44" r="13" fill="#d44000"/>
+    </svg>
+    <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-.02em">Ledger</div>
+    <div style="display:flex;gap:6px">
+      <div style="width:6px;height:6px;border-radius:50%;background:#d44000;animation:ledger-dot 1.2s ease-in-out infinite"></div>
+      <div style="width:6px;height:6px;border-radius:50%;background:#d44000;animation:ledger-dot 1.2s ease-in-out .2s infinite"></div>
+      <div style="width:6px;height:6px;border-radius:50%;background:#d44000;animation:ledger-dot 1.2s ease-in-out .4s infinite"></div>
+    </div>
+  </div>`;
+}
+function _hideSplash(){
+  const s = document.getElementById('splash-screen');
+  if(s) s.remove();
 }
 
 // ═══════════════════════════════════════════════
