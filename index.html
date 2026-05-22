@@ -923,7 +923,7 @@ const STRIPE_CONFIG = {
   // Stripe Customer Portal — set up at https://dashboard.stripe.com/settings/billing/portal
   portalUrl:  'https://billing.stripe.com/p/login/8x2aEXf1r3Le9CzaNe7ss00',
 };
-const STRIPE_ENABLED = false; // set true once you add real keys above
+const STRIPE_ENABLED = true;
 
 function redirectToStripeCheckout(planKey){
   if(!STRIPE_ENABLED){
