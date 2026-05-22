@@ -7473,12 +7473,12 @@ injectMobileNav();
 // QUESTION BANK
 // ═══════════════════════════════════════════════
 const QB_SECTIONS = [
-  {code:'FAR',full:'Financial Accounting & Reporting',color:'#dc2626',mcqTotal:500,simsTotal:80},
-  {code:'AUD',full:'Auditing & Attestation',color:'#2563eb',mcqTotal:500,simsTotal:80},
-  {code:'REG',full:'Regulation',color:'#059669',mcqTotal:500,simsTotal:80},
-  {code:'TCP',full:'Tax Compliance & Planning',color:'#0d9488',mcqTotal:400,simsTotal:60},
-  {code:'BAR',full:'Business Analysis & Reporting',color:'#d97706',mcqTotal:400,simsTotal:60},
-  {code:'ISC',full:'Information Systems & Controls',color:'#9333ea',mcqTotal:350,simsTotal:50},
+  {code:'FAR',full:'Financial Accounting & Reporting',color:'#dc2626',mcqTotal:60},
+  {code:'AUD',full:'Auditing & Attestation',color:'#2563eb',mcqTotal:60},
+  {code:'REG',full:'Regulation',color:'#059669',mcqTotal:60},
+  {code:'TCP',full:'Tax Compliance & Planning',color:'#0d9488',mcqTotal:60},
+  {code:'BAR',full:'Business Analysis & Reporting',color:'#d97706',mcqTotal:60},
+  {code:'ISC',full:'Information Systems & Controls',color:'#9333ea',mcqTotal:60},
 ];
 
 // ── Question data per section ──
@@ -8104,7 +8104,7 @@ function openQBSection(code) {
   }
 
   const modes = [
-    {type:'mcq',    icon:'\u{1F4DD}', label:'MCQ Practice',      desc: pro ? 'Work through all ' + sec.mcqTotal + '+ questions' : 'Try 5 free questions', free:true},
+    {type:'mcq',    icon:'\u{1F4DD}', label:'MCQ Practice',      desc: pro ? 'Work through all practice questions' : 'Try 5 free questions', free:true},
     {type:'random', icon:'\u{1F500}', label:'Random Quiz',        desc:'Shuffled questions, any order',  free:false},
     {type:'timed',  icon:'\u23F1', label:'Timed Set',          desc:'10 questions, beat the clock',   free:false},
     {type:'sims',   icon:'\u{1F4CB}', label:'Task-Based SIMs',   desc:'Scenario-focused practice',       free:false},
@@ -8138,7 +8138,7 @@ function openQBSection(code) {
         '<button onclick="closeQBSection()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">\u00d7</button>' +
       '</div>' +
       '<div style="font-size:20px;font-weight:800;color:#fff;margin-top:10px">' + sec.full + '</div>' +
-      '<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">' + sec.mcqTotal + '+ MCQs \u00b7 ' + sec.simsTotal + ' SIMs \u00b7 Progress: ' + (prog.mcqDone||0) + ' questions answered</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">Practice \u00b7 ' + (prog.mcqDone||0) + ' questions answered</div>' +
       // Progress bar
       '<div style="margin-top:14px;height:5px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden">' +
         '<div style="height:100%;width:' + pct + '%;background:#fff;border-radius:4px;transition:width .5s"></div>' +
@@ -8179,7 +8179,7 @@ function buildQuestionBank() {
       '<div style="padding-left:8px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
           '<span style="font-size:11px;font-weight:900;color:' + sec.color + ';background:' + sec.color + '18;padding:3px 10px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
-          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' / ' + sec.mcqTotal + ' done</span>' +
+          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' answered</span>' +
         '</div>' +
         '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;line-height:1.4">' + sec.full + '</div>' +
         '<div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-bottom:10px">' +
@@ -8187,8 +8187,8 @@ function buildQuestionBank() {
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">' + sec.mcqTotal + '+ MCQ</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">' + sec.simsTotal + ' SIMs</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">MCQ Practice</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">Task-Based SIMs</span>' +
             (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 8px;border-radius:6px;font-weight:700">5 free</span>') +
           '</div>' +
           '<span style="font-size:18px;color:var(--mut)">\u203a</span>' +
@@ -8849,7 +8849,7 @@ function _buildQBankPanel() {
       '<div style="padding-left:10px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
           '<span style="font-size:12px;font-weight:900;color:' + sec.color + ';background:' + sec.color + '18;padding:4px 12px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
-          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' / ' + sec.mcqTotal + ' done</span>' +
+          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' answered</span>' +
         '</div>' +
         '<div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:12px;line-height:1.35">' + sec.full + '</div>' +
         '<div style="height:6px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-bottom:12px">' +
@@ -8857,8 +8857,8 @@ function _buildQBankPanel() {
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">' + sec.mcqTotal + '+ MCQ</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">' + sec.simsTotal + ' SIMs</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">MCQ Practice</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">Task-Based SIMs</span>' +
             (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 9px;border-radius:6px;font-weight:700">5 free</span>') +
           '</div>' +
           '<span style="font-size:20px;color:var(--mut)">›</span>' +
