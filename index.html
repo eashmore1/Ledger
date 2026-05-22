@@ -8040,7 +8040,7 @@ function _finishQuiz() {
   // Save progress
   S.qbProgress = S.qbProgress || {};
   S.qbProgress[section] = S.qbProgress[section] || {mcqDone:0};
-  else S.qbProgress[section].mcqDone = Math.min((S.qbProgress[section].mcqDone||0) + total, 9999);
+  S.qbProgress[section].mcqDone = Math.min((S.qbProgress[section].mcqDone||0) + total, 9999);
   saveState();
 
   const overlay = document.getElementById('quiz-overlay');
