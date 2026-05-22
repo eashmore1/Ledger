@@ -26,14 +26,15 @@ if (!admin.apps.length) {
 
 const db = admin.apps.length ? admin.firestore() : null;
 
-// Map Stripe metadata plan keys → Ledger tier info
-const PLAN_TO_TIER = {
-  pro_monthly:   { tier: 'pro',   cycle: 'monthly'  },
-  pro_annual:    { tier: 'pro',   cycle: 'annual'   },
-  elite_monthly: { tier: 'elite', cycle: 'monthly'  },
-  elite_annual:  { tier: 'elite', cycle: 'annual'   },
-  cram_plan:     { tier: 'cram',  cycle: 'one_time' },
-  student_pro:   { tier: 'pro',   cycle: 'monthly'  },
+// Map Stripe Price IDs → Ledger tier info
+// (Payment Links don't support custom metadata via URL params, so we map by price ID)
+const PRICE_TO_TIER = {
+  'price_1TZiTyDF8JDLWEucEHuaVlrX': { tier: 'pro',   cycle: 'monthly'  }, // Pro Monthly $20
+  'price_1TZiVpDF8JDLWEuclAQ4vvsp': { tier: 'pro',   cycle: 'annual'   }, // Pro Annual $192
+  'price_1TZiXGDF8JDLWEucBZuX37Zf': { tier: 'elite', cycle: 'monthly'  }, // Elite Monthly
+  'price_1TZiY7DF8JDLWEucSpchlGyx': { tier: 'elite', cycle: 'annual'   }, // Elite Annual $264
+  'price_1TZiZ5DF8JDLWEucStWSadBz': { tier: 'cram',  cycle: 'one_time' }, // Cram Plan $99
+  'price_1TZiaPDF8JDLWEuc2bhLmUF0': { tier: 'pro',   cycle: 'monthly'  }, // Student Pro $13
 };
 
 // Read raw body from request stream (required for Stripe signature verification)
@@ -86,9 +87,18 @@ module.exports = async (req, res) => {
         return res.json({ received: true });
       }
 
-      // Determine tier from metadata (set in redirectToStripeCheckout)
-      const planKey  = session.metadata?.plan || '';
-      const tierInfo = PLAN_TO_TIER[planKey] || { tier: 'pro', cycle: 'monthly' };
+      // Determine tier by fetching line items and mapping the price ID
+      let tierInfo = { tier: 'pro', cycle: 'monthly' };
+      try {
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const priceId = lineItems.data[0]?.price?.id;
+        if (priceId && PRICE_TO_TIER[priceId]) {
+          tierInfo = PRICE_TO_TIER[priceId];
+        }
+        console.log(`Price ID: ${priceId} → tier: ${tierInfo.tier} (${tierInfo.cycle})`);
+      } catch (e) {
+        console.error('Failed to fetch line items:', e.message);
+      }
 
       await db.collection('users').doc(uid).set({
         sub: {
