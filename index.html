@@ -7886,9 +7886,6 @@ function openQuizModal(section, type) {
     qs = [...allQs].sort(function(){ return Math.random() - 0.5; }).slice(0, 10);
   } else if (type === 'random') {
     qs = [...allQs].sort(function(){ return Math.random() - 0.5; });
-  } else if (type === 'sims') {
-    // SIMs: show 3 scenario-based questions with explanation focus
-    qs = [...allQs].filter(function(_,i){ return i%3===0; }).slice(0,5);
   }
 
   _quiz = {
@@ -7940,7 +7937,7 @@ function _renderQuiz() {
   const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
   const color = sec ? sec.color : '#6366f1';
   const choiceLetters = ['A','B','C','D'];
-  const typeLabels = {mcq:'MCQ Practice', sims:'Task-Based SIMs', timed:'Timed Set', random:'Random Quiz'};
+  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz'};
   const pct = total > 0 ? Math.round(current / total * 100) : 0;
 
   const timerHTML = type === 'timed'
@@ -8040,8 +8037,7 @@ function _finishQuiz() {
 
   // Save progress
   S.qbProgress = S.qbProgress || {};
-  S.qbProgress[section] = S.qbProgress[section] || {mcqDone:0, simsDone:0};
-  if (type === 'sims') S.qbProgress[section].simsDone = (S.qbProgress[section].simsDone||0) + score;
+  S.qbProgress[section] = S.qbProgress[section] || {mcqDone:0};
   else S.qbProgress[section].mcqDone = Math.min((S.qbProgress[section].mcqDone||0) + total, 9999);
   saveState();
 
@@ -8092,7 +8088,7 @@ function openQBSection(code) {
   const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
   if (!sec) return;
   const pro = isPro();
-  const prog = (S.qbProgress || {})[code] || {mcqDone:0, simsDone:0};
+  const prog = (S.qbProgress || {})[code] || {mcqDone:0};
 
   let overlay = document.getElementById('qb-section-overlay');
   if (!overlay) {
@@ -8107,7 +8103,6 @@ function openQBSection(code) {
     {type:'mcq',    icon:'\u{1F4DD}', label:'MCQ Practice',      desc: pro ? 'Work through all practice questions' : 'Try 5 free questions', free:true},
     {type:'random', icon:'\u{1F500}', label:'Random Quiz',        desc:'Shuffled questions, any order',  free:false},
     {type:'timed',  icon:'\u23F1', label:'Timed Set',          desc:'10 questions, beat the clock',   free:false},
-    {type:'sims',   icon:'\u{1F4CB}', label:'Task-Based SIMs',   desc:'Scenario-focused practice',       free:false},
   ];
 
   const modeCards = modes.map(function(m) {
@@ -8167,7 +8162,7 @@ function buildQuestionBank() {
   const pro = isPro();
 
   const cards = QB_SECTIONS.map(function(sec) {
-    const prog = S.qbProgress[sec.code] || {mcqDone:0, simsDone:0};
+    const prog = S.qbProgress[sec.code] || {mcqDone:0};
     const mcqDone = prog.mcqDone || 0;
     const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
 
@@ -8188,7 +8183,7 @@ function buildQuestionBank() {
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
             '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">MCQ Practice</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">Task-Based SIMs</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">AI-Powered</span>' +
             (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 8px;border-radius:6px;font-weight:700">5 free</span>') +
           '</div>' +
           '<span style="font-size:18px;color:var(--mut)">\u203a</span>' +
@@ -8838,7 +8833,7 @@ function _buildQBankPanel() {
   const pro = isPro();
 
   const cards = QB_SECTIONS.map(function(sec) {
-    const prog = S.qbProgress[sec.code] || {mcqDone:0, simsDone:0};
+    const prog = S.qbProgress[sec.code] || {mcqDone:0};
     const mcqDone = prog.mcqDone || 0;
     const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
     return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
@@ -8858,7 +8853,7 @@ function _buildQBankPanel() {
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
             '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">MCQ Practice</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">Task-Based SIMs</span>' +
+            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">AI-Powered</span>' +
             (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 9px;border-radius:6px;font-weight:700">5 free</span>') +
           '</div>' +
           '<span style="font-size:20px;color:var(--mut)">›</span>' +
@@ -10177,8 +10172,8 @@ const ACTIVITY_MODES = {
     ],
   },
   tbs_practice:{
-    label:'TBS Simulations',icon:'🎯',color:'#059669',
-    desc:'Work through 2–3 task-based simulations. Read the requirement before the data.',
+    label:'TBS Practice',icon:'🎯',color:'#059669',
+    desc:'Work through task-based simulations in your study platform. Read the requirement before the data.',
     tips:[
       'TBS points are often easier than they look — don\'t skip them on exam day.',
       'Allocate 10–15 min per sim. If you\'re stuck, move on and come back.',
