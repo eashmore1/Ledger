@@ -2,9 +2,4 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "outputDirectory": ".",
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@3"
-    }
-  }
 }
