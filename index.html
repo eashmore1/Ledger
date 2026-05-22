@@ -1939,7 +1939,7 @@ function init(){
     _showSplash();
     initFirebase();
     // onAuthStateChanged fires once on load — use it as the single source of truth
-    const unsub = firebaseAuth.onAuthStateChanged(user => {
+    const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
       _hideSplash();
       if(user){
