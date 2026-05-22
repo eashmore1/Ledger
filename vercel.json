@@ -1,5 +1,15 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "routes": [
+    { "src": "/landing", "dest": "/landing.html" },
+    { "src": "/about", "dest": "/about.html" },
+    { "src": "/contact", "dest": "/contact.html" },
+    { "src": "/faq", "dest": "/faq.html" },
+    { "src": "/pricing", "dest": "/pricing.html" },
+    { "src": "/privacy", "dest": "/privacy.html" },
+    { "src": "/terms", "dest": "/terms.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
