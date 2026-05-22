@@ -34,7 +34,7 @@ const PRICE_TO_TIER = {
   'price_1TZiXGDF8JDLWEucBZuX37Zf': { tier: 'elite', cycle: 'monthly'  }, // Elite Monthly
   'price_1TZiY7DF8JDLWEucSpchlGyx': { tier: 'elite', cycle: 'annual'   }, // Elite Annual $264
   'price_1TZiZ5DF8JDLWEucStWSadBz': { tier: 'cram',  cycle: 'one_time' }, // Cram Plan $99
-  'price_1TZiaPDF8JDLWEuc2bhLmUF0': { tier: 'pro',   cycle: 'monthly'  }, // Student Pro $13
+  'price_1TZiaPDF8JDLWEuc2bhLmUF0': { tier: 'pro',   cycle: 'monthly', studentPlan: true }, // Student Pro $13
 };
 
 // Read raw body from request stream (required for Stripe signature verification)
@@ -106,6 +106,7 @@ module.exports = async (req, res) => {
           billingCycle:         tierInfo.cycle,
           startDate:            new Date().toISOString(),
           trialUsed:            true,
+          studentPlan:          tierInfo.studentPlan || false,
           studentVerified:      false,
           stripeCustomerId:     session.customer        || null,
           stripeSubscriptionId: session.subscription    || null,

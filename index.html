@@ -925,6 +925,110 @@ const STRIPE_CONFIG = {
 };
 const STRIPE_ENABLED = true;
 
+// ── Student Discount Verification ────────────────────────────────────────────
+function showStudentVerifyBanner(){
+  if(document.getElementById('student-verify-banner')) return;
+  // Respect recent dismissals (don't re-show for 3 days)
+  const dismissed = parseInt(localStorage.getItem('ledger-student-verify-dismissed')||'0');
+  if(dismissed && (Date.now()-dismissed) < 3*86400000) return;
+  const wrap = document.querySelector('.app-wrap');
+  if(!wrap) return;
+  const bar = document.createElement('div');
+  bar.id = 'student-verify-banner';
+  bar.style.cssText = 'background:#92400e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;font-family:Inter,system-ui,sans-serif;z-index:900';
+  bar.innerHTML = `
+    <span>🎓 <strong>Verify your student discount</strong> — confirm your .edu email to keep your $13/month rate.
+    <a onclick="openStudentVerifyModal()" style="color:#fcd34d;cursor:pointer;text-decoration:underline;margin-left:6px">Verify now →</a></span>
+    <button onclick="document.getElementById('student-verify-banner').remove();localStorage.setItem('ledger-student-verify-dismissed',Date.now())"
+      style="background:transparent;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>
+  `;
+  // Insert after the <nav> element
+  const nav = wrap.querySelector('nav.topnav');
+  if(nav && nav.nextSibling) wrap.insertBefore(bar, nav.nextSibling);
+  else wrap.prepend(bar);
+}
+
+function openStudentVerifyModal(){
+  const existing = document.getElementById('student-verify-modal');
+  if(existing) existing.remove();
+  const email = AUTH?.email || '';
+  const isEdu = email.toLowerCase().endsWith('.edu');
+  const modal = document.createElement('div');
+  modal.id = 'student-verify-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:#1e1730;border-radius:16px;padding:32px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.5);font-family:Inter,system-ui,sans-serif;color:#fff;position:relative">
+      <button onclick="document.getElementById('student-verify-modal').remove()"
+        style="position:absolute;top:16px;right:16px;background:transparent;border:none;color:rgba(255,255,255,.5);font-size:22px;cursor:pointer;line-height:1">×</button>
+      <div style="font-size:28px;margin-bottom:8px">🎓</div>
+      <h2 style="margin:0 0 8px;font-size:18px;font-weight:700">Student Discount Verification</h2>
+      <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,.65);line-height:1.6">
+        Your student plan ($13/mo) requires a university <strong>.edu email address</strong>.
+        Enter it below to confirm your enrollment status.
+      </p>
+      ${isEdu ? `
+        <div style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:16px;color:#6ee7b7">
+          ✅ Your current sign-in email <strong>${email}</strong> is already a .edu address! Click below to verify instantly.
+        </div>
+      ` : `
+        <p style="font-size:12px;color:rgba(255,255,255,.5);margin:0 0 8px">Current sign-in email: <strong>${email}</strong> <span style="color:#f87171">(not a .edu)</span></p>
+      `}
+      <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:6px">YOUR .EDU EMAIL ADDRESS</label>
+      <input id="student-edu-input" type="email" placeholder="yourname@university.edu"
+        value="${isEdu ? email : ''}"
+        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;outline:none;margin-bottom:16px"
+        oninput="document.getElementById('student-edu-err').textContent=''"
+      />
+      <div id="student-edu-err" style="color:#f87171;font-size:12px;margin-bottom:10px;min-height:16px"></div>
+      <button onclick="submitStudentVerify()"
+        style="width:100%;background:#d44000;border:none;color:#fff;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">
+        ✓ Verify Student Status
+      </button>
+      <p style="margin:0;font-size:11px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5">
+        By verifying you confirm you are currently enrolled at an accredited institution.<br>
+        Need help? <a href="mailto:support@ledgercpa.com" style="color:#d44000">support@ledgercpa.com</a>
+      </p>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(()=>{ const inp=document.getElementById('student-edu-input'); if(inp) inp.focus(); }, 100);
+}
+
+async function submitStudentVerify(){
+  const inp = document.getElementById('student-edu-input');
+  const err = document.getElementById('student-edu-err');
+  if(!inp || !err) return;
+  const val = inp.value.trim().toLowerCase();
+  if(!val){ err.textContent='Please enter your .edu email address.'; return; }
+  if(!val.endsWith('.edu')){ err.textContent='Must be a .edu email address (e.g. you@university.edu).'; return; }
+  // Simple format check
+  if(!val.includes('@') || val.split('@')[0].length < 2){ err.textContent='Please enter a valid email address.'; return; }
+  // Mark verified
+  inp.disabled = true;
+  const btn = inp.parentElement.querySelector('button[onclick="submitStudentVerify()"]');
+  if(btn){ btn.disabled=true; btn.textContent='Verifying…'; }
+  try{
+    if(firebaseDb && AUTH?.uid){
+      await firebaseDb.collection('users').doc(AUTH.uid).update({
+        'sub.studentVerified': true,
+        'sub.studentEduEmail': val,
+        'sub.updatedAt': Date.now(),
+      });
+    }
+    SUB.studentVerified = true;
+    SUB.studentEduEmail = val;
+    saveSub(SUB);
+    document.getElementById('student-verify-modal')?.remove();
+    document.getElementById('student-verify-banner')?.remove();
+    showToast('🎓 Student status verified! Enjoy your discount.','ok');
+  }catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='✓ Verify Student Status'; }
+    inp.disabled = false;
+    err.textContent = 'Could not save — please try again.';
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function redirectToStripeCheckout(planKey){
   if(!STRIPE_ENABLED){
     // Demo mode: activate locally without real payment
@@ -1963,7 +2067,19 @@ function init(){
             }
           }
         }catch(e){}
+        // Auto-verify student plan if signed in with .edu email
+        if(SUB.studentPlan && !SUB.studentVerified){
+          if(AUTH.email && AUTH.email.toLowerCase().endsWith('.edu')){
+            SUB.studentVerified = true;
+            saveSub(SUB);
+            try{
+              if(firebaseDb) await firebaseDb.collection('users').doc(user.uid).update({'sub.studentVerified':true,'sub.studentEduEmail':AUTH.email.toLowerCase()});
+            }catch(e){}
+          }
+        }
         renderApp();
+        // Show student verification banner if unverified student plan
+        if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
         setTimeout(writeUserProfile, 1200);
         setTimeout(backfillLongestStreak, 2000);
         setTimeout(checkStudyNudge, 1800);
