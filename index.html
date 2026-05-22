@@ -1208,69 +1208,63 @@ const ACHIEVEMENTS = [
 ];
 
 // ═══════════════════════════════════════════════
-// MOCK FRIENDS (makes feed feel alive)
 // ═══════════════════════════════════════════════
-const MOCK_FRIENDS = [
-  {
-    id:'f1',name:'Sarah Chen',initials:'SC',color:'#6366f1',state:'CA',
-    currentSection:'FAR',totalHours:87,streak:14,following:true,tier:'pro',
-    passedSections:[],
-    bio:'Big 4 audit associate. FAR is humbling me daily 😤',
-    activities:[
-      {id:'a1',date:'2026-04-13T08:30:00',section:'FAR',hours:3.5,material:'Governmental Accounting — CAFR & Fund Structure',caption:'CAFR finally making sense! The fund structure clicked today. Government accounting is a completely different world 🧠',difficulty:4,feeling:'💪',kudos:['you','f2','f5'],comments:[{user:'Marcus J.',text:'Keep grinding! Gov accounting is worth every hour on that exam.'},{user:'Ashley P.',text:'The fund types are on EVERY FAR exam. You\'re in great shape!'}]},
-      {id:'a2',date:'2026-04-11T19:00:00',section:'FAR',hours:2,material:'Not-for-Profit Entities — Revenue Recognition',caption:'NFP accounting is wild but knocked out the chapter. The restricted vs unrestricted net assets distinction took me forever.',difficulty:3,feeling:'😅',kudos:['f3'],comments:[]},
-      {id:'a3',date:'2026-04-09T20:00:00',section:'FAR',hours:4,material:'Leases & Pensions',caption:'4 hours of leases and pensions. My brain is mush. Becker\'s adaptive practice is genuinely helping though.',difficulty:5,feeling:'😤',kudos:['f2','f4'],comments:[{user:'Tyler W.',text:'Pensions destroyed me too. Make sure you know the corridor method cold.'}]},
-    ]
-  },
-  {
-    id:'f2',name:'Marcus Johnson',initials:'MJ',color:'#059669',state:'TX',
-    currentSection:'AUD',totalHours:134,streak:22,following:true,tier:'elite',
-    passedSections:['REG'],
-    bio:'Passed REG first try ✅ — now locked in on AUD. Tax associate @KPMG',
-    activities:[
-      {id:'a4',date:'2026-04-13T07:00:00',section:'AUD',hours:4,material:'Risk Assessment & Internal Controls — COSO Framework',caption:'200 MCQs done before breakfast. AUD is pure professional judgment — there\'s no formula, just context. Starting to click after week 3. 💼',difficulty:3,feeling:'😤',kudos:['f1','f5','you'],comments:[{user:'Sarah C.',text:'200 MCQs before breakfast?? Absolute beast mode 🔥'}]},
-      {id:'a5',date:'2026-04-12T18:00:00',section:'AUD',hours:2.5,material:'Evidence & Sampling — Substantive Procedures',caption:'Evidence and sampling MCQs are surprisingly tricky. The "most appropriate procedure" questions trip me up every time.',difficulty:3,feeling:'🤔',kudos:['f5'],comments:[]},
-    ]
-  },
-  {
-    id:'f3',name:'Emily Rodriguez',initials:'ER',color:'#ec4899',state:'NY',
-    currentSection:'REG',totalHours:45,streak:5,following:true,
-    passedSections:[],
-    bio:'Just started my CPA journey! First gen candidate 💪 Using Gleim.',
-    activities:[
-      {id:'a6',date:'2026-04-12T20:00:00',section:'REG',hours:2.5,material:'Individual Federal Taxation — Itemized Deductions',caption:'Schedule A itemized deductions memorized! REG is honestly more interesting than I expected. Tax law actually makes sense.',difficulty:2,feeling:'💪',kudos:['f1','you'],comments:[{user:'Ashley P.',text:'REG is actually one of the more enjoyable sections once it clicks! Keep going!'}]},
-      {id:'a7',date:'2026-04-10T21:00:00',section:'REG',hours:1.5,material:'Business Law — Contracts',caption:'Business law feels like studying for the bar exam but condensed. Contracts done.',difficulty:2,feeling:'💪',kudos:[],comments:[]},
-    ]
-  },
-  {
-    id:'f4',name:'Tyler Williams',initials:'TW',color:'#d44000',state:'IL',
-    currentSection:'FAR',totalHours:112,streak:31,following:false,tier:'pro',isPrivate:true,
-    passedSections:['REG','AUD'],
-    bio:'FAR retake. Not failing this time. 31-day streak and counting 🔥',
-    activities:[
-      {id:'a8',date:'2026-04-13T06:00:00',section:'FAR',hours:5,material:'State & Local Governments — Fund Types & GASB Standards',caption:'2nd attempt at FAR. I will not be going 0 for 2. 5 hours of governmental accounting done at 6am. The fund types are burned into my brain. 👊',difficulty:5,feeling:'😤',kudos:['f1','f2','f5','you'],comments:[{user:'Marcus J.',text:'Respect the dedication. The 6am sessions are where it\'s won.'},{user:'Ashley P.',text:'You got this! The fund types show up on literally every FAR exam.'}]},
-    ]
-  },
-  {
-    id:'f5',name:'Ashley Park',initials:'AP',color:'#14b8a6',state:'WA',
-    currentSection:'REG',totalHours:203,streak:8,following:true,tier:'elite',
-    passedSections:['FAR','AUD'],
-    bio:'FAR ✅ AUD ✅ | CPA candidate @Deloitte | Almost there 🎯',
-    activities:[
-      {id:'a9',date:'2026-04-12T17:00:00',section:'REG',hours:3,material:'Partnership Taxation — Basis Calculations & Distributions',caption:'FAR ✅ AUD ✅ Now grinding REG. Partnership basis calc is no joke — inside vs outside basis will humble you. Using Becker\'s TBS practice heavily.',difficulty:4,feeling:'🤔',kudos:['f1','f2','f3'],comments:[{user:'Emily R.',text:'Just started REG too! Let me know what to focus on 🙏'},{user:'Marcus J.',text:'S-Corp basis is even worse, prepare yourself 😅'}]},
-      {id:'a10',date:'2026-04-11T19:30:00',section:'REG',hours:2,material:'Federal Tax Procedures — Penalties & Statutes of Limitations',caption:'Federal tax procedures chapter done. The penalty rules are a pain to memorize but super testable.',difficulty:2,feeling:'💪',kudos:['f4'],comments:[]},
-    ]
-  },
-  {
-    id:'f6',name:'Jordan Kim',initials:'JK',color:'#f59e0b',state:'GA',
-    currentSection:null,totalHours:487,streak:0,following:false,isPrivate:true,
-    passedSections:['FAR','AUD','REG','TCP'],
-    bio:'🏆 LICENSED CPA — Atlanta, GA. It took 14 months. You can do it too.',
-    activities:[
-      {id:'a11',date:'2026-04-08T12:00:00',section:'TCP',hours:2,material:'Final review session before TCP',caption:'PASSED TCP. That\'s all 4. 14 months, 487 hours, and more Becker practice exams than I can count. You\'re next. 🏆',difficulty:1,feeling:'💪',kudos:['f1','f2','f3','f4','f5','you'],comments:[{user:'Sarah C.',text:'CONGRATS JORDAN!!! This gives me so much motivation 🎉'},{user:'Marcus J.',text:'The GOAT. Congrats on becoming a CPA!'},{user:'Emily R.',text:'This is literally my dream. Congratulations!! 🥹'}]},
-    ]
-  },
-];
+// REAL USERS CACHE (populated from Firestore on login)
+// Replace for fake mock friends — shape is compatible for drop-in use
+// ═══════════════════════════════════════════════
+let REAL_USERS = [];
+
+function hashColor(uid){
+  const colors=['#6366f1','#059669','#ec4899','#d44000','#14b8a6','#f59e0b','#8b5cf6','#06b6d4','#10b981','#f97316'];
+  let h=0;for(let i=0;i<(uid||'').length;i++)h=(h*31+uid.charCodeAt(i))|0;
+  return colors[Math.abs(h)%colors.length];
+}
+
+function firestoreToFriend(u){
+  const name=u.displayName||'CPA Candidate';
+  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
+  const secs=u.sections||[];
+  const passed=u.sectionPassed||[];
+  const currentSection=secs.find(s=>!passed.includes(s))||null;
+  return{
+    id:u.uid,
+    name,initials,
+    color:u.color||hashColor(u.uid),
+    state:u.state||u.locationState||'',
+    currentSection,
+    totalHours:u.hoursTotal||0,
+    streak:u.currentStreak||0,
+    tier:u.tier||'free',
+    passedSections:passed,
+    bio:u.bio||'',
+    activities:(u.recentActivities||[]).map(a=>({...a,userId:u.uid})),
+    isPrivate:!!u.isPrivate,
+    profilePic:u.profilePic||'',
+    avatar:u.avatar||'',
+    isReal:true,
+  };
+}
+
+async function loadRealUsers(){
+  if(!firebaseDb||!AUTH?.uid||!S) return;
+  try{
+    const followedIds=(S.following||[]).filter(id=>id&&typeof id==='string'&&id.length>4);
+    const realMap={};
+    // Fetch followed users in batches of 10
+    for(let i=0;i<followedIds.length;i+=10){
+      const batch=followedIds.slice(i,i+10);
+      const snap=await firebaseDb.collection('users').where('uid','in',batch).get();
+      snap.docs.forEach(d=>{const u=d.data();if(u.uid)realMap[u.uid]=firestoreToFriend(u);});
+    }
+    // Fetch discover users (recent registrations, not already loaded)
+    const discSnap=await firebaseDb.collection('users').orderBy('updatedAt','desc').limit(40).get();
+    discSnap.docs.forEach(d=>{
+      const u=d.data();
+      if(u.uid&&u.uid!==AUTH.uid&&!realMap[u.uid])realMap[u.uid]=firestoreToFriend(u);
+    });
+    REAL_USERS=Object.values(realMap);
+  }catch(e){console.warn('loadRealUsers:',e);}
+}
 
 // ═══════════════════════════════════════════════
 // CHALLENGES
@@ -1374,8 +1368,16 @@ async function writeUserProfile(){
       firmCode: S.firmCode||'',
       tier: (()=>{const t=localStorage.getItem('pf2-tier');return t||'free';})(),
       hoursTotal: parseFloat((()=>{try{return(S.activities||[]).reduce((s,a)=>s+(a.hours||0),0).toFixed(1);}catch{return 0;}})()),
+      currentStreak: getStreak(),
       avatar: S.avatar||'',
       profilePic: S.profilePic||'',
+      // Recent non-private activities — used by followers' feeds
+      recentActivities: (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
+        id:a.id,date:a.date,section:a.section,hours:a.hours,
+        material:a.material||'',caption:a.caption||'',
+        difficulty:a.difficulty||3,feeling:a.feeling||'',
+        kudos:a.kudos||[],comments:(a.comments||[]).slice(-3)
+      })),
       updatedAt: Date.now(),
       createdAt: S.created||Date.now()
     };
@@ -2080,6 +2082,8 @@ function init(){
         renderApp();
         // Show student verification banner if unverified student plan
         if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
+        // Load real users from Firestore (replaces fake MOCK_FRIENDS)
+        loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
         setTimeout(writeUserProfile, 1200);
         setTimeout(backfillLongestStreak, 2000);
         setTimeout(checkStudyNudge, 1800);
@@ -2719,12 +2723,12 @@ function obFinish(){
     name:obData.name,state:obData.state,hoursPerWeek:obData.hoursPerWeek,
     disc:obData.disc,sections,examDates,sectionStatus,
     school:obData.school,classYear:obData.classYear,bio:obData.bio,avatar:obData.avatar,
-    activities:[],following:['f1','f2','f3','f5',...(_pendingInvite?.fromUid&&!['f1','f2','f3','f4','f5','f6'].includes(_pendingInvite.fromUid)?[_pendingInvite.fromUid]:[])],
+    activities:[],following:[...(_pendingInvite?.fromUid&&typeof _pendingInvite.fromUid==='string'&&_pendingInvite.fromUid.length>4?[_pendingInvite.fromUid]:[])],
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],
-    isPrivate:false,pendingRequests:[],followers:['f1','f2','f5'],
-    followRequests:[{uid:'f4',name:'Tyler Williams',initials:'TW',color:'#d44000'}],
+    isPrivate:false,pendingRequests:[],followers:[],
+    followRequests:[],
     firmCode,firmName,
     studyIntensity:intensity,hourGoals,
     created:Date.now()
@@ -2910,7 +2914,7 @@ function buildFeed(){
     allActivities.push({...a,userId:'you',userName:S.name,userInitials:S.name.slice(0,2).toUpperCase(),userColor:'#6366f1',isMine:true});
   });
   // Friends
-  MOCK_FRIENDS.forEach(f=>{
+  REAL_USERS.forEach(f=>{
     if((S.following||[]).includes(f.id)){
       f.activities.forEach(a=>{
         allActivities.push({...a,userId:f.id,userName:f.name,userInitials:f.initials,userColor:f.color,isMine:false});
@@ -2970,7 +2974,7 @@ function buildFeed(){
   ${buildCohortCard()}
   <div class="card card-pad">
     <div class="section-title">Who's Studying</div>
-    ${MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id)).slice(0,4).map(f=>`
+    ${REAL_USERS.filter(f=>(S.following||[]).includes(f.id)).slice(0,4).map(f=>`
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;border-radius:8px;padding:4px;transition:background .12s" onclick="openUserProfile('${f.id}')" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">
       <div class="avatar av-sm" style="background:${f.color};color:#fff">${f.initials}</div>
       <div style="flex:1;min-width:0">
@@ -3042,8 +3046,8 @@ function buildCohortCard(){
 function buildPartnerTeaserCard(){
   const userSection=S.currentSection||(S.sections&&S.sections[0])||'FAR';
   // Pick candidates studying the same section, then fill with others
-  const sameSection=MOCK_FRIENDS.filter(f=>f.currentSection===userSection&&!f.passedAll);
-  const others=MOCK_FRIENDS.filter(f=>f.currentSection!==userSection&&f.currentSection&&!f.passedAll);
+  const sameSection=REAL_USERS.filter(f=>f.currentSection===userSection&&!f.passedAll);
+  const others=REAL_USERS.filter(f=>f.currentSection!==userSection&&f.currentSection&&!f.passedAll);
   const candidates=[...sameSection,...others].slice(0,3);
   const matchCount=Math.max(sameSection.length,2)+Math.floor(Math.random()*4)+1;
 
@@ -3089,7 +3093,7 @@ function buildActivityCard(a){
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
   const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
-  const _actFriend=a.userId!=='you'?MOCK_FRIENDS.find(f=>f.id===a.userId):null;
+  const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
   const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
@@ -3592,7 +3596,7 @@ function openStrugglingModal(){
   const el=document.createElement('div');
   el.className='modal-overlay open';
   el.style.cssText='z-index:9999';
-  const studyingNow=MOCK_FRIENDS.filter(f=>f.streak>0).length;
+  const studyingNow=Math.max(1,(S.following||[]).filter(id=>id&&id.length>4).length);
   const quotes=[
     {q:"The CPA exam is the hardest thing I've ever done — but passing FAR at 4am is also the best feeling I've ever had.",a:"Passed candidate, Texas"},
     {q:"I failed REG twice. Third time I passed with an 87. Don't let a fail define your story.",a:"r/CPA community"},
@@ -3916,9 +3920,8 @@ function buildProfile(){
   const streak=getStreak();
   const weekHrs=getWeekHours();
   const initials=(S.name||'CPA').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  const following=MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id));
-  const followersCount=(S.followers||['f1','f2','f5']).length;
-  const followingCount=following.length;
+  const followersCount=(S.followers||[]).length;
+  const followingCount=(S.following||[]).filter(id=>id&&id.length>4).length;
   const pendingRequestCount=(S.followRequests||[]).length;
 
   const achHTML=_achPreviewHTML(S.achievements||[],'own-ach',true);
@@ -4045,7 +4048,7 @@ function buildProfile(){
   ${(()=>{
     const dms=(S.clubs||[]).filter(c=>c.isDM);
     if(!dms.length) return '';
-    return'<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">💬 Direct Messages ('+dms.length+')</div><button class="btn btn-ghost btn-xs" onclick="openMessagesModal()">View All</button></div>'+dms.slice(0,3).map(c=>{const otherId=c.members.find(m=>m!=='you');const friend=MOCK_FRIENDS.find(f=>f.id===otherId);const msgs=(S.clubMessages||{})[c.id]||[];const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];return'<div class="my-club-card" onclick="openClubChat(\''+c.id+'\')"><div class="avatar av-md" style="background:'+(friend?.color||'#6366f1')+';color:#fff;flex-shrink:0">'+(friend?.initials||c.name.slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You: ':'')+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut)">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';}).join('')+'</div>';
+    return'<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">💬 Direct Messages ('+dms.length+')</div><button class="btn btn-ghost btn-xs" onclick="openMessagesModal()">View All</button></div>'+dms.slice(0,3).map(c=>{const otherId=c.members.find(m=>m!=='you');const friend=REAL_USERS.find(f=>f.id===otherId);const msgs=(S.clubMessages||{})[c.id]||[];const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];return'<div class="my-club-card" onclick="openClubChat(\''+c.id+'\')"><div class="avatar av-md" style="background:'+(friend?.color||'#6366f1')+';color:#fff;flex-shrink:0">'+(friend?.initials||c.name.slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You: ':'')+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut)">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';}).join('')+'</div>';
   })()}
 
   <!-- MY CLUBS -->
@@ -4094,7 +4097,7 @@ function buildProfile(){
     </div>
     ${(()=>{
       const partnerId=S.accountabilityPartner;
-      const partner=partnerId?MOCK_FRIENDS.find(f=>f.id===partnerId):null;
+      const partner=partnerId?REAL_USERS.find(f=>f.id===partnerId):null;
       if(partner){
         const weekAgo=new Date(Date.now()-7*86400000);
         const theirHrs=partner.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
@@ -4105,7 +4108,7 @@ function buildProfile(){
         '</div>'+
         '<div style="display:flex;gap:8px;align-items:center"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:'+partner.color+';color:#fff">'+partner.initials+'</div><div style="font-size:12px;font-weight:600">'+partner.name+'</div><button class="btn btn-ghost btn-xs" style="margin-left:auto;color:var(--mut)" onclick="removeStudyPartner()">Remove</button></div>';
       }
-      const candidates=(S.following||[]).map(id=>MOCK_FRIENDS.find(f=>f.id===id)).filter(Boolean);
+      const candidates=(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean);
       if(!candidates.length) return '<div style="font-size:12px;color:var(--sub)">Follow someone first to add them as your study partner.</div>';
       return '<div style="font-size:12px;color:var(--sub);margin-bottom:10px">Pick someone to pair with — you\'ll see each other\'s weekly hours side-by-side.</div>'+
         '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
@@ -4151,9 +4154,9 @@ function buildExplore(){
   const entries=[];
   const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
   entries.push({name:S.name,hrs:myHrs,totalHrs:Math.round(getTotalHours()),initials:S.name.slice(0,2).toUpperCase(),color:'#6366f1',isYou:true,streak:getStreak(),section:S.sections[0]});
-  MOCK_FRIENDS.forEach(f=>{
+  REAL_USERS.forEach(f=>{
     const hrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-    entries.push({name:f.name,hrs,totalHrs:f.totalHours,initials:f.initials,color:f.color,isYou:false,streak:f.streak,section:f.currentSection||'CPA ✅'});
+    entries.push({id:f.id,name:f.name,hrs,totalHrs:f.totalHours,initials:f.initials,color:f.color,isYou:false,streak:f.streak,section:f.currentSection||'CPA ✅',tier:f.tier||'free'});
   });
   entries.sort((a,b)=>b.hrs-a.hrs);
   const medals=['🥇','🥈','🥉'];
@@ -4200,8 +4203,8 @@ function buildExplore(){
       ${belowRows}`;
   } else {
     lbRows=entries.map((e,i)=>{
-      const friendTier=e.isYou?(SUB.tier||'free'):MOCK_FRIENDS.find(f=>f.name===e.name)?.tier||'free';
-      return`<div class="lb-row${e.isYou?' lb-you':''}" style="${!e.isYou?'cursor:pointer;':''}" ${!e.isYou?`onclick="openUserProfile('${MOCK_FRIENDS.find(f=>f.name===e.name)?.id||'you'}')"`:''}>
+      const friendTier=e.isYou?(SUB.tier||'free'):(e.tier||'free');
+      return`<div class="lb-row${e.isYou?' lb-you':''}" style="${!e.isYou?'cursor:pointer;':''}" ${!e.isYou&&e.id?`onclick="openUserProfile('${e.id}')"`:''}>
       <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
       <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
       <div class="lb-name">${e.name}${e.isYou?' (you)':''}${tierBadge(friendTier)}</div>
@@ -4230,7 +4233,7 @@ function buildExplore(){
   (isElite()?'<div style="margin-top:6px;padding:12px 14px;background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(212,64,0,.05));border:1.5px solid rgba(147,51,234,.2);border-radius:12px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:800;color:var(--pur)">✦ Elite — Create Custom Challenge</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Set your own goal and invite your club members.</div></div><button class="btn btn-sm" style="background:var(--pur);color:#fff" onclick="showToast(\'Custom challenge creator coming soon! 🔮\',\'info\')">Create</button></div>':'');
 
   // Find friends
-  const friendCards=MOCK_FRIENDS.map(f=>{
+  const friendCards=REAL_USERS.map(f=>{
     const isFollowing=(S.following||[]).includes(f.id);
     const isPending=!isFollowing&&(S.pendingRequests||[]).includes(f.id);
     const weekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
@@ -4267,7 +4270,7 @@ function buildExplore(){
 
   // Study buddy matching — people studying the same section as you right now
   const myCurrentSection=getCurrentSection();
-  const buddyMatches=MOCK_FRIENDS.filter(f=>f.currentSection===myCurrentSection).slice(0,6);
+  const buddyMatches=REAL_USERS.filter(f=>f.currentSection===myCurrentSection).slice(0,6);
   const buddyCards=buddyMatches.map(f=>{
     const sharedSection=myCurrentSection;
     const fWeekHrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
@@ -4287,7 +4290,7 @@ function buildExplore(){
   const circleEntries=[];
   const myWeekHrsVal=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
   circleEntries.push({name:'You',initials:(S.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),color:'#6366f1',section:S.sections[0]||'FAR',weekHrs:myWeekHrsVal,streak:getStreak(),isYou:true,tier:SUB.tier||'free'});
-  MOCK_FRIENDS.forEach(f=>{
+  REAL_USERS.forEach(f=>{
     const hrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     circleEntries.push({name:f.name,initials:f.initials,color:f.color,section:f.currentSection||'CPA ✅',weekHrs:hrs,streak:f.streak,isYou:false,id:f.id,tier:f.tier||'free'});
   });
@@ -4353,7 +4356,7 @@ function buildExplore(){
     <div class="card card-pad">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="section-title" style="margin-bottom:0">Find CPA Candidates</div>
-        <span style="font-size:10px;color:var(--mut)">${MOCK_FRIENDS.length} in the community</span>
+        <span style="font-size:10px;color:var(--mut)">${REAL_USERS.filter(f=>f.isReal).length+1} in your network</span>
       </div>
       ${friendCards}
     </div>
@@ -4521,7 +4524,7 @@ function closeSessionLoggedModal(){
 function giveProps(actId,userId){
   if(userId==='you'){showToast("Can't give yourself props 😄",'err');return;}
   // Find in mock friends
-  const friend=MOCK_FRIENDS.find(f=>f.id===userId);
+  const friend=REAL_USERS.find(f=>f.id===userId);
   let act=null;
   if(friend)act=friend.activities.find(a=>a.id===actId);
   if(!act){showToast("Something went wrong — try reloading",'err');return;}
@@ -4553,7 +4556,7 @@ function openComments(actId,userId){
     act=S.activities.find(a=>a.id===actId);
     actOwner=S.name;
   } else {
-    const friend=MOCK_FRIENDS.find(f=>f.id===userId);
+    const friend=REAL_USERS.find(f=>f.id===userId);
     if(friend){act=friend.activities.find(a=>a.id===actId);actOwner=friend.name;}
   }
   if(!act)return;
@@ -4588,7 +4591,7 @@ function addComment(actId,userId){
   if(!text)return;
   let act=null;
   if(userId==='you'){act=S.activities.find(a=>a.id===actId);}
-  else{const f=MOCK_FRIENDS.find(f=>f.id===userId);if(f)act=f.activities.find(a=>a.id===actId);}
+  else{const f=REAL_USERS.find(f=>f.id===userId);if(f)act=f.activities.find(a=>a.id===actId);}
   if(!act)return;
   if(!act.comments)act.comments=[];
   act.comments.push({user:S.name,text});
@@ -4711,8 +4714,8 @@ function handleSessionPhotoUpload(input){
 }
 
 function _isUserPrivate(uid){
-  const mock=MOCK_FRIENDS.find(f=>f.id===uid);
-  if(mock) return !!mock.isPrivate;
+  const u=REAL_USERS.find(f=>f.id===uid);
+  if(u) return !!u.isPrivate;
   return !!(window._cachedPrivacy&&window._cachedPrivacy[uid]);
 }
 
@@ -5285,7 +5288,7 @@ function sendSupportMessage(){
 }
 
 function setStudyPartner(id){
-  const f=MOCK_FRIENDS.find(f=>f.id===id);
+  const f=REAL_USERS.find(f=>f.id===id);
   S.accountabilityPartner=id;
   saveState();
   renderTab();
@@ -5310,11 +5313,11 @@ function openFollowModal(type){
   const weekAgo=new Date(Date.now()-7*86400000);
   let users;
   if(type==='followers'){
-    users=MOCK_FRIENDS.filter(f=>['f1','f2','f5'].includes(f.id));
-    document.getElementById('follow-modal-title').textContent=`Followers (${users.length})`;
+    users=REAL_USERS.filter(f=>(S.followers||[]).includes(f.id));
+    document.getElementById('follow-modal-title').textContent=`Followers (${(S.followers||[]).length})`;
   } else {
-    users=MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id));
-    document.getElementById('follow-modal-title').textContent=`Following (${users.length})`;
+    users=REAL_USERS.filter(f=>(S.following||[]).includes(f.id));
+    document.getElementById('follow-modal-title').textContent=`Following (${(S.following||[]).filter(id=>id&&id.length>4).length})`;
   }
   const rows=users.map(f=>{
     const isFollowing=(S.following||[]).includes(f.id);
@@ -5435,7 +5438,7 @@ async function openUserProfile(userId){
   }
   el.classList.add('open');
   document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
-  const mock=MOCK_FRIENDS.find(x=>x.id===userId);
+  const mock=REAL_USERS.find(x=>x.id===userId);
   if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
   if(firebaseDb){
     try{
@@ -5596,7 +5599,7 @@ function toggleFollowProfile(userId,btn){
 }
 
 function openDirectMessage(userId, displayName, displayInitials){
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);
+  const f=REAL_USERS.find(x=>x.id===userId);
   const name=f?.name||displayName||'User';
   const initials=f?.initials||displayInitials||(name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())||'??';
   const color=f?.color||'#5a5fcf';
@@ -5615,7 +5618,7 @@ function openDirectMessage(userId, displayName, displayInitials){
 }
 
 function promptInviteToClub(userId){
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);if(!f)return;
+  const f=REAL_USERS.find(x=>x.id===userId)||{name:'this user',initials:'?',color:'#6366f1'};
   const myClubs=(S.clubs||[]).filter(c=>!c.isDM&&c.members.includes('you'));
   if(!myClubs.length){
     if(confirm(`You have no study clubs yet. Create one and invite ${f.name}?`)){createClubModal();}
@@ -5642,8 +5645,8 @@ function promptInviteToClub(userId){
 
 function inviteToClub(clubId,userId,el){
   const club=(S.clubs||[]).find(c=>c.id===clubId);
-  const f=MOCK_FRIENDS.find(x=>x.id===userId);
-  if(!club||!f)return;
+  const f=REAL_USERS.find(x=>x.id===userId)||{name:'User',initials:'?',color:'#6366f1'};
+  if(!club)return;
   if(club.members.includes(userId)){showToast(`${f.name} is already in this club!`,'info');return;}
   club.members.push(userId);
   if(!S.clubMessages)S.clubMessages={};
@@ -5660,16 +5663,16 @@ function inviteToClub(clubId,userId,el){
 // ═══════════════════════════════════════════════
 function getClubMemberName(memberId){
   if(memberId==='you'||memberId==='system')return memberId==='system'?'System':S.name;
-  return MOCK_FRIENDS.find(f=>f.id===memberId)?.name||'Unknown';
+  return REAL_USERS.find(f=>f.id===memberId)?.name||'CPA Candidate';
 }
 function getClubMemberInitials(memberId){
   if(memberId==='you')return S.name.slice(0,2).toUpperCase();
-  const f=MOCK_FRIENDS.find(x=>x.id===memberId);
-  return f?f.initials:'??';
+  const f=REAL_USERS.find(x=>x.id===memberId);
+  return f?f.initials:(memberId||'??').slice(0,2).toUpperCase();
 }
 function getClubMemberColor(memberId){
   if(memberId==='you')return'#6366f1';
-  return MOCK_FRIENDS.find(f=>f.id===memberId)?.color||'#94a3b8';
+  return REAL_USERS.find(f=>f.id===memberId)?.color||hashColor(memberId||'')||'#94a3b8';
 }
 
 function openClubsModal(){
@@ -5705,7 +5708,7 @@ function renderClubsModal(){
   }).join('');
   const dmCards=dms.length?`<div class="section-title" style="margin-top:16px;margin-bottom:8px">Direct Messages</div>`+dms.map(c=>{
     const otherMember=c.members.find(m=>m!=='you');
-    const f=otherMember?MOCK_FRIENDS.find(x=>x.id===otherMember):null;
+    const f=otherMember?REAL_USERS.find(x=>x.id===otherMember):null;
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
     return`<div class="my-club-card" onclick="openClubChat('${c.id}')">
@@ -5737,7 +5740,7 @@ function createClubModal(){
   }
   window._selectedClubIcon='📚';
   const clubIcons=['📚','🏛️','⚡','🔥','🎯','💎','🚀','🧠','💼','📊','🏆','🌟','☕','🌙','🎓','🤝'];
-  const friendOptions=MOCK_FRIENDS.filter(f=>(S.following||[]).includes(f.id));
+  const friendOptions=REAL_USERS.filter(f=>(S.following||[]).includes(f.id));
   const friendCheckboxes=friendOptions.map(f=>`
   <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='transparent'">
     <input type="checkbox" id="cm-${f.id}" value="${f.id}" style="accent-color:var(--ind);width:15px;height:15px">
@@ -5836,7 +5839,7 @@ function renderClubChat(clubId){
   if(!el)return;
   const memberCount=club.members.length;
   const dmOtherId=club.isDM?club.members.find(m=>m!=='you'):null;
-  const dmFriend=dmOtherId?MOCK_FRIENDS.find(f=>f.id===dmOtherId):null;
+  const dmFriend=dmOtherId?REAL_USERS.find(f=>f.id===dmOtherId):null;
   const dmAvatarHtml=dmFriend?('<div class="avatar" style="width:34px;height:34px;border-radius:50%;background:'+getClubMemberColor(dmOtherId)+';color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">'+getClubMemberInitials(dmOtherId)+'</div>'):'💬';
   const iconHtml=club.isDM?dmAvatarHtml:('<span style="font-size:24px">'+club.icon+'</span>');
   const placeholderName=club.isDM&&dmFriend?dmFriend.name.split(' ')[0]:club.name;
@@ -5911,11 +5914,7 @@ function joinPublicClub(pubId){
 // ═══════════════════════════════════════════════
 function _defaultNotifications(){
   return [
-    {id:'n1',type:'props',icon:'👏',text:'Sarah Chen gave you props on your last session!',from:'f1',targetType:'activity',targetId:'a1',time:new Date(Date.now()-2*3600000).toISOString(),read:false},
-    {id:'n2',type:'follow',icon:'👤',text:'Marcus Johnson started following you.',from:'f2',targetType:'user',targetId:'f2',time:new Date(Date.now()-5*3600000).toISOString(),read:false},
-    {id:'n3',type:'comment',icon:'💬',text:'Ashley Park commented on your session: "Keep grinding!"',from:'f5',targetType:'activity',targetId:'a9',time:new Date(Date.now()-24*3600000).toISOString(),read:false},
     {id:'n4',type:'achievement',icon:'🏆',text:'You earned the "Early Bird" achievement!',from:null,targetType:'profile',targetId:null,time:new Date(Date.now()-48*3600000).toISOString(),read:true},
-    {id:'n5',type:'props',icon:'👏',text:'Tyler Williams and 2 others gave you props.',from:'f4',targetType:'activity',targetId:'a8',time:new Date(Date.now()-72*3600000).toISOString(),read:true},
   ];
 }
 
@@ -5937,7 +5936,7 @@ function openNotificationCenter(){
   el.className='modal-overlay open';
   const unread=notifs.filter(n=>!n.read).length;
   const notifRows=notifs.length?notifs.map(n=>{
-    const f=n.from?MOCK_FRIENDS.find(x=>x.id===n.from):null;
+    const f=n.from?REAL_USERS.find(x=>x.id===n.from):null;
     const avatarBg=f?f.color:'#6366f1';
     const avatarInit=f?f.initials:'🔔';
     const hasNav=!!(n.targetType);
@@ -6086,13 +6085,13 @@ function renderSearchResults(){
   _searchDebounce=setTimeout(async()=>{
     const following=S.following||[];
     let realUsers=await searchFirestoreUsers(q);
-    // Dedupe MOCK_FRIENDS by uid in case a real user matches a mock id
     const realUids=new Set(realUsers.map(u=>u.uid));
-    const mockFallback=q
-      ? MOCK_FRIENDS.filter(f=>!realUids.has(f.id)&&(f.name.toLowerCase().includes(q.toLowerCase())||f.state.toLowerCase().includes(q.toLowerCase())))
-      : MOCK_FRIENDS.filter(f=>!realUids.has(f.id));
+    // Also surface cached REAL_USERS not in Firestore search results
+    const cachedExtra=REAL_USERS.filter(f=>!realUids.has(f.id)&&f.id!==AUTH?.uid&&(
+      !q||f.name.toLowerCase().includes(q.toLowerCase())||f.state.toLowerCase().includes(q.toLowerCase())
+    ));
     if(!container.isConnected) return;
-    const allUsers=[...realUsers.map(u=>({...u,_real:true})),...mockFallback.map(f=>({...f,_real:false}))];
+    const allUsers=[...realUsers.map(u=>({...u,_real:true})),...cachedExtra.map(f=>({...f,uid:f.id,displayName:f.name,_real:true}))];
     const suggested=allUsers.filter(u=>!following.includes(u._real?u.uid:u.id));
     const followingList=allUsers.filter(u=>following.includes(u._real?u.uid:u.id));
     let html='';
@@ -6130,7 +6129,7 @@ function toggleFollowSearch(id, isReal){
   } else {
     S.following.push(id);
     if(!isReal){
-      const f=MOCK_FRIENDS.find(x=>x.id===id);
+      const f=REAL_USERS.find(x=>x.id===id);
       if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
     }
     showToast('Following! 🎉','ok');
@@ -6217,7 +6216,7 @@ function renderMessagesBody(){
     }
     el.innerHTML=dms.map(c=>{
       const otherId=c.members.find(m=>m!=='you');
-      const friend=MOCK_FRIENDS.find(f=>f.id===otherId);
+      const friend=REAL_USERS.find(f=>f.id===otherId);
       const msgs=(S.clubMessages||{})[c.id]||[];
       const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
       const timeStr=lastMsg?timeAgo(lastMsg.time):'';
@@ -6289,7 +6288,7 @@ function renderClubViewBody(clubId){
       const initials=getClubMemberInitials(m);
       const color=getClubMemberColor(m);
       const isYou=m==='you';
-      const friend=isYou?null:MOCK_FRIENDS.find(f=>f.id===m);
+      const friend=isYou?null:REAL_USERS.find(f=>f.id===m);
       const hrs=isYou?Math.round(getTotalHours()):(friend?.totalHours||0);
       const streak=isYou?getStreak():(friend?.streak||0);
       return'<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr);cursor:'+(isYou?'default':'pointer')+'" '+(isYou?'':'onclick="closeClubView();openUserProfile(\''+m+'\')"')+'><div class="avatar av-md" style="background:'+color+';color:#fff">'+initials+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+name+(isYou?' <span style="font-size:10px;background:var(--ora-bg);color:var(--ora);padding:1px 6px;border-radius:10px;font-weight:700">you</span>':'')+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+hrs+'h total · 🔥'+streak+'d streak</div></div>'+(isYou?'':'<span style="font-size:12px;color:var(--ind)">→</span>')+'</div>';
@@ -6299,7 +6298,7 @@ function renderClubViewBody(clubId){
     const weekAgo=new Date(Date.now()-7*86400000);
     const allMembers=club.members.map(m=>{
       const isYou=m==='you';
-      const friend=isYou?null:MOCK_FRIENDS.find(f=>f.id===m);
+      const friend=isYou?null:REAL_USERS.find(f=>f.id===m);
       const weekHrs=isYou?((S.activities||[]).filter(a=>new Date(a.date)>weekAgo).reduce((s,a)=>s+(a.hours||0),0)):(friend?.activities||[]).filter(a=>new Date(a.date)>weekAgo).reduce((s,a)=>s+(a.hours||0),0);
       const totalHrs=isYou?getTotalHours():(friend?.totalHours||0);
       const streak=isYou?getStreak():(friend?.streak||0);
