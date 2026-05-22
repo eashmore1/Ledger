@@ -449,5 +449,29 @@ document.querySelectorAll('.feat-card,.quote-card').forEach(el=>{
   observer.observe(el);
 });
 </script>
+
+<!-- ── Cookie / GDPR Consent Banner ── -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
+  <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
+    We use cookies and analytics to improve your experience. By continuing to use Ledger you agree to our
+    <a href="/privacy" style="color:#d44000;text-decoration:underline">Privacy Policy</a>.
+  </p>
+  <div style="display:flex;gap:10px;flex-shrink:0">
+    <button onclick="dismissCookieBanner(false)" style="background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer">Decline</button>
+    <button onclick="dismissCookieBanner(true)" style="background:#d44000;border:none;color:#fff;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
+  var COOKIE_KEY = 'ledger-cookie-consent';
+  var banner = document.getElementById('cookie-banner');
+  if(!banner) return;
+  if(!localStorage.getItem(COOKIE_KEY)) banner.style.display = 'flex';
+  window.dismissCookieBanner = function(accepted){
+    localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined');
+    banner.style.display = 'none';
+  };
+})();
+</script>
 </body>
 </html>

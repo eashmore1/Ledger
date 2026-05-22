@@ -1514,7 +1514,7 @@ function navProLabel(){
 const PRO_FEATURES={
   aiStudyCoach:     {label:'Ask Ledger',icon:'🤖',desc:'Personalized daily study plans powered by AI, adapting to your pace and weak spots.'},
   advancedAnalytics:{label:'Advanced Analytics',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and predicted pass probability.'},
-  examSimulator:    {label:'Full Exam Simulator',icon:'🎯',desc:'Timed mock exams with score tracking, section-by-section analysis, and adaptive question sets.'},
+  examSimulator:    {label:'Question Bank',icon:'📝',desc:'60 CPA-level MCQs per section with explanations, timed sets, and random quizzes.'},
   studySchedule:    {label:'Smart Study Schedule',icon:'📅',desc:'Auto-generated daily schedule that syncs with your exam dates and available hours.'},
   progressReports:  {label:'Weekly Progress Reports',icon:'📝',desc:'Beautiful PDF reports you can share with your employer, study group, or accountability partner.'},
   unlimitedClubs:   {label:'Unlimited Study Clubs',icon:'🏛️',desc:'Create unlimited private clubs. Free tier is limited to 1 club.'},
@@ -1651,7 +1651,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Full Session History & Heatmap'},
     {on:true,text:'Study Partner Pairing'},
     {on:true,text:'Advanced Analytics'},
-    {on:true,text:'Full Exam Simulator'},
+    {on:true,text:'Full Question Bank + Timed Sets'},
     {on:true,text:'Smart Study Schedule'},
     {on:true,text:'Unlimited Study Clubs + All Challenges'},
     {on:true,text:'Streak Shield (3×/mo)'},
@@ -1669,7 +1669,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'AI Study Coach'},
     {on:true,text:'AI Mnemonic Generator'},
     {on:true,text:'Score Predictor'},
-    {on:true,text:'Full Exam Simulator (Adaptive)'},
+    {on:true,text:'AI-Powered Question Bank'},
     {on:true,text:'Create Custom Challenges'},
     {on:true,text:'Unlimited Streak Shields'},
     {on:true,text:'Priority Support (response <2h)'},
@@ -11150,6 +11150,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   }
 });
+</script>
+
+<!-- ── Cookie Consent Banner ── -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
+  <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
+    We use cookies and analytics to improve your experience. By continuing to use Ledger you agree to our
+    <a href="/privacy" style="color:#d44000;text-decoration:underline">Privacy Policy</a>.
+  </p>
+  <div style="display:flex;gap:10px;flex-shrink:0">
+    <button onclick="dismissCookieBanner(false)" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer">Decline</button>
+    <button onclick="dismissCookieBanner(true)" style="padding:8px 20px;border-radius:8px;border:none;background:#d44000;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
+  const COOKIE_KEY = 'ledger-cookie-consent';
+  var banner = document.getElementById('cookie-banner');
+  if(!banner) return;
+  var consent = localStorage.getItem(COOKIE_KEY);
+  if(!consent) banner.style.display = 'flex';
+  window.dismissCookieBanner = function(accepted){
+    localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined');
+    banner.style.display = 'none';
+  };
+})();
 </script>
 </body>
 </html>
