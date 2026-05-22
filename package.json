@@ -10,11 +10,13 @@
     "cap:copy": "npx cap copy"
   },
   "dependencies": {
-    "@capacitor/core": "^6.0.0"
+    "@capacitor/core": "^6.0.0",
+    "firebase-admin": "^12.7.0",
+    "stripe": "^14.25.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
-    "@capacitor/ios": "^6.0.0",
-    "@capacitor/android": "^6.0.0"
+    "@capacitor/ios": "^6.0.0"
   }
 }

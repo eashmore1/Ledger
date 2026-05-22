@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "buildCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }

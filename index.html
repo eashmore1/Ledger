@@ -934,7 +934,18 @@ function redirectToStripeCheckout(planKey){
   }
   const url = STRIPE_CONFIG.paymentLinks[planKey];
   if(!url||url.includes('REPLACE')){ showToast('Stripe not configured yet','err'); return; }
-  window.location.href = url;
+  // Pass Firebase UID + plan key so webhook can identify the user
+  const uid   = AUTH?.uid   || '';
+  const email = AUTH?.email || '';
+  const sep   = url.includes('?') ? '&' : '?';
+  const params = new URLSearchParams({
+    client_reference_id: uid,
+    prefilled_email:     email,
+    metadata_plan:       planKey,  // Note: Stripe Payment Links don't support metadata directly,
+                                   // so we also write it in the webhook via checkout session metadata
+  });
+  window.location.href = url + sep + 'client_reference_id=' + encodeURIComponent(uid) +
+    '&prefilled_email=' + encodeURIComponent(email);
 }
 
 function openStripePortal(){
@@ -947,7 +958,28 @@ function openStripePortal(){
   const p = new URLSearchParams(window.location.search);
   if(p.get('billing')==='success'){
     history.replaceState({},'',window.location.pathname);
-    setTimeout(()=>showToast('🎉 Subscription activated! Welcome to Pro.','ok'),800);
+    // Poll Firestore until webhook fires and upgrades the user (usually <3s)
+    let attempts = 0;
+    const pollSub = async () => {
+      if(!firebaseDb || !AUTH?.uid){ attempts++; if(attempts<10) setTimeout(pollSub,1200); return; }
+      try{
+        const doc = await firebaseDb.collection('users').doc(AUTH.uid).get();
+        if(doc.exists){
+          const data = doc.data();
+          if(data.sub && data.sub.tier && data.sub.tier !== 'free'){
+            SUB = {...SUB, ...data.sub};
+            saveSub(SUB);
+            showToast('🎉 Subscription activated! Welcome to ' + navProLabel() + '.','ok');
+            renderApp();
+            return;
+          }
+        }
+      }catch(e){}
+      attempts++;
+      if(attempts < 10) setTimeout(pollSub, 1500);
+      else showToast('🎉 Payment received — your account will activate shortly.','ok');
+    };
+    setTimeout(pollSub, 1200);
   } else if(p.get('billing')==='cancel'){
     history.replaceState({},'',window.location.pathname);
   }
@@ -1918,6 +1950,19 @@ function init(){
         saveAuth(AUTH);
         if(!S) S = loadState(AUTH.uid)||null;
         if(!S){ renderOnboarding(); return; }
+        // Sync subscription tier from Firestore (so Stripe upgrades apply across devices)
+        try{
+          if(firebaseDb){
+            const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
+            if(userDoc.exists){
+              const fsub = userDoc.data().sub;
+              if(fsub && fsub.tier && fsub.tier !== 'free'){
+                SUB = {...SUB, ...fsub};
+                saveSub(SUB);
+              }
+            }
+          }
+        }catch(e){}
         renderApp();
         setTimeout(writeUserProfile, 1200);
         setTimeout(backfillLongestStreak, 2000);
