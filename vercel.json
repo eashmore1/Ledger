@@ -2,16 +2,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "outputDirectory": ".",
-  "routes": [
-    { "src": "/login", "dest": "/index.html" },
-    { "src": "/signup", "dest": "/index.html" },
-    { "src": "/landing", "dest": "/landing.html" },
-    { "src": "/about", "dest": "/about.html" },
-    { "src": "/contact", "dest": "/contact.html" },
-    { "src": "/faq", "dest": "/faq.html" },
-    { "src": "/pricing", "dest": "/pricing.html" },
-    { "src": "/privacy", "dest": "/privacy.html" },
-    { "src": "/terms", "dest": "/terms.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/signup", "destination": "/index.html" }
   ]
 }
