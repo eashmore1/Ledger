@@ -20,6 +20,8 @@
 <script defer src="https://js.stripe.com/v3/"></script>
 <!-- canvas-confetti — used for exam pass celebration -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<!-- OTPAuth — TOTP for two-factor authentication -->
+<script defer src="https://cdn.jsdelivr.net/npm/otpauth@9.3.6/dist/otpauth.umd.min.js"></script>
 <style>
 /* ── TOKENS ── */
 :root{
@@ -864,6 +866,19 @@ async function signInWithEmailFirebase(email, password){
       // Keep signed in so they can resend, but don't grant app access
       return 'unverified';
     }
+    // Check for 2FA before granting access
+    let totpSecret = null;
+    if(firebaseDb){
+      try{
+        const doc = await firebaseDb.collection('users').doc(cred.user.uid).get();
+        if(doc.exists) totpSecret = doc.data().totp_secret || null;
+      }catch(e){}
+    }
+    if(!totpSecret) totpSecret = localStorage.getItem('pf2-2fa-secret');
+    if(totpSecret && window.OTPAuth){
+      const passed = await show2FALoginPrompt(totpSecret);
+      if(!passed){ await firebaseAuth.signOut().catch(()=>{}); return false; }
+    }
     AUTH = { uid: cred.user.uid, displayName: cred.user.displayName||email.split('@')[0], email, method:'email', created: Date.now() };
     saveAuth(AUTH);
     return true;
@@ -916,6 +931,155 @@ function signOut(){
   saveSub(SUB);
   showToast('Signed out','info');
   setTimeout(()=>location.reload(),500);
+}
+
+// ═══════════════════════════════════════════════
+// TWO-FACTOR AUTHENTICATION (TOTP)
+// ═══════════════════════════════════════════════
+let _2fa_pending_resolve = null;
+let _2fa_login_secret = null;
+
+async function get2FASecret(){
+  // Check localStorage cache first, then Firestore
+  const cached = localStorage.getItem('pf2-2fa-secret');
+  if(cached) return cached;
+  if(!firebaseDb||!AUTH?.uid) return null;
+  try{
+    const doc = await firebaseDb.collection('users').doc(AUTH.uid).get();
+    if(doc.exists && doc.data().totp_secret){
+      localStorage.setItem('pf2-2fa-secret', doc.data().totp_secret);
+      return doc.data().totp_secret;
+    }
+  }catch(e){}
+  return null;
+}
+
+async function open2FASetupModal(){
+  if(!window.OTPAuth){ showToast('Security library loading — try again in a moment','info'); return; }
+  // Generate a new TOTP secret
+  const secret = new OTPAuth.Secret();
+  const secretBase32 = secret.base32;
+  const label = encodeURIComponent(AUTH?.email || AUTH?.displayName || 'user');
+  const totp = new OTPAuth.TOTP({issuer:'Ledger CPA',label,algorithm:'SHA1',digits:6,period:30,secret});
+  const otpUri = totp.toString();
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpUri)}`;
+  window._2fa_setup_secret = secretBase32;
+  let el = document.getElementById('twofa-modal');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'twofa-modal';
+    el.className = 'modal-overlay';
+    el.addEventListener('click', e=>{ if(e.target===el) close2FAModal(); });
+    document.body.appendChild(el);
+  }
+  el.innerHTML = `<div class="modal-box" style="max-width:380px">
+    <div class="modal-hdr"><span style="font-size:14px;font-weight:800">🔐 Set Up Two-Factor Auth</span><button class="modal-close" onclick="close2FAModal()">✕</button></div>
+    <div style="padding:18px;text-align:center">
+      <p style="font-size:12px;color:var(--mut);margin:0 0 14px">Scan this QR code with <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app</p>
+      <img src="${qrUrl}" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
+      <div style="font-size:10px;color:var(--mut);margin-bottom:6px">Or enter the key manually:</div>
+      <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;letter-spacing:.12em;word-break:break-all;margin-bottom:16px;color:var(--txt)">${secretBase32}</div>
+      <div style="font-size:12px;color:var(--mut);text-align:left;margin-bottom:8px">Enter the 6-digit code from your app to confirm setup:</div>
+      <input type="text" id="2fa-setup-code" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000 000"
+        style="width:100%;padding:12px;text-align:center;font-size:22px;letter-spacing:.25em;border:1.5px solid var(--bdr);border-radius:8px;background:var(--surf2);color:var(--txt);outline:none;box-sizing:border-box;margin-bottom:14px"
+        onkeydown="if(event.key==='Enter')verify2FASetup()">
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="close2FAModal()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="verify2FASetup()">Verify & Enable</button>
+      </div>
+    </div>
+  </div>`;
+  el.classList.add('open');
+  setTimeout(()=>document.getElementById('2fa-setup-code')?.focus(),200);
+}
+
+function close2FAModal(){
+  document.getElementById('twofa-modal')?.classList.remove('open');
+  delete window._2fa_setup_secret;
+}
+
+async function verify2FASetup(){
+  if(!window.OTPAuth){ showToast('Library not loaded — refresh and try again','err'); return; }
+  const code = document.getElementById('2fa-setup-code')?.value?.replace(/\s/g,'');
+  if(!code||code.length!==6){ showToast('Enter the 6-digit code from your app','err'); return; }
+  const secretBase32 = window._2fa_setup_secret;
+  if(!secretBase32){ showToast('Setup session expired — try again','err'); return; }
+  try{
+    const totp = new OTPAuth.TOTP({algorithm:'SHA1',digits:6,period:30,secret:OTPAuth.Secret.fromBase32(secretBase32)});
+    const delta = totp.validate({token:code,window:1});
+    if(delta===null){ showToast('Incorrect code — try again','err'); return; }
+    // Save secret
+    if(firebaseDb&&AUTH?.uid) await firebaseDb.collection('users').doc(AUTH.uid).update({totp_secret:secretBase32}).catch(()=>{});
+    localStorage.setItem('pf2-2fa-secret', secretBase32);
+    close2FAModal();
+    showToast('Two-factor auth enabled ✓','ok');
+    // Refresh security settings if open
+    const sec = document.querySelector('[data-settings-sec="security"]');
+    if(sec) sec.click();
+    else { const body=document.getElementById('settings-body'); if(body&&body.dataset.sec==='security') body.innerHTML=buildSettingsSecurity(); }
+  }catch(e){ showToast('Verification failed: '+e.message,'err'); }
+}
+
+async function disable2FA(){
+  if(!confirm('Disable two-factor authentication? Your account will be less secure.')) return;
+  if(firebaseDb&&AUTH?.uid) await firebaseDb.collection('users').doc(AUTH.uid).update({totp_secret:firebase.firestore.FieldValue.delete()}).catch(()=>{});
+  localStorage.removeItem('pf2-2fa-secret');
+  showToast('2FA disabled','info');
+  // Refresh settings UI
+  const body=document.getElementById('settings-body');
+  if(body) body.innerHTML=buildSettingsSecurity();
+}
+
+function show2FALoginPrompt(secretBase32){
+  return new Promise(resolve=>{
+    _2fa_pending_resolve = resolve;
+    _2fa_login_secret = secretBase32;
+    let el = document.getElementById('twofa-modal');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'twofa-modal';
+      el.className = 'modal-overlay';
+      document.body.appendChild(el);
+    }
+    el.innerHTML = `<div class="modal-box" style="max-width:340px">
+      <div class="modal-hdr"><span style="font-size:14px;font-weight:800">🔐 Two-Factor Authentication</span></div>
+      <div style="padding:18px;text-align:center">
+        <p style="font-size:13px;color:var(--mut);margin:0 0 16px">Enter the 6-digit code from your authenticator app</p>
+        <input type="text" id="2fa-login-code" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000 000"
+          style="width:100%;padding:14px;text-align:center;font-size:26px;letter-spacing:.3em;border:1.5px solid var(--bdr);border-radius:8px;background:var(--surf2);color:var(--txt);outline:none;box-sizing:border-box;margin-bottom:16px"
+          onkeydown="if(event.key==='Enter')verify2FALogin()">
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verify2FALogin()">Verify</button>
+        <button onclick="cancel2FALogin()" style="margin-top:10px;background:none;border:none;color:var(--mut);font-size:12px;cursor:pointer">Sign out and try a different account</button>
+      </div>
+    </div>`;
+    el.classList.add('open');
+    setTimeout(()=>document.getElementById('2fa-login-code')?.focus(),100);
+  });
+}
+
+async function verify2FALogin(){
+  if(!window.OTPAuth){ showToast('Library not loaded — refresh and try again','err'); return; }
+  const code = document.getElementById('2fa-login-code')?.value?.replace(/\s/g,'');
+  if(!code||code.length!==6){ showToast('Enter the 6-digit code','err'); return; }
+  try{
+    const totp = new OTPAuth.TOTP({algorithm:'SHA1',digits:6,period:30,secret:OTPAuth.Secret.fromBase32(_2fa_login_secret)});
+    const delta = totp.validate({token:code,window:1});
+    if(delta===null){ showToast('Incorrect code — try again','err'); return; }
+    document.getElementById('twofa-modal')?.classList.remove('open');
+    _2fa_login_secret = null;
+    const resolve = _2fa_pending_resolve;
+    _2fa_pending_resolve = null;
+    resolve(true);
+  }catch(e){ showToast('Verification failed','err'); }
+}
+
+function cancel2FALogin(){
+  document.getElementById('twofa-modal')?.classList.remove('open');
+  _2fa_login_secret = null;
+  const resolve = _2fa_pending_resolve;
+  _2fa_pending_resolve = null;
+  if(resolve) resolve(false);
+  signOut();
 }
 
 // ═══════════════════════════════════════════════
@@ -1363,7 +1527,7 @@ function saveState(){
     if(firebaseDb&&AUTH?.uid){
       firebaseDb.collection('userState').doc(AUTH.uid).set({
         state:JSON.stringify(S),updatedAt:Date.now()
-      }).catch(()=>{});
+      }).catch(e=>console.warn('[Ledger] Firestore sync failed:',e.code,e.message));
     }
   },3000);
 }
@@ -2799,7 +2963,7 @@ function obFinish(){
     activities:[],following:[...(_pendingInvite?.fromUid&&typeof _pendingInvite.fromUid==='string'&&_pendingInvite.fromUid.length>4?[_pendingInvite.fromUid]:[])],
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
-    challenges:[],challengeCompleted:[],
+    challenges:[],challengeCompleted:[],customChallenges:[],
     isPrivate:false,pendingRequests:[],followers:[],
     followRequests:[],
     firmCode,firmName,
@@ -2840,6 +3004,97 @@ function getChallengeProgress(ch){
 }
 function isChallengeDone(ch){ return getChallengeProgress(ch)>=ch.target; }
 function isJoined(chId){ return (S.challenges||[]).includes(chId); }
+
+// ── CUSTOM CHALLENGE CREATOR (Elite) ──────────────────────────────────────
+function openCustomChallengeModal(){
+  if(!isElite()){openUpgradeModal('Custom Challenge Creator');return;}
+  let el=document.getElementById('custom-challenge-modal');
+  if(!el){
+    el=document.createElement('div');
+    el.id='custom-challenge-modal';
+    el.className='modal-overlay';
+    el.addEventListener('click',e=>{if(e.target===el)closeCustomChallengeModal();});
+    document.body.appendChild(el);
+  }
+  const secs=(S.sections||[]).map(s=>s.code);
+  const secOptions=['<option value="">All Sections</option>',...Object.keys(SECTION_META).map(k=>`<option value="${k}"${secs.includes(k)?'':' style="opacity:.5"'}>${SECTION_META[k].full} (${k})</option>`)].join('');
+  el.innerHTML=`<div class="modal-box" style="max-width:420px">
+    <div class="modal-hdr"><span style="font-size:14px;font-weight:800">✦ Create Custom Challenge</span><button class="modal-close" onclick="closeCustomChallengeModal()">✕</button></div>
+    <div style="padding:18px">
+      <div class="form-grp"><label>Challenge Name</label><input id="cc-name" type="text" maxlength="50" placeholder="e.g. FAR 30-Hour Sprint" style="width:100%;box-sizing:border-box"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-grp"><label>Section (optional)</label><select id="cc-section" style="width:100%;padding:9px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px">${secOptions}</select></div>
+        <div class="form-grp"><label>End Date</label><input id="cc-end-date" type="date" style="width:100%;box-sizing:border-box" min="${new Date().toISOString().slice(0,10)}"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-grp"><label>Goal Type</label><select id="cc-goal-type" style="width:100%;padding:9px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px">
+          <option value="hours">Total Hours</option>
+          <option value="sessions">Study Sessions</option>
+          <option value="streak">Day Streak</option>
+        </select></div>
+        <div class="form-grp"><label>Goal Amount</label><input id="cc-goal-val" type="number" min="1" max="500" placeholder="e.g. 40" style="width:100%;box-sizing:border-box"></div>
+      </div>
+      <div class="form-grp"><label>Description (optional)</label><input id="cc-desc" type="text" maxlength="100" placeholder="What's this challenge about?" style="width:100%;box-sizing:border-box"></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeCustomChallengeModal()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;background:var(--pur)" onclick="saveCustomChallenge()">Create Challenge</button>
+      </div>
+    </div>
+  </div>`;
+  el.classList.add('open');
+  setTimeout(()=>document.getElementById('cc-name')?.focus(),100);
+}
+function closeCustomChallengeModal(){
+  document.getElementById('custom-challenge-modal')?.classList.remove('open');
+}
+function saveCustomChallenge(){
+  const name=document.getElementById('cc-name')?.value.trim();
+  const section=document.getElementById('cc-section')?.value;
+  const goalType=document.getElementById('cc-goal-type')?.value;
+  const goalVal=parseFloat(document.getElementById('cc-goal-val')?.value);
+  const endDate=document.getElementById('cc-end-date')?.value;
+  const desc=document.getElementById('cc-desc')?.value.trim();
+  if(!name){showToast('Give your challenge a name','err');return;}
+  if(!goalVal||goalVal<1){showToast('Set a goal amount','err');return;}
+  if(!endDate){showToast('Pick an end date','err');return;}
+  const icons={'hours':'⚡','sessions':'📖','streak':'🔥'};
+  const ch={
+    id:'custom_'+Date.now(),
+    name,section:section||null,goalType,goalVal,endDate,desc:desc||'',
+    icon:icons[goalType]||'🎯',
+    createdAt:Date.now(),
+    isCustom:true
+  };
+  if(!S.customChallenges)S.customChallenges=[];
+  S.customChallenges.push(ch);
+  if(!S.challenges)S.challenges=[];
+  S.challenges.push(ch.id);
+  saveState();
+  closeCustomChallengeModal();
+  showToast('Challenge created! Progress tracks automatically 🎯','ok');
+  renderTab();
+}
+function getCustomChallengeProgress(ch){
+  const acts=S.activities||[];
+  const start=new Date(ch.createdAt);
+  const relevant=acts.filter(a=>{
+    const d=new Date(a.date||a.id);
+    return d>=start&&(!ch.section||a.section===ch.section);
+  });
+  if(ch.goalType==='hours') return Math.min(ch.goalVal,parseFloat(relevant.reduce((s,a)=>s+(a.hours||0),0).toFixed(1)));
+  if(ch.goalType==='sessions') return Math.min(ch.goalVal,relevant.length);
+  if(ch.goalType==='streak') return Math.min(ch.goalVal,getStreak());
+  return 0;
+}
+function deleteCustomChallenge(id){
+  if(!confirm('Delete this custom challenge?'))return;
+  S.customChallenges=(S.customChallenges||[]).filter(c=>c.id!==id);
+  S.challenges=(S.challenges||[]).filter(cid=>cid!==id);
+  S.challengeCompleted=(S.challengeCompleted||[]).filter(cid=>cid!==id);
+  saveState();
+  showToast('Challenge deleted','info');
+  renderTab();
+}
 function joinChallenge(chId){
   const ch=CHALLENGES.find(c=>c.id===chId);if(!ch)return;
   if(!S.challenges)S.challenges=[];
@@ -4303,7 +4558,37 @@ function buildExplore(){
     const lockedStyle=!canAccess?'opacity:.55;filter:grayscale(.4);':'';
     return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+c.icon+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div></div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">🏅 '+c.reward+'</div></div></div></div>';
   }).join('')+
-  (isElite()?'<div style="margin-top:6px;padding:12px 14px;background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(212,64,0,.05));border:1.5px solid rgba(147,51,234,.2);border-radius:12px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:800;color:var(--pur)">✦ Elite — Create Custom Challenge</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Set your own goal and invite your club members.</div></div><button class="btn btn-sm" style="background:var(--pur);color:#fff" onclick="showToast(\'Custom challenge creator coming soon! 🔮\',\'info\')">Create</button></div>':'');
+  (isElite()?'<div style="margin-top:6px;padding:12px 14px;background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(212,64,0,.05));border:1.5px dashed rgba(147,51,234,.35);border-radius:12px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:800;color:var(--pur)">✦ Create Custom Challenge</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Set your own goal — hours, sessions, or streak.</div></div><button class="btn btn-sm" style="background:var(--pur);color:#fff" onclick="openCustomChallengeModal()">+ Create</button></div>':'<div style="margin-top:6px;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:12px;font-weight:700">Custom Challenge Creator</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Build your own goals — Elite only.</div></div><button class="challenge-pro-badge" onclick="openUpgradeModal(\'Custom Challenge Creator\')">🔒 Elite</button></div>')+
+  // Custom challenges the user created
+  (()=>{
+    const customs=(S.customChallenges||[]);
+    if(!customs.length)return'';
+    return'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px">My Custom Challenges</div>'+
+    customs.map(c=>{
+      const prog=getCustomChallengeProgress(c);
+      const done=(S.challengeCompleted||[]).includes(c.id)||(prog>=c.goalVal);
+      const pct=Math.min(100,Math.round(prog/c.goalVal*100));
+      const endLabel=new Date(c.endDate)>new Date()?'Ends '+new Date(c.endDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Ended';
+      const goalLabel=c.goalType==='hours'?`${prog.toFixed(1)} / ${c.goalVal}h`:c.goalType==='sessions'?`${prog} / ${c.goalVal} sessions`:`${prog} / ${c.goalVal} days`;
+      return`<div class="challenge-card" style="border-color:${done?'var(--grn)':'rgba(147,51,234,.3)'};background:${done?'var(--grn-bg)':'var(--surf)'}">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="font-size:24px;flex-shrink:0">${c.icon}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+              <div class="challenge-title" style="margin:0">${c.name}</div>
+              <button onclick="deleteCustomChallenge('${c.id}')" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:14px;padding:0 2px;line-height:1" title="Delete">✕</button>
+            </div>
+            ${c.desc?`<div class="challenge-meta">${c.desc}</div>`:''}
+            <div style="margin:8px 0 4px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${goalLabel}</span><span>${endLabel}</span></div>
+              <div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${done?'var(--grn)':'var(--pur)'};border-radius:4px;transition:width .4s"></div></div>
+            </div>
+            ${done?'<span style="font-size:11px;color:var(--grn);font-weight:700">✅ Complete</span>':''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  })();
 
   // Find friends
   const friendCards=REAL_USERS.map(f=>{
@@ -7236,12 +7521,9 @@ ${isGoogle?`<div style="padding:12px 14px;background:var(--ind-bg);border:1px so
 <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px">
   <div>
     <div style="font-size:13px;font-weight:700">Authenticator App (TOTP)</div>
-    <div style="font-size:11px;color:var(--mut);margin-top:2px">Use Google Authenticator or Authy</div>
+    <div style="font-size:11px;color:var(--mut);margin-top:2px">Google Authenticator, Authy, or any TOTP app</div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span style="font-size:11px;color:var(--mut)">Not enabled</span>
-    <button class="btn btn-ghost btn-xs" onclick="showToast('2FA setup coming soon!','info')">Enable</button>
-  </div>
+  ${(()=>{const has2fa=!!localStorage.getItem('pf2-2fa-secret');return has2fa?'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--grn);font-weight:700">● Enabled</span><button class="btn btn-ghost btn-xs" style="color:var(--red)" onclick="disable2FA()">Disable</button></div>':'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--mut)">Not enabled</span><button class="btn btn-ghost btn-xs" onclick="open2FASetupModal()">Enable</button></div>';})()}
 </div>
 <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:20px">
   <div>
