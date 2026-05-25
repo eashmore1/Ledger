@@ -2288,7 +2288,14 @@ function init(){
         if(!S) S = loadState(AUTH.uid)||null;
         // If no local state, try restoring from Firestore (cross-domain/device sync)
         if(!S){
+          // Show a loading state while we check Firestore
+          const splashEl = document.getElementById('splash-screen');
+          const splashMsg = splashEl?.querySelector('.splash-sub');
+          if(splashMsg) splashMsg.textContent = 'Restoring your account…';
+          _hideSplash(); // hide splash so we can show a loader
+          document.body.innerHTML += '<div id="restore-loader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:9999"><div style="font-size:28px;margin-bottom:12px">📚</div><div style="font-size:15px;font-weight:700;color:var(--txt)">Restoring your account…</div><div style="font-size:12px;color:var(--mut);margin-top:6px">Syncing from Firestore</div></div>';
           const restored = await restoreStateFromFirestore(user.uid);
+          document.getElementById('restore-loader')?.remove();
           if(!restored){ renderOnboarding(); return; }
         }
         // Sync subscription tier from Firestore (so Stripe upgrades apply across devices)
@@ -2972,6 +2979,12 @@ function obFinish(){
   };
   saveState();
   writeUserProfile();
+  // Also write userState directly so cross-device restore works immediately
+  if(firebaseDb&&AUTH?.uid){
+    firebaseDb.collection('userState').doc(AUTH.uid).set({
+      state:JSON.stringify(S),updatedAt:Date.now()
+    }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
+  }
   if(_pendingInvite?.fromName){
     showToast(`Welcome! You're now connected with ${_pendingInvite.fromName} 🎉`,'ok');
     _pendingInvite=null;
