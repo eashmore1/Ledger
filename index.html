@@ -831,8 +831,24 @@ async function signInWithGoogle(){
     saveAuth(AUTH);
     // Restore this user's saved state (survives signout)
     S = loadState(AUTH.uid) || null;
-    if(!S) renderOnboarding();
-    else renderApp();
+    if(!S){
+      // Try Firestore cross-domain/device sync before falling back to onboarding
+      const restored = await restoreStateFromFirestore(user.uid);
+      if(!restored){ renderOnboarding(); return; }
+    }
+    // Sync subscription tier from Firestore
+    try{
+      if(firebaseDb){
+        const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
+        if(userDoc.exists){
+          const fsub = userDoc.data().sub;
+          if(fsub && fsub.tier && fsub.tier !== 'free'){ SUB={...SUB,...fsub}; saveSub(SUB); }
+        }
+      }
+    }catch(e){}
+    renderApp();
+    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
+    setTimeout(writeUserProfile, 1200);
   } catch(e){
     if(e.code !== 'auth/popup-closed-by-user'){
       showToast('Sign-in failed: ' + e.message,'err');
