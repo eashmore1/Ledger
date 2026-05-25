@@ -3,6 +3,8 @@
   "trailingSlash": false,
   "outputDirectory": ".",
   "routes": [
+    { "src": "/login", "dest": "/index.html" },
+    { "src": "/signup", "dest": "/index.html" },
     { "src": "/landing", "dest": "/landing.html" },
     { "src": "/about", "dest": "/about.html" },
     { "src": "/contact", "dest": "/contact.html" },

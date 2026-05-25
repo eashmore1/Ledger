@@ -2060,6 +2060,10 @@ function showPostOnboardingOffer(){
 // INIT
 // ═══════════════════════════════════════════════
 let _pendingInvite=null; // {code, fromName, fromUid}
+// Force auth screen on /login or /signup routes
+const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname);
+if(_isLoginRoute) window._forceAuth = true;
+
 function init(){
   // Handle invite URL params
   const _p=new URLSearchParams(window.location.search);
@@ -2084,6 +2088,17 @@ function init(){
     const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
       _hideSplash();
+      // If on /login or /signup and already logged in, redirect to app
+      if(user && window._forceAuth){
+        window._forceAuth = false;
+        history.replaceState({},'','/');
+      }
+      // If on /login or /signup and NOT logged in, show auth then redirect after
+      if(!user && window._forceAuth){
+        window._forceAuth = false;
+        window._postAuthRedirect = '/';
+        renderAuth(); return;
+      }
       if(user){
         const isEmailUser = user.providerData.some(p=>p.providerId==='password');
         if(isEmailUser && !user.emailVerified){ renderAuth(); return; }
@@ -2119,6 +2134,8 @@ function init(){
             }catch(e){}
           }
         }
+        // Redirect after login if coming from /login or /signup
+        if(window._postAuthRedirect){ history.replaceState({},'',window._postAuthRedirect); window._postAuthRedirect=null; }
         renderApp();
         // Show student verification banner if unverified student plan
         if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
