@@ -1341,6 +1341,15 @@ function saveState(){
   if(!S)return;
   try{localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S));}
   catch(e){showToast('Storage full — clear old data in Settings','err');}
+  // Sync to Firestore for cross-domain/device access (debounced)
+  clearTimeout(saveState._t);
+  saveState._t=setTimeout(()=>{
+    if(firebaseDb&&AUTH?.uid){
+      firebaseDb.collection('userState').doc(AUTH.uid).set({
+        state:JSON.stringify(S),updatedAt:Date.now()
+      }).catch(()=>{});
+    }
+  },3000);
 }
 
 // ── FIRESTORE HELPERS ──
@@ -1383,7 +1392,33 @@ async function writeUserProfile(){
       createdAt: S.created||Date.now()
     };
     await firebaseDb.collection('users').doc(AUTH.uid).set(doc,{merge:true});
+    // Also save full study state for cross-domain/device sync
+    try{
+      await firebaseDb.collection('userState').doc(AUTH.uid).set({
+        state: JSON.stringify(S),
+        updatedAt: Date.now()
+      });
+    }catch(e){}
   }catch(e){}
+}
+
+async function restoreStateFromFirestore(uid){
+  if(!firebaseDb) return false;
+  try{
+    const doc = await firebaseDb.collection('userState').doc(uid).get();
+    if(doc.exists){
+      const data = doc.data();
+      if(data.state){
+        const restored = JSON.parse(data.state);
+        if(restored && restored.name){
+          S = restored;
+          saveState();
+          return true;
+        }
+      }
+    }
+  }catch(e){}
+  return false;
 }
 
 async function searchFirestoreUsers(q){
@@ -2056,7 +2091,11 @@ function init(){
         AUTH = { uid:user.uid, displayName:user.displayName||user.email.split('@')[0], email:user.email, method, photoURL:user.photoURL||null, created:Date.now() };
         saveAuth(AUTH);
         if(!S) S = loadState(AUTH.uid)||null;
-        if(!S){ renderOnboarding(); return; }
+        // If no local state, try restoring from Firestore (cross-domain/device sync)
+        if(!S){
+          const restored = await restoreStateFromFirestore(user.uid);
+          if(!restored){ renderOnboarding(); return; }
+        }
         // Sync subscription tier from Firestore (so Stripe upgrades apply across devices)
         try{
           if(firebaseDb){
