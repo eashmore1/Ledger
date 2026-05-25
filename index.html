@@ -1083,6 +1083,102 @@ function cancel2FALogin(){
 }
 
 // ═══════════════════════════════════════════════
+// ONBOARDING TOUR
+// ═══════════════════════════════════════════════
+const TOUR_STEPS = [
+  {title:'Welcome to Ledger! 🎉',body:"You're all set up. Let's take a 30-second tour so you know where everything lives.",target:null},
+  {title:'📊 Dashboard',body:'Your study command center — total hours, daily streak, section progress, and weekly pacing all in one place.',target:()=>document.querySelector('.nav-tab[onclick*="dashboard"]')||document.querySelector('[data-mnav="dashboard"]')},
+  {title:'▶ Start Session',body:'Tap here to begin a timed study session. Log hours, material, and how you felt — every session counts toward your goals.',target:()=>document.getElementById('nav-log-btn')},
+  {title:'⬡ Study Lab',body:'Practice MCQs with instant explanations, build an AI-powered study plan, and track concepts you\'ve mastered.',target:()=>document.querySelector('.nav-tab[onclick*="studylab"]')||document.querySelector('[data-mnav="studylab"]')},
+  {title:'◎ Explore',body:'Find and follow other CPA candidates studying the same sections. The social accountability makes a real difference.',target:()=>document.querySelector('.nav-tab[onclick*="explore"]')||document.querySelector('[data-mnav="explore"]')},
+  {title:"You're ready. Let's pass the CPA. 🚀",body:'Your streak starts with your first session. Come back every day and let Ledger do the tracking.',target:null,isLast:true},
+];
+let _tourStep=0;
+
+function startTour(){
+  if(localStorage.getItem('pf2-tour-done')) return;
+  _tourStep=0;
+  _showTourStep(0);
+}
+function _showTourStep(idx){
+  _cleanTour();
+  const step=TOUR_STEPS[idx];
+  if(!step){endTour();return;}
+  const total=TOUR_STEPS.length;
+  const isLast=!!step.isLast;
+
+  // Dark backdrop
+  const bg=document.createElement('div');
+  bg.id='tour-bg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;pointer-events:all;transition:opacity .25s';
+  bg.onclick=e=>{if(e.target===bg)skipTour();};
+  document.body.appendChild(bg);
+
+  const el=step.target?step.target():null;
+  if(el){
+    const r=el.getBoundingClientRect();
+    const p=8;
+    // Spotlight cutout
+    const spot=document.createElement('div');
+    spot.id='tour-spot';
+    spot.style.cssText=`position:fixed;top:${r.top-p}px;left:${r.left-p}px;width:${r.width+p*2}px;height:${r.height+p*2}px;border-radius:10px;box-shadow:0 0 0 9999px rgba(0,0,0,.72);z-index:10001;pointer-events:none;border:2px solid rgba(99,102,241,.7);`;
+    document.body.appendChild(spot);
+
+    // Tooltip — position below or above
+    const tt=_buildTourTooltip(step,idx,total,isLast);
+    document.body.appendChild(tt);
+    const ttH=tt.offsetHeight||160;
+    const vw=window.innerWidth;const vh=window.innerHeight;
+    const ttW=Math.min(320,vw-32);
+    let top=r.bottom+p+12;
+    let left=r.left+(r.width/2)-(ttW/2);
+    if(top+ttH>vh-16) top=r.top-p-ttH-12;
+    left=Math.max(16,Math.min(left,vw-ttW-16));
+    tt.style.top=`${top}px`;
+    tt.style.left=`${left}px`;
+  } else {
+    // Centered card
+    const tt=_buildTourTooltip(step,idx,total,isLast);
+    tt.style.cssText+=';top:50%;left:50%;transform:translate(-50%,-50%)';
+    document.body.appendChild(tt);
+  }
+}
+function _buildTourTooltip(step,idx,total,isLast){
+  const vw=window.innerWidth;
+  const w=Math.min(320,vw-32);
+  const dots=Array.from({length:total},(_,i)=>`<div style="width:${i===idx?'20px':'6px'};height:6px;border-radius:3px;background:${i===idx?'var(--ind)':'var(--bdr2)'};transition:all .3s"></div>`).join('');
+  const tt=document.createElement('div');
+  tt.id='tour-tt';
+  tt.style.cssText=`position:fixed;z-index:10002;width:${w}px;background:var(--surf);border:1.5px solid var(--bdr2);border-radius:16px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.4);`;
+  tt.innerHTML=`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:15px;font-weight:800;color:var(--txt);line-height:1.3;flex:1">${step.title}</div>
+      <button onclick="skipTour()" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:20px;line-height:1;padding:0 0 0 10px;flex-shrink:0">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.55;margin-bottom:18px">${step.body}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:5px;align-items:center">${dots}</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${idx>0?`<button onclick="prevTourStep()" style="background:none;border:1.5px solid var(--bdr);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;color:var(--mut);font-weight:600">← Back</button>`:''}
+        <button onclick="${isLast?'endTour()':'nextTourStep()'}" style="background:var(--ind);color:#fff;border:none;border-radius:9px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.01em">
+          ${isLast?'Start studying 🚀':'Next →'}
+        </button>
+      </div>
+    </div>
+  `;
+  return tt;
+}
+function nextTourStep(){_tourStep=Math.min(_tourStep+1,TOUR_STEPS.length-1);_showTourStep(_tourStep);}
+function prevTourStep(){_tourStep=Math.max(_tourStep-1,0);_showTourStep(_tourStep);}
+function skipTour(){_cleanTour();localStorage.setItem('pf2-tour-done','1');}
+function endTour(){skipTour();setTimeout(openSessionModal,300);}
+function _cleanTour(){
+  document.getElementById('tour-bg')?.remove();
+  document.getElementById('tour-spot')?.remove();
+  document.getElementById('tour-tt')?.remove();
+}
+
+// ═══════════════════════════════════════════════
 // STRIPE CONFIG — fill in your Stripe credentials
 // https://dashboard.stripe.com/apikeys (publishable key)
 // https://dashboard.stripe.com/payment-links (create payment links)
@@ -3030,7 +3126,7 @@ function openCustomChallengeModal(){
     document.body.appendChild(el);
   }
   const secs=(S.sections||[]).map(s=>s.code);
-  const secOptions=['<option value="">All Sections</option>',...Object.keys(SECTION_META).map(k=>`<option value="${k}"${secs.includes(k)?'':' style="opacity:.5"'}>${SECTION_META[k].full} (${k})</option>`)].join('');
+  const secOptions=['<option value="">All Sections</option>',...Object.keys(EXAMS).map(k=>`<option value="${k}"${secs.includes(k)?'':' style="opacity:.5"'}>${EXAMS[k].full} (${k})</option>`)].join('');
   el.innerHTML=`<div class="modal-box" style="max-width:420px">
     <div class="modal-hdr"><span style="font-size:14px;font-weight:800">✦ Create Custom Challenge</span><button class="modal-close" onclick="closeCustomChallengeModal()">✕</button></div>
     <div style="padding:18px">
@@ -3197,6 +3293,8 @@ function renderApp(){
   setTimeout(checkStreakUrgency, 800);
   setTimeout(checkTrialUrgency, 1600);
   setTimeout(checkStudyNudge, 1000);
+  // Show onboarding tour on first visit (after UI settles)
+  if(!localStorage.getItem('pf2-tour-done')) setTimeout(startTour, 900);
   if(!window._streakUrgencyInterval){
     window._streakUrgencyInterval=setInterval(checkStreakUrgency, 60000);
   }
@@ -7712,6 +7810,13 @@ function buildSettingsData(){
 </button>
 
 <div class="section-title" style="margin-top:20px">App Preferences</div>
+<button onclick="localStorage.removeItem('pf2-tour-done');closeAppSettings();setTimeout(startTour,300);" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <span style="font-size:18px">🗺️</span>
+  <div style="text-align:left">
+    <div style="font-size:13px;font-weight:700;color:var(--txt)">Restart App Tour</div>
+    <div style="font-size:11px;color:var(--mut)">Re-run the onboarding walkthrough</div>
+  </div>
+</button>
 <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px">
   <div>
     <div style="font-size:13px;font-weight:600">Dark Mode</div>
