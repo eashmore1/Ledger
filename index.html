@@ -2060,9 +2060,9 @@ function showPostOnboardingOffer(){
 // INIT
 // ═══════════════════════════════════════════════
 let _pendingInvite=null; // {code, fromName, fromUid}
-// Force auth screen on /login or /signup routes
-const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname);
-if(_isLoginRoute) window._forceAuth = true;
+// Force auth screen on /login, /signup routes or ?auth=1 param
+const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname) || new URLSearchParams(window.location.search).get('auth')==='1';
+if(_isLoginRoute){ window._forceAuth = true; history.replaceState({},'','/'); }
 
 function init(){
   // Handle invite URL params
