@@ -40,7 +40,8 @@
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#18103a">
+<meta name="theme-color" content="#f2ede6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0905" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
@@ -61,15 +62,18 @@
 :root{
   --bg:#f2ede6;--surf:#ffffff;--surf2:#f7f2eb;--surf3:#ede7df;
   --bdr:#e2dbd2;--bdr2:#c9c0b4;
-  --txt:#0d1117;--sub:#4a5568;--mut:#8a8d92;
+  --txt:#0d1117;--sub:#4a5568;--mut:#6b665c;
   --ora:#d44000;--ora-dk:#b03500;--ora-bg:#fff7ed;--ora-bdr:#fdba74;
   --navy:#18103a;--navy-dk:#0a0618;--navy-mid:#1e1540;
-  --ind:#5a5fcf;--ind-bg:#eef0ff;
-  --grn:#0ea574;--grn-bg:#ecfdf5;
+  --ind:#5a5fcf;--ind-bg:#eef0ff;--ind-bdr:#c4c7f0;
+  --grn:#0ea574;--grn-bg:#ecfdf5;--grn-bdr:#a7e8d0;
   --red:#e84040;--red-bg:#fff1f1;
   --amb:#f59e0b;--amb-bg:#fffbeb;
   --pur:#9333ea;--pur-bg:#faf5ff;
   --tea:#0fb5aa;--tea-bg:#f0fdfa;
+  /* ── EXAM SECTION COLORS (single source of truth — keep EXAMS[x].color in sync) ── */
+  --far:#dc2626;--far-bg:#fef2f2;--aud:#2563eb;--aud-bg:#eff6ff;--reg:#059669;--reg-bg:#ecfdf5;
+  --bar:#d97706;--bar-bg:#fffbeb;--isc:#9333ea;--isc-bg:#faf5ff;--tcp:#0d9488;--tcp-bg:#f0fdfa;
   --bg-rgb:242,237,230;
   --shadow:0 1px 4px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 20px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);
@@ -85,10 +89,11 @@ body.dark{
   --bg:#0c0905;--surf:#15100b;--surf2:#1e1812;--surf3:#261f17;
   --bg-rgb:12,9,5;
   --bdr:#2e2519;--bdr2:#3d3124;
-  --txt:#edf0f7;--sub:#8a96b8;--mut:#4a4540;
+  --txt:#edf0f7;--sub:#8a96b8;--mut:#8a847a;
   --ora-bg:#221200;--ora-bdr:#7a3500;
-  --ind-bg:#191d42;--grn-bg:#021c14;--red-bg:#1e0808;
+  --ind-bg:#191d42;--ind-bdr:#2e3470;--grn-bg:#021c14;--grn-bdr:#0a4233;--red-bg:#1e0808;
   --amb-bg:#1a1200;--pur-bg:#160a28;--tea-bg:#031a18;
+  --far-bg:#2a0e0e;--aud-bg:#0e1a2e;--reg-bg:#07251a;--bar-bg:#2a1a05;--isc-bg:#1f0e2e;--tcp-bg:#052523;
   --shadow:0 1px 4px rgba(0,0,0,.5),0 1px 2px rgba(0,0,0,.3);
   --shadow-md:0 4px 20px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
   --shadow-lg:0 12px 48px rgba(0,0,0,.6),0 4px 16px rgba(0,0,0,.4);
@@ -115,7 +120,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .nav-logo:hover{opacity:.85}
 .nav-logo span{color:var(--ind)}
 .nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
-.nav-tab{padding:7px 16px;border-radius:9px;border:none;background:transparent;color:var(--mut);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:5px;white-space:nowrap;letter-spacing:-.01em}
+.nav-tab{padding:7px 16px;border-radius:9px;border:none;background:transparent;color:var(--mut);font-size:13px;font-weight:500;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);display:flex;align-items:center;gap:5px;white-space:nowrap;letter-spacing:-.01em}
 .nav-tab:hover{background:var(--surf2);color:var(--sub)}
 .nav-tab.active{background:var(--ora-bg);color:var(--ora);font-weight:700;box-shadow:0 0 0 1px var(--ora-bdr)}
 .nav-right{display:flex;gap:var(--sp-2);align-items:center;flex-shrink:0}
@@ -131,7 +136,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 * + .section-title{margin-top:var(--sp-6)}
 
 /* ── BUTTONS ── */
-.btn{padding:8px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-weight:600;font-size:13px;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;letter-spacing:-.01em}
+.btn{padding:8px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-weight:600;font-size:13px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);display:inline-flex;align-items:center;gap:6px;letter-spacing:-.01em}
 .btn-primary{background:var(--ora);color:#fff;box-shadow:var(--shadow-btn)}
 .btn-primary:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 10px rgba(212,64,0,.22)}
 .btn-primary:active{transform:translateY(0)}
@@ -143,7 +148,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .btn-xs{padding:3px 9px;font-size:11px;border-radius:6px}
 .btn-green{background:var(--grn);color:#fff;box-shadow:var(--shadow-btn)}
 .btn-red{background:var(--red);color:#fff;box-shadow:var(--shadow-btn)}
-.post-btn{background:var(--ora);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-weight:600;font-size:13px;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.01em}
+.post-btn{background:var(--ora);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-weight:600;font-size:13px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.01em}
 .post-btn:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 10px rgba(212,64,0,.22)}
 .post-btn:active{transform:translateY(0)}
 
@@ -177,7 +182,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .ac-stat{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:4px}
 .ac-stat strong{color:var(--sub);font-weight:600}
 .ac-actions{display:flex;gap:0;border-top:1px solid var(--bdr);margin-top:var(--sp-2)}
-.ac-action{flex:1;padding:var(--sp-3) var(--sp-2);border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;border-radius:0}
+.ac-action{flex:1;padding:var(--sp-3) var(--sp-2);border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:5px;border-radius:0}
 .ac-action:hover{background:var(--surf2);color:var(--txt)}
 .ac-action.props-given{color:var(--ora);background:var(--ora-bg)}
 .ac-action.props-given:hover{background:var(--ora-bg)}
@@ -212,7 +217,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── ACHIEVEMENTS ── */
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
-.ach-item{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:10px 6px;text-align:center;transition:all .2s}
+.ach-item{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:10px 6px;text-align:center;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s}
 .ach-item.earned{border-color:var(--amb);background:var(--amb-bg)}
 .ach-item.earned:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .ach-icon{font-size:22px;margin-bottom:4px}
@@ -243,7 +248,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .friend-info{flex:1;min-width:0}
 .friend-name{font-size:13px;font-weight:700}
 .friend-meta{font-size:11px;color:var(--mut);margin-top:1px}
-.follow-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--ora);background:transparent;color:var(--ora);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;flex-shrink:0}
+.follow-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--ora);background:transparent;color:var(--ora);font-size:11px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;flex-shrink:0}
 .follow-btn.following{background:var(--ora);color:#fff;border-color:var(--ora)}
 .follow-btn:hover{opacity:.8}
 
@@ -260,13 +265,13 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── EXAM SECTION PILLS ── */
 .exam-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.exam-pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--sub)}
-.exam-pill.active-FAR{border-color:#dc2626;background:#fef2f2;color:#dc2626}
-.exam-pill.active-AUD{border-color:#2563eb;background:#eff6ff;color:#2563eb}
-.exam-pill.active-REG{border-color:#059669;background:#ecfdf5;color:#059669}
-.exam-pill.active-BAR{border-color:#d97706;background:#fffbeb;color:#d97706}
-.exam-pill.active-ISC{border-color:#9333ea;background:#faf5ff;color:#9333ea}
-.exam-pill.active-TCP{border-color:#0d9488;background:#f0fdfa;color:#0d9488}
+.exam-pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf);font-size:12px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;color:var(--sub)}
+.exam-pill.active-FAR{border-color:var(--far);background:var(--far-bg);color:var(--far)}
+.exam-pill.active-AUD{border-color:var(--aud);background:var(--aud-bg);color:var(--aud)}
+.exam-pill.active-REG{border-color:var(--reg);background:var(--reg-bg);color:var(--reg)}
+.exam-pill.active-BAR{border-color:var(--bar);background:var(--bar-bg);color:var(--bar)}
+.exam-pill.active-ISC{border-color:var(--isc);background:var(--isc-bg);color:var(--isc)}
+.exam-pill.active-TCP{border-color:var(--tcp);background:var(--tcp-bg);color:var(--tcp)}
 
 /* ── DASH PACING CARD ── */
 .pacing-card{padding:var(--sp-4) 0;display:flex;align-items:center;gap:var(--sp-4);border-bottom:1px solid var(--bdr)}
@@ -293,7 +298,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 @keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) var(--sp-6) 0}
 .modal-title{font-size:16px;font-weight:800;letter-spacing:-.02em}
-.modal-close{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:3px 7px;border-radius:7px;transition:all var(--transition)}
+.modal-close{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:3px 7px;border-radius:7px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .modal-close:hover{background:var(--surf2);color:var(--txt)}
 .modal-body{padding:var(--sp-4) var(--sp-6) var(--sp-5)}
 
@@ -306,11 +311,11 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .form-grp textarea{min-height:84px;resize:vertical;line-height:1.6}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .feeling-row{display:flex;gap:8px;flex-wrap:wrap}
-.feeling-opt{font-size:22px;padding:7px 11px;border-radius:9px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;transition:all var(--transition);line-height:1}
+.feeling-opt{font-size:22px;padding:7px 11px;border-radius:9px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);line-height:1}
 .feeling-opt:hover{border-color:var(--bdr2);background:var(--surf)}
 .feeling-opt.selected{border-color:var(--ora);background:var(--ora-bg);transform:scale(1.06)}
 .diff-row{display:flex;gap:6px;flex-wrap:wrap}
-.diff-opt{padding:6px 13px;border-radius:var(--r-sm);border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:600;transition:all var(--transition);color:var(--mut)}
+.diff-opt{padding:6px 13px;border-radius:var(--r-sm);border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:600;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);color:var(--mut)}
 .diff-opt:hover{border-color:var(--bdr2);color:var(--sub)}
 .diff-opt.selected{border-color:var(--ind);background:var(--ind-bg);color:var(--ind)}
 
@@ -332,16 +337,16 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-right{width:500px;display:flex;flex-direction:column;justify-content:center;padding:52px;background:var(--surf)}
 .auth-right-logo{font-size:26px;font-weight:800;color:var(--ora);letter-spacing:0;margin-bottom:6px;font-family:var(--font-display)}
 .auth-tabs{display:flex;gap:0;background:var(--surf2);border-radius:11px;padding:4px;margin-bottom:26px;border:1px solid var(--bdr)}
-.auth-tab{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-radius:8px;transition:all var(--transition);letter-spacing:-.01em}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-radius:8px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);letter-spacing:-.01em}
 .auth-tab.active{background:var(--surf);color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
-.google-btn{width:100%;padding:13px 20px;border:1.5px solid var(--bdr);background:var(--surf);border-radius:11px;display:flex;align-items:center;justify-content:center;gap:12px;cursor:pointer;font-size:14px;font-weight:600;color:var(--txt);transition:all var(--transition);margin-bottom:18px;letter-spacing:-.01em}
+.google-btn{width:100%;padding:13px 20px;border:1.5px solid var(--bdr);background:var(--surf);border-radius:11px;display:flex;align-items:center;justify-content:center;gap:12px;cursor:pointer;font-size:14px;font-weight:600;color:var(--txt);transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);margin-bottom:18px;letter-spacing:-.01em}
 .google-btn:hover{border-color:var(--bdr2);background:var(--surf2);box-shadow:var(--shadow);transform:translateY(-1px)}
 .google-btn:active{transform:translateY(0)}
 .google-icon{width:20px;height:20px;flex-shrink:0}
 .auth-divider{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bdr)}
 .auth-divider span{font-size:11px;color:var(--mut);font-weight:500;white-space:nowrap;letter-spacing:.02em}
-.auth-form-btn{width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);margin-top:4px;letter-spacing:-.01em;box-shadow:var(--shadow-btn)}
+.auth-form-btn{width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);margin-top:4px;letter-spacing:-.01em;box-shadow:var(--shadow-btn)}
 .auth-form-btn:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.22)}
 .auth-form-btn:active{transform:translateY(0)}
 .auth-form-btn:disabled{opacity:.6;transform:none;cursor:not-allowed}
@@ -366,17 +371,17 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .ob-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;margin-bottom:14px;box-shadow:var(--shadow)}
 .ob-card h3{font-size:14px;font-weight:800;margin-bottom:18px;color:var(--txt);letter-spacing:-.02em}
 .disc-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.disc-opt{background:var(--surf2);border:2px solid var(--bdr);border-radius:11px;padding:15px 10px;cursor:pointer;transition:all var(--transition);text-align:center}
+.disc-opt{background:var(--surf2);border:2px solid var(--bdr);border-radius:11px;padding:15px 10px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);text-align:center}
 .disc-opt:hover{border-color:var(--bdr2);background:var(--surf);box-shadow:var(--shadow)}
 .disc-opt.sel{border-color:var(--ora);background:var(--ora-bg);box-shadow:0 0 0 3px rgba(212,64,0,.1)}
 .disc-code{font-size:22px;font-weight:800;margin-bottom:3px;letter-spacing:0;font-family:var(--font-display)}
 .disc-name{font-size:10px;color:var(--mut);line-height:1.3}
 .disc-rate{font-size:10px;font-weight:700;margin-top:4px}
-.ob-big-btn{width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;transition:all var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.02em}
+.ob-big-btn{width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.02em}
 .ob-big-btn:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.22)}
 .ob-big-btn:active{transform:translateY(0)}
 .steps{display:flex;gap:6px;margin-bottom:26px}
-.step-dot{height:3px;border-radius:2px;background:var(--bdr);flex:1;transition:all .35s cubic-bezier(.4,0,.2,1)}
+.step-dot{height:3px;border-radius:2px;background:var(--bdr);flex:1;transition:background-color .35s cubic-bezier(.4,0,.2,1),border-color .35s cubic-bezier(.4,0,.2,1),color .35s cubic-bezier(.4,0,.2,1),box-shadow .35s cubic-bezier(.4,0,.2,1),transform .35s cubic-bezier(.4,0,.2,1),opacity .35s cubic-bezier(.4,0,.2,1)}
 .step-dot.done{background:var(--ora)}
 
 /* ── TOAST ── */
@@ -402,7 +407,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── SECTION STATUS SELECTOR ── */
 .section-status-row{display:flex;gap:8px;flex-wrap:wrap}
-.section-status-opt{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf2);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--mut)}
+.section-status-opt{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf2);font-size:11px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;color:var(--mut)}
 .section-status-opt.sel-planned{border-color:var(--mut);color:var(--sub);background:var(--surf)}
 .section-status-opt.sel-studying{border-color:var(--amb);color:var(--amb);background:var(--amb-bg)}
 .section-status-opt.sel-passed{border-color:var(--grn);color:var(--grn);background:var(--grn-bg)}
@@ -410,13 +415,13 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── CALENDAR ── */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-dow{font-size:10px;font-weight:700;color:var(--mut);text-align:center;padding:var(--sp-1) 0 var(--sp-2);text-transform:uppercase;letter-spacing:.06em}
-.cal-day{min-height:76px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:6px;cursor:pointer;transition:all .12s;position:relative}
+.cal-day{min-height:76px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:6px;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s;position:relative}
 .cal-day:hover{border-color:var(--bdr2)}
 .cal-day.other-month{opacity:.3;pointer-events:none}
 .cal-day.is-today{border-color:var(--ora)!important;background:var(--ora-bg)}
 .cal-day-num{font-size:10px;font-weight:600;color:var(--sub);margin-bottom:3px}
-.cal-day.is-today .cal-day-num{background:var(--ora);color:#fff;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px}
-.cal-pill{border-radius:3px;padding:1px 4px;font-size:9px;font-weight:700;color:#fff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-day.is-today .cal-day-num{background:var(--ora);color:#fff;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px}
+.cal-pill{border-radius:3px;padding:1px 4px;font-size:10px;font-weight:700;color:#fff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 @media(max-width:860px){
   .auth-left{display:none}
@@ -457,7 +462,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .uprofile-body{padding:20px 22px 24px}
 
 /* ── CLUBS ── */
-.my-club-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;transition:all .15s;margin-bottom:8px}
+.my-club-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;margin-bottom:8px}
 .my-club-card:hover{border-color:var(--ind);box-shadow:var(--shadow)}
 .club-ico{width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 
@@ -480,13 +485,13 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── SESSION TIMER OVERLAY ── */
 .sess-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(10px)}
 .sess-overlay.open{display:flex}
-.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:24px;width:100%;max-width:800px;overflow:hidden;animation:modalIn .2s ease}
+.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:520px;overflow:hidden;animation:modalIn .2s ease}
 .sess-recap-grid{display:grid;grid-template-columns:1fr;gap:0}
 @media(min-width:640px){.sess-recap-grid{grid-template-columns:260px 1fr;gap:0}.sess-recap-left{border-right:1px solid var(--bdr);padding:24px 22px 28px}.sess-recap-right{padding:24px 24px 28px}.sess-box .sess-body{padding:0!important}}
 .sess-recap-left{padding:20px 20px 24px}
 .sess-recap-right{padding:20px 20px 24px}
 .sess-color-bar{height:5px;width:100%;transition:background .3s}
-.sess-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-4) var(--sp-5) 0}
+.sess-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
 .sess-status{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
 .sess-st-setup{background:rgba(212,64,0,.1);color:var(--ora)}
 .sess-st-live{background:rgba(239,68,68,.12);color:#ef4444}
@@ -494,15 +499,15 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-st-done{background:rgba(16,185,129,.12);color:#10b981}
 .sess-close-btn{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px 6px;border-radius:6px;line-height:1}
 .sess-close-btn:hover{background:var(--surf2);color:var(--txt)}
-.sess-body{padding:var(--sp-5) var(--sp-5) var(--sp-6)}
+.sess-body{padding:20px 24px 28px}
 .rec-dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:rec-pulse 1.1s infinite}
 @keyframes rec-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-.sess-fgrp{margin-bottom:14px}
+.sess-fgrp{margin-bottom:18px}
 .sess-fgrp label{display:block;font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-.sess-fgrp select,.sess-fgrp input{width:100%;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none;transition:border .15s}
+.sess-fgrp select,.sess-fgrp input{width:100%;padding:12px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:14px;outline:none;transition:border .15s}
 .sess-fgrp select:focus,.sess-fgrp input:focus{border-color:var(--ora)}
-.sess-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.sess-start-btn{width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.sess-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sess-start-btn{width:100%;padding:15px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .sess-start-btn:hover{background:#b03500;transform:translateY(-1px)}
 .sess-exam-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px}
 .sess-clock{font-size:68px;font-weight:700;letter-spacing:-.01em;line-height:1;text-align:center;font-family:var(--font-display);font-variant-numeric:tabular-nums;transition:color .3s;margin:10px 0 6px}
@@ -511,7 +516,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-topic-lbl{font-size:12px;color:var(--mut);margin-bottom:3px}
 .sess-topic-val{font-size:15px;font-weight:700}
 .sess-ctrl-row{display:flex;gap:10px;justify-content:center}
-.sess-ctrl{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:11px;font-size:13px;font-weight:700;border:2px solid transparent;cursor:pointer;transition:all .13s}
+.sess-ctrl{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:11px;font-size:13px;font-weight:700;border:2px solid transparent;cursor:pointer;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s}
 .sess-ctrl-pause{background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.2)}
 .sess-ctrl-pause:hover{background:rgba(245,158,11,.2)}
 .sess-ctrl-resume{background:rgba(212,64,0,.1);color:var(--ora);border-color:rgba(212,64,0,.2)}
@@ -536,19 +541,19 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .concept-tag-x{cursor:pointer;opacity:.55;font-size:14px;line-height:1}
 .concept-tag-x:hover{opacity:1}
 .feeling-row-r{display:flex;gap:7px;margin-top:6px}
-.feeling-r-btn{flex:1;padding:9px 4px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:19px;text-align:center;transition:all .15s}
+.feeling-r-btn{flex:1;padding:9px 4px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:19px;text-align:center;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s}
 .feeling-r-btn:hover{border-color:var(--bdr2);transform:scale(1.05)}
 .feeling-r-btn.sel{border-color:var(--ora);background:var(--ora-bg);transform:scale(1.08)}
 .diff-r-row{display:flex;gap:7px;margin-top:6px}
-.diff-r-btn{flex:1;padding:9px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:700;text-align:center;transition:all .13s;color:var(--mut)}
+.diff-r-btn{flex:1;padding:9px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:700;text-align:center;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s;color:var(--mut)}
 .diff-r-btn:hover{border-color:var(--bdr2)}
 .diff-r-btn.sel{border-color:var(--ind);background:var(--ind-bg);color:var(--ind)}
 .sess-notes-ta{width:100%;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none;resize:vertical;min-height:72px;font-family:inherit;transition:border .15s}
 .sess-notes-ta:focus{border-color:var(--ora)}
-.sess-save-btn{width:100%;padding:14px;background:var(--grn);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.sess-save-btn{width:100%;padding:14px;background:var(--grn);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .sess-save-btn:hover{background:#059669;transform:translateY(-1px)}
 /* Active session chip in nav */
-.active-sess-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .13s}
+.active-sess-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s}
 .active-sess-chip:hover{background:rgba(239,68,68,.2)}
 .active-sess-time{font-variant-numeric:tabular-nums;font-size:12px;font-weight:700}
 
@@ -556,15 +561,15 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .pro-lock-wrap{position:relative;overflow:hidden;border-radius:var(--r)}
 .pro-lock-icon{font-size:34px;margin-bottom:8px;filter:drop-shadow(0 2px 12px rgba(0,0,0,.7))}
 .pro-lock-label{font-size:11px;font-weight:800;color:var(--txt);text-align:center;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
-.pro-lock-cta{background:var(--ora);color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:var(--shadow-btn);letter-spacing:.02em}
+.pro-lock-cta{background:var(--ora);color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:11px;font-weight:700;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;white-space:nowrap;box-shadow:var(--shadow-btn);letter-spacing:.02em}
 .pro-lock-cta:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(212,64,0,.6)}
-.pro-plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;vertical-align:middle;line-height:1}
+.pro-plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;vertical-align:middle;line-height:1}
 .badge-pro{background:linear-gradient(135deg,#d44000,#d97706);color:#fff}
 .badge-elite{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff}
 .badge-trial{background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff}
 .badge-cram{background:linear-gradient(135deg,#6366f1,#4338ca);color:#fff}
 /* Nav pro badge */
-.nav-pro-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+.nav-pro-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:none;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s}
 .nav-pro-chip-pro{background:var(--ora);color:#fff;box-shadow:0 1px 4px rgba(212,64,0,.22)}
 .nav-pro-chip-elite{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;box-shadow:0 2px 8px rgba(168,85,247,.4)}
 .nav-pro-chip-trial{background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;box-shadow:0 2px 8px rgba(20,184,166,.3)}
@@ -576,15 +581,15 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .upgrade-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(212,64,0,.38),transparent 52%),radial-gradient(ellipse at 85% 100%,rgba(99,102,241,.22),transparent 48%)}
 .upgrade-hero-inner{position:relative;z-index:1}
 .billing-toggle{display:inline-flex;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:30px;padding:4px;margin-top:20px;gap:0}
-.billing-opt{padding:7px 24px;border-radius:26px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,.55);transition:all var(--transition);white-space:nowrap;letter-spacing:-.01em}
+.billing-opt{padding:7px 24px;border-radius:26px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,.55);transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);white-space:nowrap;letter-spacing:-.01em}
 .billing-opt.active{background:rgba(255,255,255,.15);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.savings-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.22);border:1px solid rgba(16,185,129,.38);color:#6ee7b7;font-size:9px;font-weight:800;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;margin-left:8px;vertical-align:middle}
+.savings-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.22);border:1px solid rgba(16,185,129,.38);color:#6ee7b7;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;margin-left:8px;vertical-align:middle}
 .plan-cards-row{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:14px;padding:32px 36px 22px;align-items:start}
 /* FIXED: overflow:visible so badge isn't clipped */
-.plan-card{background:var(--surf);border:2px solid var(--bdr);border-radius:20px;padding:24px;position:relative;transition:all var(--transition);overflow:visible}
+.plan-card{background:var(--surf);border:2px solid var(--bdr);border-radius:20px;padding:24px;position:relative;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);overflow:visible}
 .plan-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
 .plan-card.popular{border-color:var(--ora);box-shadow:0 0 0 1px var(--ora),0 10px 36px rgba(212,64,0,.18)}
-.plan-popular-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:9px;font-weight:700;padding:4px 18px;border-radius:20px;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(212,64,0,.25)}
+.plan-popular-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:10px;font-weight:700;padding:4px 18px;border-radius:20px;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(212,64,0,.25)}
 .plan-name{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:12px}
 .plan-price{font-size:38px;font-weight:700;line-height:1;letter-spacing:-2px;color:var(--txt)}
 .plan-price sup{font-size:18px;font-weight:700;vertical-align:super;letter-spacing:0;margin-right:1px}
@@ -593,7 +598,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .plan-feat{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--sub);margin-bottom:9px;line-height:1.5}
 .plan-feat-on{color:var(--grn);flex-shrink:0;font-weight:900;font-size:13px}
 .plan-feat-off{color:var(--mut);flex-shrink:0;opacity:.35;font-size:13px}
-.plan-cta{width:100%;padding:13px;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;margin-top:16px;transition:all var(--transition);letter-spacing:-.01em}
+.plan-cta{width:100%;padding:13px;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;margin-top:16px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);letter-spacing:-.01em}
 .plan-cta-ghost{background:transparent;color:var(--sub);border:1.5px solid var(--bdr)}
 .plan-cta-ghost:hover{background:var(--surf2);border-color:var(--bdr2);color:var(--txt)}
 .plan-cta-pro{background:var(--ora);color:#fff;box-shadow:0 2px 8px rgba(212,64,0,.2)}
@@ -607,10 +612,10 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .cram-inner{position:relative;z-index:1}
 .cram-feat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .cram-feat-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.02em}
-.cram-cta{background:var(--ora);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:all var(--transition);white-space:nowrap;box-shadow:var(--shadow-btn);letter-spacing:-.01em}
+.cram-cta{background:var(--ora);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);white-space:nowrap;box-shadow:var(--shadow-btn);letter-spacing:-.01em}
 .cram-cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(212,64,0,.55)}
 /* Student discount */
-.student-section{margin:0 36px 22px;background:var(--tea-bg);border:1px solid rgba(15,181,170,.3);border-radius:14px;padding:15px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all var(--transition)}
+.student-section{margin:0 36px 22px;background:var(--tea-bg);border:1px solid rgba(15,181,170,.3);border-radius:14px;padding:15px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .student-section:hover{background:var(--grn-bg);border-color:rgba(14,165,116,.35);transform:translateY(-1px)}
 /* Testimonials */
 .testimonials-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:0 36px 32px}
@@ -621,16 +626,16 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .testimonial-meta{font-size:10px;color:var(--mut);margin-top:2px}
 .stars{color:#f59e0b;font-size:12px;letter-spacing:1px;margin-bottom:8px}
 /* Free tier banner */
-.free-limit-banner{background:linear-gradient(135deg,var(--ora-bg),var(--amb-bg));border:1px solid var(--ora-bdr);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer;transition:all var(--transition)}
+.free-limit-banner{background:linear-gradient(135deg,var(--ora-bg),var(--amb-bg));border:1px solid var(--ora-bdr);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .free-limit-banner:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 /* Challenge locked overlay */
 .challenge-pro-badge{display:inline-flex;align-items:center;gap:4px;background:var(--ora);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.02em}
 .challenge-pro-badge:hover{opacity:.88}
 /* Upsell inline card */
-.upsell-inline{background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.2);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:14px;margin-top:12px;cursor:pointer;transition:all var(--transition)}
+.upsell-inline{background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.2);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:14px;margin-top:12px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .upsell-inline:hover{border-color:rgba(90,95,207,.4);box-shadow:var(--shadow-md);transform:translateY(-1px)}
 /* Social connect */
-.social-link-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:11px;margin-bottom:8px;cursor:pointer;transition:all var(--transition)}
+.social-link-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:11px;margin-bottom:8px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .social-link-row:hover{border-color:var(--bdr2);background:var(--surf)}
 .social-link-row.connected{border-color:var(--grn);background:var(--grn-bg)}
 .soc-icon{width:34px;height:34px;border-radius:8px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
@@ -645,7 +650,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .pro-lock-icon{font-size:28px}
 .pro-lock-title{font-size:13px;font-weight:800;color:var(--txt);text-align:center;letter-spacing:-.02em}
 .pro-lock-sub{font-size:11.5px;color:var(--sub);text-align:center;line-height:1.55;max-width:220px}
-.pro-lock-cta{background:var(--ora);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.01em}
+.pro-lock-cta{background:var(--ora);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);box-shadow:var(--shadow-btn);letter-spacing:-.01em}
 .pro-lock-cta:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 10px rgba(212,64,0,.22)}
 /* ── ACTIVITY CARD ── */
 .activity-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .22s,transform .22s,border-color .22s}
@@ -656,7 +661,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .profile-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(212,64,0,.5),transparent 60%)}
 .profile-hero-inner{position:relative;z-index:1}
 /* ── SETTINGS ── */
-.settings-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:all var(--transition);font-size:13px;font-weight:500;color:var(--sub)}
+.settings-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);font-size:13px;font-weight:500;color:var(--sub)}
 .settings-nav-item:hover{background:var(--surf2);color:var(--txt)}
 .settings-nav-item.active{background:var(--ora-bg);color:var(--ora);font-weight:700}
 /* ── RESPONSIVE ── */
@@ -755,6 +760,12 @@ body.no-app-nav .session-fab{display:none!important}
 @media(prefers-reduced-motion:reduce){
   *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+/* Guaranteed keyboard focus ring — element-level outline:none can't suppress it */
+input:focus-visible,select:focus-visible,textarea:focus-visible,
+[role="button"]:focus-visible,[tabindex]:focus-visible,[onclick]:focus-visible{
+  outline:2px solid var(--ora);outline-offset:2px;border-radius:6px
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 /* ── PACING CARD RIGHT COLUMN ── */
 .pc-right{text-align:right;flex-shrink:0}
 @media(max-width:520px){
@@ -1050,7 +1061,7 @@ async function open2FASetupModal(){
     <div class="modal-hdr"><span style="font-size:14px;font-weight:800">🔐 Set Up Two-Factor Auth</span><button class="modal-close" onclick="close2FAModal()">✕</button></div>
     <div style="padding:18px;text-align:center">
       <p style="font-size:12px;color:var(--mut);margin:0 0 14px">Scan this QR code with <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app</p>
-      <img src="${qrUrl}" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
+      <img src="${qrUrl}" alt="Invite QR code" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
       <div style="font-size:10px;color:var(--mut);margin-bottom:6px">Or enter the key manually:</div>
       <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;letter-spacing:.12em;word-break:break-all;margin-bottom:16px;color:var(--txt)">${secretBase32}</div>
       <div style="font-size:12px;color:var(--mut);text-align:left;margin-bottom:8px">Enter the 6-digit code from your app to confirm setup:</div>
@@ -1220,7 +1231,7 @@ function _showTourStep(idx){
 function _buildTourTooltip(step,idx,total,isLast){
   const vw=window.innerWidth;
   const w=Math.min(320,vw-32);
-  const dots=Array.from({length:total},(_,i)=>`<div style="width:${i===idx?'20px':'6px'};height:6px;border-radius:3px;background:${i===idx?'var(--ind)':'var(--bdr2)'};transition:all .3s"></div>`).join('');
+  const dots=Array.from({length:total},(_,i)=>`<div style="width:${i===idx?'20px':'6px'};height:6px;border-radius:3px;background:${i===idx?'var(--ind)':'var(--bdr2)'};transition:background-color .3s,border-color .3s,color .3s,box-shadow .3s,transform .3s,opacity .3s"></div>`).join('');
   const tt=document.createElement('div');
   tt.id='tour-tt';
   tt.style.cssText=`position:fixed;z-index:10002;width:${w}px;background:var(--surf);border:1.5px solid var(--bdr2);border-radius:16px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.4);`;
@@ -2340,7 +2351,7 @@ function renderUpgradeModal(featureHint){
   '<div class="student-section" style="cursor:default;opacity:.7">'+
   '<span style="font-size:26px">🎓</span>'+
   '<div style="flex:1">'+
-  '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:800;color:var(--txt)">Student Discount</span><span style="font-size:9px;font-weight:800;background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em">Coming Soon</span></div>'+
+  '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:800;color:var(--txt)">Student Discount</span><span style="font-size:10px;font-weight:800;background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em">Coming Soon</span></div>'+
   '<div style="font-size:11px;color:var(--mut);margin-top:2px">A discounted rate for students is on the way.</div>'+
   '</div>'+
   '</div>'+
@@ -2476,7 +2487,7 @@ function showPostOnboardingOffer(){
   '</div>'+
   // Pro
   '<div style="border:2px solid var(--ora);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--surf),var(--ora-bg));position:relative">'+
-  '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em">Most Popular</div>'+
+  '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em">Most Popular</div>'+
   '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Pro</div>'+
   '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$9</div>'+
   '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
@@ -2721,7 +2732,7 @@ function renderAuth(){
 
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
-    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:all .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
+    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
     ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:12px 14px;margin-bottom:18px">
       <div style="width:34px;height:34px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div>
       <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_pendingInvite.fromName)} invited you to study together</div><div style="font-size:11px;color:var(--mut);margin-top:1px">Create your account to join their study group on Ledger</div></div>
@@ -3064,7 +3075,7 @@ function renderOnboarding(){
   <div class="onboard-box fade-in">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div class="onboard-logo">Ledger</div>
-      <button onclick="backToSignIn()" style="font-size:12px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:6px 12px;cursor:pointer;font-weight:600;transition:all .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Back to sign in</button>
+      <button onclick="backToSignIn()" style="font-size:12px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:6px 12px;cursor:pointer;font-weight:600;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Back to sign in</button>
     </div>
     ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:11px 14px;margin-bottom:14px;text-align:left"><div style="width:30px;height:30px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div><div style="font-size:12px;color:var(--ind);font-weight:600">${esc(_pendingInvite.fromName)} invited you — you'll be connected once you finish setup</div></div>`:''}
     ${AUTH?`<div style="display:inline-flex;align-items:center;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:var(--grn);font-weight:600"><div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">${(AUTH.displayName||'?').charAt(0).toUpperCase()}</div>Signed in as ${AUTH.email}</div>`:''}
@@ -3131,9 +3142,9 @@ function renderObStep0(){
   <div class="form-grp" style="margin-bottom:0">
     <label>Study Intensity <span style="color:var(--mut);font-weight:400">— sets your hour goals per section</span></label>
     <div style="display:flex;gap:8px">
-      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];return`<button type="button" id="ob-intensity-${k}" onclick="obSetIntensity('${k}')" style="flex:1;padding:10px 6px;border-radius:10px;border:2px solid ${k==='standard'?'var(--ora)':'var(--bdr)'};background:${k==='standard'?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:all .15s">
+      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];return`<button type="button" id="ob-intensity-${k}" onclick="obSetIntensity('${k}')" style="flex:1;padding:10px 6px;border-radius:10px;border:2px solid ${k==='standard'?'var(--ora)':'var(--bdr)'};background:${k==='standard'?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">
         <div style="font-size:12px;font-weight:800;color:${k==='standard'?'var(--ora)':'var(--txt)'};margin-bottom:2px">${p.label}</div>
-        <div style="font-size:9px;color:var(--mut);line-height:1.4">${p.tag}</div>
+        <div style="font-size:10px;color:var(--mut);line-height:1.4">${p.tag}</div>
       </button>`;}).join('')}
     </div>
     <div id="ob-intensity-desc" style="margin-top:8px;font-size:11px;color:var(--sub);background:var(--surf2);border-radius:8px;padding:8px 11px;line-height:1.55">${HOUR_GOAL_PRESETS.standard.desc}</div>
@@ -3476,7 +3487,7 @@ function renderApp(){
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
   const avatarBorder = S?.profilePic ? '2px solid var(--bdr)' : 'none';
   const avatarContent = S?.profilePic
-    ? `<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`
+    ? `<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`
     : (AUTH?.displayName||'?').charAt(0).toUpperCase();
   document.getElementById('root').innerHTML=`
 <div class="app-wrap">
@@ -3498,7 +3509,7 @@ function renderApp(){
         <button class="post-btn" id="nav-log-btn" onclick="openSessionModal()">▶ Start Session</button>
         <button class="nav-pro-chip ${navProClass()}" onclick="openUpgradeModal(null)">${navProLabel()}</button>
         <button onclick="openSearchModal()" title="Search Users" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">🔍</button>
-        <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
+        <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
         <button onclick="openMessagesModal()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
         <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
         <button onclick="openEditProfile()" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
@@ -3594,7 +3605,7 @@ function buildFeed(){
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <div class="avatar av-md" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;overflow:hidden;padding:0;cursor:pointer" onclick="switchTab('profile')" title="View profile">
-        ${S.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:`<span>${S.name.slice(0,2).toUpperCase()}</span>`}
+        ${S.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:`<span>${S.name.slice(0,2).toUpperCase()}</span>`}
       </div>
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:800;cursor:pointer" onclick="switchTab('profile')">${S.name}</div>
@@ -3622,11 +3633,11 @@ function buildFeed(){
 
   const rightSidebar=`
 <div class="sidebar-right">
-  <div class="card card-pad" style="margin-bottom:var(--sp-4);border-left:3px solid var(--ora)">
+  <div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ora-bdr);background:var(--ora-bg)">
     <div class="section-title" style="margin-bottom:8px">Today's Quote</div>
     <p style="font-size:12px;color:var(--sub);line-height:1.75;margin-bottom:10px;font-style:italic">"${tip.text}"</p>
     <div style="display:flex;align-items:center;gap:7px">
-      <div style="width:22px;height:22px;border-radius:50%;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0">${tip.src.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0">${tip.src.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
       <div style="font-size:10px;color:var(--mut);font-weight:700">${tip.src}</div>
     </div>
   </div>
@@ -3696,7 +3707,7 @@ function buildCohortCard(){
   if(!S.firmCode)return '';
   const firmName=S.firmName||'Your Cohort';
   const inviteUrl=window.location.origin+window.location.pathname+'?join='+S.firmCode;
-  return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border-left:3px solid var(--ind)">
+  return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <div class="section-title" style="margin-bottom:0">${firmName}</div>
     <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
@@ -3758,7 +3769,7 @@ function buildActivityCard(a){
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
-  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
+  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
   if(a.private && a.isMine){
@@ -3798,7 +3809,7 @@ function buildActivityCard(a){
       <div style="text-align:right">
         ${a.feeling?`<div class="feeling-chip" style="font-size:20px;margin-bottom:4px">${a.feeling}</div>`:''}
         <div class="diff-stars">${diffStars}</div>
-        <div style="font-size:9px;color:var(--mut);margin-top:2px">Difficulty</div>
+        <div style="font-size:10px;color:var(--mut);margin-top:2px">Difficulty</div>
       </div>
     </div>
     ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:4px">📖 ${a.material}</div>`:''}
@@ -3974,7 +3985,7 @@ function buildReadinessCard(){
       </svg>
     </div>
     <div style="flex:1">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:4px">Readiness Score <span class="badge badge-${r.section}" style="font-size:9px;vertical-align:middle;margin-left:4px">${r.section}</span></div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:4px">Readiness Score <span class="badge badge-${r.section}" style="font-size:10px;vertical-align:middle;margin-left:4px">${r.section}</span></div>
       <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${r.breakdown.map(b=>[
@@ -4019,9 +4030,9 @@ function openHourGoalsModal(){
     </div>
     <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.55">Your readiness score and pacing alerts use these goals. Set them to match how you actually study — not a generic average.</div>
     <div style="display:flex;gap:7px;margin-bottom:16px">
-      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];const active=currentIntensity===k;return`<button type="button" onclick="applyHourGoalPreset('${k}',this)" style="flex:1;padding:9px 6px;border-radius:9px;border:2px solid ${active?'var(--ora)':'var(--bdr)'};background:${active?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:all .15s">
+      ${['fast','standard','thorough'].map(k=>{const p=HOUR_GOAL_PRESETS[k];const active=currentIntensity===k;return`<button type="button" onclick="applyHourGoalPreset('${k}',this)" style="flex:1;padding:9px 6px;border-radius:9px;border:2px solid ${active?'var(--ora)':'var(--bdr)'};background:${active?'var(--ora-bg)':'var(--surf2)'};cursor:pointer;text-align:center;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">
         <div style="font-size:11px;font-weight:800;color:${active?'var(--ora)':'var(--txt)'};margin-bottom:2px">${p.label}</div>
-        <div style="font-size:9px;color:var(--mut)">${p.tag}</div>
+        <div style="font-size:10px;color:var(--mut)">${p.tag}</div>
       </button>`;}).join('')}
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
@@ -4132,7 +4143,7 @@ function openPacingTipsModal(){
     </div>
     <div style="font-size:12px;font-weight:700;margin-bottom:10px">What to work on:</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${tips.map(t=>`<div style="font-size:12px;color:var(--sub);background:var(--surf2);border-radius:8px;padding:10px 12px;border-left:3px solid var(--ora)">${t}</div>`).join('')}
+      ${tips.map(t=>`<div style="font-size:12px;color:var(--sub);background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:10px 12px">${t}</div>`).join('')}
     </div>
   </div>`;
   el.addEventListener('click',e=>{if(e.target===el)el.remove();});
@@ -4228,7 +4239,7 @@ function buildWeeklyCommitment(){
 
   if(!commitment){
     // Show "set your commitment" prompt
-    return`<div class="card card-pad" style="margin-bottom:20px;border-left:3px solid var(--ora)">
+    return`<div class="card card-pad" style="margin-bottom:20px;border:1px solid var(--ora-bdr);background:var(--ora-bg)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="font-size:28px;flex-shrink:0">🤝</div>
         <div style="flex:1">
@@ -4249,10 +4260,10 @@ function buildWeeklyCommitment(){
   const hrsPerDayNeeded=daysLeftInWeek>0?(parseFloat(remaining)/daysLeftInWeek).toFixed(1):'0';
   const met=weekHrsLogged>=commitment;
 
-  return`<div class="card card-pad" style="margin-bottom:20px;${met?'border-left:3px solid var(--grn);background:var(--grn-bg)':'border-left:3px solid var(--ind)'}">
+  return`<div class="card card-pad" style="margin-bottom:20px;${met?'border:1px solid var(--grn-bdr);background:var(--grn-bg)':'border:1px solid var(--ind-bdr);background:var(--ind-bg)'}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div>
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week — <span class="badge badge-${curSec}" style="font-size:9px;vertical-align:middle">${curSec}</span></div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week — <span class="badge badge-${curSec}" style="font-size:10px;vertical-align:middle">${curSec}</span></div>
         <div style="font-size:16px;font-weight:900;margin-top:2px">${met?'✅ Goal Crushed!':remaining+'h left to hit your '+commitment+'h goal'}</div>
       </div>
       <div style="text-align:right">
@@ -4321,7 +4332,7 @@ function openStrugglingModal(){
       <div style="font-size:20px;font-weight:900;margin-bottom:6px">You're Not Alone</div>
       <div style="font-size:13px;color:var(--sub);line-height:1.6">The CPA exam has a ~50% pass rate. Everyone who's passed felt exactly where you are now.</div>
     </div>
-    <div style="background:var(--surf2);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--ora)">
+    <div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:12px;padding:16px;margin-bottom:16px">
       <div style="font-size:13px;color:var(--sub);line-height:1.7;font-style:italic">"${q.q}"</div>
       <div style="font-size:10px;color:var(--mut);margin-top:8px;font-weight:700">— ${q.a}</div>
     </div>
@@ -4368,7 +4379,7 @@ function buildDashboard(){
     {id:'progress',label:'Progress'},
   ];
   const subNav=`<div style="display:flex;gap:4px;margin-bottom:24px;background:var(--surf2);padding:4px;border-radius:12px;width:fit-content">
-    ${subTabs.map(t=>`<button onclick="openDashTab('${t.id}')" style="padding:7px 18px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${_dashTab===t.id?'var(--surf)':'transparent'};color:${_dashTab===t.id?'var(--txt)':'var(--mut)'};box-shadow:${_dashTab===t.id?'var(--shadow)':'none'}">${t.label}</button>`).join('')}
+    ${subTabs.map(t=>`<button onclick="openDashTab('${t.id}')" style="padding:7px 18px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;background:${_dashTab===t.id?'var(--surf)':'transparent'};color:${_dashTab===t.id?'var(--txt)':'var(--mut)'};box-shadow:${_dashTab===t.id?'var(--shadow)':'none'}">${t.label}</button>`).join('')}
   </div>`;
 
   let content='';
@@ -4619,7 +4630,7 @@ function _achPreviewHTML(earnedIds, sectionId, showInfoBtn){
     return`<div class="ach-item${e?' earned':''}"${showInfoBtn?' style="position:relative"':''}>
       <div class="ach-icon">${a.icon}</div>
       <div class="ach-name">${a.name}</div>
-      ${showInfoBtn?`<button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>`:''}
+      ${showInfoBtn?`<button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:10px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>`:''}
     </div>`;
   };
   const preview=sorted.slice(0,8);
@@ -4700,11 +4711,11 @@ function buildProfile(){
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:16px">
           <div class="profile-av-wrap" onclick="openEditProfile()" title="Edit profile">
-            ${S.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${initials}</span>`}
+            ${S.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${initials}</span>`}
             <div class="profile-av-edit-overlay" style="font-size:12px;font-weight:700;letter-spacing:.02em">Edit</div>
           </div>
           <div>
-            <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:9px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Elite</span>':isPro()?'<span style="font-size:9px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
+            <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Elite</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
             <div class="profile-state">${S.state}${S.classYear?' · '+S.classYear:''}${S.school?' @ '+S.school:''}</div>
             ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
             ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${S.bio}"</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="openEditProfile()">+ Add a bio…</div>`}
@@ -4724,24 +4735,24 @@ function buildProfile(){
       <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
         <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:left;padding:0;position:relative">
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div>
-          ${(S.followRequests||[]).length?`<span style="position:absolute;top:-4px;right:-10px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center">${(S.followRequests||[]).length}</span>`:''}
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div>
+          ${(S.followRequests||[]).length?`<span style="position:absolute;top:-4px;right:-10px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center">${(S.followRequests||[]).length}</span>`:''}
         </button>
         <button onclick="openFollowModal('following')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followingCount}</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div>
         </button>
         <div>
           <div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(totalHrs)}</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div>
         </div>
         <div>
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${streak}</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div>
         </div>
         <div>
           <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${(S.activities||[]).length}</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div>
         </div>
       </div>
     </div>
@@ -4853,7 +4864,7 @@ function buildProfile(){
       if(!candidates.length) return '<div style="font-size:12px;color:var(--sub)">Follow someone first to add them as your study partner.</div>';
       return '<div style="font-size:12px;color:var(--sub);margin-bottom:10px">Pick someone to pair with — you\'ll see each other\'s weekly hours side-by-side.</div>'+
         '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
-        candidates.map(function(f){return '<button onclick="setStudyPartner(\''+f.id+'\')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600"><div class="avatar" style="width:20px;height:20px;font-size:8px;background:'+f.color+';color:#fff">'+f.initials+'</div>'+f.name.split(' ')[0]+'</button>';}).join('')+
+        candidates.map(function(f){return '<button onclick="setStudyPartner(\''+f.id+'\')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600"><div class="avatar" style="width:20px;height:20px;font-size:10px;background:'+f.color+';color:#fff">'+f.initials+'</div>'+f.name.split(' ')[0]+'</button>';}).join('')+
         '</div>';
     })()}
   </div>`:''}
@@ -4902,7 +4913,7 @@ function buildExplore(){
   entries.sort((a,b)=>b.hrs-a.hrs);
   const medals=['🥇','🥈','🥉'];
   const myRank=entries.findIndex(e=>e.isYou)+1;
-  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
+  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
   let lbRows;
   if(!isPro()){
     const youEntry=entries.find(e=>e.isYou);
@@ -5011,10 +5022,10 @@ function buildExplore(){
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}${f.tier==='elite'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:8px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
-        ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:8px">${s} ✓</span>`).join('')}</div>`:''}
+        ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:10px">${s} ✓</span>`).join('')}</div>`:''}
       </div>
       <button class="follow-btn${isFollowing?' following':''}" style="${isPending?'background:var(--surf2);color:var(--sub);border-color:var(--bdr)':''}" onclick="event.stopPropagation();toggleFollow('${f.id}',this)">${isFollowing?'Following':isPending?'Requested':'Follow'}</button>
     </div>`;
@@ -5026,7 +5037,7 @@ function buildExplore(){
   const myClubRows=myAllClubs.map(c=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:9px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
+    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
   }).join('');
   const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
@@ -5050,7 +5061,7 @@ function buildExplore(){
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">
       <div class="avatar av-sm" style="background:${f.color};color:#fff;cursor:pointer;flex-shrink:0" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div style="flex:1;min-width:0;cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div style="font-size:13px;font-weight:700">${f.name} ${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}<span class="badge badge-${sharedSection}" style="font-size:8px;margin-left:4px">${sharedSection}</span></div>
+        <div style="font-size:13px;font-weight:700">${f.name} ${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}<span class="badge badge-${sharedSection}" style="font-size:10px;margin-left:4px">${sharedSection}</span></div>
         <div style="font-size:11px;color:var(--mut)">${f.state} · 🔥${f.streak}d streak · ${fWeekHrs.toFixed(1)}h this week</div>
       </div>
       <button class="follow-btn${isFollowing?' following':''}" style="flex-shrink:0${isBuddyPending?';background:var(--surf2);color:var(--sub);border-color:var(--bdr)':''}" onclick="toggleFollow('${f.id}',this)">${isFollowing?'Following':isBuddyPending?'Requested':'Follow'}</button>
@@ -5068,7 +5079,7 @@ function buildExplore(){
   const activeThisWeek=circleEntries.filter(e=>e.weekHrs>0);
   const circleCards=activeThisWeek.map(e=>{
     const tierDot=e.tier==='elite'?'<span style="width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);display:inline-block;margin-left:4px;vertical-align:middle"></span>':e.tier==='pro'?'<span style="width:7px;height:7px;border-radius:50%;background:var(--ora);display:inline-block;margin-left:4px;vertical-align:middle"></span>':'';
-    return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);${e.isYou?'border-left:2px solid var(--ind);padding-left:10px;margin-left:-10px;':''}">
+    return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);${e.isYou?'background:var(--ind-bg);padding:8px 10px;margin:0 -10px;border-radius:8px;':''}">
       <div class="avatar" style="width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"${!e.isYou&&e.id?` onclick="openUserProfile('${e.id}')" style="cursor:pointer;width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"`:''}>${e.initials}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:700">${e.name}${e.isYou?' (you)':''}${tierDot}</div>
@@ -5076,7 +5087,7 @@ function buildExplore(){
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:12px;font-weight:800;color:var(--ora)">${e.weekHrs.toFixed(1)}h</div>
-        <div style="font-size:9px;color:var(--mut)">this week</div>
+        <div style="font-size:10px;color:var(--mut)">this week</div>
       </div>
     </div>`;
   }).join('');
@@ -5094,7 +5105,7 @@ function buildExplore(){
       ${circleCards||'<div style="font-size:12px;color:var(--mut);text-align:center;padding:16px 0">No activity this week — log a session to show up here!</div>'}
       ${inactiveCount>0?`<div style="font-size:10px;color:var(--mut);margin-top:8px;text-align:center">${inactiveCount} member${inactiveCount!==1?'s':''} taking a rest day</div>`:''}
     </div>
-    ${buddyMatches.length?`<div class="card card-pad" style="margin-bottom:16px;border-left:3px solid var(--ind)">
+    ${buddyMatches.length?`<div class="card card-pad" style="margin-bottom:16px;border:1px solid var(--ind-bdr);background:var(--ind-bg)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
         <div style="font-size:18px">🤝</div>
         <div>
@@ -5336,7 +5347,7 @@ function openComments(actId,userId){
     const comments=act.comments||[];
     const commentsHTML=comments.length?comments.map(c=>`
     <div class="comment-row">
-      <div class="avatar" style="width:28px;height:28px;font-size:9px;border-radius:50%;background:var(--ind);color:#fff;flex-shrink:0">${esc(c.user).slice(0,2)}</div>
+      <div class="avatar" style="width:28px;height:28px;font-size:10px;border-radius:50%;background:var(--ind);color:#fff;flex-shrink:0">${esc(c.user).slice(0,2)}</div>
       <div class="comment-body">
         <div class="comment-author">${esc(c.user)}</div>
         <div class="comment-text">${esc(c.text)}</div>
@@ -5476,7 +5487,7 @@ function handleSessionPhotoUpload(input){
       if(area){
         area.innerHTML=
           '<div style="position:relative;display:inline-block;width:100%">' +
-            '<img src="'+compressed+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block">' +
+            '<img src="'+compressed+'" alt="Study session photo" loading="lazy" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block">' +
             '<button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>' +
           '</div>';
       }
@@ -5667,11 +5678,11 @@ function openActivityDetail(actId){
       </div>
     </div>`:''}
 
-    ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:260px"><img src="${act.photo}" style="width:100%;max-height:260px;object-fit:cover;display:block" loading="lazy"></div>`:''}
+    ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:260px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:260px;object-fit:cover;display:block" loading="lazy"></div>`:''}
 
     <div style="padding-top:12px;border-top:1px solid var(--bdr);display:flex;gap:8px">
       <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;transition:opacity .12s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✏️ Edit Session</button>
-      <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:all .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">🗑 Delete</button>
+      <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">🗑 Delete</button>
     </div>
   </div>
 </div>`;
@@ -5701,7 +5712,7 @@ function openEditActivityModal(actId){
   const diffOpts=[1,2,3,4,5].map(d=>`<div class="diff-opt${d===_editDiff?' selected':''}" onclick="setEditDiff(${d},this)">${d}</div>`).join('');
   const conceptTagsHTML=_editConcepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeEditConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
   const photoHTML=_editPhoto
-    ?`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
+    ?`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" alt="Study session photo" loading="lazy" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
     :`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">📷 Add photo</label>`;
   const dateVal=act.date?act.date.slice(0,10):todayStr();
   document.getElementById('activity-detail-modal')?.remove();
@@ -5821,7 +5832,7 @@ function handleEditPhoto(input){
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       _editPhoto=canvas.toDataURL('image/jpeg',0.75);
       const area=document.getElementById('edit-photo-area');
-      if(area)area.innerHTML=`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`;
+      if(area)area.innerHTML=`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" alt="Study session photo" loading="lazy" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`;
     };
     img.src=e.target.result;
   };
@@ -5887,14 +5898,13 @@ function renderSessCard(){
   if(TS.phase==='setup'){
     const sectionOpts=(S.sections||['FAR','AUD','REG','TCP']).map(s=>`<option value="${s}"${s===TS.section?' selected':''}>${s} — ${EXAMS[s]?.full||s}</option>`).join('');
     box.innerHTML=`
-    <div class="sess-color-bar" style="background:linear-gradient(90deg,${col},${col}88)"></div>
     <div class="sess-hdr">
-      <div class="sess-status sess-st-setup">New Session</div>
+      <div class="sess-status sess-st-setup" style="background:${col}18;color:${col}">New Session</div>
       <button class="sess-close-btn" onclick="closeSessOverlay()">×</button>
     </div>
     <div class="sess-body">
-      <div style="font-size:20px;font-weight:900;margin-bottom:4px">Start a Study Session</div>
-      <div style="font-size:13px;color:var(--sub);margin-bottom:22px">Choose your focus area and start your timer</div>
+      <div style="font-size:22px;font-weight:900;margin-bottom:6px;letter-spacing:-.02em">Start a Study Session</div>
+      <div style="font-size:13px;color:var(--sub);margin-bottom:26px;line-height:1.5">Choose your focus area and start your timer</div>
       <div class="sess-fgrp">
         <label>Exam Section</label>
         <select id="ss-sec" onchange="ssUpdateSection()">${sectionOpts}</select>
@@ -6012,7 +6022,7 @@ function renderSessCard(){
             <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional</span></label>
             <div id="sess-photo-area">
               ${TS.sessionPhoto
-                ? '<div style="position:relative;display:inline-block;width:100%"><img src="'+TS.sessionPhoto+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>'
+                ? '<div style="position:relative;display:inline-block;width:100%"><img src="'+TS.sessionPhoto+'" alt="Study session photo" loading="lazy" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>'
                 : _sessPhotoPickerHTML()
               }
             </div>
@@ -6503,8 +6513,8 @@ function _renderFullUserProfile(u){
   const isFollowing=(S.following||[]).includes(u.uid);
   const isPendingRequest=!isFollowing&&(S.pendingRequests||[]).includes(u.uid);
   const isLocked=!!(u.isPrivate)&&!isFollowing;
-  const avatarInner=u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
-  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
+  const avatarInner=u.profilePic?`<img src="${u.profilePic}" alt="Member profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
   const locationLine=[u.city,u.locationState||u.state].filter(Boolean).join(', ');
 
   const sectionProgress=u.sections.map(s=>{
@@ -6563,10 +6573,10 @@ function _renderFullUserProfile(u){
         <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
       </div>
       <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
-        <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
-        ${u.streak?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.streak}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div></div>`:''}
-        ${u.sessionCount?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.sessionCount}</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div></div>`:''}
-        ${u.weekHrs?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.weekHrs.toFixed(1)}h</div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">This Week</div></div>`:''}
+        <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
+        ${u.streak?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.streak}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div></div>`:''}
+        ${u.sessionCount?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.sessionCount}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div></div>`:''}
+        ${u.weekHrs?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.weekHrs.toFixed(1)}h</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">This Week</div></div>`:''}
       </div>
     </div>
   </div>
@@ -6673,7 +6683,7 @@ function promptInviteToClub(userId){
   }
   document.getElementById('invite-club-title').textContent=`Invite ${f.name} to a Club`;
   document.getElementById('invite-club-body').innerHTML=myClubs.map(c=>`
-  <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;border:1px solid var(--bdr);margin-bottom:8px;transition:all .15s" onclick="inviteToClub('${c.id}','${userId}',this)" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;border:1px solid var(--bdr);margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onclick="inviteToClub('${c.id}','${userId}',this)" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
     <div style="font-size:22px">${c.icon}</div>
     <div style="flex:1"><div style="font-size:13px;font-weight:700">${c.name}</div><div style="font-size:11px;color:var(--mut)">${c.members.length} members</div></div>
     <span style="font-size:12px;color:var(--ind);font-weight:600">Invite →</span>
@@ -6794,7 +6804,7 @@ function createClubModal(){
 <div class="form-grp">
   <label>Icon</label>
   <div style="display:flex;gap:6px;flex-wrap:wrap" id="club-icon-picker">
-    ${clubIcons.map((ico,i)=>`<div onclick="selectClubIcon('${ico}',this)" data-ico="${ico}" style="width:38px;height:38px;border-radius:9px;border:2px solid ${i===0?'var(--ind)':'var(--bdr)'};background:${i===0?'var(--ind-bg)':'var(--surf2)'};display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all .15s">${ico}</div>`).join('')}
+    ${clubIcons.map((ico,i)=>`<div onclick="selectClubIcon('${ico}',this)" data-ico="${ico}" style="width:38px;height:38px;border-radius:9px;border:2px solid ${i===0?'var(--ind)':'var(--bdr)'};background:${i===0?'var(--ind-bg)':'var(--surf2)'};display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">${ico}</div>`).join('')}
   </div>
 </div>
 <div class="form-grp">
@@ -6856,7 +6866,7 @@ function openClubChat(clubId){
 function renderClubChat(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
   const msgs=(S.clubMessages||{})[clubId]||[];
-  const memberAvatars=club.members.slice(0,6).map((m,i)=>`<div class="avatar" style="width:26px;height:26px;font-size:9px;border-radius:50%;background:${getClubMemberColor(m)};color:#fff;border:2px solid var(--surf);margin-left:${i===0?0:-8}px;flex-shrink:0" title="${getClubMemberName(m)}">${getClubMemberInitials(m)}</div>`).join('');
+  const memberAvatars=club.members.slice(0,6).map((m,i)=>`<div class="avatar" style="width:26px;height:26px;font-size:10px;border-radius:50%;background:${getClubMemberColor(m)};color:#fff;border:2px solid var(--surf);margin-left:${i===0?0:-8}px;flex-shrink:0" title="${getClubMemberName(m)}">${getClubMemberInitials(m)}</div>`).join('');
   const msgHTML=msgs.map(msg=>{
     if(msg.isSystem)return`<div class="chat-system">— ${msg.text} —</div>`;
     const isMine=msg.author==='you';
@@ -6865,7 +6875,7 @@ function renderClubChat(clubId){
     const color=getClubMemberColor(msg.author);
     const timeStr=new Date(msg.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     return`<div class="chat-row${isMine?' mine':''}">
-      <div class="avatar" style="width:26px;height:26px;font-size:9px;border-radius:50%;background:${color};color:#fff;flex-shrink:0">${initials}</div>
+      <div class="avatar" style="width:26px;height:26px;font-size:10px;border-radius:50%;background:${color};color:#fff;flex-shrink:0">${initials}</div>
       <div>
         ${!isMine?`<div style="font-size:10px;color:var(--mut);margin-bottom:2px;font-weight:600">${name}</div>`:''}
         <div class="chat-bub ${isMine?'chat-bub-mine':'chat-bub-them'}">${msg.text}</div>
@@ -7094,7 +7104,7 @@ function _searchUserCard(u, isReal){
   const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa','#f59e0b'];
   const colorIdx=name.charCodeAt(0)%colors.length;
   const avatarHtml=u.profilePic
-    ?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    ?`<img src="${u.profilePic}" alt="Member profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
     :(u.avatar&&u.avatar.length<=2?`<span style="font-size:22px">${u.avatar}</span>`
     :`<span style="font-size:15px;font-weight:800;color:#fff">${initials}</span>`);
   const studyLine=u.disc?`Studying ${u.disc}`:(u.currentSection?'Studying '+u.currentSection:'');
@@ -7242,7 +7252,7 @@ function openMessagesModal(){
 function renderMessagesTabs(){
   const el=document.getElementById('msg-tabs');if(!el)return;
   const tabs=[{id:'dms',label:'💬 Direct Messages'},{id:'clubs',label:'🏛️ Study Clubs'}];
-  el.innerHTML=tabs.map(t=>'<button onclick="_msgTab=\''+t.id+'\';renderMessagesTabs();renderMessagesBody();" style="flex:1;padding:7px 8px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:'+(_msgTab===t.id?'var(--surf)':'transparent')+';color:'+(_msgTab===t.id?'var(--txt)':'var(--mut)')+';box-shadow:'+(_msgTab===t.id?'var(--shadow)':'none')+'">'+t.label+'</button>').join('');
+  el.innerHTML=tabs.map(t=>'<button onclick="_msgTab=\''+t.id+'\';renderMessagesTabs();renderMessagesBody();" style="flex:1;padding:7px 8px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;background:'+(_msgTab===t.id?'var(--surf)':'transparent')+';color:'+(_msgTab===t.id?'var(--txt)':'var(--mut)')+';box-shadow:'+(_msgTab===t.id?'var(--shadow)':'none')+'">'+t.label+'</button>').join('');
 }
 function renderMessagesBody(){
   const el=document.getElementById('msg-body');if(!el)return;
@@ -7300,7 +7310,7 @@ function renderClubView(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
   const el=document.getElementById('club-view-content');if(!el)return;
   const tabs=[{id:'chat',label:'💬 Chat'},{id:'members',label:'👥 Members'},{id:'leaderboard',label:'📈 Progress'},{id:'about',label:'ℹ️ About'}];
-  const tabNav=tabs.map(t=>'<button onclick="_clubViewTab=\''+t.id+'\';renderClubView(\''+clubId+'\');" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid '+(_clubViewTab===t.id?'var(--ind)':'transparent')+';background:transparent;font-size:11px;font-weight:'+(_clubViewTab===t.id?'700':'500')+';color:'+(_clubViewTab===t.id?'var(--ind)':'var(--mut)')+';cursor:pointer;transition:all .15s;white-space:nowrap">'+t.label+'</button>').join('');
+  const tabNav=tabs.map(t=>'<button onclick="_clubViewTab=\''+t.id+'\';renderClubView(\''+clubId+'\');" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid '+(_clubViewTab===t.id?'var(--ind)':'transparent')+';background:transparent;font-size:11px;font-weight:'+(_clubViewTab===t.id?'700':'500')+';color:'+(_clubViewTab===t.id?'var(--ind)':'var(--mut)')+';cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;white-space:nowrap">'+t.label+'</button>').join('');
   el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+club.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">'+club.name+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · '+club.members.length+' member'+(club.members.length!==1?'s':'')+'</div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
   renderClubViewBody(clubId);
 }
@@ -7316,7 +7326,7 @@ function renderClubViewBody(clubId){
       const initials=getClubMemberInitials(msg.author);
       const color=getClubMemberColor(msg.author);
       const timeStr=new Date(msg.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-      return'<div class="chat-row'+(isMine?' mine':'')+'"><div class="avatar" style="width:26px;height:26px;font-size:9px;border-radius:50%;background:'+color+';color:#fff;flex-shrink:0">'+initials+'</div><div>'+(!isMine?'<div style="font-size:10px;color:var(--mut);margin-bottom:2px;font-weight:600">'+name+'</div>':'')+'<div class="chat-bub '+(isMine?'chat-bub-mine':'chat-bub-them')+'">'+msg.text+'</div><div class="chat-meta'+(isMine?'':' chat-meta-them')+'">'+timeStr+'</div></div></div>';
+      return'<div class="chat-row'+(isMine?' mine':'')+'"><div class="avatar" style="width:26px;height:26px;font-size:10px;border-radius:50%;background:'+color+';color:#fff;flex-shrink:0">'+initials+'</div><div>'+(!isMine?'<div style="font-size:10px;color:var(--mut);margin-bottom:2px;font-weight:600">'+name+'</div>':'')+'<div class="chat-bub '+(isMine?'chat-bub-mine':'chat-bub-them')+'">'+msg.text+'</div><div class="chat-meta'+(isMine?'':' chat-meta-them')+'">'+timeStr+'</div></div></div>';
     }).join('');
     el.innerHTML='<div class="club-chat-area" id="cva-chat-'+clubId+'" style="padding:12px 20px;min-height:200px;max-height:320px">'+(msgHTML||'<div class="chat-system">— No messages yet. Say hello! 👋 —</div>')+'</div><div class="chat-footer" style="padding:10px 20px 16px;border-top:1px solid var(--bdr)"><input class="chat-inp" id="cva-inp-'+clubId+'" placeholder="Message '+club.name+'…" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendClubViewMessage(\''+clubId+'\');}"><button class="chat-send" onclick="sendClubViewMessage(\''+clubId+'\')">Send</button></div>';
     setTimeout(()=>{const a=document.getElementById('cva-chat-'+clubId);if(a)a.scrollTop=a.scrollHeight;document.getElementById('cva-inp-'+clubId)?.focus();},50);
@@ -7342,7 +7352,7 @@ function renderClubViewBody(clubId){
       const streak=isYou?getStreak():(friend?.streak||0);
       return{id:m,name:getClubMemberName(m),initials:getClubMemberInitials(m),color:getClubMemberColor(m),weekHrs,totalHrs,streak,isYou};
     });
-    const progressRows=allMembers.map(m=>'<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)'+(m.isYou?';background:var(--ind-bg);padding-left:10px;margin-left:-10px;border-left:2px solid var(--ind)':'')+'" '+(m.isYou?'':'onclick="closeClubView();openUserProfile(\''+m.id+'\')" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)"')+'><div class="avatar" style="width:30px;height:30px;font-size:10px;border-radius:50%;background:'+m.color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+m.initials+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+m.name+(m.isYou?' (you)':'')+'</div><div style="font-size:10px;color:var(--mut);margin-top:1px">'+Math.round(m.totalHrs)+'h total · 🔥'+m.streak+'d streak</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:var(--ora)">'+m.weekHrs.toFixed(1)+'h</div><div style="font-size:9px;color:var(--mut)">this week</div></div></div>').join('');
+    const progressRows=allMembers.map(m=>'<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)'+(m.isYou?';background:var(--ind-bg);padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;border-radius:8px':'')+'" '+(m.isYou?'':'onclick="closeClubView();openUserProfile(\''+m.id+'\')" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)"')+'><div class="avatar" style="width:30px;height:30px;font-size:10px;border-radius:50%;background:'+m.color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+m.initials+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+m.name+(m.isYou?' (you)':'')+'</div><div style="font-size:10px;color:var(--mut);margin-top:1px">'+Math.round(m.totalHrs)+'h total · 🔥'+m.streak+'d streak</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:var(--ora)">'+m.weekHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div></div>').join('');
     el.innerHTML='<div style="padding:16px 20px"><div style="font-size:11px;color:var(--mut);margin-bottom:12px">Everyone\'s making progress — keep each other accountable 💪</div>'+progressRows+'</div>';
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
@@ -7476,7 +7486,7 @@ function buildHeatMap(){
     ?[{id:'week',label:'Week'},{id:'month',label:'Month'},{id:'year',label:'Year'}]
     :[{id:'week',label:'Week'},{id:'month',label:'Month'}];
   const toggleHTML=`<div style="display:flex;gap:0;background:var(--surf3);border-radius:8px;padding:3px;width:fit-content">`+
-    toggleRanges.map(r=>`<button onclick="setHeatMapRange('${r.id}')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all .12s;background:${effectiveRange===r.id?'var(--surf)':'transparent'};color:${effectiveRange===r.id?'var(--txt)':'var(--mut)'};box-shadow:${effectiveRange===r.id?'var(--shadow)':'none'}">${r.label}</button>`).join('')+
+    toggleRanges.map(r=>`<button onclick="setHeatMapRange('${r.id}')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s;background:${effectiveRange===r.id?'var(--surf)':'transparent'};color:${effectiveRange===r.id?'var(--txt)':'var(--mut)'};box-shadow:${effectiveRange===r.id?'var(--shadow)':'none'}">${r.label}</button>`).join('')+
     (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--pur)">Year ✦</button>`:'')+'</div>';
 
   // ── WEEK VIEW ─────────────────────────────────────────────
@@ -7501,7 +7511,7 @@ function buildHeatMap(){
           <div style="width:min(100%,40px);height:${barH}px;background:${bg};border-radius:5px 5px 2px 2px;${d.isToday?'outline:2px solid var(--ora);outline-offset:2px':''}"></div>
         </div>
         <div style="font-size:11px;font-weight:${d.isToday?800:600};color:${d.isToday?'var(--ora)':'var(--sub)'}">${d.label}</div>
-        <div style="font-size:9px;color:var(--mut)">${d.date}</div>
+        <div style="font-size:10px;color:var(--mut)">${d.date}</div>
       </div>`;
     }).join('');
     return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
@@ -7533,13 +7543,13 @@ function buildHeatMap(){
       cols.push(`<div style="display:flex;flex-direction:column;gap:${GAP}px">${cells.join('')}</div>`);
     }
     const dlabM=['S','M','T','W','T','F','S'].map((day,i)=>
-      `<div style="height:${CELL}px;line-height:${CELL}px;font-size:9px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;font-weight:700">${day}</div>`
+      `<div style="height:${CELL}px;line-height:${CELL}px;font-size:10px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;font-weight:700">${day}</div>`
     ).join('');
     let lm=''; const mlabM=[];
     for(let w=0;w<weeksM;w++){
       const d=new Date(startM); d.setDate(startM.getDate()+w*7);
       const m=d.toLocaleDateString('en-US',{month:'short'});
-      if(m!==lm){lm=m;mlabM.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:9px;color:var(--mut);font-weight:700">${m}</div>`);}
+      if(m!==lm){lm=m;mlabM.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:10px;color:var(--mut);font-weight:700">${m}</div>`);}
       else mlabM.push(`<div style="width:${CELL}px;flex-shrink:0"></div>`);
     }
     const wKeys=Object.keys(dayMap).filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startM&&dt<=today;});
@@ -7579,11 +7589,11 @@ function buildHeatMap(){
   for(let w=0;w<weeksY;w++){
     const d=new Date(startY); d.setDate(startY.getDate()+w*7);
     const m=d.toLocaleDateString('en-US',{month:'short'});
-    if(m!==ly){ly=m;yLabels.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:8px;color:var(--mut);font-weight:700;white-space:nowrap">${m}</div>`);}
+    if(m!==ly){ly=m;yLabels.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:10px;color:var(--mut);font-weight:700;white-space:nowrap">${m}</div>`);}
     else yLabels.push(`<div style="width:${CELL}px;flex-shrink:0"></div>`);
   }
   const dlabY=['S','M','T','W','T','F','S'].map((day,i)=>
-    `<div style="height:${CELL}px;line-height:${CELL}px;font-size:8px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;font-weight:700">${day}</div>`
+    `<div style="height:${CELL}px;line-height:${CELL}px;font-size:10px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;font-weight:700">${day}</div>`
   ).join('');
   const wKeysY=Object.keys(dayMap).filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startY&&dt<=today;});
   const aDaysY=wKeysY.filter(d=>dayMap[d].hours>0).length;
@@ -7602,7 +7612,7 @@ function buildHeatMap(){
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Activity History')">
           <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:7px 12px;text-align:center;box-shadow:var(--shadow-md)">
             <div style="font-size:10px;font-weight:800;color:var(--ora)">52 weeks with Pro</div>
-            <div style="font-size:9px;color:var(--sub);margin-top:2px">Unlock →</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px">Unlock →</div>
           </div>
         </div>
       </div>${last}
@@ -7637,13 +7647,13 @@ function buildScoreTracker(){
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${sScores.slice(-5).map((sc,i)=>`<div style="text-align:center">
             <div style="width:34px;height:34px;border-radius:8px;background:${sc.score>=75?'var(--grn-bg)':sc.score>=65?'var(--amb-bg)':'var(--red-bg)'};border:1.5px solid ${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'}">${sc.score}</div>
-            <div style="font-size:8px;color:var(--mut);margin-top:2px">${sc.label||'P'+(i+1)}</div>
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">${sc.label||'P'+(i+1)}</div>
           </div>`).join('')}
           ${sScores.length===0?`<span style="font-size:12px;color:var(--mut)">No scores logged yet</span>`:''}
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        ${avg!==null?`<div style="font-size:18px;font-weight:900;color:${avg>=75?'var(--grn)':avg>=65?'var(--amb)':'var(--red)'}">${avg}</div><div style="font-size:9px;color:var(--mut)">avg ${trend}</div>`:''}
+        ${avg!==null?`<div style="font-size:18px;font-weight:900;color:${avg>=75?'var(--grn)':avg>=65?'var(--amb)':'var(--red)'}">${avg}</div><div style="font-size:10px;color:var(--mut)">avg ${trend}</div>`:''}
         ${passed?`<div class="badge badge-passed" style="margin-top:4px">Passed ✅</div>`:''}
       </div>
       <button class="btn btn-ghost btn-xs" onclick="openScoreModal('${s}')">+ Score</button>
@@ -7827,7 +7837,7 @@ function openEditProfile(){
 <div style="text-align:center;margin-bottom:22px">
   <div style="position:relative;display:inline-block">
     <div id="ep-avatar-preview" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:3px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;overflow:hidden;cursor:pointer;margin:0 auto;letter-spacing:-.03em" onclick="document.getElementById('ep-file-input').click()">
-      ${hasPic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:`<span>${initials}</span>`}
+      ${hasPic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:`<span>${initials}</span>`}
     </div>
     <div onclick="document.getElementById('ep-file-input').click()" style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;border-radius:50%;background:var(--ora);border:2.5px solid var(--surf);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px">📷</div>
   </div>
@@ -7929,7 +7939,7 @@ function openCropModal(dataUrl){
       '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>' +
       '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Scroll to zoom</div>' +
       '<div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">' +
-        '<img id="crop-img" style="position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;cursor:move">' +
+        '<img id="crop-img" alt="Photo being cropped" style="position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;cursor:move">' +
       '</div>' +
       '<div style="margin-top:14px;display:flex;align-items:center;gap:10px">' +
         '<span style="font-size:11px;color:var(--mut);flex-shrink:0">Zoom</span>' +
@@ -8024,7 +8034,7 @@ function applyCrop(){
   ctx.drawImage(img, ox*2, oy*2, img.naturalWidth*currentScale*2, img.naturalHeight*currentScale*2);
   const dataUrl=canvas.toDataURL('image/jpeg',0.9);
   const preview=document.getElementById('ep-avatar-preview');
-  if(preview) preview.innerHTML='<img src="'+dataUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+  if(preview) preview.innerHTML='<img src="'+dataUrl+'" alt="Profile photo preview" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   window._pendingProfilePic=dataUrl;
   // Clean up event listeners
   if(window._cropMouseMove) document.removeEventListener('mousemove',window._cropMouseMove);
@@ -8125,7 +8135,7 @@ function renderAppSettingsTabs(){
       background:${active?'var(--ora-bg)':'transparent'};
       color:${active?'var(--ora)':'var(--sub)'};
       font-size:13px;font-weight:${active?700:500};
-      margin-bottom:2px;transition:all .15s"
+      margin-bottom:2px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s"
       onmouseover="if('${t.id}'!=='${_settingsSection}')this.style.background='var(--surf2)';this.style.color='var(--txt)'"
       onmouseout="if('${t.id}'!=='${_settingsSection}')this.style.background='transparent';this.style.color='var(--sub)'">
       <span style="font-size:16px;flex-shrink:0">${t.icon}</span>
@@ -8185,7 +8195,7 @@ ${isFreePlan?`
 </div>
 `:`
 <div id="manage-sub-section">
-  <button onclick="showManageSubMenu()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--txt);transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <button onclick="showManageSubMenu()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--txt);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">💳</span>
     <div style="text-align:left;flex:1">
       <div style="font-weight:700">Manage Subscription</div>
@@ -8195,7 +8205,7 @@ ${isFreePlan?`
   </button>
 </div>
 <div id="cancel-sub-section">
-  <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:all .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
+  <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">🚫</span>
     <div style="text-align:left;flex:1">
       <div style="font-weight:700">Cancel Subscription</div>
@@ -8238,7 +8248,7 @@ function buildSettingsAccount(){
 <!-- Connected account -->
 <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:20px">
   <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:800;flex-shrink:0;overflow:hidden">
-    ${S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase()}
+    ${S?.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase()}
   </div>
   <div style="flex:1;min-width:0">
     <div style="font-size:14px;font-weight:700">${AUTH?.displayName||'Unknown'}</div>
@@ -8257,7 +8267,7 @@ ${buildLinkedAccountsRow('linkedin','LinkedIn','#0077b5','in')}
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div class="section-title" style="margin-bottom:10px">Study Goals</div>
-  <button onclick="closeAppSettings();openHourGoalsModal()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--txt);text-align:left;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <button onclick="closeAppSettings();openHourGoalsModal()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--txt);text-align:left;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
     <span style="font-size:20px">🎯</span>
     <div style="flex:1">
       <div style="font-weight:700">Customize Hour Goals</div>
@@ -8292,7 +8302,7 @@ ${buildLinkedAccountsRow('linkedin','LinkedIn','#0077b5','in')}
     </div>
     <span style="background:var(--ind);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px">${S.followRequests.length}</span>
   </button>` : ''}
-  <button onclick="closeAppSettings();signOut()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;text-align:left;transition:all .15s" onmouseover="this.style.borderColor='var(--bdr2)';this.style.background='var(--surf2)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.background='transparent'">
+  <button onclick="closeAppSettings();signOut()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--sub);font-size:13px;font-weight:600;text-align:left;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--bdr2)';this.style.background='var(--surf2)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.background='transparent'">
     <span style="font-size:16px">→</span> Sign Out
   </button>
 </div>`;
@@ -8515,7 +8525,7 @@ function buildSettingsData(){
 </div>
 
 <div class="section-title">Export</div>
-<button onclick="exportData()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+<button onclick="exportData()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
   <span style="font-size:18px">📥</span>
   <div style="text-align:left">
     <div style="font-size:13px;font-weight:700;color:var(--txt)">Download My Data</div>
@@ -8524,7 +8534,7 @@ function buildSettingsData(){
 </button>
 
 <div class="section-title" style="margin-top:20px">App Preferences</div>
-<button onclick="localStorage.removeItem('pf2-tour-done');closeAppSettings();setTimeout(startTour,300);" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+<button onclick="localStorage.removeItem('pf2-tour-done');closeAppSettings();setTimeout(startTour,300);" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
   <span style="font-size:18px">🗺️</span>
   <div style="text-align:left">
     <div style="font-size:13px;font-weight:700;color:var(--txt)">Restart App Tour</div>
@@ -8556,7 +8566,7 @@ ${isElite()?`
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div class="section-title">Feedback</div>
-  <button onclick="openInAppReviewModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <button onclick="openInAppReviewModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">⭐</span>
     <div style="text-align:left;flex:1">
       <div style="font-size:13px;font-weight:700;color:var(--txt)">Write a Review</div>
@@ -8696,7 +8706,7 @@ function generatePDFReport(){
   // ── SECTION PROGRESS ──
   doc.setFont('helvetica','bold'); doc.setFontSize(10); setTxt('#0f172a');
   doc.text('EXAM SECTION PROGRESS',margin,y); y+=6;
-  const secColors={FAR:'#ef4444',AUD:'#4f8ef7',REG:'#10b981',TCP:'#14b8a6',BAR:'#f59e0b',ISC:'#a855f7'};
+  const secColors={FAR:'#dc2626',AUD:'#2563eb',REG:'#059669',TCP:'#0d9488',BAR:'#d97706',ISC:'#9333ea'};
   const secs=S.sections||['FAR','AUD','REG','TCP'];
   const secData=secs.map(s=>{
     const ex=EXAMS[s]; const hrs=getSectionHours(s); const pct=Math.min(100,Math.round(hrs/ex.studyHours*100));
@@ -9386,7 +9396,7 @@ function _renderQuiz() {
       bg = color + '15'; border = '2px solid ' + color;
     }
     const click = answered ? '' : 'onclick="_selectAnswer(' + i + ')"';
-    return '<div ' + click + ' style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:' + border + ';background:' + bg + ';border-radius:11px;margin-bottom:9px;cursor:' + (answered?'default':'pointer') + ';transition:all .15s">' +
+    return '<div ' + click + ' style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:' + border + ';background:' + bg + ';border-radius:11px;margin-bottom:9px;cursor:' + (answered?'default':'pointer') + ';transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">' +
       '<span style="width:26px;height:26px;border-radius:50%;background:' + (i===selected&&!answered ? color : answered&&i===q.correct ? 'var(--grn)' : answered&&i===selected ? 'var(--red)' : 'var(--bdr2)') + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">' + choiceLetters[i] + '</span>' +
       '<span style="font-size:13px;line-height:1.55;color:' + txtColor + ';padding-top:3px;flex:1">' + c + '</span>' +
       badge +
@@ -9541,7 +9551,7 @@ function openQBSection(code) {
   const modeCards = modes.map(function(m) {
     const locked = !pro && !m.free;
     return '<div onclick="' + (locked ? 'openUpgradeModal(\'Question Bank \u2014 ' + m.label + '\')' : 'closeQBSection();openQuizModal(\'' + code + '\',\'' + m.type + '\')') + '" ' +
-      'style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:13px;border:1.5px solid ' + (locked ? 'var(--bdr)' : 'var(--bdr)') + ';background:var(--surf2);cursor:pointer;transition:all .15s;margin-bottom:10px" ' +
+      'style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:13px;border:1.5px solid ' + (locked ? 'var(--bdr)' : 'var(--bdr)') + ';background:var(--surf2);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;margin-bottom:10px" ' +
       'onmouseover="if(' + (!locked) + '){this.style.borderColor=\'' + sec.color + '\';this.style.background=\'' + sec.color + '12\'}" ' +
       'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.background=\'var(--surf2)\'">' +
       '<span style="font-size:24px;width:36px;text-align:center;flex-shrink:0">' + m.icon + '</span>' +
@@ -9600,7 +9610,7 @@ function buildQuestionBank() {
     const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
 
     return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
-      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden" ' +
+      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px 20px;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;position:relative;overflow:hidden" ' +
       'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
       'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
       '<div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:' + sec.color + ';border-radius:14px 0 0 14px"></div>' +
@@ -10309,7 +10319,7 @@ function buildStudyLab() {
   const subNav =
     '<div style="display:flex;gap:6px;margin-bottom:28px;background:var(--surf2);padding:5px;border-radius:12px;border:1px solid var(--bdr);width:fit-content">' +
     tabs.map(t =>
-      '<button onclick="openStudyLabTab(\'' + t.id + '\')" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .18s;' +
+      '<button onclick="openStudyLabTab(\'' + t.id + '\')" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:background-color .18s,border-color .18s,color .18s,box-shadow .18s,transform .18s,opacity .18s;' +
       (_studyLabTab === t.id
         ? 'background:var(--surf);color:var(--txt);box-shadow:var(--shadow);'
         : 'background:transparent;color:var(--mut);') +
@@ -10350,7 +10360,7 @@ function _buildQBankPanel() {
     const mcqDone = prog.mcqDone || 0;
     const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
     return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
-      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:16px;padding:22px 22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden" ' +
+      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:16px;padding:22px 22px;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;position:relative;overflow:hidden" ' +
       'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
       'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
       '<div style="position:absolute;top:0;left:0;bottom:0;width:5px;background:' + sec.color + ';border-radius:16px 0 0 16px"></div>' +
@@ -10534,7 +10544,7 @@ function _buildDecksView(){
       return `<div class="card card-pad" style="cursor:pointer" onclick="fcLoadDeck('${d.id}')">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
           <div style="flex:1;min-width:0">
-            ${d.section?`<span class="badge badge-${d.section}" style="font-size:9px;margin-bottom:5px;display:inline-flex">${d.section}</span><br>`:''}
+            ${d.section?`<span class="badge badge-${d.section}" style="font-size:10px;margin-bottom:5px;display:inline-flex">${d.section}</span><br>`:''}
             <div style="font-size:13px;font-weight:800;line-height:1.3;margin-top:2px">${d.name}</div>
             <div style="font-size:10px;color:var(--mut);margin-top:2px">${d.cards.length} cards · ${new Date(d.created).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
           </div>
@@ -10762,10 +10772,10 @@ function _buildExamDayProtocol() {
             const ck = checked[phase.day + '_' + idx] || false;
             const eid = 'pck-' + phase.day + '-' + idx;
             return '<div id="' + eid + '" onclick="toggleProtocolCheck(\'' + phase.day + '\',\'' + idx + '\',this)" style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--surf2);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:opacity .15s" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">' +
-              '<div class="pck-box" style="width:20px;height:20px;border-radius:6px;border:2px solid ' + (ck ? 'var(--grn)' : 'var(--bdr)') + ';background:' + (ck ? 'var(--grn)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .12s">' +
+              '<div class="pck-box" style="width:20px;height:20px;border-radius:6px;border:2px solid ' + (ck ? 'var(--grn)' : 'var(--bdr)') + ';background:' + (ck ? 'var(--grn)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s">' +
                 (ck ? '<span style="color:#fff;font-size:12px;line-height:1;font-weight:900">✓</span>' : '') +
               '</div>' +
-              '<span class="pck-label" style="font-size:13px;color:' + (ck ? 'var(--mut)' : 'var(--txt)') + ';text-decoration:' + (ck ? 'line-through' : 'none') + ';line-height:1.5;flex:1;transition:all .12s">' + item + '</span>' +
+              '<span class="pck-label" style="font-size:13px;color:' + (ck ? 'var(--mut)' : 'var(--txt)') + ';text-decoration:' + (ck ? 'line-through' : 'none') + ';line-height:1.5;flex:1;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s">' + item + '</span>' +
             '</div>';
           }).join('')
         : '<div style="margin-top:10px;border-top:1px solid var(--surf2);padding-top:10px">' +
@@ -11094,9 +11104,9 @@ function _buildFlashcardViewer(){
       <span style="color:var(--red)">✗ ${missed} missed</span>
       <span style="color:var(--mut);margin-left:auto">Tap card to flip</span>
     </div>
-    <div onclick="fcFlipCard()" style="cursor:pointer;min-height:160px;border-radius:14px;border:2px solid ${_fc.flipped?'var(--grn)':'var(--ind)'};background:${_fc.flipped?'var(--grn-bg)':'var(--ind-bg)'};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 24px;text-align:center;transition:all .2s;position:relative">
-      <div style="position:absolute;top:10px;left:14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:${_fc.flipped?'var(--grn)':'var(--ind)'}">${_fc.flipped?'Answer':'Question'}</div>
-      ${hasStats?`<div style="position:absolute;top:8px;right:12px;font-size:9px;color:var(--mut)">${(card.timesCorrect||0)>0?`<span style="color:var(--grn)">✓${card.timesCorrect}</span> `:''}${(card.timesMissed||0)>0?`<span style="color:var(--red)">✗${card.timesMissed}</span>`:''}</div>`:''}
+    <div onclick="fcFlipCard()" style="cursor:pointer;min-height:160px;border-radius:14px;border:2px solid ${_fc.flipped?'var(--grn)':'var(--ind)'};background:${_fc.flipped?'var(--grn-bg)':'var(--ind-bg)'};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 24px;text-align:center;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;position:relative">
+      <div style="position:absolute;top:10px;left:14px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:${_fc.flipped?'var(--grn)':'var(--ind)'}">${_fc.flipped?'Answer':'Question'}</div>
+      ${hasStats?`<div style="position:absolute;top:8px;right:12px;font-size:10px;color:var(--mut)">${(card.timesCorrect||0)>0?`<span style="color:var(--grn)">✓${card.timesCorrect}</span> `:''}${(card.timesMissed||0)>0?`<span style="color:var(--red)">✗${card.timesMissed}</span>`:''}</div>`:''}
       <div style="font-size:14px;font-weight:700;line-height:1.65;color:var(--txt);white-space:pre-line">${_fc.flipped?card.a:card.q}</div>
       ${!_fc.flipped?'<div style="font-size:11px;color:var(--mut);margin-top:10px">Tap to reveal</div>':''}
     </div>
@@ -11119,7 +11129,7 @@ function _buildFlashcardViewer(){
       ${_fc.cards.map((c,i)=>{
         const bg=i===_fc.current?'var(--ind)':(c.timesCorrect||0)>=2?'var(--grn)':(c.timesMissed||0)>0?'#fca5a5':'var(--surf3)';
         const fc=i===_fc.current||((c.timesCorrect||0)>=2)?'#fff':'var(--mut)';
-        return `<div onclick="fcGoto(${i})" style="width:22px;height:22px;border-radius:5px;cursor:pointer;background:${bg};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${fc}">${i+1}</div>`;
+        return `<div onclick="fcGoto(${i})" style="width:22px;height:22px;border-radius:5px;cursor:pointer;background:${bg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${fc}">${i+1}</div>`;
       }).join('')}
     </div>
   </div>`;
@@ -11159,7 +11169,7 @@ function _buildQuizViewer() {
           if (isCorrect) { bg='var(--grn-bg)'; border='var(--grn)'; color='var(--grn)'; }
           else if (isSelected && !isCorrect) { bg='var(--red-bg)'; border='var(--red)'; color='var(--red)'; }
         } else if (isSelected) { bg='var(--ind-bg)'; border='var(--ind)'; color='var(--ind)'; }
-        return '<div onclick="fcSelectAnswer(' + ci + ')" style="padding:11px 14px;border-radius:10px;border:1.5px solid ' + border + ';background:' + bg + ';cursor:pointer;font-size:13px;font-weight:600;color:' + color + ';transition:all .15s">' +
+        return '<div onclick="fcSelectAnswer(' + ci + ')" style="padding:11px 14px;border-radius:10px;border:1.5px solid ' + border + ';background:' + bg + ';cursor:pointer;font-size:13px;font-weight:600;color:' + color + ';transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">' +
           '<span style="font-weight:800;margin-right:8px">' + String.fromCharCode(65+ci) + '.</span>' + ch +
           (_fc.quizAns && isCorrect ? ' <span style="float:right;font-weight:900">✓</span>' : '') +
           (_fc.quizAns && isSelected && !isCorrect ? ' <span style="float:right;font-weight:900">✗</span>' : '') +
@@ -11716,7 +11726,7 @@ function buildAdvancedAnalytics() {
     const h = Math.max(4, Math.round(avg/maxDayAvg*48));
     return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
       '<div style="width:24px;height:' + h + 'px;background:' + (i===bestDayIdx?'var(--ind)':'var(--bdr2)') + ';border-radius:4px;transition:height .4s"></div>' +
-      '<div style="font-size:9px;color:var(--mut);font-weight:600">' + days[i].slice(0,1) + '</div>' +
+      '<div style="font-size:10px;color:var(--mut);font-weight:600">' + days[i].slice(0,1) + '</div>' +
     '</div>';
   }).join('');
 
@@ -11987,12 +11997,12 @@ function _buildPlanSetup(){
   const ex=EXAMS[selectedSec]||{color:'var(--ora)',full:selectedSec};
 
   const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const dayToggles=dayNames.map((d,i)=>`<button onclick="_planToggleDay(${i})" id="plan-day-${i}" style="width:38px;height:38px;border-radius:50%;border:2px solid ${studyDays.includes(i)?ex.color:'var(--bdr)'};background:${studyDays.includes(i)?ex.color:'var(--surf2)'};color:${studyDays.includes(i)?'#fff':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:all .15s">${d.slice(0,2)}</button>`).join('');
+  const dayToggles=dayNames.map((d,i)=>`<button onclick="_planToggleDay(${i})" id="plan-day-${i}" style="width:38px;height:38px;border-radius:50%;border:2px solid ${studyDays.includes(i)?ex.color:'var(--bdr)'};background:${studyDays.includes(i)?ex.color:'var(--surf2)'};color:${studyDays.includes(i)?'#fff':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">${d.slice(0,2)}</button>`).join('');
   // Long day toggles — only show study days
   const longDayToggles=dayNames.map((d,i)=>{
     if(!studyDays.includes(i)) return '';
     const isLong=longDays.includes(i);
-    return`<button onclick="_planToggleLongDay(${i})" id="plan-long-${i}" style="display:flex;flex-direction:column;align-items:center;gap:2px;width:52px;padding:8px 4px;border-radius:10px;border:2px solid ${isLong?'#f97316':'var(--bdr)'};background:${isLong?'#f9731614':'var(--surf2)'};color:${isLong?'#f97316':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:all .15s">
+    return`<button onclick="_planToggleLongDay(${i})" id="plan-long-${i}" style="display:flex;flex-direction:column;align-items:center;gap:2px;width:52px;padding:8px 4px;border-radius:10px;border:2px solid ${isLong?'#f97316':'var(--bdr)'};background:${isLong?'#f9731614':'var(--surf2)'};color:${isLong?'#f97316':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">
       <span style="font-size:14px">${isLong?'🔥':'☁️'}</span>
       <span>${d.slice(0,2)}</span>
     </button>`;
@@ -12023,7 +12033,7 @@ function _buildPlanSetup(){
           const isSelected=s===selectedSec;
           const d=S.examDates?.[s];
           const dl=d?Math.ceil((new Date(d+' 00:00')-Date.now())/86400000):null;
-          return`<button onclick="_planSelectSection('${s}')" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px 16px;border-radius:12px;border:2px solid ${isSelected?e.color:'var(--bdr)'};background:${isSelected?e.color+'14':'var(--surf2)'};cursor:pointer;transition:all .15s;min-width:110px">
+          return`<button onclick="_planSelectSection('${s}')" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px 16px;border-radius:12px;border:2px solid ${isSelected?e.color:'var(--bdr)'};background:${isSelected?e.color+'14':'var(--surf2)'};cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;min-width:110px">
             <span class="badge badge-${s}" style="font-size:11px">${s}</span>
             <span style="font-size:11px;font-weight:700;color:${isSelected?e.color:'var(--sub)'}">${e.full?.split(' ').slice(0,2).join(' ')}</span>
             ${dl!=null&&dl>0?`<span style="font-size:10px;color:var(--mut)">${dl}d to exam</span>`:dl===0?`<span style="font-size:10px;color:#ef4444">Exam today!</span>`:'<span style="font-size:10px;color:var(--mut)">No date set</span>'}
@@ -12069,7 +12079,7 @@ function _buildPlanSetup(){
       <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study style</div>
       <div style="font-size:11px;color:var(--mut);margin-bottom:14px">How do you want to split your time across the plan?</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        ${styleOptions.map(o=>`<button onclick="_planSelectStyle('${o.id}')" id="plan-style-${o.id}" style="flex:1;min-width:140px;padding:12px 14px;border-radius:12px;border:2px solid ${studyStyle===o.id?ex.color:'var(--bdr)'};background:${studyStyle===o.id?ex.color+'14':'var(--surf2)'};cursor:pointer;text-align:left;transition:all .15s">
+        ${styleOptions.map(o=>`<button onclick="_planSelectStyle('${o.id}')" id="plan-style-${o.id}" style="flex:1;min-width:140px;padding:12px 14px;border-radius:12px;border:2px solid ${studyStyle===o.id?ex.color:'var(--bdr)'};background:${studyStyle===o.id?ex.color+'14':'var(--surf2)'};cursor:pointer;text-align:left;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">
           <div style="font-size:18px;margin-bottom:5px">${o.icon}</div>
           <div style="font-size:12px;font-weight:800;color:${studyStyle===o.id?ex.color:'var(--txt)'};">${o.label}</div>
           <div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4">${o.desc}</div>
@@ -12079,7 +12089,7 @@ function _buildPlanSetup(){
 
     <!-- Generate button -->
     <button onclick="submitPlanSetup()" ${!canGenerate?'disabled':''}
-      style="width:100%;padding:16px;background:${canGenerate?'linear-gradient(135deg,var(--ora),#b03500)':'var(--surf3)'};color:${canGenerate?'#fff':'var(--mut)'};border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:${canGenerate?'pointer':'not-allowed'};box-shadow:${canGenerate?'0 6px 24px rgba(212,64,0,.35)':'none'};transition:all .15s;letter-spacing:-.01em">
+      style="width:100%;padding:16px;background:${canGenerate?'linear-gradient(135deg,var(--ora),#b03500)':'var(--surf3)'};color:${canGenerate?'#fff':'var(--mut)'};border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:${canGenerate?'pointer':'not-allowed'};box-shadow:${canGenerate?'0 6px 24px rgba(212,64,0,.35)':'none'};transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;letter-spacing:-.01em">
       ${canGenerate?'✨ Build My Study Plan →':'Set an exam date to continue'}
     </button>
     ${canGenerate?`<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px">Focused on ${selectedSec} only · ${daysLeft} days · Rebuild anytime for free</div>`:''}
@@ -12210,12 +12220,12 @@ function _buildPlanCalendar(plan){
       border=isToday?`2px solid ${ex.color}`:`1px solid ${ex.color}28`;
       inner=`<div style="font-size:10px;font-weight:${isToday?900:700};color:${isToday?ex.color:'var(--sub)'};margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;line-height:1;margin-bottom:3px">${d.done?'✅':m.icon}</div>
-        <div style="font-size:9px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
-        <div style="font-size:9px;color:var(--mut)">${d.hours}h${d.isLong?' 🔥':''}</div>`;
+        <div style="font-size:10px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
+        <div style="font-size:10px;color:var(--mut)">${d.hours}h${d.isLong?' 🔥':''}</div>`;
     }else if(d&&!d.isStudy){
       inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;opacity:.35">🛌</div>
-        <div style="font-size:9px;color:var(--mut);margin-top:2px">Rest</div>`;
+        <div style="font-size:10px;color:var(--mut);margin-top:2px">Rest</div>`;
     }else{
       inner=`<div style="font-size:10px;font-weight:600;color:var(--mut)">${dayNum}</div>`;
     }
@@ -12223,7 +12233,7 @@ function _buildPlanCalendar(plan){
       ${inner}
     </div>`);
   }
-  const dayHdrs=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div style="text-align:center;font-size:9px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;padding-bottom:6px">${d}</div>`).join('');
+  const dayHdrs=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div style="text-align:center;font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;padding-bottom:6px">${d}</div>`).join('');
 
   // Sidebar: today block
   const todayEntry=dayMap[todayStr];
@@ -12284,7 +12294,7 @@ function _buildPlanCalendar(plan){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
           <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin:0">Study Plan</h1>
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
-          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
+          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
         </div>
         <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete</p>
       </div>
@@ -12550,7 +12560,7 @@ function _buildAIPlanUI(){
             '<div style="flex:1;min-width:0">'+
               '<div style="font-size:12px;font-weight:700;color:var(--txt)">'+m.label+'</div>'+
               '<div style="display:flex;align-items:center;gap:6px;margin-top:1px">'+
-                '<span class="badge badge-'+d.section+'" style="font-size:9px;padding:1px 6px">'+d.section+'</span>'+
+                '<span class="badge badge-'+d.section+'" style="font-size:10px;padding:1px 6px">'+d.section+'</span>'+
                 '<span style="font-size:10px;color:var(--mut)">'+d.hours+'h</span>'+
               '</div>'+
             '</div>'+
@@ -12567,7 +12577,7 @@ function _buildAIPlanUI(){
       '<div>'+
         '<div style="display:flex;align-items:center;gap:8px">'+
           '<div class="section-title" style="margin-bottom:0">🤖 AI Study Plan</div>'+
-          '<span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:9px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>'+
+          '<span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>'+
         '</div>'+
         '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+daysLeft+' days to exam · '+Math.round(totalHrsPlanned)+'h planned · '+pct+'% done</div>'+
       '</div>'+
@@ -13351,6 +13361,53 @@ document.addEventListener('DOMContentLoaded', ()=>{
     localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined');
     banner.style.display = 'none';
   };
+})();
+
+/* ── A11Y: keyboard access for elements with onclick handlers ──
+   The app renders interactive rows/cards as <div onclick>. Native keyboard
+   users can't reach or activate those. This makes any non-native click target
+   focusable (role=button + tabindex) and activates it on Enter/Space. A
+   MutationObserver re-applies after the app's innerHTML re-renders. */
+(function(){
+  var NATIVE=/^(BUTTON|A|INPUT|SELECT|TEXTAREA|LABEL|SUMMARY|OPTION)$/;
+  function enhance(el){
+    if(!el||el.nodeType!==1||NATIVE.test(el.tagName)) return;
+    if(!el.hasAttribute('onclick')) return;
+    if(el.hasAttribute('role')||el.hasAttribute('tabindex')) return;
+    // Don't make a wrapper focusable if it already contains a native control —
+    // avoids nested/duplicate tab stops.
+    if(el.querySelector('button,a[href],input,select,textarea')) return;
+    el.setAttribute('role','button');
+    el.setAttribute('tabindex','0');
+  }
+  function scan(root){
+    if(!root||root.nodeType!==1) return;
+    if(root.hasAttribute&&root.hasAttribute('onclick')) enhance(root);
+    if(root.querySelectorAll){
+      var n=root.querySelectorAll('[onclick]');
+      for(var i=0;i<n.length;i++) enhance(n[i]);
+    }
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+    var t=e.target;
+    if(!t||t.nodeType!==1||NATIVE.test(t.tagName)) return;
+    if(t.getAttribute('role')!=='button'&&!t.hasAttribute('onclick')) return;
+    if(t.isContentEditable) return;
+    e.preventDefault();
+    t.click();
+  });
+  function init(){
+    scan(document.body);
+    new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var added=muts[i].addedNodes;
+        for(var j=0;j<added.length;j++) scan(added[j]);
+      }
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
 </script>
 </body>
