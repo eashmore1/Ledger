@@ -1281,7 +1281,7 @@ function showStudentVerifyBanner(){
   bar.id = 'student-verify-banner';
   bar.style.cssText = 'background:#92400e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;font-family:Inter,system-ui,sans-serif;z-index:900';
   bar.innerHTML = `
-    <span>🎓 <strong>Verify your student discount</strong> — confirm your .edu email to keep your $13/month rate.
+    <span>🎓 <strong>Verify your student discount</strong> — confirm your .edu email to keep your $5/month rate.
     <a onclick="openStudentVerifyModal()" style="color:#fcd34d;cursor:pointer;text-decoration:underline;margin-left:6px">Verify now →</a></span>
     <button onclick="document.getElementById('student-verify-banner').remove();localStorage.setItem('ledger-student-verify-dismissed',Date.now())"
       style="background:transparent;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>
@@ -1307,7 +1307,7 @@ function openStudentVerifyModal(){
       <div style="font-size:28px;margin-bottom:8px">🎓</div>
       <h2 style="margin:0 0 8px;font-size:18px;font-weight:700">Student Discount Verification</h2>
       <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,.65);line-height:1.6">
-        Your student plan ($13/mo) requires a university <strong>.edu email address</strong>.
+        Your student plan ($5/mo) requires a university <strong>.edu email address</strong>.
         Enter it below to confirm your enrollment status.
       </p>
       ${isEdu ? `
@@ -2112,9 +2112,9 @@ function closeLegalModal(){
 function renderUpgradeModal(featureHint){
   const el=document.getElementById('upgrade-modal');if(!el)return;
   const isAnnual=_upgradeBilling==='annual';
-  const proMonthly=20,proAnnual=16;
-  const eliteMonthly=29,eliteAnnual=22;
-  const cramPrice=99;
+  const proMonthly=9,proAnnual=7;
+  const eliteMonthly=14,eliteAnnual=11;
+  const cramPrice=44;
   const proDisplay=isAnnual?proAnnual:proMonthly;
   const eliteDisplay=isAnnual?eliteAnnual:eliteMonthly;
 

@@ -217,9 +217,9 @@ footer a:hover{color:rgba(255,255,255,.6)}
     <div class="plan-card popular">
       <div class="popular-badge">MOST POPULAR</div>
       <div class="plan-name ora">Pro</div>
-      <div class="plan-price ora" id="pro-price"><sup>$</sup>20</div>
+      <div class="plan-price ora" id="pro-price"><sup>$</sup>9</div>
       <div class="plan-period" id="pro-period">per month</div>
-      <div class="plan-was" id="pro-was" style="display:none">$20/mo without annual</div>
+      <div class="plan-was" id="pro-was" style="display:none">$9/mo without annual</div>
       <div class="plan-trial">7-day free trial included</div>
       <div class="plan-sep"></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Free</span></div>
@@ -236,9 +236,9 @@ footer a:hover{color:rgba(255,255,255,.6)}
     <!-- ELITE -->
     <div class="plan-card elite">
       <div class="plan-name pur">Elite</div>
-      <div class="plan-price pur" id="elite-price"><sup>$</sup>29</div>
+      <div class="plan-price pur" id="elite-price"><sup>$</sup>14</div>
       <div class="plan-period" id="elite-period">per month</div>
-      <div class="plan-was" id="elite-was" style="display:none">$29/mo without annual</div>
+      <div class="plan-was" id="elite-was" style="display:none">$14/mo without annual</div>
       <div class="plan-trial" style="color:var(--pur)">AI Tools + Priority Support</div>
       <div class="plan-sep"></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Pro</span></div>
@@ -268,9 +268,9 @@ footer a:hover{color:rgba(255,255,255,.6)}
       </div>
     </div>
     <div class="cram-right">
-      <div class="cram-price"><sup>$</sup>99</div>
+      <div class="cram-price"><sup>$</sup>44</div>
       <div class="cram-price-sub">one-time · 6 months</div>
-      <div class="cram-vs">vs $120 for 6 × Pro monthly</div>
+      <div class="cram-vs">vs $54 for 6 × Pro monthly + extras included</div>
       <a href="/" class="cram-cta" style="margin-top:16px;display:block">Get the Cram Plan →</a>
     </div>
   </div>
@@ -279,8 +279,8 @@ footer a:hover{color:rgba(255,255,255,.6)}
   <div class="student-card" onclick="window.location='/'">
     <span style="font-size:30px">🎓</span>
     <div style="flex:1">
-      <div style="font-size:14px;font-weight:700;color:#0d9488;margin-bottom:3px">Student Discount — 35% off Pro</div>
-      <div style="font-size:13px;color:var(--sub)">Verify your .edu email or enrollment status for $13/mo Pro. Takes 30 seconds.</div>
+      <div style="font-size:14px;font-weight:700;color:#0d9488;margin-bottom:3px">Student Discount — 44% off Pro</div>
+      <div style="font-size:13px;color:var(--sub)">Verify your .edu email or enrollment status for $5/mo Pro. Takes 30 seconds.</div>
     </div>
     <div style="font-size:13px;font-weight:700;color:#0d9488;flex-shrink:0">Verify →</div>
   </div>
@@ -305,7 +305,7 @@ footer a:hover{color:rgba(255,255,255,.6)}
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">What is the 6-Month Cram Plan?</div>
-    <div class="faq-a">It's a one-time purchase (not a subscription) that gives you full Pro-tier access for 6 months, plus an exam-day protocol PDF and a personal milestone check-in. It's designed for candidates with a fixed exam window who want everything for less than 6 months of Pro billed monthly.</div>
+    <div class="faq-a">It's a one-time purchase (not a subscription) that gives you full Pro-tier access for 6 months, plus an exam-day protocol PDF and a personal milestone check-in. At $44 it's cheaper than 6 months of Pro billed monthly ($54) and includes extras. Designed for candidates with a fixed exam window.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Does the annual plan auto-renew?</div>
@@ -313,7 +313,7 @@ footer a:hover{color:rgba(255,255,255,.6)}
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">How does the student discount work?</div>
-    <div class="faq-a">Verify your student status with a .edu email address or proof of enrollment and receive 35% off the Pro plan ($13/mo instead of $20/mo). The discount applies for as long as your enrollment is active.</div>
+    <div class="faq-a">Verify your student status with a .edu email address or proof of enrollment and receive 44% off the Pro plan ($5/mo instead of $9/mo). The discount applies for as long as your enrollment is active.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later?</div>
@@ -335,19 +335,19 @@ function setBilling(type) {
   document.getElementById('save-badge').style.display = type === 'annual' ? 'inline-flex' : 'none';
 
   if (type === 'annual') {
-    document.getElementById('pro-price').innerHTML = '<sup>$</sup>16';
-    document.getElementById('pro-period').textContent = 'per month · billed $192/yr';
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>7';
+    document.getElementById('pro-period').textContent = 'per month · billed $84/yr';
     document.getElementById('pro-was').style.display = 'block';
-    document.getElementById('pro-was').textContent = '$20/mo without annual';
-    document.getElementById('elite-price').innerHTML = '<sup>$</sup>23';
-    document.getElementById('elite-period').textContent = 'per month · billed $276/yr';
+    document.getElementById('pro-was').textContent = '$9/mo without annual';
+    document.getElementById('elite-price').innerHTML = '<sup>$</sup>11';
+    document.getElementById('elite-period').textContent = 'per month · billed $132/yr';
     document.getElementById('elite-was').style.display = 'block';
-    document.getElementById('elite-was').textContent = '$29/mo without annual';
+    document.getElementById('elite-was').textContent = '$14/mo without annual';
   } else {
-    document.getElementById('pro-price').innerHTML = '<sup>$</sup>20';
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>9';
     document.getElementById('pro-period').textContent = 'per month';
     document.getElementById('pro-was').style.display = 'none';
-    document.getElementById('elite-price').innerHTML = '<sup>$</sup>29';
+    document.getElementById('elite-price').innerHTML = '<sup>$</sup>14';
     document.getElementById('elite-period').textContent = 'per month';
     document.getElementById('elite-was').style.display = 'none';
   }
