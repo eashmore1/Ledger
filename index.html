@@ -8007,7 +8007,7 @@ ${isElite()?`
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div class="section-title">Feedback</div>
-  <button onclick="openReviewUrl()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
+  <button onclick="openInAppReviewModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">⭐</span>
     <div style="text-align:left;flex:1">
       <div style="font-size:13px;font-weight:700;color:var(--txt)">Write a Review</div>
@@ -9261,21 +9261,15 @@ function renderProgressReport() {
             '<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:14px">🤖</div>' +
             '<div class="section-title" style="margin:0">AI Study Advice</div>' +
           '</div>' +
-          (_fcGetApiKey()
-            ? '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>Powered by Claude</div>'
-            : '<button onclick="openFcApiKeyModal()" style="font-size:10px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer;padding:0">+ Add API key</button>') +
+          '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>Powered by Claude</div>' +
         '</div>' +
         '<div id="pr-ai-advice-body">' +
-          (_fcGetApiKey()
-            ? '<div style="display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:var(--ind);animation:ledger-dot 1.2s infinite;display:inline-block"></span>Analyzing your progress...</div>'
-            : '<div style="font-size:12px;color:var(--mut);line-height:1.6">Add your Claude API key to get personalized AI advice based on your actual study data — specific next steps, weak areas to focus on, and a realistic path to your exam dates.</div>') +
+          '<div style="display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:var(--ind);animation:ledger-dot 1.2s infinite;display:inline-block"></span>Analyzing your progress...</div>' +
         '</div>' +
       '</div>' +
     '</div>';
 
-  if (_fcGetApiKey()) {
-    _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, days);
-  }
+  _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, days);
 }
 
 function _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, rangeDays) {
@@ -9305,7 +9299,7 @@ function _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, 
     const body = document.getElementById('pr-ai-advice-body');
     if (!body) return;
     if (!advice) {
-      body.innerHTML = '<div style="font-size:12px;color:var(--mut)">Could not load AI advice. Check your API key in Study Tools.</div>';
+      body.innerHTML = '<div style="font-size:12px;color:var(--mut)">Could not load AI advice right now — try again in a moment.</div>';
       return;
     }
     const bullets = advice.split('\n').filter(function(l){ return l.trim(); });
@@ -9388,29 +9382,22 @@ function _coachBuildContext() {
 }
 
 async function _coachAskAI(msg) {
-  const key = _fcGetApiKey();
-  if (!key) return null;
   const ctx = _coachBuildContext();
   const systemPrompt = 'You are Ledger, an expert CPA exam tutor and study coach with deep knowledge of all CPA exam sections: FAR (Financial Accounting & Reporting), AUD (Auditing & Attestation), REG (Regulation/Tax), ISC (Information Systems & Controls), TCP (Tax Compliance & Planning), and BAR (Business Analysis & Reporting).\n\nYou have expert-level knowledge of:\n- GAAP, IFRS, GASB, FASB Codification\n- Federal taxation (individual, corporate, partnership, S-corp, estate/gift)\n- Auditing standards (GAAS, PCAOB, SSARS, SSAE)\n- Business law, contracts, secured transactions, bankruptcy\n- IT controls, SOC reports, cybersecurity frameworks\n- CPA exam structure, scoring, and test-taking strategy\n- Spaced repetition, active recall, and adult learning science\n\nYou have access to the student\'s real study data shown below. Give specific, accurate, actionable answers. When answering accounting/tax/audit questions, give the technically correct answer with the relevant standard or code section when applicable. Be direct and concise — no filler. If the student asks a specific accounting question, answer it precisely. If they ask for study advice, make it specific to their data.\n\n' + ctx;
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const token = await _getAuthToken();
+    const resp = await fetch('/api/ask', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: {'content-type':'application/json',...(token?{'authorization':'Bearer '+token}:{})},
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
         system: systemPrompt,
-        messages: [{ role: 'user', content: msg }]
+        messages: [{ role: 'user', content: msg }],
+        maxTokens: 600
       })
     });
     if (!resp.ok) return null;
     const data = await resp.json();
-    return (data.content && data.content[0] && data.content[0].text) || null;
+    return data.text || null;
   } catch(e) { return null; }
 }
 
@@ -9540,15 +9527,13 @@ function buildAIStudyCoach() {
     '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
         '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Ask Ledger</div>' +
-        (_fcGetApiKey()
-          ? '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>'
-          : '<button onclick="openFcApiKeyModal()" style="font-size:10px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer;padding:0">+ Add API key for real AI</button>') +
+        '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>' +
       '</div>' +
       '<div id="coach-chat-msgs" style="min-height:60px;max-height:220px;overflow-y:auto;margin-bottom:10px">' +
         (chatMsgs || '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">Ask me anything — CPA concepts, exam strategy, study advice...</div>') +
       '</div>' +
       '<div style="display:flex;gap:8px">' +
-        '<input id="coach-input" type="text" placeholder="' + (_fcGetApiKey() ? 'e.g. How does partnership basis work under IRC 705?' : 'e.g. I\'m behind on REG, what should I do?') + '" ' +
+        '<input id="coach-input" type="text" placeholder="e.g. How does partnership basis work under IRC 705?" ' +
           'style="flex:1;padding:9px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:12px;outline:none" ' +
           'onkeydown="if(event.key===\'Enter\')sendCoachMessage()" ' +
           'onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'">' +
@@ -9600,22 +9585,15 @@ function sendCoachMessage() {
     typeNext();
   }
 
-  const hasKey = !!_fcGetApiKey();
-  if (hasKey) {
-    _coachAskAI(msg).then(function(aiReply) {
-      if (aiReply) {
-        _showReply(aiReply);
-      } else {
-        _showReply(_coachReply(msg));
-      }
-    }).catch(function() {
+  _coachAskAI(msg).then(function(aiReply) {
+    if (aiReply) {
+      _showReply(aiReply);
+    } else {
       _showReply(_coachReply(msg));
-    });
-  } else {
-    const fallback = _coachReply(msg);
-    const delay = 600 + Math.min(fallback.length * 8, 1400);
-    setTimeout(function() { _showReply(fallback); }, delay);
-  }
+    }
+  }).catch(function() {
+    _showReply(_coachReply(msg));
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -9641,19 +9619,26 @@ function _fcSaveDecks(){try{localStorage.setItem('ledger_fc_decks',JSON.stringif
 function _fcGetApiKey(){return localStorage.getItem('ledger_ai_key')||'';}
 function _fcSetApiKey(k){localStorage.setItem('ledger_ai_key',k.trim());}
 
+// ── Get current user's Firebase ID token for server-side API auth ─────────────
+async function _getAuthToken(){
+  try{ return await (firebaseAuth?.currentUser?.getIdToken())||''; }catch(e){ return ''; }
+}
+
+// ── Proxy all AI calls through /api/ask — the server holds the Anthropic key ──
 async function _fcCallAI(userMsg,maxTok){
-  const key=_fcGetApiKey();
-  if(!key)return null;
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+  const token=await _getAuthToken();
+  const resp=await fetch('/api/ask',{
     method:'POST',
-    headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:maxTok||4096,
+    headers:{'content-type':'application/json',...(token?{'authorization':'Bearer '+token}:{})},
+    body:JSON.stringify({
       system:'You are an expert CPA exam tutor with deep knowledge of FAR, AUD, REG, BAR, ISC, and TCP. You create precise, exam-focused study material.',
-      messages:[{role:'user',content:userMsg}]})
+      messages:[{role:'user',content:userMsg}],
+      maxTokens:maxTok||4096
+    })
   });
-  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e?.error?.message||'API error '+resp.status);}
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e?.error||'API error '+resp.status);}
   const d=await resp.json();
-  return d.content?.[0]?.text||'';
+  return d.text||'';
 }
 function _fcParseJSON(t){const m=t&&t.match(/\[[\s\S]*\]/);if(m){try{return JSON.parse(m[0]);}catch(e){}}try{return JSON.parse(t);}catch(e){return null;}}
 
@@ -9778,8 +9763,6 @@ function _buildQBankPanel() {
 function _buildStudyToolsPanel(){
   const hasCards=_fc.cards.length>0;
   const hasQuiz=_fc.quizQ.length>0;
-  const hasKey=!!_fcGetApiKey();
-
   if(!isPro()&&!hasCards&&!hasQuiz){
     return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">
       <div class="card card-pad">
@@ -9812,16 +9795,10 @@ function _buildStudyToolsPanel(){
     <button onclick="_fc.view='decks';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--mut);margin-bottom:-2px">My Decks${deckCount?` <span style="background:var(--ind);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px">${deckCount}</span>`:''}</button>
   </div>`;
 
-  // API key banner
-  const apiBanner=!hasKey
-    ?`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(90deg,var(--pur-bg),var(--ind-bg));border:1px solid rgba(147,51,234,.2);border-radius:10px;margin-bottom:14px">
-        <div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--pur)">Add Anthropic API key for true AI generation</div><div style="font-size:11px;color:var(--mut)">Without it: smart local parsing. With it: Claude understands your material precisely.</div></div>
-        <button onclick="openFcApiKeyModal()" style="padding:7px 14px;background:linear-gradient(135deg,var(--pur),#7c3aed);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Add Key →</button>
-      </div>`
-    :`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--grn-bg);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:14px">
-        <span style="font-size:11px;font-weight:700;color:var(--grn)">✓ Claude AI active — cards generated by AI</span>
-        <button onclick="openFcApiKeyModal()" style="margin-left:auto;padding:3px 10px;background:transparent;border:1px solid var(--grn);border-radius:6px;cursor:pointer;font-size:10px;color:var(--grn)">Change</button>
-      </div>`;
+  // Always Claude AI active
+  const apiBanner=`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--grn-bg);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:14px">
+      <span style="font-size:11px;font-weight:700;color:var(--grn)">✓ Claude AI active — cards generated by AI</span>
+    </div>`;
 
   const genOptions=`<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:100px">
@@ -10571,7 +10548,6 @@ async function _fcGenerateAsync(type){
   if(statusEl){statusEl.style.display='block';statusEl.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block;margin-right:5px">⟳</span>Generating with AI…';}
   _fcRender();
 
-  const hasKey=!!_fcGetApiKey();
   const count=parseInt(document.getElementById('fc-count')?.value)||_fc.genCount||15;
   const ftype=document.getElementById('fc-type')?.value||_fc.genType||'mixed';
   _fc.genCount=count; _fc.genType=ftype;
@@ -10579,7 +10555,7 @@ async function _fcGenerateAsync(type){
   try{
     if(type==='flashcard'){
       let cards=null;
-      if(hasKey){
+      {
         const focusInstr=ftype==='definitions'?'Focus exclusively on defining key terms and concepts.':
           ftype==='rules'?'Focus exclusively on rules, requirements, thresholds, and standards.':
           ftype==='applied'?'Focus on applied scenarios, calculations, comparisons, and journal entries.':
@@ -10611,7 +10587,7 @@ ${text.slice(0,6000)}`);
 
     }else if(type==='quiz'){
       let qs=null;
-      if(hasKey){
+      {
         const raw=await _fcCallAI(`Generate exactly ${Math.min(count,12)} CPA exam MCQ questions from the material below.
 
 Requirements:
@@ -10636,7 +10612,7 @@ ${text.slice(0,6000)}`);
 
     }else if(type==='summary'){
       let summary=null;
-      if(hasKey){
+      {
         summary=await _fcCallAI(`Create a structured CPA study summary of the material below.
 
 Format with these sections (only include sections that apply to the material):
@@ -11746,10 +11722,76 @@ function closeReviewPrompt(){
 
 function openReviewUrl(){
   closeReviewPrompt();
-  S.reviewLeft=true;
-  saveState();
-  window.open(REVIEW_URL,'_blank');
-  showToast('Thank you — your review means a lot 🙏','ok');
+  openInAppReviewModal();
+}
+
+function openInAppReviewModal(){
+  document.getElementById('review-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='review-modal';
+  el.style.cssText='position:fixed;inset:0;z-index:2100;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .18s ease';
+  el.innerHTML=`
+<div style="background:var(--surf);border-radius:20px;width:100%;max-width:480px;padding:28px 28px 24px;box-shadow:0 24px 80px rgba(0,0,0,.25);position:relative">
+  <button onclick="closeReviewModal()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+  <div style="font-size:26px;margin-bottom:8px">⭐</div>
+  <div style="font-size:18px;font-weight:900;color:var(--txt);margin-bottom:4px;letter-spacing:-.03em">Write a Review</div>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:22px;line-height:1.5">Your feedback goes directly to the Ledger team. It helps us improve and helps other CPA candidates find us.</div>
+  <div style="margin-bottom:16px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Your Rating</div>
+    <div id="review-stars-row" style="display:flex;gap:6px">
+      ${[1,2,3,4,5].map(n=>`<button data-star="${n}" onclick="setReviewStar(${n})" style="font-size:30px;background:none;border:none;cursor:pointer;opacity:.25;transition:opacity .12s,transform .1s;padding:2px;line-height:1;transform:scale(1)" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">⭐</button>`).join('')}
+    </div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Your Name <span style="font-weight:400;text-transform:none">— optional</span></div>
+    <input id="review-name" type="text" placeholder="e.g. Alex M." style="width:100%;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;box-sizing:border-box;transition:border-color .12s" onfocus="this.style.borderColor='var(--ind)'" onblur="this.style.borderColor='var(--bdr)'">
+  </div>
+  <div style="margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Your Review</div>
+    <textarea id="review-text" placeholder="What has Ledger done for your CPA journey? Be as specific as you want — what sections, how many hours, what worked for you." style="width:100%;min-height:110px;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;line-height:1.6;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box;transition:border-color .12s" onfocus="this.style.borderColor='var(--ind)'" onblur="this.style.borderColor='var(--bdr)'"></textarea>
+  </div>
+  <button id="review-submit-btn" onclick="submitReview()" style="width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;transition:opacity .12s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Submit Review</button>
+  <div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px">Sent directly to the Ledger team — not posted publicly</div>
+</div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',function(e){ if(e.target===el) closeReviewModal(); });
+  window._reviewStars=0;
+}
+
+function closeReviewModal(){
+  document.getElementById('review-modal')?.remove();
+}
+
+function setReviewStar(n){
+  window._reviewStars=n;
+  document.querySelectorAll('#review-stars-row [data-star]').forEach(function(btn){
+    btn.style.opacity=parseInt(btn.getAttribute('data-star'))<=n?'1':'.25';
+  });
+}
+
+async function submitReview(){
+  const text=(document.getElementById('review-text')?.value||'').trim();
+  const name=(document.getElementById('review-name')?.value||'').trim();
+  const stars=window._reviewStars||0;
+  const btn=document.getElementById('review-submit-btn');
+  if(!text){showToast('Write something before submitting','err');return;}
+  if(!stars){showToast('Tap a star to rate Ledger','err');return;}
+  if(btn){btn.disabled=true;btn.textContent='Submitting…';}
+  try{
+    const resp=await fetch('/api/review',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({stars,text,name})
+    });
+    if(!resp.ok) throw new Error('failed');
+    closeReviewModal();
+    S.reviewLeft=true;
+    saveState();
+    showToast('Thank you — your review means a lot 🙏','ok');
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Submit Review';}
+    showToast('Could not send — please try again','err');
+  }
 }
 
 // ═══════════════════════════════════════════════
