@@ -4520,20 +4520,23 @@ function _buildDashProgress(){
     ${pacingCards}
   </div>
 
-  <div class="dash-row-2col" style="margin-bottom:20px">
-    <div class="card card-pad">
-      <div class="section-title">Study Calendar</div>
-      ${calHTML}
-    </div>
-    <div class="card card-pad">
-      <div class="section-title" style="margin-bottom:14px">${isPro()?'Study Activity — Last 52 Weeks':'Study Activity — Last 16 Weeks'}</div>
-      ${buildHeatMap()}
-    </div>
+  <div class="card card-pad" style="margin-bottom:20px">
+    <div class="section-title">Study Calendar</div>
+    ${calHTML}
   </div>
 
-  ${buildAdvancedAnalytics()}
+  <div class="card card-pad" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="section-title" style="margin:0">${isPro()?'Study Activity — Last 52 Weeks':'Study Activity — Last 16 Weeks'}</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">Colored by section studied · hover for details</div>
+      </div>
+      ${!isPro()?`<button onclick="openUpgradeModal('Full Session History')" style="font-size:11px;font-weight:700;color:var(--ora);background:var(--ora-bg);border:1px solid rgba(212,64,0,.2);border-radius:8px;padding:4px 10px;cursor:pointer">Unlock 52 weeks →</button>`:''}
+    </div>
+    ${buildHeatMap()}
+  </div>
 
-  <div id="schedule-section">${buildStudySchedule()}</div>`;
+  ${buildAdvancedAnalytics()}`;
 }
 
 function buildCalendar(){
@@ -7398,20 +7401,40 @@ document.addEventListener('keydown',e=>{
 // HEAT MAP
 // ═══════════════════════════════════════════════
 function buildHeatMap(){
-  const logMap={};
+  // Build per-day log: {hours, primarySection}
+  const dayMap={};
   (S.activities||[]).forEach(a=>{
     const d=a.date.slice(0,10);
-    logMap[d]=(logMap[d]||0)+(a.hours||0);
+    if(!dayMap[d]) dayMap[d]={hours:0,sections:{}};
+    dayMap[d].hours+=(a.hours||0);
+    dayMap[d].sections[a.section]=(dayMap[d].sections[a.section]||0)+(a.hours||0);
   });
+  // Determine primary section per day
+  Object.keys(dayMap).forEach(d=>{
+    const secs=dayMap[d].sections;
+    dayMap[d].primary=Object.keys(secs).sort((a,b)=>secs[b]-secs[a])[0]||null;
+  });
+
   const pro=isPro();
   const weeks=pro?52:16;
-  const CELL=13,GAP=3;
-  const today=new Date();today.setHours(0,0,0,0);
+  const CELL=14, GAP=3;
+  const today=new Date(); today.setHours(0,0,0,0);
   const startDay=new Date(today);
   startDay.setDate(today.getDate()-today.getDay()-(weeks-1)*7);
 
-  const colors=['var(--surf3)','#ffe0c4','#fdba74','#fb923c','#d44000'];
-  const darkColors=['var(--surf3)','#2e1200','#4f2000','#803600','#d44000'];
+  // Cell color: use section color at varying opacity based on hours
+  function cellBg(key){
+    const entry=dayMap[key];
+    if(!entry||entry.hours===0) return isDark?'rgba(255,255,255,.06)':'rgba(0,0,0,.07)';
+    const sec=entry.primary;
+    const baseColor=(sec&&EXAMS[sec])?EXAMS[sec].color:'var(--ora)';
+    const h=entry.hours;
+    const op=h<1?0.3:h<2?0.55:h<3?0.75:h<4?0.9:1;
+    // Convert to rgba-compatible — use a fixed palette fallback for css vars
+    const hexMap={'var(--ora)':'#d44000','var(--ind)':'#6366f1','var(--pur)':'#a855f7','var(--grn)':'#22c55e','var(--tea)':'#14b8a6','var(--amb)':'#f59e0b'};
+    const hex=hexMap[baseColor]||baseColor;
+    return isDark?`${hex}${Math.round(op*255).toString(16).padStart(2,'0')}`:`${hex}${Math.round(op*255).toString(16).padStart(2,'0')}`;
+  }
 
   const cols=[];
   for(let w=0;w<weeks;w++){
@@ -7419,42 +7442,49 @@ function buildHeatMap(){
     for(let d=0;d<7;d++){
       const cur=new Date(startDay);
       cur.setDate(startDay.getDate()+w*7+d);
-      if(cur>today){cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:var(--surf2)"></div>`);continue;}
+      if(cur>today){
+        cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:3px;background:${isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)'}"></div>`);
+        continue;
+      }
       const key=cur.toISOString().slice(0,10);
-      const hrs=logMap[key]||0;
-      const intensity=hrs===0?0:hrs<1?1:hrs<2?2:hrs<3?3:4;
-      const bg=isDark?darkColors[intensity]:colors[intensity];
-      cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${bg}" title="${key}: ${hrs>0?hrs.toFixed(1)+'h':'no session'}"></div>`);
+      const entry=dayMap[key];
+      const hrs=entry?entry.hours:0;
+      const sec=entry?entry.primary:null;
+      const isToday=cur.getTime()===today.getTime();
+      const bg=cellBg(key);
+      const tooltip=hrs>0?`${key} · ${hrs.toFixed(1)}h${sec?' · '+sec:''}`:`${key} · no study`;
+      cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:3px;background:${bg};${isToday?'outline:2px solid var(--ora);outline-offset:1px':''}" title="${tooltip}"></div>`);
     }
     cols.push(`<div style="display:flex;flex-direction:column;gap:${GAP}px">${cells.join('')}</div>`);
   }
 
-  // Month labels — show on every 4th week start
-  const monthLabels=[];
-  for(let w=0;w<weeks;w++){
-    const d=new Date(startDay);d.setDate(startDay.getDate()+w*7);
-    const isFirst=w===0||d.getDate()<=7;
-    monthLabels.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:8px;color:${isFirst?'var(--mut)':'transparent'};line-height:1;white-space:nowrap;overflow:visible">${d.toLocaleDateString('en-US',{month:'short'})}</div>`);
-  }
-  // Only keep labels at month boundaries
+  // Month labels at boundaries
   let lastMonth='';
-  const sparseLabels=monthLabels.map((lbl,w)=>{
-    const d=new Date(startDay);d.setDate(startDay.getDate()+w*7);
+  const sparseLabels=[];
+  for(let w=0;w<weeks;w++){
+    const d=new Date(startDay); d.setDate(startDay.getDate()+w*7);
     const m=d.toLocaleDateString('en-US',{month:'short'});
-    if(m!==lastMonth){lastMonth=m;return`<div style="width:${CELL}px;flex-shrink:0;font-size:8px;color:var(--mut);line-height:1;white-space:nowrap">${m}</div>`;}
-    return`<div style="width:${CELL}px;flex-shrink:0"></div>`;
-  }).join('');
+    if(m!==lastMonth){lastMonth=m;sparseLabels.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:9px;color:var(--mut);line-height:1;white-space:nowrap;font-weight:600">${m}</div>`);}
+    else sparseLabels.push(`<div style="width:${CELL}px;flex-shrink:0"></div>`);
+  }
 
-  // Day labels (left side)
+  // Day labels
   const dayLabels=['S','M','T','W','T','F','S'].map((day,i)=>
-    `<div style="height:${CELL}px;line-height:${CELL}px;font-size:8px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;flex-shrink:0">${day}</div>`
+    `<div style="height:${CELL}px;line-height:${CELL}px;font-size:9px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:5px;flex-shrink:0;font-weight:600">${day}</div>`
   ).join('');
 
   // Stats
-  const allDays=Object.keys(logMap);
-  const activeDaysTotal=allDays.filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).length;
-  const totalHrs=allDays.filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).reduce((a,d)=>a+(logMap[d]||0),0);
+  const windowDays=Object.keys(dayMap).filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;});
+  const activeDaysTotal=windowDays.filter(d=>dayMap[d].hours>0).length;
+  const totalHrs=windowDays.reduce((a,d)=>a+(dayMap[d]?.hours||0),0);
   const avgHrs=activeDaysTotal>0?(totalHrs/activeDaysTotal).toFixed(1):0;
+
+  // Section legend from user's sections
+  const userSections=S.sections||[];
+  const sectionLegend=userSections.map(s=>{
+    const color=(EXAMS[s]?.color)||'var(--ora)';
+    return`<div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:2px;background:${color}"></div><span style="font-size:10px;color:var(--mut)">${s}</span></div>`;
+  }).join('');
 
   let gridHTML;
   if(pro){
@@ -7464,11 +7494,11 @@ function buildHeatMap(){
     const currentCol=cols[15];
     gridHTML=`<div style="display:flex;gap:${GAP}px;align-items:flex-start">
   <div style="position:relative;display:inline-flex;gap:${GAP}px">
-    <div style="display:flex;gap:${GAP}px;filter:blur(3px);opacity:.4;pointer-events:none;user-select:none">${historyCols}</div>
+    <div style="display:flex;gap:${GAP}px;filter:blur(4px);opacity:.35;pointer-events:none;user-select:none">${historyCols}</div>
     <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Session History')">
-      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:7px 11px;text-align:center;box-shadow:var(--shadow-md)">
-        <div style="font-size:10px;font-weight:800;color:var(--ora);margin-bottom:1px">15 weeks hidden</div>
-        <div style="font-size:9px;color:var(--sub);font-weight:600">Unlock with Pro →</div>
+      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;text-align:center;box-shadow:var(--shadow-md)">
+        <div style="font-size:11px;font-weight:800;color:var(--ora);margin-bottom:2px">36 weeks hidden</div>
+        <div style="font-size:10px;color:var(--sub);font-weight:600">Unlock with Pro →</div>
       </div>
     </div>
   </div>
@@ -7477,26 +7507,24 @@ function buildHeatMap(){
   }
 
   return`
-<div style="overflow-x:auto">
-  <div style="display:flex">
-    <div style="width:18px;flex-shrink:0"></div>
-    <div style="display:flex;gap:${GAP}px;margin-bottom:4px">${sparseLabels}</div>
-  </div>
-  <div style="display:flex;gap:4px;align-items:flex-start">
-    <div style="display:flex;flex-direction:column;gap:${GAP}px;padding-top:0">${dayLabels}</div>
-    ${gridHTML}
-  </div>
-  <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
-    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">
-      Less ${(isDark?darkColors:colors).map(c=>`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${c}"></div>`).join('')} More
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+  <div style="min-width:fit-content">
+    <div style="display:flex;margin-bottom:5px">
+      <div style="width:22px;flex-shrink:0"></div>
+      <div style="display:flex;gap:${GAP}px">${sparseLabels.join('')}</div>
     </div>
-    <span style="font-size:10px;color:var(--mut)">·</span>
-    <span style="font-size:10px;color:var(--sub);font-weight:600">${activeDaysTotal} active days</span>
-    <span style="font-size:10px;color:var(--mut)">·</span>
-    <span style="font-size:10px;color:var(--sub);font-weight:600">${totalHrs.toFixed(0)}h total</span>
-    <span style="font-size:10px;color:var(--mut)">·</span>
-    <span style="font-size:10px;color:var(--sub);font-weight:600">${avgHrs}h avg/session day</span>
+    <div style="display:flex;gap:4px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:${GAP}px;padding-top:1px;width:22px">${dayLabels}</div>
+      ${gridHTML}
+    </div>
   </div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap">
+  ${sectionLegend}
+  <div style="width:1px;height:12px;background:var(--bdr);flex-shrink:0"></div>
+  <span style="font-size:11px;color:var(--sub);font-weight:600">${activeDaysTotal} active days</span>
+  <span style="font-size:11px;color:var(--sub);font-weight:600">${totalHrs.toFixed(0)}h total</span>
+  <span style="font-size:11px;color:var(--sub);font-weight:600">${avgHrs}h avg/active day</span>
 </div>`;
 }
 
@@ -12341,7 +12369,7 @@ function toggleScheduleEdit(){
 }
 
 function buildStudySchedule(){
-  if(isElite()) return '<div id="schedule-section">'+_buildAIPlanUI()+'</div>';
+  // AI Study Plan lives in the dedicated Study Plan tab — never show it here
 
   const pro=isPro();
   const schedule=S.studySchedule||_generateBasicSchedule();
