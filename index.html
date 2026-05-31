@@ -763,6 +763,9 @@ body.no-app-nav .session-fab{display:none!important}
   .pc-right select{margin-top:0!important;flex-shrink:0}
   .pc-right .pc-log-btn{margin-left:auto}
 }
+/* ── PLAN TAB CALENDAR ── */
+.plan-grid{display:grid;grid-template-columns:1fr 290px;gap:18px;align-items:start}
+@media(max-width:860px){.plan-grid{grid-template-columns:1fr}}
 /* ── DASHBOARD 2-COL ROW (tablet) ── */
 .dash-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 .dash-row-2col>.card{margin-bottom:0!important}
@@ -3413,6 +3416,7 @@ function renderApp(){
         ${[
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
+          {id:'plan',icon:'🗓',label:'Plan'},
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
@@ -3453,8 +3457,8 @@ function switchTab(tab){
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','profile','explore','studylab','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
+  const tabOrder=['feed','dashboard','plan','profile','explore','studylab','tips'];
+  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -3478,6 +3482,7 @@ function renderTab(){
   if(!el)return;
   if(currentTab==='feed')el.innerHTML=buildFeed();
   else if(currentTab==='dashboard')el.innerHTML=buildDashboard();
+  else if(currentTab==='plan')el.innerHTML=buildStudyPlanTab();
   else if(currentTab==='profile')el.innerHTML=buildProfile();
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
@@ -3918,7 +3923,10 @@ function buildReadinessCard(){
           <span style="font-size:11px;font-weight:700;color:var(--sub);width:36px;text-align:right">${pts}/${max}</span>
         </div>`).join('')).join('')}
       </div>
-      ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5">📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals. These are the strongest predictors of passing.</div>`:''}
+      ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <span>📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
+        <button onclick="document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">View Score Tracker →</button>
+      </div>`:''}
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
   </div>
@@ -4425,7 +4433,7 @@ function buildDashboard(){
     ${commitmentCard}
   </div>
 
-  <div class="card card-pad" style="margin-bottom:20px">
+  <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
       <div class="section-title" style="margin:0">Score Tracker</div>
       <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
@@ -8665,6 +8673,14 @@ function injectMobileNav(){
     </div>
     <span class="mob-more-chev">›</span>
   </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('plan')">
+    <div class="mob-more-icon" style="background:#fff7ed">🗓</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Study Plan</div>
+      <div class="mob-more-sub">AI-generated day-by-day calendar</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('tips')">
     <div class="mob-more-icon" style="background:#fff7ed">◆</div>
     <div class="mob-more-text">
@@ -11731,18 +11747,338 @@ function generateAIPlan(){
   saveState();
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// STUDY PLAN TAB — full calendar view
+// ═══════════════════════════════════════════════════════════════════
+let _planViewMonth=null; // {year,month}
+
+function buildStudyPlanTab(){
+  const pro=isPro();
+  if(!pro) return _buildPlanGate();
+  const plan=S.aiStudyPlan;
+  if(!plan) return _buildPlanEmpty();
+  return _buildPlanCalendar(plan);
+}
+
+function _buildPlanGate(){
+  const feats=[
+    ['📅','Day-by-day calendar','See exactly what to study every day from now to exam day'],
+    ['⏱','Hours planned per day','No guessing — your daily study block is laid out for you'],
+    ['🎯','Phase-based roadmap','Foundation → MCQ Drill → Mock Exams → Final Sprint'],
+    ['🤖','Built from your data','Uses your exam date, logged hours, and weekly capacity'],
+    ['✅','Track execution','Mark days done. See your completion rate build toward 100%'],
+    ['🔄','Regenerate anytime','Change your exam date? Rebuild the plan in 2 seconds'],
+  ];
+  return`<div style="max-width:800px;margin:0 auto;padding:40px 20px;text-align:center">
+    <div style="font-size:56px;margin-bottom:18px">🗓</div>
+    <div style="font-size:28px;font-weight:900;letter-spacing:-.04em;margin-bottom:10px">AI Study Plan</div>
+    <div style="font-size:14px;color:var(--sub);max-width:440px;margin:0 auto 28px;line-height:1.7">A personalized day-by-day calendar built around your exam date. Know exactly what to study each day — no guesswork.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:660px;margin:0 auto 32px;text-align:left">
+      ${feats.map(([icon,title,desc])=>`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px">
+        <div style="font-size:26px;margin-bottom:8px">${icon}</div>
+        <div style="font-size:12px;font-weight:800;margin-bottom:4px;color:var(--txt)">${title}</div>
+        <div style="font-size:11px;color:var(--mut);line-height:1.5">${desc}</div>
+      </div>`).join('')}
+    </div>
+    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.35)">Unlock Pro — Get Your Plan</button>
+    <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($12/mo) and Elite ($22/mo)</div>
+  </div>`;
+}
+
+function _buildPlanEmpty(){
+  const sec=getCurrentSection();
+  const ex=EXAMS[sec]||{color:'var(--ora)',full:sec};
+  const examDate=S.examDates?.[sec];
+  const daysLeft=examDate?Math.max(0,Math.round((new Date(examDate+' 00:00:00')-Date.now())/86400000)):null;
+  return`<div style="max-width:720px;margin:0 auto;text-align:center;padding:60px 20px">
+    <div style="font-size:56px;margin-bottom:18px">🗓</div>
+    <div style="font-size:24px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Build Your Study Plan</div>
+    <div style="font-size:13px;color:var(--sub);max-width:380px;margin:0 auto 16px;line-height:1.7">Ledger analyzes your ${ex.full||sec} exam date, hours logged, and weekly capacity — then builds a day-by-day calendar.</div>
+    ${examDate
+      ?`<div style="display:inline-flex;align-items:center;gap:8px;background:${ex.color}14;border:1px solid ${ex.color}33;border-radius:10px;padding:8px 18px;margin-bottom:28px">
+          <span class="badge badge-${sec}">${sec}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--txt)">${daysLeft} days to exam</span>
+          <span style="font-size:12px;color:var(--mut)">· ${new Date(examDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})}</span>
+        </div>`
+      :`<div style="font-size:12px;color:var(--amb);background:var(--amb-bg);border:1px solid var(--amb);border-radius:10px;padding:9px 18px;margin-bottom:28px;display:inline-block">⚠️ Set your ${sec} exam date in Dashboard → Exam Pacing first</div>`}
+    <br>
+    <button id="gen-plan-btn" onclick="runGeneratePlan()" ${!examDate?'disabled style="opacity:.45;cursor:not-allowed;"':''} style="padding:14px 44px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.35)${examDate?';animation:pulse-glow 2s infinite':''}">✨ Generate My Plan</button>
+    <div style="font-size:11px;color:var(--mut);margin-top:12px">Takes ~2 seconds · Focused on ${sec} · Regenerate anytime</div>
+  </div>`;
+}
+
+function _buildPlanCalendar(plan){
+  const todayObj=new Date();todayObj.setHours(0,0,0,0);
+  const todayStr=todayObj.toISOString().slice(0,10);
+  if(!_planViewMonth){
+    _planViewMonth={year:todayObj.getFullYear(),month:todayObj.getMonth()};
+  }
+  const {year,month}=_planViewMonth;
+  const monthStart=new Date(year,month,1);
+  const monthEnd=new Date(year,month+1,0);
+  const monthName=monthStart.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const dayMap={};
+  plan.days.forEach(d=>{dayMap[d.date]=d;});
+
+  // Calendar grid cells
+  const startDow=monthStart.getDay();
+  const totalCells=Math.ceil((startDow+monthEnd.getDate())/7)*7;
+  const cells=[];
+  for(let i=0;i<totalCells;i++){
+    const off=i-startDow;
+    const cellDate=new Date(year,month,1+off);
+    const cellStr=cellDate.toISOString().slice(0,10);
+    const inMonth=off>=0&&off<monthEnd.getDate();
+    if(!inMonth){
+      cells.push(`<div style="min-height:78px;border-radius:10px;background:var(--surf2);opacity:.25;border:1px solid var(--bdr)"></div>`);
+      continue;
+    }
+    const d=dayMap[cellStr];
+    const isToday=cellStr===todayStr;
+    const isPast=cellDate<todayObj;
+    const dayNum=cellDate.getDate();
+    let bg='var(--surf)',border=isToday?'2px solid var(--ora)':'1px solid var(--bdr)',inner='';
+    if(d&&d.isStudy){
+      const ex=EXAMS[d.section]||{color:'var(--ind)'};
+      const m=ACTIVITY_MODES[d.mode]||ACTIVITY_MODES.new_material;
+      bg=isPast?'var(--surf2)':ex.color+'12';
+      border=isToday?`2px solid ${ex.color}`:`1px solid ${ex.color}28`;
+      inner=`<div style="font-size:10px;font-weight:${isToday?900:700};color:${isToday?ex.color:'var(--sub)'};margin-bottom:4px">${dayNum}</div>
+        <div style="font-size:18px;line-height:1;margin-bottom:3px">${d.done?'✅':m.icon}</div>
+        <div style="font-size:9px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
+        <div style="font-size:9px;color:var(--mut)">${d.hours}h</div>`;
+    }else if(d&&!d.isStudy){
+      inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
+        <div style="font-size:18px;opacity:.35">🛌</div>
+        <div style="font-size:9px;color:var(--mut);margin-top:2px">Rest</div>`;
+    }else{
+      inner=`<div style="font-size:10px;font-weight:600;color:var(--mut)">${dayNum}</div>`;
+    }
+    cells.push(`<div onclick="${d?`openPlanDayDetail('${cellStr}')`:''}" style="min-height:78px;border-radius:10px;background:${bg};border:${border};padding:8px 6px;text-align:center;cursor:${d?'pointer':'default'};transition:transform .12s,box-shadow .12s;${isPast&&d?'opacity:.6':''}" ${d?`onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow=''"`:''}>
+      ${inner}
+    </div>`);
+  }
+  const dayHdrs=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div style="text-align:center;font-size:9px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;padding-bottom:6px">${d}</div>`).join('');
+
+  // Sidebar: today block
+  const todayEntry=dayMap[todayStr];
+  let todaySide='';
+  if(todayEntry&&todayEntry.isStudy){
+    const ex=EXAMS[todayEntry.section]||{color:'var(--ora)'};
+    const m=ACTIVITY_MODES[todayEntry.mode]||ACTIVITY_MODES.new_material;
+    todaySide=`<div style="background:linear-gradient(135deg,${ex.color}14,${ex.color}06);border:1.5px solid ${ex.color}44;border-radius:14px;padding:16px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;color:${ex.color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">📍 Today — Day ${todayEntry.dayNum}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <div style="background:${m.color};color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:800">${m.icon} ${m.label}</div>
+        <span class="badge badge-${todayEntry.section}">${todayEntry.section}</span>
+      </div>
+      <div style="font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px">${todayEntry.hours}h</div>
+      <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${m.desc}</div>
+      <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">💡 ${_getPlanTip(todayEntry.mode)}</div>
+      ${todayEntry.done
+        ?`<div style="background:#10b98120;color:#10b981;border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:700">✓ Day Complete!</div>`
+        :`<button onclick="markPlanDayDone('${todayStr}')" style="width:100%;padding:10px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Today Done ✓</button>`}
+    </div>`;
+  }else if(todayEntry&&!todayEntry.isStudy){
+    todaySide=`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🛌</div>
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Rest Day</div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.5">Recovery is part of the plan. Your brain consolidates memory during rest.</div>
+    </div>`;
+  }
+
+  // Sidebar: phase roadmap
+  const todayPhase=todayEntry?.phase;
+  const phaseRows=plan.phases.map(p=>{
+    const pd=plan.days.filter(d=>d.phase===p.n&&d.isStudy);
+    const done=pd.filter(d=>d.done).length;
+    const pp=pd.length?Math.round(done/pd.length*100):0;
+    const cur=todayPhase===p.n;
+    return`<div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;background:${cur?p.color+'14':'var(--surf2)'};border:1px solid ${cur?p.color+'44':'var(--bdr)'}">
+      <div style="font-size:18px;flex-shrink:0">${p.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:800;color:${cur?p.color:'var(--txt)'};margin-bottom:3px">${p.name}</div>
+        <div style="height:3px;background:var(--surf3);border-radius:2px"><div style="height:3px;background:${p.color};border-radius:2px;width:${pp}%"></div></div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:var(--mut);flex-shrink:0">${pp}%</div>
+    </div>`;
+  }).join('');
+
+  // Countdown + progress
+  const daysLeft=Math.max(0,Math.ceil((new Date(plan.examDate+' 00:00')-Date.now())/86400000));
+  const studyDays=plan.days.filter(d=>d.isStudy);
+  const doneDays=studyDays.filter(d=>d.done).length;
+  const pct=studyDays.length?Math.round(doneDays/studyDays.length*100):0;
+  const totalHrsPlanned=studyDays.reduce((s,d)=>s+d.hours,0);
+  const ex=EXAMS[plan.primarySec]||{color:'var(--ora)',full:plan.primarySec};
+
+  return`<div style="max-width:1140px;margin:0 auto">
+    <!-- Header -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin:0">Study Plan</h1>
+          <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
+          <span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>
+        </div>
+        <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete</p>
+      </div>
+      <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;flex-shrink:0">↺ Rebuild Plan</button>
+    </div>
+
+    <!-- 2-col layout -->
+    <div class="plan-grid">
+
+      <!-- CALENDAR -->
+      <div class="card" style="padding:20px">
+        <!-- Month nav -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <button onclick="planPrevMonth()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--sub)">‹</button>
+          <div style="font-size:15px;font-weight:800">${monthName}</div>
+          <button onclick="planNextMonth()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--sub)">›</button>
+        </div>
+        <!-- Mode legend -->
+        <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+          ${Object.entries(ACTIVITY_MODES).filter(([k])=>k!=='rest').map(([k,m])=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${m.icon} ${m.label}</div>`).join('')}
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">✅ Done &nbsp;🛌 Rest</div>
+        </div>
+        <!-- Day headers + grid -->
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px">${dayHdrs}</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${cells.join('')}</div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div>
+        ${todaySide}
+
+        <!-- Exam countdown -->
+        <div class="card card-pad" style="margin-bottom:14px">
+          <div style="text-align:center;padding:6px 0 10px">
+            <div style="font-size:40px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${daysLeft}</div>
+            <div style="font-size:12px;color:var(--mut);margin-bottom:6px">days to ${plan.primarySec} exam</div>
+            <div style="font-size:11px;color:var(--sub);font-weight:600">${new Date(plan.examDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+          </div>
+          <div style="height:6px;background:var(--surf2);border-radius:4px;overflow:hidden;margin-bottom:4px">
+            <div style="height:6px;background:linear-gradient(90deg,${ex.color},${ex.color}88);border-radius:4px;width:${pct}%;transition:width .6s"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)">
+            <span>${doneDays} days done</span><span>${pct}% complete</span>
+          </div>
+        </div>
+
+        <!-- Phase roadmap -->
+        <div class="card card-pad" style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px">Your Roadmap</div>
+          <div style="display:flex;flex-direction:column;gap:6px">${phaseRows}</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card card-pad">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${[
+              [Math.round(totalHrsPlanned)+'h','Total Planned'],
+              [studyDays.length+' days','Study Days'],
+              [doneDays+' done','Completed'],
+              [plan.phases.length+' phases','Roadmap'],
+            ].map(([v,l])=>`<div style="text-align:center;background:var(--surf2);border-radius:10px;padding:10px 6px">
+              <div style="font-size:18px;font-weight:900;color:var(--txt);letter-spacing:-.03em">${v}</div>
+              <div style="font-size:10px;color:var(--mut);margin-top:2px">${l}</div>
+            </div>`).join('')}
+          </div>
+          <div style="font-size:10px;color:var(--mut);text-align:center;margin-top:10px;line-height:1.5">Generated ${timeAgo(plan.generated)} · <em>Becker/Gleim guides the what — this plan guides the when</em></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function planPrevMonth(){
+  if(!_planViewMonth){const n=new Date();_planViewMonth={year:n.getFullYear(),month:n.getMonth()};}
+  let{year,month}=_planViewMonth;
+  month--;if(month<0){month=11;year--;}
+  _planViewMonth={year,month};renderTab();
+}
+function planNextMonth(){
+  if(!_planViewMonth){const n=new Date();_planViewMonth={year:n.getFullYear(),month:n.getMonth()};}
+  let{year,month}=_planViewMonth;
+  month++;if(month>11){month=0;year++;}
+  _planViewMonth={year,month};renderTab();
+}
+
+function openPlanDayDetail(dateStr){
+  const plan=S.aiStudyPlan;if(!plan)return;
+  const day=plan.days.find(d=>d.date===dateStr);if(!day)return;
+  const dt=new Date(dateStr+'T12:00:00');
+  const dateLabel=dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const ex=day.isStudy&&EXAMS[day.section]?EXAMS[day.section]:{color:'var(--mut)',full:'Rest'};
+  const m=day.isStudy?(ACTIVITY_MODES[day.mode]||ACTIVITY_MODES.new_material):ACTIVITY_MODES.rest;
+  const todayStr=new Date().toISOString().slice(0,10);
+  document.getElementById('plan-day-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='plan-day-modal';
+  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3)">
+    <div style="height:5px;background:${ex.color}"></div>
+    <div style="padding:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:var(--txt)">${dateLabel}</div>
+          <div style="font-size:11px;color:var(--mut)">Day ${day.dayNum} of ${plan.daysLeft}</div>
+        </div>
+        <button onclick="document.getElementById('plan-day-modal').remove()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center">×</button>
+      </div>
+      ${day.isStudy?`
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${m.icon} ${m.label}</div>
+          <span class="badge badge-${day.section}">${day.section}</span>
+          <span style="font-size:15px;font-weight:900;color:var(--txt)">${day.hours}h</span>
+        </div>
+        <div style="font-size:13px;color:var(--sub);line-height:1.6;background:var(--surf2);border-radius:10px;padding:12px 14px;margin-bottom:14px">${m.desc}</div>
+        <div style="font-size:11px;color:var(--mut);font-style:italic;margin-bottom:16px">💡 ${_getPlanTip(day.mode)}</div>
+        ${day.done
+          ?`<div style="background:#10b98120;color:#10b981;border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
+          :dateStr<=todayStr?`<button onclick="markPlanDayDone('${dateStr}');document.getElementById('plan-day-modal')?.remove()" style="width:100%;padding:11px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Done ✓</button>`
+          :`<div style="background:var(--surf2);border-radius:10px;padding:10px;text-align:center;font-size:12px;color:var(--mut)">Upcoming — not yet</div>`}
+      `:`
+        <div style="text-align:center;padding:20px 0">
+          <div style="font-size:40px;margin-bottom:10px">🛌</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:6px">Rest Day</div>
+          <div style="font-size:12px;color:var(--mut);line-height:1.5">Recovery is part of the plan. Your brain consolidates memory during rest.</div>
+        </div>
+      `}
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+}
+
 function runGeneratePlan(){
-  const el=document.getElementById('schedule-section');
-  if(el) el.innerHTML='<div class="card card-pad" style="text-align:center;padding:40px 20px">'+
-    '<div style="font-size:40px;margin-bottom:16px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>'+
-    '<div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px">Analyzing your study data…</div>'+
-    '<div style="font-size:12px;color:var(--mut)">Building your personalized day-by-day roadmap</div>'+
-    '</div>';
+  // Show loading state wherever we are
+  if(currentTab==='plan'){
+    const pc=document.getElementById('page-content');
+    if(pc) pc.innerHTML=`<div style="max-width:600px;margin:80px auto;text-align:center">
+      <div style="font-size:48px;margin-bottom:18px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>
+      <div style="font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px">Analyzing your study data…</div>
+      <div style="font-size:13px;color:var(--mut)">Building your personalized day-by-day calendar</div>
+    </div>`;
+  } else {
+    const el=document.getElementById('schedule-section');
+    if(el) el.innerHTML='<div class="card card-pad" style="text-align:center;padding:40px 20px">'+
+      '<div style="font-size:40px;margin-bottom:16px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>'+
+      '<div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px">Analyzing your study data…</div>'+
+      '<div style="font-size:12px;color:var(--mut)">Building your personalized day-by-day roadmap</div>'+
+      '</div>';
+  }
   setTimeout(()=>{
     generateAIPlan();
-    const el2=document.getElementById('schedule-section');
-    if(el2) el2.outerHTML=buildStudySchedule();
-    showToast('Your AI study plan is ready! 🤖','ok');
+    _planViewMonth=null; // reset to current month on fresh generate
+    if(currentTab==='plan'){
+      renderTab();
+    } else {
+      const el2=document.getElementById('schedule-section');
+      if(el2) el2.outerHTML=buildStudySchedule();
+    }
+    showToast('Your AI study plan is ready! 🗓','ok');
   },1800);
 }
 
@@ -11750,14 +12086,18 @@ function markPlanDayDone(dateStr){
   if(!S.aiStudyPlan) return;
   const day=S.aiStudyPlan.days.find(d=>d.date===dateStr);
   if(day){day.done=true;saveState();}
-  const el=document.getElementById('schedule-section');
-  if(el) el.outerHTML=buildStudySchedule();
+  if(currentTab==='plan'){
+    renderTab();
+  } else {
+    const el=document.getElementById('schedule-section');
+    if(el) el.outerHTML=buildStudySchedule();
+  }
   showToast('Day complete! Keep the streak going 🔥','ok');
   checkAchievements();
 }
 
 function regeneratePlan(){
-  if(!confirm('Regenerate your study plan? Your current plan will be replaced.')) return;
+  if(!confirm('Rebuild your study plan? Your current plan will be replaced.')) return;
   S.aiStudyPlan=null;saveState();
   runGeneratePlan();
 }
