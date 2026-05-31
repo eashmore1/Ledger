@@ -485,13 +485,13 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── SESSION TIMER OVERLAY ── */
 .sess-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(10px)}
 .sess-overlay.open{display:flex}
-.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:520px;overflow:hidden;animation:modalIn .2s ease}
+.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:600px;overflow:hidden;animation:modalIn .2s ease}
 .sess-recap-grid{display:grid;grid-template-columns:1fr;gap:0}
 @media(min-width:640px){.sess-recap-grid{grid-template-columns:260px 1fr;gap:0}.sess-recap-left{border-right:1px solid var(--bdr);padding:24px 22px 28px}.sess-recap-right{padding:24px 24px 28px}.sess-box .sess-body{padding:0!important}}
 .sess-recap-left{padding:20px 20px 24px}
 .sess-recap-right{padding:20px 20px 24px}
 .sess-color-bar{height:5px;width:100%;transition:background .3s}
-.sess-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+.sess-hdr{display:flex;align-items:center;justify-content:space-between;padding:28px 32px 0}
 .sess-status{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
 .sess-st-setup{background:rgba(212,64,0,.1);color:var(--ora)}
 .sess-st-live{background:rgba(239,68,68,.12);color:#ef4444}
@@ -499,7 +499,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-st-done{background:rgba(16,185,129,.12);color:#10b981}
 .sess-close-btn{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px 6px;border-radius:6px;line-height:1}
 .sess-close-btn:hover{background:var(--surf2);color:var(--txt)}
-.sess-body{padding:20px 24px 28px}
+.sess-body{padding:20px 32px 36px}
 .rec-dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:rec-pulse 1.1s infinite}
 @keyframes rec-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 .sess-fgrp{margin-bottom:18px}
