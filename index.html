@@ -1410,6 +1410,37 @@ function openStripePortal(){
   window.open(STRIPE_CONFIG.portalUrl,'_blank');
 }
 
+function showCancelConfirm(){
+  const section=document.getElementById('cancel-sub-section');
+  if(!section) return;
+  const tierName=subTierLabel();
+  section.innerHTML=`
+<div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:16px 18px;margin-bottom:10px">
+  <div style="font-size:14px;font-weight:800;color:#dc2626;margin-bottom:6px">Cancel your ${tierName} plan?</div>
+  <div style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:14px">You'll keep access until the end of your current billing period. After that your account reverts to Free — you'll lose AI Coach, Score Tracker, advanced analytics, and all Pro features.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button onclick="executeCancelSubscription()" style="padding:9px 18px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Yes, cancel my plan</button>
+    <button onclick="renderAppSettingsSection()" style="padding:9px 18px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-weight:600;color:var(--txt);cursor:pointer">Keep my plan</button>
+  </div>
+</div>`;
+}
+
+function executeCancelSubscription(){
+  if(STRIPE_ENABLED&&!STRIPE_CONFIG.portalUrl.includes('REPLACE')){
+    // Send to Stripe customer portal — handles cancellation officially
+    window.open(STRIPE_CONFIG.portalUrl+'?flow=cancel','_blank');
+    showToast('Redirecting to cancel in Stripe portal…','ok');
+    renderAppSettingsSection();
+  } else {
+    // Beta / dev mode — downgrade immediately
+    SUB={tier:'free',billingCycle:'monthly',startDate:null,trialUsed:SUB.trialUsed||false,studentVerified:false};
+    saveSub();
+    showToast('Subscription cancelled. You\'re on the Free plan.','ok');
+    renderAppSettingsTabs();
+    renderAppSettingsSection();
+  }
+}
+
 // Handle Stripe redirect back with ?billing=success or ?session_id=...
 (function checkBillingReturn(){
   const p = new URLSearchParams(window.location.search);
@@ -8039,10 +8070,19 @@ ${isFreePlan?`
   <span style="font-size:18px">💳</span>
   <div style="text-align:left;flex:1">
     <div style="font-weight:700">Manage Subscription</div>
-    <div style="font-size:11px;color:var(--mut)">Update payment method, download invoices, cancel</div>
+    <div style="font-size:11px;color:var(--mut)">Update payment method, download invoices</div>
   </div>
   <span style="font-size:12px;color:var(--ind)">→</span>
 </button>
+<div id="cancel-sub-section">
+  <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:all .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
+    <span style="font-size:18px">🚫</span>
+    <div style="text-align:left;flex:1">
+      <div style="font-weight:700">Cancel Subscription</div>
+      <div style="font-size:11px;color:var(--mut)">End your plan at the current billing period</div>
+    </div>
+  </button>
+</div>
 `}
 
 <!-- Plan comparison mini -->
