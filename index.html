@@ -2242,7 +2242,7 @@ function renderUpgradeModal(featureHint){
   '<div class="cram-section">'+
   '<div class="cram-inner">'+
   '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">LIMITED OFFER</div>'+
-  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">📚 6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $99 one-time</span></div>'+
+  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">📚 6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
   '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Everything in Pro for 6 months, a structured exam-day protocol, and a personal milestone check-in. Perfect if your exam window is fixed. No recurring charges — ever.</div>'+
   '<div class="cram-feat-row">'+
   '<span class="cram-feat-chip">✓ Full Pro Features</span>'+
@@ -2254,21 +2254,20 @@ function renderUpgradeModal(featureHint){
   '</div>'+
   '<div style="position:relative;z-index:1;flex-shrink:0">'+
   '<div style="text-align:center;margin-bottom:10px">'+
-  '<div style="font-size:28px;font-weight:900;color:#fff">$99</div>'+
+  '<div style="font-size:28px;font-weight:900;color:#fff">$'+cramPrice+'</div>'+
   '<div style="font-size:11px;color:rgba(255,255,255,.5)">one-time · 6 months</div>'+
-  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $120 for 6×Pro monthly</div>'+
+  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $54 for 6×Pro monthly</div>'+
   '</div>'+
   cramCTA+
   '</div>'+
   '</div>'+
   // Student discount
-  '<div class="student-section" onclick="openStudentDiscount()">'+
+  '<div class="student-section" style="cursor:default;opacity:.7">'+
   '<span style="font-size:26px">🎓</span>'+
   '<div style="flex:1">'+
-  '<div style="font-size:13px;font-weight:800;color:var(--tea)">Student Discount — 35% off Pro</div>'+
-  '<div style="font-size:11px;color:var(--sub);margin-top:2px">Verify your .edu email or enrollment status for $13/mo Pro. Takes 30 seconds.</div>'+
+  '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:800;color:var(--txt)">Student Discount</span><span style="font-size:9px;font-weight:800;background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em">Coming Soon</span></div>'+
+  '<div style="font-size:11px;color:var(--mut);margin-top:2px">A discounted rate for students is on the way.</div>'+
   '</div>'+
-  '<span style="font-size:12px;font-weight:700;color:var(--tea)">Verify →</span>'+
   '</div>'+
   // Testimonials
   '<div class="testimonials-grid">'+
@@ -2277,7 +2276,7 @@ function renderUpgradeModal(featureHint){
   '<div class="testimonial-card"><div class="stars">★★★★★</div><div class="testimonial-text">"Got the Cram Plan 3 months before my FAR window. Passed. The exam protocol PDF is insanely well done — I followed it day-by-day the final two weeks."</div><div class="testimonial-author">Jasmine T.</div><div class="testimonial-meta">2× passer · Regional Firm</div></div>'+
   '</div>'+
   // Fine print
-  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our <a href="/terms" target="_blank" style="color:var(--mut)">Terms of Service</a>. Student discount requires verification. All prices in USD.</div>'+
+  '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">Cancel anytime before trial ends and you won\'t be charged. By subscribing you agree to our <a href="/terms" target="_blank" style="color:var(--mut)">Terms of Service</a>. All prices in USD.</div>'+
   '</div>';
 }
 
