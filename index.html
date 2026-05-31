@@ -2176,7 +2176,7 @@ function renderUpgradeModal(featureHint){
   const proCTA=isProActive?'<button class="plan-cta plan-cta-active" disabled>✓ Active'+(isOnTrial()?' (Trial)':'')+'</button>':'<button class="plan-cta plan-cta-pro" onclick="activatePlan(\'pro\')">Start 7-Day Free Trial</button>';
   const eliteCTA=isEliteActive?'<button class="plan-cta plan-cta-active" disabled>✓ Current Plan</button>':'<button class="plan-cta plan-cta-elite" onclick="activatePlan(\'elite\')">Upgrade to Elite</button>';
 
-  const cramCTA=isCramActive?'<div class="plan-feat-on" style="text-align:center;font-size:16px;margin-top:10px">✓ Active</div>':'<button class="cram-cta" onclick="activatePlan(\'cram\')">Get Cram Plan — $99</button>';
+  const cramCTA=isCramActive?'<div class="plan-feat-on" style="text-align:center;font-size:16px;margin-top:10px">✓ Active</div>':'<button class="cram-cta" onclick="activatePlan(\'cram\')">Get Cram Plan — $'+cramPrice+'</button>';
 
   el.innerHTML=
   '<div class="upgrade-modal-box">'+
