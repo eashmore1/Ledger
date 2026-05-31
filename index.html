@@ -1263,7 +1263,7 @@ function openStudentVerifyModal(){
       </button>
       <p style="margin:0;font-size:11px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5">
         By verifying you confirm you are currently enrolled at an accredited institution.<br>
-        Need help? <a href="mailto:support@ledgercpa.com" style="color:#d44000">support@ledgercpa.com</a>
+        Need help? <a href="mailto:support@ledgercpa.app" style="color:#d44000">support@ledgercpa.app</a>
       </p>
     </div>
   `;
@@ -1996,7 +1996,7 @@ function openLegalModal(type){
     <h4>Data Storage</h4>
     <p>Your data is stored in Google Firebase (US servers). Study data is associated with your account and can be deleted by deleting your account.</p>
     <h4>Your Rights</h4>
-    <p>You can access, export, or delete your data at any time via Settings → Account. For questions, email <strong>support@ledgercpa.com</strong>.</p>
+    <p>You can access, export, or delete your data at any time via Settings → Account. For questions, email <strong>support@ledgercpa.app</strong>.</p>
   `:`
     <p>By creating an account or using Ledger, you agree to these Terms. Please read them carefully.</p>
     <h4>Use of the Service</h4>
@@ -2013,7 +2013,7 @@ function openLegalModal(type){
       <li>Don't post spam, harassment, or anything that violates others' rights.</li>
     </ul>
     <h4>Pro & Elite Plans</h4>
-    <p>Paid plans are billed monthly or annually. You can cancel before your renewal date to avoid future charges. Refunds are handled case-by-case — reach out to <strong>support@ledgercpa.com</strong>.</p>
+    <p>Paid plans are billed monthly or annually. You can cancel before your renewal date to avoid future charges. Refunds are handled case-by-case — reach out to <strong>support@ledgercpa.app</strong>.</p>
     <h4>Disclaimers</h4>
     <p>Ledger is a study aid, not a guarantee of exam success. We make no warranty about pass rates or outcomes. The service is provided "as is."</p>
     <h4>Changes</h4>
@@ -5707,7 +5707,7 @@ function openSupportModal(){
         '<div class="form-grp" style="margin-bottom:8px"><label>What\'s going on?</label><textarea id="support-msg-ta" style="min-height:100px" placeholder="Describe your issue, question, or feedback…"></textarea></div>' +
         '<div class="form-grp" style="margin-bottom:16px"><label>Your email</label><input type="email" id="support-email-inp" value="'+(AUTH?.email||'')+'" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none"></div>' +
         '<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="sendSupportMessage()">Send Message</button>' +
-        '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">Or email us directly: support@ledgercpa.com</div>' +
+        '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">Or email us directly: support@ledgercpa.app</div>' +
       '</div>' +
     '</div>';
   el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
@@ -5751,7 +5751,7 @@ function sendSupportMessage(){
   saveState();
   const subject=encodeURIComponent('[Ledger Elite Support] '+msg.slice(0,60));
   const body=encodeURIComponent('From: '+email+'\n\n'+msg);
-  window.location.href='mailto:support@ledgercpa.com?subject='+subject+'&body='+body;
+  window.location.href='mailto:support@ledgercpa.app?subject='+subject+'&body='+body;
   document.getElementById('support-modal')?.classList.remove('open');
   showToast('Message sent — expect a reply within 2 hours ⚡','ok');
 }

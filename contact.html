@@ -120,7 +120,7 @@ footer a:hover{color:rgba(255,255,255,.55)}
       <div class="contact-method-icon">✉️</div>
       <div>
         <div class="contact-method-label">Email</div>
-        <div class="contact-method-value"><a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a></div>
+        <div class="contact-method-value"><a href="mailto:support@ledgercpa.app">support@ledgercpa.app</a></div>
         <div class="contact-method-note">Best for account issues, billing questions, and bug reports.</div>
       </div>
     </div>
@@ -129,7 +129,7 @@ footer a:hover{color:rgba(255,255,255,.55)}
       <div class="contact-method-icon">🤝</div>
       <div>
         <div class="contact-method-label">Partnerships</div>
-        <div class="contact-method-value"><a href="mailto:hello@ledgercpa.com">hello@ledgercpa.com</a></div>
+        <div class="contact-method-value"><a href="mailto:hello@ledgercpa.app">hello@ledgercpa.app</a></div>
         <div class="contact-method-note">Firm licensing, study group programs, and integration inquiries.</div>
       </div>
     </div>
@@ -138,7 +138,7 @@ footer a:hover{color:rgba(255,255,255,.55)}
       <div class="contact-method-icon">🎓</div>
       <div>
         <div class="contact-method-label">Student discount</div>
-        <div class="contact-method-value"><a href="mailto:support@ledgercpa.com">support@ledgercpa.com</a></div>
+        <div class="contact-method-value"><a href="mailto:support@ledgercpa.app">support@ledgercpa.app</a></div>
         <div class="contact-method-note">Include your .edu email and we'll get you set up.</div>
       </div>
     </div>
@@ -213,7 +213,7 @@ function handleSubmit(e){
   // Build mailto link as fallback — opens in email client
   const subject=encodeURIComponent(`[Ledger Contact] ${topic}`);
   const body=encodeURIComponent(`Name: ${name} ${document.getElementById('lname').value.trim()}\nEmail: ${email}\n\n${message}`);
-  window.location.href=`mailto:support@ledgercpa.com?subject=${subject}&body=${body}`;
+  window.location.href=`mailto:support@ledgercpa.app?subject=${subject}&body=${body}`;
   // Show success state
   form.style.display='none';
   success.style.display='block';
