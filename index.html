@@ -3783,7 +3783,7 @@ function getDecayedSectionHours(section){
 
 function calcReadinessScore(){
   const passed=new Set(S.sectionPassed||[]);
-  if((S.sections||[]).every(s=>passed.has(s)))return{score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[]};
+  if((S.sections||[]).every(s=>passed.has(s)))return{score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[],hasScores:false};
 
   const s=getCurrentSection();
   const logged=getSectionHours(s);
@@ -3791,7 +3791,7 @@ function calcReadinessScore(){
   const goal=getHourGoal(s);
   const targetDate=S.examDates?.[s];
 
-  // Fix 1+3: volume based on where you should be TODAY in your timeline, using decayed hrs
+  // ── 1. Volume (0–25) — timeline-adjusted, recency-decayed hours ──────────────
   let volumePts;
   if(targetDate){
     const examMs=new Date(targetDate+' 00:00:00').getTime();
@@ -3801,14 +3801,14 @@ function calcReadinessScore(){
     const fracElapsed=Math.max(0,Math.min(1.5,(Date.now()-startMs)/totalMs));
     const expectedNow=goal*fracElapsed;
     volumePts=expectedNow<5
-      ?Math.min(50,Math.round(decayed/goal*50))
-      :Math.min(50,Math.round(decayed/expectedNow*50));
+      ?Math.min(25,Math.round(decayed/goal*25))
+      :Math.min(25,Math.round(decayed/expectedNow*25));
   } else {
-    volumePts=Math.min(50,Math.round(decayed/goal*50));
+    volumePts=Math.min(25,Math.round(decayed/goal*25));
   }
 
-  // Fix 2+5: pacing uses actual observed pace (last 28 days), smooth curve
-  let pacingPts=15;
+  // ── 2. Pacing (0–15) — on track for exam date ────────────────────────────────
+  let pacingPts=10;
   if(targetDate){
     const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
     const weeksLeft=Math.max(0.5,daysLeft/7);
@@ -3818,24 +3818,50 @@ function calcReadinessScore(){
     const actualPace=last28.reduce((a,b)=>a+(b.hours||0),0)/4;
     const available=actualPace>0.5?actualPace:(S.hoursPerWeek||15);
     if(daysLeft<0) pacingPts=0;
-    else if(hrsPerWeek<=0) pacingPts=20;
+    else if(hrsPerWeek<=0) pacingPts=15;
     else{
       const ratio=available/hrsPerWeek;
-      pacingPts=Math.max(0,Math.min(20,Math.round(20*Math.pow(Math.min(1.2,ratio)/1.2,1.5))));
+      pacingPts=Math.max(0,Math.min(15,Math.round(15*Math.pow(Math.min(1.2,ratio)/1.2,1.5))));
     }
   }
 
-  // Fix 4: practice scores — fix object vs array bug, avg last 3, anchor 80, trend bonus
+  // ── 3. Practice Scores (0–40) — recency-weighted Becker/Gleim/Wiley/UWorld ──
+  // Most predictive signal: candidates averaging 75+ on practice exams pass at high rates.
+  // Scores decay over time (studying 4 months ago matters less than last week).
   const sScores=(S.practiceScores||{})[s]||[];
-  let scorePts=0;
+  let practicePts=0;
+  const hasScores=sScores.length>0;
   if(sScores.length){
-    const recent=sScores.slice(-3);
-    const avg=recent.reduce((a,b)=>a+b.score,0)/recent.length;
-    scorePts=Math.min(28,Math.round(avg/80*28));
-    if(recent.length>=2&&recent[recent.length-1].score>recent[0].score) scorePts=Math.min(30,scorePts+2);
+    const now=Date.now();
+    let totalWeight=0,weightedSum=0;
+    sScores.forEach(sc=>{
+      const daysAgo=Math.max(0,(now-new Date(sc.date).getTime())/86400000);
+      // Exponential decay: full weight <30 days, ~50% weight at 3 months
+      const w=Math.max(0.3,Math.exp(-daysAgo/120));
+      weightedSum+=sc.score*w;
+      totalWeight+=w;
+    });
+    const weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
+    // 75 = CPA passing threshold = 35 pts; 80+ = full 40 pts
+    practicePts=Math.min(40,Math.round((weightedAvg/75)*35));
+    if(weightedAvg>=75) practicePts=Math.min(40,practicePts+5);
   }
 
-  // Fix 6: consistency — active days with >=0.5h in last 14 days (not raw streak)
+  // ── 4. Momentum (0–10) — are your scores improving? ──────────────────────────
+  let momentumPts=0;
+  if(sScores.length===1){
+    momentumPts=3; // credit for logging first score
+  } else if(sScores.length>=2){
+    const latest=sScores[sScores.length-1].score;
+    const prevAvg=sScores.slice(0,-1).reduce((a,b)=>a+b.score,0)/(sScores.length-1);
+    const delta=latest-prevAvg;
+    if(delta>=5) momentumPts=10;       // strong upward trend
+    else if(delta>=2) momentumPts=7;   // improving
+    else if(delta>=-2) momentumPts=4;  // flat — stable is fine
+    else momentumPts=1;                // declining — still credit for trying
+  }
+
+  // ── 5. Consistency (0–10) — active days with ≥30 min in last 14 days ─────────
   const twoWeeksAgo=Date.now()-14*86400000;
   const activeDays=new Set();
   (S.activities||[]).forEach(a=>{
@@ -3843,8 +3869,8 @@ function calcReadinessScore(){
   });
   const consistencyPts=Math.min(10,Math.round(activeDays.size/10*10));
 
-  const score=Math.min(99,volumePts+pacingPts+scorePts+consistencyPts);
-  const breakdown=[{section:s,score,volumePts,pacingPts,scorePts,consistencyPts,logged,decayed:Math.round(decayed)}];
+  const score=Math.min(99,volumePts+pacingPts+practicePts+momentumPts+consistencyPts);
+  const breakdown=[{section:s,score,volumePts,pacingPts,practicePts,momentumPts,consistencyPts,logged,decayed:Math.round(decayed),hasScores}];
 
   let label,color,tier;
   if(score<35){label='Just Getting Started';color='#ef4444';tier='start';}
@@ -3852,7 +3878,7 @@ function calcReadinessScore(){
   else if(score<65){label='On Track';color='var(--ind)';tier='track';}
   else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
   else{label='Exam Ready 🎯';color='var(--grn)';tier='ready';}
-  return{score,label,color,tier,breakdown,section:s};
+  return{score,label,color,tier,breakdown,section:s,hasScores};
 }
 
 function buildReadinessCard(){
@@ -3878,9 +3904,10 @@ function buildReadinessCard(){
       <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${r.breakdown.map(b=>[
-          ['📚','Volume',b.volumePts,50],
-          ['📅','Pacing',b.pacingPts,20],
-          ['📝','Practice',b.scorePts,30],
+          ['📝','Practice',b.practicePts,40],
+          ['📈','Momentum',b.momentumPts,10],
+          ['📚','Volume',b.volumePts,25],
+          ['📅','Pacing',b.pacingPts,15],
           ['🔥','Consist.',b.consistencyPts,10]
         ].map(([icon,lbl,pts,max])=>`<div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:12px;width:18px;text-align:center;flex-shrink:0">${icon}</span>
@@ -3891,7 +3918,8 @@ function buildReadinessCard(){
           <span style="font-size:11px;font-weight:700;color:var(--sub);width:36px;text-align:right">${pts}/${max}</span>
         </div>`).join('')).join('')}
       </div>
-      <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Volume weighted for recency · pacing uses your actual study pace · 14-day consistency</div>
+      ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5">📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals. These are the strongest predictors of passing.</div>`:''}
+      <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
   </div>
   <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap">
@@ -3986,16 +4014,24 @@ function openPacingTipsModal(){
   const r=calcReadinessScore();
   let tips=[];
   r.breakdown.forEach(b=>{
-    if(b.volumePts<25) tips.push(`📚 You're behind where you should be in your study plan for <strong>${b.section}</strong> — log more sessions to close the gap`);
-    else if(b.volumePts<40) tips.push(`📚 <strong>${b.section}</strong> volume is building but you need to accelerate — you're behind your timeline target`);
-    if(b.pacingPts<8) tips.push(`⚡ Your actual study pace isn't enough for <strong>${b.section}</strong> — your recent hours per week are below what's needed. Either study more or push your exam date`);
-    else if(b.pacingPts<14) tips.push(`📅 You're a bit tight on <strong>${b.section}</strong> pacing — consider adding 2-3 hrs/week to build a comfortable buffer`);
-    if(b.scorePts===0) tips.push(`📝 No practice scores logged for <strong>${b.section}</strong> — this is 30 points you're leaving on the table. Log a Becker or Gleim score`);
-    else if(b.scorePts<15) tips.push(`📈 Your <strong>${b.section}</strong> practice avg is below 80 — target 80+ consistently before scheduling your real exam`);
-    if(b.consistencyPts<5) tips.push(`🔥 Only ${Math.round(b.consistencyPts)}+ qualifying days in the last 14 — aim for at least 10 days with 30+ min sessions`);
+    // Volume (max 25)
+    if(b.volumePts<12) tips.push(`📚 You're behind where you should be for <strong>${b.section}</strong> — log more sessions to close the gap`);
+    else if(b.volumePts<20) tips.push(`📚 <strong>${b.section}</strong> volume is building but you need to accelerate — you're behind your timeline target`);
+    // Pacing (max 15)
+    if(b.pacingPts<6) tips.push(`⚡ Your recent study pace isn't enough for <strong>${b.section}</strong> — hours per week are below what's needed. Study more or push your exam date`);
+    else if(b.pacingPts<11) tips.push(`📅 You're a bit tight on <strong>${b.section}</strong> pacing — adding 2-3 hrs/week builds a comfortable buffer`);
+    // Practice (max 40) — most important signal
+    if(!b.hasScores) tips.push(`📝 No practice scores logged for <strong>${b.section}</strong> — this is 50 points locked. Log a Becker, Gleim, Wiley, or UWorld score to unlock the strongest readiness signal`);
+    else if(b.practicePts<20) tips.push(`📈 Your <strong>${b.section}</strong> practice scores are below the 75 passing threshold — keep grinding and log each attempt to track your trajectory`);
+    else if(b.practicePts<32) tips.push(`📈 You're getting close on <strong>${b.section}</strong> practice — aim for 75+ consistently before scheduling`);
+    // Momentum (max 10)
+    if(b.hasScores&&b.momentumPts<=1) tips.push(`📉 Your <strong>${b.section}</strong> practice scores are trending down — review weak areas and log another attempt`);
+    // Consistency (max 10)
+    if(b.consistencyPts<5) tips.push(`🔥 Only ${activeDaysCount(b.section)} qualifying days in the last 14 — aim for at least 10 days with 30+ min sessions`);
+    // Recency
     if(b.decayed&&b.logged&&b.decayed<b.logged*0.7) tips.push(`⏰ Most of your <strong>${b.section}</strong> hours were logged a long time ago — recent study counts more, so revisit the material`);
   });
-  if(!tips.length) tips=['✅ You\'re doing great — keep your current pace!'];
+  if(!tips.length) tips=['✅ You\'re doing great — keep your current pace and keep logging practice scores!'];
 
   const el=document.createElement('div');
   el.className='modal-overlay open';
@@ -4005,12 +4041,13 @@ function openPacingTipsModal(){
       <div style="font-size:17px;font-weight:800">How Your Readiness Score Works</div>
       <button onclick="this.closest('.modal-overlay').remove()" class="modal-close">×</button>
     </div>
-    <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:16px">Your score (0–99) reflects four signals. Each is calibrated against your timeline and actual study pace — not just a raw count.</div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:16px">Your score (0–99) uses five signals. Practice test scores carry the most weight — they're the strongest real-world predictor of passing the CPA exam.</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-      ${[['📚','Study Volume (50pts)','Hours logged vs. where you should be TODAY in your study timeline. Recent hours weighted higher — old material fades.'],
-         ['📅','Pacing (20pts)','Calculated from your actual average hours/week (last 28 days) vs. what you need to finish before exam day. No cliffs — falls off smoothly if you fall behind.'],
-         ['📝','Practice Scores (30pts)','Average of your last 3 practice exam scores vs. an 80% standard. Improving trend adds a bonus. Log scores in Score Tracker.'],
-         ['🔥','Consistency (10pts)','Days with 30+ min sessions in the last 14 days. 10 qualifying days = full 10pts. Rewards real study, not streak gaming.']
+      ${[['📝','Practice Scores (40pts)','Recency-weighted average of your Becker, Gleim, Wiley, or UWorld scores. 75 = CPA passing threshold = full credit. Scores from the last 30 days count fully; older scores decay gradually.'],
+         ['📈','Momentum (10pts)','Is your practice score trending up? Improving scores signal real mastery. Flat = partial credit. Declining = investigate weak areas.'],
+         ['📚','Study Volume (25pts)','Hours logged vs. where you should be TODAY in your timeline. Recency-weighted — old sessions fade, recent sessions count more.'],
+         ['📅','Pacing (15pts)','Your actual hrs/week (last 28 days) vs. what you need to finish before exam day. Falls off smoothly if you fall behind.'],
+         ['🔥','Consistency (10pts)','Days with 30+ min sessions in the last 14 days. 10 qualifying days = full 10pts.']
       ].map(([i,t,d])=>`<div style="display:flex;gap:12px;align-items:flex-start">
         <div style="font-size:20px;flex-shrink:0">${i}</div>
         <div><div style="font-size:13px;font-weight:700">${t}</div><div style="font-size:11px;color:var(--mut)">${d}</div></div>
@@ -4023,6 +4060,12 @@ function openPacingTipsModal(){
   </div>`;
   el.addEventListener('click',e=>{if(e.target===el)el.remove();});
   document.body.appendChild(el);
+}
+function activeDaysCount(section){
+  const twoWeeksAgo=Date.now()-14*86400000;
+  const days=new Set();
+  (S.activities||[]).forEach(a=>{if(new Date(a.date).getTime()>twoWeeksAgo&&(a.hours||0)>=0.5)days.add(a.date.slice(0,10));});
+  return days.size;
 }
 
 // ═══════════════════════════════════════════════
@@ -5536,8 +5579,9 @@ function openActivityDetail(actId){
 
     ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:260px"><img src="${act.photo}" style="width:100%;max-height:260px;object-fit:cover;display:block" loading="lazy"></div>`:''}
 
-    <div style="padding-top:12px;border-top:1px solid var(--bdr)">
-      <button onclick="deleteActivity('${act.id}')" style="width:100%;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:all .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">🗑 Delete Session</button>
+    <div style="padding-top:12px;border-top:1px solid var(--bdr);display:flex;gap:8px">
+      <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;transition:opacity .12s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✏️ Edit Session</button>
+      <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:all .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">🗑 Delete</button>
     </div>
   </div>
 </div>`;
@@ -5547,6 +5591,179 @@ function openActivityDetail(actId){
 
 function closeActivityDetail(){
   document.getElementById('activity-detail-modal')?.remove();
+}
+
+// ═══════════════════════════════════════════════
+// EDIT SESSION
+// ═══════════════════════════════════════════════
+let _editConcepts=[],_editPhoto=null,_editFeeling='💪',_editDiff=3;
+
+function openEditActivityModal(actId){
+  const act=(S.activities||[]).find(a=>a.id===actId);
+  if(!act)return;
+  _editConcepts=[...(act.concepts||[])];
+  _editPhoto=act.photo||null;
+  _editFeeling=act.feeling||'💪';
+  _editDiff=act.difficulty||3;
+  const ex=EXAMS[act.section]||{color:'var(--ind)',icon:'📚',full:act.section};
+  const sectionOpts=(S.sections||['FAR','AUD','REG','TCP']).map(s=>`<option value="${s}"${s===act.section?' selected':''}>${s} — ${EXAMS[s]?.full||s}</option>`).join('');
+  const feelingOpts=['💪','😤','😅','🤔','😵','🔥'].map(f=>`<div class="feeling-opt${f===_editFeeling?' selected':''}" onclick="setEditFeeling('${f}',this)">${f}</div>`).join('');
+  const diffOpts=[1,2,3,4,5].map(d=>`<div class="diff-opt${d===_editDiff?' selected':''}" onclick="setEditDiff(${d},this)">${d}</div>`).join('');
+  const conceptTagsHTML=_editConcepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeEditConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
+  const photoHTML=_editPhoto
+    ?`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
+    :`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">📷 Add photo</label>`;
+  const dateVal=act.date?act.date.slice(0,10):todayStr();
+  document.getElementById('activity-detail-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='activity-detail-modal';
+  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  el.innerHTML=`
+<div style="background:var(--surf);border-radius:22px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3);max-height:90vh;display:flex;flex-direction:column">
+  <div style="height:5px;background:${ex.color};flex-shrink:0"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px;flex-shrink:0;border-bottom:1px solid var(--bdr)">
+    <div style="font-size:16px;font-weight:900;color:var(--txt)">✏️ Edit Session</div>
+    <button onclick="closeActivityDetail()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0">×</button>
+  </div>
+  <div style="overflow-y:auto;padding:20px">
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Exam Section</label>
+        <select id="edit-section">${sectionOpts}</select>
+      </div>
+      <div class="form-grp">
+        <label>Date</label>
+        <input id="edit-date" type="date" value="${dateVal}">
+      </div>
+    </div>
+    <div class="form-grp">
+      <label>Hours Studied</label>
+      <input id="edit-hours" type="number" min="0.1" max="16" step="0.5" value="${act.hours||''}">
+    </div>
+    <div class="form-grp">
+      <label>Material Covered <span style="color:var(--mut);font-weight:400">(optional)</span></label>
+      <input id="edit-material" type="text" maxlength="120" value="${(act.material||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="e.g. Governmental Accounting — Fund Structure">
+    </div>
+    <div class="form-grp">
+      <label>Session Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
+      <textarea id="edit-caption" maxlength="500" placeholder="How did it go? What clicked? What's still tricky?">${act.caption||''}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-grp">
+        <label>How'd it feel?</label>
+        <div class="feeling-row" id="edit-feeling-row">${feelingOpts}</div>
+      </div>
+      <div class="form-grp">
+        <label>Difficulty (1–5)</label>
+        <div class="diff-row" id="edit-diff-row">${diffOpts}</div>
+      </div>
+    </div>
+    <div class="form-grp">
+      <label>Concepts Covered</label>
+      <div class="concept-inp-wrap">
+        <input class="concept-inp" id="edit-concept-inp" placeholder="Type a concept, press Enter…" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditConceptTag();}">
+        <button class="concept-add-btn" onclick="addEditConceptTag()">Add</button>
+      </div>
+      <div class="concept-tags-wrap" id="edit-concept-tags-wrap">${conceptTagsHTML}</div>
+    </div>
+    <div class="form-grp">
+      <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional</span></label>
+      <div id="edit-photo-area">${photoHTML}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--surf2);border-radius:9px;margin-bottom:16px;cursor:pointer" onclick="document.getElementById('edit-private').checked=!document.getElementById('edit-private').checked">
+      <input type="checkbox" id="edit-private" ${act.private?'checked':''} style="width:15px;height:15px;accent-color:var(--ind);cursor:pointer" onclick="event.stopPropagation()">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Keep private</div>
+        <div style="font-size:11px;color:var(--mut)">Session shows as "logged a session" to others — details are just for you</div>
+      </div>
+    </div>
+    <button onclick="saveEditedActivity('${act.id}')" style="width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Save Changes</button>
+    <button onclick="openActivityDetail('${act.id}')" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Cancel</button>
+  </div>
+</div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',function(e){if(e.target===el)closeActivityDetail();});
+}
+function setEditFeeling(f,el){
+  _editFeeling=f;
+  document.querySelectorAll('#edit-feeling-row .feeling-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function setEditDiff(d,el){
+  _editDiff=d;
+  document.querySelectorAll('#edit-diff-row .diff-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function addEditConceptTag(){
+  const inp=document.getElementById('edit-concept-inp');
+  const val=(inp?.value||'').trim().slice(0,60);
+  if(!val||_editConcepts.includes(val)){if(inp)inp.value='';return;}
+  _editConcepts.push(val);
+  if(inp)inp.value='';
+  _renderEditConceptTags();
+}
+function removeEditConceptTag(idx){
+  _editConcepts.splice(idx,1);
+  _renderEditConceptTags();
+}
+function _renderEditConceptTags(){
+  const wrap=document.getElementById('edit-concept-tags-wrap');
+  if(!wrap)return;
+  wrap.innerHTML=_editConcepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeEditConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
+}
+function clearEditPhoto(){
+  _editPhoto=null;
+  const area=document.getElementById('edit-photo-area');
+  if(area)area.innerHTML=`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">📷 Add photo</label>`;
+}
+function handleEditPhoto(input){
+  const file=input?.files?.[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const MAX=800;let w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      _editPhoto=canvas.toDataURL('image/jpeg',0.75);
+      const area=document.getElementById('edit-photo-area');
+      if(area)area.innerHTML=`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function saveEditedActivity(actId){
+  const idx=(S.activities||[]).findIndex(a=>a.id===actId);
+  if(idx===-1){showToast('Session not found','err');return;}
+  const section=document.getElementById('edit-section')?.value;
+  const hours=parseFloat(document.getElementById('edit-hours')?.value)||0;
+  const date=document.getElementById('edit-date')?.value||todayStr();
+  const material=(document.getElementById('edit-material')?.value?.trim()||'').slice(0,120);
+  const caption=(document.getElementById('edit-caption')?.value?.trim()||'').slice(0,500);
+  const isPrivate=document.getElementById('edit-private')?.checked||false;
+  if(!section){showToast('Select a section','err');return;}
+  if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
+  if(hours>16){showToast('Hours capped at 16 per session','err');return;}
+  const existing=S.activities[idx];
+  S.activities[idx]={
+    ...existing,
+    section,hours,
+    date:date+'T'+(existing.date?.slice(11)||new Date().toTimeString().slice(0,8)),
+    material,caption,
+    difficulty:_editDiff,feeling:_editFeeling,
+    concepts:[..._editConcepts],
+    photo:_editPhoto,
+    private:isPrivate,
+  };
+  saveState();checkAchievements();
+  closeActivityDetail();
+  showToast('Session updated ✓','ok');
+  renderTab();
 }
 
 // ═══════════════════════════════════════════════
