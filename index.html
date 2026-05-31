@@ -1269,6 +1269,9 @@ const STRIPE_CONFIG = {
 };
 const STRIPE_ENABLED = true;
 
+// ── Review URL — update once you have a Google Business profile or app store listing ──
+const REVIEW_URL = 'https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review'; // TODO: replace with real URL
+
 // ── Student Discount Verification (coming soon — banner disabled) ─────────────
 function showStudentVerifyBanner(){ return; // disabled until student discount launches
   if(document.getElementById('student-verify-banner')) return;
@@ -5060,6 +5063,7 @@ function submitPost(){
   checkChallengeAchievements();
   closePostModal();
   openSessionLoggedModal(act);
+  checkReviewPrompt();
 }
 
 // ═══════════════════════════════════════════════
@@ -5754,6 +5758,7 @@ function saveSession(){
   tsReset();updateNavChip();
   checkShareTrigger(_priorAch);
   openSessionLoggedModal(act,_priorScore);
+  checkReviewPrompt();
 }
 
 function discardSession(){
@@ -7955,7 +7960,7 @@ function buildSettingsData(){
   </div>
   <div style="flex:1">
     <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">Ledger App — Coming to iOS</div>
-    <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Be the first to know when we launch on the App Store. First 500 get 60 days Pro free.</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Be the first to know when we launch on the App Store.</div>
   </div>
   <a href="/landing#appstore-notify" target="_blank" style="background:#d44000;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0">Notify Me</a>
 </div>
@@ -7999,6 +8004,18 @@ ${isElite()?`
     </button>
   </div>
 </div>`:''}
+
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
+  <div class="section-title">Feedback</div>
+  <button onclick="openReviewUrl()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--ora)'" onmouseout="this.style.borderColor='var(--bdr)'">
+    <span style="font-size:18px">⭐</span>
+    <div style="text-align:left;flex:1">
+      <div style="font-size:13px;font-weight:700;color:var(--txt)">Write a Review</div>
+      <div style="font-size:11px;color:var(--mut)">Help other CPA candidates discover Ledger</div>
+    </div>
+    <span style="color:var(--mut);font-size:14px">›</span>
+  </button>
+</div>
 
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div class="section-title" style="color:var(--red)">Danger Zone</div>
@@ -11626,6 +11643,68 @@ function checkShareTrigger(priorAchSet){
   const newOnes=(S.achievements||[]).filter(id=>!priorAchSet.has(id));
   const trigger=newOnes.find(id=>SHARE_MILESTONES[id]);
   if(trigger)setTimeout(()=>showShareModal(trigger),1400);
+}
+
+// ═══════════════════════════════════════════════
+// REVIEW PROMPT
+// ═══════════════════════════════════════════════
+function _isReviewMilestone(count){
+  if(count===1)return true;
+  if(count>=5&&count%5===0)return true;
+  return false;
+}
+
+function checkReviewPrompt(){
+  if(S.reviewLeft)return; // already left a review
+  const count=(S.activities||[]).length;
+  if(!_isReviewMilestone(count))return;
+  if((S.reviewLastPromptCount||0)>=count)return; // already prompted for this milestone
+  S.reviewLastPromptCount=count;
+  saveState();
+  setTimeout(showReviewPrompt,5000); // wait 5s so session logged modal can breathe
+}
+
+function showReviewPrompt(){
+  if(document.getElementById('review-prompt-sheet'))return;
+  const count=(S.activities||[]).length;
+  const el=document.createElement('div');
+  el.id='review-prompt-sheet';
+  el.style.cssText='position:fixed;inset:0;z-index:2100;pointer-events:none';
+  el.innerHTML=`
+<div id="rev-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s ease"></div>
+<div id="rev-drawer" style="position:absolute;bottom:0;left:0;right:0;max-width:520px;margin:0 auto;background:var(--surf);border-radius:22px 22px 0 0;padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(0,0,0,.18);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);text-align:center">
+  <div style="width:40px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 22px"></div>
+  <div style="font-size:34px;margin-bottom:10px">⭐</div>
+  <div style="font-size:19px;font-weight:900;color:var(--txt);margin-bottom:6px;letter-spacing:-.03em">Enjoying Ledger?</div>
+  <div style="font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:24px">You've logged ${count} session${count===1?'':'s'} — that's real progress.<br>A quick review helps other CPA candidates find this.</div>
+  <button onclick="openReviewUrl()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:-.01em">Write a Review ✍️</button>
+  <button onclick="closeReviewPrompt()" style="width:100%;padding:12px;background:transparent;border:none;font-size:13px;color:var(--mut);cursor:pointer;font-weight:600">Maybe later</button>
+</div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{
+    el.style.pointerEvents='all';
+    document.getElementById('rev-backdrop').style.background='rgba(0,0,0,.45)';
+    document.getElementById('rev-drawer').style.transform='none';
+  });
+  document.getElementById('rev-backdrop').addEventListener('click',closeReviewPrompt);
+}
+
+function closeReviewPrompt(){
+  const el=document.getElementById('review-prompt-sheet');
+  if(!el)return;
+  const drawer=document.getElementById('rev-drawer');
+  const backdrop=document.getElementById('rev-backdrop');
+  if(drawer)drawer.style.transform='translateY(100%)';
+  if(backdrop)backdrop.style.background='rgba(0,0,0,0)';
+  setTimeout(()=>el.remove(),360);
+}
+
+function openReviewUrl(){
+  closeReviewPrompt();
+  S.reviewLeft=true;
+  saveState();
+  window.open(REVIEW_URL,'_blank');
+  showToast('Thank you — your review means a lot 🙏','ok');
 }
 
 // ═══════════════════════════════════════════════
