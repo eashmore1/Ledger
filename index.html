@@ -855,60 +855,55 @@ function logLedgerEvent(name, params){
 }
 
 async function signInWithGoogle(){
-  if(!FIREBASE_ENABLED){
-    simulateGoogleSignIn();
-    return;
-  }
+  if(!FIREBASE_ENABLED){ simulateGoogleSignIn(); return; }
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('email');
   provider.addScope('profile');
-  // Mobile browsers block popups — use redirect flow instead.
-  // onAuthStateChanged in init() handles the result when the page reloads.
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
-  if(isMobile){
-    try{
-      await firebaseAuth.signInWithRedirect(provider);
-    }catch(e){
-      showToast('Sign-in failed: ' + e.message,'err');
-    }
-    return; // browser navigates away — nothing else to do here
-  }
-  // Desktop: use popup
   try {
+    // Try popup on all devices — modern mobile browsers support it from a direct tap.
     const result = await firebaseAuth.signInWithPopup(provider);
-    const user = result.user;
-    AUTH = {
-      uid: user.uid,
-      displayName: user.displayName || user.email.split('@')[0],
-      email: user.email,
-      method: 'google',
-      photoURL: user.photoURL || null,
-      created: Date.now()
-    };
-    saveAuth(AUTH);
-    S = loadState(AUTH.uid) || null;
-    if(!S){
-      const restored = await restoreStateFromFirestore(user.uid);
-      if(!restored){ renderOnboarding(); return; }
-    }
-    try{
-      if(firebaseDb){
-        const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
-        if(userDoc.exists){
-          const fsub = userDoc.data().sub;
-          if(fsub && fsub.tier && fsub.tier !== 'free'){ SUB={...SUB,...fsub}; saveSub(SUB); }
-        }
-      }
-    }catch(e){}
-    logLedgerEvent('login', {method:'google'});
-    renderApp();
-    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
-    setTimeout(writeUserProfile, 1200);
+    await _processGoogleUser(result.user);
   } catch(e){
-    if(e.code !== 'auth/popup-closed-by-user'){
-      showToast('Sign-in failed: ' + e.message,'err');
+    if(e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request'){
+      // Popup was blocked — fall back to redirect.
+      // Reset URL to '/' first so Firebase returns to a safe, always-valid path.
+      history.replaceState({},'','/');
+      try{ await firebaseAuth.signInWithRedirect(provider); }
+      catch(e2){ showToast('Sign-in failed: ' + (e2.message||e2.code),'err'); }
+    } else if(e.code !== 'auth/popup-closed-by-user'){
+      showToast('Sign-in failed: ' + (e.message||e.code),'err');
     }
   }
+}
+
+async function _processGoogleUser(user){
+  AUTH = {
+    uid: user.uid,
+    displayName: user.displayName || user.email.split('@')[0],
+    email: user.email,
+    method: 'google',
+    photoURL: user.photoURL || null,
+    created: Date.now()
+  };
+  saveAuth(AUTH);
+  S = loadState(AUTH.uid) || null;
+  if(!S){
+    const restored = await restoreStateFromFirestore(user.uid);
+    if(!restored){ renderOnboarding(); return; }
+  }
+  try{
+    if(firebaseDb){
+      const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
+      if(userDoc.exists){
+        const fsub = userDoc.data().sub;
+        if(fsub && fsub.tier && fsub.tier !== 'free'){ SUB={...SUB,...fsub}; saveSub(SUB); }
+      }
+    }
+  }catch(e){}
+  logLedgerEvent('login', {method:'google'});
+  renderApp();
+  loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
+  setTimeout(writeUserProfile, 1200);
 }
 
 async function signInWithEmailFirebase(email, password){
@@ -2414,11 +2409,26 @@ function init(){
   const isNative = !!(window.Capacitor?.isNativePlatform?.() || window.Capacitor?.platform);
 
   if(FIREBASE_ENABLED){
-    // Show splash while Firebase confirms auth state — prevents showing
-    // dashboard before login is verified (critical on native iOS app)
     _showSplash();
     initFirebase();
-    // onAuthStateChanged fires once on load — use it as the single source of truth
+    // Handle any pending redirect sign-in result (fallback path for popup-blocked browsers).
+    // Must be called before onAuthStateChanged so errors surface correctly.
+    (async function(){
+      try{
+        const rr = await firebaseAuth.getRedirectResult();
+        if(rr && rr.user){
+          // Redirect auth succeeded — _processGoogleUser handles UI; onAuthStateChanged
+          // will also fire with the user so no manual call needed here.
+          logLedgerEvent('login',{method:'google_redirect'});
+        }
+      }catch(e){
+        if(e.code && e.code !== 'auth/no-current-user'){
+          _hideSplash();
+          showToast('Google sign-in failed: '+(e.message||e.code),'err');
+        }
+      }
+    })();
+    // onAuthStateChanged fires once on load — single source of truth for auth state
     const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
       _hideSplash();

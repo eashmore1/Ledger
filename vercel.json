@@ -4,6 +4,7 @@
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/login", "destination": "/index.html" },
-    { "source": "/signup", "destination": "/index.html" }
+    { "source": "/signup", "destination": "/index.html" },
+    { "source": "/((?!_vercel|api|logo\\.svg|manifest\\.json|sitemap\\.xml|robots\\.txt|android|ios).*)", "destination": "/index.html" }
   ]
 }
