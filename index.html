@@ -1416,8 +1416,7 @@ function showManageSubMenu(){
   const portalUrl=STRIPE_CONFIG.portalUrl;
   const hasPortal=STRIPE_ENABLED&&!portalUrl.includes('REPLACE');
   const actions=[
-    {icon:'💳',label:'Update Payment Method',sub:'Change your card or billing info',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Billing portal not configured','err')},
-    {icon:'🧾',label:'View Invoices',sub:'Download past receipts and billing history',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Billing portal not configured','err')},
+    {icon:'💳',label:'Update Payment Method',sub:'Change your credit card or billing info on Stripe',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Stripe billing portal not yet configured — contact support@ledgercpa.app','err')},
     {icon:'🔄',label:'Change Plan',sub:'Upgrade, downgrade, or switch billing cycle',fn:()=>{closeAppSettings();openUpgradeModal(null);}},
   ];
   el.innerHTML=`
@@ -8200,9 +8199,9 @@ ${isFreePlan?`
 <div class="section-title">All Plans</div>
 ${[
   {name:'Free',price:'$0',desc:'Timer, feed, 4 starter challenges, 1 club, basic achievements',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
-  {name:'Pro',price:'$20/mo',desc:'Full Study Circle, all personal goals, study partner, analytics, unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
-  {name:'Elite',price:'$29/mo',desc:'Everything Pro + AI Coach, Mnemonics, Score Predictor, custom challenges',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
-  {name:'6-Month Cram','price':'$99 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
+  {name:'Pro',price:'$9/mo',desc:'Full Study Circle, all personal goals, study partner, analytics, unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
+  {name:'Elite',price:'$14/mo',desc:'Everything Pro + AI Coach, Mnemonics, Score Predictor, custom challenges',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
+  {name:'6-Month Cram','price':'$50 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
 <!-- Beta tier switcher -->
@@ -11818,6 +11817,7 @@ function generateAIPlan(settings){
   const dailyHrs=settings.dailyHrs||Math.max(1.5,Math.min(8,(S.hoursPerWeek||15)/6));
   const studyStyle=settings.studyStyle||'balanced';
   const studyDays=settings.studyDays||[1,2,3,4,5,6]; // array of dow (0=Sun)
+  const longDays=settings.longDays||[]; // days with extended hours (~1.6x)
 
   const logged=getSectionHours(primarySec);
   const target=EXAMS[primarySec]?.studyHours||150;
@@ -11865,11 +11865,14 @@ function generateAIPlan(settings){
     const phase=phases.find(p=>dayNum>=p.start&&dayNum<=p.end)||phases[phases.length-1];
 
     let hrs=0,mode=phase.mode;
+    const isLongDay=longDays.includes(dow);
     if(isStudy){
       // Ramp toward exam: start slightly lighter, peak in final sprint
       const progress=dayNum/planDays;
       const ramp=progress<0.5?0.9+progress*0.2:1.0+Math.max(0,(progress-0.75)*0.5);
-      hrs=Math.min(8,Math.max(1,parseFloat((dailyHrs*ramp).toFixed(1))));
+      const baseHrs=dailyHrs*ramp;
+      const longMultiplier=isLongDay?1.6:1.0;
+      hrs=Math.min(8,Math.max(1,parseFloat((baseHrs*longMultiplier).toFixed(1))));
 
       // Final sprint: alternate modes
       if(phase.n===phases[phases.length-1].n&&phases.length>1){
@@ -11878,7 +11881,7 @@ function generateAIPlan(settings){
       studyDayNum++;
     }
 
-    days.push({dayNum,date:dateStr,section:primarySec,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,done:false});
+    days.push({dayNum,date:dateStr,section:primarySec,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,isLong:isStudy&&isLongDay,done:false});
   }
 
   S.aiStudyPlan={
@@ -11888,6 +11891,7 @@ function generateAIPlan(settings){
     daysLeft:planDays,
     studyStyle,
     studyDays,
+    longDays,
     dailyHrs,
     sectionStats,
     phases,
@@ -11969,10 +11973,20 @@ function _buildPlanSetup(){
   const weeklyHrs=storedSettings.weeklyHrs||(S.hoursPerWeek||15);
   const studyStyle=storedSettings.studyStyle||'balanced';
   const studyDays=storedSettings.studyDays||[1,2,3,4,5,6]; // Mon-Sat default
+  const longDays=storedSettings.longDays||[]; // subset of studyDays for extended sessions
   const ex=EXAMS[selectedSec]||{color:'var(--ora)',full:selectedSec};
 
   const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const dayToggles=dayNames.map((d,i)=>`<button onclick="_planToggleDay(${i})" id="plan-day-${i}" style="width:38px;height:38px;border-radius:50%;border:2px solid ${studyDays.includes(i)?ex.color:'var(--bdr)'};background:${studyDays.includes(i)?ex.color:'var(--surf2)'};color:${studyDays.includes(i)?'#fff':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:all .15s">${d.slice(0,2)}</button>`).join('');
+  // Long day toggles — only show study days
+  const longDayToggles=dayNames.map((d,i)=>{
+    if(!studyDays.includes(i)) return '';
+    const isLong=longDays.includes(i);
+    return`<button onclick="_planToggleLongDay(${i})" id="plan-long-${i}" style="display:flex;flex-direction:column;align-items:center;gap:2px;width:52px;padding:8px 4px;border-radius:10px;border:2px solid ${isLong?'#f97316':'var(--bdr)'};background:${isLong?'#f9731614':'var(--surf2)'};color:${isLong?'#f97316':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:all .15s">
+      <span style="font-size:14px">${isLong?'🔥':'☁️'}</span>
+      <span>${d.slice(0,2)}</span>
+    </button>`;
+  }).join('');
 
   const styleOptions=[
     {id:'mcq_heavy',label:'MCQ Heavy',icon:'⚡',desc:'More practice questions — great if you have limited time'},
@@ -12032,6 +12046,14 @@ function _buildPlanSetup(){
       <div style="display:flex;gap:8px;flex-wrap:wrap" id="plan-day-toggles">${dayToggles}</div>
     </div>
 
+    <!-- Long session days -->
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Which days can you go long? 🔥</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:14px">Pick your high-energy days — Ledger schedules 1.6× more hours on these. Great for weekends or lighter work days.</div>
+      ${studyDays.length===0?`<div style="font-size:12px;color:var(--mut)">Select study days above first.</div>`:`<div style="display:flex;gap:8px;flex-wrap:wrap" id="plan-long-toggles">${longDayToggles}</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:10px" id="plan-long-hint">${longDays.length>0?`🔥 Long days: ${longDays.map(i=>dayNames[i]).join(', ')} · ~${Math.min(8,Math.round(weeklyHrs/6*1.6*10)/10)}h on these days`:'No long days — tap a day above to mark it as a long session day'}</div>`}
+    </div>
+
     <!-- Study style -->
     <div class="card card-pad" style="margin-bottom:28px">
       <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study style</div>
@@ -12078,7 +12100,10 @@ function _planToggleDay(i){
   const idx=current.indexOf(i);
   const updated=idx>=0?current.filter(d=>d!==i):[...current,i].sort();
   if(updated.length===0){showToast('Select at least 1 study day','err');return;}
-  _planSettings=Object.assign({},_planSettings||{},{studyDays:updated});
+  // Also remove from longDays if the day is being unselected
+  const currentLong=(_planSettings||{}).longDays||[];
+  const updatedLong=currentLong.filter(d=>updated.includes(d));
+  _planSettings=Object.assign({},_planSettings||{},{studyDays:updated,longDays:updatedLong});
   const storedSec=(_planSettings||{}).section||getCurrentSection();
   const ex=EXAMS[storedSec]||{color:'var(--ora)'};
   const btn=document.getElementById('plan-day-'+i);
@@ -12087,6 +12112,24 @@ function _planToggleDay(i){
     btn.style.borderColor=on?ex.color:'var(--bdr)';
     btn.style.background=on?ex.color:'var(--surf2)';
     btn.style.color=on?'#fff':'var(--mut)';
+  }
+  // Re-render long day toggles section
+  renderTab();
+}
+function _planToggleLongDay(i){
+  const current=(_planSettings||{}).longDays||[];
+  const studyDays=(_planSettings||{}).studyDays||[1,2,3,4,5,6];
+  if(!studyDays.includes(i)){showToast('That day is not a study day','err');return;}
+  const idx=current.indexOf(i);
+  const updated=idx>=0?current.filter(d=>d!==i):[...current,i].sort();
+  _planSettings=Object.assign({},_planSettings||{},{longDays:updated});
+  const btn=document.getElementById('plan-long-'+i);
+  if(btn){
+    const on=updated.includes(i);
+    btn.style.borderColor=on?'#f97316':'var(--bdr)';
+    btn.style.background=on?'#f9731614':'var(--surf2)';
+    btn.style.color=on?'#f97316':'var(--mut)';
+    btn.querySelector('span:first-child').textContent=on?'🔥':'☁️';
   }
 }
 function _planUpdateSettings(){
@@ -12158,7 +12201,7 @@ function _buildPlanCalendar(plan){
       inner=`<div style="font-size:10px;font-weight:${isToday?900:700};color:${isToday?ex.color:'var(--sub)'};margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;line-height:1;margin-bottom:3px">${d.done?'✅':m.icon}</div>
         <div style="font-size:9px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
-        <div style="font-size:9px;color:var(--mut)">${d.hours}h</div>`;
+        <div style="font-size:9px;color:var(--mut)">${d.hours}h${d.isLong?' 🔥':''}</div>`;
     }else if(d&&!d.isStudy){
       inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;opacity:.35">🛌</div>
@@ -12184,7 +12227,7 @@ function _buildPlanCalendar(plan){
         <div style="background:${m.color};color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:800">${m.icon} ${m.label}</div>
         <span class="badge badge-${todayEntry.section}">${todayEntry.section}</span>
       </div>
-      <div style="font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px">${todayEntry.hours}h</div>
+      <div style="font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px">${todayEntry.hours}h${todayEntry.isLong?' <span style="font-size:14px;background:#f9731620;color:#f97316;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:800;vertical-align:middle">🔥 Long Day</span>':''}</div>
       <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${m.desc}</div>
       <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">💡 ${_getPlanTip(todayEntry.mode)}</div>
       ${todayEntry.done
