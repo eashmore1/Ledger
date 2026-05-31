@@ -1410,6 +1410,34 @@ function openStripePortal(){
   window.open(STRIPE_CONFIG.portalUrl,'_blank');
 }
 
+function showManageSubMenu(){
+  const el=document.getElementById('manage-sub-section');
+  if(!el) return;
+  const portalUrl=STRIPE_CONFIG.portalUrl;
+  const hasPortal=STRIPE_ENABLED&&!portalUrl.includes('REPLACE');
+  const actions=[
+    {icon:'💳',label:'Update Payment Method',sub:'Change your card or billing info',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Billing portal not configured','err')},
+    {icon:'🧾',label:'View Invoices',sub:'Download past receipts and billing history',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Billing portal not configured','err')},
+    {icon:'🔄',label:'Change Plan',sub:'Upgrade, downgrade, or switch billing cycle',fn:()=>{closeAppSettings();openUpgradeModal(null);}},
+  ];
+  el.innerHTML=`
+<div style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:10px;overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--bdr);background:var(--surf)">
+    <span style="font-size:13px;font-weight:800">Manage Subscription</span>
+    <button onclick="renderAppSettingsSection()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--mut);line-height:1;padding:0 2px">×</button>
+  </div>
+  ${actions.map((a,i)=>`<button onclick="(${a.fn.toString()})()" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;background:transparent;border:none;border-bottom:${i<actions.length-1?'1px solid var(--bdr)':'none'};cursor:pointer;text-align:left;transition:background .12s" onmouseover="this.style.background='var(--surf)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;flex-shrink:0">${a.icon}</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700;color:var(--txt)">${a.label}</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:1px">${a.sub}</div>
+    </div>
+    <span style="font-size:14px;color:var(--mut)">›</span>
+  </button>`).join('')}
+  ${!hasPortal?`<div style="padding:10px 14px;font-size:10px;color:var(--mut);border-top:1px solid var(--bdr)">⚠️ Stripe portal not configured — links disabled in beta mode</div>`:''}
+</div>`;
+}
+
 function showCancelConfirm(){
   const section=document.getElementById('cancel-sub-section');
   if(!section) return;
@@ -8094,14 +8122,16 @@ ${isFreePlan?`
   <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="redirectToStripeCheckout('pro_monthly')">Add Payment Method</button>
 </div>
 `:`
-<button onclick="openStripePortal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--txt);transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
-  <span style="font-size:18px">💳</span>
-  <div style="text-align:left;flex:1">
-    <div style="font-weight:700">Manage Subscription</div>
-    <div style="font-size:11px;color:var(--mut)">Update payment method, download invoices</div>
-  </div>
-  <span style="font-size:12px;color:var(--ind)">→</span>
-</button>
+<div id="manage-sub-section">
+  <button onclick="showManageSubMenu()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--txt);transition:all .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
+    <span style="font-size:18px">💳</span>
+    <div style="text-align:left;flex:1">
+      <div style="font-weight:700">Manage Subscription</div>
+      <div style="font-size:11px;color:var(--mut)">Payment method · invoices · plan changes</div>
+    </div>
+    <span style="font-size:12px;color:var(--ind)">›</span>
+  </button>
+</div>
 <div id="cancel-sub-section">
   <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:all .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">🚫</span>
@@ -11722,110 +11752,91 @@ function _sectionPriority(activeSections){
   });
 }
 
-function generateAIPlan(){
-  if(!isElite()) return;
-  const sections=S.sections||[];
-  const passed=S.sectionPassed||[];
-  const active=sections.filter(s=>!passed.includes(s));
-  if(!active.length && !sections.length){ showToast('Add exam sections in your profile first','err'); return; }
-  const allActive=active.length?active:sections;
+function generateAIPlan(settings){
+  if(!isPro()) return;
+  settings=settings||_planSettings||{};
 
-  // Find nearest exam date across all active sections
-  let daysLeft=60; let nearestDate=null; let primarySec=allActive[0]||'FAR';
-  allActive.forEach(s=>{
-    const d=S.examDates?.[s];
-    if(d){const dl=Math.ceil((new Date(d+' 00:00')-new Date())/86400000);if(dl>0&&(nearestDate===null||dl<daysLeft)){daysLeft=dl;nearestDate=d;primarySec=s;}}
-  });
-  if(!nearestDate){
-    nearestDate=new Date(Date.now()+60*86400000).toISOString().slice(0,10);
-    daysLeft=60;
-  }
-  const planDays=Math.max(7,Math.min(daysLeft,84));
-  const hrsPerWeek=S.hoursPerWeek||15;
+  // Single-section focus — users study one test at a time
+  const primarySec=settings.section||getCurrentSection()||'FAR';
+  const examDate=settings.examDate||(S.examDates?.[primarySec]||null);
+  if(!examDate){showToast('Set an exam date first','err');return;}
 
-  // Section urgency — rank by % of recommended hours remaining
-  // This is Option C: data-driven section priority
-  const ranked=_sectionPriority(allActive);
+  const daysLeft=Math.max(7,Math.min(Math.ceil((new Date(examDate+' 00:00')-Date.now())/86400000),120));
+  const planDays=daysLeft;
+  const dailyHrs=settings.dailyHrs||Math.max(1.5,Math.min(8,(S.hoursPerWeek||15)/6));
+  const studyStyle=settings.studyStyle||'balanced';
+  const studyDays=settings.studyDays||[1,2,3,4,5,6]; // array of dow (0=Sun)
+
+  const logged=getSectionHours(primarySec);
+  const target=EXAMS[primarySec]?.studyHours||150;
+  const pctComplete=Math.min(100,Math.round(logged/target*100));
   const sectionStats={};
-  allActive.forEach(s=>{
-    const logged=getSectionHours(s);
-    const target=EXAMS[s]?.studyHours||150;
-    const pct=Math.min(100,Math.round(logged/target*100));
-    sectionStats[s]={logged,target,pct,remaining:Math.max(0,target-logged)};
-  });
+  sectionStats[primarySec]={logged,target,pct:pctComplete,remaining:Math.max(0,target-logged)};
 
-  // Build phases based on days remaining
+  // Phase ratios based on study style + time available
   let phases=[];
   if(planDays>=28){
-    const p1=Math.floor(planDays*.45),p2=Math.floor(planDays*.72),p3=Math.floor(planDays*.88);
+    let r1,r2,r3;
+    if(studyStyle==='mcq_heavy'){r1=0.30;r2=0.75;r3=0.90;}
+    else if(studyStyle==='tbs_heavy'){r1=0.45;r2=0.68;r3=0.90;}
+    else{r1=0.38;r2=0.70;r3=0.88;} // balanced
+    const p1=Math.floor(planDays*r1),p2=Math.floor(planDays*r2),p3=Math.floor(planDays*r3);
     phases=[
-      {n:1,mode:'new_material',name:'Phase 1 · New Material',icon:'📖',start:1,end:p1,focus:'Work through your study material section by section',color:'#6366f1'},
-      {n:2,mode:'mcq_practice',name:'Phase 2 · MCQ Blitz',icon:'⚡',start:p1+1,end:p2,focus:'Practice questions — build speed & pattern recognition',color:'#d44000'},
-      {n:3,mode:'tbs_practice',name:'Phase 3 · TBS Focus',icon:'🎯',start:p2+1,end:p3,focus:'Task-based simulations & targeted weak-area drilling',color:'#059669'},
-      {n:4,mode:'final_review',name:'Phase 4 · Final Sprint',icon:'🚀',start:p3+1,end:planDays,focus:'Mock exams, weak areas, and mental preparation',color:'#9333ea'},
+      {n:1,mode:'new_material',name:'Phase 1 — Foundation',icon:'📖',start:1,end:p1,focus:'Work through '+primarySec+' reading material. Build the conceptual base before drilling questions.',color:'#6366f1'},
+      {n:2,mode:'mcq_practice',name:'Phase 2 — MCQ Drill',icon:'⚡',start:p1+1,end:p2,focus:'High-volume practice questions. Aim for 40–60 MCQs per session. Review every wrong answer.',color:'#d44000'},
+      {n:3,mode:'tbs_practice',name:'Phase 3 — Simulations',icon:'🎯',start:p2+1,end:p3,focus:'Task-based simulations and weak-area targeting. Use Becker/Gleim diagnostic results to guide focus.',color:'#059669'},
+      {n:4,mode:'final_review',name:'Phase 4 — Final Sprint',icon:'🚀',start:p3+1,end:planDays,focus:'Mock exams under timed conditions. Only high-yield review. Protect your sleep.',color:'#9333ea'},
     ];
   } else if(planDays>=14){
-    const p1=Math.floor(planDays*.55);
+    const p1=Math.floor(planDays*(studyStyle==='mcq_heavy'?0.45:0.55));
     phases=[
-      {n:1,mode:'mcq_practice',name:'Phase 1 · MCQ Blitz',icon:'⚡',start:1,end:p1,focus:'Drill practice questions fast — identify weak areas',color:'#d44000'},
-      {n:2,mode:'final_review',name:'Phase 2 · Final Sprint',icon:'🚀',start:p1+1,end:planDays,focus:'TBS practice, mock exam, and targeted review',color:'#9333ea'},
+      {n:1,mode:'mcq_practice',name:'Phase 1 — MCQ Blitz',icon:'⚡',start:1,end:p1,focus:'Rapid-fire practice questions to identify weak areas. 50+ MCQs per session.',color:'#d44000'},
+      {n:2,mode:'final_review',name:'Phase 2 — Final Sprint',icon:'🚀',start:p1+1,end:planDays,focus:'Targeted TBS practice, a mock exam, and final-week mental prep.',color:'#9333ea'},
     ];
   } else {
-    phases=[{n:1,mode:'final_review',name:'Exam Crunch',icon:'🔥',start:1,end:planDays,focus:'High-yield MCQs and TBS only — no new material',color:'#ef4444'}];
+    phases=[{n:1,mode:'final_review',name:'Exam Crunch 🔥',icon:'🔥',start:1,end:planDays,focus:'High-yield MCQs and key TBS only. No new material. Stay sharp and rested.',color:'#ef4444'}];
   }
 
-  // Build day-by-day plan
-  // Section assigned each day = highest-urgency section that still has hours remaining
-  // We rotate so no section gets neglected
-  const studyMask=[false,true,true,true,true,true,true]; // Sun off, Mon-Sat on
+  // Sprint alternating modes for final phase
+  const sprintModes=['mock_exam','final_review','mcq_practice','final_review','mock_exam','tbs_practice'];
+
   const today=new Date();today.setHours(0,0,0,0);
   const days=[];
   let studyDayNum=0;
 
-  // Final sprint days alternate mock exam & final review
-  const sprintModes=['mock_exam','final_review','mcq_practice','final_review','mock_exam','final_review'];
-
   for(let i=0;i<planDays;i++){
     const dt=new Date(today);dt.setDate(today.getDate()+i);
     const dow=dt.getDay();
-    const isStudy=studyMask[dow];
+    const isStudy=studyDays.includes(dow);
     const dateStr=dt.toISOString().slice(0,10);
     const dayNum=i+1;
     const phase=phases.find(p=>dayNum>=p.start&&dayNum<=p.end)||phases[phases.length-1];
 
-    let hrs=0,section=primarySec,mode=phase.mode;
+    let hrs=0,mode=phase.mode;
     if(isStudy){
-      const base=hrsPerWeek/6;
-      // Ramp hours slightly as exam approaches
-      const rampFactor=1+Math.min(0.3,(planDays-dayNum)/planDays*0.4);
-      hrs=Math.min(8,Math.max(1.5,parseFloat((base*rampFactor).toFixed(1))));
+      // Ramp toward exam: start slightly lighter, peak in final sprint
+      const progress=dayNum/planDays;
+      const ramp=progress<0.5?0.9+progress*0.2:1.0+Math.max(0,(progress-0.75)*0.5);
+      hrs=Math.min(8,Math.max(1,parseFloat((dailyHrs*ramp).toFixed(1))));
 
-      // Pick section: rotate through ranked sections, weighted by remaining hours
-      // Simple round-robin weighted — most urgent section gets more days
-      if(allActive.length>1){
-        const slot=studyDayNum%allActive.length;
-        // Extra day for most urgent section every other rotation
-        section=studyDayNum%(allActive.length*2)<allActive.length?ranked[slot%ranked.length]:ranked[Math.min(1,slot)%ranked.length];
-      } else {
-        section=allActive[0]||primarySec;
-      }
-
-      // Final sprint: mix mock exams and targeted review
-      if(phase.n===phases[phases.length-1].n && phases.length>1){
+      // Final sprint: alternate modes
+      if(phase.n===phases[phases.length-1].n&&phases.length>1){
         mode=sprintModes[studyDayNum%sprintModes.length];
       }
-
       studyDayNum++;
     }
 
-    days.push({dayNum,date:dateStr,section,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,done:false});
+    days.push({dayNum,date:dateStr,section:primarySec,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,done:false});
   }
 
   S.aiStudyPlan={
     generated:new Date().toISOString(),
     primarySec,
-    examDate:nearestDate,
+    examDate,
     daysLeft:planDays,
+    studyStyle,
+    studyDays,
+    dailyHrs,
     sectionStats,
     phases,
     days,
@@ -11837,12 +11848,15 @@ function generateAIPlan(){
 // STUDY PLAN TAB — full calendar view
 // ═══════════════════════════════════════════════════════════════════
 let _planViewMonth=null; // {year,month}
+let _planGenerating=false;
+let _planSettings=null; // customization before generating
 
 function buildStudyPlanTab(){
   const pro=isPro();
   if(!pro) return _buildPlanGate();
+  if(_planGenerating) return _buildPlanLoading();
   const plan=S.aiStudyPlan;
-  if(!plan) return _buildPlanEmpty();
+  if(!plan) return _buildPlanSetup();
   return _buildPlanCalendar(plan);
 }
 
@@ -11871,26 +11885,186 @@ function _buildPlanGate(){
   </div>`;
 }
 
-function _buildPlanEmpty(){
-  const sec=getCurrentSection();
-  const ex=EXAMS[sec]||{color:'var(--ora)',full:sec};
-  const examDate=S.examDates?.[sec];
-  const daysLeft=examDate?Math.max(0,Math.round((new Date(examDate+' 00:00:00')-Date.now())/86400000)):null;
-  return`<div style="max-width:720px;margin:0 auto;text-align:center;padding:60px 20px">
-    <div style="font-size:56px;margin-bottom:18px">🗓</div>
-    <div style="font-size:24px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Build Your Study Plan</div>
-    <div style="font-size:13px;color:var(--sub);max-width:380px;margin:0 auto 16px;line-height:1.7">Ledger analyzes your ${ex.full||sec} exam date, hours logged, and weekly capacity — then builds a day-by-day calendar.</div>
-    ${examDate
-      ?`<div style="display:inline-flex;align-items:center;gap:8px;background:${ex.color}14;border:1px solid ${ex.color}33;border-radius:10px;padding:8px 18px;margin-bottom:28px">
-          <span class="badge badge-${sec}">${sec}</span>
-          <span style="font-size:13px;font-weight:700;color:var(--txt)">${daysLeft} days to exam</span>
-          <span style="font-size:12px;color:var(--mut)">· ${new Date(examDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})}</span>
-        </div>`
-      :`<div style="font-size:12px;color:var(--amb);background:var(--amb-bg);border:1px solid var(--amb);border-radius:10px;padding:9px 18px;margin-bottom:28px;display:inline-block">⚠️ Set your ${sec} exam date in Dashboard → Exam Pacing first</div>`}
-    <br>
-    <button id="gen-plan-btn" onclick="runGeneratePlan()" ${!examDate?'disabled style="opacity:.45;cursor:not-allowed;"':''} style="padding:14px 44px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.35)${examDate?';animation:pulse-glow 2s infinite':''}">✨ Generate My Plan</button>
-    <div style="font-size:11px;color:var(--mut);margin-top:12px">Takes ~2 seconds · Focused on ${sec} · Regenerate anytime</div>
+function _buildPlanLoading(){
+  const msgs=['Analyzing your exam date…','Calculating study phases…','Mapping your daily schedule…','Tuning hours to your capacity…','Finalizing your day-by-day plan…'];
+  const msg=msgs[Math.floor(Math.random()*msgs.length)];
+  return`<div style="max-width:500px;margin:100px auto;text-align:center;padding:0 20px">
+    <div style="font-size:64px;margin-bottom:24px;display:inline-block;animation:spin 1.4s linear infinite">⚙️</div>
+    <div style="font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Building your plan…</div>
+    <div style="font-size:14px;color:var(--sub);margin-bottom:32px;line-height:1.7">${msg}</div>
+    <div style="background:var(--surf2);border-radius:100px;height:6px;overflow:hidden;max-width:300px;margin:0 auto">
+      <div style="height:6px;background:linear-gradient(90deg,var(--ora),#b03500);border-radius:100px;animation:plan-progress 2.4s ease-in-out forwards"></div>
+    </div>
+  </div>
+  <style>
+    @keyframes plan-progress{0%{width:0%}60%{width:75%}90%{width:92%}100%{width:100%}}
+  </style>`;
+}
+
+function _buildPlanSetup(){
+  const availableSections=(S.sections||[]).filter(s=>!(S.sectionPassed||[]).includes(s));
+  const allSections=availableSections.length?availableSections:(S.sections||['FAR']);
+  // Default to section with nearest exam date, or first section
+  let defaultSec=allSections[0];
+  let nearestDays=Infinity;
+  allSections.forEach(s=>{
+    const d=S.examDates?.[s];
+    if(d){const dl=Math.ceil((new Date(d+' 00:00')-Date.now())/86400000);if(dl>0&&dl<nearestDays){nearestDays=dl;defaultSec=s;}}
+  });
+  const storedSettings=_planSettings||{};
+  const selectedSec=storedSettings.section||defaultSec;
+  const examDate=storedSettings.examDate||(S.examDates?.[selectedSec]||'');
+  const weeklyHrs=storedSettings.weeklyHrs||(S.hoursPerWeek||15);
+  const studyStyle=storedSettings.studyStyle||'balanced';
+  const studyDays=storedSettings.studyDays||[1,2,3,4,5,6]; // Mon-Sat default
+  const ex=EXAMS[selectedSec]||{color:'var(--ora)',full:selectedSec};
+
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayToggles=dayNames.map((d,i)=>`<button onclick="_planToggleDay(${i})" id="plan-day-${i}" style="width:38px;height:38px;border-radius:50%;border:2px solid ${studyDays.includes(i)?ex.color:'var(--bdr)'};background:${studyDays.includes(i)?ex.color:'var(--surf2)'};color:${studyDays.includes(i)?'#fff':'var(--mut)'};font-size:11px;font-weight:700;cursor:pointer;transition:all .15s">${d.slice(0,2)}</button>`).join('');
+
+  const styleOptions=[
+    {id:'mcq_heavy',label:'MCQ Heavy',icon:'⚡',desc:'More practice questions — great if you have limited time'},
+    {id:'balanced',label:'Balanced',icon:'⚖️',desc:'Equal mix of reading, MCQs, and simulations'},
+    {id:'tbs_heavy',label:'Sim Heavy',icon:'🎯',desc:'More task-based simulations — great for technical sections'},
+  ];
+
+  const daysLeft=examDate?Math.max(0,Math.ceil((new Date(examDate+' 00:00')-Date.now())/86400000)):null;
+  const canGenerate=!!examDate&&daysLeft>0;
+
+  return`<div style="max-width:680px;margin:0 auto;padding:20px 0">
+    <div style="margin-bottom:28px">
+      <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin-bottom:6px">Build Your Study Plan</h1>
+      <p style="color:var(--sub);font-size:13px;margin:0">Customize your settings — Ledger builds a day-by-day calendar around your exam.</p>
+    </div>
+
+    <!-- Section selector -->
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Which exam are you preparing for?</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:14px">Focus on one at a time. You can rebuild the plan after you pass.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${allSections.map(s=>{
+          const e=EXAMS[s]||{color:'var(--ora)',full:s};
+          const isSelected=s===selectedSec;
+          const d=S.examDates?.[s];
+          const dl=d?Math.ceil((new Date(d+' 00:00')-Date.now())/86400000):null;
+          return`<button onclick="_planSelectSection('${s}')" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px 16px;border-radius:12px;border:2px solid ${isSelected?e.color:'var(--bdr)'};background:${isSelected?e.color+'14':'var(--surf2)'};cursor:pointer;transition:all .15s;min-width:110px">
+            <span class="badge badge-${s}" style="font-size:11px">${s}</span>
+            <span style="font-size:11px;font-weight:700;color:${isSelected?e.color:'var(--sub)'}">${e.full?.split(' ').slice(0,2).join(' ')}</span>
+            ${dl!=null&&dl>0?`<span style="font-size:10px;color:var(--mut)">${dl}d to exam</span>`:dl===0?`<span style="font-size:10px;color:#ef4444">Exam today!</span>`:'<span style="font-size:10px;color:var(--mut)">No date set</span>'}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Exam date -->
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Exam date for ${selectedSec}</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">The plan ends the day before your exam. Set this accurately.</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input type="date" id="plan-exam-date" value="${examDate}" min="${new Date().toISOString().slice(0,10)}" onchange="_planUpdateSettings()" style="padding:9px 12px;background:var(--surf2);border:1.5px solid ${canGenerate?ex.color:'var(--bdr)'};border-radius:10px;color:var(--txt);font-size:14px;font-weight:700;outline:none;cursor:pointer">
+        ${canGenerate?`<span style="font-size:13px;font-weight:700;color:${ex.color}">${daysLeft} days away</span>`:''}
+      </div>
+      ${!canGenerate&&examDate?`<div style="font-size:11px;color:#ef4444;margin-top:8px">⚠️ That date is in the past — pick a future date</div>`:!examDate?`<div style="font-size:11px;color:var(--amb);margin-top:8px">📅 Pick your exam date to continue</div>`:''}
+    </div>
+
+    <!-- Daily hours + study days -->
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study schedule</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:16px">How many hours per day, and which days you're available.</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap">Daily hours:</span>
+        <input type="range" id="plan-hrs" min="1" max="8" step="0.5" value="${weeklyHrs/6>8?8:Math.round(weeklyHrs/6*2)/2||2}" oninput="document.getElementById('plan-hrs-lbl').textContent=this.value+'h';_planUpdateSettings()" style="flex:1;max-width:200px;accent-color:${ex.color}">
+        <span id="plan-hrs-lbl" style="font-size:16px;font-weight:900;color:${ex.color};min-width:36px">${(Math.round(weeklyHrs/6*2)/2||2).toFixed(1)}h</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--sub);margin-bottom:10px">Study days:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="plan-day-toggles">${dayToggles}</div>
+    </div>
+
+    <!-- Study style -->
+    <div class="card card-pad" style="margin-bottom:28px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study style</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:14px">How do you want to split your time across the plan?</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        ${styleOptions.map(o=>`<button onclick="_planSelectStyle('${o.id}')" id="plan-style-${o.id}" style="flex:1;min-width:140px;padding:12px 14px;border-radius:12px;border:2px solid ${studyStyle===o.id?ex.color:'var(--bdr)'};background:${studyStyle===o.id?ex.color+'14':'var(--surf2)'};cursor:pointer;text-align:left;transition:all .15s">
+          <div style="font-size:18px;margin-bottom:5px">${o.icon}</div>
+          <div style="font-size:12px;font-weight:800;color:${studyStyle===o.id?ex.color:'var(--txt)'};">${o.label}</div>
+          <div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4">${o.desc}</div>
+        </button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Generate button -->
+    <button onclick="submitPlanSetup()" ${!canGenerate?'disabled':''}
+      style="width:100%;padding:16px;background:${canGenerate?'linear-gradient(135deg,var(--ora),#b03500)':'var(--surf3)'};color:${canGenerate?'#fff':'var(--mut)'};border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:${canGenerate?'pointer':'not-allowed'};box-shadow:${canGenerate?'0 6px 24px rgba(212,64,0,.35)':'none'};transition:all .15s;letter-spacing:-.01em">
+      ${canGenerate?'✨ Build My Study Plan →':'Set an exam date to continue'}
+    </button>
+    ${canGenerate?`<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px">Focused on ${selectedSec} only · ${daysLeft} days · Rebuild anytime for free</div>`:''}
+    ${S.aiStudyPlan?`<button onclick="openDashTab&&openDashTab('plan');renderTab()" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer" onclick="window._cancelPlanSetup=true;renderTab()">← Back to existing plan</button>`:''}
   </div>`;
+}
+
+function _planSelectSection(sec){
+  _planSettings=Object.assign({},_planSettings||{},{
+    section:sec,
+    examDate:S.examDates?.[sec]||'',
+  });
+  renderTab();
+}
+function _planSelectStyle(style){
+  _planSettings=Object.assign({},_planSettings||{},{studyStyle:style});
+  const storedSec=(_planSettings||{}).section||getCurrentSection();
+  const ex=EXAMS[storedSec]||{color:'var(--ora)'};
+  document.querySelectorAll('[id^="plan-style-"]').forEach(b=>{
+    const id=b.id.replace('plan-style-','');
+    b.style.borderColor=id===style?ex.color:'var(--bdr)';
+    b.style.background=id===style?ex.color+'14':'var(--surf2)';
+    b.querySelector('div:nth-child(2)').style.color=id===style?ex.color:'var(--txt)';
+  });
+}
+function _planToggleDay(i){
+  const current=(_planSettings||{}).studyDays||[1,2,3,4,5,6];
+  const idx=current.indexOf(i);
+  const updated=idx>=0?current.filter(d=>d!==i):[...current,i].sort();
+  if(updated.length===0){showToast('Select at least 1 study day','err');return;}
+  _planSettings=Object.assign({},_planSettings||{},{studyDays:updated});
+  const storedSec=(_planSettings||{}).section||getCurrentSection();
+  const ex=EXAMS[storedSec]||{color:'var(--ora)'};
+  const btn=document.getElementById('plan-day-'+i);
+  if(btn){
+    const on=updated.includes(i);
+    btn.style.borderColor=on?ex.color:'var(--bdr)';
+    btn.style.background=on?ex.color:'var(--surf2)';
+    btn.style.color=on?'#fff':'var(--mut)';
+  }
+}
+function _planUpdateSettings(){
+  const dateEl=document.getElementById('plan-exam-date');
+  const hrsEl=document.getElementById('plan-hrs');
+  if(dateEl) _planSettings=Object.assign({},_planSettings||{},{examDate:dateEl.value});
+  if(hrsEl) _planSettings=Object.assign({},_planSettings||{},{dailyHrs:parseFloat(hrsEl.value)||2});
+}
+
+function submitPlanSetup(){
+  _planUpdateSettings();
+  const settings=_planSettings||{};
+  const sec=settings.section||getCurrentSection();
+  const examDate=settings.examDate||(S.examDates?.[sec]||'');
+  if(!examDate){showToast('Set your exam date first','err');return;}
+  const daysLeft=Math.ceil((new Date(examDate+' 00:00')-Date.now())/86400000);
+  if(daysLeft<=0){showToast('Exam date must be in the future','err');return;}
+  // Save exam date back to state if changed
+  if(!S.examDates) S.examDates={};
+  S.examDates[sec]=examDate;
+  saveState();
+  _planGenerating=true;
+  renderTab();
+  setTimeout(()=>{
+    generateAIPlan(settings);
+    _planGenerating=false;
+    _planViewMonth=null;
+    renderTab();
+    showToast('Your study plan is ready! 🗓','ok');
+  },2600);
 }
 
 function _buildPlanCalendar(plan){
@@ -12009,7 +12183,7 @@ function _buildPlanCalendar(plan){
         </div>
         <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete</p>
       </div>
-      <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;flex-shrink:0">↺ Rebuild Plan</button>
+      <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;flex-shrink:0">⚙️ Edit &amp; Rebuild</button>
     </div>
 
     <!-- 2-col layout -->
@@ -12139,34 +12313,13 @@ function openPlanDayDetail(dateStr){
 }
 
 function runGeneratePlan(){
-  // Show loading state wherever we are
-  const _onPlanTab=(currentTab==='plan');
-  if(_onPlanTab){
-    const pc=document.getElementById('page-content');
-    if(pc) pc.innerHTML=`<div style="max-width:600px;margin:80px auto;text-align:center">
-      <div style="font-size:48px;margin-bottom:18px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>
-      <div style="font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px">Analyzing your study data…</div>
-      <div style="font-size:13px;color:var(--mut)">Building your personalized day-by-day calendar</div>
-    </div>`;
-  } else {
-    const el=document.getElementById('schedule-section');
-    if(el) el.innerHTML='<div class="card card-pad" style="text-align:center;padding:40px 20px">'+
-      '<div style="font-size:40px;margin-bottom:16px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>'+
-      '<div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px">Analyzing your study data…</div>'+
-      '<div style="font-size:12px;color:var(--mut)">Building your personalized day-by-day roadmap</div>'+
-      '</div>';
+  // Legacy call — route to new setup flow
+  if(currentTab==='plan'){
+    _planSettings=null;
+    S.aiStudyPlan=null;
+    saveState();
+    renderTab();
   }
-  setTimeout(()=>{
-    generateAIPlan();
-    _planViewMonth=null; // reset to current month on fresh generate
-    if(_onPlanTab){
-      renderTab();
-    } else {
-      const el2=document.getElementById('schedule-section');
-      if(el2) el2.outerHTML=buildStudySchedule();
-    }
-    showToast('Your AI study plan is ready! 🗓','ok');
-  },1800);
 }
 
 function markPlanDayDone(dateStr){
@@ -12184,9 +12337,18 @@ function markPlanDayDone(dateStr){
 }
 
 function regeneratePlan(){
-  if(!confirm('Rebuild your study plan? Your current plan will be replaced.')) return;
+  // Prefill settings from existing plan so user can tweak before rebuilding
+  if(S.aiStudyPlan){
+    _planSettings={
+      section:S.aiStudyPlan.primarySec,
+      examDate:S.aiStudyPlan.examDate,
+      dailyHrs:S.aiStudyPlan.dailyHrs||2,
+      studyStyle:S.aiStudyPlan.studyStyle||'balanced',
+      studyDays:S.aiStudyPlan.studyDays||[1,2,3,4,5,6],
+    };
+  }
   S.aiStudyPlan=null;saveState();
-  runGeneratePlan();
+  renderTab();
 }
 
 function _buildAIPlanUI(){
