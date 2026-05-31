@@ -3419,10 +3419,10 @@ function renderApp(){
         ${[
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
+          {id:'plan',icon:'🗓',label:'Study Plan'},
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
-          {id:'tips',icon:'◆',label:'Exam Hub'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -3459,8 +3459,8 @@ function switchTab(tab){
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','profile','explore','studylab','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
+  const tabOrder=['feed','dashboard','plan','profile','explore','studylab'];
+  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Study Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -3484,10 +3484,10 @@ function renderTab(){
   if(!el)return;
   if(currentTab==='feed')el.innerHTML=buildFeed();
   else if(currentTab==='dashboard')el.innerHTML=buildDashboard();
+  else if(currentTab==='plan')el.innerHTML=buildStudyPlanTab();
   else if(currentTab==='profile')el.innerHTML=buildProfile();
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
-  else if(currentTab==='tips')el.innerHTML=buildTips();
   attachTabHandlers();
 }
 
@@ -4298,7 +4298,6 @@ function buildDashboard(){
   const subTabs=[
     {id:'overview',label:'Overview'},
     {id:'progress',label:'Progress'},
-    {id:'plan',label:'Study Plan'},
   ];
   const subNav=`<div style="display:flex;gap:4px;margin-bottom:24px;background:var(--surf2);padding:4px;border-radius:12px;width:fit-content">
     ${subTabs.map(t=>`<button onclick="openDashTab('${t.id}')" style="padding:7px 18px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${_dashTab===t.id?'var(--surf)':'transparent'};color:${_dashTab===t.id?'var(--txt)':'var(--mut)'};box-shadow:${_dashTab===t.id?'var(--shadow)':'none'}">${t.label}</button>`).join('')}
@@ -4307,7 +4306,6 @@ function buildDashboard(){
   let content='';
   if(_dashTab==='overview') content=_buildDashOverview();
   else if(_dashTab==='progress') content=_buildDashProgress();
-  else if(_dashTab==='plan') content=buildStudyPlanTab();
 
   return`<div style="max-width:880px;margin:0 auto">${subNav}${content}</div>`;
 }
@@ -8690,7 +8688,7 @@ function injectMobileNav(){
     </div>
     <span class="mob-more-chev">›</span>
   </button>
-  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('dashboard');setTimeout(()=>openDashTab('plan'),50)">
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('plan')">
     <div class="mob-more-icon" style="background:#fff7ed">🗓</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
@@ -8698,7 +8696,7 @@ function injectMobileNav(){
     </div>
     <span class="mob-more-chev">›</span>
   </button>
-  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('tips')">
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('studylab');setTimeout(()=>openStudyLabTab('examhub'),50)">
     <div class="mob-more-icon" style="background:#fff7ed">◆</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Exam Hub</div>
@@ -10145,6 +10143,7 @@ function buildStudyLab() {
     { id:'tools', label:'Study Tools', icon:'⚡' },
     { id:'coach', label:'Ask Ledger', icon:'🤖' },
     { id:'aitools', label:'AI Tools', icon:'✦' },
+    { id:'examhub', label:'Exam Hub', icon:'◆' },
   ];
 
   const subNav =
@@ -10167,6 +10166,8 @@ function buildStudyLab() {
     body = _buildCoachPanel();
   } else if (_studyLabTab === 'aitools') {
     body = _buildAIToolsPanel();
+  } else if (_studyLabTab === 'examhub') {
+    body = buildTips();
   }
 
   return '<div style="max-width:960px;margin:0 auto">' +
@@ -12071,7 +12072,7 @@ function openPlanDayDetail(dateStr){
 
 function runGeneratePlan(){
   // Show loading state wherever we are
-  const _onPlanTab=(currentTab==='dashboard'&&_dashTab==='plan');
+  const _onPlanTab=(currentTab==='plan');
   if(_onPlanTab){
     const pc=document.getElementById('page-content');
     if(pc) pc.innerHTML=`<div style="max-width:600px;margin:80px auto;text-align:center">
@@ -12104,7 +12105,7 @@ function markPlanDayDone(dateStr){
   if(!S.aiStudyPlan) return;
   const day=S.aiStudyPlan.days.find(d=>d.date===dateStr);
   if(day){day.done=true;saveState();}
-  if(currentTab==='dashboard'&&_dashTab==='plan'){
+  if(currentTab==='plan'){
     renderTab();
   } else {
     const el=document.getElementById('schedule-section');
