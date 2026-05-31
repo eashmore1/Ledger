@@ -269,6 +269,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) var(--sp-6) 0}
 .modal-title{font-size:16px;font-weight:800;letter-spacing:-.02em}
 .modal-close{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:3px 7px;border-radius:7px;transition:all var(--transition)}
@@ -7449,40 +7450,56 @@ function openAppSettings(section='account'){
   if(!el){
     el=document.createElement('div');
     el.id='app-settings-modal';
-    el.className='modal-overlay';
-    el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:540px;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
-      <div style="flex-shrink:0;padding:20px 22px 0;border-bottom:1px solid var(--bdr)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div style="font-size:16px;font-weight:800">⚙️ Settings</div>
-          <button class="modal-close" onclick="closeAppSettings()">×</button>
-        </div>
-        <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:0" id="as-tabs"></div>
-      </div>
-      <div id="as-body" style="overflow-y:auto;flex:1;padding:20px 22px 24px"></div>
-    </div>`;
-    el.addEventListener('click',e=>{if(e.target===el)closeAppSettings();});
+    el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;backdrop-filter:blur(2px)';
+    el.innerHTML=`
+<div id="as-panel" style="position:absolute;top:0;right:0;bottom:0;width:min(100vw,680px);background:var(--bg);display:flex;flex-direction:column;box-shadow:-12px 0 48px rgba(0,0,0,.18);animation:slideInRight .22s ease">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">⚙️</span>
+      <span style="font-size:17px;font-weight:800;letter-spacing:-.02em">Settings</span>
+    </div>
+    <button onclick="closeAppSettings()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+  </div>
+  <div style="display:flex;flex:1;min-height:0;overflow:hidden">
+    <div id="as-sidebar" style="width:170px;flex-shrink:0;border-right:1px solid var(--bdr);padding:10px 8px;overflow-y:auto;background:var(--surf)"></div>
+    <div id="as-body" style="flex:1;overflow-y:auto;padding:22px 24px 40px;min-width:0"></div>
+  </div>
+</div>`;
+    el.addEventListener('click',e=>{ if(e.target===el) closeAppSettings(); });
     document.body.appendChild(el);
   }
+  el.style.display='block';
   renderAppSettingsTabs();
   renderAppSettingsSection();
-  el.classList.add('open');
 }
 
 function renderAppSettingsTabs(){
   const tabs=[
-    {id:'account',icon:'👤',label:'Account'},
-    {id:'billing',icon:'💳',label:'Billing'},
-    {id:'security',icon:'🔒',label:'Security'},
+    {id:'account',  icon:'👤', label:'Account'},
+    {id:'billing',  icon:'💳', label:'Billing'},
+    {id:'security', icon:'🔒', label:'Security'},
     {id:'notifications',icon:'🔔',label:'Notifications'},
-    {id:'privacy',icon:'🛡️',label:'Privacy'},
-    {id:'data',icon:'💾',label:'Data'},
+    {id:'privacy',  icon:'🛡️', label:'Privacy'},
+    {id:'data',     icon:'💾', label:'Data & App'},
   ];
-  const el=document.getElementById('as-tabs');
-  if(!el)return;
-  el.innerHTML=tabs.map(t=>`
-  <button onclick="switchSettingsSection('${t.id}')" id="as-tab-${t.id}" style="padding:8px 14px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:${_settingsSection===t.id?700:500};color:${_settingsSection===t.id?'var(--ora)':'var(--mut)'};border-bottom:2px solid ${_settingsSection===t.id?'var(--ora)':'transparent'};white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px">
-    <span>${t.icon}</span>${t.label}
-  </button>`).join('');
+  const el=document.getElementById('as-sidebar');
+  if(!el) return;
+  el.innerHTML = tabs.map(t=>{
+    const active = _settingsSection===t.id;
+    return `<button onclick="switchSettingsSection('${t.id}')" style="
+      display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+      border:none;border-radius:9px;cursor:pointer;text-align:left;
+      background:${active?'var(--ora-bg)':'transparent'};
+      color:${active?'var(--ora)':'var(--sub)'};
+      font-size:13px;font-weight:${active?700:500};
+      margin-bottom:2px;transition:all .15s"
+      onmouseover="if('${t.id}'!=='${_settingsSection}')this.style.background='var(--surf2)';this.style.color='var(--txt)'"
+      onmouseout="if('${t.id}'!=='${_settingsSection}')this.style.background='transparent';this.style.color='var(--sub)'">
+      <span style="font-size:16px;flex-shrink:0">${t.icon}</span>
+      <span>${t.label}</span>
+      ${active?'<span style="width:4px;height:4px;border-radius:50%;background:var(--ora);margin-left:auto;flex-shrink:0"></span>':''}
+    </button>`;
+  }).join('');
 }
 
 function switchSettingsSection(section){
@@ -7753,8 +7770,8 @@ function buildSettingsNotifications(){
     {id:'props_notifs',label:'Props & Comments',sub:'When someone gives you props or comments',def:true},
     {id:'club_messages',label:'Club Messages',sub:'New messages in your study clubs',def:true},
     {id:'achievements',label:'Achievements',sub:'When you unlock a new badge',def:true},
-    {id:'weekly_recap',label:'Weekly Recap',sub:'Your study summary every Sunday',def:false},
-    {id:'leaderboard',label:'Weekly Recap',sub:'Your personal weekly progress summary',def:true},
+    {id:'weekly_recap',label:'Weekly Recap',sub:'Your study summary delivered every Sunday',def:false},
+    {id:'leaderboard',label:'Leaderboard Updates',sub:'Your position in the weekly study circle rankings',def:true},
   ];
   return`
 <div class="section-title">Push Notifications</div>
@@ -7948,7 +7965,7 @@ async function confirmDeleteAccount(){
   }
 }
 
-function closeAppSettings(){document.getElementById('app-settings-modal')?.classList.remove('open');}
+function closeAppSettings(){ const el=document.getElementById('app-settings-modal'); if(el) el.style.display='none'; }
 
 // ═══════════════════════════════════════════════
 // PDF REPORT GENERATION (jsPDF)
