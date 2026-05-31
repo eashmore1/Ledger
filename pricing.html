@@ -276,13 +276,15 @@ footer a:hover{color:rgba(255,255,255,.6)}
   </div>
 
   <!-- STUDENT -->
-  <div class="student-card" onclick="window.location='/'">
+  <div class="student-card" style="cursor:default;opacity:.75">
     <span style="font-size:30px">🎓</span>
     <div style="flex:1">
-      <div style="font-size:14px;font-weight:700;color:#0d9488;margin-bottom:3px">Student Discount — 44% off Pro</div>
-      <div style="font-size:13px;color:var(--sub)">Verify your .edu email or enrollment status for $5/mo Pro. Takes 30 seconds.</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+        <span style="font-size:14px;font-weight:700;color:var(--txt)">Student Discount</span>
+        <span style="font-size:10px;font-weight:800;background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em">Coming Soon</span>
+      </div>
+      <div style="font-size:13px;color:var(--mut)">A discounted rate for students is on the way. Ledger is already pretty affordable — hang tight.</div>
     </div>
-    <div style="font-size:13px;font-weight:700;color:#0d9488;flex-shrink:0">Verify →</div>
   </div>
 </div>
 
@@ -312,8 +314,8 @@ footer a:hover{color:rgba(255,255,255,.6)}
     <div class="faq-a">Yes, annual plans renew automatically unless cancelled. You can manage or cancel your subscription at any time from your account settings.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">How does the student discount work?</div>
-    <div class="faq-a">Verify your student status with a .edu email address or proof of enrollment and receive 44% off the Pro plan ($5/mo instead of $9/mo). The discount applies for as long as your enrollment is active.</div>
+    <div class="faq-q" onclick="toggleFaq(this)">Is there a student discount?</div>
+    <div class="faq-a">A student discount is coming soon. For now, Pro is $9/mo — already well below what other CPA tools charge. Stay tuned.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later?</div>

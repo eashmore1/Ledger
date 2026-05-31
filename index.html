@@ -1269,10 +1269,9 @@ const STRIPE_CONFIG = {
 };
 const STRIPE_ENABLED = true;
 
-// ── Student Discount Verification ────────────────────────────────────────────
-function showStudentVerifyBanner(){
+// ── Student Discount Verification (coming soon — banner disabled) ─────────────
+function showStudentVerifyBanner(){ return; // disabled until student discount launches
   if(document.getElementById('student-verify-banner')) return;
-  // Respect recent dismissals (don't re-show for 3 days)
   const dismissed = parseInt(localStorage.getItem('ledger-student-verify-dismissed')||'0');
   if(dismissed && (Date.now()-dismissed) < 3*86400000) return;
   const wrap = document.querySelector('.app-wrap');
