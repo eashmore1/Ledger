@@ -1807,6 +1807,7 @@ async function saveFollowToFirestore(){
 
 let S = loadState(AUTH?.uid) || null;
 let currentTab = 'feed';
+let _dashTab = 'overview'; // 'overview' | 'progress' | 'plan'
 let isDark = localStorage.getItem('pf2-theme')==='dark';
 
 // ── SESSION TIMER STATE ──
@@ -1829,6 +1830,8 @@ applyTheme();
 // HELPERS
 // ═══════════════════════════════════════════════
 function todayStr(){return new Date().toISOString().slice(0,10);}
+function _getGreeting(){const h=new Date().getHours();if(h<12)return'Good morning';if(h<17)return'Good afternoon';return'Good evening';}
+function openDashTab(tab){_dashTab=tab;renderTab();}
 function timeAgo(isoStr){
   const diff=(Date.now()-new Date(isoStr))/1000;
   if(diff<60)return 'just now';
@@ -3416,7 +3419,6 @@ function renderApp(){
         ${[
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
-          {id:'plan',icon:'🗓',label:'Plan'},
           {id:'profile',icon:'◉',label:'Profile'},
           {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
@@ -3457,8 +3459,8 @@ function switchTab(tab){
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','plan','profile','explore','studylab','tips'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
+  const tabOrder=['feed','dashboard','profile','explore','studylab','tips'];
+  const labelMap={feed:'Feed',dashboard:'Dashboard',profile:'Profile',explore:'Explore',studylab:'Study Lab',tips:'Exam Hub'};
   document.querySelectorAll('.nav-tab').forEach(b=>{
     b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
   });
@@ -3482,7 +3484,6 @@ function renderTab(){
   if(!el)return;
   if(currentTab==='feed')el.innerHTML=buildFeed();
   else if(currentTab==='dashboard')el.innerHTML=buildDashboard();
-  else if(currentTab==='plan')el.innerHTML=buildStudyPlanTab();
   else if(currentTab==='profile')el.innerHTML=buildProfile();
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
@@ -4132,7 +4133,7 @@ function buildPacingAlert(){
         <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">At your current ${b.available}h/wk pace you won't make it. You need <strong>${b.hrsPerWeek}h/week</strong> — about <strong>${b.catchUpHrsToday}h/day</strong>. Either increase your hours or push your exam date.</div>
       </div>
-      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>document.getElementById('schedule-section')?.scrollIntoView({behavior:'smooth'}),100)">Reschedule →</button>
+      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>{openDashTab('progress');setTimeout(()=>document.getElementById('schedule-section')?.scrollIntoView({behavior:'smooth'}),100)},50)">Reschedule →</button>
     </div>`);
   });
 
@@ -4294,9 +4295,90 @@ function openStrugglingModal(){
 // DASHBOARD
 // ═══════════════════════════════════════════════
 function buildDashboard(){
+  const subTabs=[
+    {id:'overview',label:'Overview'},
+    {id:'progress',label:'Progress'},
+    {id:'plan',label:'Study Plan'},
+  ];
+  const subNav=`<div style="display:flex;gap:4px;margin-bottom:24px;background:var(--surf2);padding:4px;border-radius:12px;width:fit-content">
+    ${subTabs.map(t=>`<button onclick="openDashTab('${t.id}')" style="padding:7px 18px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${_dashTab===t.id?'var(--surf)':'transparent'};color:${_dashTab===t.id?'var(--txt)':'var(--mut)'};box-shadow:${_dashTab===t.id?'var(--shadow)':'none'}">${t.label}</button>`).join('')}
+  </div>`;
+
+  let content='';
+  if(_dashTab==='overview') content=_buildDashOverview();
+  else if(_dashTab==='progress') content=_buildDashProgress();
+  else if(_dashTab==='plan') content=buildStudyPlanTab();
+
+  return`<div style="max-width:880px;margin:0 auto">${subNav}${content}</div>`;
+}
+
+function _buildDashOverview(){
   const totalHrs=getTotalHours();
   const weekHrs=getWeekHours();
   const streak=getStreak();
+  const pacingAlert=buildPacingAlert();
+  const readinessCard=buildReadinessCard();
+  const commitmentCard=buildWeeklyCommitment();
+  const countdownAlerts=buildCountdownAlerts();
+  const streakRecovery=buildStreakRecovery();
+
+  return`
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">${_getGreeting()}, ${S.name}.</h1>
+      <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">
+        📝 Log Exam Result
+      </button>
+      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:7px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;flex-shrink:0" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
+        <span style="font-size:14px">💪</span> Feeling stuck?
+      </button>
+    </div>
+  </div>
+
+  ${countdownAlerts}
+  ${pacingAlert}
+
+  <div class="stats-grid" style="margin-bottom:var(--sp-5)">
+    ${[
+      {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)'},
+      {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)'},
+      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1},
+      {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
+    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
+  </div>
+  ${streakRecovery}
+
+  <div class="dash-row-2col">
+    ${readinessCard}
+    ${commitmentCard}
+  </div>
+
+  <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="section-title" style="margin:0">Score Tracker</div>
+      <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
+    </div>
+    ${buildScoreTracker()}
+  </div>
+
+  <!-- Ask Ledger teaser -->
+  <div class="card card-pad" style="margin-bottom:16px;background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border-color:rgba(90,95,207,.25)">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🤖</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800;margin-bottom:3px">Ask Ledger</div>
+        <div style="font-size:12px;color:var(--sub)">Your AI study coach — get personalized pacing, weak-spot alerts, and instant answers.</div>
+      </div>
+      <button onclick="switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)" class="btn btn-ind btn-sm" style="flex-shrink:0;white-space:nowrap">Open →</button>
+    </div>
+  </div>`;
+}
+
+function _buildDashProgress(){
+  const weekHrs=getWeekHours();
   const weekGoal=S.hoursPerWeek||15;
   const weekPct=Math.min(100,Math.round(weekHrs/weekGoal*100));
   const today=todayStr();
@@ -4337,20 +4419,19 @@ function buildDashboard(){
     } else if(passed){paceMsg='Passed!';}
     else{paceMsg='Add a target date to see your pace';}
 
-    // Retake info
-    const lastResult = getLastExamResult(s);
-    const isRetake = lastResult && !lastResult.passed;
-    let retakeInfo = '';
-    if(isRetake) {
-      const hrsSinceSit = Math.round(getSectionHoursSinceSit(s));
-      const adjustedGoal = Math.max(20, getHourGoal(s) - hrsSinceSit);
-      let ntsMsg = '';
-      if(lastResult.ntsExpiry) {
-        const ntsMs = new Date(lastResult.ntsExpiry+' 00:00:00') - Date.now();
-        const ntsDays = Math.round(ntsMs/86400000);
-        ntsMsg = ntsDays < 0 ? ' · NTS may have expired' : ntsDays === 0 ? ' · NTS expires today' : ` · ${ntsDays}d on NTS`;
-      } else { ntsMsg = ' · Enter NTS expiry for countdown'; }
-      retakeInfo = `<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
+    const lastResult=getLastExamResult(s);
+    const isRetake=lastResult&&!lastResult.passed;
+    let retakeInfo='';
+    if(isRetake){
+      const hrsSinceSit=Math.round(getSectionHoursSinceSit(s));
+      const adjustedGoal=Math.max(20,getHourGoal(s)-hrsSinceSit);
+      let ntsMsg='';
+      if(lastResult.ntsExpiry){
+        const ntsMs=new Date(lastResult.ntsExpiry+' 00:00:00')-Date.now();
+        const ntsDays=Math.round(ntsMs/86400000);
+        ntsMsg=ntsDays<0?' · NTS may have expired':ntsDays===0?' · NTS expires today':` · ${ntsDays}d on NTS`;
+      } else {ntsMsg=' · Enter NTS expiry for countdown';}
+      retakeInfo=`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
         <span style="background:#ef444422;color:#ef4444;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">↺ Retake</span>
         <span style="font-size:10px;color:var(--mut)">${hrsSinceSit}h logged since last sit · goal: ${adjustedGoal}h more${ntsMsg}</span>
       </div>`;
@@ -4389,58 +4470,9 @@ function buildDashboard(){
     </div>`;
   }).join('');
 
-  // Calendar
   const calHTML=buildCalendar();
 
-  const pacingAlert=buildPacingAlert();
-  const readinessCard=buildReadinessCard();
-  const commitmentCard=buildWeeklyCommitment();
-  const countdownAlerts=buildCountdownAlerts();
-  const streakRecovery=buildStreakRecovery();
-
   return`
-<div style="max-width:880px;margin:0 auto">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:10px">
-    <div>
-      <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">Hey, ${S.name}.</h1>
-      <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">
-        📝 Log Exam Result
-      </button>
-      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:7px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;flex-shrink:0" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
-        <span style="font-size:14px">💪</span> Feeling stuck?
-      </button>
-    </div>
-  </div>
-
-  ${countdownAlerts}
-  ${pacingAlert}
-
-  <div class="stats-grid" style="margin-bottom:var(--sp-5)">
-    ${[
-      {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)'},
-      {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)'},
-      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1},
-      {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
-    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
-  </div>
-  ${streakRecovery}
-
-  <div class="dash-row-2col">
-    ${readinessCard}
-    ${commitmentCard}
-  </div>
-
-  <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div class="section-title" style="margin:0">Score Tracker</div>
-      <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
-    </div>
-    ${buildScoreTracker()}
-  </div>
-
   <div class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
@@ -4470,24 +4502,9 @@ function buildDashboard(){
     </div>
   </div>
 
-  <!-- Ask Ledger teaser on Dashboard -->
-  <div class="card card-pad" style="margin-bottom:16px;background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border-color:rgba(90,95,207,.25)">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🤖</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:800;margin-bottom:3px">Ask Ledger</div>
-        <div style="font-size:12px;color:var(--sub)">Your AI study coach — get personalized pacing, weak-spot alerts, and instant answers.</div>
-      </div>
-      <button onclick="switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)" class="btn btn-ind btn-sm" style="flex-shrink:0;white-space:nowrap">Open →</button>
-    </div>
-  </div>
-
   ${buildAdvancedAnalytics()}
 
-  <div id="schedule-section">${buildStudySchedule()}</div>
-
-
-</div>`;
+  <div id="schedule-section">${buildStudySchedule()}</div>`;
 }
 
 function buildCalendar(){
@@ -8673,7 +8690,7 @@ function injectMobileNav(){
     </div>
     <span class="mob-more-chev">›</span>
   </button>
-  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('plan')">
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('dashboard');setTimeout(()=>openDashTab('plan'),50)">
     <div class="mob-more-icon" style="background:#fff7ed">🗓</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
@@ -12054,7 +12071,8 @@ function openPlanDayDetail(dateStr){
 
 function runGeneratePlan(){
   // Show loading state wherever we are
-  if(currentTab==='plan'){
+  const _onPlanTab=(currentTab==='dashboard'&&_dashTab==='plan');
+  if(_onPlanTab){
     const pc=document.getElementById('page-content');
     if(pc) pc.innerHTML=`<div style="max-width:600px;margin:80px auto;text-align:center">
       <div style="font-size:48px;margin-bottom:18px;display:inline-block;animation:spin 1.2s linear infinite">⚙️</div>
@@ -12072,7 +12090,7 @@ function runGeneratePlan(){
   setTimeout(()=>{
     generateAIPlan();
     _planViewMonth=null; // reset to current month on fresh generate
-    if(currentTab==='plan'){
+    if(_onPlanTab){
       renderTab();
     } else {
       const el2=document.getElementById('schedule-section');
@@ -12086,7 +12104,7 @@ function markPlanDayDone(dateStr){
   if(!S.aiStudyPlan) return;
   const day=S.aiStudyPlan.days.find(d=>d.date===dateStr);
   if(day){day.done=true;saveState();}
-  if(currentTab==='plan'){
+  if(currentTab==='dashboard'&&_dashTab==='plan'){
     renderTab();
   } else {
     const el=document.getElementById('schedule-section');
