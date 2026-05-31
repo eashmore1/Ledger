@@ -683,6 +683,8 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
   .mob-nav{display:block}
   .session-fab{display:flex}
 }
+body.no-app-nav .mob-nav{display:none!important}
+body.no-app-nav .session-fab{display:none!important}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(212,64,0,.4)}50%{box-shadow:0 0 0 8px rgba(212,64,0,0)}}
@@ -2511,6 +2513,7 @@ let authEmailInput = '';
 function renderAuth(){
   history.pushState({view:'auth'},'','/login');
   document.title='Sign In — Ledger';
+  document.body.classList.add('no-app-nav');
   applyTheme();
   document.getElementById('root').innerHTML=`
 <div class="auth-wrap">
@@ -2894,6 +2897,7 @@ function renderOnboarding(){
   if(!obData.name&&AUTH?.displayName){initObData();}
   history.pushState({view:'onboarding'},'','/signup');
   document.title='Create Account — Ledger';
+  document.body.classList.add('no-app-nav');
   applyTheme();
   document.getElementById('root').innerHTML=`
 <div class="onboard-wrap">
@@ -3307,6 +3311,7 @@ function checkChallengeAchievements(){
 function renderApp(){
   logLedgerEvent('app_open');
   history.pushState({view:'app'},'','/');
+  document.body.classList.remove('no-app-nav');
   document.title='Ledger — Pass the CPA.';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
   const avatarBorder = S?.profilePic ? '2px solid var(--bdr)' : 'none';
