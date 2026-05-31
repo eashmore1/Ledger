@@ -2185,7 +2185,7 @@ function renderUpgradeModal(featureHint){
   const isAnnual=_upgradeBilling==='annual';
   const proMonthly=9,proAnnual=7;
   const eliteMonthly=14,eliteAnnual=11;
-  const cramPrice=50;
+  const cramPrice=75;
   const proDisplay=isAnnual?proAnnual:proMonthly;
   const eliteDisplay=isAnnual?eliteAnnual:eliteMonthly;
 
@@ -2480,7 +2480,7 @@ function showPostOnboardingOffer(){
   '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Pro</div>'+
   '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$9</div>'+
   '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
-  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>AI coach (Ask Ledger)<br>Smart schedule<br>Streak Shield<br>Weekly PDF reports</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Full question bank (all types)<br>Exam Day Protocol<br>Streak Shield (3×/mo)<br>Weekly PDF reports</div>'+
   '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
   '</div>'+
   // Elite
@@ -2488,7 +2488,7 @@ function showPostOnboardingOffer(){
   '<div style="font-size:10px;font-weight:800;color:var(--pur);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Elite</div>'+
   '<div style="font-size:26px;font-weight:900;color:var(--pur);line-height:1;margin-bottom:2px">$14</div>'+
   '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
-  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Pro<br>Score Predictor<br>AI Mnemonics<br>Exam Simulator<br>Priority support</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Pro<br>AI Study Plan (day-by-day)<br>Ask Ledger (AI Coach)<br>Advanced Analytics<br>AI Mnemonics &amp; Score Predictor</div>'+
   '<button onclick="activatePlan(\'elite\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--pur);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
   '</div>'+
   '</div>'+
@@ -8212,7 +8212,7 @@ ${[
   {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements, limited MCQ',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
   {name:'Pro',price:'$9/mo',desc:'Full question bank, streak shields, exam protocol, heatmap, progress reports, study partner',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
   {name:'Elite',price:'$14/mo',desc:'Everything Pro + AI Study Plan, Ask Ledger, Advanced Analytics, year heatmap, AI tools, priority support',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
-  {name:'6-Month Cram','price':'$50 once',desc:'Full Elite access for 6 months — no recurring charge',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
+  {name:'6-Month Cram','price':'$75 once',desc:'Full Elite access for 6 months — no recurring charge',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
 <!-- Beta tier switcher -->
@@ -12284,7 +12284,7 @@ function _buildPlanCalendar(plan){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
           <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin:0">Study Plan</h1>
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
-          <span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>
+          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
         </div>
         <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete</p>
       </div>
