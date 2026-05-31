@@ -2397,16 +2397,6 @@ function init(){
     // dashboard before login is verified (critical on native iOS app)
     _showSplash();
     initFirebase();
-    // Surface any error from a mobile Google redirect sign-in before
-    // onAuthStateChanged fires (e.g. auth/account-exists-with-different-credential)
-    try{
-      const rr = await firebaseAuth.getRedirectResult();
-      if(rr && rr.user) logLedgerEvent('login', {method:'google_redirect'});
-    }catch(e){
-      if(e.code && e.code !== 'auth/no-current-user'){
-        showToast('Google sign-in failed: ' + (e.message||e.code),'err');
-      }
-    }
     // onAuthStateChanged fires once on load — use it as the single source of truth
     const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
