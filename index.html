@@ -480,7 +480,11 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── SESSION TIMER OVERLAY ── */
 .sess-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(10px)}
 .sess-overlay.open{display:flex}
-.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:22px;width:100%;max-width:490px;overflow:hidden;animation:modalIn .2s ease}
+.sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:24px;width:100%;max-width:800px;overflow:hidden;animation:modalIn .2s ease}
+.sess-recap-grid{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:640px){.sess-recap-grid{grid-template-columns:260px 1fr;gap:0}.sess-recap-left{border-right:1px solid var(--bdr);padding:24px 22px 28px}.sess-recap-right{padding:24px 24px 28px}.sess-box .sess-body{padding:0!important}}
+.sess-recap-left{padding:20px 20px 24px}
+.sess-recap-right{padding:20px 20px 24px}
 .sess-color-bar{height:5px;width:100%;transition:background .3s}
 .sess-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-4) var(--sp-5) 0}
 .sess-status{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
@@ -5553,65 +5557,74 @@ function renderSessCard(){
     const sectionOpts=(S.sections||[]).map(s=>`<option value="${s}"${s===TS.section?' selected':''}>${s}</option>`).join('');
     box.innerHTML=`
     <div class="sess-color-bar" style="background:linear-gradient(90deg,#10b981,#059669)"></div>
-    <div class="sess-hdr">
-      <div class="sess-status sess-st-done">✓ Complete</div>
+    <div class="sess-hdr" style="padding:14px 18px 0">
+      <div class="sess-status sess-st-done">✓ Session Complete</div>
       <button class="sess-close-btn" onclick="discardSession()">×</button>
     </div>
     <div class="sess-body">
-      <div class="sess-recap-hero">
-        <div class="sess-recap-icon">🏆</div>
-        <div class="sess-recap-title">Session Complete!</div>
-        <div class="sess-recap-sub">${ex2?.full||TS.section} · ${new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
-      </div>
-      <div class="sess-rstats">
-        <div class="sess-rstat"><div class="sess-rstat-val" style="color:${col2}">${fmtDur(TS.elapsed)}</div><div class="sess-rstat-lbl">Duration</div></div>
-        <div class="sess-rstat"><div class="sess-rstat-val">${(TS.elapsed/3600).toFixed(2)}h</div><div class="sess-rstat-lbl">Hours</div></div>
-        <div class="sess-rstat"><div class="sess-rstat-val" style="color:${col2}">${TS.section}</div><div class="sess-rstat-lbl">Section</div></div>
-      </div>
-      <div class="sess-divider"></div>
-      <div class="sess-fgrp">
-        <label>Concepts Covered</label>
-        <div class="concept-inp-wrap">
-          <input class="concept-inp" id="concept-inp" placeholder="Type concept, press Enter…" onkeydown="if(event.key==='Enter'){event.preventDefault();addConceptTag();}">
-          <button class="concept-add-btn" onclick="addConceptTag()">Add</button>
+      <div class="sess-recap-grid">
+
+        <!-- LEFT: hero + stats + vibe -->
+        <div class="sess-recap-left">
+          <div style="text-align:center;padding:12px 0 20px">
+            <div style="font-size:52px;margin-bottom:10px;filter:drop-shadow(0 2px 12px rgba(0,0,0,.15))">🏆</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:-.03em;color:var(--txt);margin-bottom:4px">Great work.</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.5">${ex2?.full||TS.section}<br>${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</div>
+          </div>
+
+          <div class="sess-rstats" style="grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+            <div class="sess-rstat"><div class="sess-rstat-val" style="color:${col2};font-size:22px">${fmtDur(TS.elapsed)}</div><div class="sess-rstat-lbl">Duration</div></div>
+            <div class="sess-rstat"><div class="sess-rstat-val" style="font-size:22px">${(TS.elapsed/3600).toFixed(2)}h</div><div class="sess-rstat-lbl">Hours</div></div>
+          </div>
+
+          <div class="sess-fgrp" style="margin-bottom:16px">
+            <label>How'd it feel?</label>
+            <div class="feeling-row-r" id="feeling-row-r">${feelHTML}</div>
+          </div>
+          <div class="sess-fgrp" style="margin-bottom:0">
+            <label>Difficulty (1–5)</label>
+            <div class="diff-r-row" id="diff-r-row">${diffHTML}</div>
+          </div>
         </div>
-        <div class="concept-tags-wrap" id="concept-tags-wrap">${conceptTagsHTML||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>'}</div>
-      </div>
-      <div class="sess-fgrp">
-        <label>Session Notes</label>
-        <textarea class="sess-notes-ta" id="sess-notes-ta" placeholder="How did it go? What clicked? What's still tricky?">${TS.notes}</textarea>
-      </div>
-      <div class="sess-fgrp">
-        <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional — share your setup or whiteboard</span></label>
-        <div id="sess-photo-area">
-          ${TS.sessionPhoto
-            ? '<div style="position:relative;display:inline-block;width:100%"><img src="'+TS.sessionPhoto+'" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>'
-            : _sessPhotoPickerHTML()
-          }
+
+        <!-- RIGHT: concepts + notes + fields + save -->
+        <div class="sess-recap-right">
+          <div class="sess-fgrp">
+            <label>Concepts Covered</label>
+            <div class="concept-inp-wrap">
+              <input class="concept-inp" id="concept-inp" placeholder="Type a concept, press Enter…" onkeydown="if(event.key==='Enter'){event.preventDefault();addConceptTag();}">
+              <button class="concept-add-btn" onclick="addConceptTag()">Add</button>
+            </div>
+            <div class="concept-tags-wrap" id="concept-tags-wrap">${conceptTagsHTML||'<span style="font-size:11px;color:var(--mut)">Nothing tagged yet</span>'}</div>
+          </div>
+          <div class="sess-fgrp">
+            <label>Session Notes</label>
+            <textarea class="sess-notes-ta" id="sess-notes-ta" placeholder="What clicked? What's still fuzzy? Anything to revisit next time?" style="min-height:90px">${TS.notes}</textarea>
+          </div>
+          <div class="sess-fgrp">
+            <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional</span></label>
+            <div id="sess-photo-area">
+              ${TS.sessionPhoto
+                ? '<div style="position:relative;display:inline-block;width:100%"><img src="'+TS.sessionPhoto+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearSessionPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>'
+                : _sessPhotoPickerHTML()
+              }
+            </div>
+          </div>
+          <div class="sess-2col" style="margin-bottom:16px">
+            <div class="sess-fgrp" style="margin-bottom:0">
+              <label>Section</label>
+              <select id="recap-sec" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">${sectionOpts}</select>
+            </div>
+            <div class="sess-fgrp" style="margin-bottom:0">
+              <label>Date</label>
+              <input id="recap-date" type="date" value="${TS.date||todayStr()}" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">
+            </div>
+          </div>
+          <button class="sess-save-btn" onclick="saveSession()">✓ Log Session</button>
+          <button onclick="discardSession()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)'">Discard Session</button>
         </div>
+
       </div>
-      <div class="form-row" style="margin-bottom:14px">
-        <div class="sess-fgrp" style="margin-bottom:0">
-          <label>How'd it feel?</label>
-          <div class="feeling-row-r" id="feeling-row-r">${feelHTML}</div>
-        </div>
-        <div class="sess-fgrp" style="margin-bottom:0">
-          <label>Difficulty (1–5)</label>
-          <div class="diff-r-row" id="diff-r-row">${diffHTML}</div>
-        </div>
-      </div>
-      <div class="sess-2col" style="margin-bottom:14px">
-        <div class="sess-fgrp" style="margin-bottom:0">
-          <label>Section</label>
-          <select id="recap-sec" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">${sectionOpts}</select>
-        </div>
-        <div class="sess-fgrp" style="margin-bottom:0">
-          <label>Date</label>
-          <input id="recap-date" type="date" value="${TS.date||todayStr()}" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">
-        </div>
-      </div>
-      <button class="sess-save-btn" onclick="saveSession()">✓ Log Session</button>
-      <button onclick="discardSession()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Discard Session</button>
     </div>`;
     setTimeout(()=>document.getElementById('concept-inp')?.focus(),80);
   }
