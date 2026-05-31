@@ -835,14 +835,25 @@ function logLedgerEvent(name, params){
 
 async function signInWithGoogle(){
   if(!FIREBASE_ENABLED){
-    // Fallback: simulate Google sign-in (demo mode)
     simulateGoogleSignIn();
     return;
   }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  provider.addScope('profile');
+  // Mobile browsers block popups — use redirect flow instead.
+  // onAuthStateChanged in init() handles the result when the page reloads.
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+  if(isMobile){
+    try{
+      await firebaseAuth.signInWithRedirect(provider);
+    }catch(e){
+      showToast('Sign-in failed: ' + e.message,'err');
+    }
+    return; // browser navigates away — nothing else to do here
+  }
+  // Desktop: use popup
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('email');
-    provider.addScope('profile');
     const result = await firebaseAuth.signInWithPopup(provider);
     const user = result.user;
     AUTH = {
@@ -854,14 +865,11 @@ async function signInWithGoogle(){
       created: Date.now()
     };
     saveAuth(AUTH);
-    // Restore this user's saved state (survives signout)
     S = loadState(AUTH.uid) || null;
     if(!S){
-      // Try Firestore cross-domain/device sync before falling back to onboarding
       const restored = await restoreStateFromFirestore(user.uid);
       if(!restored){ renderOnboarding(); return; }
     }
-    // Sync subscription tier from Firestore
     try{
       if(firebaseDb){
         const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
@@ -2389,6 +2397,16 @@ function init(){
     // dashboard before login is verified (critical on native iOS app)
     _showSplash();
     initFirebase();
+    // Surface any error from a mobile Google redirect sign-in before
+    // onAuthStateChanged fires (e.g. auth/account-exists-with-different-credential)
+    try{
+      const rr = await firebaseAuth.getRedirectResult();
+      if(rr && rr.user) logLedgerEvent('login', {method:'google_redirect'});
+    }catch(e){
+      if(e.code && e.code !== 'auth/no-current-user'){
+        showToast('Google sign-in failed: ' + (e.message||e.code),'err');
+      }
+    }
     // onAuthStateChanged fires once on load — use it as the single source of truth
     const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
