@@ -706,6 +706,22 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 }
 body.no-app-nav .mob-nav{display:none!important}
 body.no-app-nav .session-fab{display:none!important}
+/* ── MOBILE MORE SHEET ── */
+.mob-more-sheet{position:fixed;inset:0;z-index:1100;pointer-events:none}
+.mob-more-sheet.open{pointer-events:all}
+.mob-more-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s ease}
+.mob-more-sheet.open .mob-more-backdrop{background:rgba(0,0,0,.45)}
+.mob-more-drawer{position:absolute;bottom:0;left:0;right:0;background:var(--surf);border-radius:20px 20px 0 0;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 30px rgba(0,0,0,.15)}
+.mob-more-sheet.open .mob-more-drawer{transform:none}
+.mob-more-handle{width:36px;height:4px;background:var(--bdr);border-radius:2px;margin:14px auto 6px}
+.mob-more-title{font-size:11px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;padding:0 20px 10px}
+.mob-more-row{display:flex;align-items:center;gap:14px;padding:12px 20px;border:none;background:none;width:100%;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .1s}
+.mob-more-row:active{background:var(--surf2)}
+.mob-more-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mob-more-text{flex:1;min-width:0}
+.mob-more-label{font-size:15px;font-weight:700;color:var(--txt);line-height:1.2}
+.mob-more-sub{font-size:12px;color:var(--mut);margin-top:1px}
+.mob-more-chev{font-size:18px;color:var(--mut);line-height:1}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(212,64,0,.4)}50%{box-shadow:0 0 0 8px rgba(212,64,0,0)}}
@@ -3398,6 +3414,9 @@ function renderApp(){
 }
 
 function switchTab(tab){
+  // close more sheet if open
+  const _moreSheet=document.getElementById('mob-more-sheet');
+  if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
   const tabOrder=['feed','dashboard','profile','explore','studylab','tips'];
@@ -8199,12 +8218,12 @@ function injectMobileNav(){
     {id:'dashboard',icon:'▦',label:'Dash'},
     {id:'profile',icon:'◉',label:'You'},
     {id:'explore',icon:'◎',label:'Explore'},
-    {id:'tips',icon:'◆',label:'Tips'}
+    {id:'more',icon:'···',label:'More',isMore:true}
   ];
   const nav=document.createElement('nav');
   nav.id='mobile-nav';
   nav.className='mob-nav';
-  nav.innerHTML=`<div class="mob-nav-inner">${tabs.map(t=>`<button class="mob-nav-btn${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')" data-mnav="${t.id}"><span class="mob-nav-icon">${t.icon}</span>${t.label}</button>`).join('')}</div>`;
+  nav.innerHTML=`<div class="mob-nav-inner">${tabs.map(t=>`<button class="mob-nav-btn${currentTab===t.id?' active':''}" onclick="${t.isMore?'openMobileMoreSheet()':'switchTab(\''+t.id+'\')'}" data-mnav="${t.id}"><span class="mob-nav-icon">${t.icon}</span>${t.label}</button>`).join('')}</div>`;
   document.body.appendChild(nav);
   if(!document.getElementById('session-fab')){
     const fab=document.createElement('button');
@@ -8215,8 +8234,68 @@ function injectMobileNav(){
     fab.addEventListener('click',openSessionModal);
     document.body.appendChild(fab);
   }
+  // Inject more sheet
+  if(!document.getElementById('mob-more-sheet')){
+    const sheet=document.createElement('div');
+    sheet.id='mob-more-sheet';
+    sheet.className='mob-more-sheet';
+    sheet.innerHTML=`
+<div class="mob-more-backdrop" onclick="closeMobileMoreSheet()"></div>
+<div class="mob-more-drawer">
+  <div class="mob-more-handle"></div>
+  <div class="mob-more-title">More</div>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();openMessagesModal()">
+    <div class="mob-more-icon" style="background:#eff6ff">💬</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Messages</div>
+      <div class="mob-more-sub">Study groups &amp; direct messages</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('tips')">
+    <div class="mob-more-icon" style="background:#fff7ed">◆</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Exam Hub</div>
+      <div class="mob-more-sub">Tips, strategies &amp; resources</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();openNotificationCenter()">
+    <div class="mob-more-icon" style="background:#fef9c3">🔔</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Notifications</div>
+      <div class="mob-more-sub">Activity &amp; alerts</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();openAppSettings()">
+    <div class="mob-more-icon" style="background:#f0fdf4">⚙️</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Settings</div>
+      <div class="mob-more-sub">Account, plan &amp; preferences</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
+</div>`;
+    document.body.appendChild(sheet);
+  }
 }
 injectMobileNav();
+
+function openMobileMoreSheet(){
+  const sheet=document.getElementById('mob-more-sheet');
+  if(!sheet)return;
+  sheet.classList.add('open');
+  // mark more button active
+  document.querySelectorAll('[data-mnav]').forEach(b=>b.classList.toggle('active',b.dataset.mnav==='more'));
+}
+function closeMobileMoreSheet(){
+  const sheet=document.getElementById('mob-more-sheet');
+  if(!sheet)return;
+  sheet.classList.remove('open');
+  // restore correct active tab
+  document.querySelectorAll('[data-mnav]').forEach(b=>b.classList.toggle('active',b.dataset.mnav===currentTab));
+}
 
 // ═══════════════════════════════════════════════
 // QUESTION BANK
