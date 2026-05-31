@@ -3922,9 +3922,9 @@ function buildReadinessCard(){
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
   </div>
-  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap">
-    <span style="font-size:11px;color:var(--mut)">Log more sessions and add practice scores to improve your score</span>
-    <button class="btn btn-ghost btn-xs" onclick="openPacingTipsModal()">How is this calculated? →</button>
+  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-xs" onclick="openScoreModal('${r.section}')" style="background:var(--ora);color:#fff;border:none;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;flex-shrink:0">📝 Log Practice Score</button>
+    <button class="btn btn-ghost btn-xs" onclick="openPacingTipsModal()" style="flex-shrink:0">How is this calculated? →</button>
   </div>
 </div>`;
 }
@@ -4426,6 +4426,14 @@ function buildDashboard(){
   </div>
 
   <div class="card card-pad" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="section-title" style="margin:0">Score Tracker</div>
+      <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
+    </div>
+    ${buildScoreTracker()}
+  </div>
+
+  <div class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
         <div class="section-title" style="margin-bottom:2px">Weekly Pacing</div>
@@ -4443,21 +4451,15 @@ function buildDashboard(){
     ${pacingCards}
   </div>
 
-  <div class="dash-row-2col">
+  <div class="dash-row-2col" style="margin-bottom:20px">
     <div class="card card-pad">
       <div class="section-title">Study Calendar</div>
       ${calHTML}
     </div>
-
     <div class="card card-pad">
-      <div class="section-title">Study Heat Map — Last 16 Weeks</div>
+      <div class="section-title" style="margin-bottom:14px">${isPro()?'Study Activity — Last 52 Weeks':'Study Activity — Last 16 Weeks'}</div>
       ${buildHeatMap()}
     </div>
-  </div>
-
-  <div class="card card-pad" style="margin-bottom:40px">
-    <div class="section-title">Score Tracker</div>
-    ${buildScoreTracker()}
   </div>
 
   <!-- Ask Ledger teaser on Dashboard -->
@@ -7347,10 +7349,15 @@ function buildHeatMap(){
     const d=a.date.slice(0,10);
     logMap[d]=(logMap[d]||0)+(a.hours||0);
   });
-  const weeks=16;
+  const pro=isPro();
+  const weeks=pro?52:16;
+  const CELL=13,GAP=3;
   const today=new Date();today.setHours(0,0,0,0);
   const startDay=new Date(today);
   startDay.setDate(today.getDate()-today.getDay()-(weeks-1)*7);
+
+  const colors=['var(--surf3)','#ffe0c4','#fdba74','#fb923c','#d44000'];
+  const darkColors=['var(--surf3)','#2e1200','#4f2000','#803600','#d44000'];
 
   const cols=[];
   for(let w=0;w<weeks;w++){
@@ -7358,33 +7365,52 @@ function buildHeatMap(){
     for(let d=0;d<7;d++){
       const cur=new Date(startDay);
       cur.setDate(startDay.getDate()+w*7+d);
-      if(cur>today){cells.push(`<div style="width:11px;height:11px;border-radius:2px;background:var(--surf2)"></div>`);continue;}
+      if(cur>today){cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:var(--surf2)"></div>`);continue;}
       const key=cur.toISOString().slice(0,10);
       const hrs=logMap[key]||0;
       const intensity=hrs===0?0:hrs<1?1:hrs<2?2:hrs<3?3:4;
-      const colors=['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#d44000'];
-      const dark_colors=['var(--surf2)','#2e1200','#4f2000','#803600','#d44000'];
-      const bg=isDark?dark_colors[intensity]:colors[intensity];
-      cells.push(`<div style="width:11px;height:11px;border-radius:2px;background:${bg};cursor:default" title="${key}: ${hrs.toFixed(1)}h"></div>`);
+      const bg=isDark?darkColors[intensity]:colors[intensity];
+      cells.push(`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${bg}" title="${key}: ${hrs>0?hrs.toFixed(1)+'h':'no session'}"></div>`);
     }
-    cols.push(`<div style="display:flex;flex-direction:column;gap:2px">${cells.join('')}</div>`);
+    cols.push(`<div style="display:flex;flex-direction:column;gap:${GAP}px">${cells.join('')}</div>`);
   }
+
+  // Month labels — show on every 4th week start
   const monthLabels=[];
-  for(let w=0;w<weeks;w+=4){
+  for(let w=0;w<weeks;w++){
     const d=new Date(startDay);d.setDate(startDay.getDate()+w*7);
-    monthLabels.push(`<div style="flex:1;font-size:9px;color:var(--mut)">${d.toLocaleDateString('en-US',{month:'short'})}</div>`);
+    const isFirst=w===0||d.getDate()<=7;
+    monthLabels.push(`<div style="width:${CELL}px;flex-shrink:0;font-size:8px;color:${isFirst?'var(--mut)':'transparent'};line-height:1;white-space:nowrap;overflow:visible">${d.toLocaleDateString('en-US',{month:'short'})}</div>`);
   }
-  const totalDays=Object.keys(logMap).filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).length;
+  // Only keep labels at month boundaries
+  let lastMonth='';
+  const sparseLabels=monthLabels.map((lbl,w)=>{
+    const d=new Date(startDay);d.setDate(startDay.getDate()+w*7);
+    const m=d.toLocaleDateString('en-US',{month:'short'});
+    if(m!==lastMonth){lastMonth=m;return`<div style="width:${CELL}px;flex-shrink:0;font-size:8px;color:var(--mut);line-height:1;white-space:nowrap">${m}</div>`;}
+    return`<div style="width:${CELL}px;flex-shrink:0"></div>`;
+  }).join('');
+
+  // Day labels (left side)
+  const dayLabels=['S','M','T','W','T','F','S'].map((day,i)=>
+    `<div style="height:${CELL}px;line-height:${CELL}px;font-size:8px;color:${i%2===1?'var(--mut)':'transparent'};text-align:right;padding-right:4px;flex-shrink:0">${day}</div>`
+  ).join('');
+
+  // Stats
+  const allDays=Object.keys(logMap);
+  const activeDaysTotal=allDays.filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).length;
+  const totalHrs=allDays.filter(d=>{const dt=new Date(d+'T12:00:00');return dt>=startDay&&dt<=today;}).reduce((a,d)=>a+(logMap[d]||0),0);
+  const avgHrs=activeDaysTotal>0?(totalHrs/activeDaysTotal).toFixed(1):0;
 
   let gridHTML;
-  if(isPro()){
-    gridHTML=`<div style="display:flex;gap:2px">${cols.join('')}</div>`;
+  if(pro){
+    gridHTML=`<div style="display:flex;gap:${GAP}px">${cols.join('')}</div>`;
   } else {
     const historyCols=cols.slice(0,15).join('');
     const currentCol=cols[15];
-    gridHTML=`<div style="display:flex;gap:2px;align-items:flex-start">
-  <div style="position:relative;display:inline-flex;gap:2px">
-    <div style="display:flex;gap:2px;filter:blur(2.5px);opacity:.45;pointer-events:none;user-select:none">${historyCols}</div>
+    gridHTML=`<div style="display:flex;gap:${GAP}px;align-items:flex-start">
+  <div style="position:relative;display:inline-flex;gap:${GAP}px">
+    <div style="display:flex;gap:${GAP}px;filter:blur(3px);opacity:.4;pointer-events:none;user-select:none">${historyCols}</div>
     <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Session History')">
       <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:7px 11px;text-align:center;box-shadow:var(--shadow-md)">
         <div style="font-size:10px;font-weight:800;color:var(--ora);margin-bottom:1px">15 weeks hidden</div>
@@ -7398,12 +7424,24 @@ function buildHeatMap(){
 
   return`
 <div style="overflow-x:auto">
-  <div style="display:flex;gap:2px;margin-bottom:4px">${monthLabels.join('')}</div>
-  ${gridHTML}
-  <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:var(--mut)">
-    Less
-    ${['var(--surf2)','#ffe0c4','#fdba74','#fb923c','#d44000'].map(c=>`<div style="width:11px;height:11px;border-radius:2px;background:${c}"></div>`).join('')}
-    More &nbsp;·&nbsp; ${totalDays} active days in ${isPro()?'last 16 weeks':'this week'}
+  <div style="display:flex">
+    <div style="width:18px;flex-shrink:0"></div>
+    <div style="display:flex;gap:${GAP}px;margin-bottom:4px">${sparseLabels}</div>
+  </div>
+  <div style="display:flex;gap:4px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:${GAP}px;padding-top:0">${dayLabels}</div>
+    ${gridHTML}
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">
+      Less ${(isDark?darkColors:colors).map(c=>`<div style="width:${CELL}px;height:${CELL}px;border-radius:2px;background:${c}"></div>`).join('')} More
+    </div>
+    <span style="font-size:10px;color:var(--mut)">·</span>
+    <span style="font-size:10px;color:var(--sub);font-weight:600">${activeDaysTotal} active days</span>
+    <span style="font-size:10px;color:var(--mut)">·</span>
+    <span style="font-size:10px;color:var(--sub);font-weight:600">${totalHrs.toFixed(0)}h total</span>
+    <span style="font-size:10px;color:var(--mut)">·</span>
+    <span style="font-size:10px;color:var(--sub);font-weight:600">${avgHrs}h avg/session day</span>
   </div>
 </div>`;
 }
@@ -7439,9 +7477,7 @@ function buildScoreTracker(){
       <button class="btn btn-ghost btn-xs" onclick="openScoreModal('${s}')">+ Score</button>
     </div>`;
   }).join('');
-  return`
-<div style="font-size:11px;color:var(--mut);margin-bottom:10px">Log your Becker/Gleim practice exam scores. Target: 75+ consistently before scheduling.</div>
-${rows}`;
+  return`<div>${rows}</div>`;
 }
 
 function openScoreModal(section){
