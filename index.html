@@ -2371,34 +2371,58 @@ function showPostOnboardingOffer(){
   const el=document.createElement('div');
   el.className='modal-overlay open';
   el.id='post-ob-offer';
+  el.style.cssText='overflow-y:auto;align-items:flex-start;padding:20px 16px';
   el.innerHTML=
-  '<div style="background:var(--surf);border-radius:24px;width:100%;max-width:560px;overflow:hidden;animation:modalIn .3s ease;box-shadow:0 40px 100px rgba(0,0,0,.4)">'+
+  '<div style="background:var(--surf);border-radius:24px;width:100%;max-width:580px;overflow:hidden;animation:modalIn .3s ease;box-shadow:0 40px 100px rgba(0,0,0,.4);margin:auto">'+
   // Hero
-  '<div style="background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:36px 36px 28px;text-align:center;position:relative;overflow:hidden">'+
-  '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,64,0,.4),transparent 60%)"></div>'+
+  '<div style="background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:32px 32px 24px;text-align:center;position:relative;overflow:hidden">'+
+  '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,64,0,.35),transparent 60%)"></div>'+
   '<div style="position:relative;z-index:1">'+
-  '<div style="font-size:46px;margin-bottom:12px">🎓</div>'+
-  '<div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.5px;margin-bottom:8px">Your plan is set.<br>Ready to pass?</div>'+
-  '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:360px;margin:0 auto">Candidates who use Ledger Pro study 31% more consistently and pass sections 1.4× faster on average.</div>'+
+  '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px">🎉 Account Created</div>'+
+  '<div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px">Choose your plan.<br>First 7 days are free.</div>'+
+  '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(14,165,116,.15);border:1px solid rgba(14,165,116,.3);color:#34d399;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px">✓ No credit card required to start</div>'+
   '</div>'+
   '</div>'+
-  '<div style="padding:24px 32px 28px">'+
-  // Trial CTA (big)
-  '<div style="background:linear-gradient(135deg,var(--ora-bg),var(--amb-bg));border:1.5px solid var(--ora-bdr);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center">'+
-  '<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ora);margin-bottom:6px">🎁 Special New User Offer</div>'+
-  '<div style="font-size:20px;font-weight:800;margin-bottom:4px">7-Day Free Trial</div>'+
-  '<div style="font-size:13px;color:var(--sub);margin-bottom:16px">Try everything. Cancel anytime. No credit card required to start.</div>'+
-  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-btn)">Start Free Trial — No Card Needed</button>'+
+  // Plan cards
+  '<div style="padding:20px 20px 24px">'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'+
+  // Free
+  '<div style="border:1.5px solid var(--bdr);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column">'+
+  '<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Free</div>'+
+  '<div style="font-size:26px;font-weight:900;color:var(--txt);line-height:1;margin-bottom:2px">$0</div>'+
+  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">forever</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Session logging<br>Streak tracking<br>Study groups<br>Community feed</div>'+
+  '<button onclick="document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Continue Free</button>'+
   '</div>'+
-  // What you get bullets
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">'+
-  ['🤖 Ask Ledger','📊 Advanced Analytics','🎯 Exam Simulator','📅 Smart Schedule','🛡️ Streak Shield','📝 Weekly Reports'].map(f=>'<div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--sub)"><span style="color:var(--grn);font-weight:900">✓</span>'+f+'</div>').join('')+
+  // Pro
+  '<div style="border:2px solid var(--ora);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--surf),var(--ora-bg));position:relative">'+
+  '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em">Most Popular</div>'+
+  '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Pro</div>'+
+  '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$9</div>'+
+  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>AI coach (Ask Ledger)<br>Smart schedule<br>Streak Shield<br>Weekly PDF reports</div>'+
+  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
   '</div>'+
-  // Skip
-  '<button onclick="document.getElementById(\'post-ob-offer\').remove()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">Continue with Free Plan →</button>'+
-  '<div style="text-align:center;font-size:10px;color:var(--mut);margin-top:10px">After trial, Pro is $20/mo or $16/mo annual. Cancel anytime.</div>'+
+  // Elite
+  '<div style="border:1.5px solid var(--pur);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--surf),var(--pur-bg))">'+
+  '<div style="font-size:10px;font-weight:800;color:var(--pur);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Elite</div>'+
+  '<div style="font-size:26px;font-weight:900;color:var(--pur);line-height:1;margin-bottom:2px">$14</div>'+
+  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Pro<br>Score Predictor<br>AI Mnemonics<br>Exam Simulator<br>Priority support</div>'+
+  '<button onclick="activatePlan(\'elite\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--pur);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
+  '</div>'+
+  '</div>'+
+  '<div style="text-align:center;font-size:11px;color:var(--mut)">7-day free trial on Pro &amp; Elite · No card needed · Cancel anytime</div>'+
   '</div>'+
   '</div>';
+  // After offer closes (via any button), fire the tour
+  const _obs=new MutationObserver(function(m,obs){
+    if(!document.getElementById('post-ob-offer')){
+      obs.disconnect();
+      if(!localStorage.getItem('pf2-tour-done')) setTimeout(startTour,400);
+    }
+  });
+  _obs.observe(document.body,{childList:true});
   document.body.appendChild(el);
 }
 
@@ -3407,8 +3431,11 @@ function renderApp(){
   setTimeout(checkStreakUrgency, 800);
   setTimeout(checkTrialUrgency, 1600);
   setTimeout(checkStudyNudge, 1000);
-  // Show onboarding tour on first visit (after UI settles)
-  if(!localStorage.getItem('pf2-tour-done')) setTimeout(startTour, 900);
+  // Show onboarding tour on first visit — wait until post-onboarding offer is gone
+  if(!localStorage.getItem('pf2-tour-done')) setTimeout(function(){
+    if(document.getElementById('post-ob-offer')) return; // offer still open, skip tour for now
+    startTour();
+  }, 900);
   if(!window._streakUrgencyInterval){
     window._streakUrgencyInterval=setInterval(checkStreakUrgency, 60000);
   }
