@@ -2508,7 +2508,8 @@ let authMode = 'signin'; // 'signin' | 'signup'
 let authEmailInput = '';
 
 function renderAuth(){
-  document.title='Join Ledger Today';
+  history.pushState({view:'auth'},'','/login');
+  document.title='Sign In — Ledger';
   applyTheme();
   document.getElementById('root').innerHTML=`
 <div class="auth-wrap">
@@ -2870,13 +2871,36 @@ let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','R
 function initObData(){obData.name=(AUTH?.displayName||'').split(' ')[0]||'';}
 initObData();
 
+async function backToSignIn(){
+  // Sign out any partially-created auth session so they start fresh
+  if(FIREBASE_ENABLED && firebaseAuth){
+    try{ await firebaseAuth.signOut(); }catch(e){}
+  }
+  AUTH=null; S=null; obStep=0;
+  renderAuth();
+}
+
+// Handle browser back/forward so each view has its own history entry
+window.addEventListener('popstate', function(e){
+  const view = e.state?.view;
+  if(view==='auth') { AUTH=null; S=null; obStep=0; renderAuth(); }
+  else if(view==='onboarding') renderOnboarding();
+  else if(view==='app' && AUTH && S) renderApp();
+  else if(!AUTH) renderAuth();
+});
+
 function renderOnboarding(){
   if(!obData.name&&AUTH?.displayName){initObData();}
+  history.pushState({view:'onboarding'},'','/signup');
+  document.title='Create Account — Ledger';
   applyTheme();
   document.getElementById('root').innerHTML=`
 <div class="onboard-wrap">
   <div class="onboard-box fade-in">
-    <div class="onboard-logo">Ledger</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="onboard-logo">Ledger</div>
+      <button onclick="backToSignIn()" style="font-size:12px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:6px 12px;cursor:pointer;font-weight:600;transition:all .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Back to sign in</button>
+    </div>
     ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:11px 14px;margin-bottom:14px;text-align:left"><div style="width:30px;height:30px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div><div style="font-size:12px;color:var(--ind);font-weight:600">${esc(_pendingInvite.fromName)} invited you — you'll be connected once you finish setup</div></div>`:''}
     ${AUTH?`<div style="display:inline-flex;align-items:center;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:var(--grn);font-weight:600"><div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">${(AUTH.displayName||'?').charAt(0).toUpperCase()}</div>Signed in as ${AUTH.email}</div>`:''}
     <div class="onboard-sub">Tell us about yourself so we can build your personalized CPA study plan.</div>
@@ -3281,6 +3305,7 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  history.pushState({view:'app'},'','/');
   document.title='Ledger — Pass the CPA.';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
   const avatarBorder = S?.profilePic ? '2px solid var(--bdr)' : 'none';
@@ -11771,7 +11796,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 <!-- ── Cookie Consent Banner ── -->
-<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
   <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
     We use cookies and analytics to improve your experience. By continuing to use Ledger you agree to our
     <a href="/privacy" style="color:#d44000;text-decoration:underline">Privacy Policy</a>.
