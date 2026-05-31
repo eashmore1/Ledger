@@ -2189,51 +2189,54 @@ function renderUpgradeModal(featureHint){
   const proDisplay=isAnnual?proAnnual:proMonthly;
   const eliteDisplay=isAnnual?eliteAnnual:eliteMonthly;
 
-  const hintHTML=featureHint?('<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--ora)"><span style="font-size:18px">🔒</span><span>Unlock <strong>'+featureHint+'</strong> and all Pro features</span></div>'):'';
+  const _eliteFeatures=['AI Study Plan','Ask Ledger','Advanced Analytics','Full Activity History','Elite AI Tools','AI Tools','Score Predictor','AI Mnemonic Generator'];
+  const _hintIsElite=featureHint&&_eliteFeatures.some(f=>featureHint.includes(f));
+  const hintHTML=featureHint?('<div style="background:'+(_hintIsElite?'var(--pur-bg)':'var(--ora-bg)')+';border:1px solid '+(_hintIsElite?'rgba(147,51,234,.25)':'var(--ora-bdr)')+';border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:'+(_hintIsElite?'var(--pur)':'var(--ora)')+'"><span style="font-size:18px">'+(_hintIsElite?'✦':'🔒')+'</span><span>Unlock <strong>'+featureHint+'</strong> — '+(_hintIsElite?'Elite feature':'requires Pro or higher')+'</span></div>'):'';
 
   // Feature rows per plan
   const free=[
     {on:true,text:'Feed + Activity Log'},
     {on:true,text:'Study Timer (unlimited sessions)'},
-    {on:true,text:'Dashboard + Calendar'},
+    {on:true,text:'Dashboard + Exam Pacing'},
     {on:true,text:'1 Study Club'},
     {on:true,text:'Study Circle (community view)'},
-    {on:true,text:'Basic Achievements (12)'},
-    {on:false,text:'Ask Ledger'},
-    {on:false,text:'Advanced Analytics & Heatmaps'},
-    {on:false,text:'Exam Simulator'},
+    {on:true,text:'Basic Achievements'},
+    {on:false,text:'Full Question Bank'},
     {on:false,text:'Streak Shield'},
-    {on:false,text:'Weekly Progress Reports'},
+    {on:false,text:'Exam Day Protocol'},
+    {on:false,text:'AI Study Plan'},
+    {on:false,text:'Ask Ledger'},
   ];
   const pro=[
     {on:true,text:'Everything in Free'},
-    {on:true,text:'Full Study Circle + Profile Browsing'},
-    {on:true,text:'Full Session History & Heatmap'},
-    {on:true,text:'Study Partner Pairing'},
-    {on:true,text:'Advanced Analytics'},
     {on:true,text:'Full Question Bank + Timed Sets'},
-    {on:true,text:'Smart Study Schedule'},
-    {on:true,text:'Unlimited Study Clubs + All Challenges'},
+    {on:true,text:'Exam Day Protocol'},
+    {on:true,text:'Full Activity Heatmap (Week & Month)'},
+    {on:true,text:'Score Tracker'},
+    {on:true,text:'Study Partner Pairing'},
+    {on:true,text:'Unlimited Study Clubs + Challenges'},
     {on:true,text:'Streak Shield (3×/mo)'},
     {on:true,text:'Weekly PDF Progress Reports'},
     {on:true,text:'Custom Per-Section Goals'},
+    {on:true,text:'Full Study Circle + Profile Browsing'},
     {on:true,text:'Data Export (CSV/PDF)'},
-    {on:true,text:'Exam Day Protocol'},
-    {on:true,text:'Member Badge'},
-    {on:false,text:'AI Study Coach'},
-    {on:false,text:'AI Mnemonic Generator'},
-    {on:false,text:'Score Predictor'},
+    {on:true,text:'Pro Member Badge'},
+    {on:false,text:'AI Study Plan'},
+    {on:false,text:'Ask Ledger (AI Coach)'},
+    {on:false,text:'Advanced Analytics'},
   ];
   const elite=[
     {on:true,text:'Everything in Pro'},
-    {on:true,text:'AI Study Coach'},
+    {on:true,text:'AI Study Plan — day-by-day calendar'},
+    {on:true,text:'Ask Ledger (AI Coach)'},
+    {on:true,text:'Advanced Analytics'},
+    {on:true,text:'Activity Heatmap Year View'},
     {on:true,text:'AI Mnemonic Generator'},
     {on:true,text:'Score Predictor'},
-    {on:true,text:'AI-Powered Question Bank'},
-    {on:true,text:'Create Custom Challenges'},
+    {on:true,text:'Custom Challenge Creator'},
     {on:true,text:'Unlimited Streak Shields'},
     {on:true,text:'Priority Support (response <2h)'},
-    {on:true,text:'Member Badge'},
+    {on:true,text:'Elite Member Badge'},
   ];
 
   const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
@@ -2304,7 +2307,7 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-price" style="color:var(--pur)"><sup>$</sup>'+eliteDisplay+'</div>'+
   '<div class="plan-period">per month'+(isAnnual?' · billed $'+(eliteAnnual*12)+'/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+eliteMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">AI Tools + Priority Support + Study Partner</div>'+
+  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">AI Study Plan · AI Coach · Analytics · Priority Support</div>'+
   '<div class="plan-sep"></div>'+
   elite.map(fRow).join('')+
   eliteCTA+
@@ -2315,9 +2318,9 @@ function renderUpgradeModal(featureHint){
   '<div class="cram-inner">'+
   '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">ONE-TIME PURCHASE</div>'+
   '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">📚 6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
-  '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Everything in Pro for 6 months, a structured exam-day protocol, and a personal milestone check-in. Perfect if your exam window is fixed. No recurring charges — ever.</div>'+
+  '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Full Elite access for 6 months — AI Study Plan, Ask Ledger, all analytics, and every Pro feature. Perfect if your exam window is fixed. No recurring charges — ever.</div>'+
   '<div class="cram-feat-row">'+
-  '<span class="cram-feat-chip">✓ Full Pro Features</span>'+
+  '<span class="cram-feat-chip">✓ Full Elite Features</span>'+
   '<span class="cram-feat-chip">✓ 6-Month Access</span>'+
   '<span class="cram-feat-chip">✓ Exam Protocol PDF</span>'+
   '<span class="cram-feat-chip">✓ Score Predictor</span>'+
@@ -2431,10 +2434,16 @@ function proLockHTML(featureName,btnLabel){
   const lbl=btnLabel||'Unlock with Pro';
   return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')">'+'<div class="pro-lock-icon">🔒</div>'+'<div class="pro-lock-label">'+featureName+'</div>'+'<button class="pro-lock-cta">'+lbl+'</button>'+'</div>';
 }
+function eliteLockHTML(featureName,btnLabel){
+  if(isElite())return'';
+  const lbl=btnLabel||'Unlock with Elite';
+  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(147,51,234,.04));border:1.5px solid rgba(147,51,234,.25)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Elite</div>'+'<button class="pro-lock-cta" style="background:linear-gradient(135deg,var(--pur),#7c22c8)">'+lbl+'</button>'+'</div>';
+}
 
 // Inline upsell banner (used inside cards)
-function upsellBannerHTML(text,cta,featureName){
-  return'<div class="upsell-inline" onclick="openUpgradeModal(\''+featureName+'\')">'+'<span style="font-size:24px">✨</span>'+'<div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--ind)">'+text+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Available with Ledger Pro</div></div>'+'<button class="challenge-pro-badge">'+cta+'</button>'+'</div>';
+function upsellBannerHTML(text,cta,featureName,tier){
+  const _t=tier||'Pro';
+  return'<div class="upsell-inline" onclick="openUpgradeModal(\''+featureName+'\')">'+'<span style="font-size:24px">'+(_t==='Elite'?'✦':'✨')+'</span>'+'<div style="flex:1"><div style="font-size:12px;font-weight:800;color:'+(_t==='Elite'?'var(--pur)':'var(--ind)')+'">'+text+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Available with Ledger '+_t+'</div></div>'+'<button class="challenge-pro-badge" style="'+(_t==='Elite'?'background:var(--pur);color:#fff':'')+'">'+cta+'</button>'+'</div>';
 }
 
 // Post-onboarding offer — shown once after completing onboarding
@@ -7455,19 +7464,20 @@ function buildHeatMap(){
     return hex+Math.round(op*255).toString(16).padStart(2,'0');
   }
 
-  const effectiveRange=(!pro&&_heatMapRange==='year')?'month':_heatMapRange;
+  const effectiveRange=(!isElite()&&_heatMapRange==='year')?'month':_heatMapRange;
   const userSections=S.sections||[];
   const legendHTML=userSections.map(s=>{
     const c=EXAMS[s]?.color||'var(--ora)';
     return`<div style="display:flex;align-items:center;gap:4px"><div style="width:9px;height:9px;border-radius:2px;background:${c}"></div><span style="font-size:10px;color:var(--mut);font-weight:600">${s}</span></div>`;
   }).join('');
 
-  const toggleRanges=pro
+  const elite=isElite();
+  const toggleRanges=elite
     ?[{id:'week',label:'Week'},{id:'month',label:'Month'},{id:'year',label:'Year'}]
     :[{id:'week',label:'Week'},{id:'month',label:'Month'}];
   const toggleHTML=`<div style="display:flex;gap:0;background:var(--surf3);border-radius:8px;padding:3px;width:fit-content">`+
     toggleRanges.map(r=>`<button onclick="setHeatMapRange('${r.id}')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all .12s;background:${effectiveRange===r.id?'var(--surf)':'transparent'};color:${effectiveRange===r.id?'var(--txt)':'var(--mut)'};box-shadow:${effectiveRange===r.id?'var(--shadow)':'none'}">${r.label}</button>`).join('')+
-    (!pro?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--ora)">Year ✦</button>`:'')+'</div>';
+    (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--pur)">Year ✦</button>`:'')+'</div>';
 
   // ── WEEK VIEW ─────────────────────────────────────────────
   if(effectiveRange==='week'){
@@ -8199,10 +8209,10 @@ ${isFreePlan?`
 <div style="height:1px;background:var(--bdr);margin:16px 0"></div>
 <div class="section-title">All Plans</div>
 ${[
-  {name:'Free',price:'$0',desc:'Timer, feed, 4 starter challenges, 1 club, basic achievements',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
-  {name:'Pro',price:'$9/mo',desc:'Full Study Circle, all personal goals, study partner, analytics, unlimited clubs',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
-  {name:'Elite',price:'$14/mo',desc:'Everything Pro + AI Coach, Mnemonics, Score Predictor, custom challenges',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
-  {name:'6-Month Cram','price':'$50 once',desc:'Full Pro for 6 months + exam protocol',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
+  {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements, limited MCQ',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
+  {name:'Pro',price:'$9/mo',desc:'Full question bank, streak shields, exam protocol, heatmap, progress reports, study partner',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
+  {name:'Elite',price:'$14/mo',desc:'Everything Pro + AI Study Plan, Ask Ledger, Advanced Analytics, year heatmap, AI tools, priority support',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
+  {name:'6-Month Cram','price':'$50 once',desc:'Full Elite access for 6 months — no recurring charge',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
 <!-- Beta tier switcher -->
@@ -10041,7 +10051,7 @@ ${ctx}`;
 }
 
 function buildAIStudyCoach() {
-  if (!isPro()) {
+  if (!isElite()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
       '<div class="section-title">🤖 Ask Ledger</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.3;pointer-events:none;user-select:none">' +
@@ -10050,7 +10060,7 @@ function buildAIStudyCoach() {
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Pass Probability</div><div style="font-size:22px;font-weight:900;color:var(--grn)">67%</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Next Milestone</div><div style="font-size:11px;color:var(--mut)">50h → Dedicated badge<br>Almost there!</div></div>' +
       '</div>' +
-      proLockHTML('Ask Ledger', 'Unlock AI Coach') +
+      eliteLockHTML('Ask Ledger', 'Unlock Elite') +
     '</div>';
   }
 
@@ -10557,7 +10567,7 @@ function _buildAIToolsPanel() {
           '<div style="font-size:12px;font-weight:800">Score<br>Predictor</div>' +
         '</div>' +
       '</div>' +
-      '<button class="btn btn-primary" style="font-size:14px;padding:12px 32px" onclick="openUpgradeModal(\'Elite AI Tools\')">Unlock Elite — $22/mo</button>' +
+      '<button class="btn btn-primary" style="font-size:14px;padding:12px 32px;background:linear-gradient(135deg,var(--pur),#7c22c8);box-shadow:0 4px 18px rgba(147,51,234,.35)" onclick="openUpgradeModal(\'Elite AI Tools\')">Unlock Elite — $14/mo ✦</button>' +
     '</div>';
   }
 
@@ -11650,7 +11660,7 @@ function fcSaveApiKey(){
 // ADVANCED ANALYTICS
 // ═══════════════════════════════════════════════
 function buildAdvancedAnalytics() {
-  if (!isPro()) {
+  if (!isElite()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
       '<div class="section-title">Analytics</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;opacity:.3;pointer-events:none;user-select:none">' +
@@ -11658,7 +11668,7 @@ function buildAdvancedAnalytics() {
         '<div class="stat-box"><div class="stat-val" style="color:var(--grn)">—</div><div class="stat-lbl">Avg Session</div></div>' +
         '<div class="stat-box"><div class="stat-val" style="color:var(--amb)">—</div><div class="stat-lbl">Peak Hour</div></div>' +
       '</div>' +
-      proLockHTML('Advanced Analytics', 'Unlock Analytics') +
+      eliteLockHTML('Advanced Analytics', 'Unlock Elite') +
     '</div>';
   }
 
@@ -11805,7 +11815,7 @@ function _sectionPriority(activeSections){
 }
 
 function generateAIPlan(settings){
-  if(!isPro()) return;
+  if(!isElite()) return;
   settings=settings||_planSettings||{};
 
   // Single-section focus — users study one test at a time
@@ -11909,8 +11919,7 @@ let _planGenerating=false;
 let _planSettings=null; // customization before generating
 
 function buildStudyPlanTab(){
-  const pro=isPro();
-  if(!pro) return _buildPlanGate();
+  if(!isElite()) return _buildPlanGate();
   if(_planGenerating) return _buildPlanLoading();
   const plan=S.aiStudyPlan;
   if(!plan) return _buildPlanSetup();
@@ -11937,8 +11946,8 @@ function _buildPlanGate(){
         <div style="font-size:11px;color:var(--mut);line-height:1.5">${desc}</div>
       </div>`).join('')}
     </div>
-    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.35)">Unlock Pro — Get Your Plan</button>
-    <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($12/mo) and Elite ($22/mo)</div>
+    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Elite — Get Your Plan ✦</button>
+    <div style="font-size:11px;color:var(--mut);margin-top:12px">Exclusive to Elite ($14/mo) · Includes AI Coach, Analytics & more</div>
   </div>`;
 }
 
