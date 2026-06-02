@@ -13305,73 +13305,131 @@ function buildStudySchedule(){
 // SHAREABLE MILESTONE CARDS
 // ═══════════════════════════════════════════════
 const SHARE_MILESTONES={
-  streak_7:   {emoji:'🔥',headline:'7-Day Study Streak',sub:'Consistency beats motivation every time.',accent:'#f59e0b'},
-  streak_14:  {emoji:'🔥',headline:'14-Day Streak',sub:'Two weeks straight. No excuses.',accent:'#f59e0b'},
-  streak_30:  {emoji:'💥',headline:'30-Day Streak',sub:'A full month of showing up daily.',accent:'#ef4444'},
-  streak_60:  {emoji:'👑',headline:'60-Day Streak',sub:'Two months. Most candidates quit by now.',accent:'#a855f7'},
-  streak_100: {emoji:'🏆',headline:'100-Day Legend',sub:'1 in 100 candidates ever get here.',accent:'#d44000'},
-  hrs_50:     {emoji:'⏱️',headline:'50 Hours Studied',sub:'The foundation is being built.',accent:'#0ea574'},
-  hrs_100:    {emoji:'💪',headline:'100 Hours In',sub:'A third of the way to exam-ready.',accent:'#0ea574'},
-  hrs_250:    {emoji:'🚀',headline:'250 Hours Studied',sub:'Elite territory. Stay the course.',accent:'#5a5fcf'},
-  section_pass:{emoji:'✅',headline:'First Section Passed',sub:'One down. The CPA is real.',accent:'#0ea574'},
-  two_sections:{emoji:'🎯',headline:'Two Sections Passed',sub:'Halfway to the CPA license.',accent:'#0ea574'},
-  three_sections:{emoji:'🔑',headline:'Three Sections Passed',sub:"One left. You're going to make it.",accent:'#d44000'},
-  all_pass:   {emoji:'🏆',headline:'All Four Sections Passed',sub:'CPA licensed. You earned it.',accent:'#d44000'},
+  streak_7:   {label:'STUDY STREAK',headline:'7 Days.',sub:'Consistency beats motivation every time.',accent:'#f59e0b',num:'7'},
+  streak_14:  {label:'STUDY STREAK',headline:'14 Days.',sub:'Two weeks straight. No days off.',accent:'#f59e0b',num:'14'},
+  streak_30:  {label:'STUDY STREAK',headline:'30 Days.',sub:'A full month of showing up.',accent:'#ef4444',num:'30'},
+  streak_60:  {label:'STUDY STREAK',headline:'60 Days.',sub:'Two months. Most candidates quit by now.',accent:'#a855f7',num:'60'},
+  streak_100: {label:'STUDY STREAK',headline:'100 Days.',sub:'One in a hundred ever get here.',accent:'#d44000',num:'100'},
+  hrs_50:     {label:'HOURS LOGGED',headline:'50 Hours.',sub:'The foundation is being built.',accent:'#0ea574',num:'50'},
+  hrs_100:    {label:'HOURS LOGGED',headline:'100 Hours.',sub:'A third of the way to exam-ready.',accent:'#0ea574',num:'100'},
+  hrs_250:    {label:'HOURS LOGGED',headline:'250 Hours.',sub:'Elite study volume. Stay the course.',accent:'#5a5fcf',num:'250'},
+  section_pass:{label:'CPA EXAM',headline:'First Section Passed.',sub:'One down. The license is real.',accent:'#0ea574',num:'1/4'},
+  two_sections:{label:'CPA EXAM',headline:'Two Sections Passed.',sub:'Halfway to the CPA license.',accent:'#0ea574',num:'2/4'},
+  three_sections:{label:'CPA EXAM',headline:'Three Sections Passed.',sub:"One left. You're going to make it.",accent:'#d44000',num:'3/4'},
+  all_pass:   {label:'CPA LICENSED',headline:'All Four Sections.',sub:'The credential is yours. You earned it.',accent:'#d44000',num:'✓'},
 };
 
 function drawShareCard(canvas, milestoneId, statLine){
   const cfg=SHARE_MILESTONES[milestoneId];
   if(!cfg)return;
-  const W=canvas.width,H=canvas.height;
+  const W=canvas.width, H=canvas.height;
   const ctx=canvas.getContext('2d');
+  const acc=cfg.accent;
 
-  // Background
-  const bg=ctx.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#18103a');bg.addColorStop(1,'#06030f');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // ── Background ──────────────────────────────────────────────────────────────
+  ctx.fillStyle='#0d0a18';
+  ctx.fillRect(0,0,W,H);
 
-  // Subtle ledger lines
-  ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
-  for(let y=44;y<H;y+=44){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // Radial glow behind the number circle (right side)
+  const gx=W*0.78, gy=H*0.5;
+  const glow=ctx.createRadialGradient(gx,gy,10,gx,gy,320);
+  glow.addColorStop(0,acc+'28');
+  glow.addColorStop(0.5,acc+'0e');
+  glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow;
+  ctx.fillRect(0,0,W,H);
 
-  // Left accent bar
-  const bar=ctx.createLinearGradient(0,0,0,H);
-  bar.addColorStop(0,cfg.accent);bar.addColorStop(1,cfg.accent+'55');
-  ctx.fillStyle=bar;ctx.fillRect(0,0,7,H);
+  // Very subtle dot grid
+  ctx.fillStyle='rgba(255,255,255,.035)';
+  for(let x=40;x<W;x+=48)for(let y=40;y<H;y+=48){ctx.beginPath();ctx.arc(x,y,1.2,0,Math.PI*2);ctx.fill();}
 
-  // Ledger wordmark (top-left)
-  ctx.fillStyle='rgba(255,255,255,.45)';
-  ctx.font='700 13px Inter,system-ui,sans-serif';
-  ctx.fillText('LEDGER',28,34);
+  // ── Left accent stripe ───────────────────────────────────────────────────────
+  const stripe=ctx.createLinearGradient(0,0,0,H);
+  stripe.addColorStop(0,acc);
+  stripe.addColorStop(0.6,acc+'99');
+  stripe.addColorStop(1,acc+'11');
+  ctx.fillStyle=stripe;
+  ctx.fillRect(0,0,5,H);
 
-  // Big emoji
-  ctx.font='76px serif';
-  ctx.fillText(cfg.emoji,28,138);
-
-  // Headline
+  // ── Right: Big decorative ring + number ─────────────────────────────────────
+  const cx=W*0.78, cy=H/2, R=130;
+  // Outer ring (faint)
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.strokeStyle=acc+'22';ctx.lineWidth=1.5;ctx.stroke();
+  // Middle ring
+  ctx.beginPath();ctx.arc(cx,cy,R*0.82,0,Math.PI*2);
+  ctx.strokeStyle=acc+'18';ctx.lineWidth=1;ctx.stroke();
+  // Accent arc (partial — goes 3/4 around)
+  ctx.beginPath();ctx.arc(cx,cy,R,-Math.PI*0.5,Math.PI*1.0);
+  ctx.strokeStyle=acc;ctx.lineWidth=4;ctx.lineCap='round';ctx.stroke();
+  // Number / label inside ring
+  const numStr=cfg.num||'';
+  const numSize=numStr.length>3?52:numStr.length===3?62:76;
   ctx.fillStyle='#ffffff';
-  ctx.font='800 46px Inter,system-ui,sans-serif';
-  ctx.fillText(cfg.headline,28,216);
+  ctx.font=`800 ${numSize}px Inter,system-ui,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(numStr,cx,cy);
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+
+  // ── Left: Text content ───────────────────────────────────────────────────────
+  const lx=60, contentY=H*0.5;
+
+  // Label chip
+  ctx.font='700 11px Inter,system-ui,sans-serif';
+  const labelW=ctx.measureText(cfg.label).width+32;
+  ctx.fillStyle=acc+'22';
+  const chipH=28, chipY=contentY-130;
+  ctx.beginPath();
+  if(ctx.roundRect) ctx.roundRect(lx,chipY,labelW,chipH,6);
+  else {ctx.moveTo(lx+6,chipY);ctx.lineTo(lx+labelW-6,chipY);ctx.arcTo(lx+labelW,chipY,lx+labelW,chipY+chipH,6);ctx.lineTo(lx+labelW,chipY+chipH-6);ctx.arcTo(lx+labelW,chipY+chipH,lx+labelW-6,chipY+chipH,6);ctx.lineTo(lx+6,chipY+chipH);ctx.arcTo(lx,chipY+chipH,lx,chipY+chipH-6,6);ctx.lineTo(lx,chipY+6);ctx.arcTo(lx,chipY,lx+6,chipY,6);}
+  ctx.fill();
+  ctx.fillStyle=acc;
+  ctx.font='700 11px Inter,system-ui,sans-serif';
+  ctx.letterSpacing='0.1em';
+  ctx.fillText(cfg.label,lx+16,chipY+19);
+  ctx.letterSpacing='0';
+
+  // Headline — split into two lines if long
+  ctx.fillStyle='#ffffff';
+  const words=cfg.headline.split(' ');
+  const line1=words.slice(0,Math.ceil(words.length/2)).join(' ');
+  const line2=words.slice(Math.ceil(words.length/2)).join(' ');
+  const headSize=cfg.headline.length>18?52:cfg.headline.length>12?60:68;
+  ctx.font=`800 ${headSize}px Inter,system-ui,sans-serif`;
+  ctx.fillText(line1,lx,contentY-50);
+  if(line2){ctx.fillText(line2,lx,contentY-50+headSize*1.12);}
 
   // Sub-text
-  ctx.fillStyle='rgba(255,255,255,.6)';
-  ctx.font='400 19px Inter,system-ui,sans-serif';
-  ctx.fillText(cfg.sub,28,256);
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  ctx.font='400 20px Inter,system-ui,sans-serif';
+  const subY=line2?contentY-50+headSize*1.12+44:contentY-50+44;
+  ctx.fillText(cfg.sub,lx,subY);
 
-  // Stat line
+  // ── Bottom bar ──────────────────────────────────────────────────────────────
+  const barY=H-64;
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(lx,barY);ctx.lineTo(W-lx,barY);ctx.stroke();
+
+  // Name + stat
   ctx.fillStyle='rgba(255,255,255,.38)';
   ctx.font='600 14px Inter,system-ui,sans-serif';
-  ctx.fillText(statLine,28,H-44);
+  ctx.fillText(statLine,lx,H-32);
 
-  // URL (bottom-right, accent color)
-  ctx.fillStyle=cfg.accent;
+  // Ledger branding right-aligned
+  ctx.fillStyle=acc;
   ctx.font='700 14px Inter,system-ui,sans-serif';
-  const url='ledgercpa.app';
-  ctx.fillText(url,W-ctx.measureText(url).width-28,H-44);
+  ctx.textAlign='right';
+  ctx.fillText('ledgercpa.app',W-lx,H-32);
+  ctx.textAlign='left';
 
-  // Bottom separator
-  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(28,H-28);ctx.lineTo(W-28,H-28);ctx.stroke();
+  // ── Top-right Ledger mark ────────────────────────────────────────────────────
+  ctx.fillStyle='rgba(255,255,255,.2)';
+  ctx.font='700 13px Inter,system-ui,sans-serif';
+  ctx.letterSpacing='0.12em';
+  ctx.textAlign='right';
+  ctx.fillText('LEDGER',W-lx,36);
+  ctx.textAlign='left';
+  ctx.letterSpacing='0';
 }
 
 function showShareModal(milestoneId){
@@ -13402,7 +13460,7 @@ function showShareModal(milestoneId){
     </div>
     <button onclick="document.getElementById('share-card-overlay').remove()" style="background:var(--surf2);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--mut)">×</button>
   </div>
-  <canvas id="share-canvas" width="800" height="420" style="width:100%;border-radius:12px;display:block;margin-bottom:16px"></canvas>
+  <canvas id="share-canvas" width="1200" height="630" style="width:100%;border-radius:14px;display:block;margin-bottom:16px;box-shadow:0 8px 40px rgba(0,0,0,.4)"></canvas>
   <div style="display:flex;gap:10px">
     <button id="share-download-btn" style="flex:1;padding:11px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Download Card</button>
     <button onclick="navigator.clipboard.writeText('Just hit: ${cfg.headline.replace(/'/g,"\\'")} while studying for the CPA exam. Tracking every hour on Ledger — ledgercpa.app').then(()=>showToast('Caption copied!','ok'))" style="flex:1;padding:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy Caption</button>
@@ -13417,7 +13475,7 @@ function showShareModal(milestoneId){
     drawShareCard(canvas,milestoneId,statLine);
     document.getElementById('share-download-btn').onclick=()=>{
       const a=document.createElement('a');
-      a.download='ledger-milestone.png';
+      a.download=`ledger-${milestoneId.replace('_','-')}.png`;
       a.href=canvas.toDataURL('image/png');
       a.click();
     };
