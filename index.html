@@ -2474,13 +2474,18 @@ function checkAchievements(){
   check('hrs_250',totalHrs>=250);
   check('hrs_500',totalHrs>=500);
 
-  // Streaks
+  // Streaks — milestone ones get special celebration
+  const _streakMilestones=[7,14,30,60,100];
   check('streak_3',streak>=3);
   check('streak_7',streak>=7);
   check('streak_14',streak>=14);
   check('streak_30',streak>=30);
   check('streak_60',streak>=60);
   check('streak_100',streak>=100);
+  if(_streakMilestones.includes(streak)&&!earned.has('streak_shown_'+streak)){
+    earned.add('streak_shown_'+streak);
+    setTimeout(()=>showStreakMilestone(streak),800);
+  }
 
   // Session intensity
   check('marathon',S.activities.some(a=>a.hours>=5));
@@ -2530,9 +2535,10 @@ function checkAchievements(){
   S.achievements=Array.from(earned);
   saveState();
 
-  newOnes.forEach(id=>{
+  // Queue achievement unlocks with staggered delay
+  newOnes.forEach((id,i)=>{
     const ach=ACHIEVEMENTS.find(a=>a.id===id);
-    if(ach)setTimeout(()=>showToast(`${ach.icon} Achievement Unlocked: ${ach.name}!`,'ach'),500);
+    if(ach) setTimeout(()=>showAchievementUnlock(ach), 500+i*900);
   });
 }
 
@@ -4072,6 +4078,7 @@ function switchTab(tab){
     void page.offsetWidth;
     page.classList.add(dir);
   }
+  _animateNextRender=true;
   renderTab();
 }
 
@@ -4115,6 +4122,7 @@ function burstConfetti(originEl){
   }
 }
 
+let _animateNextRender=false; // only true when user explicitly switches tabs
 function renderTab(){
   const el=document.getElementById('page-content');
   if(!el)return;
@@ -4125,22 +4133,34 @@ function renderTab(){
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
   attachTabHandlers();
-  // Stagger card entrance animations
+  const shouldAnimate=_animateNextRender;
+  _animateNextRender=false;
   requestAnimationFrame(()=>{
-    el.querySelectorAll('.card').forEach((c,i)=>{
-      c.style.animationDelay=(i*48)+'ms';
-      c.classList.add('card-enter');
-    });
-    // Animate progress bars from 0
+    // Animate progress bars from 0 always (subtle, no flash)
     el.querySelectorAll('.prog-fill').forEach(bar=>{
       const w=bar.style.width;
       bar.style.width='0%';
       requestAnimationFrame(()=>{ bar.style.width=w; });
     });
-    // Count up any [data-count] numbers
+    // Animate readiness ring from 0
+    const ring=document.getElementById('readiness-ring');
+    if(ring){
+      const target=ring.getAttribute('stroke-dashoffset');
+      const total=ring.getAttribute('stroke-dasharray');
+      ring.setAttribute('stroke-dashoffset',total);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>ring.setAttribute('stroke-dashoffset',target)));
+    }
+    // Count up numbers always
     el.querySelectorAll('[data-count]').forEach(n=>{
       animateCount(n, parseFloat(n.dataset.count)||0, n.dataset.suffix||'', n.dataset.decimals||0);
     });
+    // Only stagger card entrance on deliberate tab switches
+    if(shouldAnimate){
+      el.querySelectorAll('.card').forEach((c,i)=>{
+        c.style.animationDelay=(i*48)+'ms';
+        c.classList.add('card-enter');
+      });
+    }
   });
 }
 
@@ -4549,10 +4569,10 @@ function buildReadinessCard(){
     <div style="position:relative;flex-shrink:0">
       <svg width="120" height="120" viewBox="0 0 120 120">
         <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surf3)" stroke-width="8"/>
-        <circle cx="60" cy="60" r="52" fill="none" stroke="${r.color}" stroke-width="8"
-          stroke-dasharray="${circumference}" stroke-dashoffset="${dash}"
+        <circle id="readiness-ring" cx="60" cy="60" r="52" fill="none" stroke="${r.color}" stroke-width="8"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}"
           stroke-linecap="round" transform="rotate(-90 60 60)"
-          style="transition:stroke-dashoffset .8s ease"/>
+          style="transition:stroke-dashoffset 1.1s cubic-bezier(.22,.61,.36,1)"/>
         <text x="60" y="55" text-anchor="middle" font-size="28" font-weight="900" fill="var(--txt)">${r.score}</text>
         <text x="60" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="var(--mut)">/ 100</text>
       </svg>
@@ -13697,37 +13717,90 @@ async function logExamResult(){
 // PASS CELEBRATION
 // ═══════════════════════════════════════════════
 function showPassCelebration(section,score,hours){
-  if(typeof confetti==='function'){
-    confetti({particleCount:120,spread:90,origin:{y:0.6},colors:['#d44000','#f59e0b','#10b981','#6366f1','#fff']});
-    setTimeout(()=>confetti({particleCount:60,spread:120,origin:{y:0.5},colors:['#d44000','#f59e0b','#fff']}),600);
-  }
   const sec=section||'CPA';
+  const ex=EXAMS[sec]||{color:'var(--grn)',full:sec};
   const hrs=hours||Math.round(getSectionHours(sec));
-  const scoreText=score!=null?` with a ${score}`:'';
-  const shareText=`Just passed ${sec}${scoreText}! ${hrs} hours logged on Ledger.`;
+  const scoreText=score!=null?` · Score: ${score}`:'';
+  const shareText=`Just passed ${sec}${scoreText}! ${hrs} hours logged on Ledger. ledgercpa.app`;
   window._celebShareText=shareText;
   const liUrl=`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://ledgercpa.app')}&summary=${encodeURIComponent(shareText)}`;
+
+  // Confetti burst
+  if(typeof confetti==='function'){
+    const col=ex.color.replace('var(--grn)','#10b981').replace('var(--ora)','#d44000').replace('var(--ind)','#6366f1').replace('var(--pur)','#a855f7');
+    confetti({particleCount:100,spread:80,origin:{y:0.55},colors:[col,'#ffffff',col+'99']});
+    setTimeout(()=>confetti({particleCount:50,spread:100,origin:{y:0.45},angle:60,colors:[col,'#fff']}),500);
+    setTimeout(()=>confetti({particleCount:50,spread:100,origin:{y:0.45},angle:120,colors:[col,'#fff']}),500);
+  } else {
+    burstConfetti(document.body);
+  }
+
   let el=document.getElementById('pass-celebration-overlay');
   if(el)el.remove();
   el=document.createElement('div');
   el.id='pass-celebration-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .25s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML=`
-<div style="background:var(--surf);border-radius:20px;padding:32px;max-width:440px;width:100%;text-align:center;box-shadow:var(--shadow-lg)">
-  <div style="font-size:52px;margin-bottom:10px">🎉</div>
-  <div style="font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px">You passed ${sec}!</div>
-  ${score!=null?`<div style="font-size:32px;font-weight:900;color:var(--grn);margin-bottom:4px">${score}</div><div style="font-size:12px;color:var(--mut);margin-bottom:16px">scaled score · pass is 75+</div>`:'<div style="margin-bottom:16px"></div>'}
-  <div style="font-size:13px;color:var(--sub);margin-bottom:24px;line-height:1.6">${hrs} hours logged for ${sec}. That grind paid off.</div>
+<div style="background:var(--surf);border-radius:24px;padding:36px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
+  <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:${ex.color}18;border:2px solid ${ex.color}44;margin-bottom:20px;animation:badgeBurst .6s cubic-bezier(.22,.61,.36,1)">
+    <span style="font-size:28px;font-weight:900;color:${ex.color}">${sec}</span>
+  </div>
+  <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:${ex.color};margin-bottom:8px">Section Complete</div>
+  <div style="font-size:30px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px">You passed ${ex.full||sec}.</div>
+  ${score!=null?`<div style="font-size:48px;font-weight:900;color:${ex.color};line-height:1;margin:12px 0 4px;letter-spacing:-.04em">${score}</div><div style="font-size:12px;color:var(--mut);margin-bottom:20px">scaled score · 75 to pass</div>`:`<div style="margin-bottom:20px"></div>`}
+  <div style="background:var(--surf2);border-radius:12px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:var(--sub);line-height:1.6">${hrs} hours logged for ${sec}. That work is permanent.</div>
   <div style="display:flex;flex-direction:column;gap:10px">
     <a href="${liUrl}" target="_blank" rel="noopener" onclick="document.getElementById('pass-celebration-overlay').remove()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#0077b5;color:#fff;border-radius:12px;text-decoration:none;font-size:14px;font-weight:800">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 24 22.222 0h.003z"/></svg>
       Share on LinkedIn
     </a>
-    <button onclick="shareCelebration()" style="padding:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Share / Copy</button>
+    <button onclick="shareCelebration()" style="padding:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy & Share</button>
     <button onclick="document.getElementById('pass-celebration-overlay').remove()" style="padding:10px;background:none;border:none;font-size:13px;color:var(--mut);cursor:pointer">Dismiss</button>
   </div>
 </div>`;
   document.body.appendChild(el);
+}
+
+function showAchievementUnlock(ach){
+  // Small floating card from bottom-right, stacks with toasts
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:28px;right:24px;z-index:1050;background:var(--surf);border:1.5px solid rgba(245,158,11,.4);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,.2);max-width:300px;animation:modalIn .4s cubic-bezier(.22,.61,.36,1);transition:opacity .4s`;
+  el.innerHTML=`
+    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b22,#d9770622);border:1.5px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;animation:badgeBurst .5s cubic-bezier(.22,.61,.36,1)">${ach.icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:3px">Achievement</div>
+      <div style="font-size:14px;font-weight:800;color:var(--txt)">${ach.name}</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:1px">${ach.desc}</div>
+    </div>`;
+  document.body.appendChild(el);
+  burstConfetti(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),400);},4000);
+}
+
+function showStreakMilestone(days){
+  const configs={
+    7: {label:'One week straight.',sub:'Consistency is the whole game.'},
+    14:{label:'Two weeks.',sub:'You\'re building a real habit.'},
+    30:{label:'30 days.',sub:'A month of showing up. That\'s discipline.'},
+    60:{label:'60 days.',sub:'Most candidates quit long before this.'},
+    100:{label:'100 days.',sub:'You\'re a different person than when you started.'},
+  };
+  const cfg=configs[days]||{label:`${days}-day streak.`,sub:'Keep going.'};
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.innerHTML=`
+<div style="background:var(--surf);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.3);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
+  <div style="font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:16px">Study Streak</div>
+  <div style="font-size:80px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--txt);margin-bottom:12px;font-family:var(--font-display)">${days}</div>
+  <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px">${cfg.label}</div>
+  <div style="font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:28px">${cfg.sub}</div>
+  <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.3)">Keep Going</button>
+</div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  if(typeof confetti==='function'){
+    confetti({particleCount:60,spread:70,origin:{y:0.5},colors:['#d44000','#6366f1','#10b981','#f59e0b']});
+  } else { burstConfetti(el); }
 }
 
 function shareCelebration(){
