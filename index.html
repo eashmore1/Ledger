@@ -1585,26 +1585,26 @@ function getHourGoal(section){
 // DAILY QUOTES (rotating — shown in Feed sidebar)
 // ═══════════════════════════════════════════════
 const CPA_TIPS = [
-  {text:"The more you learn, the more you earn. Accounting is the language of business — master it.",src:"Warren Buffett"},
-  {text:"You have to know accounting. It's the language of practical business life.",src:"Charlie Munger"},
-  {text:"The people who are crazy enough to think they can change the world are the ones who do.",src:"Steve Jobs"},
-  {text:"Nothing will work unless you do. Every hour you put in compounds.",src:"Maya Angelou"},
-  {text:"Success is not final, failure is not fatal: it is the courage to continue that counts.",src:"Winston Churchill"},
-  {text:"Work like hell. If other people are putting in 40-hour weeks and you're putting in 100, you achieve in 4 months what takes them a year.",src:"Elon Musk"},
-  {text:"It always seems impossible until it's done. Your CPA license is no different.",src:"Nelson Mandela"},
-  {text:"Believe you can and you're halfway there. The other half is showing up every day.",src:"Theodore Roosevelt"},
-  {text:"I knew the one thing I might regret is not trying.",src:"Jeff Bezos"},
-  {text:"The most important thing is to try and inspire people so that they can be great in whatever they want to do.",src:"Kobe Bryant"},
-  {text:"I have not failed. I've just found 10,000 ways that won't work. Every retake is data.",src:"Thomas Edison"},
-  {text:"Give me six hours to chop down a tree and I will spend the first four sharpening the axe. Preparation is everything.",src:"Abraham Lincoln"},
-  {text:"An investment in knowledge pays the best interest.",src:"Benjamin Franklin"},
-  {text:"I've missed more than 9,000 shots. I've failed over and over. And that is why I succeed.",src:"Michael Jordan"},
-  {text:"Enthusiasm is common. Endurance is rare. The CPA exam rewards endurance above all else.",src:"Angela Duckworth"},
-  {text:"You have power over your mind — not outside events. Realize this and you will find strength.",src:"Marcus Aurelius"},
-  {text:"Without commitment, you'll never start. Without consistency, you'll never finish.",src:"Denzel Washington"},
-  {text:"Pain plus reflection equals progress. Hard study sessions are the price of the license.",src:"Ray Dalio"},
-  {text:"Rock bottom became the solid foundation on which I rebuilt my life.",src:"J.K. Rowling"},
-  {text:"High expectations are the key to everything. Set the bar high for yourself.",src:"Sam Walton"},
+  {text:"MCQs are scored on a scale, not raw percentage. A 75 doesn't mean 75% correct — the adaptive algorithm weights harder questions more. Don't panic if you felt shaky; you may have been hitting harder questions because you were doing well.",tag:"Exam Strategy"},
+  {text:"FAR is the longest section — 4 hours, 5 MCQ testlets, 3 TBS. Pace yourself at roughly 1.5 min per MCQ and 18 min per TBS. Don't blow your whole time on the first testlet.",tag:"FAR"},
+  {text:"REG heavily tests basis calculations. When in doubt on a partnership or S-corp question, trace the basis step by step. Most wrong answers come from skipping that process.",tag:"REG"},
+  {text:"For AUD, think like an auditor — every question is really asking 'what would a skeptical, independent auditor do here?' When two answers look right, pick the one with more professional skepticism.",tag:"AUD"},
+  {text:"TBS (Task-Based Simulations) are worth 50% of your score. Most candidates under-prepare for them because MCQ drilling feels more productive. Spend at least 30% of your study time on sims.",tag:"Exam Strategy"},
+  {text:"The AICPA releases Blueprints showing exactly what's tested and at what skill level (remembering vs. applying vs. analyzing). Download the Blueprint for your section — it's the most accurate study guide that exists.",tag:"Study Tip"},
+  {text:"Spaced repetition beats marathon sessions. Reviewing a concept 4 times over 4 days is more effective than reviewing it 4 times in one day. Use your review sessions to revisit last week's material, not just today's.",tag:"Study Science"},
+  {text:"The 18-month window starts when your FIRST section score releases — not when you sit. If you passed FAR in October, the clock started ticking then, not when you opened the score.",tag:"Exam Rules"},
+  {text:"Most candidates who fail do so in the final 20% of the exam — fatigue sets in and careless errors spike. Practice taking full-length timed exams so you build the stamina to stay sharp at hour 3.",tag:"Exam Strategy"},
+  {text:"BAR (Business Analysis & Reporting) is the newest discipline section. It replaced BEC in 2024. If you're studying BAR, know that data analytics and financial statement analysis are heavily weighted.",tag:"BAR"},
+  {text:"ISC (Information Systems & Controls) tests IT controls and SOC reports more than pure accounting. Think access controls, change management, and what an auditor looks for in an IT environment.",tag:"ISC"},
+  {text:"On AUD simulations, read the requirement BEFORE the exhibits. It tells you exactly what you need — otherwise you waste 5 minutes reading irrelevant details in the financial statements.",tag:"AUD"},
+  {text:"In REG, always check entity type first. A question about 'flow-through taxation' answers differently for a partnership vs. an S-corp vs. a C-corp. Entity type is the fastest filter.",tag:"REG"},
+  {text:"Your NTS (Notice to Schedule) is valid for 6 months in most states. Don't let it expire — you'll have to repay the exam fee. Schedule your exam before you feel ready, then prepare toward the date.",tag:"Exam Rules"},
+  {text:"The passing score of 75 is the same across all sections, but FAR has historically had the lowest pass rate (~44%). It's not harder questions — it's the sheer volume of material. Start FAR early.",tag:"FAR"},
+  {text:"For governmental accounting in FAR, the fund types trip up almost every candidate. Create a simple table: Government Funds (modified accrual) vs. Proprietary/Fiduciary (full accrual). Most questions fit in one of those two buckets.",tag:"FAR"},
+  {text:"When you miss an MCQ, don't just check the answer — read the full explanation. The explanation teaches the concept. The answer just tells you you were wrong.",tag:"Study Tip"},
+  {text:"TCP (Tax Compliance & Planning) is more planning-focused than REG was. Individual and entity tax planning, basis, and at-risk rules are heavily tested. If you studied REG before the 2024 change, TCP requires extra attention to planning concepts.",tag:"TCP"},
+  {text:"Sleep the night before your exam is more valuable than a 2am cram session. Memory consolidation happens during sleep — what you studied yesterday is being locked in right now while you rest.",tag:"Exam Strategy"},
+  {text:"If you're stuck between two MCQ answers, eliminate the clearly wrong ones first. Most CPA MCQs have 2 solid distractors and 2 obvious wrong answers. Once you're down to two, look for the answer that's more conservative or follows GAAP more strictly.",tag:"Exam Strategy"},
 ];
 
 // ═══════════════════════════════════════════════
@@ -3659,13 +3659,12 @@ function buildFeed(){
 
   const rightSidebar=`
 <div class="sidebar-right">
-  <div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ora-bdr);background:var(--ora-bg)">
-    <div class="section-title" style="margin-bottom:8px">Today's Quote</div>
-    <p style="font-size:12px;color:var(--sub);line-height:1.75;margin-bottom:10px;font-style:italic">"${tip.text}"</p>
-    <div style="display:flex;align-items:center;gap:7px">
-      <div style="width:22px;height:22px;border-radius:50%;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0">${tip.src.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
-      <div style="font-size:10px;color:var(--mut);font-weight:700">${tip.src}</div>
+  <div class="card card-pad" style="margin-bottom:var(--sp-4)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="section-title" style="margin-bottom:0">💡 Daily Tip</div>
+      <span style="font-size:10px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 9px">${tip.tag}</span>
     </div>
+    <p style="font-size:12px;color:var(--sub);line-height:1.8;margin:0">${tip.text}</p>
   </div>
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div class="section-title">Your Week</div>
