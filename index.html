@@ -927,12 +927,14 @@ async function _processGoogleUser(user){
     const restored = await restoreStateFromFirestore(user.uid);
     if(!restored){ renderOnboarding(); return; }
   }
+  SUB = {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
+  saveSub(SUB);
   try{
     if(firebaseDb){
       const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
       if(userDoc.exists){
         const fsub = userDoc.data().sub;
-        if(fsub && fsub.tier && fsub.tier !== 'free'){ SUB={...SUB,...fsub}; saveSub(SUB); }
+        if(fsub && fsub.tier){ SUB={...SUB,...fsub}; saveSub(SUB); }
       }
     }
   }catch(e){}
@@ -1585,26 +1587,26 @@ function getHourGoal(section){
 // DAILY QUOTES (rotating — shown in Feed sidebar)
 // ═══════════════════════════════════════════════
 const CPA_TIPS = [
-  {text:"MCQs are scored on a scale, not raw percentage. A 75 doesn't mean 75% correct — the adaptive algorithm weights harder questions more. Don't panic if you felt shaky; you may have been hitting harder questions because you were doing well.",tag:"Exam Strategy"},
-  {text:"FAR is the longest section — 4 hours, 5 MCQ testlets, 3 TBS. Pace yourself at roughly 1.5 min per MCQ and 18 min per TBS. Don't blow your whole time on the first testlet.",tag:"FAR"},
-  {text:"REG heavily tests basis calculations. When in doubt on a partnership or S-corp question, trace the basis step by step. Most wrong answers come from skipping that process.",tag:"REG"},
-  {text:"For AUD, think like an auditor — every question is really asking 'what would a skeptical, independent auditor do here?' When two answers look right, pick the one with more professional skepticism.",tag:"AUD"},
-  {text:"TBS (Task-Based Simulations) are worth 50% of your score. Most candidates under-prepare for them because MCQ drilling feels more productive. Spend at least 30% of your study time on sims.",tag:"Exam Strategy"},
-  {text:"The AICPA releases Blueprints showing exactly what's tested and at what skill level (remembering vs. applying vs. analyzing). Download the Blueprint for your section — it's the most accurate study guide that exists.",tag:"Study Tip"},
-  {text:"Spaced repetition beats marathon sessions. Reviewing a concept 4 times over 4 days is more effective than reviewing it 4 times in one day. Use your review sessions to revisit last week's material, not just today's.",tag:"Study Science"},
-  {text:"The 18-month window starts when your FIRST section score releases — not when you sit. If you passed FAR in October, the clock started ticking then, not when you opened the score.",tag:"Exam Rules"},
-  {text:"Most candidates who fail do so in the final 20% of the exam — fatigue sets in and careless errors spike. Practice taking full-length timed exams so you build the stamina to stay sharp at hour 3.",tag:"Exam Strategy"},
-  {text:"BAR (Business Analysis & Reporting) is the newest discipline section. It replaced BEC in 2024. If you're studying BAR, know that data analytics and financial statement analysis are heavily weighted.",tag:"BAR"},
-  {text:"ISC (Information Systems & Controls) tests IT controls and SOC reports more than pure accounting. Think access controls, change management, and what an auditor looks for in an IT environment.",tag:"ISC"},
-  {text:"On AUD simulations, read the requirement BEFORE the exhibits. It tells you exactly what you need — otherwise you waste 5 minutes reading irrelevant details in the financial statements.",tag:"AUD"},
-  {text:"In REG, always check entity type first. A question about 'flow-through taxation' answers differently for a partnership vs. an S-corp vs. a C-corp. Entity type is the fastest filter.",tag:"REG"},
-  {text:"Your NTS (Notice to Schedule) is valid for 6 months in most states. Don't let it expire — you'll have to repay the exam fee. Schedule your exam before you feel ready, then prepare toward the date.",tag:"Exam Rules"},
-  {text:"The passing score of 75 is the same across all sections, but FAR has historically had the lowest pass rate (~44%). It's not harder questions — it's the sheer volume of material. Start FAR early.",tag:"FAR"},
-  {text:"For governmental accounting in FAR, the fund types trip up almost every candidate. Create a simple table: Government Funds (modified accrual) vs. Proprietary/Fiduciary (full accrual). Most questions fit in one of those two buckets.",tag:"FAR"},
-  {text:"When you miss an MCQ, don't just check the answer — read the full explanation. The explanation teaches the concept. The answer just tells you you were wrong.",tag:"Study Tip"},
-  {text:"TCP (Tax Compliance & Planning) is more planning-focused than REG was. Individual and entity tax planning, basis, and at-risk rules are heavily tested. If you studied REG before the 2024 change, TCP requires extra attention to planning concepts.",tag:"TCP"},
-  {text:"Sleep the night before your exam is more valuable than a 2am cram session. Memory consolidation happens during sleep — what you studied yesterday is being locked in right now while you rest.",tag:"Exam Strategy"},
-  {text:"If you're stuck between two MCQ answers, eliminate the clearly wrong ones first. Most CPA MCQs have 2 solid distractors and 2 obvious wrong answers. Once you're down to two, look for the answer that's more conservative or follows GAAP more strictly.",tag:"Exam Strategy"},
+  {text:"Only about 50% of CPA candidates pass each section on the first try — but over 90% of people who keep retaking eventually pass. The exam rewards persistence more than raw intelligence.",tag:"Did You Know"},
+  {text:"The CPA exam was first administered in 1917. It used to take two and a half days to complete and was entirely paper-based. Today's computer-adaptive version is harder to cheat but arguably harder to pass.",tag:"Did You Know"},
+  {text:"FAR has historically had the lowest pass rate of any section — around 44%. Most candidates who fail FAR say they underestimated how much government and nonprofit accounting is actually tested.",tag:"Did You Know"},
+  {text:"Task-Based Simulations (TBS) are worth exactly 50% of your score on every section. Most candidates spend 80% of their time on MCQs. That mismatch is one of the biggest reasons people fail with scores in the 60s.",tag:"Did You Know"},
+  {text:"The CPA license is recognized in all 50 US states and over 50 countries through mutual recognition agreements. It's one of the most portable professional credentials in the world.",tag:"Did You Know"},
+  {text:"The AICPA estimates the average candidate needs 300–400 hours of total study time to pass all four sections. That's roughly the same hours as a full college semester.",tag:"Did You Know"},
+  {text:"BEC (Business Environment & Concepts) was retired in 2024 and replaced by three new discipline sections: BAR, ISC, and TCP. Candidates now choose one discipline to sit in addition to the three core sections.",tag:"Did You Know"},
+  {text:"The 75 passing score is NOT a percentage of correct answers. It's a scaled score — harder questions count for more points than easier ones. A 74 and a 50 both fail, but they represent very different levels of knowledge.",tag:"Did You Know"},
+  {text:"Your NTS (Notice to Schedule) expires in 6 months in most states. If it expires unused, you forfeit the exam fee — typically $200–$250 per section. Always schedule before you feel ready.",tag:"Did You Know"},
+  {text:"The Uniform CPA Exam is written by the AICPA but administered by Prometric testing centers. There are over 300 Prometric locations in the US — you can sit anywhere, not just in your home state.",tag:"Did You Know"},
+  {text:"About 40,000 people sit for the CPA exam each year in the US. Only around 25,000 new CPA licenses are issued annually — meaning a significant portion of candidates are retakers.",tag:"Did You Know"},
+  {text:"Candidates who schedule their next exam within 30 days of receiving a failing score pass at a significantly higher rate than those who wait 3+ months. Momentum matters more than extra study time.",tag:"Did You Know"},
+  {text:"The CPA exam uses a multistage adaptive testing model — your second MCQ testlet is harder if you did well on the first. If the questions feel brutal, that might actually be a good sign.",tag:"Did You Know"},
+  {text:"Some states require 150 credit hours to sit for the exam; others let you sit with 120 and require 150 for licensure. Always check your specific state board's requirements at nasba.org.",tag:"Did You Know"},
+  {text:"REG tests both federal taxation AND business law. Many candidates over-index on tax and get blindsided by contracts, agency, and bankruptcy questions that together make up about 10–20% of the section.",tag:"Did You Know"},
+  {text:"The median salary for a licensed CPA in the US is around $95,000 — but CPAs in Big 4 advisory or corporate finance often clear $150,000+ within 5–7 years of licensure.",tag:"Did You Know"},
+  {text:"The AICPA releases official Blueprints for each exam section showing exactly which topics are tested and at what skill level. Most candidates have never read them. They're free at aicpa.org.",tag:"Did You Know"},
+  {text:"Sleep is a more effective study tool than caffeine. Memory consolidation — the process of moving short-term study into long-term retention — happens during deep sleep, not while you're awake reviewing notes.",tag:"Did You Know"},
+  {text:"The first woman to pass the CPA exam was Christine Ross in 1899 — but New York refused to issue her a license for years because of her gender. She finally received it in 1924.",tag:"Did You Know"},
+  {text:"Most CPA review course providers (Becker, Gleim, Roger, Wiley) report that candidates who complete 70%+ of their course material pass at a rate above 80%. The content works — the bottleneck is usually consistency, not intelligence.",tag:"Did You Know"},
 ];
 
 // ═══════════════════════════════════════════════
@@ -2620,13 +2622,16 @@ function init(){
           document.getElementById('restore-loader')?.remove();
           if(!restored){ renderOnboarding(); return; }
         }
-        // Sync subscription tier from Firestore (so Stripe upgrades apply across devices)
+        // Sync subscription tier from Firestore — always reset to free first so
+        // leftover localStorage from a previous session/test never leaks to new accounts.
+        SUB = {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
+        saveSub(SUB);
         try{
           if(firebaseDb){
             const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
             if(userDoc.exists){
               const fsub = userDoc.data().sub;
-              if(fsub && fsub.tier && fsub.tier !== 'free'){
+              if(fsub && fsub.tier){
                 SUB = {...SUB, ...fsub};
                 saveSub(SUB);
               }
@@ -3660,9 +3665,9 @@ function buildFeed(){
   const rightSidebar=`
 <div class="sidebar-right">
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="section-title" style="margin-bottom:0">💡 Daily Tip</div>
-      <span style="font-size:10px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 9px">${tip.tag}</span>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:16px">🤓</span>
+      <div class="section-title" style="margin-bottom:0">Did You Know?</div>
     </div>
     <p style="font-size:12px;color:var(--sub);line-height:1.8;margin:0">${tip.text}</p>
   </div>
