@@ -759,6 +759,7 @@ body.no-app-nav .session-fab{display:none!important}
 /* ── ACCESSIBILITY ── */
 /* ── CARD STAGGERED ENTRANCE ── */
 @keyframes cardUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slideInFromBottom{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .card-enter{animation:cardUp .42s cubic-bezier(.22,.61,.36,1) both}
 /* ── CONFETTI PARTICLE ── */
 @keyframes confetti-fly{from{transform:translate(0,0) rotate(0deg) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4);opacity:0}}
@@ -7141,61 +7142,123 @@ function _renderFullUserProfile(u){
     </div>`;
   }).join('');
 
-  document.getElementById('uprofile-content').innerHTML=`
-<div style="max-width:700px;margin:0 auto;padding:0 0 40px">
-  <div class="profile-hero" style="border-radius:0 0 var(--r) var(--r);margin-bottom:20px">
-    <div class="profile-hero-inner">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div style="display:flex;align-items:center;gap:16px">
-          <div style="width:80px;height:80px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarInner}</div>
-          <div>
-            <div class="profile-name" style="margin-top:0;color:#fff">${u.name} ${u.sectionPassed.length===4?'🏆':''}${u.isPrivate?'<span style="font-size:14px;opacity:.8">🔒</span>':''}</div>
-            <div class="profile-state">${u.state}${u.classYear?' · '+u.classYear:''}${u.school?' @ '+u.school:''}</div>
-            ${locationLine?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${locationLine}</div>`:''}
-            ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${u.bio}"</div>`:''}
-            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              ${u.disc?`<span class="badge" style="background:rgba(255,255,255,.15);color:#fff">${u.disc} Discipline</span>`:''}
-              ${u.sectionPassed.length>0?`<span class="badge" style="background:rgba(16,185,129,.3);color:#6ee7b7">✅ ${u.sectionPassed.length} Passed</span>`:''}
-              ${tierBadge}
-              ${u.firmName?`<span class="badge" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)">${u.firmName}</span>`:''}
+  // Build all activities for the profile feed
+  const allActs=u.activities.slice().reverse(); // newest first
+  const activityFeed=isLocked?'':(allActs.length===0
+    ?`<div style="text-align:center;padding:48px 16px;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-size:14px;font-weight:600">No activity yet</div></div>`
+    :allActs.map(a=>{
+      const ex=EXAMS[a.section];if(!ex)return'';
+      const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?ex.color:'var(--surf3)'}">★</span>`).join(''):'';
+      return`<div class="card card-pad" style="margin-bottom:12px;cursor:pointer" onclick="openProfileActivity(this)" data-section="${a.section}" data-hours="${a.hours}" data-date="${a.date}" data-material="${(a.material||'').replace(/"/g,'&quot;')}" data-caption="${(a.caption||'').replace(/"/g,'&quot;')}" data-difficulty="${a.difficulty||0}" data-feeling="${a.feeling||''}">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:12px;background:${ex.color}18;border:1.5px solid ${ex.color}33;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${ex.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="badge badge-${a.section}" style="font-size:10px">${a.section}</span>
+              <span style="font-size:13px;font-weight:700">${a.hours}h studied</span>
+              ${a.material?`<span style="font-size:11px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">${a.material}</span>`:''}
+            </div>
+            ${a.caption?`<div style="font-size:12px;color:var(--mut);margin-top:3px;font-style:italic">"${a.caption}"</div>`:''}
+            <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+              <span style="font-size:11px;color:var(--mut)">${timeAgo(a.date)}</span>
+              ${diffStars?`<span style="font-size:10px">${diffStars}</span>`:''}
+              ${a.feeling?`<span style="font-size:11px;color:var(--mut)">${{great:'😄',good:'🙂',okay:'😐',rough:'😓',bad:'😩'}[a.feeling]||''}</span>`:''}
             </div>
           </div>
+          <span style="font-size:18px;color:var(--mut)">›</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-          <button onclick="closeUserProfile()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">← Back</button>
+      </div>`;
+    }).join(''));
+
+  document.getElementById('uprofile-content').innerHTML=`
+<div style="max-width:680px;margin:0 auto;padding-bottom:60px">
+
+  <!-- Sticky header -->
+  <div id="vp-sticky-hdr" style="position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(10px)">
+    <button onclick="closeUserProfile()" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt);flex-shrink:0">← Back</button>
+    <div style="font-size:15px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name}</div>
+    <button id="vp-follow-btn-sticky" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'var(--surf2)':'var(--ora)'};border:1px solid ${isFollowing?'var(--bdr)':'transparent'};color:${isFollowing?'var(--txt)':'#fff'};border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${isFollowing?'Following':isPendingRequest?'Requested':'+ Follow'}</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="profile-hero" style="border-radius:0;margin-bottom:0">
+    <div class="profile-hero-inner">
+      <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px">
+        <div style="width:88px;height:88px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;font-size:32px;font-weight:900;color:#fff">${avatarInner}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1.1">${u.name}${u.isPrivate?' <span style="font-size:14px;opacity:.7">🔒</span>':''}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${[u.school,u.state,u.classYear].filter(Boolean).join(' · ')}</div>
+          ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:6px;line-height:1.5">${u.bio}</div>`:''}
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+            ${u.disc?`<span class="badge" style="background:rgba(255,255,255,.15);color:#fff">${u.disc}</span>`:''}
+            ${u.sectionPassed.length>0?`<span class="badge" style="background:rgba(16,185,129,.3);color:#6ee7b7">${u.sectionPassed.join(', ')} Passed</span>`:''}
+            ${tierBadge}
+          </div>
         </div>
       </div>
-      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-        <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'rgba(255,255,255,.15)':isPendingRequest?'rgba(255,255,255,.1)':'var(--ora)'};border:1px solid ${(isFollowing||isPendingRequest)?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':isPendingRequest?'⏳ Requested':'+ Follow'}</button>
-        <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">💬 Message</button>
+
+      <!-- Action buttons -->
+      <div style="display:flex;gap:10px;margin-bottom:18px">
+        <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="flex:1;background:${isFollowing?'rgba(255,255,255,.15)':isPendingRequest?'rgba(255,255,255,.1)':'var(--ora)'};border:1px solid ${(isFollowing||isPendingRequest)?'rgba(255,255,255,.25)':'transparent'};color:#fff;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">${isFollowing?'✓ Following':isPendingRequest?'⏳ Requested':'+ Follow'}</button>
+        <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer">Message</button>
       </div>
-      <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
-        <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
-        ${u.streak?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.streak}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div></div>`:''}
-        ${u.sessionCount?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.sessionCount}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div></div>`:''}
-        ${(!isLocked&&u.followersCount!=null)?`<button onclick="openUserFollowList('${u.uid}','followers','${u.name}')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0"><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.followersCount||0}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div></button>`:''}
-        ${(!isLocked&&u.followingCount!=null)?`<button onclick="openUserFollowList('${u.uid}','following','${u.name}')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0"><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.followingCount||0}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div></button>`:''}
+
+      <!-- Stats row -->
+      <div style="display:flex;gap:0;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
+        ${[
+          {v:Math.round(u.hoursTotal),l:'Hours',c:'rgba(212,64,0,.95)',fn:''},
+          u.streak?{v:u.streak,l:'Streak',c:'#fff',fn:''}:null,
+          u.sessionCount?{v:u.sessionCount,l:'Sessions',c:'#fff',fn:''}:null,
+          !isLocked?{v:u.followersCount||0,l:'Followers',c:'#fff',fn:`openUserFollowList('${u.uid}','followers','${u.name}')`}:null,
+          !isLocked?{v:u.followingCount||0,l:'Following',c:'#fff',fn:`openUserFollowList('${u.uid}','following','${u.name}')`}:null,
+        ].filter(Boolean).map(s=>`<div onclick="${s.fn||''}" style="flex:1;text-align:center;${s.fn?'cursor:pointer;':''};padding:4px 0">
+          <div style="font-size:24px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">${s.l}</div>
+        </div>`).join('<div style="width:1px;background:rgba(255,255,255,.1)"></div>')}
       </div>
     </div>
   </div>
 
-  <div style="padding:0 16px">
-    ${isLocked
-      ? `<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:48px 24px">
-          <div style="font-size:48px;margin-bottom:16px">🔒</div>
-          <div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px">This account is private</div>
-          <div style="font-size:13px;color:var(--sub);line-height:1.6;max-width:280px;margin:0 auto">${isPendingRequest?'Your follow request is pending. Once approved you\'ll see their activity and progress.':'Follow this account to see their study activity, progress, and achievements.'}</div>
-          ${!isPendingRequest?`<button onclick="toggleFollowViewProfile('${u.uid}')" style="margin-top:20px;padding:10px 24px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Request to Follow</button>`:''}
-        </div>`
-      : `${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
-        ${recentActs?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Recent Activity</div>${recentActs}</div>`:`<div class="card card-pad" style="margin-bottom:16px;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:8px">📭</div><div style="font-size:13px;font-weight:700;color:var(--sub)">No activity yet</div></div>`}
-        <div class="card card-pad" style="margin-bottom:16px">
-          <div class="section-title" style="margin-bottom:12px">Achievements (${u.achievements.length}/${ACHIEVEMENTS.length})</div>
-          ${_achPreviewHTML(u.achievements,'view-ach',false)}
-        </div>`
-    }
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--surf);sticky;position:sticky;top:57px;z-index:9" id="vp-tabs">
+    ${['activity','progress','about'].map(t=>`<button onclick="switchProfileTab('${t}')" id="vpt-${t}" style="flex:1;padding:13px;background:none;border:none;font-size:13px;font-weight:${t==='activity'?800:600};color:${t==='activity'?'var(--ora)':'var(--mut)'};cursor:pointer;border-bottom:2px solid ${t==='activity'?'var(--ora)':'transparent'};transition:all .15s">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
   </div>
+
+  <!-- Tab content -->
+  <div style="padding:16px" id="vp-tab-content">
+    ${isLocked
+      ?`<div style="text-align:center;padding:48px 16px">
+          <div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:8px">Private Account</div>
+          <div style="font-size:13px;color:var(--sub);line-height:1.6;max-width:260px;margin:0 auto 20px">${isPendingRequest?'Follow request pending — you\'ll see their activity once approved.':'Follow to see their study activity and progress.'}</div>
+          ${!isPendingRequest?`<button onclick="toggleFollowViewProfile('${u.uid}')" style="padding:10px 24px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Request to Follow</button>`:''}
+        </div>`
+      :activityFeed}
+  </div>
+
+  <!-- Progress tab content (hidden by default) -->
+  <div style="display:none;padding:16px" id="vp-progress-content">
+    ${sectionProgress?`<div class="card card-pad" style="margin-bottom:16px"><div class="section-title">Exam Progress</div>${sectionProgress}</div>`:''}
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:12px">Achievements (${u.achievements.length})</div>
+      ${_achPreviewHTML(u.achievements,'view-ach',false)}
+    </div>
+  </div>
+
+  <!-- About tab content (hidden by default) -->
+  <div style="display:none;padding:16px" id="vp-about-content">
+    <div class="card card-pad">
+      ${u.school?`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:18px">🎓</span><div><div style="font-size:12px;color:var(--mut)">School</div><div style="font-size:14px;font-weight:700">${u.school}${u.classYear?' · '+u.classYear:''}</div></div></div>`:''}
+      ${u.state?`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:18px">📍</span><div><div style="font-size:12px;color:var(--mut)">State</div><div style="font-size:14px;font-weight:700">${u.state}</div></div></div>`:''}
+      ${u.disc?`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:18px">📋</span><div><div style="font-size:12px;color:var(--mut)">Discipline</div><div style="font-size:14px;font-weight:700">${u.disc}</div></div></div>`:''}
+      ${u.firmName?`<div style="display:flex;gap:10px;padding:10px 0"><span style="font-size:18px">🏢</span><div><div style="font-size:12px;color:var(--mut)">Firm / Group</div><div style="font-size:14px;font-weight:700">${u.firmName}</div></div></div>`:''}
+      ${!u.school&&!u.state&&!u.disc&&!u.firmName?`<div style="text-align:center;padding:24px;color:var(--mut);font-size:13px">No info added yet</div>`:''}
+    </div>
+  </div>
+
 </div>`;
+
+  // Scroll overlay to top
+  document.getElementById('uprofile-modal').scrollTop=0;
 }
 
 function toggleFollowViewProfile(uid){
@@ -7229,6 +7292,56 @@ function toggleFollowViewProfile(uid){
 
 
 function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+
+function switchProfileTab(tab){
+  ['activity','progress','about'].forEach(t=>{
+    const btn=document.getElementById('vpt-'+t);
+    const isActive=t===tab;
+    if(btn){btn.style.fontWeight=isActive?800:600;btn.style.color=isActive?'var(--ora)':'var(--mut)';btn.style.borderBottom=isActive?'2px solid var(--ora)':'2px solid transparent';}
+  });
+  const tabContent=document.getElementById('vp-tab-content');
+  const progressContent=document.getElementById('vp-progress-content');
+  const aboutContent=document.getElementById('vp-about-content');
+  if(tabContent) tabContent.style.display=tab==='activity'?'block':'none';
+  if(progressContent) progressContent.style.display=tab==='progress'?'block':'none';
+  if(aboutContent) aboutContent.style.display=tab==='about'?'block':'none';
+}
+
+function openProfileActivity(cardEl){
+  const section=cardEl.dataset.section;
+  const hours=cardEl.dataset.hours;
+  const date=cardEl.dataset.date;
+  const material=cardEl.dataset.material;
+  const caption=cardEl.dataset.caption;
+  const difficulty=parseInt(cardEl.dataset.difficulty)||0;
+  const feeling=cardEl.dataset.feeling;
+  const ex=EXAMS[section]||{color:'var(--ora)',full:section,icon:'📖'};
+  const feelingLabel={great:'Great 😄',good:'Good 🙂',okay:'Okay 😐',rough:'Rough 😓',bad:'Bad 😩'}[feeling]||'';
+  const diffStars=difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=difficulty?ex.color:'var(--surf3)'};font-size:18px">★</span>`).join(''):'';
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2200;display:flex;align-items:flex-end;animation:fadeIn .2s ease';
+  el.innerHTML=`
+  <div style="background:var(--surf);border-radius:20px 20px 0 0;width:100%;max-width:680px;margin:0 auto;padding:0 0 40px;animation:slideInFromBottom .3s cubic-bezier(.22,.61,.36,1)" onclick="event.stopPropagation()">
+    <div style="width:40px;height:4px;border-radius:2px;background:var(--bdr2);margin:12px auto 20px"></div>
+    <div style="padding:0 20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}18;border:1.5px solid ${ex.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${ex.icon}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-${section}">${section}</span><span style="font-size:16px;font-weight:900">${hours}h</span></div>
+          <div style="font-size:12px;color:var(--mut);margin-top:2px">${new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
+        </div>
+      </div>
+      ${material?`<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:4px">Topic</div><div style="font-size:14px;font-weight:600">${material}</div></div>`:''}
+      ${caption?`<div style="margin-bottom:14px;background:var(--surf2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--sub);font-style:italic;line-height:1.6">"${caption}"</div>`:''}
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        ${difficulty?`<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:4px">Difficulty</div><div>${diffStars}</div></div>`:''}
+        ${feelingLabel?`<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:4px">Feeling</div><div style="font-size:16px">${feelingLabel}</div></div>`:''}
+      </div>
+    </div>
+  </div>`;
+  el.addEventListener('click',()=>el.remove());
+  document.body.appendChild(el);
+}
 
 async function openUserFollowList(uid, type, name){
   // Show followers or following list for a given user
