@@ -12598,7 +12598,7 @@ function _buildPlanSetup(){
       ${canGenerate?'✨ Build My Study Plan →':'Set an exam date to continue'}
     </button>
     ${canGenerate?`<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px">Focused on ${selectedSec} only · ${daysLeft} days · Rebuild anytime for free</div>`:''}
-    ${S.aiStudyPlan?`<button onclick="openDashTab&&openDashTab('plan');renderTab()" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer" onclick="window._cancelPlanSetup=true;renderTab()">← Back to existing plan</button>`:''}
+    ${S.aiStudyPlan?`<button onclick="_planSettings=null;renderTab()" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">← Back to existing plan</button>`:''}
   </div>`;
 }
 
