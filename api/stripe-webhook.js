@@ -29,11 +29,18 @@ const db = admin.apps.length ? admin.firestore() : null;
 // Map Stripe Price IDs → Ledger tier info
 // (Payment Links don't support custom metadata via URL params, so we map by price ID)
 const PRICE_TO_TIER = {
-  'price_1TZiTyDF8JDLWEucEHuaVlrX': { tier: 'pro',   cycle: 'monthly'  }, // Pro Monthly $20
-  'price_1TZiVpDF8JDLWEuclAQ4vvsp': { tier: 'pro',   cycle: 'annual'   }, // Pro Annual $192
-  'price_1TZiXGDF8JDLWEucBZuX37Zf': { tier: 'elite', cycle: 'monthly'  }, // Elite Monthly
-  'price_1TZiY7DF8JDLWEucSpchlGyx': { tier: 'elite', cycle: 'annual'   }, // Elite Annual $264
-  'price_1TZiZ5DF8JDLWEucStWSadBz': { tier: 'cram',  cycle: 'one_time' }, // Cram Plan $99
+  // ── Current prices (updated June 2025) ──────────────────────────────────────
+  'price_1Td1TCDF8JDLWEucnD4FaSEq': { tier: 'pro',   cycle: 'monthly'  }, // Pro Monthly $9
+  'price_1Td1TdDF8JDLWEucIyg0B5tJ': { tier: 'pro',   cycle: 'annual'   }, // Pro Annual $7/mo
+  'price_1Td1U8DF8JDLWEucKuGTORNk': { tier: 'elite', cycle: 'monthly'  }, // Elite Monthly $14
+  'price_1Td1VGDF8JDLWEuccPCIN9Ry': { tier: 'elite', cycle: 'annual'   }, // Elite Annual $11/mo
+  'price_1TdDt5DF8JDLWEuc64F6EtXI': { tier: 'cram',  cycle: 'one_time' }, // Cram Plan $75
+  // ── Legacy prices (kept so old subscriptions still renew correctly) ─────────
+  'price_1TZiTyDF8JDLWEucEHuaVlrX': { tier: 'pro',   cycle: 'monthly'  }, // Pro Monthly $20 (old)
+  'price_1TZiVpDF8JDLWEuclAQ4vvsp': { tier: 'pro',   cycle: 'annual'   }, // Pro Annual $192 (old)
+  'price_1TZiXGDF8JDLWEucBZuX37Zf': { tier: 'elite', cycle: 'monthly'  }, // Elite Monthly (old)
+  'price_1TZiY7DF8JDLWEucSpchlGyx': { tier: 'elite', cycle: 'annual'   }, // Elite Annual $264 (old)
+  'price_1TZiZ5DF8JDLWEucStWSadBz': { tier: 'cram',  cycle: 'one_time' }, // Cram Plan $99 (old)
   'price_1TZiaPDF8JDLWEuc2bhLmUF0': { tier: 'pro',   cycle: 'monthly', studentPlan: true }, // Student Pro $13
 };
 
