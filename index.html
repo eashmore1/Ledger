@@ -386,7 +386,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── TOAST ── */
 .toast-wrap{position:fixed;bottom:28px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:flex-end}
-.toast{padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateX(calc(100% + 32px));transition:transform .3s cubic-bezier(.22,.61,.36,1);pointer-events:auto;letter-spacing:-.01em;max-width:320px}
+.toast{padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateX(calc(100% + 32px));transition:transform .38s cubic-bezier(.34,1.56,.64,1);pointer-events:auto;letter-spacing:-.01em;max-width:320px}
 .toast.show{transform:translateX(0)}
 .toast-ok{background:var(--grn);color:#fff}
 .toast-err{background:var(--red);color:#fff}
@@ -757,6 +757,27 @@ body.no-app-nav .session-fab{display:none!important}
 /* ── ACTIVITY CARD ENTER ── */
 .activity-card{animation:fadeIn .3s cubic-bezier(.22,.61,.36,1) both}
 /* ── ACCESSIBILITY ── */
+/* ── CARD STAGGERED ENTRANCE ── */
+@keyframes cardUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.card-enter{animation:cardUp .42s cubic-bezier(.22,.61,.36,1) both}
+/* ── CONFETTI PARTICLE ── */
+@keyframes confetti-fly{from{transform:translate(0,0) rotate(0deg) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4);opacity:0}}
+/* ── CARD HOVER LIFT ── */
+.card{transition:box-shadow .18s cubic-bezier(.4,0,.2,1),transform .18s cubic-bezier(.4,0,.2,1)}
+.card-lift:hover,.card[onclick]:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.10)}
+/* ── STAT NUMBER FLASH ── */
+@keyframes statPop{0%{transform:scale(1)}40%{transform:scale(1.18)}70%{transform:scale(.96)}100%{transform:scale(1)}}
+.stat-pop{animation:statPop .45s cubic-bezier(.22,.61,.36,1)}
+/* ── SKELETON SHIMMER ── */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.skeleton{background:linear-gradient(90deg,var(--surf2) 25%,var(--surf3) 50%,var(--surf2) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite linear;border-radius:8px}
+/* ── TOAST BOUNCE ── */
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(16px) scale(.92)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+/* ── BADGE EARN BURST ── */
+@keyframes badgeBurst{0%{transform:scale(0) rotate(-12deg);opacity:0}55%{transform:scale(1.18) rotate(4deg);opacity:1}75%{transform:scale(.94) rotate(-2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.badge-earn{animation:badgeBurst .55s cubic-bezier(.22,.61,.36,1) both}
+/* ── PROGRESS BAR ENTER ── */
+.prog-fill{transition:width .7s cubic-bezier(.22,.61,.36,1)}
 @media(prefers-reduced-motion:reduce){
   *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -4054,6 +4075,46 @@ function switchTab(tab){
   renderTab();
 }
 
+// ═══════════════════════════════════════════════
+// ANIMATION UTILITIES
+// ═══════════════════════════════════════════════
+function animateCount(el, target, suffix='', decimals=0){
+  if(!el) return;
+  const dur=700, start=Date.now();
+  const from=parseFloat(el.textContent)||0;
+  const tick=()=>{
+    const p=Math.min((Date.now()-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=from+(target-from)*ease;
+    el.textContent=decimals?val.toFixed(decimals):Math.round(val);
+    if(suffix) el.textContent+=suffix;
+    if(p<1) requestAnimationFrame(tick);
+    else el.classList.add('stat-pop');
+  };
+  requestAnimationFrame(tick);
+}
+
+function burstConfetti(originEl){
+  const rect=originEl?originEl.getBoundingClientRect():{top:window.innerHeight*0.45,left:window.innerWidth/2,width:0,height:0};
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  const colors=['#d44000','#6366f1','#10b981','#f59e0b','#a855f7','#3b82f6','#ec4899','#14b8a6'];
+  for(let i=0;i<32;i++){
+    const el=document.createElement('div');
+    const angle=(Math.random()*360);
+    const dist=80+Math.random()*120;
+    const dx=Math.cos(angle*Math.PI/180)*dist, dy=Math.sin(angle*Math.PI/180)*dist-80;
+    const size=5+Math.random()*6;
+    const isCircle=Math.random()>.45;
+    el.style.cssText=`position:fixed;left:${cx-size/2}px;top:${cy-size/2}px;width:${size}px;height:${size}px;`+
+      `border-radius:${isCircle?'50%':'2px'};background:${colors[i%colors.length]};`+
+      `pointer-events:none;z-index:9999;`+
+      `--dx:${dx}px;--dy:${dy}px;--dr:${Math.random()>0.5?360:-360}deg;`+
+      `animation:confetti-fly ${0.6+Math.random()*0.5}s cubic-bezier(.22,.61,.36,1) ${i*18}ms forwards`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 1400+i*18);
+  }
+}
+
 function renderTab(){
   const el=document.getElementById('page-content');
   if(!el)return;
@@ -4064,6 +4125,23 @@ function renderTab(){
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
   attachTabHandlers();
+  // Stagger card entrance animations
+  requestAnimationFrame(()=>{
+    el.querySelectorAll('.card').forEach((c,i)=>{
+      c.style.animationDelay=(i*48)+'ms';
+      c.classList.add('card-enter');
+    });
+    // Animate progress bars from 0
+    el.querySelectorAll('.prog-fill').forEach(bar=>{
+      const w=bar.style.width;
+      bar.style.width='0%';
+      requestAnimationFrame(()=>{ bar.style.width=w; });
+    });
+    // Count up any [data-count] numbers
+    el.querySelectorAll('[data-count]').forEach(n=>{
+      animateCount(n, parseFloat(n.dataset.count)||0, n.dataset.suffix||'', n.dataset.decimals||0);
+    });
+  });
 }
 
 function toggleTheme(){
@@ -4915,11 +4993,11 @@ function _buildDashOverview(){
 
   <div class="stats-grid" style="margin-bottom:var(--sp-5)">
     ${[
-      {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)'},
-      {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)'},
-      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1},
+      {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)',count:Math.round(totalHrs)},
+      {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)',count:parseFloat(weekHrs.toFixed(1)),dec:1,suf:'h'},
+      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1,count:streak},
       {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
-    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
+    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}"${s.count!=null?` data-count="${s.count}"${s.dec?` data-decimals="${s.dec}"`:''} ${s.suf?`data-suffix="${s.suf}"`:''}`:''}>${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
   </div>
   ${streakRecovery}
 
@@ -6682,6 +6760,7 @@ function saveSession(){
   document.getElementById('sess-overlay')?.classList.remove('open');
   tsReset();updateNavChip();
   checkShareTrigger(_priorAch);
+  burstConfetti(document.getElementById('sess-overlay'));
   openSessionLoggedModal(act,_priorScore);
   checkReviewPrompt();
 }
@@ -12946,6 +13025,7 @@ function markPlanDayDone(dateStr){
   if(!S.aiStudyPlan) return;
   const day=S.aiStudyPlan.days.find(d=>d.date===dateStr);
   if(day){day.done=true;saveState();}
+  burstConfetti(document.querySelector('.sess-start-btn')||document.body);
   if(currentTab==='plan'){
     renderTab();
   } else {
