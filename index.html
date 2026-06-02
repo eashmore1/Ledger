@@ -6165,10 +6165,10 @@ function updateSectionStatus(section,status){
     if(!S.sectionPassed)S.sectionPassed=[];
     if(!S.sectionPassed.includes(section)){
       const _priorAch=new Set(S.achievements||[]);
-      S.sectionPassed.push(section);showToast(`🎉 ${section} marked as PASSED!`,'ok');
+      S.sectionPassed.push(section);showToast(`${section} marked as Passed!`,'ok');
       checkAchievements();checkShareTrigger(_priorAch);
       const hrs=Math.round(getSectionHours(section));
-      setTimeout(()=>showPassCelebration(section,null,hrs),400);
+      setTimeout(()=>showPassCelebration(section,null,hrs),300);
     } else { checkAchievements(); }
   } else {
     S.sectionPassed=(S.sectionPassed||[]).filter(s=>s!==section);
@@ -13964,25 +13964,59 @@ function showPassCelebration(section,score,hours){
   el=document.createElement('div');
   el.id='pass-celebration-overlay';
   el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  // Determine which SHARE_MILESTONES key applies
+  const passedCount=(S.sectionPassed||[]).length;
+  const milestoneId=passedCount>=4?'all_pass':passedCount===3?'three_sections':passedCount===2?'two_sections':'section_pass';
+  const statLine=(S.name||'Ledger')+` · ${hrs}h logged for ${sec}`;
+
   el.innerHTML=`
-<div style="background:var(--surf);border-radius:24px;padding:36px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
-  <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:${ex.color}18;border:2px solid ${ex.color}44;margin-bottom:20px;animation:badgeBurst .6s cubic-bezier(.22,.61,.36,1)">
-    <span style="font-size:28px;font-weight:900;color:${ex.color}">${sec}</span>
+<div style="background:var(--surf);border-radius:24px;padding:28px 24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1);max-height:90vh;overflow-y:auto">
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:18px;background:${ex.color}18;border:2px solid ${ex.color}44;margin-bottom:14px;animation:badgeBurst .6s cubic-bezier(.22,.61,.36,1)">
+      <span style="font-size:24px;font-weight:900;color:${ex.color}">${sec}</span>
+    </div>
+    <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:${ex.color};margin-bottom:6px">Section Complete</div>
+    <div style="font-size:26px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px">You passed ${ex.full||sec}.</div>
+    ${score!=null?`<div style="font-size:40px;font-weight:900;color:${ex.color};line-height:1;margin:8px 0 2px;letter-spacing:-.04em">${score}</div><div style="font-size:11px;color:var(--mut);margin-bottom:4px">scaled score · 75 to pass</div>`:''}
+    <div style="font-size:12px;color:var(--mut);margin-top:6px">${hrs} hours logged. That work is permanent.</div>
   </div>
-  <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:${ex.color};margin-bottom:8px">Section Complete</div>
-  <div style="font-size:30px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px">You passed ${ex.full||sec}.</div>
-  ${score!=null?`<div style="font-size:48px;font-weight:900;color:${ex.color};line-height:1;margin:12px 0 4px;letter-spacing:-.04em">${score}</div><div style="font-size:12px;color:var(--mut);margin-bottom:20px">scaled score · 75 to pass</div>`:`<div style="margin-bottom:20px"></div>`}
-  <div style="background:var(--surf2);border-radius:12px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:var(--sub);line-height:1.6">${hrs} hours logged for ${sec}. That work is permanent.</div>
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <a href="${liUrl}" target="_blank" rel="noopener" onclick="document.getElementById('pass-celebration-overlay').remove()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#0077b5;color:#fff;border-radius:12px;text-decoration:none;font-size:14px;font-weight:800">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 24 22.222 0h.003z"/></svg>
-      Share on LinkedIn
-    </a>
-    <button onclick="shareCelebration()" style="padding:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy & Share</button>
-    <button onclick="document.getElementById('pass-celebration-overlay').remove()" style="padding:10px;background:none;border:none;font-size:13px;color:var(--mut);cursor:pointer">Dismiss</button>
+
+  <!-- Certificate card preview -->
+  <div style="margin-bottom:16px">
+    <canvas id="pass-cert-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;gap:8px">
+      <button id="pass-cert-download" style="flex:1;padding:12px;background:${ex.color};color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↓ Download Card</button>
+      <a href="${liUrl}" target="_blank" rel="noopener" onclick="document.getElementById('pass-celebration-overlay').remove()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:#0077b5;color:#fff;border-radius:11px;text-decoration:none;font-size:13px;font-weight:800">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 24 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <button onclick="shareCelebration()" style="padding:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)">Copy & Share</button>
+    <button onclick="document.getElementById('pass-celebration-overlay').remove()" style="padding:9px;background:none;border:none;font-size:12px;color:var(--mut);cursor:pointer">Dismiss</button>
   </div>
 </div>`;
   document.body.appendChild(el);
+
+  // Draw the certificate card and wire download button
+  document.fonts.ready.then(()=>{
+    const canvas=document.getElementById('pass-cert-canvas');
+    if(!canvas)return;
+    drawShareCard(canvas,milestoneId,statLine);
+    const dlBtn=document.getElementById('pass-cert-download');
+    if(dlBtn){
+      dlBtn.onclick=()=>{
+        const a=document.createElement('a');
+        a.download=`ledger-${sec.toLowerCase()}-passed.png`;
+        a.href=canvas.toDataURL('image/png');
+        a.click();
+      };
+    }
+  });
 }
 
 function showAchievementUnlock(ach){
