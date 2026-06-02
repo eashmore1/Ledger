@@ -1176,7 +1176,7 @@ const TOUR_STEPS = [
   {title:'Welcome to Ledger! 🎉',body:"You're all set up. Let's take a 30-second tour so you know where everything lives.",target:null},
   {title:'📊 Dashboard',body:'Your study command center — total hours, daily streak, section progress, and weekly pacing all in one place.',target:()=>document.querySelector('.nav-tab[onclick*="dashboard"]')||document.querySelector('[data-mnav="dashboard"]')},
   {title:'▶ Start Session',body:'Tap here to begin a timed study session. Log hours, material, and how you felt — every session counts toward your goals.',target:()=>document.getElementById('nav-log-btn')},
-  {title:'⬡ Study Lab',body:'Practice MCQs with instant explanations, build an AI-powered study plan, and track concepts you\'ve mastered.',target:()=>document.querySelector('.nav-tab[onclick*="studylab"]')||document.querySelector('[data-mnav="studylab"]')},
+  {title:'⬡ Study Lab',body:'Practice MCQs with instant explanations, use AI flashcards, and access the Ask Ledger coach. Elite users also get a day-by-day AI Study Plan.',target:()=>document.querySelector('.nav-tab[onclick*="studylab"]')||document.querySelector('[data-mnav="studylab"]')},
   {title:'◎ Explore',body:'Find and follow other CPA candidates studying the same sections. The social accountability makes a real difference.',target:()=>document.querySelector('.nav-tab[onclick*="explore"]')||document.querySelector('[data-mnav="explore"]')},
   {title:"You're ready. Let's pass the CPA. 🚀",body:'Your streak starts with your first session. Come back every day and let Ledger do the tracking.',target:null,isLast:true},
 ];
@@ -2560,22 +2560,23 @@ function navProLabel(){
   return'Upgrade';
 }
 
-// PRO FEATURES MAP — what requires pro
+// PRO FEATURES MAP — what requires pro (or elite)
 const PRO_FEATURES={
-  aiStudyCoach:     {label:'Ask Ledger',icon:'🤖',desc:'Personalized daily study plans powered by AI, adapting to your pace and weak spots.'},
-  advancedAnalytics:{label:'Advanced Analytics',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and predicted pass probability.'},
-  examSimulator:    {label:'Question Bank',icon:'📝',desc:'60 CPA-level MCQs per section with explanations, timed sets, and random quizzes.'},
-  studySchedule:    {label:'Smart Study Schedule',icon:'📅',desc:'Auto-generated daily schedule that syncs with your exam dates and available hours.'},
+  // Pro tier
+  examSimulator:    {label:'Question Bank',icon:'📝',desc:'Unlimited MCQs per section with explanations, timed sets, and random quizzes.'},
   progressReports:  {label:'Weekly Progress Reports',icon:'📝',desc:'Beautiful PDF reports you can share with your employer, study group, or accountability partner.'},
   unlimitedClubs:   {label:'Unlimited Study Clubs',icon:'🏛️',desc:'Create unlimited private clubs. Free tier is limited to 1 club.'},
-  priorityBadges:   {label:'Exclusive Pro Badges',icon:'🏅',desc:'Pro-only achievement badges visible on your public profile and leaderboard.'},
+  priorityBadges:   {label:'Member Badge',icon:'🏅',desc:'Pro member badge visible on your public profile and leaderboard.'},
   streakShield:     {label:'Streak Shield',icon:'🛡️',desc:'Miss a day? Use a Streak Shield to protect your streak — 3 shields per month.'},
   exportData:       {label:'Export Your Data',icon:'📤',desc:'Export all your sessions, scores, and progress to CSV or PDF at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'🎯',desc:'Set custom per-section weekly hour goals with smart reminders.'},
-  // Elite only
-  partnerSync:      {label:'Study Partner Pairing',icon:'🤝',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
-  mnemonicGen:      {label:'AI Mnemonic Generator',icon:'🧠',desc:'Generate custom mnemonics and memory tricks for any CPA topic instantly.'},
-  scorePredictor:   {label:'Score Predictor',icon:'🔮',desc:'ML-based score predictor that estimates your pass probability from practice data.'},
+  // Elite tier
+  aiStudyCoach:     {label:'Ask Ledger (Elite)',icon:'🤖',desc:'AI coach that adapts to your pace, flags weak spots, and builds your daily study focus.'},
+  advancedAnalytics:{label:'Advanced Analytics (Elite)',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and year-view activity.'},
+  studySchedule:    {label:'AI Study Plan (Elite)',icon:'📅',desc:'Day-by-day personalized calendar built around your exam date, study hours, and style.'},
+  partnerSync:      {label:'Study Partner Pairing (Elite)',icon:'🤝',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
+  mnemonicGen:      {label:'AI Mnemonic Generator (Elite)',icon:'🧠',desc:'Generate custom mnemonics and memory tricks for any CPA topic instantly.'},
+  scorePredictor:   {label:'Score Predictor (Elite)',icon:'🔮',desc:'ML-based score predictor that estimates your pass probability from practice data.'},
 };
 
 let _upgradeBilling='annual';
@@ -3102,6 +3103,19 @@ function init(){
         // Redirect after login if coming from /login or /signup
         if(window._postAuthRedirect){ history.replaceState({},'',window._postAuthRedirect); window._postAuthRedirect=null; }
         renderApp();
+        // Handle pending invite for existing users (new users are handled in obFinish)
+        if(_pendingInvite && S){
+          let changed=false;
+          if(!S.firmCode){S.firmCode=_pendingInvite.code;changed=true;}
+          const fromUid=_pendingInvite.fromUid;
+          if(fromUid&&fromUid.length>4&&!(S.following||[]).includes(fromUid)){
+            S.following=[...(S.following||[]),fromUid];changed=true;
+          }
+          if(changed){saveState();setTimeout(writeUserProfile,500);}
+          if(_pendingInvite.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_pendingInvite.fromName+' 🎉','ok');
+          else showToast('Joined study group! 🎉','ok');
+          _pendingInvite=null;
+        }
         // Show student verification banner if unverified student plan
         if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
         // Load real users from Firestore (replaces fake MOCK_FRIENDS)
@@ -3677,7 +3691,7 @@ function renderObStep3(){
   const inviteCode=obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
   const _invName=encodeURIComponent(obData.name||S?.name||'');
   const _invUid=AUTH?.uid||'';
-  const inviteUrl=window.location.origin+window.location.pathname+'?join='+inviteCode+'&from='+_invName+'&uid='+_invUid;
+  const inviteUrl='https://ledgercpa.app/?join='+inviteCode+'&from='+_invName+'&uid='+encodeURIComponent(_invUid);
   return`
 <div class="ob-card">
   <h3>Invite your study group</h3>
@@ -3690,7 +3704,7 @@ function renderObStep3(){
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Your invite link</div>
     <div style="display:flex;gap:8px;align-items:center">
       <div style="flex:1;font-size:11px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
-      <button class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Copy</button>
+      <button class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
     </div>
     <div style="font-size:11px;color:var(--mut);margin-top:8px">Share this link — anyone who joins can see your activity and support your progress.</div>
   </div>
@@ -4187,14 +4201,14 @@ function buildMiniLeaderboard(){
 function buildCohortCard(){
   if(!S.firmCode)return '';
   const firmName=S.firmName||'Your Cohort';
-  const inviteUrl=window.location.origin+window.location.pathname+'?join='+S.firmCode;
+  const inviteUrl='https://ledgercpa.app/?join='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'');
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <div class="section-title" style="margin-bottom:0">${firmName}</div>
     <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
   </div>
   <div style="font-size:12px;color:var(--sub);margin-bottom:8px">Just you so far — share your invite link to add cohort members.</div>
-  <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Copied!','ok'))" title="Click to copy">${inviteUrl}</div>
+  <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Copied!','ok'))" data-url="${inviteUrl}" title="Click to copy">${inviteUrl}</div>
 </div>`;
 }
 
@@ -13486,7 +13500,7 @@ function checkTrialUrgency(){
     <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Full Study Circle + community view</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Reverts to blurred</span></div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0"><span style="font-size:13px;color:var(--sub)">Streak Shield protection</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Goes away</span></div>
   </div>
-  <button onclick="document.getElementById('trial-urgency-overlay').remove();activatePlan('pro')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ora),var(--ora-dk));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.35);margin-bottom:10px">Keep Pro Access — $20/mo</button>
+  <button onclick="document.getElementById('trial-urgency-overlay').remove();activatePlan('pro')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ora),var(--ora-dk));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.35);margin-bottom:10px">Keep Pro Access — $9/mo</button>
   <button onclick="document.getElementById('trial-urgency-overlay').remove()" style="width:100%;padding:11px;background:transparent;border:none;color:var(--mut);font-size:13px;cursor:pointer">Not now — I'll lose access in ${daysLeft} day${daysLeft>1?'s':''}</button>
 </div>`;
   document.body.appendChild(overlay);
