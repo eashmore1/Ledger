@@ -1463,19 +1463,45 @@ function showCancelConfirm(){
 </div>`;
 }
 
-function executeCancelSubscription(){
-  if(STRIPE_ENABLED&&!STRIPE_CONFIG.portalUrl.includes('REPLACE')){
-    // Send to Stripe customer portal — handles cancellation officially
-    window.open(STRIPE_CONFIG.portalUrl+'?flow=cancel','_blank');
-    showToast('Redirecting to cancel in Stripe portal…','ok');
-    renderAppSettingsSection();
-  } else {
-    // Beta / dev mode — downgrade immediately
+async function executeCancelSubscription(){
+  if(!STRIPE_ENABLED||STRIPE_CONFIG.portalUrl.includes('REPLACE')){
+    // Dev / beta mode — downgrade immediately without Stripe
     SUB={tier:'free',billingCycle:'monthly',startDate:null,trialUsed:SUB.trialUsed||false,studentVerified:false};
     saveSub();
     showToast('Subscription cancelled. You\'re on the Free plan.','ok');
     renderAppSettingsTabs();
     renderAppSettingsSection();
+    return;
+  }
+
+  // Disable buttons and show loading state
+  const cancelBtn=document.querySelector('[onclick="executeCancelSubscription()"]');
+  if(cancelBtn){cancelBtn.disabled=true;cancelBtn.textContent='Cancelling…';}
+
+  try {
+    const idToken=await _getAuthToken();
+    if(!idToken) throw new Error('Not authenticated');
+
+    const resp=await fetch('/api/cancel-subscription',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+idToken},
+    });
+    const data=await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Cancel failed');
+
+    // Update local state — keep tier active, just mark cancelling
+    SUB.cancelAtPeriodEnd=true;
+    if(data.cancelAt) SUB.cancelAt=data.cancelAt;
+    saveSub();
+
+    const dateStr=data.cancelAt?new Date(data.cancelAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'the end of your billing period';
+    showToast('Subscription cancelled — you keep access until '+dateStr,'ok');
+    renderAppSettingsTabs();
+    renderAppSettingsSection();
+  } catch(e) {
+    console.error('Cancel error:',e);
+    showToast('Could not cancel: '+e.message+'. Email support@ledgercpa.app','err');
+    if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Yes, cancel my plan';}
   }
 }
 
