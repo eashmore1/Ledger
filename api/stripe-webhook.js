@@ -88,16 +88,22 @@ module.exports = async (req, res) => {
       }
 
       // Determine tier by fetching line items and mapping the price ID
-      let tierInfo = { tier: 'pro', cycle: 'monthly' };
+      let tierInfo = null;
       try {
         const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
         const priceId = lineItems.data[0]?.price?.id;
         if (priceId && PRICE_TO_TIER[priceId]) {
           tierInfo = PRICE_TO_TIER[priceId];
+          console.log(`Price ID: ${priceId} → tier: ${tierInfo.tier} (${tierInfo.cycle})`);
+        } else {
+          // UNKNOWN PRICE ID — do not silently downgrade to Pro.
+          // Log it so you can add it to PRICE_TO_TIER and manually fix the user.
+          console.error(`UNKNOWN_PRICE_ID: ${priceId} — session ${session.id}, uid ${uid}. Add this price ID to PRICE_TO_TIER in stripe-webhook.js and manually upgrade the user in Firebase.`);
+          return res.json({ received: true }); // Acknowledge Stripe but don't touch the user
         }
-        console.log(`Price ID: ${priceId} → tier: ${tierInfo.tier} (${tierInfo.cycle})`);
       } catch (e) {
         console.error('Failed to fetch line items:', e.message);
+        return res.json({ received: true }); // Don't silently default to Pro on error
       }
 
       await db.collection('users').doc(uid).set({
