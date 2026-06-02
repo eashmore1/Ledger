@@ -1429,7 +1429,7 @@ function showManageSubMenu(){
   const portalUrl=STRIPE_CONFIG.portalUrl;
   const hasPortal=STRIPE_ENABLED&&!portalUrl.includes('REPLACE');
   const actions=[
-    {icon:'💳',label:'Update Payment Method',sub:'Change your credit card or billing info on Stripe',fn:()=>hasPortal?window.open(portalUrl,'_blank'):showToast('Stripe billing portal not yet configured — contact support@ledgercpa.app','err')},
+    {icon:'💳',label:'Update Payment Method',sub:'Change your credit card or billing info',fn:()=>openBillingPortal()},
     {icon:'🔄',label:'Change Plan',sub:'Upgrade, downgrade, or switch billing cycle',fn:()=>{closeAppSettings();openUpgradeModal(null);}},
   ];
   el.innerHTML=`
@@ -1504,6 +1504,51 @@ async function executeCancelSubscription(){
     console.error('Cancel error:',e);
     showToast('Could not cancel: '+e.message+'. Email support@ledgercpa.app','err');
     if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Yes, cancel my plan';}
+  }
+}
+
+async function openBillingPortal(){
+  if(!STRIPE_ENABLED||STRIPE_CONFIG.portalUrl.includes('REPLACE')){
+    showToast('Stripe not configured yet','err'); return;
+  }
+  showToast('Opening billing portal…','ok');
+  try{
+    const idToken=await _getAuthToken();
+    if(!idToken) throw new Error('Not authenticated');
+    const resp=await fetch('/api/billing-portal',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+idToken},
+    });
+    const data=await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed to open portal');
+    window.open(data.url,'_blank');
+  }catch(e){
+    // Fallback to static portal URL if API fails
+    window.open(STRIPE_CONFIG.portalUrl,'_blank');
+  }
+}
+
+async function reactivateSubscription(){
+  const btn=document.getElementById('reactivate-btn');
+  if(btn){btn.disabled=true;btn.textContent='Reactivating…';}
+  try{
+    const idToken=await _getAuthToken();
+    if(!idToken) throw new Error('Not authenticated');
+    const resp=await fetch('/api/reactivate-subscription',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+idToken},
+    });
+    const data=await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Reactivation failed');
+    SUB.cancelAtPeriodEnd=false;
+    SUB.cancelAt=null;
+    saveSub(SUB);
+    showToast('Subscription reactivated — you\'re all set! 🎉','ok');
+    renderAppSettingsTabs();
+    renderAppSettingsSection();
+  }catch(e){
+    showToast('Could not reactivate: '+e.message+'. Email support@ledgercpa.app','err');
+    if(btn){btn.disabled=false;btn.textContent='Reactivate Subscription';}
   }
 }
 
@@ -8209,7 +8254,8 @@ function buildSettingsBilling(){
     ${!isFreePlan?`<span class="pro-plan-badge ${subTierClass()}" style="font-size:11px;padding:4px 12px">Active</span>`:''}
   </div>
   ${isOnTrial()?`<div style="font-size:12px;color:var(--tea);font-weight:600;margin-bottom:4px">⏳ Trial ends ${trialEnd} — ${getTrialDaysLeft()} days left</div>`:''}
-  ${!isFreePlan&&SUB.billingCycle!=='one_time'?`<div style="font-size:12px;color:var(--mut)">Next billing: <strong style="color:var(--sub)">${nextBilling}</strong></div>`:''}
+  ${SUB.cancelAtPeriodEnd?`<div style="font-size:12px;color:#f59e0b;font-weight:600">⚠️ Cancels ${SUB.cancelAt?new Date(SUB.cancelAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'at end of billing period'} — you keep access until then</div>`
+    :!isFreePlan&&SUB.billingCycle!=='one_time'?`<div style="font-size:12px;color:var(--mut)">Next billing: <strong style="color:var(--sub)">${nextBilling}</strong></div>`:''}
   ${SUB.billingCycle==='one_time'?`<div style="font-size:12px;color:var(--mut)">One-time purchase · expires ${new Date((SUB.startDate||Date.now())+183*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`:''}
   ${isFreePlan?`<div style="font-size:12px;color:var(--mut)">You're on the Free plan. Upgrade to unlock Pro features.</div>`:''}
 </div>
@@ -8220,7 +8266,7 @@ ${isFreePlan?`
 `:isOnTrial()?`
 <div style="background:var(--tea-bg);border:1px solid rgba(20,184,166,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px">
   <div style="font-size:13px;font-weight:700;color:var(--tea);margin-bottom:4px">Your trial ends in ${getTrialDaysLeft()} days</div>
-  <div style="font-size:12px;color:var(--sub);margin-bottom:12px">After your trial, Pro is $20/mo or $16/mo (annual). Add a payment method to continue uninterrupted.</div>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:12px">After your trial, Pro is $9/mo or $7/mo (annual). Add a payment method to continue uninterrupted.</div>
   <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="redirectToStripeCheckout('pro_monthly')">Add Payment Method</button>
 </div>
 `:`
@@ -8235,13 +8281,22 @@ ${isFreePlan?`
   </button>
 </div>
 <div id="cancel-sub-section">
-  <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
+  ${SUB.cancelAtPeriodEnd?`
+  <button id="reactivate-btn" onclick="reactivateSubscription()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--grn-bg);border:1.5px solid var(--grn);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--grn);transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    <span style="font-size:18px">✅</span>
+    <div style="text-align:left;flex:1">
+      <div style="font-weight:700">Reactivate Subscription</div>
+      <div style="font-size:11px;color:var(--mut);font-weight:400">Resume your plan — cancellation will be reversed</div>
+    </div>
+    <span style="font-size:12px;color:var(--grn)">›</span>
+  </button>`:`
+  <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:all .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
     <span style="font-size:18px">🚫</span>
     <div style="text-align:left;flex:1">
       <div style="font-weight:700">Cancel Subscription</div>
       <div style="font-size:11px;color:var(--mut)">End your plan at the current billing period</div>
     </div>
-  </button>
+  </button>`}
 </div>
 `}
 
