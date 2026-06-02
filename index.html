@@ -2306,6 +2306,11 @@ async function writeUserProfile(){
       currentStreak: getStreak(),
       avatar: S.avatar||'',
       profilePic: S.profilePic||'',
+      isPrivate: S.isPrivate||false,
+      following: (S.following||[]).filter(id=>id&&id.length>4),
+      followers: (S.followers||[]).filter(id=>id&&id.length>4),
+      followingCount: (S.following||[]).filter(id=>id&&id.length>4).length,
+      followersCount: (S.followers||[]).filter(id=>id&&id.length>4).length,
       // Recent non-private activities — used by followers' feeds
       recentActivities: (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
         id:a.id,date:a.date,section:a.section,hours:a.hours,
@@ -4182,7 +4187,7 @@ function buildFeed(){
   REAL_USERS.forEach(f=>{
     if((S.following||[]).includes(f.id)){
       f.activities.forEach(a=>{
-        allActivities.push({...a,userId:f.id,userName:f.name,userInitials:f.initials,userColor:f.color,isMine:false});
+        allActivities.push({...a,userId:f.id,userName:f.name,userInitials:f.initials,userColor:f.color,userPic:f.profilePic||'',isMine:false});
       });
     }
   });
@@ -4362,10 +4367,12 @@ function buildActivityCard(a){
   const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
+  const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
+  const _avatarHtmlFriend=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`;
   if(a.private && a.isMine){
     return`<div class="activity-card" style="margin-bottom:16px;border-style:dashed" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header">
-    <div class="avatar av-md" style="background:${a.userColor};color:#fff">${a.userInitials}</div>
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;overflow:hidden">${_avatarHtmlMine}</div>
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:6px"><span class="ac-user-name">${a.userName} <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span></span></div>
       <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
@@ -4380,7 +4387,7 @@ function buildActivityCard(a){
 
   return`<div class="activity-card" style="margin-bottom:16px" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header">
-    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${a.userInitials}</div>
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${a.isMine?_avatarHtmlMine:_avatarHtmlFriend}</div>
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}${tierBadgeAct}</span>
@@ -6574,8 +6581,7 @@ function renderSessCard(){
         <!-- LEFT: hero + stats + vibe -->
         <div class="sess-recap-left">
           <div style="text-align:center;padding:12px 0 20px">
-            <div style="font-size:52px;margin-bottom:10px;filter:drop-shadow(0 2px 12px rgba(0,0,0,.15))">🏆</div>
-            <div style="font-size:20px;font-weight:900;letter-spacing:-.03em;color:var(--txt);margin-bottom:4px">Great work.</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:-.03em;color:var(--txt);margin-bottom:4px">Session logged.</div>
             <div style="font-size:12px;color:var(--sub);line-height:1.5">${ex2?.full||TS.section}<br>${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</div>
           </div>
 
@@ -7097,7 +7103,7 @@ function _normProfileFirestore(u){
   const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
   const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
   const color=colors[name.charCodeAt(0)%colors.length];
-  return{uid:u.uid,name,initials,color:u.color||color,bio:u.bio||'',state:u.state||'',city:u.city||'',locationState:u.locationState||'',school:u.school||'',classYear:u.classYear||'',disc:u.disc||'',sections:u.sections||[],sectionPassed:u.sectionPassed||[],hoursTotal:u.hoursTotal||0,streak:0,sessionCount:0,weekHrs:0,activities:[],achievements:u.achievements||[],avatar:u.avatar||'',profilePic:u.profilePic||'',tier:u.tier||'free',firmName:u.firmName||'',isMock:false};
+  return{uid:u.uid,name,initials,color:u.color||color,bio:u.bio||'',state:u.state||'',city:u.city||'',locationState:u.locationState||'',school:u.school||'',classYear:u.classYear||'',disc:u.disc||'',sections:u.sections||[],sectionPassed:u.sectionPassed||[],hoursTotal:u.hoursTotal||0,streak:0,sessionCount:0,weekHrs:0,activities:[],achievements:u.achievements||[],avatar:u.avatar||'',profilePic:u.profilePic||'',tier:u.tier||'free',firmName:u.firmName||'',isPrivate:u.isPrivate||false,followersCount:u.followersCount||0,followingCount:u.followingCount||0,followers:u.followers||[],following:u.following||[],isMock:false};
 }
 
 function _renderFullUserProfile(u){
@@ -7167,7 +7173,8 @@ function _renderFullUserProfile(u){
         <div><div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(u.hoursTotal)}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div></div>
         ${u.streak?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.streak}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div></div>`:''}
         ${u.sessionCount?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.sessionCount}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div></div>`:''}
-        ${u.weekHrs?`<div><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.weekHrs.toFixed(1)}h</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">This Week</div></div>`:''}
+        ${(!isLocked&&u.followersCount!=null)?`<button onclick="openUserFollowList('${u.uid}','followers','${u.name}')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0"><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.followersCount||0}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div></button>`:''}
+        ${(!isLocked&&u.followingCount!=null)?`<button onclick="openUserFollowList('${u.uid}','following','${u.name}')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0"><div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${u.followingCount||0}</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div></button>`:''}
       </div>
     </div>
   </div>
@@ -7222,6 +7229,55 @@ function toggleFollowViewProfile(uid){
 
 
 function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+
+async function openUserFollowList(uid, type, name){
+  // Show followers or following list for a given user
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2200;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:400px;max-height:70vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--bdr);flex-shrink:0">
+      <div style="font-size:15px;font-weight:800">${name}'s ${type==='followers'?'Followers':'Following'}</div>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--mut)">×</button>
+    </div>
+    <div id="uflist-body" style="overflow-y:auto;padding:12px 16px;flex:1">
+      <div style="text-align:center;padding:32px;color:var(--mut);font-size:13px">Loading…</div>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+
+  try {
+    const doc=await firebaseDb.collection('users').doc(uid).get();
+    const data=doc.exists?doc.data():{};
+    const ids=(type==='followers'?data.followers:data.following)||[];
+    const body=document.getElementById('uflist-body');
+    if(!body)return;
+    if(!ids.length){body.innerHTML=`<div style="text-align:center;padding:32px;color:var(--mut);font-size:13px">No ${type} yet</div>`;return;}
+
+    // Load profiles for the ids
+    const profiles=await Promise.all(ids.slice(0,50).map(id=>firebaseDb.collection('users').doc(id).get()));
+    body.innerHTML=profiles.map(p=>{
+      if(!p.exists)return'';
+      const u=p.data();
+      const n=u.displayName||'CPA Candidate';
+      const initials=n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+      const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
+      const col=colors[n.charCodeAt(0)%colors.length];
+      const isFollowing=(S.following||[]).includes(p.id);
+      return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <div style="width:40px;height:40px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden;cursor:pointer" onclick="this.closest('[style*=fixed]').remove();openUserProfile('${p.id}')">${u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${initials}`}</div>
+        <div style="flex:1;min-width:0;cursor:pointer" onclick="this.closest('[style*=fixed]').remove();openUserProfile('${p.id}')">
+          <div style="font-size:13px;font-weight:700">${n}</div>
+          <div style="font-size:11px;color:var(--mut)">${u.state||''}</div>
+        </div>
+        ${p.id!==AUTH?.uid?`<button onclick="if((S.following||[]).includes('${p.id}')){S.following=S.following.filter(x=>x!=='${p.id}');this.textContent='Follow';this.style.background='var(--ora)';this.style.color='#fff';}else{if(!S.following)S.following=[];S.following.push('${p.id}');this.textContent='Following';this.style.background='var(--surf2)';this.style.color='var(--txt)';}saveState();saveFollowToFirestore();" style="padding:6px 14px;background:${isFollowing?'var(--surf2)':'var(--ora)'};color:${isFollowing?'var(--txt)':'#fff'};border:1px solid ${isFollowing?'var(--bdr)':'transparent'};border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${isFollowing?'Following':'Follow'}</button>`:'<span style="font-size:11px;color:var(--mut)">You</span>'}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    const body=document.getElementById('uflist-body');
+    if(body) body.innerHTML=`<div style="text-align:center;padding:32px;color:var(--mut);font-size:13px">Could not load list</div>`;
+  }
+}
 
 
 function toggleFollowProfile(userId,btn){
@@ -8885,7 +8941,7 @@ ${buildLinkedAccountsRow('linkedin','LinkedIn','#0077b5','in')}
       <span style="font-size:20px">🔒</span>
       <div>
         <div style="font-size:13px;font-weight:700">Private Account</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:2px">Only approved followers can see your activity and progress</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">Only approved followers can see your activity, progress, and followers/following lists</div>
       </div>
     </div>
     <label style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0">
