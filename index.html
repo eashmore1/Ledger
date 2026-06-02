@@ -13491,8 +13491,8 @@ function drawShareCard(canvas, milestoneId, statLine){
 function showShareModal(milestoneId){
   const cfg=SHARE_MILESTONES[milestoneId];
   if(!cfg)return;
-  // Don't show same milestone twice
-  const shownKey='share_shown_'+milestoneId;
+  // Don't show same milestone twice — scoped to user so switching accounts works correctly
+  const shownKey='share_shown_'+(AUTH?.uid||'anon')+'_'+milestoneId;
   if(localStorage.getItem(shownKey))return;
   localStorage.setItem(shownKey,'1');
 
