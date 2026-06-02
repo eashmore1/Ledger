@@ -4135,33 +4135,30 @@ function renderTab(){
   attachTabHandlers();
   const shouldAnimate=_animateNextRender;
   _animateNextRender=false;
-  requestAnimationFrame(()=>{
-    // Animate progress bars from 0 always (subtle, no flash)
-    el.querySelectorAll('.prog-fill').forEach(bar=>{
-      const w=bar.style.width;
-      bar.style.width='0%';
-      requestAnimationFrame(()=>{ bar.style.width=w; });
-    });
-    // Animate readiness ring from 0
-    const ring=document.getElementById('readiness-ring');
-    if(ring){
-      const target=ring.getAttribute('stroke-dashoffset');
-      const total=ring.getAttribute('stroke-dasharray');
-      ring.setAttribute('stroke-dashoffset',total);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>ring.setAttribute('stroke-dashoffset',target)));
-    }
-    // Count up numbers always
-    el.querySelectorAll('[data-count]').forEach(n=>{
-      animateCount(n, parseFloat(n.dataset.count)||0, n.dataset.suffix||'', n.dataset.decimals||0);
-    });
-    // Only stagger card entrance on deliberate tab switches
-    if(shouldAnimate){
+  // All entrance animations only fire on deliberate tab switches — never on data re-renders
+  if(shouldAnimate){
+    requestAnimationFrame(()=>{
       el.querySelectorAll('.card').forEach((c,i)=>{
         c.style.animationDelay=(i*48)+'ms';
         c.classList.add('card-enter');
       });
-    }
-  });
+      el.querySelectorAll('.prog-fill').forEach(bar=>{
+        const w=bar.style.width;
+        bar.style.width='0%';
+        requestAnimationFrame(()=>{ bar.style.width=w; });
+      });
+      el.querySelectorAll('[data-count]').forEach(n=>{
+        animateCount(n, parseFloat(n.dataset.count)||0, n.dataset.suffix||'', n.dataset.decimals||0);
+      });
+      const ring=document.getElementById('readiness-ring');
+      if(ring){
+        const target=ring.getAttribute('stroke-dashoffset');
+        const total=ring.getAttribute('stroke-dasharray');
+        ring.setAttribute('stroke-dashoffset',total);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>ring.setAttribute('stroke-dashoffset',target)));
+      }
+    });
+  }
 }
 
 function toggleTheme(){
