@@ -195,6 +195,26 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── FEELING CHIP ── */
 .feeling-chip{font-size:13px}
 
+/* ── STRAVA-STYLE CARD STATS ROW ── */
+.ac-stat-row{display:flex;align-items:stretch;gap:0;padding:12px 16px;border-bottom:1px solid var(--bdr)}
+.ac-stat-blk{display:flex;flex-direction:column;gap:2px}
+.ac-stat-blk+.ac-stat-blk{padding-left:18px;border-left:1px solid var(--bdr);margin-left:18px}
+.ac-stat-v{font-size:24px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--txt);font-family:var(--font-display)}
+.ac-stat-l{font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+
+/* ── FEED CHALLENGE CARD ── */
+.feed-ch-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.feed-ch-row{display:flex;align-items:center;gap:12px;padding:11px 0}
+.feed-ch-row+.feed-ch-row{border-top:1px solid var(--bdr)}
+
+/* ── USER PROFILE PAGE ── */
+.uprofile-page-wrap{padding-top:64px;min-height:100vh}
+@media(max-width:768px){
+  .uprofile-page-wrap{padding-top:56px}
+  #vp-sticky-hdr{top:56px!important}
+  #vp-tabs{top:113px!important}
+}
+
 /* ── PROGRESS BAR ── */
 .prog-bar{height:9px;background:var(--surf2);border-radius:9px;overflow:hidden}
 .prog-fill{height:100%;border-radius:9px;transition:width .55s cubic-bezier(.4,0,.2,1)}
@@ -840,7 +860,6 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9736995109176734" crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -2315,6 +2334,7 @@ async function writeUserProfile(){
       // Recent non-private activities — used by followers' feeds
       recentActivities: (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
         id:a.id,date:a.date,section:a.section,hours:a.hours,
+        type:a.type||'session',score:(typeof a.score==='number'?a.score:null),
         material:a.material||'',caption:a.caption||'',
         difficulty:a.difficulty||3,feeling:a.feeling||'',
         kudos:a.kudos||[],comments:(a.comments||[]).slice(-3)
@@ -3589,7 +3609,11 @@ window.addEventListener('popstate', function(e){
   const view = e.state?.view;
   if(view==='auth') { AUTH=null; S=null; obStep=0; renderAuth(); }
   else if(view==='onboarding') renderOnboarding();
-  else if(view==='app' && AUTH && S) renderApp();
+  else if(view==='userProfile' && AUTH && S){ _loadAndRenderProfilePage(e.state.userId); }
+  else if(view==='activityPage' && AUTH && S){ _renderActivityPage(e.state.actId); }
+  else if(view==='clubPage' && AUTH && S){ _renderClubPage(e.state.clubId); }
+  else if(view==='app' && AUTH && S){ renderApp(); if(e.state?.fromTab)switchTab(e.state.fromTab); }
+  else if(AUTH && S){ renderApp(); }
   else if(!AUTH) renderAuth();
 });
 
@@ -4048,6 +4072,13 @@ function renderApp(){
   <div class="page fade-in" id="page-content"></div>
 </div>`;
   renderTab();
+  // Handle direct deep-link navigation on page reload
+  const _profMatch=window.location.pathname.match(/^\/user\/(.+)/);
+  const _actMatch=window.location.pathname.match(/^\/activity\/(.+)/);
+  const _clubMatch=window.location.pathname.match(/^\/club\/(.+)/);
+  if(_profMatch){setTimeout(()=>openUserProfile(decodeURIComponent(_profMatch[1])),80);}
+  else if(_actMatch){setTimeout(()=>openActivityPage(decodeURIComponent(_actMatch[1])),80);}
+  else if(_clubMatch){setTimeout(()=>openClubPage(decodeURIComponent(_clubMatch[1])),80);}
   setTimeout(checkStreakUrgency, 800);
   setTimeout(checkTrialUrgency, 1600);
   setTimeout(checkStudyNudge, 1000);
@@ -4175,6 +4206,47 @@ function toggleTheme(){
 }
 
 // ═══════════════════════════════════════════════
+// FEED CHALLENGE CARD
+// ═══════════════════════════════════════════════
+function buildFeedChallengeCard(){
+  // Pick up to 2 challenges not yet done, prioritise the current section's challenges
+  const curSec=getCurrentSection();
+  const notDone=CHALLENGES.filter(c=>!isChallengeDone(c));
+  if(!notDone.length)return'';
+  const relevant=notDone.filter(c=>c.section===curSec||!c.section).sort((a,b)=>isJoined(a.id)?-1:isJoined(b.id)?1:0);
+  const picks=(relevant.length?relevant:notDone).slice(0,2);
+  return`<div class="feed-ch-card">
+  <div style="padding:14px 16px 0;display:flex;align-items:center;gap:7px">
+    <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--ora),#d97706);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;flex-shrink:0">⚡</div>
+    <span style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em">Suggested Challenges</span>
+  </div>
+  <div style="padding:6px 16px 4px">
+    ${picks.map(c=>{
+      const prog=getChallengeProgress(c);
+      const pct=c.target?Math.min(100,Math.round(prog/c.target*100)):0;
+      const joined=isJoined(c.id);
+      return`<div class="feed-ch-row">
+        <div style="font-size:26px;flex-shrink:0;width:36px;text-align:center">${c.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:800">${c.title}</span>
+            <span style="font-size:9px;font-weight:700;color:${c.diffColor};background:${c.diffColor}18;padding:1px 7px;border-radius:20px;letter-spacing:.03em">${c.difficulty}</span>
+            ${joined?'<span style="font-size:9px;font-weight:700;color:var(--grn);background:var(--grn-bg);padding:1px 7px;border-radius:20px">Joined ✓</span>':''}
+          </div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:6px">${c.desc}</div>
+          <div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden;margin-bottom:4px">
+            <div style="height:100%;background:${c.diffColor};width:${pct}%;border-radius:4px;transition:width .6s"></div>
+          </div>
+          <div style="font-size:10px;color:var(--mut)">${prog} / ${c.target} &nbsp;·&nbsp; ${c.participants.toLocaleString()} studying</div>
+        </div>
+        <button onclick="switchTab('explore')" style="flex-shrink:0;margin-left:12px;padding:7px 13px;background:${joined?'var(--surf2)':'var(--ora)'};color:${joined?'var(--sub)':'#fff'};border:${joined?'1px solid var(--bdr)':'none'};border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${joined?'View →':'Join →'}</button>
+      </div>`;
+    }).join('')}
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════
 // FEED
 // ═══════════════════════════════════════════════
 function buildFeed(){
@@ -4259,6 +4331,12 @@ function buildFeed(){
   const actCards=allActivities.map(a=>buildActivityCard(a));
   if(!isPro()&&actCards.length>0){
     actCards.splice(Math.min(2,actCards.length),0,buildPartnerTeaserCard());
+  }
+  // Inject challenge suggestion card after every 5th activity (first at index 4)
+  const _chCard=buildFeedChallengeCard();
+  if(_chCard){
+    for(let _i=4;_i<actCards.length;_i+=6){actCards.splice(_i,0,_chCard);}
+    if(actCards.length<=4)actCards.push(_chCard);
   }
   const feedCenter = allActivities.length===0 ?
     `<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
@@ -4357,8 +4435,47 @@ function buildPartnerTeaserCard(){
 </div>`;
 }
 
+// Celebratory card shown when a candidate passes a section.
+function buildPassCard(a,ex){
+  ex=ex||EXAMS[a.section]||{color:'var(--grn)',full:a.section,icon:'🎉'};
+  const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
+  const commentCount=Array.isArray(a.comments)?a.comments.length:0;
+  const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
+  const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
+  const _pic=a.userPic||(a.isMine?S?.profilePic:'')||'';
+  const _avatarHtml=_pic?`<img src="${_pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials||''}`;
+  const scoreLine=(typeof a.score==='number')?`<div style="font-size:13px;color:rgba(255,255,255,.85);font-weight:700;margin-top:2px">Score: ${a.score}</div>`:'';
+  return`<div class="activity-card pass-card" style="margin-bottom:16px;overflow:hidden;border:1px solid ${ex.color}55" data-aid="${a.id}" data-uid="${a.userId}">
+  <div class="ac-header">
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${_avatarHtml}</div>
+    <div style="flex:1;min-width:0">
+      <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}</span>
+      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+    </div>
+    <span class="badge badge-passed">Passed ✅</span>
+  </div>
+  <div style="background:linear-gradient(135deg,${ex.color},${ex.color}cc);padding:22px 18px;text-align:center;color:#fff">
+    <div style="font-size:40px;line-height:1;margin-bottom:8px">🎉</div>
+    <div style="font-size:20px;font-weight:900;letter-spacing:-.02em">Passed ${a.section}!</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:3px">${ex.full}</div>
+    ${scoreLine}
+    ${a.hours?`<div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px">${a.hours} hours logged on the way there</div>`:''}
+  </div>
+  <div class="ac-actions">
+    <button class="ac-action${hasGivenProps?' props-given':''}" onclick="giveProps('${a.id}','${a.userId}')" data-props="${a.id}">
+      <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800;color:${hasGivenProps?'var(--ora)':'var(--mut)'}">${propCount}</span>
+    </button>
+    <button class="ac-action" onclick="openComments('${a.id}','${a.userId}')">
+      💬 Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
+    </button>
+    <button class="ac-action" onclick="shareActivity('${a.id}')">🔗 Share</button>
+  </div>
+</div>`;
+}
+
 function buildActivityCard(a){
   const ex=EXAMS[a.section];
+  if(a.type==='pass')return buildPassCard(a,ex);
   const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
   const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
@@ -4371,51 +4488,59 @@ function buildActivityCard(a){
   const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
   const _avatarHtmlFriend=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`;
   if(a.private && a.isMine){
-    return`<div class="activity-card" style="margin-bottom:16px;border-style:dashed" data-aid="${a.id}" data-uid="${a.userId}">
-  <div class="ac-header">
-    <div class="avatar av-md" style="background:${a.userColor};color:#fff;overflow:hidden">${_avatarHtmlMine}</div>
-    <div style="flex:1;min-width:0">
-      <div style="display:flex;align-items:center;gap:6px"><span class="ac-user-name">${a.userName} <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span></span></div>
-      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+    return`<div class="activity-card" style="margin-bottom:16px;border-left:3px solid var(--bdr);border-style:dashed" data-aid="${a.id}" data-uid="${a.userId}">
+  <div class="ac-header" style="padding:14px 16px 12px">
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;overflow:hidden;flex-shrink:0">${_avatarHtmlMine}</div>
+    <div style="flex:1;min-width:0;padding-left:10px">
+      <span class="ac-user-name">${a.userName} <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span></span>
+      <div class="ac-meta" style="margin-top:2px">${ex.icon} ${ex.full} · Private · ${a.hours}h</div>
     </div>
-    <span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:20px;font-weight:700">Private</span>
-  </div>
-  <div class="ac-body" style="color:var(--mut);font-size:12px;padding-bottom:14px">
-    Logged a private session · ${a.hours}h studied (visible only to you)
+    <span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:20px;font-weight:700;flex-shrink:0">Private</span>
   </div>
 </div>`;
   }
 
-  return`<div class="activity-card" style="margin-bottom:16px" data-aid="${a.id}" data-uid="${a.userId}">
-  <div class="ac-header">
-    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${a.isMine?_avatarHtmlMine:_avatarHtmlFriend}</div>
-    <div style="flex:1;min-width:0">
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}${tierBadgeAct}</span>
-        ${passedBadge}
+  const _diffLabel=a.difficulty?[1,2,3,4,5].map(i=>i<=a.difficulty?'★':'☆').join(''):'';
+  const _feelEmoji={'great':'😄','good':'🙂','okay':'😐','rough':'😓','bad':'😩'}[a.feeling]||'';
+
+  return`<div class="activity-card" style="margin-bottom:16px;border-left:3px solid ${ex.color}" data-aid="${a.id}" data-uid="${a.userId}">
+  <div class="ac-header" style="padding:14px 16px 12px;align-items:flex-start">
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden;flex-shrink:0" onclick="openUserProfile('${a.userId}')">${a.isMine?_avatarHtmlMine:_avatarHtmlFriend}</div>
+    <div style="flex:1;min-width:0;padding-left:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0">
+          <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}${tierBadgeAct}</span>
+          ${passedBadge}
+        </div>
+        <span style="font-size:11px;color:var(--mut);flex-shrink:0;white-space:nowrap;padding-top:1px">${timeAgo(a.date)}</span>
       </div>
-      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
+        <span class="badge badge-${a.section}" style="font-size:9px">${a.section}</span>
+        <span style="font-size:11px;color:var(--sub)">${ex.icon} ${ex.full} Session</span>
+      </div>
     </div>
-    <span class="badge badge-${a.section}">${a.section}</span>
   </div>
-  <div class="ac-body" ${a.isMine?`onclick="openActivityDetail('${a.id}')" style="cursor:pointer;border-radius:0 0 2px 2px"`:''}>
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px">
-      <div>
-        <div class="ac-hours">${a.hours}</div>
-        <div class="ac-hours-lbl">HOURS STUDIED</div>
-      </div>
-      <div style="text-align:right">
-        ${a.feeling?`<div class="feeling-chip" style="font-size:20px;margin-bottom:4px">${a.feeling}</div>`:''}
-        <div class="diff-stars">${diffStars}</div>
-        <div style="font-size:10px;color:var(--mut);margin-top:2px">Difficulty</div>
-      </div>
+  <div class="ac-stat-row">
+    <div class="ac-stat-blk">
+      <div class="ac-stat-v">${a.hours}h</div>
+      <div class="ac-stat-l">Duration</div>
     </div>
-    ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:4px">📖 ${a.material}</div>`:''}
-    ${a.caption?`<div class="ac-caption">${a.caption}</div>`:''}
-    ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0">${a.concepts.slice(0,5).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:2px 9px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>5?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-5} more</span>`:''}</div>`:''}
-    ${a.photo?`<div style="margin:8px 0 4px;border-radius:10px;overflow:hidden;max-height:300px"><img src="${a.photo}" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy" alt="Study session photo"></div>`:''}
+    ${_diffLabel?`<div class="ac-stat-blk">
+      <div class="ac-stat-v" style="font-size:14px;letter-spacing:.02em;color:${ex.color};padding-top:5px">${_diffLabel}</div>
+      <div class="ac-stat-l">Difficulty</div>
+    </div>`:''}
+    ${_feelEmoji?`<div class="ac-stat-blk">
+      <div class="ac-stat-v" style="font-size:22px;padding-top:1px">${_feelEmoji}</div>
+      <div class="ac-stat-l">Feeling</div>
+    </div>`:''}
+  </div>
+  <div class="ac-body" style="padding:10px 16px 6px" ${a.isMine?`onclick="openActivityPage('${a.id}')" style="padding:10px 16px 6px;cursor:pointer"`:''}>
+    ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:5px">📖 ${a.material}</div>`:''}
+    ${a.caption?`<div class="ac-caption" style="font-size:13px;margin:0 0 5px">"${a.caption}"</div>`:''}
+    ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin:4px 0">${a.concepts.slice(0,5).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:2px 9px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>5?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-5} more</span>`:''}</div>`:''}
+    ${a.photo?`<div style="margin:6px 0 2px;border-radius:10px;overflow:hidden;max-height:300px"><img src="${a.photo}" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy" alt="Study session photo"></div>`:''}
     ${a.elapsed?`<div style="font-size:10px;color:var(--mut);margin-top:4px">⏱ ${fmtDur(a.elapsed)} actual timer</div>`:''}
-    ${(()=>{if(!a.isMine)return'';const _secActs=S.activities.filter(x=>x.section===a.section);const _secHrs=_secActs.reduce((t,x)=>t+(x.hours||0),0);const _goal=(S.hourGoals||{})[a.section]||0;if(!_goal)return'';const _pct=Math.min(100,Math.round((_secHrs/_goal)*100));return`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${a.section} progress</span><span style="font-weight:700;color:var(--txt)">${_secHrs.toFixed(1)}h / ${_goal}h &middot; ${_pct}%</span></div><div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden"><div style="height:100%;background:${(EXAMS[a.section]||{color:'var(--ind)'}).color};width:${_pct}%;border-radius:4px;transition:width .4s"></div></div></div>`;})()}
+    ${(()=>{if(!a.isMine)return'';const _sa=S.activities.filter(x=>x.section===a.section);const _sh=_sa.reduce((t,x)=>t+(x.hours||0),0);const _g=(S.hourGoals||{})[a.section]||0;if(!_g)return'';const _p=Math.min(100,Math.round((_sh/_g)*100));return`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${a.section} progress</span><span style="font-weight:700;color:var(--txt)">${_sh.toFixed(1)}h / ${_g}h &middot; ${_p}%</span></div><div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden"><div style="height:100%;background:${(EXAMS[a.section]||{color:'var(--ind)'}).color};width:${_p}%;border-radius:4px;transition:width .4s"></div></div></div>`;})()}
   </div>
   <div class="ac-actions">
     <button class="ac-action${hasGivenProps?' props-given':''}" onclick="giveProps('${a.id}','${a.userId}')" data-props="${a.id}">
@@ -5261,7 +5386,7 @@ function buildProfile(){
   const recentActs=allActs.slice(0,12).map(a=>{
     const ex=EXAMS[a.section]||{color:'var(--ind)',icon:'📚',full:a.section};
     const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?'var(--amb)':'var(--bdr)'}">★</span>`).join(''):'';
-    return`<div onclick="openActivityDetail('${a.id}')" style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:0;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='${ex.color}';this.style.boxShadow='0 4px 18px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.boxShadow='none'">
+    return`<div onclick="openActivityPage('${a.id}')" style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:0;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='${ex.color}';this.style.boxShadow='0 4px 18px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.boxShadow='none'">
       <div style="height:4px;background:${ex.color}"></div>
       <div style="padding:12px 14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -5413,7 +5538,7 @@ function buildProfile(){
       return clubs.map(c=>{
         const msgs=(S.clubMessages||{})[c.id]||[];
         const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-        return'<div class="my-club-card" onclick="openClubView(\''+c.id+'\')"><div class="club-ico">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut);margin-top:1px">'+(c.isPublic?'🌐 Public':'🔒 Private')+' · '+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut);margin-top:2px">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';
+        return'<div class="my-club-card" onclick="openClubPage(\''+c.id+'\')"><div class="club-ico">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut);margin-top:1px">'+(c.isPublic?'🌐 Public':'🔒 Private')+' · '+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut);margin-top:2px">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';
       }).join('')+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="openMessagesModal()">View All Clubs →</button>';
     })()}
   </div>
@@ -5635,7 +5760,7 @@ function buildExplore(){
   const myClubRows=myAllClubs.map(c=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
+    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
   }).join('');
   const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
@@ -6135,7 +6260,8 @@ function toggleFollow(fId,btn){
     following.splice(idx,1);
     S.following=following;
     if(btn){btn.textContent='Follow';btn.classList.remove('following');btn.style.background='';btn.style.color='';}
-    saveState();checkAchievements();
+    saveState();checkAchievements();saveFollowToFirestore();
+    if(currentTab==='feed'||currentTab==='explore')renderTab();
     showToast('Unfollowed','info');
   } else if(_isUserPrivate(fId)){
     _sendFollowRequest(fId,btn);
@@ -6145,6 +6271,8 @@ function toggleFollow(fId,btn){
     if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';btn.classList.remove('just-followed');void btn.offsetWidth;btn.classList.add('just-followed');}
     saveState();checkAchievements();saveFollowToFirestore();
     showToast('Following! Their sessions will now appear in your feed.','ok');
+    // Pull the newly-followed user's recent activity into the feed right away.
+    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore')renderTab(); });
   }
 }
 
@@ -6166,9 +6294,11 @@ function updateSectionStatus(section,status){
     if(!S.sectionPassed.includes(section)){
       const _priorAch=new Set(S.achievements||[]);
       S.sectionPassed.push(section);showToast(`${section} marked as Passed!`,'ok');
+      addPassActivity(section,null);
       checkAchievements();checkShareTrigger(_priorAch);
       const hrs=Math.round(getSectionHours(section));
       setTimeout(()=>showPassCelebration(section,null,hrs),300);
+      writeUserProfile();
     } else { checkAchievements(); }
   } else {
     S.sectionPassed=(S.sectionPassed||[]).filter(s=>s!==section);
@@ -6377,7 +6507,7 @@ function openEditActivityModal(actId){
       </div>
     </div>
     <button onclick="saveEditedActivity('${act.id}')" style="width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Save Changes</button>
-    <button onclick="openActivityDetail('${act.id}')" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Cancel</button>
+    <button onclick="closeActivityDetail();openActivityPage('${act.id}')" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Cancel</button>
   </div>
 </div>`;
   document.body.appendChild(el);
@@ -7070,19 +7200,55 @@ function denyAllFollowRequests(){
 // ═══════════════════════════════════════════════
 // USER PROFILE VIEW
 // ═══════════════════════════════════════════════
+// Dismiss every open overlay/modal before a full-page navigation.
+function _closeAllOverlays(){
+  document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  ['search-modal','log-result-modal','upgrade-modal','follow-modal','notif-modal',
+   'mess-modal','follow-req-modal','sess-overlay','social-modal','comments-modal','post-modal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.contains('open')?el.classList.remove('open'):el.remove?.();
+  });
+  document.body.style.overflow='';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SHARED PAGE-NAVIGATION HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+const _LOGO_SVG=`<svg width="20" height="20" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>`;
+
+function _appPageNavHTML(){
+  const avatarBg=S?.profilePic?'transparent':'linear-gradient(135deg,#5a5fcf,#9333ea)';
+  const avatarContent=S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
+  return`<nav class="topnav">
+    <div class="topnav-inner">
+      <button onclick="history.back()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
+      <div class="nav-logo" onclick="currentTab='feed';renderApp()" style="display:flex;align-items:center;gap:7px;margin:0 auto;cursor:pointer">${_LOGO_SVG}Ledger</div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">▶ Start Session</button>
+        <button onclick="openEditProfile()" style="background:${avatarBg};border:2px solid var(--bdr);border-radius:50%;width:34px;height:34px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${avatarContent}</button>
+      </div>
+    </div>
+  </nav>`;
+}
+
+function _mountPageShell(contentId){
+  document.body.classList.remove('no-app-nav');
+  document.body.style.overflow='';
+  document.getElementById('root').innerHTML=`<div class="app-wrap">${_appPageNavHTML()}<div class="uprofile-page-wrap"><div id="${contentId}" style="max-width:680px;margin:0 auto;padding:0 0 80px"></div></div></div>`;
+}
+
+// ── USER PROFILE ─────────────────────────────────────────────────────
 async function openUserProfile(userId){
   if(userId==='you'||userId===AUTH?.uid){switchTab('profile');return;}
-  let el=document.getElementById('uprofile-modal');
-  if(!el){
-    el=document.createElement('div');
-    el.id='uprofile-modal';
-    el.className='modal-overlay';
-    el.style.cssText='align-items:flex-start;padding:0;overflow-y:auto';
-    el.innerHTML=`<div id="uprofile-page" onclick="event.stopPropagation()" style="width:100%;max-width:700px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column"><div id="uprofile-content" style="flex:1"></div></div>`;
-    el.addEventListener('click',e=>{if(e.target===el)closeUserProfile();});
-    document.body.appendChild(el);
-  }
-  el.classList.add('open');
+  _closeAllOverlays();
+  history.pushState({view:'userProfile',userId,fromTab:currentTab},'','/user/'+encodeURIComponent(userId));
+  document.title='Profile — Ledger';
+  await _loadAndRenderProfilePage(userId);
+}
+
+async function _loadAndRenderProfilePage(userId){
+  _mountPageShell('uprofile-content');
   document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
   const mock=REAL_USERS.find(x=>x.id===userId);
   if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
@@ -7092,7 +7258,134 @@ async function openUserProfile(userId){
       if(snap.exists){_renderFullUserProfile(_normProfileFirestore(snap.data()));return;}
     }catch(e){}
   }
-  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="closeUserProfile()">Close</button></div>`;
+  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+}
+
+// ── ACTIVITY PAGE ────────────────────────────────────────────────────
+function openActivityPage(actId){
+  _closeAllOverlays();
+  history.pushState({view:'activityPage',actId,fromTab:currentTab},'','/activity/'+actId);
+  document.title='Study Session — Ledger';
+  _renderActivityPage(actId);
+}
+
+function _renderActivityPage(actId){
+  _mountPageShell('activity-page-content');
+  const act=(S.activities||[]).find(a=>a.id===actId);
+  if(!act){
+    document.getElementById('activity-page-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Session not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+    return;
+  }
+  const ex=EXAMS[act.section]||{color:'var(--ind)',icon:'📚',full:act.section};
+  const d=new Date(act.date);
+  const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const propCount=Array.isArray(act.kudos)?act.kudos.length:0;
+  const commentCount=Array.isArray(act.comments)?act.comments.length:0;
+  const hasGivenProps=Array.isArray(act.kudos)&&act.kudos.includes('you');
+  const diffLabel=act.difficulty?[1,2,3,4,5].map(i=>i<=act.difficulty?'★':'☆').join(''):'';
+  const feelEmoji={'great':'😄','good':'🙂','okay':'😐','rough':'😓','bad':'😩'}[act.feeling]||'';
+  const statBlocks=[
+    `<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1;font-family:var(--font-display)">${act.hours}h</div>
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Duration</div>
+    </div>`,
+    act.elapsed?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:24px;font-weight:900;color:var(--txt);letter-spacing:-.02em;line-height:1;margin-top:4px">${fmtDur(act.elapsed)}</div>
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Timer</div>
+    </div>`:'',
+    (diffLabel||feelEmoji)?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      ${feelEmoji?`<div style="font-size:28px;line-height:1.1">${feelEmoji}</div>`:''}
+      ${diffLabel?`<div style="font-size:12px;color:${ex.color};font-weight:800;letter-spacing:.05em;margin-top:${feelEmoji?4:8}px">${diffLabel}</div>`:''}
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">${feelEmoji&&diffLabel?'Mood / Difficulty':feelEmoji?'Feeling':'Difficulty'}</div>
+    </div>`:''
+  ].filter(Boolean).join('');
+  document.getElementById('activity-page-content').innerHTML=`
+<div>
+  <div style="background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);position:relative;overflow:hidden;padding:24px 20px 22px">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,${ex.color}55,transparent 45%)"></div>
+    <div style="position:relative;z-index:1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}22;border:1px solid ${ex.color}44;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${ex.icon}</div>
+        <div>
+          <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-.02em">${ex.full} Session</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px">${dateStr} · ${timeStr}</div>
+        </div>
+        <span class="badge badge-${act.section}" style="margin-left:auto;font-size:10px">${act.section}</span>
+      </div>
+    </div>
+  </div>
+  <div style="padding:20px 16px 0">
+    <div style="display:flex;gap:10px;margin-bottom:18px">${statBlocks}</div>
+    ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">📖 ${act.material}</div></div>`:''}
+    ${act.caption?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div><div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">"${act.caption}"</div></div>`:''}
+    ${(act.concepts||[]).length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Concepts (${act.concepts.length})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${act.concepts.map(c=>`<span style="font-size:11px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:3px 10px;border-radius:20px;font-weight:600">${c}</span>`).join('')}</div></div>`:''}
+    ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:300px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy"></div>`:''}
+  </div>
+  <div style="border-top:1px solid var(--bdr);display:flex">
+    <button class="ac-action${hasGivenProps?' props-given':''}" onclick="giveProps('${act.id}','you')" style="flex:1;padding:14px;border:none;background:transparent;color:${hasGivenProps?'var(--ora)':'var(--mut)'};cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">
+      <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800">${propCount}</span>
+    </button>
+    <button class="ac-action" onclick="openComments('${act.id}','you')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">
+      💬 Comments <span style="font-weight:800">${commentCount}</span>
+    </button>
+    <button class="ac-action" onclick="shareActivity('${act.id}')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">🔗 Share</button>
+  </div>
+  <div style="padding:14px 16px;display:flex;gap:8px;border-top:1px solid var(--bdr)">
+    <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:700">✏️ Edit Session</button>
+    <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)'">🗑 Delete</button>
+  </div>
+</div>`;
+  window.scrollTo({top:0});
+}
+
+// ── CLUB PAGE ──────────────────────────────────────────────────────
+function openClubPage(clubId){
+  const club=(S.clubs||[]).find(c=>c.id===clubId);
+  if(club?.isDM){openClubChat(clubId);return;}
+  _closeAllOverlays();
+  const pc=PUBLIC_CLUBS.find(c=>c.id===clubId);
+  const name=(club||pc)?.name||'Club';
+  history.pushState({view:'clubPage',clubId,fromTab:currentTab},'','/club/'+encodeURIComponent(clubId));
+  document.title=name+' — Ledger';
+  _renderClubPage(clubId);
+}
+
+function _renderClubPage(clubId){
+  _mountPageShell('club-page-outer');
+  const memberClub=(S.clubs||[]).find(c=>c.id===clubId);
+  const pc=PUBLIC_CLUBS.find(c=>c.id===clubId);
+  if(!memberClub&&!pc){
+    document.getElementById('club-page-outer').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🏚️</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Club not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+    return;
+  }
+  if(!memberClub&&pc){
+    // Not yet a member — show public club landing
+    document.getElementById('club-page-outer').innerHTML=`
+<div>
+  <div style="background:linear-gradient(155deg,#0e0804,#1c1008);padding:28px 20px 22px;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(90,95,207,.45),transparent 55%)"></div>
+    <div style="position:relative;z-index:1;display:flex;align-items:center;gap:16px">
+      <div style="width:64px;height:64px;border-radius:18px;background:var(--ind-bg);border:1.5px solid rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0">${pc.icon}</div>
+      <div>
+        <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">${pc.name}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">🌐 Public Club · 👥 ${pc.memberCount.toLocaleString()} members</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:20px 16px">
+    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-bottom:20px">${pc.desc}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">${(pc.tags||[]).map(t=>`<span class="badge badge-${t==='all'?'AUD':t}" style="font-size:11px">${t==='all'?'All Sections':t}</span>`).join('')}</div>
+    <button onclick="joinPublicClub('${pc.id}');openClubPage('${pc.id}')" style="width:100%;padding:14px;background:var(--ind);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer">Join ${pc.name} →</button>
+  </div>
+</div>`;
+    return;
+  }
+  // Member — render full club UI using existing functions
+  // We reuse club-view-content / club-view-body IDs so renderClubView works
+  document.getElementById('club-page-outer').innerHTML=`<div id="club-view-content" style="display:flex;flex-direction:column;min-height:calc(100vh - 64px)"></div>`;
+  _clubViewTab='chat';
+  renderClubView(clubId);
 }
 
 function _normProfileMock(f){
@@ -7148,6 +7441,17 @@ function _renderFullUserProfile(u){
     ?`<div style="text-align:center;padding:48px 16px;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-size:14px;font-weight:600">No activity yet</div></div>`
     :allActs.map(a=>{
       const ex=EXAMS[a.section];if(!ex)return'';
+      if(a.type==='pass'){
+        const scoreLine=(typeof a.score==='number')?` · Score ${a.score}`:'';
+        return`<div class="card" style="margin-bottom:12px;overflow:hidden;border:1px solid ${ex.color}55">
+          <div style="background:linear-gradient(135deg,${ex.color},${ex.color}cc);padding:18px;text-align:center;color:#fff">
+            <div style="font-size:34px;line-height:1;margin-bottom:6px">🎉</div>
+            <div style="font-size:18px;font-weight:900;letter-spacing:-.02em">Passed ${a.section}!</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:3px">${ex.full}${scoreLine}</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:8px">${timeAgo(a.date)}</div>
+          </div>
+        </div>`;
+      }
       const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?ex.color:'var(--surf3)'}">★</span>`).join(''):'';
       return`<div class="card card-pad" style="margin-bottom:12px;cursor:pointer" onclick="openProfileActivity(this)" data-section="${a.section}" data-hours="${a.hours}" data-date="${a.date}" data-material="${(a.material||'').replace(/"/g,'&quot;')}" data-caption="${(a.caption||'').replace(/"/g,'&quot;')}" data-difficulty="${a.difficulty||0}" data-feeling="${a.feeling||''}">
         <div style="display:flex;align-items:center;gap:12px">
@@ -7170,11 +7474,12 @@ function _renderFullUserProfile(u){
       </div>`;
     }).join(''));
 
+  document.title=`${u.name} — Ledger`;
   document.getElementById('uprofile-content').innerHTML=`
 <div style="max-width:680px;margin:0 auto;padding-bottom:60px">
 
   <!-- Sticky header -->
-  <div id="vp-sticky-hdr" style="position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(10px)">
+  <div id="vp-sticky-hdr" style="position:sticky;top:64px;z-index:10;background:var(--bg);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(10px)">
     <button onclick="closeUserProfile()" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt);flex-shrink:0">← Back</button>
     <div style="font-size:15px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name}</div>
     <button id="vp-follow-btn-sticky" onclick="toggleFollowViewProfile('${u.uid}')" style="background:${isFollowing?'var(--surf2)':'var(--ora)'};border:1px solid ${isFollowing?'var(--bdr)':'transparent'};color:${isFollowing?'var(--txt)':'#fff'};border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${isFollowing?'Following':isPendingRequest?'Requested':'+ Follow'}</button>
@@ -7220,7 +7525,7 @@ function _renderFullUserProfile(u){
   </div>
 
   <!-- Tabs -->
-  <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--surf);sticky;position:sticky;top:57px;z-index:9" id="vp-tabs">
+  <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--surf);position:sticky;top:121px;z-index:9" id="vp-tabs">
     ${['activity','progress','about'].map(t=>`<button onclick="switchProfileTab('${t}')" id="vpt-${t}" style="flex:1;padding:13px;background:none;border:none;font-size:13px;font-weight:${t==='activity'?800:600};color:${t==='activity'?'var(--ora)':'var(--mut)'};cursor:pointer;border-bottom:2px solid ${t==='activity'?'var(--ora)':'transparent'};transition:all .15s">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
   </div>
 
@@ -7257,8 +7562,7 @@ function _renderFullUserProfile(u){
 
 </div>`;
 
-  // Scroll overlay to top
-  document.getElementById('uprofile-modal').scrollTop=0;
+  window.scrollTo({top:0});
 }
 
 function toggleFollowViewProfile(uid){
@@ -7269,6 +7573,7 @@ function toggleFollowViewProfile(uid){
     S.following.splice(idx,1);
     saveState();saveFollowToFirestore();checkAchievements();
     if(btn){btn.textContent='+ Follow';btn.style.background='var(--ora)';btn.style.border='1px solid transparent';}
+    const sb=document.getElementById('vp-follow-btn-sticky');if(sb){sb.textContent='+ Follow';sb.style.background='var(--ora)';sb.style.color='#fff';sb.style.border='1px solid transparent';}
     showToast('Unfollowed','info');
   } else if(_isUserPrivate(uid)){
     if(!S.pendingRequests)S.pendingRequests=[];
@@ -7285,13 +7590,25 @@ function toggleFollowViewProfile(uid){
     S.following.push(uid);
     saveState();saveFollowToFirestore();checkAchievements();
     if(btn){btn.textContent='✓ Following';btn.style.background='rgba(255,255,255,.15)';btn.style.border='1px solid rgba(255,255,255,.25)';}
+    const sb=document.getElementById('vp-follow-btn-sticky');if(sb){sb.textContent='Following';sb.style.background='var(--surf2)';sb.style.color='var(--txt)';sb.style.border='1px solid var(--bdr)';}
     showToast('Following!','ok');
+    // Pull the newly-followed user's recent activity into the feed right away.
+    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore')renderTab(); });
   }
 }
 
 
 
-function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+function closeUserProfile(){
+  const st=history.state;
+  if(st?.view==='userProfile'){
+    history.back();
+  } else {
+    // fallback: restore app
+    renderApp();
+    if(st?.fromTab)switchTab(st.fromTab);
+  }
+}
 
 function switchProfileTab(tab){
   ['activity','progress','about'].forEach(t=>{
@@ -8040,7 +8357,7 @@ function renderMessagesBody(){
       const msgs=(S.clubMessages||{})[c.id]||[];
       const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
       const timeStr=lastMsg?timeAgo(lastMsg.time):'';
-      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">👥 '+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
+      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">👥 '+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
     }).join('');
   }
 }
@@ -8141,7 +8458,10 @@ function sendClubViewMessage(clubId){
     },1100+Math.random()*1200);
   }
 }
-function closeClubView(){document.getElementById('club-view-modal')?.classList.remove('open');}
+function closeClubView(){
+  if(history.state?.view==='clubPage'){history.back();return;}
+  document.getElementById('club-view-modal')?.classList.remove('open');
+}
 
 // ═══════════════════════════════════════════════
 // MISC HANDLERS
@@ -13896,6 +14216,23 @@ function openLogResultModal(prefSection){
   document.body.appendChild(el);
 }
 
+// Creates a celebratory "passed this section" card in the feed/profile.
+// De-duped per section so re-logging or status toggles don't spam the feed.
+function addPassActivity(section,score){
+  if(!section)return;
+  if(!S.activities)S.activities=[];
+  if(S.activities.some(a=>a.type==='pass'&&a.section===section))return;
+  S.activities.push({
+    id:'p'+Date.now(),
+    type:'pass',
+    date:todayStr()+'T'+new Date().toTimeString().slice(0,8),
+    section,
+    score:(typeof score==='number'&&!isNaN(score))?score:null,
+    hours:Math.round(getSectionHours(section)),
+    kudos:[],comments:[]
+  });
+}
+
 async function logExamResult(){
   const section=document.getElementById('lr-section')?.value;
   const sitDate=document.getElementById('lr-sitdate')?.value;
@@ -13914,10 +14251,12 @@ async function logExamResult(){
     S.sectionPassed.push(section);
     if(!S.sectionStatus)S.sectionStatus={};
     S.sectionStatus[section]='passed';
+    addPassActivity(section,scoreRaw);
     const _priorAch=new Set(S.achievements||[]);
     checkAchievements();checkShareTrigger(_priorAch);
   }
   saveState();
+  if(passed)writeUserProfile();
   if(firebaseDb&&AUTH?.uid){
     try{
       await firebaseDb.collection('users').doc(AUTH.uid).update({
