@@ -680,6 +680,9 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(212,64,0,.65),transparent 48%),radial-gradient(ellipse at 95% 5%,rgba(90,95,207,.22),transparent 40%)}
 .profile-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(212,64,0,.5),transparent 60%)}
 .profile-hero-inner{position:relative;z-index:1}
+.ptab-btn{transition:color .15s,border-color .15s}
+.ptab-btn:hover{color:var(--txt)!important}
+.ptab-btn.active{color:var(--ora)!important;border-bottom-color:var(--ora)!important}
 /* ── SETTINGS ── */
 .settings-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);font-size:13px;font-weight:500;color:var(--sub)}
 .settings-nav-item:hover{background:var(--surf2);color:var(--txt)}
@@ -4166,7 +4169,7 @@ function renderTab(){
   if(currentTab==='feed')el.innerHTML=buildFeed();
   else if(currentTab==='dashboard')el.innerHTML=buildDashboard();
   else if(currentTab==='plan')el.innerHTML=buildStudyPlanTab();
-  else if(currentTab==='profile')el.innerHTML=buildProfile();
+  else if(currentTab==='profile'){el.innerHTML=buildProfile();}
   else if(currentTab==='explore')el.innerHTML=buildExplore();
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
   attachTabHandlers();
@@ -5371,14 +5374,133 @@ function toggleAchSection(id,total){
   if(btn)btn.textContent=open?`View all ${total} achievements ↓`:'Show less ↑';
 }
 
+let _profileTab='sessions';
+function switchProfileTab(tab){
+  _profileTab=tab;
+  document.querySelectorAll('.ptab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  const el=document.getElementById('profile-tab-body');
+  if(el){
+    el.innerHTML=_buildProfileTabContent(tab);
+    el.querySelectorAll('.prog-fill').forEach(bar=>{const t=bar.style.width;bar.style.width='0%';requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.width=t;}));});
+  }
+}
+function _buildProfileTabContent(tab){
+  if(tab==='sessions') return _buildProfileSessions();
+  if(tab==='progress') return _buildProfileProgress();
+  if(tab==='achievements') return _buildProfileAchievements();
+  if(tab==='clubs') return _buildProfileClubs();
+  return '';
+}
+function _buildProfileSessions(){
+  const allActs=(S.activities||[]).slice().reverse();
+  const recentActs=allActs.slice(0,20).map(a=>{
+    const ex=EXAMS[a.section]||{color:'var(--ind)',icon:'📚',full:a.section};
+    const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?'var(--amb)':'var(--bdr)'}">★</span>`).join(''):'';
+    return`<div onclick="openActivityPage('${a.id}')" style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='${ex.color}';this.style.boxShadow='0 4px 16px rgba(0,0,0,.07)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.boxShadow='none'">
+      <div style="height:3px;background:${ex.color}"></div>
+      <div style="padding:11px 13px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+          <span class="badge badge-${a.section}" style="font-size:10px">${a.section}</span>
+          <span style="font-size:10px;color:var(--mut)">${timeAgo(a.date)}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px">
+          <span style="font-size:24px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${a.hours}</span>
+          <span style="font-size:11px;color:var(--mut);font-weight:600">hrs</span>
+          ${a.feeling?`<span style="font-size:15px;margin-left:2px">${a.feeling}</span>`:''}
+        </div>
+        ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.material}</div>`:''}
+        ${a.caption?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">"${a.caption}"</div>`:''}
+        ${diffStars?`<div style="font-size:11px;margin-top:5px">${diffStars}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  if(!recentActs) return`<div class="empty-state" style="padding:48px 0"><div class="empty-icon">📖</div><div class="empty-msg">No sessions yet.<br><button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openSessionModal()">▶ Start First Session</button></div></div>`;
+  return`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">${recentActs}</div>${allActs.length>20?`<div style="text-align:center;margin-top:14px;font-size:12px;color:var(--mut)">${allActs.length-20} older sessions not shown</div>`:''}`;
+}
+function _buildProfileProgress(){
+  const weekHrs=getWeekHours();
+  const weekPct=Math.min(100,Math.round(weekHrs/(S.hoursPerWeek||15)*100));
+  const sectionProgress=(S.sections||[]).map(s=>{
+    const ex=EXAMS[s];
+    const hrs=getSectionHours(s);
+    const pct=Math.min(100,Math.round(hrs/getHourGoal(s)*100));
+    const passed=(S.sectionPassed||[]).includes(s);
+    return`<div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="badge badge-${s}">${s}</span>
+          ${passed?`<span class="badge badge-passed">Passed ✅</span>`:''}
+        </div>
+        <span style="font-size:11px;color:var(--mut)">${hrs}h / ${getHourGoal(s)}h · ${pct}%</span>
+      </div>
+      <div class="prog-bar" style="height:9px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
+    </div>`;
+  }).join('');
+  const partnerHTML=(()=>{
+    if(!isPro()) return`<div style="margin-top:16px;padding:14px;background:var(--surf2);border-radius:10px;border:1px solid var(--bdr);opacity:.6;text-align:center"><div style="font-size:12px;color:var(--mut)">🤝 Study Partner — <button class="btn btn-ghost btn-xs" onclick="openUpgradeModal(null)">Upgrade to Pro</button></div></div>`;
+    const partnerId=S.accountabilityPartner;
+    const partner=partnerId?REAL_USERS.find(f=>f.id===partnerId):null;
+    if(partner){
+      const weekAgo=new Date(Date.now()-7*86400000);
+      const theirHrs=partner.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
+      const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
+      return`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">🤝 Study Partner</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:4px">YOU</div><div style="font-size:22px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div><div style="font-size:10px;color:var(--mut)">this week</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:4px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:22px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div><div style="font-size:10px;color:var(--mut)">this week</div></div></div><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:${partner.color};color:#fff">${partner.initials}</div><div style="font-size:12px;font-weight:600">${partner.name}</div><button class="btn btn-ghost btn-xs" style="margin-left:auto;color:var(--mut)" onclick="removeStudyPartner()">Remove</button></div></div>`;
+    }
+    const candidates=(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean);
+    if(!candidates.length) return`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px">🤝 Study Partner</div><div style="font-size:12px;color:var(--mut)">Follow someone first to add them as your study partner.</div></div>`;
+    return`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px">🤝 Study Partner</div><div style="font-size:12px;color:var(--sub);margin-bottom:10px">Pick someone to keep each other accountable.</div><div style="display:flex;flex-wrap:wrap;gap:8px">${candidates.map(f=>`<button onclick="setStudyPartner('${f.id}')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600"><div class="avatar" style="width:20px;height:20px;font-size:10px;background:${f.color};color:#fff">${f.initials}</div>${f.name.split(' ')[0]}</button>`).join('')}</div></div>`;
+  })();
+  const shieldHTML=isPro()?(()=>{
+    const remaining=isElite()?'∞':(3-(S.shieldsUsed||0));
+    return`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr);display:flex;align-items:center;gap:10px"><span style="font-size:16px">🛡️</span><div style="flex:1"><div style="font-size:12px;font-weight:700">Streak Shield</div><div style="font-size:11px;color:var(--mut)">${remaining} remaining</div></div><button class="btn btn-ghost btn-xs" onclick="useStreakShield()">Use Shield</button></div>`;
+  })():'';
+  return`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px">
+        <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">This Week</div>
+        <div style="font-size:42px;font-weight:900;color:var(--ora);letter-spacing:-.04em;line-height:1">${weekHrs.toFixed(1)}</div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:12px">of ${S.hoursPerWeek||15}h goal</div>
+        <div class="prog-bar" style="height:7px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':'var(--ora)'}"></div></div>
+      </div>
+      <div style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px">
+        ${isPro()?`<div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Progress Report</div><div style="font-size:12px;color:var(--sub);margin-bottom:12px">${new Date(Date.now()-7*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><button class="btn btn-ind btn-sm" style="width:100%" onclick="openProgressReport()">📊 View Report</button>`:`<div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Weekly Report</div><div style="font-size:12px;color:var(--mut);margin-bottom:12px">Automated study summary</div><button class="btn btn-ghost btn-sm" style="width:100%" onclick="openUpgradeModal(null)">Upgrade to Pro →</button>`}
+      </div>
+    </div>
+    <div style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Exam Progress</div>
+      ${sectionProgress||'<div style="font-size:12px;color:var(--mut)">No sections added yet. <button class="btn btn-ghost btn-xs" onclick="openAppSettings()">Add sections →</button></div>'}
+      ${partnerHTML}
+      ${shieldHTML}
+    </div>`;
+}
+function _buildProfileAchievements(){
+  return _achPreviewHTML(S.achievements||[],'own-ach',true);
+}
+function _buildProfileClubs(){
+  const dms=(S.clubs||[]).filter(c=>c.isDM);
+  const clubs=(S.clubs||[]).filter(c=>!c.isDM);
+  const dmHTML=dms.length?`<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Direct Messages</div>${dms.slice(0,5).map(c=>{const otherId=c.members.find(m=>m!=='you');const friend=REAL_USERS.find(f=>f.id===otherId);const msgs=(S.clubMessages||{})[c.id]||[];const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];return`<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="openClubChat('${c.id}')" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'"><div class="avatar av-md" style="background:${friend?.color||'#6366f1'};color:#fff;flex-shrink:0">${friend?.initials||c.name.slice(0,2).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${c.name}</div>${lastMsg?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastMsg.author==='you'?'You: ':''}${lastMsg.text}</div>`:'<div style="font-size:11px;color:var(--mut)">No messages yet</div>'}</div><span style="font-size:16px;color:var(--mut)">›</span></div>`;}).join('')}${dms.length>5?`<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px" onclick="openMessagesModal()">View all ${dms.length} conversations →</button>`:''}</div>`:'';
+  const clubHTML=clubs.length?clubs.map(c=>{
+    const msgs=(S.clubMessages||{})[c.id]||[];
+    const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
+    return`<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="openClubPage('${c.id}')" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'"><div style="width:42px;height:42px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${c.icon}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${c.name}</div><div style="font-size:11px;color:var(--mut)">${c.isPublic?'🌐 Public':'🔒 Private'} · ${c.members.length} member${c.members.length!==1?'s':''}</div>${lastMsg?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author)}: ${lastMsg.text}</div>`:''}</div><span style="font-size:16px;color:var(--mut)">›</span></div>`;
+  }).join(''):`<div style="text-align:center;padding:32px 0;color:var(--mut);font-size:13px">No clubs yet.<br><button class="btn btn-ind btn-sm" style="margin-top:12px" onclick="createClubModal()">✨ Create First Club</button></div>`;
+  return`
+    ${dmHTML}
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em">Study Clubs (${clubs.length})</div>
+        <button class="btn btn-ghost btn-xs" onclick="createClubModal()">+ Create</button>
+      </div>
+      ${clubHTML}
+    </div>`;
+}
 function buildProfile(){
   const totalHrs=getTotalHours();
   const streak=getStreak();
-  const weekHrs=getWeekHours();
   const initials=(S.name||'CPA').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
   const followersCount=(S.followers||[]).length;
   const followingCount=(S.following||[]).filter(id=>id&&id.length>4).length;
-  const pendingRequestCount=(S.followRequests||[]).length;
 
   const achHTML=_achPreviewHTML(S.achievements||[],'own-ach',true);
 
@@ -5409,29 +5531,11 @@ function buildProfile(){
     </div>`;
   }).join('');
 
-  const sectionProgress=(S.sections||[]).map(s=>{
-    const ex=EXAMS[s];
-    const hrs=getSectionHours(s);
-    const pct=Math.min(100,Math.round(hrs/getHourGoal(s)*100));
-    const passed=(S.sectionPassed||[]).includes(s);
-    return`<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-        <div style="display:flex;align-items:center;gap:7px">
-          <span class="badge badge-${s}">${s}</span>
-          ${passed?`<span class="badge badge-passed">Passed ✅</span>`:''}
-        </div>
-        <span style="font-size:11px;color:var(--mut)">${hrs}h / ${getHourGoal(s)}h · ${pct}%</span>
-      </div>
-      <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
-    </div>`;
-  }).join('');
-
   return`
-<div style="max-width:700px;margin:0 auto">
-  <!-- HERO -->
-  <div class="profile-hero" style="margin-bottom:24px">
+<div style="max-width:680px;margin:0 auto">
+  <div class="profile-hero" style="border-radius:16px;margin-bottom:0">
     <div class="profile-hero-inner">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
         <div style="display:flex;align-items:center;gap:16px">
           <div class="profile-av-wrap" onclick="openEditProfile()" title="Edit profile">
             ${S.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${initials}</span>`}
@@ -5440,183 +5544,49 @@ function buildProfile(){
           <div>
             <div class="profile-name" style="margin-top:0">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Elite</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
             <div class="profile-state">${S.state}${S.classYear?' · '+S.classYear:''}${S.school?' @ '+S.school:''}</div>
-            ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
-            ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;max-width:320px;line-height:1.5">"${S.bio}"</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="openEditProfile()">+ Add a bio…</div>`}
-            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              <span class="badge" style="background:rgba(255,255,255,.15);color:#fff">${S.disc} Discipline</span>
-              ${(S.sectionPassed||[]).length>0?`<span class="badge" style="background:rgba(16,185,129,.3);color:#6ee7b7">✅ ${(S.sectionPassed||[]).length} Passed</span>`:''}
-            </div>
+            ${(S.city||S.locationState)?`<div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">📍 ${[S.city,S.locationState].filter(Boolean).join(', ')}</div>`:''}
+            ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:5px;max-width:340px;line-height:1.55">${S.bio}</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:5px;cursor:pointer" onclick="openEditProfile()">+ Add a bio…</div>`}
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-          <button onclick="openEditProfile()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
-          <button onclick="openQRModal()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer">⬛ My QR Code</button>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button onclick="openEditProfile()" style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Edit Profile</button>
+          <button onclick="openQRModal()" title="My QR Code" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);border-radius:8px;padding:7px 10px;font-size:14px;cursor:pointer">⬛</button>
         </div>
       </div>
-
-      <!-- SOCIAL STATS -->
-      <div style="display:flex;gap:28px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap">
-        <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:left;padding:0;position:relative">
-          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Followers</div>
-          ${(S.followRequests||[]).length?`<span style="position:absolute;top:-4px;right:-10px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center">${(S.followRequests||[]).length}</span>`:''}
+      <div style="display:flex;gap:0;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
+        <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:center;padding:0 20px 0 0;position:relative">
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Followers</div>
+          ${(S.followRequests||[]).length?`<span style="position:absolute;top:-3px;right:12px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 4px;border-radius:10px">${(S.followRequests||[]).length}</span>`:''}
         </button>
-        <button onclick="openFollowModal('following')" style="background:none;border:none;cursor:pointer;text-align:left;padding:0">
-          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followingCount}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Following</div>
+        <button onclick="openFollowModal('following')" style="background:none;border:none;cursor:pointer;text-align:center;padding:0 20px 0 0">
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followingCount}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Following</div>
         </button>
-        <div>
-          <div style="font-size:30px;font-weight:900;color:rgba(212,64,0,.95);letter-spacing:-.04em;line-height:1">${Math.round(totalHrs)}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Total Hrs</div>
+        <div style="text-align:center;padding:0 20px 0 0">
+          <div style="font-size:26px;font-weight:900;color:rgba(212,64,0,.9);letter-spacing:-.04em;line-height:1">${Math.round(totalHrs)}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Hours</div>
         </div>
-        <div>
-          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${streak}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Day Streak</div>
+        <div style="text-align:center;padding:0 20px 0 0">
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${streak}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Streak</div>
         </div>
-        <div>
-          <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${(S.activities||[]).length}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Sessions</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROGRESS + WEEK -->
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px">
-    <div class="card card-pad">
-      <div class="section-title">Exam Progress</div>
-      ${sectionProgress||'<div style="color:var(--mut);font-size:12px">No sections added yet.</div>'}
-    </div>
-    <div class="card card-pad" style="text-align:center">
-      <div class="section-title">This Week</div>
-      <div style="font-size:48px;font-weight:900;color:var(--ora);line-height:1">${weekHrs.toFixed(1)}</div>
-      <div style="font-size:12px;color:var(--mut);margin-bottom:14px">hours studied</div>
-      <div style="font-size:13px;font-weight:700;color:var(--sub)">Goal: ${S.hoursPerWeek||15} hrs</div>
-      <div class="prog-bar" style="margin-top:8px;height:8px"><div class="prog-fill" style="width:${Math.min(100,Math.round(weekHrs/(S.hoursPerWeek||15)*100))}%;background:var(--ora)"></div></div>
-    </div>
-  </div>
-
-  <!-- RECENT SESSIONS -->
-  <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div>
-        <div class="section-title" style="margin-bottom:2px">Recent Sessions</div>
-        <div style="font-size:11px;color:var(--mut)">${(S.activities||[]).length} total · click any to view details</div>
-      </div>
-      <button class="btn btn-ghost btn-xs" onclick="openSessionModal()">+ Log Session</button>
-    </div>
-    ${recentActs
-      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">${recentActs}</div>${(S.activities||[]).length>12?`<div style="text-align:center;margin-top:12px;font-size:12px;color:var(--mut)">${(S.activities||[]).length-12} older sessions not shown</div>`:''}`
-      : `<div class="empty-state" style="padding:24px 0"><div class="empty-icon">📖</div><div class="empty-msg">No sessions logged yet.<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="openSessionModal()">▶ Start First Session</button></div></div>`}
-  </div>
-
-  <!-- ACHIEVEMENTS -->
-  <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="section-title" style="margin-bottom:0">Achievements (${(S.achievements||[]).length}/${ACHIEVEMENTS.length})</div>
-      <span style="font-size:10px;color:var(--mut)">Click <strong>i</strong> to see how to unlock</span>
-    </div>
-    ${achHTML}
-  </div>
-
-  <!-- DIRECT MESSAGES -->
-  ${(()=>{
-    const dms=(S.clubs||[]).filter(c=>c.isDM);
-    if(!dms.length) return '';
-    return'<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">💬 Direct Messages ('+dms.length+')</div><button class="btn btn-ghost btn-xs" onclick="openMessagesModal()">View All</button></div>'+dms.slice(0,3).map(c=>{const otherId=c.members.find(m=>m!=='you');const friend=REAL_USERS.find(f=>f.id===otherId);const msgs=(S.clubMessages||{})[c.id]||[];const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];return'<div class="my-club-card" onclick="openClubChat(\''+c.id+'\')"><div class="avatar av-md" style="background:'+(friend?.color||'#6366f1')+';color:#fff;flex-shrink:0">'+(friend?.initials||c.name.slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You: ':'')+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut)">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';}).join('')+'</div>';
-  })()}
-
-  <!-- MY CLUBS -->
-  <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="section-title" style="margin-bottom:0">My Study Clubs (${(S.clubs||[]).filter(c=>!c.isDM).length})</div>
-      <button class="btn btn-ghost btn-xs" onclick="createClubModal()">+ Create Club</button>
-    </div>
-    ${(()=>{
-      const clubs=(S.clubs||[]).filter(c=>!c.isDM);
-      if(!clubs.length) return'<div style="text-align:center;padding:18px 0;color:var(--mut);font-size:13px">No clubs yet — create one or join a public club in Explore.<br><button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="createClubModal()">✨ Create First Club</button></div>';
-      return clubs.map(c=>{
-        const msgs=(S.clubMessages||{})[c.id]||[];
-        const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-        return'<div class="my-club-card" onclick="openClubPage(\''+c.id+'\')"><div class="club-ico">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut);margin-top:1px">'+(c.isPublic?'🌐 Public':'🔒 Private')+' · '+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut);margin-top:2px">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';
-      }).join('')+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="openMessagesModal()">View All Clubs →</button>';
-    })()}
-  </div>
-
-  <!-- Streak Shield pill (subtle) -->
-  ${isPro()?(()=>{
-    const shieldsUsed=S.shieldsUsed||0;
-    const shieldsTotal=isElite()?999:3;
-    const remaining=isElite()?'∞':shieldsTotal-shieldsUsed;
-    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:12px;cursor:pointer" onclick="useStreakShield()" title="Streak Shield — protects your streak if you miss a day"><span style="font-size:14px">🛡️</span><span style="font-size:12px;font-weight:700;color:var(--sub)">Streak Shield</span><span style="font-size:11px;color:var(--mut)">'+remaining+' remaining</span><button class="btn btn-ghost btn-xs" style="margin-left:auto" onclick="event.stopPropagation();useStreakShield()">Use</button></div>';
-  })():''}
-
-  <!-- PRO: Weekly Progress Report -->
-  ${isPro()?
-    '<div class="card card-pad" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="section-title" style="margin-bottom:0">📝 Progress Report</div><span class="pro-plan-badge badge-pro">Pro</span></div><div style="background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📊</span><div style="flex:1"><div style="font-size:13px;font-weight:700">Week of '+new Date(Date.now()-7*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div><div style="font-size:11px;color:var(--mut);margin-top:3px">'+Math.round(getWeekHours())+'h studied · '+getStreak()+' day streak · '+(S.activities||[]).filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).length+' sessions</div></div><button class="btn btn-ind btn-sm" onclick="openProgressReport()">📊 View Report</button></div></div>'
-    :
-    '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px"><div class="section-title">Weekly Progress Reports</div><div style="opacity:.3;pointer-events:none;user-select:none;background:var(--surf2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px"><span style="font-size:32px">📄</span><div><div style="font-size:13px;font-weight:700">Week of Apr 7–14</div><div style="font-size:11px;color:var(--mut)">Your automated study summary PDF</div></div><div style="margin-left:auto;background:var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--mut)">Download PDF</div></div>'+proLockHTML('Weekly Progress Reports','Unlock Reports')+'</div>'
-  }
-
-  <!-- PRO+: Accountability Partner -->
-  ${isPro()?`
-  <div class="card card-pad" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="font-size:20px">🤝</div>
-        <div>
-          <div class="section-title" style="margin-bottom:0">Study Partner</div>
-          <div style="font-size:11px;color:var(--mut)">Keep each other accountable</div>
+        <div style="text-align:center">
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${(S.activities||[]).length}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Sessions</div>
         </div>
       </div>
     </div>
-    ${(()=>{
-      const partnerId=S.accountabilityPartner;
-      const partner=partnerId?REAL_USERS.find(f=>f.id===partnerId):null;
-      if(partner){
-        const weekAgo=new Date(Date.now()-7*86400000);
-        const theirHrs=partner.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-        const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'+
-          '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--mut);margin-bottom:4px">YOU</div><div style="font-size:22px;font-weight:900;color:var(--ora)">'+myHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
-          '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--mut);margin-bottom:4px">'+partner.name.split(' ')[0].toUpperCase()+'</div><div style="font-size:22px;font-weight:900;color:var(--ind)">'+theirHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
-        '</div>'+
-        '<div style="display:flex;gap:8px;align-items:center"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:'+partner.color+';color:#fff">'+partner.initials+'</div><div style="font-size:12px;font-weight:600">'+partner.name+'</div><button class="btn btn-ghost btn-xs" style="margin-left:auto;color:var(--mut)" onclick="removeStudyPartner()">Remove</button></div>';
-      }
-      const candidates=(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean);
-      if(!candidates.length) return '<div style="font-size:12px;color:var(--sub)">Follow someone first to add them as your study partner.</div>';
-      return '<div style="font-size:12px;color:var(--sub);margin-bottom:10px">Pick someone to pair with — you\'ll see each other\'s weekly hours side-by-side.</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
-        candidates.map(function(f){return '<button onclick="setStudyPartner(\''+f.id+'\')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600"><div class="avatar" style="width:20px;height:20px;font-size:10px;background:'+f.color+';color:#fff">'+f.initials+'</div>'+f.name.split(' ')[0]+'</button>';}).join('')+
-        '</div>';
-    })()}
-  </div>`:''}
-
-  <!-- SOCIAL CONNECT -->
-  <div class="card card-pad">
-    <div class="section-title">Connect Your Socials</div>
-    <p style="font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.6">Share your CPA journey on LinkedIn and Facebook. Connected profiles are visible on your public study card.</p>
-    <div class="social-link-row${(S.social?.linkedin)?` connected`:''}" onclick="openSocialModal('linkedin')">
-      <div class="soc-icon soc-li">in</div>
-      <div class="soc-link-info">
-        <div class="soc-link-name">LinkedIn${S.social?.linkedin?' ✓':''}</div>
-        <div class="soc-link-url">${S.social?.linkedin||'Not connected — click to add'}</div>
-      </div>
-      <span style="font-size:11px;color:${S.social?.linkedin?'var(--grn)':'var(--mut)'}">
-        ${S.social?.linkedin?'Connected':'Connect →'}
-      </span>
-    </div>
-    <div class="social-link-row${(S.social?.facebook)?` connected`:''}" onclick="openSocialModal('facebook')">
-      <div class="soc-icon soc-fb">f</div>
-      <div class="soc-link-info">
-        <div class="soc-link-name">Facebook${S.social?.facebook?' ✓':''}</div>
-        <div class="soc-link-url">${S.social?.facebook||'Not connected — click to add'}</div>
-      </div>
-      <span style="font-size:11px;color:${S.social?.facebook?'var(--grn)':'var(--mut)'}">
-        ${S.social?.facebook?'Connected':'Connect →'}
-      </span>
-    </div>
   </div>
+
+  <!-- PROFILE TABS -->
+  <div style="display:flex;border-bottom:2px solid var(--bdr);margin-bottom:20px;margin-top:6px">
+    ${[['sessions','Sessions'],['progress','Progress'],['achievements','Achievements'],['clubs','Clubs']].map(([t,l])=>`<button class="ptab-btn${_profileTab===t?' active':''}" data-tab="${t}" onclick="switchProfileTab('${t}')" style="padding:10px 18px;background:none;border:none;font-size:13px;font-weight:700;cursor:pointer;color:${_profileTab===t?'var(--ora)':'var(--mut)'};border-bottom:2px solid ${_profileTab===t?'var(--ora)':'transparent'};margin-bottom:-2px;transition:color .15s">${l}</button>`).join('')}
+    <div style="flex:1"></div>
+    ${_profileTab==='sessions'?`<button class="btn btn-primary btn-sm" style="align-self:center;margin-right:4px" onclick="openSessionModal()">▶ Log Session</button>`:''}
+  </div>
+
+  <div id="profile-tab-body">${_buildProfileTabContent(_profileTab)}</div>
 </div>`;
 }
 
