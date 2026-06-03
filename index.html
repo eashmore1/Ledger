@@ -7194,8 +7194,20 @@ function denyAllFollowRequests(){
 // ═══════════════════════════════════════════════
 // USER PROFILE VIEW
 // ═══════════════════════════════════════════════
+// Dismiss every open overlay/modal before a full-page navigation.
+function _closeAllOverlays(){
+  document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  ['search-modal','log-result-modal','upgrade-modal','follow-modal','notif-modal',
+   'mess-modal','follow-req-modal','sess-overlay','social-modal','comments-modal','post-modal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.contains('open')?el.classList.remove('open'):el.remove?.();
+  });
+  document.body.style.overflow='';
+}
+
 async function openUserProfile(userId){
   if(userId==='you'||userId===AUTH?.uid){switchTab('profile');return;}
+  _closeAllOverlays();
   history.pushState({view:'userProfile',userId,fromTab:currentTab},'','/user/'+encodeURIComponent(userId));
   document.title='Profile — Ledger';
   await _loadAndRenderProfilePage(userId);
