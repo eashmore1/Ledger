@@ -293,6 +293,10 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── MODAL ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:500;align-items:center;justify-content:center;padding:var(--sp-4);backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
+/* User-profile takeover: centered card on desktop, full-screen on mobile, scrolls internally */
+#uprofile-modal{align-items:center;justify-content:center;padding:24px;overflow:hidden}
+#uprofile-page{width:100%;max-width:600px;max-height:88vh;background:var(--bg);border-radius:18px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:0 24px 70px rgba(0,0,0,.45);display:flex;flex-direction:column;animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
+@media(max-width:700px){#uprofile-modal{padding:0}#uprofile-page{max-width:none;max-height:none;height:100vh;height:100dvh;border-radius:0;box-shadow:none}}
 .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
@@ -2314,6 +2318,7 @@ async function writeUserProfile(){
       // Recent non-private activities — used by followers' feeds
       recentActivities: (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
         id:a.id,date:a.date,section:a.section,hours:a.hours,
+        type:a.type||'session',score:(typeof a.score==='number'?a.score:null),
         material:a.material||'',caption:a.caption||'',
         difficulty:a.difficulty||3,feeling:a.feeling||'',
         kudos:a.kudos||[],comments:(a.comments||[]).slice(-3)
@@ -4356,8 +4361,47 @@ function buildPartnerTeaserCard(){
 </div>`;
 }
 
+// Celebratory card shown when a candidate passes a section.
+function buildPassCard(a,ex){
+  ex=ex||EXAMS[a.section]||{color:'var(--grn)',full:a.section,icon:'🎉'};
+  const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
+  const commentCount=Array.isArray(a.comments)?a.comments.length:0;
+  const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
+  const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
+  const _pic=a.userPic||(a.isMine?S?.profilePic:'')||'';
+  const _avatarHtml=_pic?`<img src="${_pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials||''}`;
+  const scoreLine=(typeof a.score==='number')?`<div style="font-size:13px;color:rgba(255,255,255,.85);font-weight:700;margin-top:2px">Score: ${a.score}</div>`:'';
+  return`<div class="activity-card pass-card" style="margin-bottom:16px;overflow:hidden;border:1px solid ${ex.color}55" data-aid="${a.id}" data-uid="${a.userId}">
+  <div class="ac-header">
+    <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${_avatarHtml}</div>
+    <div style="flex:1;min-width:0">
+      <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}</span>
+      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+    </div>
+    <span class="badge badge-passed">Passed ✅</span>
+  </div>
+  <div style="background:linear-gradient(135deg,${ex.color},${ex.color}cc);padding:22px 18px;text-align:center;color:#fff">
+    <div style="font-size:40px;line-height:1;margin-bottom:8px">🎉</div>
+    <div style="font-size:20px;font-weight:900;letter-spacing:-.02em">Passed ${a.section}!</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:3px">${ex.full}</div>
+    ${scoreLine}
+    ${a.hours?`<div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px">${a.hours} hours logged on the way there</div>`:''}
+  </div>
+  <div class="ac-actions">
+    <button class="ac-action${hasGivenProps?' props-given':''}" onclick="giveProps('${a.id}','${a.userId}')" data-props="${a.id}">
+      <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800;color:${hasGivenProps?'var(--ora)':'var(--mut)'}">${propCount}</span>
+    </button>
+    <button class="ac-action" onclick="openComments('${a.id}','${a.userId}')">
+      💬 Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
+    </button>
+    <button class="ac-action" onclick="shareActivity('${a.id}')">🔗 Share</button>
+  </div>
+</div>`;
+}
+
 function buildActivityCard(a){
   const ex=EXAMS[a.section];
+  if(a.type==='pass')return buildPassCard(a,ex);
   const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
   const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
@@ -6134,7 +6178,8 @@ function toggleFollow(fId,btn){
     following.splice(idx,1);
     S.following=following;
     if(btn){btn.textContent='Follow';btn.classList.remove('following');btn.style.background='';btn.style.color='';}
-    saveState();checkAchievements();
+    saveState();checkAchievements();saveFollowToFirestore();
+    if(currentTab==='feed'||currentTab==='explore')renderTab();
     showToast('Unfollowed','info');
   } else if(_isUserPrivate(fId)){
     _sendFollowRequest(fId,btn);
@@ -6144,6 +6189,8 @@ function toggleFollow(fId,btn){
     if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';btn.classList.remove('just-followed');void btn.offsetWidth;btn.classList.add('just-followed');}
     saveState();checkAchievements();saveFollowToFirestore();
     showToast('Following! Their sessions will now appear in your feed.','ok');
+    // Pull the newly-followed user's recent activity into the feed right away.
+    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore')renderTab(); });
   }
 }
 
@@ -6165,9 +6212,11 @@ function updateSectionStatus(section,status){
     if(!S.sectionPassed.includes(section)){
       const _priorAch=new Set(S.achievements||[]);
       S.sectionPassed.push(section);showToast(`${section} marked as Passed!`,'ok');
+      addPassActivity(section,null);
       checkAchievements();checkShareTrigger(_priorAch);
       const hrs=Math.round(getSectionHours(section));
       setTimeout(()=>showPassCelebration(section,null,hrs),300);
+      writeUserProfile();
     } else { checkAchievements(); }
   } else {
     S.sectionPassed=(S.sectionPassed||[]).filter(s=>s!==section);
@@ -7076,12 +7125,12 @@ async function openUserProfile(userId){
     el=document.createElement('div');
     el.id='uprofile-modal';
     el.className='modal-overlay';
-    el.style.cssText='align-items:flex-start;padding:0;overflow-y:auto';
-    el.innerHTML=`<div id="uprofile-page" onclick="event.stopPropagation()" style="width:100%;max-width:700px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column"><div id="uprofile-content" style="flex:1"></div></div>`;
+    el.innerHTML=`<div id="uprofile-page" onclick="event.stopPropagation()"><div id="uprofile-content" style="flex:1"></div></div>`;
     el.addEventListener('click',e=>{if(e.target===el)closeUserProfile();});
     document.body.appendChild(el);
   }
   el.classList.add('open');
+  document.body.style.overflow='hidden';
   document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
   const mock=REAL_USERS.find(x=>x.id===userId);
   if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
@@ -7147,6 +7196,17 @@ function _renderFullUserProfile(u){
     ?`<div style="text-align:center;padding:48px 16px;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-size:14px;font-weight:600">No activity yet</div></div>`
     :allActs.map(a=>{
       const ex=EXAMS[a.section];if(!ex)return'';
+      if(a.type==='pass'){
+        const scoreLine=(typeof a.score==='number')?` · Score ${a.score}`:'';
+        return`<div class="card" style="margin-bottom:12px;overflow:hidden;border:1px solid ${ex.color}55">
+          <div style="background:linear-gradient(135deg,${ex.color},${ex.color}cc);padding:18px;text-align:center;color:#fff">
+            <div style="font-size:34px;line-height:1;margin-bottom:6px">🎉</div>
+            <div style="font-size:18px;font-weight:900;letter-spacing:-.02em">Passed ${a.section}!</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:3px">${ex.full}${scoreLine}</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:8px">${timeAgo(a.date)}</div>
+          </div>
+        </div>`;
+      }
       const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?ex.color:'var(--surf3)'}">★</span>`).join(''):'';
       return`<div class="card card-pad" style="margin-bottom:12px;cursor:pointer" onclick="openProfileActivity(this)" data-section="${a.section}" data-hours="${a.hours}" data-date="${a.date}" data-material="${(a.material||'').replace(/"/g,'&quot;')}" data-caption="${(a.caption||'').replace(/"/g,'&quot;')}" data-difficulty="${a.difficulty||0}" data-feeling="${a.feeling||''}">
         <div style="display:flex;align-items:center;gap:12px">
@@ -7256,8 +7316,8 @@ function _renderFullUserProfile(u){
 
 </div>`;
 
-  // Scroll overlay to top
-  document.getElementById('uprofile-modal').scrollTop=0;
+  // Scroll the profile card back to top
+  const _upp=document.getElementById('uprofile-page');if(_upp)_upp.scrollTop=0;
 }
 
 function toggleFollowViewProfile(uid){
@@ -7268,6 +7328,7 @@ function toggleFollowViewProfile(uid){
     S.following.splice(idx,1);
     saveState();saveFollowToFirestore();checkAchievements();
     if(btn){btn.textContent='+ Follow';btn.style.background='var(--ora)';btn.style.border='1px solid transparent';}
+    const sb=document.getElementById('vp-follow-btn-sticky');if(sb){sb.textContent='+ Follow';sb.style.background='var(--ora)';sb.style.color='#fff';sb.style.border='1px solid transparent';}
     showToast('Unfollowed','info');
   } else if(_isUserPrivate(uid)){
     if(!S.pendingRequests)S.pendingRequests=[];
@@ -7284,13 +7345,16 @@ function toggleFollowViewProfile(uid){
     S.following.push(uid);
     saveState();saveFollowToFirestore();checkAchievements();
     if(btn){btn.textContent='✓ Following';btn.style.background='rgba(255,255,255,.15)';btn.style.border='1px solid rgba(255,255,255,.25)';}
+    const sb=document.getElementById('vp-follow-btn-sticky');if(sb){sb.textContent='Following';sb.style.background='var(--surf2)';sb.style.color='var(--txt)';sb.style.border='1px solid var(--bdr)';}
     showToast('Following!','ok');
+    // Pull the newly-followed user's recent activity into the feed right away.
+    loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore')renderTab(); });
   }
 }
 
 
 
-function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');}
+function closeUserProfile(){document.getElementById('uprofile-modal')?.classList.remove('open');document.body.style.overflow='';}
 
 function switchProfileTab(tab){
   ['activity','progress','about'].forEach(t=>{
@@ -13895,6 +13959,23 @@ function openLogResultModal(prefSection){
   document.body.appendChild(el);
 }
 
+// Creates a celebratory "passed this section" card in the feed/profile.
+// De-duped per section so re-logging or status toggles don't spam the feed.
+function addPassActivity(section,score){
+  if(!section)return;
+  if(!S.activities)S.activities=[];
+  if(S.activities.some(a=>a.type==='pass'&&a.section===section))return;
+  S.activities.push({
+    id:'p'+Date.now(),
+    type:'pass',
+    date:todayStr()+'T'+new Date().toTimeString().slice(0,8),
+    section,
+    score:(typeof score==='number'&&!isNaN(score))?score:null,
+    hours:Math.round(getSectionHours(section)),
+    kudos:[],comments:[]
+  });
+}
+
 async function logExamResult(){
   const section=document.getElementById('lr-section')?.value;
   const sitDate=document.getElementById('lr-sitdate')?.value;
@@ -13913,10 +13994,12 @@ async function logExamResult(){
     S.sectionPassed.push(section);
     if(!S.sectionStatus)S.sectionStatus={};
     S.sectionStatus[section]='passed';
+    addPassActivity(section,scoreRaw);
     const _priorAch=new Set(S.achievements||[]);
     checkAchievements();checkShareTrigger(_priorAch);
   }
   saveState();
+  if(passed)writeUserProfile();
   if(firebaseDb&&AUTH?.uid){
     try{
       await firebaseDb.collection('users').doc(AUTH.uid).update({
