@@ -3610,6 +3610,8 @@ window.addEventListener('popstate', function(e){
   if(view==='auth') { AUTH=null; S=null; obStep=0; renderAuth(); }
   else if(view==='onboarding') renderOnboarding();
   else if(view==='userProfile' && AUTH && S){ _loadAndRenderProfilePage(e.state.userId); }
+  else if(view==='activityPage' && AUTH && S){ _renderActivityPage(e.state.actId); }
+  else if(view==='clubPage' && AUTH && S){ _renderClubPage(e.state.clubId); }
   else if(view==='app' && AUTH && S){ renderApp(); if(e.state?.fromTab)switchTab(e.state.fromTab); }
   else if(AUTH && S){ renderApp(); }
   else if(!AUTH) renderAuth();
@@ -4070,9 +4072,13 @@ function renderApp(){
   <div class="page fade-in" id="page-content"></div>
 </div>`;
   renderTab();
-  // Handle direct /user/:id navigation (deep-link or page reload on profile URL)
+  // Handle direct deep-link navigation on page reload
   const _profMatch=window.location.pathname.match(/^\/user\/(.+)/);
+  const _actMatch=window.location.pathname.match(/^\/activity\/(.+)/);
+  const _clubMatch=window.location.pathname.match(/^\/club\/(.+)/);
   if(_profMatch){setTimeout(()=>openUserProfile(decodeURIComponent(_profMatch[1])),80);}
+  else if(_actMatch){setTimeout(()=>openActivityPage(decodeURIComponent(_actMatch[1])),80);}
+  else if(_clubMatch){setTimeout(()=>openClubPage(decodeURIComponent(_clubMatch[1])),80);}
   setTimeout(checkStreakUrgency, 800);
   setTimeout(checkTrialUrgency, 1600);
   setTimeout(checkStudyNudge, 1000);
@@ -4528,7 +4534,7 @@ function buildActivityCard(a){
       <div class="ac-stat-l">Feeling</div>
     </div>`:''}
   </div>
-  <div class="ac-body" style="padding:10px 16px 6px" ${a.isMine?`onclick="openActivityDetail('${a.id}')" style="padding:10px 16px 6px;cursor:pointer"`:''}>
+  <div class="ac-body" style="padding:10px 16px 6px" ${a.isMine?`onclick="openActivityPage('${a.id}')" style="padding:10px 16px 6px;cursor:pointer"`:''}>
     ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:5px">📖 ${a.material}</div>`:''}
     ${a.caption?`<div class="ac-caption" style="font-size:13px;margin:0 0 5px">"${a.caption}"</div>`:''}
     ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin:4px 0">${a.concepts.slice(0,5).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:2px 9px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>5?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-5} more</span>`:''}</div>`:''}
@@ -5380,7 +5386,7 @@ function buildProfile(){
   const recentActs=allActs.slice(0,12).map(a=>{
     const ex=EXAMS[a.section]||{color:'var(--ind)',icon:'📚',full:a.section};
     const diffStars=a.difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=a.difficulty?'var(--amb)':'var(--bdr)'}">★</span>`).join(''):'';
-    return`<div onclick="openActivityDetail('${a.id}')" style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:0;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='${ex.color}';this.style.boxShadow='0 4px 18px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.boxShadow='none'">
+    return`<div onclick="openActivityPage('${a.id}')" style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:14px;padding:0;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='${ex.color}';this.style.boxShadow='0 4px 18px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.boxShadow='none'">
       <div style="height:4px;background:${ex.color}"></div>
       <div style="padding:12px 14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -5532,7 +5538,7 @@ function buildProfile(){
       return clubs.map(c=>{
         const msgs=(S.clubMessages||{})[c.id]||[];
         const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-        return'<div class="my-club-card" onclick="openClubView(\''+c.id+'\')"><div class="club-ico">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut);margin-top:1px">'+(c.isPublic?'🌐 Public':'🔒 Private')+' · '+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut);margin-top:2px">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';
+        return'<div class="my-club-card" onclick="openClubPage(\''+c.id+'\')"><div class="club-ico">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut);margin-top:1px">'+(c.isPublic?'🌐 Public':'🔒 Private')+' · '+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'<div style="font-size:11px;color:var(--mut);margin-top:2px">No messages yet</div>')+'</div><span style="font-size:18px;color:var(--mut)">›</span></div>';
       }).join('')+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="openMessagesModal()">View All Clubs →</button>';
     })()}
   </div>
@@ -5754,7 +5760,7 @@ function buildExplore(){
   const myClubRows=myAllClubs.map(c=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
+    return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
   }).join('');
   const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
@@ -6501,7 +6507,7 @@ function openEditActivityModal(actId){
       </div>
     </div>
     <button onclick="saveEditedActivity('${act.id}')" style="width:100%;padding:13px;background:var(--ora);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Save Changes</button>
-    <button onclick="openActivityDetail('${act.id}')" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Cancel</button>
+    <button onclick="closeActivityDetail();openActivityPage('${act.id}')" style="width:100%;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px">Cancel</button>
   </div>
 </div>`;
   document.body.appendChild(el);
@@ -7205,6 +7211,34 @@ function _closeAllOverlays(){
   document.body.style.overflow='';
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// SHARED PAGE-NAVIGATION HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+const _LOGO_SVG=`<svg width="20" height="20" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>`;
+
+function _appPageNavHTML(){
+  const avatarBg=S?.profilePic?'transparent':'linear-gradient(135deg,#5a5fcf,#9333ea)';
+  const avatarContent=S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
+  return`<nav class="topnav">
+    <div class="topnav-inner">
+      <button onclick="history.back()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
+      <div class="nav-logo" onclick="currentTab='feed';renderApp()" style="display:flex;align-items:center;gap:7px;margin:0 auto;cursor:pointer">${_LOGO_SVG}Ledger</div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">▶ Start Session</button>
+        <button onclick="openEditProfile()" style="background:${avatarBg};border:2px solid var(--bdr);border-radius:50%;width:34px;height:34px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${avatarContent}</button>
+      </div>
+    </div>
+  </nav>`;
+}
+
+function _mountPageShell(contentId){
+  document.body.classList.remove('no-app-nav');
+  document.body.style.overflow='';
+  document.getElementById('root').innerHTML=`<div class="app-wrap">${_appPageNavHTML()}<div class="uprofile-page-wrap"><div id="${contentId}" style="max-width:680px;margin:0 auto;padding:0 0 80px"></div></div></div>`;
+}
+
+// ── USER PROFILE ─────────────────────────────────────────────────────
 async function openUserProfile(userId){
   if(userId==='you'||userId===AUTH?.uid){switchTab('profile');return;}
   _closeAllOverlays();
@@ -7214,27 +7248,7 @@ async function openUserProfile(userId){
 }
 
 async function _loadAndRenderProfilePage(userId){
-  // Build the profile page shell
-  const avatarBg=S?.profilePic?'transparent':'linear-gradient(135deg,#5a5fcf,#9333ea)';
-  const avatarContent=S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
-  document.body.classList.remove('no-app-nav');
-  document.body.style.overflow='';
-  document.getElementById('root').innerHTML=`
-<div class="app-wrap">
-  <nav class="topnav">
-    <div class="topnav-inner">
-      <button onclick="closeUserProfile()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
-      <div class="nav-logo" onclick="switchTab('feed')" style="display:flex;align-items:center;gap:7px;margin:0 auto"><svg width="20" height="20" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">▶ Start Session</button>
-        <button onclick="openEditProfile()" style="background:${avatarBg};border:2px solid var(--bdr);border-radius:50%;width:34px;height:34px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${avatarContent}</button>
-      </div>
-    </div>
-  </nav>
-  <div class="uprofile-page-wrap">
-    <div id="uprofile-content" style="max-width:680px;margin:0 auto;padding:0 0 80px"></div>
-  </div>
-</div>`;
+  _mountPageShell('uprofile-content');
   document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
   const mock=REAL_USERS.find(x=>x.id===userId);
   if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
@@ -7244,7 +7258,134 @@ async function _loadAndRenderProfilePage(userId){
       if(snap.exists){_renderFullUserProfile(_normProfileFirestore(snap.data()));return;}
     }catch(e){}
   }
-  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="closeUserProfile()">← Go Back</button></div>`;
+  document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Profile not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+}
+
+// ── ACTIVITY PAGE ────────────────────────────────────────────────────
+function openActivityPage(actId){
+  _closeAllOverlays();
+  history.pushState({view:'activityPage',actId,fromTab:currentTab},'','/activity/'+actId);
+  document.title='Study Session — Ledger';
+  _renderActivityPage(actId);
+}
+
+function _renderActivityPage(actId){
+  _mountPageShell('activity-page-content');
+  const act=(S.activities||[]).find(a=>a.id===actId);
+  if(!act){
+    document.getElementById('activity-page-content').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Session not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+    return;
+  }
+  const ex=EXAMS[act.section]||{color:'var(--ind)',icon:'📚',full:act.section};
+  const d=new Date(act.date);
+  const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const propCount=Array.isArray(act.kudos)?act.kudos.length:0;
+  const commentCount=Array.isArray(act.comments)?act.comments.length:0;
+  const hasGivenProps=Array.isArray(act.kudos)&&act.kudos.includes('you');
+  const diffLabel=act.difficulty?[1,2,3,4,5].map(i=>i<=act.difficulty?'★':'☆').join(''):'';
+  const feelEmoji={'great':'😄','good':'🙂','okay':'😐','rough':'😓','bad':'😩'}[act.feeling]||'';
+  const statBlocks=[
+    `<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1;font-family:var(--font-display)">${act.hours}h</div>
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Duration</div>
+    </div>`,
+    act.elapsed?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:24px;font-weight:900;color:var(--txt);letter-spacing:-.02em;line-height:1;margin-top:4px">${fmtDur(act.elapsed)}</div>
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Timer</div>
+    </div>`:'',
+    (diffLabel||feelEmoji)?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
+      ${feelEmoji?`<div style="font-size:28px;line-height:1.1">${feelEmoji}</div>`:''}
+      ${diffLabel?`<div style="font-size:12px;color:${ex.color};font-weight:800;letter-spacing:.05em;margin-top:${feelEmoji?4:8}px">${diffLabel}</div>`:''}
+      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">${feelEmoji&&diffLabel?'Mood / Difficulty':feelEmoji?'Feeling':'Difficulty'}</div>
+    </div>`:''
+  ].filter(Boolean).join('');
+  document.getElementById('activity-page-content').innerHTML=`
+<div>
+  <div style="background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);position:relative;overflow:hidden;padding:24px 20px 22px">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,${ex.color}55,transparent 45%)"></div>
+    <div style="position:relative;z-index:1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}22;border:1px solid ${ex.color}44;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${ex.icon}</div>
+        <div>
+          <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-.02em">${ex.full} Session</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px">${dateStr} · ${timeStr}</div>
+        </div>
+        <span class="badge badge-${act.section}" style="margin-left:auto;font-size:10px">${act.section}</span>
+      </div>
+    </div>
+  </div>
+  <div style="padding:20px 16px 0">
+    <div style="display:flex;gap:10px;margin-bottom:18px">${statBlocks}</div>
+    ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">📖 ${act.material}</div></div>`:''}
+    ${act.caption?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div><div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">"${act.caption}"</div></div>`:''}
+    ${(act.concepts||[]).length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Concepts (${act.concepts.length})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${act.concepts.map(c=>`<span style="font-size:11px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:3px 10px;border-radius:20px;font-weight:600">${c}</span>`).join('')}</div></div>`:''}
+    ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:300px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy"></div>`:''}
+  </div>
+  <div style="border-top:1px solid var(--bdr);display:flex">
+    <button class="ac-action${hasGivenProps?' props-given':''}" onclick="giveProps('${act.id}','you')" style="flex:1;padding:14px;border:none;background:transparent;color:${hasGivenProps?'var(--ora)':'var(--mut)'};cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">
+      <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800">${propCount}</span>
+    </button>
+    <button class="ac-action" onclick="openComments('${act.id}','you')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">
+      💬 Comments <span style="font-weight:800">${commentCount}</span>
+    </button>
+    <button class="ac-action" onclick="shareActivity('${act.id}')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">🔗 Share</button>
+  </div>
+  <div style="padding:14px 16px;display:flex;gap:8px;border-top:1px solid var(--bdr)">
+    <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:700">✏️ Edit Session</button>
+    <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)'">🗑 Delete</button>
+  </div>
+</div>`;
+  window.scrollTo({top:0});
+}
+
+// ── CLUB PAGE ──────────────────────────────────────────────────────
+function openClubPage(clubId){
+  const club=(S.clubs||[]).find(c=>c.id===clubId);
+  if(club?.isDM){openClubChat(clubId);return;}
+  _closeAllOverlays();
+  const pc=PUBLIC_CLUBS.find(c=>c.id===clubId);
+  const name=(club||pc)?.name||'Club';
+  history.pushState({view:'clubPage',clubId,fromTab:currentTab},'','/club/'+encodeURIComponent(clubId));
+  document.title=name+' — Ledger';
+  _renderClubPage(clubId);
+}
+
+function _renderClubPage(clubId){
+  _mountPageShell('club-page-outer');
+  const memberClub=(S.clubs||[]).find(c=>c.id===clubId);
+  const pc=PUBLIC_CLUBS.find(c=>c.id===clubId);
+  if(!memberClub&&!pc){
+    document.getElementById('club-page-outer').innerHTML=`<div style="padding:80px 40px;text-align:center"><div style="font-size:32px;margin-bottom:12px">🏚️</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Club not found</div><button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="history.back()">← Go Back</button></div>`;
+    return;
+  }
+  if(!memberClub&&pc){
+    // Not yet a member — show public club landing
+    document.getElementById('club-page-outer').innerHTML=`
+<div>
+  <div style="background:linear-gradient(155deg,#0e0804,#1c1008);padding:28px 20px 22px;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 10% 80%,rgba(90,95,207,.45),transparent 55%)"></div>
+    <div style="position:relative;z-index:1;display:flex;align-items:center;gap:16px">
+      <div style="width:64px;height:64px;border-radius:18px;background:var(--ind-bg);border:1.5px solid rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0">${pc.icon}</div>
+      <div>
+        <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">${pc.name}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">🌐 Public Club · 👥 ${pc.memberCount.toLocaleString()} members</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:20px 16px">
+    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-bottom:20px">${pc.desc}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">${(pc.tags||[]).map(t=>`<span class="badge badge-${t==='all'?'AUD':t}" style="font-size:11px">${t==='all'?'All Sections':t}</span>`).join('')}</div>
+    <button onclick="joinPublicClub('${pc.id}');openClubPage('${pc.id}')" style="width:100%;padding:14px;background:var(--ind);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer">Join ${pc.name} →</button>
+  </div>
+</div>`;
+    return;
+  }
+  // Member — render full club UI using existing functions
+  // We reuse club-view-content / club-view-body IDs so renderClubView works
+  document.getElementById('club-page-outer').innerHTML=`<div id="club-view-content" style="display:flex;flex-direction:column;min-height:calc(100vh - 64px)"></div>`;
+  _clubViewTab='chat';
+  renderClubView(clubId);
 }
 
 function _normProfileMock(f){
@@ -8216,7 +8357,7 @@ function renderMessagesBody(){
       const msgs=(S.clubMessages||{})[c.id]||[];
       const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
       const timeStr=lastMsg?timeAgo(lastMsg.time):'';
-      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubView(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">👥 '+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
+      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">👥 '+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
     }).join('');
   }
 }
@@ -8317,7 +8458,10 @@ function sendClubViewMessage(clubId){
     },1100+Math.random()*1200);
   }
 }
-function closeClubView(){document.getElementById('club-view-modal')?.classList.remove('open');}
+function closeClubView(){
+  if(history.state?.view==='clubPage'){history.back();return;}
+  document.getElementById('club-view-modal')?.classList.remove('open');
+}
 
 // ═══════════════════════════════════════════════
 // MISC HANDLERS
