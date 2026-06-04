@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ledger — Pass the CPA.</title>
+<title>Ledger — CPA Study Tracker</title>
 <meta name="description" content="Know exactly if you're on pace to pass the CPA. Log study hours, track FAR, AUD, REG & TCP, quiz yourself, and stay accountable with your firm's study group. Free to start.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ledger">
-<meta property="og:title" content="Ledger — Pass the CPA.">
+<meta property="og:title" content="Ledger — CPA Study Tracker">
 <meta property="og:description" content="Know exactly if you're on pace to pass the CPA. Log study hours, track all four sections, and grind alongside your firm's study group. Free to start.">
 <meta property="og:url" content="https://ledgercpa.app/">
 <meta property="og:image" content="https://ledgercpa.app/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Ledger — Pass the CPA.">
+<meta name="twitter:title" content="Ledger — CPA Study Tracker">
 <meta name="twitter:description" content="Know exactly if you're on pace to pass the CPA. Log study hours, track all four sections, and grind alongside your firm's study group. Free to start.">
 <meta name="twitter:image" content="https://ledgercpa.app/og-image.png">
 <link rel="canonical" href="https://ledgercpa.app/">
@@ -2785,7 +2785,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Score Tracker'},
     {on:true,text:'Study Partner Pairing'},
     {on:true,text:'Unlimited Study Clubs + Challenges'},
-    {on:true,text:'Streak Shield (3×/mo)'},
+    {on:true,text:'Streak Shield (3×/mo) — miss a day without breaking your streak'},
     {on:true,text:'Weekly PDF Progress Reports'},
     {on:true,text:'Custom Per-Section Goals'},
     {on:true,text:'Full Study Circle + Profile Browsing'},
@@ -2804,7 +2804,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'AI Mnemonic Generator'},
     {on:true,text:'Score Predictor'},
     {on:true,text:'Custom Challenge Creator'},
-    {on:true,text:'Unlimited Streak Shields'},
+    {on:true,text:'Unlimited Streak Shields — never lose your streak for a missed day'},
     {on:true,text:'Priority Support (response <2h)'},
     {on:true,text:'Elite Member Badge'},
   ];
@@ -4070,7 +4070,7 @@ function renderApp(){
   logLedgerEvent('app_open');
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
-  document.title='Ledger — Pass the CPA.';
+  document.title='Ledger — CPA Study Tracker';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
   const avatarBorder = S?.profilePic ? '2px solid var(--bdr)' : 'none';
   const avatarContent = S?.profilePic
