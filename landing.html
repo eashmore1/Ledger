@@ -70,11 +70,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .hero-proof-av{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.15);margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
 
 /* ── THE PROBLEM ── */
-.problem{background:var(--surf);padding:72px 28px;border-bottom:1px solid var(--bdr)}
-.problem-inner{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
-.problem-label{font-size:11px;font-weight:800;color:var(--ora-dk);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
-.problem-h2{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:20px}
-.problem-p{font-size:14px;color:var(--sub);line-height:1.8;margin-bottom:12px}
+.problem{background:var(--surf);padding:88px 28px;border-bottom:1px solid var(--bdr)}
+.problem-inner{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.problem-label{font-size:11px;font-weight:800;color:var(--ora-dk);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+.problem-h2{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:22px}
+.problem-p{font-size:14px;color:var(--sub);line-height:1.85;margin-bottom:16px}
 .problem-p strong{color:var(--txt)}
 .problem-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .problem-stat{text-align:center;padding:24px 16px;background:var(--bg);border-radius:16px}
@@ -82,17 +82,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .problem-stat-label{font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.07em;line-height:1.4}
 
 /* ── FEATURES ── */
-.features{padding:96px 28px;background:var(--bg)}
-.section-label{font-size:11px;font-weight:800;color:var(--ora-dk);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-bottom:12px}
-.section-h2{font-family:var(--display);font-size:clamp(32px,5vw,50px);font-weight:800;text-align:center;color:var(--txt);line-height:1.02;letter-spacing:-.02em;margin-bottom:16px}
-.section-sub{font-size:16px;color:var(--sub);text-align:center;max-width:500px;margin:0 auto 56px;line-height:1.6}
-.features-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-.feat-card{background:var(--surf);border-radius:20px;padding:32px;border:1px solid var(--bdr);transition:all .2s}
+.features{padding:100px 28px;background:var(--bg)}
+.section-label{font-size:11px;font-weight:800;color:var(--ora-dk);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-bottom:14px}
+.section-h2{font-family:var(--display);font-size:clamp(32px,5vw,50px);font-weight:800;text-align:center;color:var(--txt);line-height:1.02;letter-spacing:-.02em;margin-bottom:18px}
+.section-sub{font-size:16px;color:var(--sub);text-align:center;max-width:520px;margin:0 auto 64px;line-height:1.7}
+.features-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+.feat-card{background:var(--surf);border-radius:20px;padding:36px;border:1px solid var(--bdr);transition:all .2s}
 .feat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.07)}
-.feat-icon{width:48px;height:48px;border-radius:14px;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px}
-.feat-title{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:8px;letter-spacing:-.01em}
-.feat-desc{font-size:14px;color:var(--sub);line-height:1.65}
-.feat-tag{display:inline-block;margin-top:14px;font-size:11px;font-weight:800;color:var(--ora-dk);background:rgba(212,64,0,.08);border-radius:6px;padding:4px 10px;text-transform:uppercase;letter-spacing:.07em}
+.feat-icon{width:52px;height:52px;border-radius:14px;background:var(--ora);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px}
+.feat-title{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:10px;letter-spacing:-.01em}
+.feat-desc{font-size:14px;color:var(--sub);line-height:1.75}
+.feat-tag{display:inline-block;margin-top:16px;font-size:11px;font-weight:800;color:var(--ora-dk);background:rgba(212,64,0,.08);border-radius:6px;padding:4px 10px;text-transform:uppercase;letter-spacing:.07em}
 /* Each feature owns a color from the app's exam-color family — ties the landing to the product identity */
 .features-grid .feat-card:nth-child(1) .feat-icon{background:#d44000}
 .features-grid .feat-card:nth-child(2) .feat-icon{background:#2563eb}
@@ -100,22 +100,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .features-grid .feat-card:nth-child(4) .feat-icon{background:#dc2626}
 .features-grid .feat-card:nth-child(5) .feat-icon{background:#9333ea}
 .features-grid .feat-card:nth-child(6) .feat-icon{background:#d97706}
+.features-grid .feat-card:nth-child(7) .feat-icon{background:#0891b2}
 /* Lead feature spans the row — breaks the identical 6-up grid, gives the community angle top billing */
-.feat-card.feat-wide{grid-column:1/-1;display:flex;gap:28px;align-items:flex-start;background:linear-gradient(150deg,var(--surf),#fff7ed)}
-.feat-card.feat-wide .feat-icon{flex-shrink:0;margin-bottom:0;width:56px;height:56px;font-size:26px}
+.feat-card.feat-wide{grid-column:1/-1;display:flex;gap:32px;align-items:flex-start;background:linear-gradient(150deg,var(--surf),#fff7ed)}
+.feat-card.feat-wide .feat-icon{flex-shrink:0;margin-bottom:0;width:60px;height:60px;font-size:28px}
 .feat-card.feat-wide .feat-body{flex:1;min-width:0}
 .feat-card.feat-wide .feat-title{font-size:20px}
 @media(max-width:700px){.feat-card.feat-wide{flex-direction:column;gap:16px}}
 
 /* ── HOW IT WORKS ── */
-.how{padding:96px 28px;background:linear-gradient(160deg,#fff7ed,#f2ede6)}
+.how{padding:100px 28px;background:linear-gradient(160deg,#fff7ed,#f2ede6)}
 .how-inner{max-width:800px;margin:0 auto;text-align:center}
-.how-h2{font-family:var(--display);font-size:clamp(30px,5vw,46px);font-weight:800;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
-.how-sub{font-size:15px;color:var(--sub);line-height:1.65;margin-bottom:60px}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:left}
-.step-num{font-family:var(--display);font-size:48px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:12px}
-.step-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:8px}
-.step-desc{font-size:13px;color:var(--sub);line-height:1.7}
+.how-h2{font-family:var(--display);font-size:clamp(30px,5vw,46px);font-weight:800;color:var(--txt);line-height:1.05;letter-spacing:-.02em;margin-bottom:18px}
+.how-sub{font-size:15px;color:var(--sub);line-height:1.7;margin-bottom:64px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;text-align:left}
+.step-num{font-family:var(--display);font-size:48px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:14px}
+.step-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--sub);line-height:1.75}
 
 /* ── QUOTES ── */
 .quotes{padding:96px 28px;background:var(--bg)}
@@ -317,6 +318,12 @@ footer a:hover{color:rgba(255,255,255,.55)}
       <div class="feat-title">Streaks, Milestones & Pass Celebrations</div>
       <div class="feat-desc">Maintain your daily study streak and earn achievement badges as you hit milestones. When you pass a section, Ledger marks the moment with confetti, a shareable card, and the exact score and hours it took. Years later you can look back and see the day.</div>
       <div class="feat-tag">Core Feature</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📋</div>
+      <div class="feat-title">Question Bank & Practice MCQs</div>
+      <div class="feat-desc">Drill original practice questions for AUD, FAR, REG, and BAR right inside the app. Instant answer feedback, explanations for every choice, and a running score so you know which topics still need work before exam day.</div>
+      <div class="feat-tag">Pro Feature</div>
     </div>
   </div>
 </section>
