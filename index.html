@@ -5407,37 +5407,68 @@ function toggleAchSection(id,total){
 }
 
 function _buildHeatmap(activities){
-  const WEEKS=16;
-  const today=new Date(); today.setHours(23,59,59,999);
-  const dayMs=86400000;
-  const start=new Date(today.getTime()-(WEEKS*7-1)*dayMs); start.setHours(0,0,0,0);
-  const byDay={};
+  var now=new Date();
+  var year=now.getFullYear();
+  var month=now.getMonth();
+  var todayStr=now.toISOString().slice(0,10);
+  var daysInMonth=new Date(year,month+1,0).getDate();
+
+  // Map hours by date
+  var byDay={};
   (activities||[]).forEach(function(a){var d=a.date?a.date.slice(0,10):null;if(d)byDay[d]=(byDay[d]||0)+(a.hours||0);});
-  const mx=Object.values(byDay).length?Math.max.apply(null,Object.values(byDay)):1;
-  const cols=[]; var col=[]; var cur=new Date(start);
-  while(cur<=today){
-    var ds=cur.toISOString().slice(0,10);
+  var mx=Object.values(byDay).length?Math.max.apply(null,Object.values(byDay)):1;
+
+  // Monday-first offset for the 1st of the month (Mon=0 … Sun=6)
+  var firstDow=new Date(year,month,1).getDay();
+  var offset=(firstDow+6)%7;
+
+  // Stats for header
+  var activeDays=0; var totalH=0;
+  for(var k in byDay){if(k.slice(0,7)===(year+'-'+String(month+1).padStart(2,'0'))){activeDays++;totalH+=byDay[k];}}
+
+  var DOW=['M','T','W','T','F','S','S'];
+  var headers=DOW.map(function(d){return'<div style="font-size:11px;font-weight:700;color:var(--mut);text-align:center;padding-bottom:6px">'+d+'</div>';}).join('');
+
+  // Build day cells
+  var cells='';
+  var totalCells=offset+daysInMonth;
+  var numRows=Math.ceil(totalCells/7);
+  for(var i=0;i<numRows*7;i++){
+    var dayNum=i-offset+1;
+    if(dayNum<1||dayNum>daysInMonth){
+      cells+='<div></div>';
+      continue;
+    }
+    var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(dayNum).padStart(2,'0');
     var h=byDay[ds]||0;
-    var lvl=h===0?0:Math.min(4,Math.ceil(h/mx*4));
-    col.push({ds:ds,h:h,lvl:lvl});
-    if(cur.getDay()===6){cols.push(col);col=[];}
-    cur.setDate(cur.getDate()+1);
+    var isFuture=ds>todayStr;
+    var isToday=ds===todayStr;
+    if(isFuture){
+      // Future — empty
+      cells+='<div></div>';
+    } else if(h===0){
+      // Past, no study — tiny dot
+      cells+='<div style="display:flex;align-items:center;justify-content:center;aspect-ratio:1">'
+        +'<div style="width:5px;height:5px;border-radius:50%;background:var(--bdr)"></div></div>';
+    } else {
+      // Active day — filled circle, size scales with intensity
+      var lvl=Math.min(4,Math.ceil(h/mx*4));
+      var sz=[18,20,22,24][lvl-1];
+      var col=['rgba(212,64,0,.3)','rgba(212,64,0,.5)','rgba(212,64,0,.75)','var(--ora)'][lvl-1];
+      var ring=isToday?';box-shadow:0 0 0 2px var(--ora)':'';
+      cells+='<div style="display:flex;align-items:center;justify-content:center;aspect-ratio:1">'
+        +'<div title="'+ds+': '+h.toFixed(1)+'h" style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+col+ring+'"></div></div>';
+    }
   }
-  if(col.length)cols.push(col);
-  var bg=['var(--surf2)','rgba(212,64,0,.2)','rgba(212,64,0,.4)','rgba(212,64,0,.7)','var(--ora)'];
-  var activeDays=Object.keys(byDay).length;
-  var totalH=Object.values(byDay).reduce(function(a,b){return a+b;},0);
+
+  var monthLabel=now.toLocaleString('default',{month:'long'})+' '+year;
   return '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px">'
-    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
-    +'<div style="font-size:12px;font-weight:700">Study Activity</div>'
-    +'<div style="font-size:11px;color:var(--mut)">'+activeDays+' active days · '+totalH.toFixed(0)+'h logged</div></div>'
-    +'<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:2px">'
-    +cols.map(function(c){return'<div style="display:flex;flex-direction:column;gap:3px">'+c.map(function(d){return'<div title="'+d.ds+': '+d.h.toFixed(1)+'h" style="width:12px;height:12px;border-radius:2px;background:'+bg[d.lvl]+';flex-shrink:0"></div>';}).join('')+'</div>';}).join('')
-    +'</div>'
-    +'<div style="display:flex;align-items:center;gap:3px;margin-top:8px;justify-content:flex-end">'
-    +'<span style="font-size:10px;color:var(--mut);margin-right:2px">Less</span>'
-    +bg.map(function(c){return'<div style="width:10px;height:10px;border-radius:2px;background:'+c+'"></div>';}).join('')
-    +'<span style="font-size:10px;color:var(--mut);margin-left:2px">More</span></div></div>';
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+    +'<div style="font-size:12px;font-weight:700">'+monthLabel+'</div>'
+    +'<div style="font-size:11px;color:var(--mut)">'+activeDays+' days · '+totalH.toFixed(0)+'h</div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">'
+    +headers+cells
+    +'</div></div>';
 }
 
 function buildProfile(){
