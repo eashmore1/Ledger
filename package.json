@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Ledger — CPA Study Tracker",
   "scripts": {
-    "build": "cp index.html www/index.html && cp logo.svg www/logo.svg && cp manifest.json www/manifest.json",
+    "build": "echo 'Static site — no build step needed'",
     "deploy": "npx vercel deploy --prod --yes",
     "deploy:rules": "npx firebase-tools deploy --only firestore:rules,firestore:indexes",
     "cap:ios": "npx cap sync ios && npx cap open ios",
