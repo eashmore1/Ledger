@@ -5406,69 +5406,95 @@ function toggleAchSection(id,total){
   if(btn)btn.textContent=open?`View all ${total} achievements ↓`:'Show less ↑';
 }
 
-function _buildHeatmap(activities){
+function _buildHeatmap(activities, weekOffset, containerId){
+  weekOffset=weekOffset||0;
+  containerId=containerId||'heatmap-own';
   var now=new Date();
-  var year=now.getFullYear();
-  var month=now.getMonth();
   var todayStr=now.toISOString().slice(0,10);
-  var daysInMonth=new Date(year,month+1,0).getDate();
 
-  // Map hours by date
+  // Monday of the current week
+  var dow=(now.getDay()+6)%7; // Mon=0, Sun=6
+  var monThis=new Date(now); monThis.setDate(now.getDate()-dow); monThis.setHours(0,0,0,0);
+
+  // Apply week offset
+  var weekStart=new Date(monThis); weekStart.setDate(monThis.getDate()+weekOffset*7);
+
+  // Build 7 date strings for this week
+  var days=[];
+  for(var i=0;i<7;i++){
+    var d=new Date(weekStart); d.setDate(weekStart.getDate()+i);
+    days.push(d.toISOString().slice(0,10));
+  }
+
+  // Hours by date
   var byDay={};
-  (activities||[]).forEach(function(a){var d=a.date?a.date.slice(0,10):null;if(d)byDay[d]=(byDay[d]||0)+(a.hours||0);});
-  var mx=Object.values(byDay).length?Math.max.apply(null,Object.values(byDay)):1;
+  (activities||[]).forEach(function(a){var dd=a.date?a.date.slice(0,10):null;if(dd)byDay[dd]=(byDay[dd]||0)+(a.hours||0);});
+  var weekVals=days.map(function(d){return byDay[d]||0;});
+  var mx=Math.max.apply(null,weekVals)||1;
 
-  // Monday-first offset for the 1st of the month (Mon=0 … Sun=6)
-  var firstDow=new Date(year,month,1).getDay();
-  var offset=(firstDow+6)%7;
+  // Week label
+  var fmtDay=function(ds){var dt=new Date(ds+'T12:00:00');return dt.toLocaleString('default',{month:'short',day:'numeric'});};
+  var weekLabel=fmtDay(days[0])+' – '+fmtDay(days[6]);
+  var weekH=weekVals.reduce(function(a,b){return a+b;},0);
+  var weekActive=weekVals.filter(function(h){return h>0;}).length;
 
-  // Stats for header
-  var activeDays=0; var totalH=0;
-  for(var k in byDay){if(k.slice(0,7)===(year+'-'+String(month+1).padStart(2,'0'))){activeDays++;totalH+=byDay[k];}}
+  // Nav state
+  var canPrev=true; // can always go further back
+  var canNext=weekOffset<0;
+
+  var navBtn=function(dir,enabled){
+    var arrow=dir<0?'‹':'›';
+    var fn='_stepHeatmap('+dir+',\''+containerId+'\')';
+    return'<button onclick="'+fn+'" style="background:none;border:1px solid '+(enabled?'var(--bdr)':'transparent')+';border-radius:6px;width:28px;height:28px;cursor:'+(enabled?'pointer':'default')+';font-size:16px;color:'+(enabled?'var(--txt)':'var(--bdr)')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;'+(enabled?'':'pointer-events:none')+'">'+arrow+'</button>';
+  };
 
   var DOW=['M','T','W','T','F','S','S'];
-  var headers=DOW.map(function(d){return'<div style="font-size:11px;font-weight:700;color:var(--mut);text-align:center;padding-bottom:6px">'+d+'</div>';}).join('');
+  var headers=DOW.map(function(d){return'<div style="font-size:11px;font-weight:700;color:var(--mut);text-align:center;padding-bottom:8px">'+d+'</div>';}).join('');
 
-  // Build day cells
-  var cells='';
-  var totalCells=offset+daysInMonth;
-  var numRows=Math.ceil(totalCells/7);
-  for(var i=0;i<numRows*7;i++){
-    var dayNum=i-offset+1;
-    if(dayNum<1||dayNum>daysInMonth){
-      cells+='<div></div>';
-      continue;
-    }
-    var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(dayNum).padStart(2,'0');
+  var cells=days.map(function(ds){
     var h=byDay[ds]||0;
     var isFuture=ds>todayStr;
     var isToday=ds===todayStr;
     if(isFuture){
-      // Future — empty
-      cells+='<div></div>';
+      return'<div style="height:36px;display:flex;align-items:center;justify-content:center"></div>';
     } else if(h===0){
-      // Past, no study — tiny dot
-      cells+='<div style="display:flex;align-items:center;justify-content:center;aspect-ratio:1">'
-        +'<div style="width:5px;height:5px;border-radius:50%;background:var(--bdr)"></div></div>';
+      return'<div style="height:36px;display:flex;align-items:center;justify-content:center">'
+        +'<div style="width:6px;height:6px;border-radius:50%;background:var(--bdr)"></div></div>';
     } else {
-      // Active day — filled circle, size scales with intensity
       var lvl=Math.min(4,Math.ceil(h/mx*4));
-      var sz=[18,20,22,24][lvl-1];
+      var sz=[18,21,24,28][lvl-1];
       var col=['rgba(212,64,0,.3)','rgba(212,64,0,.5)','rgba(212,64,0,.75)','var(--ora)'][lvl-1];
-      var ring=isToday?';box-shadow:0 0 0 2px var(--ora)':'';
-      cells+='<div style="display:flex;align-items:center;justify-content:center;aspect-ratio:1">'
+      var ring=isToday?';box-shadow:0 0 0 2.5px var(--ora)':'';
+      return'<div style="height:36px;display:flex;align-items:center;justify-content:center">'
         +'<div title="'+ds+': '+h.toFixed(1)+'h" style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+col+ring+'"></div></div>';
     }
-  }
+  }).join('');
 
-  var monthLabel=now.toLocaleString('default',{month:'long'})+' '+year;
-  return '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px">'
-    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
-    +'<div style="font-size:12px;font-weight:700">'+monthLabel+'</div>'
-    +'<div style="font-size:11px;color:var(--mut)">'+activeDays+' days · '+totalH.toFixed(0)+'h</div></div>'
-    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">'
+  return'<div id="'+containerId+'" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">'
+    +navBtn(-1,canPrev)
+    +'<div style="text-align:center;flex:1">'
+    +'<div style="font-size:12px;font-weight:700">'+weekLabel+'</div>'
+    +'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+weekActive+' days · '+weekH.toFixed(1)+'h</div>'
+    +'</div>'
+    +navBtn(1,canNext)
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">'
     +headers+cells
     +'</div></div>';
+}
+
+function _stepHeatmap(delta, containerId){
+  var isOther=containerId==='heatmap-other';
+  if(isOther){
+    _heatmapOtherOffset=Math.min(0,_heatmapOtherOffset+delta);
+    var el=document.getElementById(containerId);
+    if(el){var tmp=document.createElement('div');tmp.innerHTML=_buildHeatmap(_heatmapOtherActivities,_heatmapOtherOffset,containerId);el.replaceWith(tmp.firstChild);}
+  } else {
+    _heatmapOwnOffset=Math.min(0,_heatmapOwnOffset+delta);
+    var el2=document.getElementById(containerId);
+    if(el2){var tmp2=document.createElement('div');tmp2.innerHTML=_buildHeatmap(S.activities||[],_heatmapOwnOffset,containerId);el2.replaceWith(tmp2.firstChild);}
+  }
 }
 
 function buildProfile(){
@@ -5556,7 +5582,8 @@ function buildProfile(){
     return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
   })();
 
-  const _heatmapHTML=_buildHeatmap(S.activities||[]);
+  _heatmapOwnOffset=0;
+  const _heatmapHTML=_buildHeatmap(S.activities||[],0,'heatmap-own');
   const _quickStartSecs=(S.sections||[]).slice(0,4).map(s=>{const ex=EXAMS[s]||{color:'var(--ind)'};return'<button onclick="openSessionModal()" style="padding:8px 14px;background:'+ex.color+'18;border:1.5px solid '+ex.color+'44;border-radius:10px;cursor:pointer;font-size:12px;font-weight:700;color:'+ex.color+'">'+s+'</button>';}).join('');
 
   return`
@@ -7498,7 +7525,9 @@ function _renderFullUserProfile(u){
   }).join('');
 
   const allActs=u.activities.slice().reverse();
-  const _uHeatmap=u.activities.length>0?_buildHeatmap(u.activities):'';
+  _heatmapOtherOffset=0;
+  _heatmapOtherActivities=u.activities||[];
+  const _uHeatmap=u.activities.length>0?_buildHeatmap(u.activities,0,'heatmap-other'):'';
   const activityFeed=isLocked
     ?`<div style="text-align:center;padding:56px 16px">
         <div style="font-size:40px;margin-bottom:12px">🔒</div>
@@ -7786,6 +7815,9 @@ function toggleFollowProfile(userId,btn){
 
 // ── FIREBASE MESSAGING HELPERS ────────────────────────────────────────────
 let _activeMsgUnsub = null;
+let _heatmapOwnOffset=0;
+let _heatmapOtherOffset=0;
+let _heatmapOtherActivities=[];
 let _clubViewMsgUnsub = null;
 
 function _detachMsgListener(){ if(_activeMsgUnsub){ _activeMsgUnsub(); _activeMsgUnsub=null; } }
