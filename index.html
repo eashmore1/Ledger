@@ -8482,18 +8482,19 @@ async function _renderMessagesPage(){
     const color=f?.color||'#5a5fcf';
     const lastMsg=conv.lastMessage||'Start the conversation…';
     const lastAt=conv.lastAt?.toDate?.()?conv.lastAt.toDate().toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
-    return '<div onclick="_openFbChat(''+conv.id+'','conversations',''+name.replace(/'/g,'\'')+'  ','💬 Direct message')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">'
+    const safeName=name.replace(/'/g,'&#39;');
+    return '<div onclick="_openFbChat(\''+conv.id+'\',\'conversations\',\''+safeName+'\',\'💬 Direct message\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'">'
       +'<div class="avatar av-md" style="background:'+color+';color:#fff;flex-shrink:0">'+initials+'</div>'
       +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
       +'<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">'+lastMsg+'</div></div></div>';
-  }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">💬</div><div class="empty-msg">No direct messages yet.<br>Visit someone's profile and tap 💬 to start a conversation.</div></div>';
+  }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">💬</div><div class="empty-msg">No direct messages yet.<br>Visit a profile and tap 💬 to start a conversation.</div></div>';
 
   const clubHTML=clubs.length?clubs.map(c=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsgObj=msgs.slice(-1)[0];
     const lastMsg=lastMsgObj?(lastMsgObj.author==='you'?'You: ':(getClubMemberName(lastMsgObj.author)+': '))+lastMsgObj.text:'No messages yet';
     const lastAt=lastMsgObj?timeAgo(lastMsgObj.time):'';
-    return '<div onclick="openClubPage(''+c.id+'')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">'
+    return '<div onclick="openClubPage(\''+c.id+'\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'">'
       +'<div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div>'
       +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
       +'<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">'+lastMsg+'</div></div></div>';
@@ -8606,7 +8607,6 @@ function sendClubViewMessage(clubId){
   firebaseDb.collection('clubs').doc(clubId).collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()})
     .then(()=>firebaseDb.collection('clubs').doc(clubId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}))
     .catch(e=>{ console.warn('sendClubViewMessage error:',e); showToast('Failed to send','err'); if(inp) inp.value=text; });
-}
 }
 function closeClubView(){
   _detachClubViewListener();
