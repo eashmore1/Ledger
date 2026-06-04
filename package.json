@@ -5,6 +5,7 @@
   "scripts": {
     "build": "cp index.html www/index.html && cp logo.svg www/logo.svg && cp manifest.json www/manifest.json",
     "deploy": "npx vercel deploy --prod --yes",
+    "deploy:rules": "npx firebase-tools deploy --only firestore:rules,firestore:indexes",
     "cap:ios": "npx cap sync ios && npx cap open ios",
     "cap:android": "npx cap sync android && npx cap open android",
     "cap:sync": "npx cap sync",

@@ -5381,6 +5381,40 @@ function toggleAchSection(id,total){
   if(btn)btn.textContent=open?`View all ${total} achievements ↓`:'Show less ↑';
 }
 
+function _buildHeatmap(activities){
+  const WEEKS=16;
+  const today=new Date(); today.setHours(23,59,59,999);
+  const dayMs=86400000;
+  const start=new Date(today.getTime()-(WEEKS*7-1)*dayMs); start.setHours(0,0,0,0);
+  const byDay={};
+  (activities||[]).forEach(function(a){var d=a.date?a.date.slice(0,10):null;if(d)byDay[d]=(byDay[d]||0)+(a.hours||0);});
+  const mx=Object.values(byDay).length?Math.max.apply(null,Object.values(byDay)):1;
+  const cols=[]; var col=[]; var cur=new Date(start);
+  while(cur<=today){
+    var ds=cur.toISOString().slice(0,10);
+    var h=byDay[ds]||0;
+    var lvl=h===0?0:Math.min(4,Math.ceil(h/mx*4));
+    col.push({ds:ds,h:h,lvl:lvl});
+    if(cur.getDay()===6){cols.push(col);col=[];}
+    cur.setDate(cur.getDate()+1);
+  }
+  if(col.length)cols.push(col);
+  var bg=['var(--surf2)','rgba(212,64,0,.2)','rgba(212,64,0,.4)','rgba(212,64,0,.7)','var(--ora)'];
+  var activeDays=Object.keys(byDay).length;
+  var totalH=Object.values(byDay).reduce(function(a,b){return a+b;},0);
+  return '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+    +'<div style="font-size:12px;font-weight:700">Study Activity</div>'
+    +'<div style="font-size:11px;color:var(--mut)">'+activeDays+' active days · '+totalH.toFixed(0)+'h logged</div></div>'
+    +'<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:2px">'
+    +cols.map(function(c){return'<div style="display:flex;flex-direction:column;gap:3px">'+c.map(function(d){return'<div title="'+d.ds+': '+d.h.toFixed(1)+'h" style="width:12px;height:12px;border-radius:2px;background:'+bg[d.lvl]+';flex-shrink:0"></div>';}).join('')+'</div>';}).join('')
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:3px;margin-top:8px;justify-content:flex-end">'
+    +'<span style="font-size:10px;color:var(--mut);margin-right:2px">Less</span>'
+    +bg.map(function(c){return'<div style="width:10px;height:10px;border-radius:2px;background:'+c+'"></div>';}).join('')
+    +'<span style="font-size:10px;color:var(--mut);margin-left:2px">More</span></div></div>';
+}
+
 function buildProfile(){
   const totalHrs=getTotalHours();
   const streak=getStreak();
@@ -5466,6 +5500,9 @@ function buildProfile(){
     return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
   })();
 
+  const _heatmapHTML=_buildHeatmap(S.activities||[]);
+  const _quickStartSecs=(S.sections||[]).slice(0,4).map(s=>{const ex=EXAMS[s]||{color:'var(--ind)'};return'<button onclick="openSessionModal()" style="padding:8px 14px;background:'+ex.color+'18;border:1.5px solid '+ex.color+'44;border-radius:10px;cursor:pointer;font-size:12px;font-weight:700;color:'+ex.color+'">'+s+'</button>';}).join('');
+
   return`
 <!-- HERO — full width -->
 <div class="profile-hero" style="margin-bottom:20px;border-radius:14px">
@@ -5525,9 +5562,16 @@ function buildProfile(){
       </div>
       <button class="btn btn-primary btn-sm" onclick="openSessionModal()">▶ Log Session</button>
     </div>
+    ${_heatmapHTML}
     ${recentActs
       ?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">${recentActs}</div>${(S.activities||[]).length>12?`<div style="text-align:center;margin-top:14px;font-size:12px;color:var(--mut)">${(S.activities||[]).length-12} older sessions not shown</div>`:''}`
-      :`<div class="empty-state" style="padding:40px 0"><div class="empty-icon">📖</div><div class="empty-msg">No sessions yet.<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="openSessionModal()">▶ Start First Session</button></div></div>`}
+      :`<div style="text-align:center;padding:28px 20px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:14px">
+          <div style="font-size:36px;margin-bottom:10px">📖</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:6px">Start your CPA journey</div>
+          <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.5">Log your first session to build your streak and track progress toward passing.</div>
+          ${_quickStartSecs?`<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">${_quickStartSecs}</div>`:''}
+          <button class="btn btn-primary" onclick="openSessionModal()">▶ Log First Session</button>
+        </div>`}
   </div>
 
   <!-- RIGHT: Sidebar -->
@@ -7398,6 +7442,7 @@ function _renderFullUserProfile(u){
   }).join('');
 
   const allActs=u.activities.slice().reverse();
+  const _uHeatmap=u.activities.length>0?_buildHeatmap(u.activities):'';
   const activityFeed=isLocked
     ?`<div style="text-align:center;padding:56px 16px">
         <div style="font-size:40px;margin-bottom:12px">🔒</div>
@@ -7406,8 +7451,12 @@ function _renderFullUserProfile(u){
         ${!isPendingRequest?`<button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="padding:10px 24px;background:var(--ora);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Request to Follow</button>`:''}
       </div>`
     :allActs.length===0
-      ?`<div style="text-align:center;padding:56px 16px;color:var(--mut)"><div style="font-size:36px;margin-bottom:12px">📭</div><div style="font-size:14px;font-weight:600">No activity yet</div></div>`
-      :allActs.map(a=>{
+      ?`<div style="text-align:center;padding:48px 20px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:14px;color:var(--mut)">
+          <div style="font-size:44px;margin-bottom:12px;opacity:.55">📭</div>
+          <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:6px">No sessions yet</div>
+          <div style="font-size:12px;line-height:1.55;max-width:240px;margin:0 auto">${u.name.split(' ')[0]}'s study sessions will appear here once they start logging.</div>
+        </div>`
+      :_uHeatmap+allActs.map(a=>{
           const ex=EXAMS[a.section];if(!ex)return'';
           if(a.type==='pass'){
             const scoreLine=(typeof a.score==='number')?` · Score ${a.score}`:'';
@@ -7494,7 +7543,13 @@ function _renderFullUserProfile(u){
 
     <!-- LEFT: Activity feed -->
     <div>
-      <div style="font-size:15px;font-weight:800;margin-bottom:14px">Activity</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-size:15px;font-weight:800">Activity</div>
+          ${!isLocked&&u.activities.length?`<div style="font-size:11px;color:var(--mut);margin-top:1px">${u.activities.length} sessions logged</div>`:''}
+        </div>
+        ${!isLocked?`<button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">💬 Message</button>`:''}
+      </div>
       ${activityFeed}
     </div>
 
@@ -7713,27 +7768,53 @@ function _renderFirebaseMsgs(areaId, msgs){
 
 function _attachMsgListener(collection, docId, areaId){
   _detachMsgListener();
-  if(!firebaseDb){ document.getElementById(areaId)&&(document.getElementById(areaId).innerHTML='<div class="chat-system">— Offline —</div>'); return; }
+  const area=document.getElementById(areaId);
+  if(!firebaseDb){ if(area) area.innerHTML='<div class="chat-system">— No connection —</div>'; return; }
   const msgsRef=firebaseDb.collection(collection).doc(docId).collection('messages').orderBy('timestamp','asc').limitToLast(100);
   _activeMsgUnsub=msgsRef.onSnapshot(snap=>{
     _renderFirebaseMsgs(areaId, snap.docs.map(d=>({...d.data(),id:d.id})));
   }, err=>{
-    console.warn('Msg listener error:',err);
-    const area=document.getElementById(areaId);
-    if(area) area.innerHTML='<div class="chat-system">— Could not load messages —</div>';
+    console.warn('Msg listener error:',err.code,err.message);
+    const el=document.getElementById(areaId);
+    if(!el) return;
+    if(err.code==='permission-denied'){
+      el.innerHTML='<div style="padding:20px;text-align:center"><div style="font-size:13px;color:var(--mut);line-height:1.6">Messaging needs Firestore rules deployed.<br><strong style="color:var(--txt)">Run:</strong> <code style="background:var(--surf2);padding:2px 6px;border-radius:4px;font-size:11px">npm run deploy:rules</code><br><span style="font-size:11px;color:var(--mut)">in your Ledger project folder.</span></div></div>';
+    } else {
+      el.innerHTML='<div class="chat-system">— Could not load messages ('+err.code+') —</div>';
+    }
   });
 }
 
 async function sendFirebaseMessage(channelId, collection){
   const inp=document.getElementById('cci-'+channelId);
   const text=inp?.value?.trim(); if(!text) return;
-  if(!AUTH||!firebaseDb){ showToast('Sign in to send messages','err'); return; }
+  if(!AUTH){ showToast('Sign in to send messages','err'); return; }
+  if(!firebaseDb){ showToast('No connection — check your internet','err'); return; }
   inp.value='';
   try{
-    await firebaseDb.collection(collection).doc(channelId).collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-    await firebaseDb.collection(collection).doc(channelId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    // For conversations, ensure the parent document exists first so rules can verify participants
+    if(collection==='conversations'){
+      const convRef=firebaseDb.collection('conversations').doc(channelId);
+      await convRef.set({
+        participants:channelId.split('__dm__').sort(),
+        lastMessage:text,
+        lastAt:firebase.firestore.FieldValue.serverTimestamp()
+      },{merge:true});
+      await convRef.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    } else {
+      await firebaseDb.collection(collection).doc(channelId).collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+      await firebaseDb.collection(collection).doc(channelId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    }
   }catch(e){
-    console.warn('sendFirebaseMessage error:',e); showToast('Failed to send message','err'); if(inp) inp.value=text;
+    console.warn('sendFirebaseMessage error:',e.code,e.message);
+    if(inp) inp.value=text;
+    if(e.code==='permission-denied'||e.code==='PERMISSION_DENIED'){
+      showToast('Firestore rules not deployed — run: npm run deploy:rules','err');
+    } else if(e.code==='unavailable'||e.code==='failed-precondition'){
+      showToast('Offline — message will send when reconnected','info');
+    } else {
+      showToast('Failed to send: '+e.code,'err');
+    }
   }
 }
 
@@ -8602,11 +8683,23 @@ function renderClubViewBody(clubId){
 function sendClubViewMessage(clubId){
   const inp=document.getElementById('cva-inp-'+clubId);
   const text=inp?.value?.trim(); if(!text) return;
-  if(!AUTH||!firebaseDb){ showToast('Not connected','err'); return; }
+  if(!AUTH){ showToast('Sign in to send messages','err'); return; }
+  if(!firebaseDb){ showToast('No connection — check your internet','err'); return; }
   inp.value='';
-  firebaseDb.collection('clubs').doc(clubId).collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()})
+  firebaseDb.collection('clubs').doc(clubId).collection('messages')
+    .add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()})
     .then(()=>firebaseDb.collection('clubs').doc(clubId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}))
-    .catch(e=>{ console.warn('sendClubViewMessage error:',e); showToast('Failed to send','err'); if(inp) inp.value=text; });
+    .catch(e=>{
+      console.warn('sendClubViewMessage error:',e.code,e.message);
+      if(inp) inp.value=text;
+      if(e.code==='permission-denied'||e.code==='PERMISSION_DENIED'){
+        showToast('Firestore rules not deployed — run: npm run deploy:rules','err');
+      } else if(e.code==='unavailable'||e.code==='failed-precondition'){
+        showToast('Offline — message will send when reconnected','info');
+      } else {
+        showToast('Failed to send: '+e.code,'err');
+      }
+    });
 }
 function closeClubView(){
   _detachClubViewListener();
