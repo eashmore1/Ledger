@@ -14,6 +14,22 @@ service cloud.firestore {
         allow read: if request.auth != null;
         allow write: if request.auth != null && request.auth.uid == followerId;
       }
+
+      // Feed PROPS (likes) on this user's activities — anyone reads; you may only
+      // create/delete a prop attributed to your own uid.
+      match /props/{propId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.resource.data.reactor == request.auth.uid;
+        allow delete: if request.auth != null && resource.data.reactor == request.auth.uid;
+      }
+
+      // Feed COMMENTS on this user's activities — anyone reads; you may only
+      // create/delete a comment attributed to your own uid.
+      match /comments/{commentId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+        allow delete: if request.auth != null && resource.data.from == request.auth.uid;
+      }
     }
 
     // ── USER STATE ─────────────────────────────────────────────────────

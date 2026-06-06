@@ -2225,6 +2225,31 @@ async function loadRealUsers(){
     });
     REAL_USERS=Object.values(realMap);
   }catch(e){console.warn('loadRealUsers:',e);}
+  try{ await loadFeedReactions(); }catch(e){}
+}
+
+// Load cross-user props + comments (stored under each author's user doc) and merge
+// them onto the matching activities so likes/comments are shared between users.
+async function loadFeedReactions(){
+  if(!firebaseDb||!AUTH?.uid) return;
+  const me=AUTH.uid;
+  const authors=new Set([me]);
+  (REAL_USERS||[]).forEach(u=>{ if(u.id&&u.id.length>4) authors.add(u.id); });
+  await Promise.all([...authors].map(async aid=>{
+    try{
+      const [propsSnap,commentsSnap]=await Promise.all([
+        firebaseDb.collection('users').doc(aid).collection('props').get(),
+        firebaseDb.collection('users').doc(aid).collection('comments').get()
+      ]);
+      const propsByAct={}, commentsByAct={};
+      propsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(propsByAct[x.activityId]=propsByAct[x.activityId]||[]).push(x.reactor);});
+      commentsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(commentsByAct[x.activityId]=commentsByAct[x.activityId]||[]).push({user:x.name||'Member',text:x.text||'',from:x.from});});
+      const apply=acts=>(acts||[]).forEach(a=>{ if(propsByAct[a.id])a.kudos=propsByAct[a.id]; if(commentsByAct[a.id])a.comments=commentsByAct[a.id]; });
+      if(aid===me) apply(S&&S.activities);
+      const u=(REAL_USERS||[]).find(x=>x.id===aid);
+      if(u) apply(u.activities);
+    }catch(e){}
+  }));
 }
 
 // ═══════════════════════════════════════════════
@@ -4552,7 +4577,7 @@ function buildPassCard(a,ex){
   ex=ex||EXAMS[a.section]||{color:'var(--grn)',full:a.section,icon:'🎉'};
   const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
-  const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
+  const hasGivenProps=Array.isArray(a.kudos)&&(a.kudos.includes('you')||a.kudos.includes(AUTH?.uid));
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const _pic=a.userPic||(a.isMine?S?.profilePic:'')||'';
   const _avatarHtml=_pic?`<img src="${_pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials||''}`;
@@ -4590,7 +4615,7 @@ function buildActivityCard(a){
   if(a.type==='pass')return buildPassCard(a,ex);
   const propCount=Array.isArray(a.kudos)?a.kudos.length:0;
   const commentCount=Array.isArray(a.comments)?a.comments.length:0;
-  const hasGivenProps=Array.isArray(a.kudos)&&a.kudos.includes('you');
+  const hasGivenProps=Array.isArray(a.kudos)&&(a.kudos.includes('you')||a.kudos.includes(AUTH?.uid));
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
@@ -6197,14 +6222,25 @@ function closeSessionLoggedModal(){
 // ═══════════════════════════════════════════════
 function giveProps(actId,userId){
   if(userId==='you'){showToast("Can't give yourself props 😄",'err');return;}
-  // Find in mock friends
+  if(!AUTH){showToast('Sign in to give props','err');return;}
+  const me=AUTH.uid;
+  const authorUid=userId;
   const friend=REAL_USERS.find(f=>f.id===userId);
   let act=null;
   if(friend)act=friend.activities.find(a=>a.id===actId);
   if(!act){showToast("Something went wrong — try reloading",'err');return;}
-  const hasProps=act.kudos.includes('you');
-  if(hasProps){act.kudos=act.kudos.filter(k=>k!=='you');}
-  else{act.kudos.push('you');S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();}
+  if(!Array.isArray(act.kudos))act.kudos=[];
+  const hasProps=act.kudos.includes(me)||act.kudos.includes('you');
+  // Persist to the author's props subcollection so they (and everyone) see it.
+  const _ref=firebaseDb?firebaseDb.collection('users').doc(authorUid).collection('props').doc(actId+'__'+me):null;
+  if(hasProps){
+    act.kudos=act.kudos.filter(k=>k!==me&&k!=='you');
+    if(_ref)_ref.delete().catch(()=>{});
+  }
+  else{
+    act.kudos.push(me);S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();
+    if(_ref)_ref.set({activityId:actId,reactor:me,author:authorUid,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Publish updated Firestore rules to enable props','err');});
+  }
   // Animate button
   const btn=document.querySelector(`[data-aid="${actId}"][data-uid="${userId}"] .ac-action`)||
     document.querySelector(`.activity-card[data-aid="${actId}"] .ac-action`);
@@ -6263,13 +6299,18 @@ function addComment(actId,userId){
   const input=document.getElementById('comment-input');
   const text=(input?.value?.trim()||'').slice(0,300);
   if(!text)return;
+  if(!AUTH){showToast('Sign in to comment','err');return;}
+  const me=AUTH.uid; const myName=S.name||AUTH.displayName||'You';
+  const authorUid=(userId==='you'||userId===me)?me:userId;
   let act=null;
-  if(userId==='you'){act=S.activities.find(a=>a.id===actId);}
-  else{const f=REAL_USERS.find(f=>f.id===userId);if(f)act=f.activities.find(a=>a.id===actId);}
+  if(authorUid===me){act=S.activities.find(a=>a.id===actId);}
+  else{const f=REAL_USERS.find(f=>f.id===authorUid);if(f)act=f.activities.find(a=>a.id===actId);}
   if(!act)return;
   if(!act.comments)act.comments=[];
-  act.comments.push({user:S.name,text});
-  if(userId==='you')saveState();
+  act.comments.push({user:myName,text,from:me});
+  // Persist to the author's comments subcollection so the comment reaches them + everyone.
+  if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Publish updated Firestore rules to enable comments','err');});}
+  if(authorUid===me)saveState();
   input.value='';
   openComments(actId,userId);
   renderTab();
