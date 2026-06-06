@@ -8780,9 +8780,16 @@ function renderClubViewBody(clubId){
     el.innerHTML='<div class="club-chat-area" id="cva-chat-'+clubId+'" style="padding:12px 20px;min-height:200px;max-height:320px;overflow-y:auto"><div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">Loading…</div></div><div class="chat-footer" style="padding:10px 20px 16px;border-top:1px solid var(--bdr)"><input class="chat-inp" id="cva-inp-'+clubId+'" placeholder="Message '+club.name+'…" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendClubViewMessage(\''+clubId+'\');}"><button class="chat-send" onclick="sendClubViewMessage(\''+clubId+'\')">Send</button></div>';
     _detachClubViewListener();
     if(firebaseDb){
-      _clubViewMsgUnsub=firebaseDb.collection('clubs').doc(clubId).collection('messages').orderBy('timestamp','asc').limitToLast(100).onSnapshot(snap=>{
+      const _msgQ=firebaseDb.collection('clubs').doc(clubId).collection('messages').orderBy('timestamp','asc').limitToLast(100);
+      _clubViewMsgUnsub=_msgQ.onSnapshot(snap=>{
         _renderFirebaseMsgs('cva-chat-'+clubId, snap.docs.map(d=>({...d.data(),id:d.id})));
       },err=>{console.warn('Club view listener:',err);});
+      // Belt-and-suspenders: one-shot fetch resolves after any synchronous re-render,
+      // so the panel never gets stuck on "Loading…" if the listener's first snapshot raced a DOM swap.
+      _msgQ.get().then(snap=>{
+        const area=document.getElementById('cva-chat-'+clubId);
+        if(area && /Loading…/.test(area.textContent)) _renderFirebaseMsgs('cva-chat-'+clubId, snap.docs.map(d=>({...d.data(),id:d.id})));
+      }).catch(()=>{});
     }
     setTimeout(()=>document.getElementById('cva-inp-'+clubId)?.focus(),80);
   } else if(_clubViewTab==='members'){
