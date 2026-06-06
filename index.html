@@ -2608,6 +2608,13 @@ function checkAchievements(){
     setTimeout(()=>showStreakMilestone(streak),800);
   }
 
+  // Hours milestones get a shareable card (mark all crossed as shown; celebrate the highest new one)
+  let _hrsToShow=null;
+  [[50,'hrs_50'],[100,'hrs_100'],[250,'hrs_250']].forEach(function(m){
+    if(totalHrs>=m[0] && !earned.has('shown_'+m[1])){ earned.add('shown_'+m[1]); _hrsToShow=m[1]; }
+  });
+  if(_hrsToShow) setTimeout(()=>showMilestoneShareCard(_hrsToShow),900);
+
   // Session intensity
   check('marathon',S.activities.some(a=>a.hours>=5));
   check('deep_work',S.activities.some(a=>a.hours>=6));
@@ -3983,6 +3990,7 @@ function obFinish(){
   };
   saveState();
   writeUserProfile();
+  ensureFirmCohort(); // join the shared firm cohort club if a firm code was set
   // Also write userState directly so cross-device restore works immediately
   if(firebaseDb&&AUTH?.uid){
     firebaseDb.collection('userState').doc(AUTH.uid).set({
@@ -4169,6 +4177,8 @@ function renderApp(){
   if(!window._clubSynced){window._clubSynced=true;setTimeout(()=>{try{syncClubActivity();}catch(e){}},2500);}
   // Once per page load: backfill follower edges so existing follows count correctly cross-user.
   if(!window._followBackfilled){window._followBackfilled=true;setTimeout(()=>{try{saveFollowToFirestore();}catch(e){}},3000);}
+  // Once per page load: make sure I'm in my firm's shared cohort club.
+  if(!window._cohortEnsured){window._cohortEnsured=true;setTimeout(()=>{try{ensureFirmCohort();}catch(e){}},3500);}
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
@@ -8979,6 +8989,32 @@ async function syncClubActivity(){
     updatedAt:Date.now()
   };
   await Promise.all(myClubs.map(c=>firebaseDb.collection('clubs').doc(c.id).collection('members').doc(AUTH.uid).set(data,{merge:true}).catch(()=>{})));
+}
+
+// Firm-cohort auto-join: everyone with the same firm code shares ONE club (firm_{CODE}),
+// reusing all the group features (chat, leaderboard, group streak, live presence).
+async function ensureFirmCohort(){
+  if(!S||!S.firmCode||!firebaseDb||!AUTH||!AUTH.uid) return;
+  const code=String(S.firmCode).toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!code) return;
+  const clubId='firm_'+code;
+  const name=(S.firmName&&S.firmName.trim())?S.firmName.trim():'My Cohort';
+  if(!S.clubs) S.clubs=[];
+  let local=S.clubs.find(c=>c.id===clubId);
+  if(!local){
+    S.clubs.push({id:clubId,name:name,icon:'🏢',desc:name+' — your study cohort',isPrivate:true,isDM:false,isPublic:false,isCohort:true,members:['you'],created:Date.now()});
+    saveState();
+  } else if(local.name!==name && name!=='My Cohort'){ local.name=name; saveState(); }
+  try{
+    await firebaseDb.collection('clubs').doc(clubId).set({name:name,icon:'🏢',desc:name+' — study cohort',isCohort:true,firmCode:code},{merge:true});
+    const mref=firebaseDb.collection('clubs').doc(clubId).collection('members').doc(AUTH.uid);
+    const snap=await mref.get();
+    if(!snap.exists){
+      await mref.set({uid:AUTH.uid,name:S.name||AUTH.displayName||'Member',joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      await firebaseDb.collection('clubs').doc(clubId).set({memberCount:firebase.firestore.FieldValue.increment(1)},{merge:true});
+    }
+    syncClubActivity();
+  }catch(e){console.warn('ensureFirmCohort:',e);}
 }
 
 // Group streak = consecutive days (ending today, or yesterday if no session yet today) where ≥1 member studied.
@@ -15038,7 +15074,36 @@ function showAchievementUnlock(ach){
   setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),400);},4000);
 }
 
+// Reusable shareable milestone card (streaks, hours, sections) — reuses drawShareCard + SHARE_MILESTONES.
+function showMilestoneShareCard(milestoneId){
+  const cfg=SHARE_MILESTONES[milestoneId]; if(!cfg) return;
+  const statLine=(S.name||'Ledger')+' · '+Math.round((typeof getTotalHours==='function'?getTotalHours():0))+'h logged on Ledger';
+  const shareText=cfg.headline+' '+cfg.sub+' — tracked on Ledger. ledgercpa.app';
+  const liUrl='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://ledgercpa.app')+'&summary='+encodeURIComponent(shareText);
+  if(typeof confetti==='function'){confetti({particleCount:90,spread:80,origin:{y:0.5},colors:[cfg.accent,'#ffffff',cfg.accent+'99']});}
+  let el=document.getElementById('milestone-card-overlay'); if(el)el.remove();
+  el=document.createElement('div'); el.id='milestone-card-overlay';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1);max-height:90vh;overflow-y:auto">'+
+    '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:'+cfg.accent+';margin-bottom:4px">'+cfg.label+'</div><div style="font-size:25px;font-weight:900;letter-spacing:-.03em">'+cfg.headline+'</div><div style="font-size:13px;color:var(--mut);margin-top:4px">'+cfg.sub+'</div></div>'+
+    '<div style="margin-bottom:16px"><canvas id="milestone-card-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
+    '<div style="display:flex;gap:8px"><button id="milestone-card-dl" style="flex:1;padding:12px;background:'+cfg.accent+';color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↓ Download Card</button>'+
+      '<a href="'+liUrl+'" target="_blank" rel="noopener" onclick="document.getElementById(\'milestone-card-overlay\').remove()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:#0077b5;color:#fff;border-radius:11px;text-decoration:none;font-size:13px;font-weight:800">Share on LinkedIn</a></div>'+
+    '<button onclick="document.getElementById(\'milestone-card-overlay\').remove()" style="width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--mut);border:none;font-size:13px;font-weight:600;cursor:pointer">Close</button>'+
+  '</div>';
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.fonts.ready.then(()=>{
+    const canvas=document.getElementById('milestone-card-canvas'); if(!canvas)return;
+    drawShareCard(canvas,milestoneId,statLine);
+    const dl=document.getElementById('milestone-card-dl');
+    if(dl)dl.onclick=()=>{const a=document.createElement('a');a.download='ledger-'+milestoneId+'.png';a.href=canvas.toDataURL('image/png');a.click();};
+  });
+}
+
 function showStreakMilestone(days){
+  // Use the shareable milestone card when we have a design for this streak length.
+  if(SHARE_MILESTONES['streak_'+days]){ showMilestoneShareCard('streak_'+days); return; }
   const configs={
     7: {label:'One week straight.',sub:'Consistency is the whole game.'},
     14:{label:'Two weeks.',sub:'You\'re building a real habit.'},
