@@ -32,6 +32,9 @@ service cloud.firestore {
         // Create: sender must match the from field
         allow create: if request.auth != null &&
           request.resource.data.from == request.auth.uid;
+        // Delete: only the original sender can delete their own message
+        allow delete: if request.auth != null &&
+          resource.data.from == request.auth.uid;
       }
     }
 
@@ -48,6 +51,9 @@ service cloud.firestore {
         // Only the sender can create a message with their own UID
         allow create: if request.auth != null &&
           request.resource.data.from == request.auth.uid;
+        // Only the original sender can delete their own message
+        allow delete: if request.auth != null &&
+          resource.data.from == request.auth.uid;
       }
 
       match /members/{userId} {
