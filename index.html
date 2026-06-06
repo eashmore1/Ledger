@@ -7852,9 +7852,16 @@ async function openUserFollowList(uid, type, name){
   el.addEventListener('click',e=>{if(e.target===el)el.remove();});
 
   try {
-    const doc=await firebaseDb.collection('users').doc(uid).get();
-    const data=doc.exists?doc.data():{};
-    const ids=(type==='followers'?data.followers:data.following)||[];
+    // Followers come from the followers subcollection (source of truth, matches the count);
+    // following stays on the user's own doc array (which they maintain themselves).
+    let ids;
+    if(type==='followers'){
+      const fsnap=await firebaseDb.collection('users').doc(uid).collection('followers').get();
+      ids=fsnap.docs.map(d=>d.id);
+    } else {
+      const doc=await firebaseDb.collection('users').doc(uid).get();
+      ids=((doc.exists?doc.data():{}).following)||[];
+    }
     const body=document.getElementById('uflist-body');
     if(!body)return;
     if(!ids.length){body.innerHTML=`<div style="text-align:center;padding:32px;color:var(--mut);font-size:13px">No ${type} yet</div>`;return;}
@@ -8866,7 +8873,7 @@ function renderClubViewBody(clubId){
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     const msgCount=((S.clubMessages||{})[clubId]||[]).filter(m=>!m.isSystem).length;
-    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="if(confirm(\'Leave '+club.name+'? You can rejoin anytime.\')){S.clubs=S.clubs.filter(c=>c.id!==\''+clubId+'\');saveState();closeClubView();renderTab();showToast(\'Left '+club.name+'.\',\'info\');}">Leave Club</button></div></div>';
+    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="leaveClubFull(\''+clubId+'\')">Leave Club</button></div></div>';
   }
 }
 // ── Group activity sync: write my study stats to each club I'm in (shared, read by all members) ──
@@ -8962,6 +8969,22 @@ function sendClubViewMessage(clubId){
       }
     });
 }
+function leaveClubFull(clubId){
+  const club=(S.clubs||[]).find(c=>c.id===clubId);
+  const nm=club?club.name:'this club';
+  if(!confirm('Leave '+nm+'? You can rejoin anytime.')) return;
+  S.clubs=(S.clubs||[]).filter(c=>c.id!==clubId);
+  saveState();
+  // Firestore cleanup so the shared member count + leaderboard update for everyone.
+  if(firebaseDb&&AUTH&&AUTH.uid){
+    firebaseDb.collection('clubs').doc(clubId).collection('members').doc(AUTH.uid).delete().catch(()=>{});
+    firebaseDb.collection('clubs').doc(clubId).set({memberCount:firebase.firestore.FieldValue.increment(-1)},{merge:true}).catch(()=>{});
+  }
+  closeClubView();
+  renderTab();
+  showToast('Left '+nm+'.','info');
+}
+
 function closeClubView(){
   _detachClubViewListener();
   if(history.state?.view==='clubPage'){history.back();return;}
