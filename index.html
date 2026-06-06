@@ -4215,6 +4215,36 @@ function renderApp(){
     </div>
   </nav>
   <div class="page fade-in" id="page-content"></div>
+  <footer class="lg-footer">
+    <style>
+    .lg-footer{background:#0c0a14;color:rgba(255,255,255,.72);padding:48px 24px 26px;font-family:var(--font),'Inter',system-ui,sans-serif;margin-top:40px}
+    .lg-footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
+    .lg-footer a:hover{color:#fff}
+    .lg-foot-inner{max-width:1060px;margin:0 auto}
+    .lg-foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.4);margin-bottom:16px}
+    .lg-foot-col a{display:block;font-size:13px;margin-bottom:11px;line-height:1.2}
+    .lg-foot-col a:last-child{margin-bottom:0}
+    .lg-foot-bottom{border-top:1px solid rgba(255,255,255,.09);margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:rgba(255,255,255,.45)}
+    .lg-foot-disc{font-size:11px;color:rgba(255,255,255,.28);line-height:1.7;margin:20px auto 0;max-width:920px;text-align:center}
+    @media(max-width:760px){.lg-foot-grid{grid-template-columns:1fr 1fr;gap:28px 24px}.lg-foot-brand{grid-column:1 / -1}.lg-foot-bottom{justify-content:center;text-align:center}}
+    @media(max-width:640px){.lg-footer{padding-bottom:90px}}
+    </style>
+    <div class="lg-foot-inner">
+      <div class="lg-foot-grid">
+        <div class="lg-foot-brand">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:'Barlow Condensed','Inter',sans-serif;font-size:21px;font-weight:800;color:#fff;letter-spacing:.3px">Ledger</span></div>
+          <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
+          <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45)">A product of <strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></div>
+        </div>
+        <div class="lg-foot-col"><div class="lg-foot-h">Product</div><a href="/landing">Features</a><a href="/pricing">Pricing</a><a href="/faq">FAQ</a></div>
+        <div class="lg-foot-col"><div class="lg-foot-h">Company</div><a href="/about">About</a><a href="/contact">Contact</a><a href="mailto:support@ledgercpa.app">Support</a></div>
+        <div class="lg-foot-col"><div class="lg-foot-h">Legal</div><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/terms">Refund Policy</a></div>
+      </div>
+      <div class="lg-foot-bottom"><div>&copy; 2026 Momentum Apps LLC. All rights reserved.</div><div>Ledger&trade; is a product of Momentum Apps LLC &middot; <a href="mailto:support@ledgercpa.app">support@ledgercpa.app</a></div></div>
+      <p class="lg-foot-disc">Ledger is an independent study tracking tool and is not affiliated with, endorsed by, or approved by the AICPA, NASBA, Prometric, Becker, Gleim, Roger, Wiley, UWorld, or any other exam review provider. &ldquo;CPA&rdquo; and &ldquo;CPA Exam&rdquo; are trademarks of the AICPA and NASBA. Ledger is a study aid and does not guarantee exam passage. Results vary.</p>
+    </div>
+  </footer>
 </div>`;
   renderTab();
   updateNavChip(); // reflect any restored in-progress session in the top bar

@@ -183,16 +183,17 @@ footer a:hover{color:rgba(255,255,255,.55)}
 
 <footer class="lg-footer">
 <style>
-.lg-footer{background:#0c0a14;color:rgba(255,255,255,.72);padding:56px 24px 26px;font-family:'Inter',system-ui,sans-serif}
+.lg-footer{background:#0c0a14;color:rgba(255,255,255,.72);padding:56px 24px 28px;font-family:'Inter',system-ui,sans-serif}
 .lg-footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
 .lg-footer a:hover{color:#fff}
-.lg-foot-inner{max-width:1080px;margin:0 auto}
-.lg-foot-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:36px}
-.lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.38);margin-bottom:14px}
-.lg-foot-col a{display:block;font-size:13px;margin-bottom:10px}
-.lg-foot-bottom{border-top:1px solid rgba(255,255,255,.08);margin-top:40px;padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;color:rgba(255,255,255,.42)}
-.lg-foot-disc{font-size:11px;color:rgba(255,255,255,.25);line-height:1.65;margin-top:16px;max-width:920px}
-@media(max-width:720px){.lg-foot-grid{grid-template-columns:1fr 1fr}.lg-foot-brand{grid-column:1/-1}}
+.lg-foot-inner{max-width:1060px;margin:0 auto}
+.lg-foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;align-items:start}
+.lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.4);margin-bottom:16px}
+.lg-foot-col a{display:block;font-size:13px;margin-bottom:11px;line-height:1.2}
+.lg-foot-col a:last-child{margin-bottom:0}
+.lg-foot-bottom{border-top:1px solid rgba(255,255,255,.09);margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:rgba(255,255,255,.45)}
+.lg-foot-disc{font-size:11px;color:rgba(255,255,255,.28);line-height:1.7;margin:20px auto 0;max-width:920px;text-align:center}
+@media(max-width:760px){.lg-foot-grid{grid-template-columns:1fr 1fr;gap:28px 24px}.lg-foot-brand{grid-column:1 / -1}.lg-foot-bottom{justify-content:center;text-align:center}}
 </style>
 <div class="lg-foot-inner">
   <div class="lg-foot-grid">
@@ -201,7 +202,7 @@ footer a:hover{color:rgba(255,255,255,.55)}
         <img src="/logo.svg" alt="Ledger" style="width:26px;height:26px">
         <span style="font-family:'Barlow Condensed','Inter',sans-serif;font-size:21px;font-weight:800;color:#fff;letter-spacing:.3px">Ledger</span>
       </div>
-      <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:300px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
+      <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
       <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45)">A product of <strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></div>
     </div>
     <div class="lg-foot-col">
@@ -232,6 +233,7 @@ footer a:hover{color:rgba(255,255,255,.55)}
   <p class="lg-foot-disc">Ledger is an independent study tracking tool and is not affiliated with, endorsed by, or approved by the American Institute of CPAs (AICPA), NASBA, Prometric, Becker Professional Education, Gleim, Roger, Wiley, UWorld, or any other exam review provider. &ldquo;CPA&rdquo; and &ldquo;CPA Exam&rdquo; are trademarks of the AICPA and NASBA. Ledger is a study aid &mdash; it does not guarantee exam passage. Results vary.</p>
 </div>
 </footer>
+
 
 
 
