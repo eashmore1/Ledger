@@ -4108,6 +4108,8 @@ function renderApp(){
   logLedgerEvent('app_open');
   // Once per page load: rehydrate an in-progress study session so a reload never loses the timer.
   if(!window._tsRestored){window._tsRestored=true;if(tsRestore())showToast('Paused study session restored — resume or save it.','info');}
+  // Once per page load: push my current study stats to my clubs' shared leaderboards.
+  if(!window._clubSynced){window._clubSynced=true;setTimeout(()=>{try{syncClubActivity();}catch(e){}},2500);}
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
@@ -7047,6 +7049,7 @@ function saveSession(){
   logLedgerEvent('session_logged', {section: act.section, hours: act.hours});
   const _priorAch=new Set(S.achievements||[]);
   saveState();checkAchievements();checkChallengeAchievements();
+  syncClubActivity(); // push updated study stats to my clubs' shared leaderboard
   document.getElementById('sess-overlay')?.classList.remove('open');
   tsReset();updateNavChip();
   checkShareTrigger(_priorAch);
@@ -8312,6 +8315,7 @@ async function joinPublicClub(pubId){
   const club={id:pubId,name:pc.name,icon:pc.icon,desc:pc.desc,isPrivate:false,isDM:false,isPublic:true,members:['you'],created:Date.now()};
   S.clubs.push(club);
   saveState();
+  syncClubActivity(); // seed my stats into the new club's shared leaderboard
   // Write membership to Firestore so all members are shared across users
   if(firebaseDb&&AUTH){
     try{
@@ -8820,23 +8824,87 @@ function renderClubViewBody(clubId){
     }).join('');
     el.innerHTML='<div style="padding:16px 20px"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px">'+club.members.length+' Members</div>'+rows+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="promptInviteToClub(null,\''+clubId+'\')">+ Invite Someone</button></div>';
   } else if(_clubViewTab==='leaderboard'){
-    const weekAgo=new Date(Date.now()-7*86400000);
-    const allMembers=club.members.map(m=>{
-      const isYou=m==='you';
-      const friend=isYou?null:REAL_USERS.find(f=>f.id===m);
-      const weekHrs=isYou?((S.activities||[]).filter(a=>new Date(a.date)>weekAgo).reduce((s,a)=>s+(a.hours||0),0)):(friend?.activities||[]).filter(a=>new Date(a.date)>weekAgo).reduce((s,a)=>s+(a.hours||0),0);
-      const totalHrs=isYou?getTotalHours():(friend?.totalHours||0);
-      const streak=isYou?getStreak():(friend?.streak||0);
-      return{id:m,name:getClubMemberName(m),initials:getClubMemberInitials(m),color:getClubMemberColor(m),weekHrs,totalHrs,streak,isYou};
-    });
-    const progressRows=allMembers.map(m=>'<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)'+(m.isYou?';background:var(--ind-bg);padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;border-radius:8px':'')+'" '+(m.isYou?'':'onclick="closeClubView();openUserProfile(\''+m.id+'\')" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr)"')+'><div class="avatar" style="width:30px;height:30px;font-size:10px;border-radius:50%;background:'+m.color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+m.initials+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+m.name+(m.isYou?' (you)':'')+'</div><div style="font-size:10px;color:var(--mut);margin-top:1px">'+Math.round(m.totalHrs)+'h total · 🔥'+m.streak+'d streak</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:var(--ora)">'+m.weekHrs.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div></div>').join('');
-    el.innerHTML='<div style="padding:16px 20px"><div style="font-size:11px;color:var(--mut);margin-bottom:12px">Everyone\'s making progress — keep each other accountable 💪</div>'+progressRows+'</div>';
+    // Real cross-user progress from Firestore (clubs/{id}/members), rendered async.
+    el.innerHTML='<div id="club-lb-'+clubId+'" style="padding:16px 20px"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading group progress…</div></div>';
+    _renderClubLeaderboard(clubId);
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     const msgCount=((S.clubMessages||{})[clubId]||[]).filter(m=>!m.isSystem).length;
     el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="if(confirm(\'Leave '+club.name+'? You can rejoin anytime.\')){S.clubs=S.clubs.filter(c=>c.id!==\''+clubId+'\');saveState();closeClubView();renderTab();showToast(\'Left '+club.name+'.\',\'info\');}">Leave Club</button></div></div>';
   }
 }
+// ── Group activity sync: write my study stats to each club I'm in (shared, read by all members) ──
+async function syncClubActivity(){
+  if(!firebaseDb||!AUTH||!AUTH.uid) return;
+  const myClubs=(S.clubs||[]).filter(c=>!c.isDM&&Array.isArray(c.members)&&c.members.includes('you'));
+  if(!myClubs.length) return;
+  const acts=S.activities||[];
+  const weekAgo=Date.now()-7*86400000;
+  const name=S.name||AUTH.displayName||'Member';
+  const data={
+    uid:AUTH.uid,
+    name,
+    initials:(name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'M',
+    section:(typeof getCurrentSection==='function'?getCurrentSection():'')||'',
+    totalHrs:(typeof getTotalHours==='function'?getTotalHours():acts.reduce((s,a)=>s+(a.hours||0),0)),
+    weekHrs:acts.filter(a=>new Date(a.date).getTime()>weekAgo).reduce((s,a)=>s+(a.hours||0),0),
+    streak:(typeof getStreak==='function'?getStreak():0),
+    studyDates:[...new Set(acts.map(a=>(a.date||'').slice(0,10)).filter(Boolean))].sort().slice(-60),
+    updatedAt:Date.now()
+  };
+  await Promise.all(myClubs.map(c=>firebaseDb.collection('clubs').doc(c.id).collection('members').doc(AUTH.uid).set(data,{merge:true}).catch(()=>{})));
+}
+
+// Group streak = consecutive days (ending today, or yesterday if no session yet today) where ≥1 member studied.
+function _computeGroupStreak(docs){
+  const dates=new Set();
+  docs.forEach(m=>(m.studyDates||[]).forEach(d=>dates.add(d)));
+  if(!dates.size) return 0;
+  const iso=d=>d.toISOString().slice(0,10);
+  let streak=0; const day=new Date(); day.setHours(0,0,0,0);
+  if(!dates.has(iso(day))) day.setDate(day.getDate()-1); // grace before today's session is logged
+  while(dates.has(iso(day))){ streak++; day.setDate(day.getDate()-1); }
+  return streak;
+}
+
+async function _renderClubLeaderboard(clubId){
+  const host=document.getElementById('club-lb-'+clubId);
+  if(!host) return;
+  if(!firebaseDb){ host.innerHTML='<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No connection</div>'; return; }
+  try{ await syncClubActivity(); }catch(e){}
+  let docs=[];
+  try{
+    const snap=await firebaseDb.collection('clubs').doc(clubId).collection('members').get();
+    docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ const h=document.getElementById('club-lb-'+clubId); if(h) h.innerHTML='<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">Could not load progress ('+(e.code||'error')+')</div>'; return; }
+  const h=document.getElementById('club-lb-'+clubId); if(!h) return;
+  const gStreak=_computeGroupStreak(docs);
+  const weekHrsTotal=docs.reduce((s,m)=>s+(m.weekHrs||0),0);
+  const myUid=AUTH&&AUTH.uid;
+  const members=docs.slice().sort((a,b)=>(b.weekHrs||0)-(a.weekHrs||0));
+  const rows=members.map((m,i)=>{
+    const isYou=(m.uid&&m.uid===myUid)||m.id===myUid;
+    const initials=(m.initials||(m.name||'M').slice(0,2)).toString().toUpperCase();
+    const color=m.color||'#5a5fcf';
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    return '<div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--bdr)'+(isYou?';background:var(--ind-bg);padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;border-radius:8px':'')+'">'+
+      '<div style="width:20px;text-align:center;font-size:12px;font-weight:800;color:var(--mut);flex-shrink:0">'+medal+'</div>'+
+      '<div class="avatar" style="width:30px;height:30px;font-size:10px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(initials)+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+esc(m.name||'Member')+(isYou?' (you)':'')+'</div>'+
+        '<div style="font-size:10px;color:var(--mut);margin-top:1px">'+Math.round(m.totalHrs||0)+'h total · 🔥'+(m.streak||0)+'d streak</div></div>'+
+      '<div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:var(--ora)">'+(m.weekHrs||0).toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
+    '</div>';
+  }).join('');
+  const streakBanner='<div style="background:linear-gradient(135deg,#1c1206,#2a1a0a);border-radius:14px;padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px">'+
+    '<div style="font-size:34px">🔥</div>'+
+    '<div style="flex:1"><div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">'+gStreak+'-day group streak</div>'+
+      '<div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">'+(gStreak>0?'Keep it alive — someone must log a session today.':'Log a session today to start your group’s streak.')+'</div></div></div>';
+  const summary='<div style="display:flex;gap:10px;margin-bottom:14px">'+
+    '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ora)">'+weekHrsTotal.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">team this week</div></div>'+
+    '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ind)">'+members.length+'</div><div style="font-size:10px;color:var(--mut)">active member'+(members.length!==1?'s':'')+'</div></div></div>';
+  h.innerHTML=streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first! 💪</div>');
+}
+
 function sendClubViewMessage(clubId){
   const inp=document.getElementById('cva-inp-'+clubId);
   const text=inp?.value?.trim(); if(!text) return;
