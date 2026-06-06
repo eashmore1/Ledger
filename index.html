@@ -2197,6 +2197,11 @@ function firestoreToFriend(u){
     isPrivate:!!u.isPrivate,
     profilePic:u.profilePic||'',
     avatar:u.avatar||'',
+    firmName:u.firmName||'',
+    followers:u.followers||[],
+    following:u.following||[],
+    followersCount:(typeof u.followersCount==='number'?u.followersCount:(u.followers||[]).length),
+    followingCount:(typeof u.followingCount==='number'?u.followingCount:(u.following||[]).length),
     isReal:true,
   };
 }
@@ -2403,8 +2408,10 @@ async function searchFirestoreUsers(q){
 async function saveFollowToFirestore(){
   if(!firebaseDb||!AUTH?.uid||!S) return;
   try{
+    const _following=(S.following||[]).filter(id=>id&&id.length>4);
     await firebaseDb.collection('users').doc(AUTH.uid).update({
-      following: S.following||[],
+      following: _following,
+      followingCount: _following.length,
       updatedAt: Date.now()
     });
   }catch(e){}
@@ -7539,7 +7546,7 @@ function _renderClubPage(clubId){
 
 function _normProfileMock(f){
   const allSecs=[...new Set([...(f.passedSections||[]),(f.currentSection||null)].filter(Boolean))];
-  return{uid:f.id,name:f.name,initials:f.initials,color:f.color,bio:f.bio||'',state:f.state,city:'',locationState:'',school:'',classYear:'',disc:f.currentSection||'',sections:allSecs,sectionPassed:f.passedSections||[],hoursTotal:f.totalHours||0,streak:f.streak||0,sessionCount:f.activities.length,weekHrs:f.activities.filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).reduce((s,a)=>s+(a.hours||0),0),activities:f.activities||[],achievements:[],avatar:'',profilePic:'',tier:'free',firmName:'',isMock:true,isPrivate:!!f.isPrivate};
+  return{uid:f.id,name:f.name,initials:f.initials,color:f.color,bio:f.bio||'',state:f.state,city:'',locationState:'',school:'',classYear:'',disc:f.currentSection||'',sections:allSecs,sectionPassed:f.passedSections||[],hoursTotal:f.totalHours||0,streak:f.streak||0,sessionCount:f.activities.length,weekHrs:f.activities.filter(a=>new Date(a.date)>new Date(Date.now()-7*86400000)).reduce((s,a)=>s+(a.hours||0),0),activities:f.activities||[],achievements:[],avatar:f.avatar||'',profilePic:f.profilePic||'',tier:f.tier||'free',firmName:f.firmName||'',isMock:true,isPrivate:!!f.isPrivate,followersCount:f.followersCount||0,followingCount:f.followingCount||0,followers:f.followers||[],following:f.following||[]};
 }
 function _normProfileFirestore(u){
   const name=u.displayName||'CPA Candidate';
