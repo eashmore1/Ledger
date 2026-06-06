@@ -51,8 +51,8 @@
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
-<!-- Stripe.js (deferred — app uses payment links, not embedded Stripe elements) -->
-<script defer src="https://js.stripe.com/v3/"></script>
+<!-- Stripe.js intentionally NOT loaded — checkout uses hosted Payment Links (redirects),
+     so the ~1MB Stripe SDK is unnecessary on every page. Re-add only if embedding Stripe Elements. -->
 <!-- canvas-confetti — used for exam pass celebration -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" crossorigin="anonymous"></script>
 <!-- OTPAuth — TOTP for two-factor authentication -->
@@ -3351,7 +3351,7 @@ function renderAuth(){
     </div>`:''}
     <div id="auth-heading" style="margin-bottom:26px">
       <div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_pendingInvite?.fromName?'Join '+esc(_pendingInvite.fromName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
-      <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${authMode==='signin'?'Sign in to continue your CPA journey':'Join 12,400+ candidates grinding toward CPA'}</div>
+      <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${authMode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>
     </div>
 
     <div class="auth-tabs" id="auth-tabs">
@@ -3437,7 +3437,7 @@ function switchAuthMode(mode){
   authMode=mode;
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='signin')||(i===1&&mode==='signup')));
   const hdr=document.getElementById('auth-heading');
-  if(hdr)hdr.innerHTML=`<div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${mode==='signin'?'Welcome back':'Create your account'}</div><div style="font-size:13.5px;color:var(--sub);line-height:1.5">${mode==='signin'?'Sign in to continue your CPA journey':'Join 12,400+ candidates grinding toward CPA'}</div>`;
+  if(hdr)hdr.innerHTML=`<div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${mode==='signin'?'Welcome back':'Create your account'}</div><div style="font-size:13.5px;color:var(--sub);line-height:1.5">${mode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>`;
   const fb=document.getElementById('auth-form-body');
   if(fb)fb.innerHTML=buildAuthForm();
   const terms=document.querySelector('.auth-terms');
@@ -4313,7 +4313,7 @@ function buildFeedChallengeCard(){
           <div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden;margin-bottom:4px">
             <div style="height:100%;background:${c.diffColor};width:${pct}%;border-radius:4px;transition:width .6s"></div>
           </div>
-          <div style="font-size:10px;color:var(--mut)">${prog} / ${c.target} &nbsp;·&nbsp; ${c.participants.toLocaleString()} studying</div>
+          <div style="font-size:10px;color:var(--mut)">${prog} / ${c.target} &nbsp;·&nbsp; 🏅 Earn "${c.reward}"</div>
         </div>
         <button onclick="switchTab('explore')" style="flex-shrink:0;margin-left:12px;padding:7px 13px;background:${joined?'var(--surf2)':'var(--ora)'};color:${joined?'var(--sub)':'#fff'};border:${joined?'1px solid var(--bdr)':'none'};border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${joined?'View →':'Join →'}</button>
       </div>`;
@@ -5894,15 +5894,15 @@ function buildExplore(){
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
     return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)">'+c.members.length+' member'+(c.members.length!==1?'s':'')+'</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
   }).join('');
-  const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
+  const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
 
   // Show-more for discover clubs (limit initial to 3)
   const discoverRowItems=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id));
   const discoverVisible=discoverRowItems.slice(0,3);
   const discoverHidden=discoverRowItems.slice(3);
-  const discoverVisibleHtml=discoverVisible.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
-  const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">👥 '+c.memberCount.toLocaleString()+' members</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
+  const discoverVisibleHtml=discoverVisible.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
+  const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
   const clubSectionNew=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverVisibleHtml+discoverHiddenHtml;
 
   // Study buddy matching — people studying the same section as you right now
@@ -7505,7 +7505,7 @@ function _renderClubPage(clubId){
       <div style="width:64px;height:64px;border-radius:18px;background:var(--ind-bg);border:1.5px solid rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0">${pc.icon}</div>
       <div>
         <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">${pc.name}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">🌐 Public Club · 👥 <span id="pub-mc-${pc.id}">${pc.memberCount.toLocaleString()}</span> members</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">🌐 Public Club · <span id="pub-mc-${pc.id}">🌱 Be an early member</span></div>
       </div>
     </div>
   </div>
@@ -7518,9 +7518,10 @@ function _renderClubPage(clubId){
     // Fetch real member count from Firestore
     if(firebaseDb){
       firebaseDb.collection('clubs').doc(pc.id).get().then(snap=>{
-        if(snap.exists&&snap.data().memberCount){
+        if(snap.exists&&snap.data().memberCount>0){
           const el2=document.getElementById('pub-mc-'+pc.id);
-          if(el2) el2.textContent=snap.data().memberCount.toLocaleString();
+          const mc=snap.data().memberCount;
+          if(el2) el2.textContent='👥 '+mc.toLocaleString()+' member'+(mc!==1?'s':'');
         }
       }).catch(()=>{});
     }
@@ -14869,7 +14870,8 @@ function checkStudyNudge(){
   if(localStorage.getItem('nudgeDismissedDate')===today)return;
   const banner=document.createElement('div');
   banner.id='study-nudge-banner';
-  banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:1100;max-width:400px;width:calc(100% - 32px);animation:slide-up-banner .3s ease forwards';
+  // Bottom-RIGHT corner (not dead-center) so it never covers primary action buttons (Send, Flashcards, etc.)
+  banner.style.cssText='position:fixed;bottom:20px;right:20px;left:auto;transform:none;z-index:1100;max-width:340px;width:calc(100% - 32px);animation:slide-up-banner .3s ease forwards';
   banner.innerHTML=`<div style="background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px">
     <div style="font-size:22px;flex-shrink:0">📚</div>
     <div style="flex:1;min-width:0">
@@ -14880,6 +14882,8 @@ function checkStudyNudge(){
     <button onclick="document.getElementById('study-nudge-banner').remove();localStorage.setItem('nudgeDismissedDate','${today}')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1">×</button>
   </div>`;
   document.body.appendChild(banner);
+  // Auto-dismiss after 12s so it doesn't linger over the UI (does not set the dismissed flag — it can nudge again next visit).
+  setTimeout(()=>{const b=document.getElementById('study-nudge-banner');if(b){b.style.transition='opacity .4s ease';b.style.opacity='0';setTimeout(()=>b.remove(),400);}},12000);
 }
 
 // ═══════════════════════════════════════════════
