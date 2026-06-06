@@ -6995,6 +6995,32 @@ function ssUpdateSection(){
   }
 }
 
+// ── LIVE STUDY PRESENCE ──────────────────────────────────────────────────
+// While actively studying, broadcast presence to every club I'm in so members
+// see "studying now" in real time. Heartbeat keeps it fresh; cleared on stop.
+let _presenceHeartbeat=null;
+function _writeClubPresence(){
+  if(!firebaseDb||!AUTH||!AUTH.uid) return;
+  const myClubs=(S.clubs||[]).filter(c=>!c.isDM&&Array.isArray(c.members)&&c.members.includes('you'));
+  if(!myClubs.length) return;
+  const name=S.name||AUTH.displayName||'Member';
+  const data={
+    uid:AUTH.uid, name,
+    initials:(name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'M',
+    color:(S&&S.profileColor)||'#5a5fcf',
+    section:TS.section||'', startedAt:TS.startTime||Date.now(), lastBeat:Date.now()
+  };
+  myClubs.forEach(c=>firebaseDb.collection('clubs').doc(c.id).collection('presence').doc(AUTH.uid).set(data,{merge:true}).catch(()=>{}));
+}
+function _clearClubPresence(){
+  if(!firebaseDb||!AUTH||!AUTH.uid) return;
+  const myClubs=(S.clubs||[]).filter(c=>!c.isDM&&Array.isArray(c.members)&&c.members.includes('you'));
+  myClubs.forEach(c=>firebaseDb.collection('clubs').doc(c.id).collection('presence').doc(AUTH.uid).delete().catch(()=>{}));
+}
+function _startPresence(){ _writeClubPresence(); clearInterval(_presenceHeartbeat); _presenceHeartbeat=setInterval(_writeClubPresence,45000); }
+function _stopPresence(){ clearInterval(_presenceHeartbeat); _presenceHeartbeat=null; _clearClubPresence(); }
+window.addEventListener('beforeunload',()=>{ try{ if(_presenceHeartbeat) _clearClubPresence(); }catch(e){} });
+
 function startTimer(){
   const sec=document.getElementById('ss-sec')?.value||TS.section;
   const mat=document.getElementById('ss-mat')?.value?.trim()||'';
@@ -7014,6 +7040,7 @@ function startTimer(){
     }
   },1000);
   tsPersist();
+  _startPresence(); // broadcast "studying now" to my clubs
   renderSessCard();
   updateNavChip();
 }
@@ -7024,6 +7051,7 @@ function pauseTimer(){
   TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='paused';
   tsPersist();
+  _stopPresence();
   renderSessCard();updateNavChip();
 }
 
@@ -7042,6 +7070,7 @@ function resumeTimer(){
     }
   },1000);
   tsPersist();
+  _startPresence();
   renderSessCard();updateNavChip();
 }
 
@@ -7050,6 +7079,7 @@ function endSession(){
   if(TS.phase==='active')TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='recap';
   tsPersist(); // phase is 'recap' → clears the persisted active-session key
+  _stopPresence();
   renderSessCard();updateNavChip();
 }
 
@@ -8889,6 +8919,7 @@ async function _loadClubMemberCount(clubId, elId){
 function renderClubViewBody(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
   const el=document.getElementById('club-view-body');if(!el)return;
+  _detachClubPresence(); // only the leaderboard tab keeps a live presence listener
   if(_clubViewTab==='chat'){
     el.innerHTML='<div class="club-chat-area" id="cva-chat-'+clubId+'" style="padding:12px 20px;min-height:200px;max-height:320px;overflow-y:auto"><div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">Loading…</div></div><div class="chat-footer" style="padding:10px 20px 16px;border-top:1px solid var(--bdr)"><input class="chat-inp" id="cva-inp-'+clubId+'" placeholder="Message '+club.name+'…" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendClubViewMessage(\''+clubId+'\');}"><button class="chat-send" onclick="sendClubViewMessage(\''+clubId+'\')">Send</button></div>';
     _detachClubViewListener();
@@ -8918,8 +8949,9 @@ function renderClubViewBody(clubId){
     }).join('');
     el.innerHTML='<div style="padding:16px 20px"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px">'+club.members.length+' Members</div>'+rows+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="promptInviteToClub(null,\''+clubId+'\')">+ Invite Someone</button></div>';
   } else if(_clubViewTab==='leaderboard'){
-    // Real cross-user progress from Firestore (clubs/{id}/members), rendered async.
-    el.innerHTML='<div id="club-lb-'+clubId+'" style="padding:16px 20px"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading group progress…</div></div>';
+    // Live "studying now" presence (real-time) + real cross-user progress from Firestore.
+    el.innerHTML='<div style="padding:16px 20px"><div id="club-live-'+clubId+'"></div><div id="club-lb-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading group progress…</div></div></div>';
+    _attachClubPresence(clubId);
     _renderClubLeaderboard(clubId);
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
@@ -8959,6 +8991,32 @@ function _computeGroupStreak(docs){
   if(!dates.has(iso(day))) day.setDate(day.getDate()-1); // grace before today's session is logged
   while(dates.has(iso(day))){ streak++; day.setDate(day.getDate()-1); }
   return streak;
+}
+
+// Live "studying now" presence panel — real-time list of members in an active session.
+let _clubPresenceUnsub=null;
+function _detachClubPresence(){ if(_clubPresenceUnsub){ _clubPresenceUnsub(); _clubPresenceUnsub=null; } }
+function _attachClubPresence(clubId){
+  _detachClubPresence();
+  if(!firebaseDb) return;
+  _clubPresenceUnsub=firebaseDb.collection('clubs').doc(clubId).collection('presence').onSnapshot(snap=>{
+    const host=document.getElementById('club-live-'+clubId); if(!host) return;
+    const now=Date.now();
+    const live=snap.docs.map(d=>d.data()).filter(p=>p.lastBeat&&(now-p.lastBeat)<120000); // fresh < 2 min
+    if(!live.length){ host.innerHTML=''; return; }
+    host.innerHTML='<div style="background:linear-gradient(135deg,#04301c,#065f33);border-radius:14px;padding:14px 16px;margin-bottom:14px">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:'+(live.length?'10px':'0')+'">'+
+        '<span style="width:9px;height:9px;border-radius:50%;background:#22c55e;animation:pulse-glow 1.6s infinite;flex-shrink:0"></span>'+
+        '<span style="font-size:13px;font-weight:800;color:#fff">'+live.length+' studying now</span></div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px">'+live.map(p=>{
+        const mins=p.startedAt?Math.max(0,Math.floor((now-p.startedAt)/60000)):0;
+        return '<div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:20px;padding:4px 11px 4px 4px">'+
+          '<div class="avatar" style="width:24px;height:24px;font-size:9px;border-radius:50%;background:'+(p.color||'#5a5fcf')+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(p.initials||'?')+'</div>'+
+          '<span style="font-size:11px;color:#fff;font-weight:600">'+esc(p.name||'Member')+(p.section?' · '+esc(p.section):'')+(mins?' · '+mins+'m':'')+'</span></div>';
+      }).join('')+'</div>'+
+      ((window.AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">▶ Start studying with them</button>':'')+
+    '</div>';
+  },err=>{});
 }
 
 async function _renderClubLeaderboard(clubId){
@@ -9038,6 +9096,7 @@ function leaveClubFull(clubId){
 
 function closeClubView(){
   _detachClubViewListener();
+  _detachClubPresence();
   if(history.state?.view==='clubPage'){history.back();return;}
   document.getElementById('club-view-modal')?.classList.remove('open');
 }
