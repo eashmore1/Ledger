@@ -2681,7 +2681,29 @@ function saveSub(sub){localStorage.setItem(SUB_KEY,JSON.stringify(sub));}
 // billingCycle: 'monthly' | 'annual'
 let SUB = loadSub() || {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
 
-function isPro(){return SUB.tier==='pro'||SUB.tier==='elite'||SUB.tier==='cram'||isOnTrial();}
+function isPro(){return SUB.tier==='pro'||SUB.tier==='elite'||SUB.tier==='cram'||isOnTrial()||referralProActive();}
+// Referral reward: free Pro time earned by referring friends (self-contained, no Stripe).
+function referralProActive(){return !!(S&&S.referralProUntil&&Date.now()<S.referralProUntil);}
+function referralProDaysLeft(){return referralProActive()?Math.ceil((S.referralProUntil-Date.now())/86400000):0;}
+function _grantReferralPro(days){ if(!S)return; const base=Math.max(Date.now(), S.referralProUntil||0); S.referralProUntil=base+days*86400000; }
+// Referrer reward: each friend who joins via my invite = +14 days Pro; crossing 3 = +30 bonus.
+async function checkReferralRewards(){
+  if(!firebaseDb||!AUTH||!AUTH.uid||!S) return;
+  try{
+    const snap=await firebaseDb.collection('users').doc(AUTH.uid).collection('referrals').get();
+    const count=snap.size;
+    const rewarded=S.referralRewarded||0;
+    if(count<=rewarded) return;
+    const newOnes=count-rewarded;
+    const milestone=(rewarded<3 && count>=3);
+    const days=newOnes*14 + (milestone?30:0);
+    _grantReferralPro(days);
+    S.referralRewarded=count;
+    saveState(); writeUserProfile();
+    showToast('🎁 '+newOnes+' friend'+(newOnes>1?'s':'')+' joined with your invite — +'+days+' days of Pro'+(milestone?' (3-referral bonus!)':'')+'!','ok');
+    if(['profile','dashboard','explore'].includes(currentTab)) renderTab();
+  }catch(e){}
+}
 function isElite(){return SUB.tier==='elite'||SUB.tier==='cram';}
 function isOnTrial(){return SUB.tier==='trial'&&SUB.trialEnd&&Date.now()<SUB.trialEnd;}
 function getTrialDaysLeft(){if(!isOnTrial())return 0;return Math.ceil((SUB.trialEnd-Date.now())/86400000);}
@@ -4014,6 +4036,14 @@ function obFinish(){
   saveState();
   writeUserProfile();
   ensureFirmCohort(); // join the shared firm cohort club if a firm code was set
+  // Referral: credit the inviter (so they earn their reward) + give the new user a welcome Pro perk.
+  if(_inv && _inv.fromUid && _inv.fromUid.length>4){
+    if(firebaseDb && AUTH && AUTH.uid){
+      firebaseDb.collection('users').doc(_inv.fromUid).collection('referrals').doc(AUTH.uid)
+        .set({uid:AUTH.uid,name:S.name||'Member',at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    }
+    _grantReferralPro(7); saveState();
+  }
   // Also write userState directly so cross-device restore works immediately
   if(firebaseDb&&AUTH?.uid){
     firebaseDb.collection('userState').doc(AUTH.uid).set({
@@ -4021,9 +4051,9 @@ function obFinish(){
     }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
   }
   if(_inv&&_inv.fromName){
-    showToast(`Welcome! You're now connected with ${_inv.fromName} 🎉`,'ok');
+    showToast(`Welcome! You're connected with ${_inv.fromName} — enjoy 7 days of Pro on us 🎁`,'ok');
   } else if(_inv&&_inv.code){
-    showToast(`Welcome! You've joined the ${firmName||'study'} cohort 🎉`,'ok');
+    showToast(`Welcome! You joined the ${firmName||'study'} cohort — 7 days of Pro on us 🎁`,'ok');
   } else {
     showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
   }
@@ -4204,6 +4234,8 @@ function renderApp(){
   if(!window._followBackfilled){window._followBackfilled=true;setTimeout(()=>{try{saveFollowToFirestore();}catch(e){}},3000);}
   // Once per page load: make sure I'm in my firm's shared cohort club.
   if(!window._cohortEnsured){window._cohortEnsured=true;setTimeout(()=>{try{ensureFirmCohort();}catch(e){}},3500);}
+  // Once per page load: grant referral rewards for any friends who joined via my invite.
+  if(!window._refChecked){window._refChecked=true;setTimeout(()=>{try{checkReferralRewards();}catch(e){}},4200);}
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
@@ -4588,7 +4620,10 @@ function buildCohortCard(){
     <div class="section-title" style="margin-bottom:0">${firmName}</div>
     <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
   </div>
-  <div style="font-size:12px;color:var(--sub);margin-bottom:8px">Just you so far — share your invite link to add cohort members.</div>
+  <div style="display:flex;align-items:flex-start;gap:8px;background:var(--surf2);border-radius:9px;padding:9px 11px;margin-bottom:8px">
+    <span style="font-size:16px;flex-shrink:0">🎁</span>
+    <div style="font-size:11.5px;color:var(--sub);line-height:1.5"><strong style="color:var(--txt)">Refer friends, you both get free Pro.</strong> Each friend who joins with your link gives you <strong style="color:var(--ind)">14 days of Pro</strong> — and they get 7 days too. Hit 3 referrals for a <strong style="color:var(--ind)">+30-day bonus</strong>.${referralProActive()?`<div style="margin-top:4px;color:var(--grn);font-weight:700">✓ You have ${referralProDaysLeft()} days of Pro from referrals</div>`:''}</div>
+  </div>
   <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Copied!','ok'))" data-url="${inviteUrl}" title="Click to copy">${inviteUrl}</div>
 </div>`;
 }
