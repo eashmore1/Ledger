@@ -744,6 +744,8 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 body.no-app-nav .mob-nav{display:none!important}
 body.no-app-nav .session-fab{display:none!important}
 /* ── MOBILE MORE SHEET ── */
+/* Mobile-only: never render on desktop, even if an .open class is erroneously left on. */
+@media(min-width:641px){.mob-more-sheet{display:none!important}}
 .mob-more-sheet{position:fixed;inset:0;z-index:1100;pointer-events:none}
 .mob-more-sheet.open{pointer-events:all}
 .mob-more-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s ease}
@@ -2423,7 +2425,35 @@ let TS = {
   concepts: [], notes: '', feeling: '💪', difficulty: 3,
   sessionPhoto: null, // base64 image attached at recap
 };
-function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null};}
+function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null};try{localStorage.removeItem(tsPersistKey());}catch(e){}}
+// ── In-progress session persistence (survives page reload) ──────────────────
+function tsPersistKey(){return 'pf2-active-session-'+((typeof AUTH!=='undefined'&&AUTH&&AUTH.uid)||'anon');}
+function tsPersist(){
+  try{
+    if(TS.phase==='active'||TS.phase==='paused'){
+      const snap={...TS};
+      if(TS.phase==='active'&&TS.startTime)snap.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
+      snap.startTime=null; // recomputed on resume — closed-tab time is not credited
+      localStorage.setItem(tsPersistKey(),JSON.stringify(snap));
+    } else {
+      localStorage.removeItem(tsPersistKey());
+    }
+  }catch(e){}
+}
+function tsRestore(){
+  try{
+    const raw=localStorage.getItem(tsPersistKey());
+    if(!raw)return false;
+    const snap=JSON.parse(raw);
+    if(snap&&(snap.phase==='active'||snap.phase==='paused')){
+      // Restore as paused at the last-known elapsed so the user can resume or save —
+      // the running timer is never silently lost on reload.
+      TS={...TS,...snap,phase:'paused',startTime:null};
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
 function fmtElapsed(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
 function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?`${h}h ${m}m`:`${m}m ${s%60}s`;}
 
@@ -2901,7 +2931,7 @@ function renderUpgradeModal(featureHint){
   '<div style="text-align:center;margin-bottom:10px">'+
   '<div style="font-size:28px;font-weight:900;color:#fff">$'+cramPrice+'</div>'+
   '<div style="font-size:11px;color:rgba(255,255,255,.5)">one-time · 6 months</div>'+
-  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $54 for 6×Pro monthly</div>'+
+  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $84 for 6×Elite monthly</div>'+
   '</div>'+
   cramCTA+
   '</div>'+
@@ -3501,22 +3531,30 @@ async function handleEmailAuth(){
   // ── Real Firebase path ──────────────────────────────
   if(FIREBASE_ENABLED){
     const btn=document.querySelector('.auth-form-btn');
+    const btnLabel=btn?btn.textContent:'';
     if(btn){btn.disabled=true;btn.textContent='Please wait…';}
-    if(authMode==='signup'){
-      const result=await signUpWithEmailFirebase(email,pass,name);
-      if(result==='verify'){
-        renderEmailVerificationScreen(email,false);
+    try{
+      if(authMode==='signup'){
+        const result=await signUpWithEmailFirebase(email,pass,name);
+        if(result==='verify'){
+          renderEmailVerificationScreen(email,false);
+        }
+        // if false, error toast already shown
+      } else {
+        const result=await signInWithEmailFirebase(email,pass);
+        if(result==='unverified'){
+          renderEmailVerificationScreen(email,true);
+        } else if(result===true){
+          // Restore this user's saved state (survives signout)
+          S = loadState(AUTH?.uid) || null;
+          if(!S) renderOnboarding(); else renderApp();
+        }
       }
-      // if false, error toast already shown
-    } else {
-      const result=await signInWithEmailFirebase(email,pass);
-      if(result==='unverified'){
-        renderEmailVerificationScreen(email,true);
-      } else if(result===true){
-        // Restore this user's saved state (survives signout)
-        S = loadState(AUTH?.uid) || null;
-        if(!S) renderOnboarding(); else renderApp();
-      }
+    } finally {
+      // Re-enable the button if we're still on the auth screen (failed login/signup),
+      // so a failure never dead-ends the user on a stuck "Please wait…" button.
+      const b=document.querySelector('.auth-form-btn');
+      if(b){b.disabled=false;b.textContent=btnLabel||(authMode==='signup'?'Create Account →':'Sign In →');}
     }
     return;
   }
@@ -4068,6 +4106,8 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  // Once per page load: rehydrate an in-progress study session so a reload never loses the timer.
+  if(!window._tsRestored){window._tsRestored=true;if(tsRestore())showToast('Paused study session restored — resume or save it.','info');}
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
@@ -4106,6 +4146,7 @@ function renderApp(){
   <div class="page fade-in" id="page-content"></div>
 </div>`;
   renderTab();
+  updateNavChip(); // reflect any restored in-progress session in the top bar
   // Handle direct deep-link navigation on page reload
   const _profMatch=window.location.pathname.match(/^\/user\/(.+)/);
   const _actMatch=window.location.pathname.match(/^\/activity\/(.+)/);
@@ -6895,6 +6936,7 @@ function startTimer(){
       if(chip)chip.textContent=fmtElapsed(TS.elapsed);
     }
   },1000);
+  tsPersist();
   renderSessCard();
   updateNavChip();
 }
@@ -6904,6 +6946,7 @@ function pauseTimer(){
   clearInterval(timerInterval);timerInterval=null;
   TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='paused';
+  tsPersist();
   renderSessCard();updateNavChip();
 }
 
@@ -6921,6 +6964,7 @@ function resumeTimer(){
       if(chip)chip.textContent=fmtElapsed(TS.elapsed);
     }
   },1000);
+  tsPersist();
   renderSessCard();updateNavChip();
 }
 
@@ -6928,6 +6972,7 @@ function endSession(){
   clearInterval(timerInterval);timerInterval=null;
   if(TS.phase==='active')TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='recap';
+  tsPersist(); // phase is 'recap' → clears the persisted active-session key
   renderSessCard();updateNavChip();
 }
 
@@ -8282,6 +8327,7 @@ function _defaultNotifications(){
 }
 
 function openNotificationCenter(){
+  closeAppSettings(); // don't stack behind the higher z-index Settings panel
   if(!S.notifications) S.notifications=_defaultNotifications();
   const notifs=S.notifications;
   // Mark all as read after opening
@@ -8845,6 +8891,7 @@ function attachTabHandlers(){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+    closeAppSettings(); // Settings uses display:none, not a .open class — close it on Escape too
     if(TS.phase==='setup'||TS.phase==='recap'){document.getElementById('sess-overlay')?.classList.remove('open');}
     else if(TS.phase==='active'){pauseTimer();document.getElementById('sess-overlay')?.classList.remove('open');}
   }
@@ -9500,6 +9547,8 @@ function saveSettings(){saveEditProfile();}
 let _settingsSection = 'account';
 
 function openAppSettings(section='account'){
+  // Close any open lighter-weight overlays (e.g. notifications) so they don't sit behind Settings
+  document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
   _settingsSection=section;
   let el=document.getElementById('app-settings-modal');
   if(!el){
@@ -9576,7 +9625,9 @@ function renderAppSettingsSection(){
 function buildSettingsBilling(){
   const tier=subTierLabel();
   const isFreePlan=SUB.tier==='free'&&!isOnTrial();
-  const nextBilling=SUB.startDate?new Date(SUB.startDate+(SUB.billingCycle==='annual'?365:30)*86400000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—';
+  // Coerce startDate from any form (ms timestamp, ISO string, or Firestore Timestamp) to ms — avoids "Invalid Date".
+  const _subStartMs=SUB.startDate?(typeof SUB.startDate==='number'?SUB.startDate:(SUB.startDate.seconds?SUB.startDate.seconds*1000:new Date(SUB.startDate).getTime())):NaN;
+  const nextBilling=!isNaN(_subStartMs)?new Date(_subStartMs+(SUB.billingCycle==='annual'?365:30)*86400000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—';
   const trialEnd=isOnTrial()?new Date(SUB.trialEnd).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):null;
   const planColor=SUB.tier==='elite'?'var(--pur)':SUB.tier==='cram'?'var(--ind)':isOnTrial()?'var(--tea)':SUB.tier==='pro'?'var(--ora)':'var(--mut)';
 
@@ -11481,10 +11532,11 @@ ${ctx}`;
         maxTokens: 600
       })
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) { window._aiHealthy=false; return null; }
     const data = await resp.json();
+    window._aiHealthy=true;
     return data.text || null;
-  } catch(e) { return null; }
+  } catch(e) { window._aiHealthy=false; return null; }
 }
 
 function buildAIStudyCoach() {
@@ -11674,14 +11726,17 @@ function sendCoachMessage() {
     typeNext();
   }
 
+  // If live AI is unavailable, fall back to a built-in pointer — but say so, so a generic
+  // tip is never passed off as a real answer to the user's specific question.
+  const _offlineNote = '⚠️ Live AI coaching is offline right now — here\'s a general pointer instead:\n\n';
   _coachAskAI(msg).then(function(aiReply) {
     if (aiReply) {
       _showReply(aiReply);
     } else {
-      _showReply(_coachReply(msg));
+      _showReply(_offlineNote + _coachReply(msg));
     }
   }).catch(function() {
-    _showReply(_coachReply(msg));
+    _showReply(_offlineNote + _coachReply(msg));
   });
 }
 
@@ -11725,8 +11780,9 @@ async function _fcCallAI(userMsg,maxTok){
       maxTokens:maxTok||4096
     })
   });
-  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e?.error||'API error '+resp.status);}
+  if(!resp.ok){window._aiHealthy=false;const e=await resp.json().catch(()=>({}));throw new Error(e?.error||'API error '+resp.status);}
   const d=await resp.json();
+  window._aiHealthy=true;
   return d.text||'';
 }
 function _fcParseJSON(t){const m=t&&t.match(/\[[\s\S]*\]/);if(m){try{return JSON.parse(m[0]);}catch(e){}}try{return JSON.parse(t);}catch(e){return null;}}
@@ -11887,8 +11943,12 @@ function _buildStudyToolsPanel(){
     <button onclick="_fc.view='decks';_fcRender()" style="padding:9px 18px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--mut);margin-bottom:-2px">My Decks${deckCount?` <span style="background:var(--ind);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px">${deckCount}</span>`:''}</button>
   </div>`;
 
-  // Always Claude AI active
-  const apiBanner=`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--grn-bg);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:14px">
+  // Reflect real AI health: only claim "AI active" until a call has actually failed this session.
+  const apiBanner=(window._aiHealthy===false)
+    ? `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--amb-bg,rgba(245,158,11,.1));border:1px solid rgba(245,158,11,.25);border-radius:8px;margin-bottom:14px">
+      <span style="font-size:11px;font-weight:700;color:var(--amb,#b45309)">⚠ AI temporarily offline — using built-in generation</span>
+    </div>`
+    : `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--grn-bg);border:1px solid rgba(34,197,94,.2);border-radius:8px;margin-bottom:14px">
       <span style="font-size:11px;font-weight:700;color:var(--grn)">✓ Claude AI active — cards generated by AI</span>
     </div>`;
 
