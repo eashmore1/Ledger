@@ -3181,6 +3181,24 @@ function showPostOnboardingOffer(){
 // INIT
 // ═══════════════════════════════════════════════
 let _pendingInvite=null; // {code, fromName, fromUid}
+// Invite must survive the Google OAuth full-page redirect (mobile / in-app browsers),
+// so it's persisted to localStorage, not just held in memory.
+function _savePendingInvite(inv){ try{ localStorage.setItem('pf2-pending-invite', JSON.stringify({...inv, ts:Date.now()})); }catch(e){} }
+function _getPendingInvite(){
+  if(_pendingInvite) return _pendingInvite;
+  try{
+    const raw=localStorage.getItem('pf2-pending-invite');
+    if(raw){
+      const inv=JSON.parse(raw);
+      if(inv && inv.code && (Date.now()-(inv.ts||0) < 2*60*60*1000)){ // honor for 2 hours
+        _pendingInvite={code:inv.code,fromName:inv.fromName||'',fromUid:inv.fromUid||''};
+        return _pendingInvite;
+      }
+    }
+  }catch(e){}
+  return null;
+}
+function _clearPendingInvite(){ _pendingInvite=null; try{ localStorage.removeItem('pf2-pending-invite'); }catch(e){} }
 // Force auth screen on /login, /signup routes or ?auth=1 param
 const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname) || new URLSearchParams(window.location.search).get('auth')==='1';
 if(_isLoginRoute){ window._forceAuth = true; history.replaceState({},'','/'); }
@@ -3193,6 +3211,7 @@ function init(){
     const fromName=decodeURIComponent(_p.get('from')||'');
     const fromUid=_p.get('uid')||'';
     _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid};
+    _savePendingInvite(_pendingInvite); // survive the OAuth redirect
     if(obData)obData.firmCode=urlJoinCode.toUpperCase();
     if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
     history.replaceState({},'',window.location.pathname);
@@ -3283,18 +3302,22 @@ function init(){
         // Redirect after login if coming from /login or /signup
         if(window._postAuthRedirect){ history.replaceState({},'',window._postAuthRedirect); window._postAuthRedirect=null; }
         renderApp();
-        // Handle pending invite for existing users (new users are handled in obFinish)
-        if(_pendingInvite && S){
+        // Handle pending invite for existing users (new users are handled in obFinish).
+        // Read from memory OR localStorage so it survives the Google OAuth redirect.
+        const _inv=_getPendingInvite();
+        if(_inv && S){
           let changed=false;
-          if(!S.firmCode){S.firmCode=_pendingInvite.code;changed=true;}
-          const fromUid=_pendingInvite.fromUid;
+          if(!S.firmCode){S.firmCode=_inv.code;changed=true;}
+          const fromUid=_inv.fromUid;
           if(fromUid&&fromUid.length>4&&!(S.following||[]).includes(fromUid)){
             S.following=[...(S.following||[]),fromUid];changed=true;
+            saveFollowToFirestore(); // create the follower edge so the inviter's count is right
           }
           if(changed){saveState();setTimeout(writeUserProfile,500);}
-          if(_pendingInvite.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_pendingInvite.fromName+' 🎉','ok');
+          ensureFirmCohort(); // join the shared firm cohort club
+          if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+' 🎉','ok');
           else showToast('Joined study group! 🎉','ok');
-          _pendingInvite=null;
+          _clearPendingInvite();
         }
         // Show student verification banner if unverified student plan
         if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
@@ -3968,8 +3991,8 @@ function obFinish(){
   const sectionStatus={};
   sections.forEach(s=>{sectionStatus[s]='planned';});
   sectionStatus['FAR']='studying';
-  const urlJoinCode=new URLSearchParams(window.location.search).get('join')||'';
-  const firmCode=urlJoinCode||obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
+  const _inv=_getPendingInvite(); // from memory or localStorage (survives OAuth redirect)
+  const firmCode=(_inv&&_inv.code)||obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
   const intensity=obData.studyIntensity||'standard';
   const preset=HOUR_GOAL_PRESETS[intensity]||HOUR_GOAL_PRESETS.standard;
   const hourGoals={};
@@ -3978,7 +4001,7 @@ function obFinish(){
     name:obData.name,state:obData.state,hoursPerWeek:obData.hoursPerWeek,
     disc:obData.disc,sections,examDates,sectionStatus,
     school:obData.school,classYear:obData.classYear,bio:obData.bio,avatar:obData.avatar,
-    activities:[],following:[...(_pendingInvite?.fromUid&&typeof _pendingInvite.fromUid==='string'&&_pendingInvite.fromUid.length>4?[_pendingInvite.fromUid]:[])],
+    activities:[],following:[...((_inv&&_inv.fromUid&&typeof _inv.fromUid==='string'&&_inv.fromUid.length>4)?[_inv.fromUid]:[])],
     achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],customChallenges:[],
@@ -3997,12 +4020,14 @@ function obFinish(){
       state:JSON.stringify(S),updatedAt:Date.now()
     }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
   }
-  if(_pendingInvite?.fromName){
-    showToast(`Welcome! You're now connected with ${_pendingInvite.fromName} 🎉`,'ok');
-    _pendingInvite=null;
+  if(_inv&&_inv.fromName){
+    showToast(`Welcome! You're now connected with ${_inv.fromName} 🎉`,'ok');
+  } else if(_inv&&_inv.code){
+    showToast(`Welcome! You've joined the ${firmName||'study'} cohort 🎉`,'ok');
   } else {
     showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
   }
+  _clearPendingInvite(); // invite consumed
   renderApp();
   // Show upgrade offer after a short delay so the app renders first
   if(!SUB.trialUsed) setTimeout(showPostOnboardingOffer, 1200);
