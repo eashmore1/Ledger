@@ -12,7 +12,10 @@ service cloud.firestore {
       // the edge keyed by your OWN uid (i.e. you follow/unfollow as yourself).
       match /followers/{followerId} {
         allow read: if request.auth != null;
-        allow write: if request.auth != null && request.auth.uid == followerId;
+        // You may write the edge for yourself (you follow someone), OR the profile owner
+        // may write edges under their own profile (approving a private follow request).
+        allow write: if request.auth != null &&
+          (request.auth.uid == followerId || request.auth.uid == userId);
       }
 
       // Feed PROPS (likes) on this user's activities — anyone reads; you may only

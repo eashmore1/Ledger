@@ -7378,6 +7378,11 @@ function acceptFollowRequest(uid){
   if(!S.followers) S.followers=[];
   if(!S.followers.includes(uid)) S.followers.push(uid);
   saveState();
+  // Create the follower edge under MY profile (the owner may write their own followers,
+  // which is how an accepted private-account request becomes a real, counted follow).
+  if(firebaseDb&&AUTH&&AUTH.uid){
+    firebaseDb.collection('users').doc(AUTH.uid).collection('followers').doc(uid).set({uid:uid,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+  }
   showToast('Follow request accepted — '+req.name+' can now see your activity','ok');
   _renderFollowRequestsModal();
   renderTab();
@@ -8873,8 +8878,13 @@ function renderClubView(clubId){
   const el=document.getElementById('club-view-content');if(!el)return;
   const tabs=[{id:'chat',label:'💬 Chat'},{id:'members',label:'👥 Members'},{id:'leaderboard',label:'📈 Progress'},{id:'about',label:'ℹ️ About'}];
   const tabNav=tabs.map(t=>'<button onclick="_clubViewTab=\''+t.id+'\';renderClubView(\''+clubId+'\');" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid '+(_clubViewTab===t.id?'var(--ind)':'transparent')+';background:transparent;font-size:11px;font-weight:'+(_clubViewTab===t.id?'700':'500')+';color:'+(_clubViewTab===t.id?'var(--ind)':'var(--mut)')+';cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;white-space:nowrap">'+t.label+'</button>').join('');
-  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+club.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">'+club.name+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · '+club.members.length+' member'+(club.members.length!==1?'s':'')+'</div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
+  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+club.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">'+club.name+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · <span id="club-hdr-mc">'+club.members.length+'</span> members</div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
   renderClubViewBody(clubId);
+  _loadClubMemberCount(clubId,'club-hdr-mc'); // show the real member count, not the local array length
+}
+async function _loadClubMemberCount(clubId, elId){
+  if(!firebaseDb||!clubId) return;
+  try{ const s=await firebaseDb.collection('clubs').doc(clubId).collection('members').get(); const el=document.getElementById(elId); if(el) el.textContent=s.size; }catch(e){}
 }
 function renderClubViewBody(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
