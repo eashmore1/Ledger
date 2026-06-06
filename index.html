@@ -2407,13 +2407,38 @@ async function searchFirestoreUsers(q){
 
 async function saveFollowToFirestore(){
   if(!firebaseDb||!AUTH?.uid||!S) return;
+  const _following=(S.following||[]).filter(id=>id&&id.length>4);
   try{
-    const _following=(S.following||[]).filter(id=>id&&id.length>4);
     await firebaseDb.collection('users').doc(AUTH.uid).update({
       following: _following,
       followingCount: _following.length,
       updatedAt: Date.now()
     });
+  }catch(e){}
+  // Reconcile follower EDGES so each followed user's real follower count is correct.
+  // I can only write my own edge (users/{target}/followers/{me}); rules enforce that.
+  // Diff against last-synced set so this covers every follow path that funnels through here,
+  // and backfills existing follows on the first call (prev=[]).
+  try{
+    const me=AUTH.uid;
+    const prev=window._lastSyncedFollowing||[];
+    const added=_following.filter(id=>!prev.includes(id));
+    const removed=prev.filter(id=>!_following.includes(id));
+    await Promise.all([
+      ...added.map(t=>firebaseDb.collection('users').doc(t).collection('followers').doc(me).set({uid:me,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{})),
+      ...removed.map(t=>firebaseDb.collection('users').doc(t).collection('followers').doc(me).delete().catch(()=>{}))
+    ]);
+    window._lastSyncedFollowing=_following.slice();
+  }catch(e){}
+}
+
+// Read a user's REAL follower count from the followers subcollection and update an element.
+async function _loadFollowerCount(uid, elId){
+  if(!firebaseDb||!uid) return;
+  try{
+    const snap=await firebaseDb.collection('users').doc(uid).collection('followers').get();
+    const el=document.getElementById(elId);
+    if(el) el.textContent=snap.size;
   }catch(e){}
 }
 
@@ -4117,6 +4142,8 @@ function renderApp(){
   if(!window._tsRestored){window._tsRestored=true;if(tsRestore())showToast('Paused study session restored — resume or save it.','info');}
   // Once per page load: push my current study stats to my clubs' shared leaderboards.
   if(!window._clubSynced){window._clubSynced=true;setTimeout(()=>{try{syncClubActivity();}catch(e){}},2500);}
+  // Once per page load: backfill follower edges so existing follows count correctly cross-user.
+  if(!window._followBackfilled){window._followBackfilled=true;setTimeout(()=>{try{saveFollowToFirestore();}catch(e){}},3000);}
   history.pushState({view:'app'},'','/');
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
@@ -5659,7 +5686,7 @@ function buildProfile(){
     </div>
     <div style="display:flex;gap:0;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12)">
       <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:center;padding:0 24px 0 0;position:relative">
-        <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
+        <div id="my-foll-cnt" style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
         <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Followers</div>
         ${(S.followRequests||[]).length?`<span style="position:absolute;top:-3px;right:14px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 4px;border-radius:10px">${(S.followRequests||[]).length}</span>`:''}
       </button>
@@ -7669,10 +7696,10 @@ function _renderFullUserProfile(u){
           {v:Math.round(u.hoursTotal),l:'Hours',c:'rgba(212,64,0,.9)',fn:''},
           u.streak?{v:u.streak,l:'Streak',c:'#fff',fn:''}:null,
           u.sessionCount?{v:u.sessionCount,l:'Sessions',c:'#fff',fn:''}:null,
-          !isLocked?{v:u.followersCount||0,l:'Followers',c:'#fff',fn:`openUserFollowList('${u.uid}','followers','${u.name}')`}:null,
+          !isLocked?{v:u.followersCount||0,l:'Followers',c:'#fff',id:'prof-foll-cnt',fn:`openUserFollowList('${u.uid}','followers','${u.name}')`}:null,
           !isLocked?{v:u.followingCount||0,l:'Following',c:'#fff',fn:`openUserFollowList('${u.uid}','following','${u.name}')`}:null,
         ].filter(Boolean).map(s=>`<div onclick="${s.fn||''}" style="flex:1;text-align:center;${s.fn?'cursor:pointer':''}">
-          <div style="font-size:22px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div>
+          <div ${s.id?`id="${s.id}"`:''} style="font-size:22px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div>
           <div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">${s.l}</div>
         </div>`).join('<div style="width:1px;background:rgba(255,255,255,.1)"></div>')}
       </div>
@@ -7704,6 +7731,8 @@ function _renderFullUserProfile(u){
   </div>
 `;
 
+  // Override the stored follower count with the REAL count from the followers subcollection.
+  if(!u.isPrivate||!isLocked) _loadFollowerCount(u.uid,'prof-foll-cnt');
   window.scrollTo({top:0});
 }
 
@@ -7860,7 +7889,7 @@ function toggleFollowProfile(userId,btn){
   const following=S.following||[];
   const idx=following.indexOf(userId);
   if(idx>=0){following.splice(idx,1);}else{following.push(userId);}
-  S.following=following;saveState();checkAchievements();
+  S.following=following;saveState();checkAchievements();saveFollowToFirestore();
   const isNow=(S.following||[]).includes(userId);
   btn.textContent=isNow?'✓ Following':'+ Follow';
   btn.className=`btn ${isNow?'btn-ghost':'btn-primary'}`;
@@ -8943,6 +8972,8 @@ function closeClubView(){
 // MISC HANDLERS
 // ═══════════════════════════════════════════════
 function attachTabHandlers(){
+  // If my profile is showing, refresh my follower count from the real subcollection.
+  if(document.getElementById('my-foll-cnt')&&AUTH?.uid) _loadFollowerCount(AUTH.uid,'my-foll-cnt');
   // Animate progress bars from 0 → target width
   document.querySelectorAll('.prog-fill').forEach(el=>{
     const target=el.style.width;
