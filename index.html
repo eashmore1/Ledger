@@ -5800,7 +5800,7 @@ function buildProfile(){
 
   // Sidebar: study partner
   const partnerSide=(()=>{
-    if(!isPro()) return`<div style="font-size:11px;color:var(--mut);line-height:1.5">Study Partner — <button class="btn btn-ghost btn-xs" onclick="openUpgradeModal(null)">Pro feature</button></div>`;
+    if(!isElite()) return`<div style="font-size:11px;color:var(--mut);line-height:1.5">Study Partner — <button class="btn btn-ghost btn-xs" onclick="openUpgradeModal('Study Partner Pairing')">Elite feature</button></div>`;
     const partner=S.accountabilityPartner?REAL_USERS.find(f=>f.id===S.accountabilityPartner):null;
     if(!partner) return`<div style="font-size:11px;color:var(--mut)">No partner set yet.</div><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">${(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean).slice(0,4).map(f=>`<button onclick="setStudyPartner('${f.id}')" style="display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:11px;font-weight:600"><div class="avatar" style="width:16px;height:16px;font-size:8px;background:${f.color};color:#fff">${f.initials}</div>${f.name.split(' ')[0]}</button>`).join('')||'<span style="font-size:11px;color:var(--mut)">Follow someone first</span>'}</div>`;
     const weekAgo=new Date(Date.now()-7*86400000);
@@ -5831,7 +5831,7 @@ function buildProfile(){
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0;padding-top:2px">
         <button onclick="openEditProfile()" style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
-        <button onclick="openQRModal()" title="My QR Code" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);border-radius:8px;padding:8px 11px;font-size:14px;cursor:pointer">⬛</button>
+        <button onclick="openQRModal()" title="Invite QR Code" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);border-radius:8px;padding:8px 11px;font-size:14px;cursor:pointer">⬛</button>
       </div>
     </div>
     <div style="display:flex;gap:0;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12)">
@@ -7433,6 +7433,7 @@ function sendSupportMessage(){
 }
 
 function setStudyPartner(id){
+  if(!isElite()){openUpgradeModal('Study Partner Pairing');return;}
   const f=REAL_USERS.find(f=>f.id===id);
   S.accountabilityPartner=id;
   saveState();
@@ -8819,24 +8820,22 @@ function openQRModal(){
   el=document.createElement('div');
   el.id='qr-modal';
   el.className='modal-overlay open';
-  const userName=encodeURIComponent(S.name||'CPA Candidate');
-  const uid=AUTH?.uid||'demo';
-  const profileUrl='https://ledgercpa.app/u/'+uid+'?ref=qr';
-  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(profileUrl);
+  const inviteUrl='https://ledgercpa.app/?join='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'');
+  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(inviteUrl);
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
     <div class="modal-hdr">
-      <div class="modal-title">⬛ My QR Code</div>
+      <div class="modal-title">⬛ Invite QR Code</div>
       <button class="modal-close" onclick="closeQRModal()">×</button>
     </div>
     <div style="padding:24px 22px">
-      <div style="font-size:13px;color:var(--mut);margin-bottom:20px">Share this code so others can find and follow you instantly on Ledger.</div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:20px">Have a friend scan this to join your study group — you both get free Pro when they sign up.</div>
       <div style="background:#fff;border-radius:16px;padding:18px;display:inline-block;margin-bottom:18px;box-shadow:0 4px 20px rgba(0,0,0,.12)">
-        <img src="${qrUrl}" alt="QR Code" style="width:200px;height:200px;border-radius:8px;display:block">
+        <img src="${qrUrl}" alt="Invite QR Code" style="width:200px;height:200px;border-radius:8px;display:block">
       </div>
-      <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:4px">${esc(S.name||'CPA Candidate')}</div>
-      <div style="font-size:12px;color:var(--mut);margin-bottom:20px">${S.currentSection||'CPA Candidate'} · ${S.state||''}</div>
+      <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:4px">${esc(S.name||'CPA Candidate')}'s invite</div>
+      <div style="font-size:12px;color:var(--ora);font-weight:600;margin-bottom:20px">🎁 You both get free Pro</div>
       <div style="display:flex;gap:10px">
-        <button onclick="shareQRProfile('${profileUrl}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Share Profile Link</button>
+        <button onclick="shareQRProfile('${inviteUrl}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Share Invite Link</button>
         <button onclick="closeQRModal()" style="padding:11px 16px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:10px;color:var(--txt);font-size:13px;font-weight:600;cursor:pointer">Done</button>
       </div>
     </div>
@@ -8849,7 +8848,7 @@ function closeQRModal(){document.getElementById('qr-modal')?.remove();}
 
 function shareQRProfile(url){
   if(navigator.share){
-    navigator.share({title:(S.name||'CPA Candidate')+' on Ledger',text:'Follow my CPA journey on Ledger!',url}).catch(e=>{if(e.name!=='AbortError')_fallbackShare(url);});
+    navigator.share({title:'Join me on Ledger',text:'Study for the CPA with me on Ledger — we both get free Pro when you join!',url}).catch(e=>{if(e.name!=='AbortError')_fallbackShare(url);});
     return;
   }
   _fallbackShare(url);
