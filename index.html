@@ -2688,8 +2688,10 @@ function isPro(){return SUB.tier==='pro'||SUB.tier==='elite'||SUB.tier==='cram'|
 // Referral reward: free Pro time earned by referring friends (self-contained, no Stripe).
 function referralProActive(){return !!(S&&S.referralProUntil&&Date.now()<S.referralProUntil);}
 function referralProDaysLeft(){return referralProActive()?Math.ceil((S.referralProUntil-Date.now())/86400000):0;}
-function _grantReferralPro(days){ if(!S)return; const base=Math.max(Date.now(), S.referralProUntil||0); S.referralProUntil=base+days*86400000; }
-// Referrer reward: each friend who joins via my invite = +14 days Pro; crossing 3 = +30 bonus.
+// Free Pro is capped at REFERRAL_PRO_CAP_DAYS of banked future time so it can't be farmed.
+const REFERRAL_PRO_CAP_DAYS=30;
+function _grantReferralPro(days){ if(!S)return; const cap=Date.now()+REFERRAL_PRO_CAP_DAYS*86400000; const base=Math.max(Date.now(), S.referralProUntil||0); S.referralProUntil=Math.min(base+days*86400000, cap); }
+// Referrer reward: each friend who joins via my invite = +5 days Pro; crossing 3 = +10 bonus (capped).
 async function checkReferralRewards(){
   if(!firebaseDb||!AUTH||!AUTH.uid||!S) return;
   try{
@@ -2699,7 +2701,7 @@ async function checkReferralRewards(){
     if(count<=rewarded) return;
     const newOnes=count-rewarded;
     const milestone=(rewarded<3 && count>=3);
-    const days=newOnes*14 + (milestone?30:0);
+    const days=newOnes*5 + (milestone?10:0);
     _grantReferralPro(days);
     S.referralRewarded=count;
     saveState(); writeUserProfile();
@@ -3410,14 +3412,30 @@ function renderAuth(){
   document.title='Sign In — Ledger';
   document.body.classList.add('no-app-nav');
   applyTheme();
+  // Invite landing experience: personalize the whole auth screen when arriving via a friend's link.
+  const _inv=_getPendingInvite();
+  const _invName=_inv&&_inv.fromName?_inv.fromName:'';
+  if(_invName&&authMode==='signin')authMode='signup'; // invited visitors are new users — default to Create Account
+  const _invInitials=_invName?_invName.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase():'';
   document.getElementById('root').innerHTML=`
 <div class="auth-wrap">
   <!-- LEFT PANEL — brand + features -->
   <div class="auth-left">
     <div class="auth-left-inner">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><svg width="42" height="42" viewBox="0 0 180 180" style="border-radius:10px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".15"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg><div class="auth-brand">Ledger</div></div>
+      ${_invName?`
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#d44000,#ff6a2b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(212,64,0,.4)">${esc(_invInitials)}</div>
+        <div><div style="font-size:13px;color:rgba(255,255,255,.55);font-weight:600">${esc(_invName)} invited you</div><div style="font-size:15px;color:#fff;font-weight:700;letter-spacing:-.01em">Study toward the CPA together</div></div>
+      </div>
+      <div style="font-size:26px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.02em;margin-bottom:10px">You don't have to<br>grind the CPA alone.</div>
+      <div class="auth-brand-sub" style="margin-bottom:18px">${esc(_invName)} is on Ledger tracking their pace, streaks, and study hours. Join their circle and keep each other on track.</div>
+      <div style="display:flex;align-items:center;gap:11px;background:rgba(212,64,0,.14);border:1px solid rgba(212,64,0,.35);border-radius:11px;padding:12px 14px;margin-bottom:24px">
+        <div style="font-size:20px;flex-shrink:0">🎁</div>
+        <div style="font-size:12.5px;color:#fff;font-weight:600;line-height:1.45">You and ${esc(_invName)} <strong>both get free Pro</strong> the moment you join.</div>
+      </div>`:`
       <div style="font-size:26px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.02em;margin-bottom:10px">Know exactly if you're<br>on pace to pass the CPA.</div>
-      <div class="auth-brand-sub" style="margin-bottom:24px">Most candidates fail because they don't know they're behind until it's too late. Ledger fixes that.</div>
+      <div class="auth-brand-sub" style="margin-bottom:24px">Most candidates fail because they don't know they're behind until it's too late. Ledger fixes that.</div>`}
 
       <div class="auth-feature">
         <div class="auth-feature-icon">📊</div>
@@ -3457,13 +3475,13 @@ function renderAuth(){
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
     <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
-    ${_pendingInvite?.fromName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:12px 14px;margin-bottom:18px">
-      <div style="width:34px;height:34px;border-radius:50%;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_pendingInvite.fromName).slice(0,2).toUpperCase()}</div>
-      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_pendingInvite.fromName)} invited you to study together</div><div style="font-size:11px;color:var(--mut);margin-top:1px">Create your account to join their study group on Ledger</div></div>
+    ${_invName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px 14px;margin-bottom:18px">
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d44000,#ff6a2b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_invInitials)}</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div><div style="font-size:11px;color:var(--ora);margin-top:1px;font-weight:600">🎁 You'll both get free Pro to start</div></div>
     </div>`:''}
     <div id="auth-heading" style="margin-bottom:26px">
-      <div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_pendingInvite?.fromName?'Join '+esc(_pendingInvite.fromName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
-      <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${authMode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_invName?'Join '+esc(_invName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
+      <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${_invName?'Create your free account to connect and unlock Pro':authMode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>
     </div>
 
     <div class="auth-tabs" id="auth-tabs">
@@ -3515,6 +3533,8 @@ function renderAuth(){
 }
 
 function buildAuthForm(){
+  const _bInv=_getPendingInvite();
+  const _bInvName=_bInv&&_bInv.fromName?_bInv.fromName:'';
   if(authMode==='signup'){
     return`
 <div class="form-grp">
@@ -3529,7 +3549,7 @@ function buildAuthForm(){
   <label>Password</label>
   <input id="auth-pass" type="password" placeholder="Min. 8 characters" autocomplete="new-password">
 </div>
-<button class="auth-form-btn" onclick="handleEmailAuth()">Create Account →</button>`;
+<button class="auth-form-btn" onclick="handleEmailAuth()">${_bInvName?'Create Account &amp; Join '+esc(_bInvName).split(' ')[0]+' →':'Create Account →'}</button>`;
   } else {
     return`
 <div class="form-grp">
@@ -3548,8 +3568,10 @@ function buildAuthForm(){
 function switchAuthMode(mode){
   authMode=mode;
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='signin')||(i===1&&mode==='signup')));
+  const _sInv=_getPendingInvite();
+  const _sInvName=_sInv&&_sInv.fromName?_sInv.fromName:'';
   const hdr=document.getElementById('auth-heading');
-  if(hdr)hdr.innerHTML=`<div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${mode==='signin'?'Welcome back':'Create your account'}</div><div style="font-size:13.5px;color:var(--sub);line-height:1.5">${mode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>`;
+  if(hdr)hdr.innerHTML=`<div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_sInvName?'Join '+esc(_sInvName)+'\'s study group':mode==='signin'?'Welcome back':'Create your account'}</div><div style="font-size:13.5px;color:var(--sub);line-height:1.5">${_sInvName?(mode==='signin'?'Sign in to connect with '+esc(_sInvName):'Create your free account to connect and unlock Pro'):mode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>`;
   const fb=document.getElementById('auth-form-body');
   if(fb)fb.innerHTML=buildAuthForm();
   const terms=document.querySelector('.auth-terms');
@@ -4045,7 +4067,7 @@ function obFinish(){
       firebaseDb.collection('users').doc(_inv.fromUid).collection('referrals').doc(AUTH.uid)
         .set({uid:AUTH.uid,name:S.name||'Member',at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
     }
-    _grantReferralPro(7); saveState();
+    _grantReferralPro(3); saveState();
   }
   // Also write userState directly so cross-device restore works immediately
   if(firebaseDb&&AUTH?.uid){
@@ -4054,9 +4076,9 @@ function obFinish(){
     }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
   }
   if(_inv&&_inv.fromName){
-    showToast(`Welcome! You're connected with ${_inv.fromName} — enjoy 7 days of Pro on us 🎁`,'ok');
+    showToast(`Welcome! You're connected with ${_inv.fromName} — enjoy 3 days of Pro on us 🎁`,'ok');
   } else if(_inv&&_inv.code){
-    showToast(`Welcome! You joined the ${firmName||'study'} cohort — 7 days of Pro on us 🎁`,'ok');
+    showToast(`Welcome! You joined the ${firmName||'study'} cohort — 3 days of Pro on us 🎁`,'ok');
   } else {
     showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
   }
@@ -4625,7 +4647,7 @@ function buildCohortCard(){
   </div>
   <div style="display:flex;align-items:flex-start;gap:8px;background:var(--surf2);border-radius:9px;padding:9px 11px;margin-bottom:8px">
     <span style="font-size:16px;flex-shrink:0">🎁</span>
-    <div style="font-size:11.5px;color:var(--sub);line-height:1.5"><strong style="color:var(--txt)">Refer friends, you both get free Pro.</strong> Each friend who joins with your link gives you <strong style="color:var(--ind)">14 days of Pro</strong> — and they get 7 days too. Hit 3 referrals for a <strong style="color:var(--ind)">+30-day bonus</strong>.${referralProActive()?`<div style="margin-top:4px;color:var(--grn);font-weight:700">✓ You have ${referralProDaysLeft()} days of Pro from referrals</div>`:''}</div>
+    <div style="font-size:11.5px;color:var(--sub);line-height:1.5"><strong style="color:var(--txt)">Refer friends, you both get free Pro.</strong> Each friend who joins with your link gives you <strong style="color:var(--ind)">5 days of Pro</strong> — and they get 3 days too. Hit 3 referrals for a <strong style="color:var(--ind)">+10-day bonus</strong>.${referralProActive()?`<div style="margin-top:4px;color:var(--grn);font-weight:700">✓ You have ${referralProDaysLeft()} days of Pro from referrals</div>`:''}</div>
   </div>
   <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Copied!','ok'))" data-url="${inviteUrl}" title="Click to copy">${inviteUrl}</div>
 </div>`;
