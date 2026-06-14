@@ -162,6 +162,16 @@ module.exports = async (req, res) => {
   const section = (q.section || '').toUpperCase();
   if (!TOPICS[section]) return res.status(400).json({ error: 'unknown section', valid: Object.keys(TOPICS) });
 
+  // Read-only quality peek: return a few stored questions for review.
+  if (q.peek) {
+    if (!admin.apps.length) return res.status(500).json({ error: 'firebase not configured' });
+    const snap = await admin.firestore().collection('questionBank').doc(section).collection('topics').get();
+    let all = [];
+    snap.forEach(d => { const dd = d.data() || {}; (dd.questions || []).forEach(x => all.push({ topic: dd.topic, ...x })); });
+    const sample = all.sort(() => Math.random() - 0.5).slice(0, Math.min(parseInt(q.peek, 10) || 3, 12));
+    return res.json({ section, total: all.length, topics: snap.size, sample });
+  }
+
   const from = Math.max(0, parseInt(q.from, 10) || 0);
   const count = Math.max(1, Math.min(parseInt(q.count, 10) || 10, 20));
   const topics = TOPICS[section].slice(from, from + count);
