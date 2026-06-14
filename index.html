@@ -508,32 +508,31 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .dm-inbox-row.dm-unread .dm-inbox-preview{color:var(--txt);font-weight:600}
 .dm-inbox-time{font-size:10px;color:var(--mut);flex-shrink:0;align-self:flex-start;padding-top:2px}
 .dm-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--ind);flex-shrink:0;margin-left:auto}
-.dm-conv-hdr{padding:12px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surf)}
-.dm-conv-msgs{flex:1;overflow-y:auto;padding:12px 18px 4px;display:flex;flex-direction:column}
-.dm-date-sep{text-align:center;font-size:10px;font-weight:700;color:var(--mut);padding:14px 0 6px;position:relative;letter-spacing:.04em;text-transform:uppercase}
-.dm-date-sep::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--bdr)}
+.dm-conv-hdr{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surf);min-height:60px;box-sizing:border-box}
+.dm-conv-msgs{flex:1;overflow-y:auto;padding:16px 18px 8px;display:flex;flex-direction:column;gap:2px}
+.dm-msgs-spacer{flex:1 1 auto;min-height:4px}
+.dm-date-sep{text-align:center;font-size:10px;font-weight:700;color:var(--mut);padding:16px 0 10px;position:relative;letter-spacing:.05em;text-transform:uppercase}
+.dm-date-sep::before{content:'';position:absolute;left:0;right:0;top:calc(50% + 3px);height:1px;background:var(--bdr)}
 .dm-date-sep span{background:var(--bg);padding:0 12px;position:relative;z-index:1}
-.dm-group{display:flex;flex-direction:column;margin-bottom:8px}
+.dm-group{display:flex;flex-direction:column;margin-bottom:10px;max-width:100%}
 .dm-group.mine{align-items:flex-end}
-.dm-group.them{align-items:flex-start;padding-left:36px;position:relative}
-.dm-group-av{position:absolute;left:0;bottom:22px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
-.dm-sender-name{font-size:10px;font-weight:700;color:var(--mut);margin-bottom:3px;padding-left:2px}
-.dm-bubble{max-width:min(72%,480px);padding:9px 13px;border-radius:18px;font-size:14px;line-height:1.5;overflow-wrap:break-word;word-break:break-word;margin-bottom:2px;cursor:default}
-.dm-bubble-mine{background:var(--ind);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
-.dm-bubble-them{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr);border-bottom-left-radius:5px}
-.dm-bubble:last-of-type.dm-bubble-mine{border-bottom-right-radius:18px}
-.dm-bubble:last-of-type.dm-bubble-them{border-bottom-left-radius:18px}
-.dm-bubble:not(:last-of-type).dm-bubble-mine{border-bottom-right-radius:5px;border-top-right-radius:5px}
-.dm-bubble:not(:last-of-type).dm-bubble-them{border-bottom-left-radius:5px;border-top-left-radius:5px}
-.dm-group-meta{font-size:10px;color:var(--mut);margin-top:3px;padding:0 2px}
-.dm-group.mine .dm-group-meta{text-align:right}
+.dm-group.them{align-items:flex-start;padding-left:38px;position:relative}
+.dm-group-av{position:absolute;left:0;bottom:20px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.dm-sender-name{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:4px;padding-left:4px}
+.dm-bubble{max-width:min(74%,460px);padding:9px 14px;border-radius:20px;font-size:14px;line-height:1.45;overflow-wrap:break-word;word-break:break-word;margin-bottom:3px;cursor:default;box-shadow:0 1px 1px rgba(0,0,0,.03)}
+.dm-bubble-mine{background:var(--ind);color:#fff}
+.dm-bubble-them{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr)}
+.dm-group.mine .dm-bubble:last-child{border-bottom-right-radius:6px}
+.dm-group.them .dm-bubble:last-child{border-bottom-left-radius:6px}
+.dm-group-meta{font-size:10px;color:var(--mut);margin-top:2px;padding:0 6px}
 .dm-system{text-align:center;font-size:11px;color:var(--mut);font-style:italic;padding:8px 0}
-.dm-empty-conv{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:40px;gap:10px}
-.dm-comp{flex-shrink:0;padding:10px 18px 14px;border-top:1px solid var(--bdr);background:var(--surf);display:flex;align-items:flex-end;gap:8px}
-.dm-comp-inp{flex:1;padding:10px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:22px;color:var(--txt);font-size:14px;outline:none;resize:none;line-height:1.45;font-family:inherit;transition:border .15s;max-height:120px;overflow-y:auto}
+.dm-empty-conv{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:40px;gap:8px}
+.dm-comp{flex-shrink:0;padding:12px 16px;background:var(--surf);display:flex;align-items:flex-end;gap:10px;border-top:1px solid var(--bdr)}
+.dm-comp-inp{flex:1;padding:10px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:22px;color:var(--txt);font-size:14px;outline:none;resize:none;line-height:1.45;font-family:inherit;transition:border .15s;max-height:120px;overflow-y:auto;box-sizing:border-box}
 .dm-comp-inp:focus{border-color:var(--ind)}
-.dm-comp-send{width:38px;height:38px;border-radius:50%;background:var(--ind);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .15s,transform .1s;line-height:1}
-.dm-comp-send:hover{opacity:.85;transform:scale(1.06)}
+.dm-comp-send{width:40px;height:40px;border-radius:50%;background:var(--ind);border:none;color:#fff;font-size:19px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .15s,transform .1s,background .15s;line-height:1}
+.dm-comp-send:hover{opacity:.92;transform:scale(1.06)}
+.dm-comp-send:disabled{background:var(--bdr);cursor:default;transform:none;opacity:1}
 .dm-new-btn{width:30px;height:30px;border-radius:50%;background:var(--ind);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
 .dm-new-btn:hover{opacity:.85}
 /* ── CLUB CHAT ── */
@@ -3862,7 +3861,7 @@ window.addEventListener('popstate', function(e){
   else if(view==='activityPage' && AUTH && S){ _renderActivityPage(e.state.actId); }
   else if(view==='clubPage' && AUTH && S){ _renderClubPage(e.state.clubId); }
   else if(view==='messagesPage' && AUTH && S){
-    if(e.state.convId){ _renderMessagesPage(e.state.convId,e.state.otherUserId,e.state.displayName,e.state.displayColor,e.state.displayInitials); }
+    if(e.state.openConv){ _renderMessagesPage(e.state.openConv); }
     else { _renderMessagesPage(); }
   }
   else if(view==='app' && AUTH && S){ renderApp(); if(e.state?.fromTab)switchTab(e.state.fromTab); }
@@ -8389,27 +8388,30 @@ function _dmTimeStr(ts){
   return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 }
 
-function _renderMsgsDM(areaId, msgs, convId){
+function _renderMsgsDM(areaId, msgs, channelId, opts){
   const area=document.getElementById(areaId); if(!area)return;
+  opts=opts||{};
+  const collection=opts.collection||'conversations';
+  const isGroup=!!opts.isGroup; // club group chat: always show sender names for others
   if(!msgs||!msgs.length){
-    area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:48px">👋</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Start the conversation</div><div style="font-size:12px;color:var(--mut)">Send the first message below</div></div>`;
+    area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:46px">${isGroup?'👥':'👋'}</div><div style="font-size:14px;font-weight:700;color:var(--txt)">${isGroup?'No messages yet':'Start the conversation'}</div><div style="font-size:12px;color:var(--mut)">Say hello below 👇</div></div>`;
+    area.scrollTop=area.scrollHeight;
     return;
   }
-  // Build groups: date separators + sender groups
-  const output=[];
+  // spacer pushes short conversations to the bottom (standard chat behavior)
+  const output=['<div class="dm-msgs-spacer"></div>'];
   let lastDayLabel=null;
   let currentGroup=null; // {isMine, from, name, initials, color, msgs:[]}
 
   const flushGroup=()=>{
     if(!currentGroup||!currentGroup.msgs.length)return;
     const g=currentGroup;
-    const lastMsg=g.msgs[g.msgs.length-1];
-    const timeStr=_dmTimeStr(lastMsg.ts);
-    const canDelLast=g.isMine&&lastMsg.id;
+    const timeStr=_dmTimeStr(g.msgs[g.msgs.length-1].ts);
 
     const bubbles=g.msgs.map((m,idx)=>{
       const canDel=g.isMine&&m.id;
-      const delHint=canDel?` oncontextmenu="event.preventDefault();if(confirm('Delete this message?'))deleteChatMessage('conversations','${convId}','${m.id}')"`:' ';
+      const isLast=idx===g.msgs.length-1;
+      const delHint=canDel?` oncontextmenu="event.preventDefault();if(confirm('Delete this message?'))deleteChatMessage('${collection}','${channelId}','${m.id}')"`:'';
       const cls=`dm-bubble ${g.isMine?'dm-bubble-mine':'dm-bubble-them'}`;
       return`<div class="${cls}" title="${_dmTimeStr(m.ts)}"${delHint}>${esc(m.text)}</div>`;
     }).join('');
@@ -8418,19 +8420,21 @@ function _renderMsgsDM(areaId, msgs, convId){
       output.push(`<div class="dm-group mine">${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
     } else {
       const av=`<div class="dm-group-av" style="background:${g.color}">${g.initials}</div>`;
-      output.push(`<div class="dm-group them">${av}${g.msgs.length>1?`<div class="dm-sender-name">${esc(g.name)}</div>`:''}${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
+      const showName=isGroup||g.msgs.length>1;
+      output.push(`<div class="dm-group them">${av}${showName?`<div class="dm-sender-name">${esc(g.name)}</div>`:''}${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
     }
     currentGroup=null;
   };
 
   msgs.forEach((msg,i)=>{
-    if(msg.isSystem||msg.from==='system'){
+    const from=msg.from||msg.author;
+    if(msg.isSystem||from==='system'){
       flushGroup();
-      output.push(`<div class="dm-system">— ${esc(msg.text||'')} —</div>`);
+      output.push(`<div class="dm-system">${esc(msg.text||'')}</div>`);
       return;
     }
-    const ts=msg.timestamp?.toDate?.()??new Date(msg.timestamp||Date.now());
-    const isMine=msg.from===AUTH?.uid;
+    const ts=msg.timestamp?.toDate?.()??new Date(msg.timestamp||msg.time||Date.now());
+    const isMine=from===AUTH?.uid||from==='you';
     const dayLabel=_dmDateLabel(ts);
     if(dayLabel!==lastDayLabel){
       flushGroup();
@@ -8438,12 +8442,13 @@ function _renderMsgsDM(areaId, msgs, convId){
       lastDayLabel=dayLabel;
     }
     const prev=i>0?msgs[i-1]:null;
-    const prevTs=prev?.timestamp?.toDate?.()??new Date(prev?.timestamp||0);
-    const sameGroup=prev&&!prev.isSystem&&prev.from===msg.from&&(ts-prevTs)<5*60*1000;
+    const prevFrom=prev?(prev.from||prev.author):null;
+    const prevTs=prev?(prev.timestamp?.toDate?.()??new Date(prev.timestamp||prev.time||0)):0;
+    const sameGroup=prev&&!prev.isSystem&&prevFrom===from&&(ts-prevTs)<5*60*1000;
     if(!sameGroup){
       flushGroup();
-      const {name,initials,color}=_fbMsgAuthorInfo(msg.from);
-      currentGroup={isMine,from:msg.from,name,initials,color,msgs:[]};
+      const info=_fbMsgAuthorInfo(from);
+      currentGroup={isMine,from,name:info.name,initials:info.initials,color:info.color,msgs:[]};
     }
     currentGroup.msgs.push({...msg,ts,isMine});
   });
@@ -8452,49 +8457,76 @@ function _renderMsgsDM(areaId, msgs, convId){
   area.scrollTop=area.scrollHeight;
 }
 
-function _renderConvPanel(convId, otherUserId, displayName, displayColor, displayInitials){
+// Unified conversation panel — handles both DMs (kind:'dm') and study clubs (kind:'club').
+let _activeConvOpts=null;
+async function _renderConvPanel(opts){
   _detachDMConvListener();
   const convPanel=document.getElementById('dm-conv-panel');
   if(!convPanel)return;
-  const isPartner=S.accountabilityPartner===otherUserId;
+  _activeConvOpts=opts;
+  const {kind,channelId,name,color,initials,otherUserId,icon,memberCount}=opts;
+  const collection=kind==='club'?'clubs':'conversations';
+  const isPartner=kind==='dm'&&S.accountabilityPartner===otherUserId;
+  const subtitle=kind==='club'?`${memberCount!=null?memberCount:'…'} member${memberCount===1?'':'s'}`:(isPartner?'Study Partner':'Direct Message');
+  const avatar=kind==='club'
+    ?`<div style="width:38px;height:38px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${icon||'👥'}</div>`
+    :`<div style="width:38px;height:38px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0">${initials}</div>`;
+  const rightBtn=kind==='club'
+    ?`<button class="btn btn-ghost btn-xs" onclick="openClubPage('${channelId}')" title="Open full club">Open Club</button>`
+    :(otherUserId?`<button class="btn btn-ghost btn-xs" onclick="openUserProfile('${otherUserId}')">Profile</button>`:'');
+
   convPanel.innerHTML=`
 <div class="dm-conv-hdr">
-  <button onclick="_showDMInbox()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--mut);padding:4px 6px;border-radius:8px;flex-shrink:0;display:none;transition:background-color .15s" id="dm-back-btn" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">←</button>
-  <div style="width:36px;height:36px;border-radius:50%;background:${displayColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${displayInitials}</div>
-  <div style="flex:1;min-width:0">
-    <div style="font-size:14px;font-weight:800;color:var(--txt)">${esc(displayName)}${isPartner?'<span style="font-size:10px;color:var(--ind);font-weight:700;margin-left:6px">Study Partner</span>':''}</div>
-    <div style="font-size:11px;color:var(--mut)">Direct Message</div>
+  <button onclick="_showDMInbox()" id="dm-back-btn" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--mut);padding:2px 6px;border-radius:8px;flex-shrink:0;display:none;line-height:1;transition:background-color .15s" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">←</button>
+  ${avatar}
+  <div style="flex:1;min-width:0;cursor:${kind==='club'?'pointer':'default'}" ${kind==='club'?`onclick="openClubPage('${channelId}')"`:''}>
+    <div style="font-size:15px;font-weight:800;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}${isPartner?'<span style="font-size:10px;color:var(--ind);font-weight:700;margin-left:6px;vertical-align:middle">Study Partner</span>':''}</div>
+    <div style="font-size:11px;color:var(--mut)">${subtitle}</div>
   </div>
-  ${otherUserId?`<button class="btn btn-ghost btn-xs" onclick="openUserProfile('${otherUserId}')">Profile</button>`:''}
+  ${rightBtn}
 </div>
-<div id="dm-msgs-area" class="dm-conv-msgs"><div class="dm-system" style="padding-top:20px">Loading…</div></div>
+<div id="dm-msgs-area" class="dm-conv-msgs"><div class="dm-system" style="margin-top:auto;margin-bottom:auto">Loading…</div></div>
 <div class="dm-comp">
-  <textarea id="dm-inp-${convId}" class="dm-comp-inp" rows="1" placeholder="Message ${esc(displayName)}…"
-    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();_sendDM('${convId}')}"
-    oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-  <button class="dm-comp-send" onclick="_sendDM('${convId}')" title="Send">↑</button>
+  <textarea id="dm-inp-${channelId}" class="dm-comp-inp" rows="1" placeholder="Message ${kind==='club'?esc(name):esc(name)}…"
+    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();_sendConvMessage('${kind}','${channelId}')}"
+    oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';document.getElementById('dm-send-${channelId}').disabled=!this.value.trim()"></textarea>
+  <button class="dm-comp-send" id="dm-send-${channelId}" onclick="_sendConvMessage('${kind}','${channelId}')" title="Send" disabled>↑</button>
 </div>`;
 
-  // Show back button on mobile
   if(window.innerWidth<720){
     const btn=document.getElementById('dm-back-btn');
     if(btn)btn.style.display='';
   }
 
-  if(firebaseDb){
-    const msgsRef=firebaseDb.collection('conversations').doc(convId).collection('messages').orderBy('timestamp','asc').limitToLast(150);
-    _dmConvUnsub=msgsRef.onSnapshot(snap=>{
-      _renderMsgsDM('dm-msgs-area',snap.docs.map(d=>({...d.data(),id:d.id})),convId);
-      try{localStorage.setItem('pf2-lr-'+convId,Date.now());}catch(e){}
-    },err=>{
-      const el=document.getElementById('dm-msgs-area');
-      if(el)el.innerHTML=`<div class="dm-system">— ${err.code==='permission-denied'?'Firestore rules needed — ask admin':'Could not load messages'} —</div>`;
-    });
-  } else {
+  if(!firebaseDb){
     const el=document.getElementById('dm-msgs-area');
-    if(el)el.innerHTML='<div class="dm-system">— No connection —</div>';
+    if(el)el.innerHTML='<div class="dm-system">No connection</div>';
+    return;
   }
-  setTimeout(()=>document.getElementById('dm-inp-'+convId)?.focus(),100);
+
+  // For DMs, ensure the parent conversation doc exists BEFORE listening, otherwise
+  // the message read rule (which get()s the parent's participants) denies the read.
+  if(kind==='dm'&&AUTH){
+    try{
+      const ref=firebaseDb.collection('conversations').doc(channelId);
+      const snap=await ref.get();
+      if(!snap.exists){
+        await ref.set({participants:channelId.split('__dm__').sort(),lastMessage:'',lastAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+    }catch(e){ /* listener will surface any real error */ }
+  }
+  // Bail if the user navigated away during the await
+  if(_activeConvOpts!==opts)return;
+
+  const msgsRef=firebaseDb.collection(collection).doc(channelId).collection('messages').orderBy('timestamp','asc').limitToLast(150);
+  _dmConvUnsub=msgsRef.onSnapshot(snap=>{
+    _renderMsgsDM('dm-msgs-area',snap.docs.map(d=>({...d.data(),id:d.id})),channelId,{collection,isGroup:kind==='club'});
+    try{localStorage.setItem('pf2-lr-'+channelId,Date.now());}catch(e){}
+  },err=>{
+    const el=document.getElementById('dm-msgs-area');
+    if(el)el.innerHTML=`<div class="dm-system">${err.code==='permission-denied'?'Messaging needs Firestore rules published.':'Could not load messages ('+err.code+')'}</div>`;
+  });
+  setTimeout(()=>document.getElementById('dm-inp-'+channelId)?.focus(),100);
 }
 
 function _openDMFromInbox(convId, otherUid){
@@ -8506,27 +8538,39 @@ function _openDMFromInbox(convId, otherUid){
   openConversationPage(convId, otherUid, name, color, initials);
 }
 
-function openConversationPage(convId, otherUserId, displayName, displayColor, displayInitials){
-  _activeDMConvId=convId;
-  try{localStorage.setItem('pf2-lr-'+convId,Date.now());}catch(e){}
-  // If already on messages page, just update the conv panel
+// Generic open: routes to the conv panel if the messages page is mounted, otherwise
+// navigates to the messages page with the conversation open.
+function _openConv(opts){
+  _activeDMConvId=opts.channelId;
+  try{localStorage.setItem('pf2-lr-'+opts.channelId,Date.now());}catch(e){}
   const inboxPanel=document.getElementById('dm-inbox-panel');
   if(inboxPanel){
     if(window.innerWidth<720){inboxPanel.style.display='none';}
     const convPanel=document.getElementById('dm-conv-panel');
     if(convPanel)convPanel.style.display='flex';
-    _renderConvPanel(convId,otherUserId,displayName,displayColor,displayInitials);
-    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===convId));
+    _renderConvPanel(opts);
+    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===opts.channelId));
     return;
   }
-  // Navigate to messages page
-  history.pushState({view:'messagesPage',convId,otherUserId,displayName,displayColor,displayInitials,fromTab:currentTab},'','/messages');
-  document.title=displayName+' — Messages — Ledger';
-  _renderMessagesPage(convId,otherUserId,displayName,displayColor,displayInitials);
+  history.pushState({view:'messagesPage',openConv:opts,fromTab:currentTab},'','/messages');
+  document.title=(opts.name||'Messages')+' — Ledger';
+  _renderMessagesPage(opts);
+}
+
+function openConversationPage(convId, otherUserId, displayName, displayColor, displayInitials){
+  _openConv({kind:'dm',channelId:convId,otherUserId,name:displayName,color:displayColor,initials:displayInitials});
+}
+
+function openClubInDMCenter(clubId){
+  const club=(S.clubs||[]).find(c=>c.id===clubId);
+  if(!club){ openClubPage(clubId); return; }
+  if(club.isDM){ openClubChat(clubId); return; }
+  _openConv({kind:'club',channelId:clubId,name:club.name,icon:club.icon,memberCount:(club.members||[]).length});
 }
 
 function _showDMInbox(){
   _activeDMConvId=null;
+  _activeConvOpts=null;
   _detachDMConvListener();
   const inboxPanel=document.getElementById('dm-inbox-panel');
   const convPanel=document.getElementById('dm-conv-panel');
@@ -8540,20 +8584,35 @@ function _showDMInbox(){
   document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.remove('active'));
 }
 
-async function _sendDM(convId){
-  const inp=document.getElementById('dm-inp-'+convId);
+async function _sendConvMessage(kind, channelId){
+  const inp=document.getElementById('dm-inp-'+channelId);
   const text=inp?.value?.trim();
-  if(!text||!AUTH)return;
+  if(!text){ return; }
+  if(!AUTH){ showToast('Sign in to send messages','err'); return; }
+  if(!firebaseDb){ showToast('No connection','err'); return; }
+  const sendBtn=document.getElementById('dm-send-'+channelId);
   inp.value='';inp.style.height='auto';
+  if(sendBtn)sendBtn.disabled=true;
   try{
-    const convRef=firebaseDb.collection('conversations').doc(convId);
-    await convRef.set({participants:convId.split('__dm__').sort(),lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-    await convRef.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    if(kind==='club'){
+      const ref=firebaseDb.collection('clubs').doc(channelId);
+      await ref.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+      await ref.set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    } else {
+      const ref=firebaseDb.collection('conversations').doc(channelId);
+      await ref.set({participants:channelId.split('__dm__').sort(),lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      await ref.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    }
   }catch(e){
-    if(inp)inp.value=text;
-    showToast(e.code==='permission-denied'?'Firestore rules needed':'Failed to send','err');
+    if(inp){inp.value=text;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
+    if(sendBtn)sendBtn.disabled=false;
+    if(e.code==='permission-denied'){ showToast('Publish Firestore rules to enable messaging','err'); }
+    else if(e.code==='unavailable'){ showToast('Offline — will send when reconnected','info'); }
+    else { showToast('Could not send ('+(e.code||'error')+')','err'); }
   }
 }
+// Back-compat shim
+function _sendDM(convId){ return _sendConvMessage('dm',convId); }
 
 async function openDirectMessage(userId, displayName, displayInitials){
   if(!AUTH){ showToast('Sign in to message users','err'); return; }
@@ -9241,7 +9300,7 @@ function closeMessagesPage(){
   else { renderApp(); if(history.state?.fromTab) switchTab(history.state.fromTab); }
 }
 
-async function _renderMessagesPage(openConvId, openOtherUid, openName, openColor, openInitials){
+async function _renderMessagesPage(openConv){
   _mountPageShell('messages-page-content');
   const el=document.getElementById('messages-page-content');
   el.style.padding='0';el.style.maxWidth='none';
@@ -9302,7 +9361,7 @@ async function _renderMessagesPage(openConvId, openOtherUid, openName, openColor
     const preview=lastMsgObj?(lastMsgObj.author==='you'?'You: ':'')+lastMsgObj.text:'No messages yet';
     const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+c.id)||'0',10);
     const hasUnread=!!(lastMsgObj&&lastMsgObj.author!=='you'&&new Date(lastMsgObj.time).getTime()>lastReadMs);
-    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${c.id}" onclick="openClubPage('${c.id}')">
+    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${esc(c.id)}" onclick="openClubInDMCenter('${esc(c.id)}')">
       <div style="width:42px;height:42px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${c.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
@@ -9339,13 +9398,13 @@ async function _renderMessagesPage(openConvId, openOtherUid, openName, openColor
   :`<div style="padding:32px 16px;text-align:center"><div style="font-size:40px;margin-bottom:12px">💬</div><div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px">No messages yet</div><div style="font-size:11px;color:var(--mut)">Find someone to message in Explore</div><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="switchTab('explore')">Find People →</button></div>`}
 </div>`;
 
-  // If a specific conv was requested, open it
-  if(openConvId){
-    _renderConvPanel(openConvId,openOtherUid,openName,openColor,openInitials);
+  // If a specific conversation was requested, open it
+  if(openConv){
+    _renderConvPanel(openConv);
     if(window.innerWidth<720){
       document.getElementById('dm-inbox-panel').style.display='none';
     }
-    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===openConvId));
+    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===openConv.channelId));
   } else if(window.innerWidth<720){
     document.getElementById('dm-conv-panel').style.display='none';
   }
