@@ -14393,6 +14393,7 @@ function generateAIPlan(settings){
     phases,
     days,
     blockedDates:[],
+    timeOff:[],
   };
   saveState();
 }
@@ -14401,9 +14402,28 @@ function generateAIPlan(settings){
 // Redistributes the study hours from blocked/upcoming days across the remaining
 // available study days so the user never falls "behind" — the plan flexes to fit
 // real life instead of forcing a restart.
+// Full set of blocked dates = single-day toggles + every day inside a labeled
+// time-off range ("Vacation at the beach", etc.).
+function _planBlockedSet(plan){
+  const set=new Set(plan.blockedDates||[]);
+  (plan.timeOff||[]).forEach(t=>{
+    if(!t.start) return;
+    const end=t.end||t.start;
+    let d=new Date(t.start+'T12:00:00'); const e=new Date(end+'T12:00:00');
+    let guard=0;
+    while(d<=e && guard<400){ set.add(d.toISOString().slice(0,10)); d.setDate(d.getDate()+1); guard++; }
+  });
+  return set;
+}
+// The labeled time-off range (if any) covering a given date.
+function _planDayLabel(plan,dateStr){
+  const t=(plan.timeOff||[]).find(t=>{const e=t.end||t.start;return t.start&&dateStr>=t.start&&dateStr<=e;});
+  return t?(t.label||'Time off'):'';
+}
+
 function rebalanceStudyPlan(){
   const plan=S.aiStudyPlan; if(!plan) return;
-  const blocked=new Set(plan.blockedDates||[]);
+  const blocked=_planBlockedSet(plan);
   const todayStr=new Date().toISOString().slice(0,10);
   const baseH=d=>(d.baseHours!=null?d.baseHours:d.hours)||0;
   const isBase=d=>(d.isStudyBase!=null?d.isStudyBase:d.isStudy);
@@ -14444,7 +14464,8 @@ function toggleBlockDay(dateStr){
 
   // Honest feedback about what just happened to the plan.
   const todayStr=new Date().toISOString().slice(0,10);
-  const recip=plan.days.filter(d=>d.date>=todayStr && (d.isStudyBase!=null?d.isStudyBase:d.isStudy) && !(plan.blockedDates||[]).includes(d.date));
+  const blockedNow=_planBlockedSet(plan);
+  const recip=plan.days.filter(d=>d.date>=todayStr && (d.isStudyBase!=null?d.isStudyBase:d.isStudy) && !blockedNow.has(d.date));
   const maxed=recip.length && recip.every(d=>d.hours>=8);
   if(blocking){
     showToast(maxed
@@ -14453,6 +14474,77 @@ function toggleBlockDay(dateStr){
   } else {
     showToast('Day reopened — plan rebalanced','ok');
   }
+}
+
+// ── LABELED TIME OFF (Step 3.5) — block a range like a real calendar ──────────
+function openTimeOffModal(){
+  const plan=S.aiStudyPlan; if(!plan) return;
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('timeoff-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='timeoff-modal';
+  el.style.cssText='position:fixed;inset:0;z-index:1600;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  const ranges=(plan.timeOff||[]).slice().sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+  const fmt=ds=>new Date(ds+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const existing=ranges.length?`<div style="margin-top:18px;border-top:1px solid var(--bdr);padding-top:14px">
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px">Your time off</div>
+    ${ranges.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf2);border-radius:10px;margin-bottom:8px">
+      <span style="font-size:16px;flex-shrink:0">✈️</span>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(t.label||'Time off').replace(/</g,'&lt;')}</div>
+      <div style="font-size:11px;color:var(--mut)">${fmt(t.start)}${(t.end&&t.end!==t.start)?' – '+fmt(t.end):''}</div></div>
+      <button onclick="removeTimeOff('${t.id}')" style="background:transparent;border:1px solid var(--bdr);border-radius:8px;color:var(--mut);width:28px;height:28px;cursor:pointer;flex-shrink:0;font-size:14px">×</button>
+    </div>`).join('')}
+  </div>`:'';
+  el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;box-shadow:0 24px 80px rgba(0,0,0,.3);overflow:hidden">
+    <div style="padding:20px 22px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:17px;font-weight:900;letter-spacing:-.02em">✈️ Add time off</div>
+        <button onclick="document.getElementById('timeoff-modal').remove()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub)">×</button>
+      </div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:16px">Block out vacation, work crunch, or any days you can't study. Your plan reshuffles those hours across the rest of your schedule.</div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">What's the occasion?</label>
+      <input id="timeoff-label" type="text" placeholder="e.g. Vacation at the beach 🏖️" maxlength="60" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;margin-bottom:14px">
+      <div style="display:flex;gap:10px;margin-bottom:4px">
+        <div style="flex:1">
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">From</label>
+          <input id="timeoff-start" type="date" min="${today}" value="${today}" onchange="if(document.getElementById('timeoff-end').value<this.value)document.getElementById('timeoff-end').value=this.value;document.getElementById('timeoff-end').min=this.value" style="width:100%;box-sizing:border-box;padding:9px 10px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none">
+        </div>
+        <div style="flex:1">
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">To</label>
+          <input id="timeoff-end" type="date" min="${today}" value="${today}" style="width:100%;box-sizing:border-box;padding:9px 10px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none">
+        </div>
+      </div>
+      <button onclick="saveTimeOff()" style="width:100%;margin-top:16px;padding:13px;background:linear-gradient(135deg,var(--ind),var(--pur));color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">Add to my plan</button>
+      ${existing}
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+}
+
+function saveTimeOff(){
+  const plan=S.aiStudyPlan; if(!plan) return;
+  const start=(document.getElementById('timeoff-start')||{}).value||'';
+  let end=(document.getElementById('timeoff-end')||{}).value||start;
+  const label=((document.getElementById('timeoff-label')||{}).value||'').trim()||'Time off';
+  if(!start){ showToast('Pick a start date','err'); return; }
+  if(end<start) end=start;
+  plan.timeOff=plan.timeOff||[];
+  plan.timeOff.push({id:'to_'+Date.now(), start, end, label});
+  rebalanceStudyPlan();
+  document.getElementById('timeoff-modal')?.remove();
+  if(currentTab==='plan') renderTab();
+  showToast('Time off added — your plan adapted around it 🔄','ok');
+}
+
+function removeTimeOff(id){
+  const plan=S.aiStudyPlan; if(!plan) return;
+  plan.timeOff=(plan.timeOff||[]).filter(t=>t.id!==id);
+  rebalanceStudyPlan();
+  document.getElementById('timeoff-modal')?.remove();
+  document.getElementById('plan-day-modal')?.remove();
+  if(currentTab==='plan') renderTab();
+  showToast('Time off removed — plan rebalanced','ok');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -14757,10 +14849,11 @@ function _buildPlanCalendar(plan){
         <div style="font-size:10px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
         <div style="font-size:10px;color:var(--mut)">${d.hours}h${d.isLong?' 🔥':''}</div>`;
     }else if(d&&d.blocked){
+      const lbl=_planDayLabel(plan,cellStr);
       bg='var(--surf2)';border=isToday?'2px solid var(--ora)':'1px dashed var(--bdr2)';
       inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px">✈️</div>
-        <div style="font-size:10px;color:var(--mut);margin-top:2px">Off</div>`;
+        <div style="font-size:9px;color:var(--mut);margin-top:2px;line-height:1.2;max-height:22px;overflow:hidden">${lbl?lbl.replace(/</g,'&lt;'):'Off'}</div>`;
     }else if(d&&!d.isStudy){
       inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;opacity:.35">🛌</div>
@@ -14835,9 +14928,12 @@ function _buildPlanCalendar(plan){
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
           <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
         </div>
-        <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length?` · ✈️ ${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length} day${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length>1?'s':''} off`:''}</p>
+        <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete${(()=>{const n=[..._planBlockedSet(plan)].filter(bd=>bd>=todayStr).length;return n?` · ✈️ ${n} day${n>1?'s':''} off`:'';})()}</p>
       </div>
-      <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;flex-shrink:0">⚙️ Edit &amp; Rebuild</button>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button onclick="openTimeOffModal()" style="padding:8px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">✈️ Add time off</button>
+        <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">⚙️ Edit &amp; Rebuild</button>
+      </div>
     </div>
 
     <!-- 2-col layout -->
@@ -14928,6 +15024,7 @@ function openPlanDayDetail(dateStr){
   const ex=day.isStudy&&EXAMS[day.section]?EXAMS[day.section]:{color:'var(--mut)',full:'Rest'};
   const m=day.isStudy?(ACTIVITY_MODES[day.mode]||ACTIVITY_MODES.new_material):ACTIVITY_MODES.rest;
   const todayStr=new Date().toISOString().slice(0,10);
+  const offRange=(plan.timeOff||[]).find(t=>{const e=t.end||t.start;return t.start&&dateStr>=t.start&&dateStr<=e;});
   document.getElementById('plan-day-modal')?.remove();
   const el=document.createElement('div');
   el.id='plan-day-modal';
@@ -14945,10 +15042,12 @@ function openPlanDayDetail(dateStr){
       ${day.blocked?`
         <div style="text-align:center;padding:14px 0 18px">
           <div style="font-size:40px;margin-bottom:10px">✈️</div>
-          <div style="font-size:14px;font-weight:800;margin-bottom:6px">Day Off</div>
-          <div style="font-size:12px;color:var(--mut);line-height:1.5">You marked this day unavailable. Its study hours were spread across your remaining days — you're still on track.</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:6px">${offRange?(offRange.label||'Time off').replace(/</g,'&lt;'):'Day Off'}</div>
+          <div style="font-size:12px;color:var(--mut);line-height:1.5">${offRange?'Part of your scheduled time off. Those study hours are spread across your remaining days — you\'re still on track.':'You marked this day unavailable. Its study hours were spread across your remaining days — you\'re still on track.'}</div>
         </div>
-        ${dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">↩️ Reopen this day</button>`:''}
+        ${offRange
+          ?`<button onclick="removeTimeOff('${offRange.id}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">🗑 Remove this time off</button>`
+          :dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">↩️ Reopen this day</button>`:''}
       `:day.isStudy?`
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
           <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${m.icon} ${m.label}</div>

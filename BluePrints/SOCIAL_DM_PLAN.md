@@ -20,7 +20,7 @@ Persist any changes here so the plan survives future clears.
 - [ ] **Step 9** — UNKNOWN (lost to context clear; confirm with user).
 - [x] **Step 10** — Full DM messaging center revamp + polish/send-fix. (commits bc4ace0, 174052f)
 
-- [ ] **Step 3.5** (added 2026-06-14, do right after Step 6) — Personalized calendar blocking. Upgrade the blocked-days feature (Step 3) into a real-calendar experience: let users select a *range* of days and add a **label/note** (e.g. "vacation at the beach", "work busy season"). Shows on the plan calendar like a normal calendar event, not just a silent ✈️. More personal than the per-day "life happens" button. Reuses rebalanceStudyPlan().
+- [x] **Step 3.5** — Personalized calendar blocking. SHIPPED. `plan.timeOff=[{id,start,end,label}]` labeled ranges alongside single-day `blockedDates`; `_planBlockedSet()` unions them and feeds `rebalanceStudyPlan()`. "✈️ Add time off" button in plan header → `openTimeOffModal()` (label + from/to date pickers + list of existing ranges with × to remove). Calendar cells show the label under ✈️; day-detail shows the label + "Remove this time off". `_planDayLabel()` resolves the covering range. (pending commit)
 
 ## Execution order (post-reorder)
 2 → 3 → 6 → 3.5 → 7 → 5 → 8 → 4. (Step 9 TBD.)
