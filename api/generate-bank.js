@@ -169,16 +169,23 @@ module.exports = async (req, res) => {
   const db = admin.firestore();
   const done = [];
   let totalQ = 0;
+  const CONCURRENCY = 4; // generate several topics in parallel to fit the function timeout
   try {
-    for (const topic of topics) {
-      const questions = await genTopic(section, topic);
-      if (!questions.length) { done.push({ topic, count: 0, skipped: true }); continue; }
-      const slug = slugify(topic);
-      await db.collection('questionBank').doc(section).collection('topics').doc(slug).set({
-        section, topic, slug, questions, count: questions.length, model: GEN_MODEL, generatedAt: Date.now(),
-      });
-      totalQ += questions.length;
-      done.push({ topic, slug, count: questions.length });
+    for (let i = 0; i < topics.length; i += CONCURRENCY) {
+      const batch = topics.slice(i, i + CONCURRENCY);
+      const results = await Promise.all(batch.map(async (topic) => {
+        try { return { topic, questions: await genTopic(section, topic) }; }
+        catch (e) { return { topic, error: e.message }; }
+      }));
+      for (const r of results) {
+        if (r.error || !r.questions || !r.questions.length) { done.push({ topic: r.topic, count: 0, skipped: true, error: r.error }); continue; }
+        const slug = slugify(r.topic);
+        await db.collection('questionBank').doc(section).collection('topics').doc(slug).set({
+          section, topic: r.topic, slug, questions: r.questions, count: r.questions.length, model: GEN_MODEL, generatedAt: Date.now(),
+        });
+        totalQ += r.questions.length;
+        done.push({ topic: r.topic, slug, count: r.questions.length });
+      }
     }
 
     // Refresh the section meta doc from whatever topics now exist.
