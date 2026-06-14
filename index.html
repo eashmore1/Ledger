@@ -11763,8 +11763,31 @@ function _launchAIQuiz(section, questions, topic){
   _renderQuiz();
 }
 
-function openQuizModal(section, type) {
-  // AI sets aren't in the static bank — replay the last generated set (free), or generate anew.
+// ── CACHED QUESTION BANK (Step 6) — pre-generated bank read from Firestore ────
+// "Generate once, cache forever": the bank is built one time by /api/generate-bank
+// and stored in Firestore. Serving is just a database read, cached per session.
+let _qbBankCache = {}; // section -> {questions:[...], loadedAt}
+async function loadQuestionBank(section){
+  const cached=_qbBankCache[section];
+  if(cached && cached.questions) return cached.questions;
+  if(!firebaseDb) return [];
+  try{
+    const snap=await firebaseDb.collection('questionBank').doc(section).collection('topics').get();
+    let questions=[];
+    snap.forEach(d=>{ const dd=d.data()||{}; if(Array.isArray(dd.questions)) questions=questions.concat(dd.questions); });
+    _qbBankCache[section]={questions,loadedAt:Date.now()};
+    return questions;
+  }catch(e){ console.warn('[Ledger] question bank load failed:',e.message); _qbBankCache[section]={questions:[],loadedAt:Date.now()}; return []; }
+}
+function _showQuizLoading(section){
+  let overlay=document.getElementById('quiz-overlay');
+  if(!overlay){ overlay=document.createElement('div'); overlay.id='quiz-overlay'; overlay.style.cssText='position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;animation:fadeIn .2s ease'; document.body.appendChild(overlay); }
+  overlay.style.display='block';
+  overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="font-size:56px;margin-bottom:20px;display:inline-block;animation:spin 1.4s linear infinite">📚</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
+}
+
+async function openQuizModal(section, type) {
+  // AI custom sets aren't in the bank — replay the last generated set (free), or generate anew.
   if (type === 'ai') {
     if (_lastAIQuiz && _lastAIQuiz.section === section && _lastAIQuiz.questions.length) {
       _launchAIQuiz(section, _lastAIQuiz.questions, _lastAIQuiz.topic);
@@ -11775,18 +11798,27 @@ function openQuizModal(section, type) {
   }
   if (!isPro() && type !== 'mcq') { openUpgradeModal('Question Bank — ' + type); return; }
 
-  const allQs = QB_QUESTIONS[section] || [];
-  if (!allQs.length) { showToast('Questions coming soon for ' + section, 'info'); return; }
+  // Primary source = the pre-generated bank (random, curated, free to serve).
+  // Falls back to the built-in static set until the bank is populated.
+  let bank = (_qbBankCache[section] || {}).questions;
+  if (bank === undefined && firebaseDb) { _showQuizLoading(section); bank = await loadQuestionBank(section); }
+  const pool = (bank && bank.length) ? bank : (QB_QUESTIONS[section] || []);
+  if (!pool.length) { closeQuizOverlay(); showToast('Questions coming soon for ' + section, 'info'); return; }
 
-  // Build question set based on type
-  let qs = [];
-  if (type === 'mcq') {
-    qs = isPro() ? [...allQs] : allQs.slice(0, 5);
-  } else if (type === 'timed') {
-    qs = [...allQs].sort(function(){ return Math.random() - 0.5; }).slice(0, 10);
-  } else if (type === 'random') {
-    qs = [...allQs].sort(function(){ return Math.random() - 0.5; });
+  const elite = isElite(), pro = isPro();
+  // Per-attempt size by type, then capped by tier: Free taster / Pro daily quota / Elite full.
+  const want = type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20;
+  let cap;
+  if (!pro) cap = 5;
+  else if (elite) cap = Math.min(want, pool.length);
+  else {
+    const rem = _aiQbQuota(section).remaining;
+    if (rem <= 0) { closeQuizOverlay(); showToast("You've used today's " + AI_QB_PRO_DAILY + " " + section + " questions — resets in 24h, or go Elite for unlimited.", 'info'); return; }
+    cap = Math.min(want, rem);
   }
+
+  const qs = [...pool].sort(function(){ return Math.random() - 0.5; }).slice(0, Math.max(1, Math.min(cap, pool.length)));
+  if (pro && !elite) _aiQbConsume(section, qs.length); // bank reads are free, but Pro is metered to 20/section/day
 
   _quiz = {
     active: true, section, type,
@@ -11988,6 +12020,7 @@ function _finishQuiz() {
 function openQBSection(code) {
   const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
   if (!sec) return;
+  if (firebaseDb) loadQuestionBank(code); // warm the cache so practice starts instantly
   const pro = isPro();
   const elite = isElite();
   const quota = _aiQbQuota(code);
