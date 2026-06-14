@@ -5515,10 +5515,13 @@ function _buildDashProgress(){
       </div>
       <div class="pc-right">
         <div class="pc-right-label" style="font-size:10px;color:var(--mut)">Exam Date</div>
-        <div style="position:relative;display:inline-flex;align-items:center;gap:4px;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:4px 8px;cursor:pointer" title="Click to change exam date">
-          <span style="font-size:12px;font-weight:700;color:${targetDate?'var(--txt)':'var(--mut)'};pointer-events:none;white-space:nowrap">${targetDate?new Date(targetDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Set date'}</span>
-          <span style="font-size:11px;color:var(--mut);pointer-events:none">✎</span>
-          <input type="date" value="${targetDate||''}" onchange="setPacingTargetDate('${s}',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%">
+        <div style="display:inline-flex;align-items:center;gap:4px">
+          <div style="position:relative;display:inline-flex;align-items:center;gap:4px;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:4px 8px;cursor:pointer" title="Click to change exam date">
+            <span style="font-size:12px;font-weight:700;color:${targetDate?'var(--txt)':'var(--mut)'};pointer-events:none;white-space:nowrap">${targetDate?new Date(targetDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Set date'}</span>
+            <span style="font-size:11px;color:var(--mut);pointer-events:none">✎</span>
+            <input type="date" value="${targetDate||''}" onchange="setPacingTargetDate('${s}',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%">
+          </div>
+          ${targetDate?`<button onclick="setPacingTargetDate('${s}','')" title="Remove date" style="width:18px;height:18px;border-radius:50%;border:1px solid var(--bdr);background:var(--surf2);color:var(--mut);font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0">×</button>`:''}
         </div>
         <select onchange="updateSectionStatus('${s}',this.value)" style="margin-top:6px;padding:3px 6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;outline:none;cursor:pointer">
           <option value="planned"${status==='planned'?' selected':''}>Planned</option>
