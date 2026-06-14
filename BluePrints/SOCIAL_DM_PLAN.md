@@ -6,7 +6,7 @@ Persist any changes here so the plan survives future clears.
 ## Status
 - [x] **Step 1** — Strengthen social: Study Crew onboarding card, partner check-in DM, unread dots, partner Elite→Pro. (commit 2c149ce)
 - [x] **Step 2** — Readiness + burnout detection. `buildBurnoutCheckIn()` compares this week's hours/sessions/active-days vs a 3-week baseline; gentle "Just checking in" (pulling back) or "You've been going hard" (10+ day streak / overwork) card on the dashboard. Dismissible with 7-day back-off. Never alarm-styled. (pending commit)
-- [ ] **Step 3** — Blocked days / adjustable study plan. "Life happens" — let users shift their plan without starting over. Big retention play.
+- [x] **Step 3** — Blocked days / adjustable study plan. In the Elite AI Study Plan: tap any upcoming day → "Can't study this day"; `rebalanceStudyPlan()` redistributes those hours across remaining study days (weighted by each day's `baseHours`, capped 8h) so the user never falls behind. Blocked days render ✈️ "Off", reopenable. Header shows "✈️ N days off". Works on pre-existing plans via baseHours/isStudyBase fallbacks. (pending commit)
 - [ ] **Step 6** — Content depth via AI question generation. DECIDED design:
   - **Cached bank**: one-time AI generation, stored in Firestore, free to serve from cache.
   - **Elite**: full cached bank, unlimited.

@@ -14212,7 +14212,9 @@ function generateAIPlan(settings){
       studyDayNum++;
     }
 
-    days.push({dayNum,date:dateStr,section:primarySec,mode,hours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,isLong:isStudy&&isLongDay,done:false});
+    // baseHours / isStudyBase are the immutable "intended" values — blocked-day
+    // rebalancing redistributes against these so repeated edits never drift.
+    days.push({dayNum,date:dateStr,section:primarySec,mode,hours:hrs,baseHours:hrs,phase:phase.n,phaseColor:phase.color,isStudy,isStudyBase:isStudy,isLong:isStudy&&isLongDay,blocked:false,done:false});
   }
 
   S.aiStudyPlan={
@@ -14227,8 +14229,67 @@ function generateAIPlan(settings){
     sectionStats,
     phases,
     days,
+    blockedDates:[],
   };
   saveState();
+}
+
+// ── BLOCKED DAYS (Step 3) — life happens; adapt the plan, don't break it ──────
+// Redistributes the study hours from blocked/upcoming days across the remaining
+// available study days so the user never falls "behind" — the plan flexes to fit
+// real life instead of forcing a restart.
+function rebalanceStudyPlan(){
+  const plan=S.aiStudyPlan; if(!plan) return;
+  const blocked=new Set(plan.blockedDates||[]);
+  const todayStr=new Date().toISOString().slice(0,10);
+  const baseH=d=>(d.baseHours!=null?d.baseHours:d.hours)||0;
+  const isBase=d=>(d.isStudyBase!=null?d.isStudyBase:d.isStudy);
+
+  // Hours pool to preserve = every upcoming study-weekday's intended hours
+  // (including the blocked ones — those are what we redistribute).
+  let poolHours=0;
+  plan.days.forEach(d=>{ if(d.date>=todayStr && isBase(d)) poolHours+=baseH(d); });
+
+  // Recipients = upcoming study weekdays that are NOT blocked.
+  const recip=plan.days.filter(d=>d.date>=todayStr && isBase(d) && !blocked.has(d.date));
+  const totalWeight=recip.reduce((s,d)=>s+baseH(d),0)||recip.length||1;
+
+  plan.days.forEach(d=>{
+    if(d.date<todayStr) return; // the past is fixed
+    if(blocked.has(d.date)){ d.blocked=true; d.isStudy=false; d.hours=0; return; }
+    d.blocked=false;
+    if(!isBase(d)){ d.isStudy=false; d.hours=0; return; } // genuine rest weekday
+    d.isStudy=true;
+    const w=totalWeight?baseH(d)/totalWeight:1/recip.length;
+    d.hours=Math.min(8,Math.max(1,parseFloat((poolHours*w).toFixed(1))));
+  });
+  plan.rebalancedAt=Date.now();
+  saveState();
+}
+
+function toggleBlockDay(dateStr){
+  const plan=S.aiStudyPlan; if(!plan) return;
+  plan.blockedDates=plan.blockedDates||[];
+  const i=plan.blockedDates.indexOf(dateStr);
+  const blocking=i<0;
+  if(blocking) plan.blockedDates.push(dateStr);
+  else plan.blockedDates.splice(i,1);
+
+  rebalanceStudyPlan();
+  document.getElementById('plan-day-modal')?.remove();
+  if(currentTab==='plan') renderTab();
+
+  // Honest feedback about what just happened to the plan.
+  const todayStr=new Date().toISOString().slice(0,10);
+  const recip=plan.days.filter(d=>d.date>=todayStr && (d.isStudyBase!=null?d.isStudyBase:d.isStudy) && !(plan.blockedDates||[]).includes(d.date));
+  const maxed=recip.length && recip.every(d=>d.hours>=8);
+  if(blocking){
+    showToast(maxed
+      ? "Day off saved — remaining days are near max. Consider a later exam date. 📅"
+      : "Day off saved — those hours moved to your other days 🔄",'ok');
+  } else {
+    showToast('Day reopened — plan rebalanced','ok');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -14532,6 +14593,11 @@ function _buildPlanCalendar(plan){
         <div style="font-size:18px;line-height:1;margin-bottom:3px">${d.done?'✅':m.icon}</div>
         <div style="font-size:10px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
         <div style="font-size:10px;color:var(--mut)">${d.hours}h${d.isLong?' 🔥':''}</div>`;
+    }else if(d&&d.blocked){
+      bg='var(--surf2)';border=isToday?'2px solid var(--ora)':'1px dashed var(--bdr2)';
+      inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
+        <div style="font-size:18px">✈️</div>
+        <div style="font-size:10px;color:var(--mut);margin-top:2px">Off</div>`;
     }else if(d&&!d.isStudy){
       inner=`<div style="font-size:10px;font-weight:${isToday?900:600};color:var(--mut);margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;opacity:.35">🛌</div>
@@ -14606,7 +14672,7 @@ function _buildPlanCalendar(plan){
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
           <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
         </div>
-        <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete</p>
+        <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length?` · ✈️ ${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length} day${(plan.blockedDates||[]).filter(bd=>bd>=todayStr).length>1?'s':''} off`:''}</p>
       </div>
       <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;flex-shrink:0">⚙️ Edit &amp; Rebuild</button>
     </div>
@@ -14625,8 +14691,9 @@ function _buildPlanCalendar(plan){
         <!-- Mode legend -->
         <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
           ${Object.entries(ACTIVITY_MODES).filter(([k])=>k!=='rest').map(([k,m])=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${m.icon} ${m.label}</div>`).join('')}
-          <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">✅ Done &nbsp;🛌 Rest</div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">✅ Done &nbsp;🛌 Rest &nbsp;✈️ Off</div>
         </div>
+        <div style="font-size:10px;color:var(--mut);margin-bottom:12px;font-style:italic">💡 Life happens — tap any upcoming day to mark it off. Your hours move to the rest of the plan automatically.</div>
         <!-- Day headers + grid -->
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px">${dayHdrs}</div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${cells.join('')}</div>
@@ -14712,7 +14779,14 @@ function openPlanDayDetail(dateStr){
         </div>
         <button onclick="document.getElementById('plan-day-modal').remove()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center">×</button>
       </div>
-      ${day.isStudy?`
+      ${day.blocked?`
+        <div style="text-align:center;padding:14px 0 18px">
+          <div style="font-size:40px;margin-bottom:10px">✈️</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:6px">Day Off</div>
+          <div style="font-size:12px;color:var(--mut);line-height:1.5">You marked this day unavailable. Its study hours were spread across your remaining days — you're still on track.</div>
+        </div>
+        ${dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">↩️ Reopen this day</button>`:''}
+      `:day.isStudy?`
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
           <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${m.icon} ${m.label}</div>
           <span class="badge badge-${day.section}">${day.section}</span>
@@ -14724,6 +14798,7 @@ function openPlanDayDetail(dateStr){
           ?`<div style="background:#10b98120;color:#10b981;border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
           :dateStr<=todayStr?`<button onclick="markPlanDayDone('${dateStr}');document.getElementById('plan-day-modal')?.remove()" style="width:100%;padding:11px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Done ✓</button>`
           :`<div style="background:var(--surf2);border-radius:10px;padding:10px;text-align:center;font-size:12px;color:var(--mut)">Upcoming — not yet</div>`}
+        ${dateStr>todayStr&&!day.done?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">🚫 Can't study this day — life happens</button>`:''}
       `:`
         <div style="text-align:center;padding:20px 0">
           <div style="font-size:40px;margin-bottom:10px">🛌</div>
