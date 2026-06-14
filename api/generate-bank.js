@@ -158,6 +158,36 @@ module.exports = async (req, res) => {
     return res.status(403).json({ error: 'forbidden' });
   }
   if (!admin.apps.length) return res.status(500).json({ error: 'firebase not configured' });
+
+  // ── UPLOAD MODE ── write pre-made questions straight to Firestore (no AI call).
+  // POST { section, topics: [{ topic, questions: [{q,choices,correct,exp}] }] }
+  if (req.method === 'POST') {
+    const body = req.body || {};
+    const section = (body.section || '').toUpperCase();
+    if (!SECTION_FULL[section]) return res.status(400).json({ error: 'unknown section' });
+    const incoming = Array.isArray(body.topics) ? body.topics
+      : (body.topic ? [{ topic: body.topic, questions: body.questions }] : []);
+    if (!incoming.length) return res.status(400).json({ error: 'no topics provided' });
+    const db = admin.firestore();
+    const written = [];
+    for (const t of incoming) {
+      const qs = (t.questions || []).map(normQ).filter(Boolean);
+      if (!qs.length) { written.push({ topic: t.topic, count: 0, skipped: true }); continue; }
+      const slug = slugify(t.topic || ('topic-' + (written.length + 1)));
+      await db.collection('questionBank').doc(section).collection('topics').doc(slug).set({
+        section, topic: t.topic, slug, questions: qs, count: qs.length, model: 'manual', generatedAt: Date.now(),
+      });
+      written.push({ topic: t.topic, slug, count: qs.length });
+    }
+    const snap = await db.collection('questionBank').doc(section).collection('topics').get();
+    let qCount = 0; const topicSlugs = [];
+    snap.forEach(d => { const dd = d.data(); qCount += (dd.count || 0); topicSlugs.push(dd.slug || d.id); });
+    await db.collection('questionBank').doc(section).set({
+      section, full: SECTION_FULL[section], topics: topicSlugs, topicCount: topicSlugs.length,
+      questionCount: qCount, updatedAt: Date.now(),
+    }, { merge: true });
+    return res.json({ ok: true, section, written, sectionTotal: qCount });
+  }
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'anthropic not configured' });
 
   const section = (q.section || '').toUpperCase();
