@@ -7,7 +7,7 @@ Persist any changes here so the plan survives future clears.
 - [x] **Step 1** — Strengthen social: Study Crew onboarding card, partner check-in DM, unread dots, partner Elite→Pro. (commit 2c149ce)
 - [x] **Step 2** — Readiness + burnout detection. `buildBurnoutCheckIn()` compares this week's hours/sessions/active-days vs a 3-week baseline; gentle "Just checking in" (pulling back) or "You've been going hard" (10+ day streak / overwork) card on the dashboard. Dismissible with 7-day back-off. Never alarm-styled. (pending commit)
 - [x] **Step 3** — Blocked days / adjustable study plan. In the Elite AI Study Plan: tap any upcoming day → "Can't study this day"; `rebalanceStudyPlan()` redistributes those hours across remaining study days (weighted by each day's `baseHours`, capped 8h) so the user never falls behind. Blocked days render ✈️ "Off", reopenable. Header shows "✈️ N days off". Works on pre-existing plans via baseHours/isStudyBase fallbacks. (pending commit)
-- [ ] **Step 6** — Content depth via AI question generation. DECIDED design:
+- [x] **Step 6** — Content depth via AI question generation. SHIPPED (core/6a). `generateAIQuestions(section,topic)` builds a prompt → existing `/api/ask` (Haiku) → `_fcParseJSON` → `_normAIQ` validation → feeds the existing quiz engine via `_launchAIQuiz`. Tiers via `_aiQbQuota`: Free=gate, Pro=20/section/24h (`S.aiQbUsage`), Elite=unlimited. Per-user cache in `S.aiQbCache` (free retries/replays). UI = ✦ card + optional topic input in the section modal. Verified live: API returns valid parseable question JSON. NOTE: shared Firestore "cached bank" deferred (6b) — per-user cache is fine at current scale + Haiku cost; revisit if usage grows. Server-side quota enforcement also deferred (client-side + ask.js 30/hr limiter for now). DECIDED design was:
   - **Cached bank**: one-time AI generation, stored in Firestore, free to serve from cache.
   - **Elite**: full cached bank, unlimited.
   - **Pro**: 20 MCQs per section per 24 hours (rate-limited) + on-demand topic-specific generation ("give me 10 questions on ASC 842 lease modifications").
@@ -20,5 +20,7 @@ Persist any changes here so the plan survives future clears.
 - [ ] **Step 9** — UNKNOWN (lost to context clear; confirm with user).
 - [x] **Step 10** — Full DM messaging center revamp + polish/send-fix. (commits bc4ace0, 174052f)
 
+- [ ] **Step 3.5** (added 2026-06-14, do right after Step 6) — Personalized calendar blocking. Upgrade the blocked-days feature (Step 3) into a real-calendar experience: let users select a *range* of days and add a **label/note** (e.g. "vacation at the beach", "work busy season"). Shows on the plan calendar like a normal calendar event, not just a silent ✈️. More personal than the per-day "life happens" button. Reuses rebalanceStudyPlan().
+
 ## Execution order (post-reorder)
-2 → 3 → 6 → 7 → 5 → 8 → 4. (Step 9 TBD.)
+2 → 3 → 6 → 3.5 → 7 → 5 → 8 → 4. (Step 9 TBD.)

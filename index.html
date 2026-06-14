@@ -11607,7 +11607,139 @@ let _quiz = {
   results: [],
 };
 
+// ── AI QUESTION GENERATION (Step 6) ───────────────────────────────────────────
+// Free: none (upgrade gate). Pro: 20 fresh MCQs per section per 24h + topic focus.
+// Elite: unlimited. Generated sets feed the existing quiz engine and are cached
+// per-user in S.aiQbCache so retries/repeats cost nothing.
+const AI_QB_PRO_DAILY = 20;
+const AI_QB_SET_SIZE  = 10;
+let _lastAIQuiz = null;     // {section,questions,topic} — for free retry
+let _aiQbGenerating = false;
+
+function _aiQbToday(){ return new Date().toISOString().slice(0,10); }
+function _aiQbQuota(section){
+  if(isElite()) return {unlimited:true, used:0, limit:Infinity, remaining:Infinity};
+  if(!isPro())  return {locked:true, used:0, limit:0, remaining:0};
+  S.aiQbUsage = S.aiQbUsage || {};
+  let u = S.aiQbUsage[section];
+  const today = _aiQbToday();
+  if(!u || u.date !== today){ u = {date:today, count:0}; S.aiQbUsage[section] = u; }
+  const used = u.count || 0;
+  return {used, limit:AI_QB_PRO_DAILY, remaining:Math.max(0, AI_QB_PRO_DAILY - used)};
+}
+function _aiQbConsume(section, n){
+  if(isElite()) return; // unlimited
+  S.aiQbUsage = S.aiQbUsage || {};
+  const today = _aiQbToday();
+  let u = S.aiQbUsage[section];
+  if(!u || u.date !== today) u = {date:today, count:0};
+  u.count = (u.count || 0) + n;
+  S.aiQbUsage[section] = u;
+  saveState();
+}
+
+function _aiQbPrompt(code, full, topic, count){
+  return 'Generate exactly ' + count + ' multiple-choice questions for the CPA exam section ' + code + ' (' + full + ').'
+    + (topic ? (' Focus specifically on this topic: ' + topic + '.') : '')
+    + ' Each question must be exam-realistic and test real conceptual understanding or a calculation, with exactly 4 answer choices and one unambiguously correct answer.'
+    + ' Return ONLY a JSON array (no prose, no markdown fences). Each element is an object with keys:'
+    + ' "q" (question text), "choices" (array of exactly 4 strings), "correct" (integer 0-3 index of the correct choice), "exp" (a concise 1-2 sentence explanation, citing the relevant standard/rule when applicable).'
+    + ' Vary difficulty and subtopics. Do not number the questions. Do not repeat questions.';
+}
+
+function _normAIQ(o){
+  if(!o || typeof o !== 'object') return null;
+  const q = (o.q || o.question || '').toString().trim();
+  let choices = o.choices || o.options || o.answers;
+  if(!Array.isArray(choices) || choices.length < 4) return null;
+  choices = choices.slice(0,4).map(c => (c==null?'':c).toString());
+  let correct = o.correct;
+  if(typeof correct === 'string'){
+    const L = 'ABCD'.indexOf(correct.trim().toUpperCase());
+    correct = L >= 0 ? L : choices.findIndex(c => c === correct);
+  }
+  correct = parseInt(correct, 10);
+  if(!(correct >= 0 && correct <= 3)) return null;
+  if(q.length < 8) return null;
+  const exp = (o.exp || o.explanation || '').toString().trim() || 'Review this concept with your primary course.';
+  return {q, choices, correct, exp};
+}
+
+async function generateAIQuestions(section, topic){
+  topic = (topic || '').trim();
+  const sec = QB_SECTIONS.find(s => s.code === section);
+  if(!sec) return;
+  if(!isPro()){ openUpgradeModal('AI Question Generator'); return; }
+  if(_aiQbGenerating) return;
+
+  let count = AI_QB_SET_SIZE;
+  const quota = _aiQbQuota(section);
+  if(!quota.unlimited){
+    if(quota.remaining <= 0){
+      showToast("You've used today's " + AI_QB_PRO_DAILY + " AI questions for " + section + ". Resets in 24h — Elite is unlimited.", 'info');
+      return;
+    }
+    count = Math.min(count, quota.remaining);
+  }
+
+  _aiQbGenerating = true;
+  closeQBSection();
+  _showAIQbLoading(section, topic);
+  try{
+    const raw = await _fcCallAI(_aiQbPrompt(section, sec.full, topic, count), Math.min(4096, count*280 + 500));
+    let arr = (_fcParseJSON(raw) || []).map(_normAIQ).filter(Boolean).slice(0, count);
+    if(!arr.length) throw new Error('no valid questions');
+
+    _aiQbConsume(section, arr.length);
+    // Cache per-user so the same questions can re-serve for free.
+    S.aiQbCache = S.aiQbCache || {};
+    const bank = S.aiQbCache[section] = S.aiQbCache[section] || [];
+    const seen = new Set(bank.map(x => x.q));
+    arr.forEach(x => { if(!seen.has(x.q)){ bank.push(x); seen.add(x.q); } });
+    if(bank.length > 300) S.aiQbCache[section] = bank.slice(-300);
+    saveState();
+
+    _launchAIQuiz(section, arr, topic);
+  }catch(e){
+    console.warn('[Ledger] AI question gen failed:', e.message);
+    showToast(window._aiHealthy === false ? 'AI is temporarily offline — try again shortly' : 'Could not generate questions — try again', 'err');
+    closeQuizOverlay();
+  }finally{
+    _aiQbGenerating = false;
+  }
+}
+
+function _showAIQbLoading(section, topic){
+  let overlay = document.getElementById('quiz-overlay');
+  if(!overlay){ overlay = document.createElement('div'); overlay.id = 'quiz-overlay'; overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;animation:fadeIn .2s ease'; document.body.appendChild(overlay); }
+  overlay.style.display = 'block';
+  const safeTopic = (topic||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  overlay.innerHTML = '<div style="max-width:520px;margin:90px auto;text-align:center;padding:0 20px">'
+    + '<div style="font-size:60px;margin-bottom:22px;display:inline-block;animation:spin 1.4s linear infinite">✦</div>'
+    + '<div style="font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Writing fresh ' + section + ' questions…</div>'
+    + '<div style="font-size:13px;color:var(--sub);line-height:1.6">' + (safeTopic ? ('Topic: ' + safeTopic) : 'Building a brand-new practice set just for you') + '</div>'
+    + '</div>';
+}
+
+function _launchAIQuiz(section, questions, topic){
+  _lastAIQuiz = {section, questions: questions.slice(), topic: topic || ''};
+  _quiz = {active:true, section, type:'ai', questions: questions.slice(), current:0, selected:null, answered:false, score:0, timerInterval:null, timeLeft:0, results:[]};
+  let overlay = document.getElementById('quiz-overlay');
+  if(!overlay){ overlay = document.createElement('div'); overlay.id = 'quiz-overlay'; overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;animation:fadeIn .2s ease'; document.body.appendChild(overlay); }
+  overlay.style.display = 'block';
+  _renderQuiz();
+}
+
 function openQuizModal(section, type) {
+  // AI sets aren't in the static bank — replay the last generated set (free), or generate anew.
+  if (type === 'ai') {
+    if (_lastAIQuiz && _lastAIQuiz.section === section && _lastAIQuiz.questions.length) {
+      _launchAIQuiz(section, _lastAIQuiz.questions, _lastAIQuiz.topic);
+    } else {
+      generateAIQuestions(section, '');
+    }
+    return;
+  }
   if (!isPro() && type !== 'mcq') { openUpgradeModal('Question Bank — ' + type); return; }
 
   const allQs = QB_QUESTIONS[section] || [];
@@ -11672,7 +11804,7 @@ function _renderQuiz() {
   const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
   const color = sec ? sec.color : '#6366f1';
   const choiceLetters = ['A','B','C','D'];
-  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz'};
+  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz', ai:'✦ AI Practice'};
   const pct = total > 0 ? Math.round(current / total * 100) : 0;
 
   const timerHTML = type === 'timed'
@@ -11824,6 +11956,8 @@ function openQBSection(code) {
   const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
   if (!sec) return;
   const pro = isPro();
+  const elite = isElite();
+  const quota = _aiQbQuota(code);
   const prog = (S.qbProgress || {})[code] || {mcqDone:0};
 
   let overlay = document.getElementById('qb-section-overlay');
@@ -11858,6 +11992,34 @@ function openQBSection(code) {
 
   const pct = Math.min(100, Math.round((prog.mcqDone || 0) / sec.mcqTotal * 100));
 
+  // ✦ AI question generator block (Step 6)
+  let aiBlock;
+  if (!pro) {
+    aiBlock =
+      '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
+        '<div onclick="openUpgradeModal(\'AI Question Generator\')" style="background:var(--surf2);border:1px dashed var(--bdr2);border-radius:13px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px">' +
+          '<div style="font-size:24px">🔒</div>' +
+          '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--txt)">Unlimited fresh questions with AI</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Pro: 20 new questions/section daily · Elite: unlimited + topic focus</div></div>' +
+          '<span style="font-size:10px;font-weight:800;color:var(--ora);background:var(--ora-bg);padding:3px 9px;border-radius:20px">PRO</span>' +
+        '</div>' +
+      '</div>';
+  } else {
+    const disabled = !elite && quota.remaining <= 0;
+    const quotaLabel = elite ? '✦ Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today · Elite is unlimited');
+    aiBlock =
+      '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
+        '<div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:13px;padding:16px">' +
+          '<div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--txt)">Fresh questions, infinite practice</div>' +
+          '<div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.5">Generate brand-new ' + code + ' questions on demand. Leave the topic blank for a mixed set, or name a topic for a focused drill.</div>' +
+          '<input id="ai-qb-topic" type="text" placeholder="Optional topic — e.g. ASC 842 lease modifications" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;outline:none;margin-bottom:10px" onkeydown="if(event.key===\'Enter\'){generateAIQuestions(\'' + code + '\',this.value)}">' +
+          '<button onclick="generateAIQuestions(\'' + code + '\',(document.getElementById(\'ai-qb-topic\')||{}).value||\'\')" ' + (disabled?'disabled':'') + ' style="width:100%;padding:11px;background:' + (disabled?'var(--surf3)':'linear-gradient(135deg,var(--ind),var(--pur))') + ';color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:' + (disabled?'not-allowed':'pointer') + '">✦ Generate ' + AI_QB_SET_SIZE + ' Questions</button>' +
+          '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">' + quotaLabel + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   overlay.innerHTML =
     '<div style="background:var(--surf);border-radius:20px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);overflow:hidden">' +
     // Header
@@ -11882,6 +12044,7 @@ function openQBSection(code) {
       '</div>' +
       '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:14px">Choose a practice mode</div>' +
       modeCards +
+      aiBlock +
     '</div>' +
     '</div>';
 
