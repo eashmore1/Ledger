@@ -4572,15 +4572,23 @@ function buildFeed(){
   ${buildCohortCard()}
   <div class="card card-pad">
     <div class="section-title">Who's Studying</div>
-    ${REAL_USERS.filter(f=>(S.following||[]).includes(f.id)).slice(0,4).map(f=>`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;border-radius:8px;padding:4px;transition:background .12s" onclick="openUserProfile('${f.id}')" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">
-      <div class="avatar av-sm" style="background:${f.color};color:#fff">${f.initials}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
-        <div style="font-size:10px;color:var(--mut)">${f.currentSection||'CPA ✅'} · ${f.streak}d streak</div>
-      </div>
-      <div style="width:8px;height:8px;border-radius:50%;background:${f.streak>0?'var(--grn)':'var(--bdr)'}"></div>
-    </div>`).join('')}
+    ${(()=>{
+      const followed=REAL_USERS.filter(f=>(S.following||[]).includes(f.id));
+      if(!followed.length) return`<div style="text-align:center;padding:12px 0">
+        <div style="font-size:24px;margin-bottom:6px">👋</div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.55;margin-bottom:10px">Follow people to see who's studying live alongside you.</div>
+        <button class="btn btn-ghost btn-xs" style="width:100%;justify-content:center" onclick="switchTab('explore')">Find People to Follow →</button>
+      </div>`;
+      return followed.slice(0,4).map(f=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;border-radius:8px;padding:4px;transition:background .12s" onclick="openUserProfile('${f.id}')" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">
+        <div class="avatar av-sm" style="background:${f.color};color:#fff">${f.initials}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
+          <div style="font-size:10px;color:var(--mut)">${f.currentSection||'CPA ✅'} · ${f.streak}d streak</div>
+        </div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${f.streak>0?'var(--grn)':'var(--bdr)'}"></div>
+      </div>`).join('');
+    })()}
   </div>
 </div>`;
 
@@ -4594,9 +4602,39 @@ function buildFeed(){
     for(let _i=4;_i<actCards.length;_i+=6){actCards.splice(_i,0,_chCard);}
     if(actCards.length<=4)actCards.push(_chCard);
   }
+
+  // Crew-building onboarding card: show until user follows 3+ people
+  const _followingCount=(S.following||[]).filter(id=>id&&id.length>4).length;
+  const _crewCard=_followingCount<3?`<div class="card card-pad" style="margin-bottom:16px;border:1.5px solid var(--ind-bdr);background:var(--ind-bg)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="font-size:26px">🤝</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:var(--txt)">Build Your Study Crew</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:1px">CPA candidates who study with others are 2× more likely to pass.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="width:26px;height:26px;border-radius:50%;background:${_followingCount>=1?'var(--grn)':'var(--ind)'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${_followingCount>=1?'✓':'1'}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Follow 3 candidates</div><div style="font-size:11px;color:var(--mut)">See their sessions in your feed · ${_followingCount}/3 done</div></div>
+        ${_followingCount<3?`<button class="btn btn-ind btn-xs" onclick="switchTab('explore')">Find →</button>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="width:26px;height:26px;border-radius:50%;background:${(S.clubs||[]).filter(c=>!c.isDM).length?'var(--grn)':'var(--surf2)'};color:${(S.clubs||[]).filter(c=>!c.isDM).length?'#fff':'var(--mut)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${(S.clubs||[]).filter(c=>!c.isDM).length?'✓':'2'}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Join a study club</div><div style="font-size:11px;color:var(--mut)">Chat with candidates on the same sections</div></div>
+        ${!(S.clubs||[]).filter(c=>!c.isDM).length?`<button class="btn btn-ghost btn-xs" onclick="switchTab('explore')">Browse →</button>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="width:26px;height:26px;border-radius:50%;background:${S.accountabilityPartner?'var(--grn)':'var(--surf2)'};color:${S.accountabilityPartner?'#fff':'var(--mut)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${S.accountabilityPartner?'✓':'3'}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Set a study partner</div><div style="font-size:11px;color:var(--mut)">Someone to hold you accountable</div></div>
+        ${!S.accountabilityPartner?`<button class="btn btn-ghost btn-xs" onclick="switchTab('profile')">Set →</button>`:''}
+      </div>
+    </div>
+  </div>`:'';
+
   const feedCenter = allActivities.length===0 ?
-    `<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
-    actCards.join('');
+    `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
+    _crewCard+actCards.join('');
 
   return`<div class="feed-layout">${leftSidebar}<div class="feed-center">${feedCenter}</div>${rightSidebar}</div>`;
 }
@@ -4689,7 +4727,10 @@ function buildPartnerTeaserCard(){
         </div>
       </div>
     </div>
-    <button onclick="openUpgradeModal('Study Partner Pairing')" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--ind),#4338ca);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(90,95,207,.35)">Find My Study Partner</button>
+    <div style="display:flex;gap:8px">
+      <button onclick="switchTab('explore')" style="flex:1;padding:10px;background:var(--surf2);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">See Who's Studying ${userSection}</button>
+      <button onclick="openUpgradeModal('Study Partner')" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--ind),#4338ca);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(90,95,207,.35)">Unlock Pro →</button>
+    </div>
   </div>
 </div>`;
 }
@@ -5800,13 +5841,19 @@ function buildProfile(){
 
   // Sidebar: study partner
   const partnerSide=(()=>{
-    if(!isElite()) return`<div style="font-size:11px;color:var(--mut);line-height:1.5">Study Partner — <button class="btn btn-ghost btn-xs" onclick="openUpgradeModal('Study Partner Pairing')">Elite feature</button></div>`;
+    if(!isPro()) return`<div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:8px">Hold each other accountable — see how your study hours compare week over week.</div><button class="btn btn-ghost btn-xs" style="width:100%;justify-content:center" onclick="openUpgradeModal('Study Partner')">Unlock with Pro →</button>`;
     const partner=S.accountabilityPartner?REAL_USERS.find(f=>f.id===S.accountabilityPartner):null;
-    if(!partner) return`<div style="font-size:11px;color:var(--mut)">No partner set yet.</div><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">${(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean).slice(0,4).map(f=>`<button onclick="setStudyPartner('${f.id}')" style="display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:11px;font-weight:600"><div class="avatar" style="width:16px;height:16px;font-size:8px;background:${f.color};color:#fff">${f.initials}</div>${f.name.split(' ')[0]}</button>`).join('')||'<span style="font-size:11px;color:var(--mut)">Follow someone first</span>'}</div>`;
+    if(!partner){
+      const candidates=(S.following||[]).map(id=>REAL_USERS.find(f=>f.id===id)).filter(Boolean).slice(0,4);
+      return`<div style="font-size:11px;color:var(--mut);margin-bottom:8px">No partner set yet. Pick someone you follow to track hours together.</div><div style="display:flex;flex-wrap:wrap;gap:6px">${candidates.map(f=>`<button onclick="setStudyPartner('${f.id}')" style="display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:11px;font-weight:600"><div class="avatar" style="width:16px;height:16px;font-size:8px;background:${f.color};color:#fff">${f.initials}</div>${f.name.split(' ')[0]}</button>`).join('')||'<button class="btn btn-ghost btn-xs" onclick="switchTab(\'explore\')">Follow someone first →</button>'}</div>`;
+    }
     const weekAgo=new Date(Date.now()-7*86400000);
     const theirHrs=partner.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-    return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
+    const ahead=myHrs>theirHrs+0.5;
+    const behind=theirHrs>myHrs+0.5;
+    const statusMsg=ahead?`You're ahead by ${(myHrs-theirHrs).toFixed(1)}h this week 💪`:behind?`${partner.name.split(' ')[0]} is ahead by ${(theirHrs-myHrs).toFixed(1)}h — keep pushing!`:`Neck and neck this week 🔥`;
+    return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center">${statusMsg}</div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="font-size:10px" onclick="pingStudyPartner('${partner.id}','${partner.name.replace(/'/g,"&#39;")}')">👋 Check In</button><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
   })();
 
   _heatmapOwnOffset=0;
@@ -7433,7 +7480,7 @@ function sendSupportMessage(){
 }
 
 function setStudyPartner(id){
-  if(!isElite()){openUpgradeModal('Study Partner Pairing');return;}
+  if(!isPro()){openUpgradeModal('Study Partner');return;}
   const f=REAL_USERS.find(f=>f.id===id);
   S.accountabilityPartner=id;
   saveState();
@@ -7444,6 +7491,21 @@ function removeStudyPartner(){
   S.accountabilityPartner=null;
   saveState();
   renderTab();
+}
+function pingStudyPartner(partnerId, partnerName){
+  const firstName=partnerName.split(' ')[0];
+  const msgs=[
+    `Hey ${firstName}! Just checking in — how's the studying going? 👋`,
+    `Checking in on you! How are your sections coming along? 💪`,
+    `Hey! How's the CPA grind treating you this week? 📚`,
+  ];
+  const msg=msgs[Math.floor(Math.random()*msgs.length)];
+  const convId=[AUTH?.uid||'you',partnerId].sort().join('__');
+  _openFbChat(convId,'conversations',partnerName,'💬 Study Partner');
+  setTimeout(()=>{
+    const inp=document.getElementById('cci-'+convId);
+    if(inp){inp.value=msg;inp.focus();}
+  },350);
 }
 
 function openFollowModal(type){
@@ -7718,6 +7780,7 @@ function _renderActivityPage(actId){
 function openClubPage(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);
   if(club?.isDM){openClubChat(clubId);return;}
+  try{localStorage.setItem('pf2-lr-'+clubId, Date.now());}catch(e){}
   _closeAllOverlays();
   const pc=PUBLIC_CLUBS.find(c=>c.id===clubId);
   const name=(club||pc)?.name||'Club';
@@ -8238,6 +8301,8 @@ function _openFbChat(channelId, collection, title, subtitle){
   <button class="chat-send" onclick="sendFirebaseMessage('${channelId}','${collection}')">Send</button>
 </div>`;
   el.classList.add('open');
+  // Mark as read
+  try{localStorage.setItem('pf2-lr-'+channelId, Date.now());}catch(e){}
   _attachMsgListener(collection, channelId, 'cca-'+channelId);
   setTimeout(()=>document.getElementById('cci-'+channelId)?.focus(), 100);
 }
@@ -8959,23 +9024,30 @@ async function _renderMessagesPage(){
     const initials=f?.initials||name.slice(0,2).toUpperCase();
     const color=f?.color||'#5a5fcf';
     const lastMsg=conv.lastMessage||'Start the conversation…';
-    const lastAt=conv.lastAt?.toDate?.()?conv.lastAt.toDate().toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const lastAtDate=conv.lastAt?.toDate?.();
+    const lastAt=lastAtDate?lastAtDate.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+conv.id)||'0',10);
+    const hasUnread=lastAtDate&&lastAtDate.getTime()>lastReadMs&&conv.lastMessage;
+    const unreadDot=hasUnread?'<div style="width:9px;height:9px;border-radius:50%;background:var(--ind);flex-shrink:0"></div>':'';
     const safeName=name.replace(/'/g,'&#39;');
-    return '<div onclick="_openFbChat(\''+conv.id+'\',\'conversations\',\''+safeName+'\',\'💬 Direct message\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'">'
+    return '<div onclick="_openFbChat(\''+conv.id+'\',\'conversations\',\''+safeName+'\',\'💬 Direct message\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s;background:'+(hasUnread?'var(--ind-bg)':'transparent')+'" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\''+(hasUnread?'var(--ind-bg)':'transparent')+'\'">'+unreadDot
       +'<div class="avatar av-md" style="background:'+color+';color:#fff;flex-shrink:0">'+initials+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
-      +'<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">'+lastMsg+'</div></div></div>';
+      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:'+(hasUnread?'800':'700')+'">'+name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
+      +'<div style="font-size:11px;color:'+(hasUnread?'var(--txt)':'var(--mut)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-weight:'+(hasUnread?'600':'400')+'">'+lastMsg+'</div></div></div>';
   }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">💬</div><div class="empty-msg">No direct messages yet.<br>Visit a profile and tap 💬 to start a conversation.</div></div>';
 
   const clubHTML=clubs.length?clubs.map(c=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
-    const lastMsgObj=msgs.slice(-1)[0];
+    const lastMsgObj=msgs.filter(m=>!m.isSystem).slice(-1)[0];
     const lastMsg=lastMsgObj?(lastMsgObj.author==='you'?'You: ':(getClubMemberName(lastMsgObj.author)+': '))+lastMsgObj.text:'No messages yet';
     const lastAt=lastMsgObj?timeAgo(lastMsgObj.time):'';
-    return '<div onclick="openClubPage(\''+c.id+'\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'">'
-      +'<div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
-      +'<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">'+lastMsg+'</div></div></div>';
+    const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+c.id)||'0',10);
+    const hasUnread=lastMsgObj&&lastMsgObj.author!=='you'&&new Date(lastMsgObj.time).getTime()>lastReadMs;
+    const unreadDot=hasUnread?'<div style="width:9px;height:9px;border-radius:50%;background:var(--ind);flex-shrink:0;margin-left:auto"></div>':'';
+    return '<div onclick="openClubPage(\''+c.id+'\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s;background:'+(hasUnread?'var(--ind-bg)':'transparent')+'" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\''+(hasUnread?'var(--ind-bg)':'transparent')+'\'">'+
+      '<div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:13px;font-weight:'+(hasUnread?'800':'700')+'">'+c.name+'</div><div style="font-size:10px;color:var(--mut);flex-shrink:0">'+lastAt+'</div></div>'+
+      '<div style="font-size:11px;color:'+(hasUnread?'var(--txt)':'var(--mut)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-weight:'+(hasUnread?'600':'400')+'">'+lastMsg+'</div></div>'+unreadDot+'</div>';
   }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">🏛️</div><div class="empty-msg">No study clubs yet.<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="createClubModal()">+ Create a Club</button></div></div>';
 
   el.innerHTML=`
