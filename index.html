@@ -3979,12 +3979,45 @@ function renderObStep1(){
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obNext()">Continue →</button>`;
 }
 
+// Step 7 — personalized section-order recommendation. CPA advice, tuned to the
+// user's discipline + available time. A high-trust moment right at signup.
+function recommendSectionOrder(disc, classYear, hoursPerWeek){
+  disc = disc || 'TCP';
+  const lowTime = (hoursPerWeek || 15) <= 10;
+  const working = /Professional|Alumni/i.test(classYear || '');
+  let order, reason;
+  if(disc==='TCP'){
+    if(lowTime || working){
+      order=['REG','FAR','AUD','TCP'];
+      reason='With a lighter weekly schedule, opening with REG gets you an early win and momentum — its tax foundation flows straight into TCP. You hit FAR, the biggest section, once you’ve found your rhythm.';
+    } else {
+      order=['FAR','AUD','REG','TCP'];
+      reason='FAR builds the foundation everything else leans on. REG and TCP sit back-to-back at the end since they share heavy tax overlap — review once, test twice.';
+    }
+  } else if(disc==='BAR'){
+    order=['FAR','BAR','AUD','REG'];
+    reason='BAR builds directly on FAR’s financial reporting, so take them back-to-back while the material is fresh. AUD and REG round it out.';
+  } else { // ISC
+    order=['FAR','AUD','ISC','REG'];
+    reason='AUD and ISC share internal-controls and IT concepts, so pairing them saves review time. FAR leads as your foundation; REG comes last.';
+  }
+  return {order, reason};
+}
+
 function renderObStep2(){
-  const sections=['FAR','AUD','REG',obData.disc];
+  const rec=recommendSectionOrder(obData.disc,obData.classYear,obData.hoursPerWeek);
+  const sections=rec.order;
   return`
 <div class="ob-card">
   <h3>Set your target exam dates</h3>
   <div style="font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.6">Set realistic target dates for each section. We'll calculate your pacing — how many hours/week you need to be ready on time.</div>
+  <div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:11px;padding:14px;margin-bottom:16px;text-align:left">
+    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ind);margin-bottom:8px">✦ Recommended order for you</div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px">
+      ${rec.order.map((s,i)=>`<span class="badge badge-${s}" style="font-size:11px">${s}</span>${i<rec.order.length-1?'<span style="color:var(--mut);font-size:13px;font-weight:700">→</span>':''}`).join('')}
+    </div>
+    <div style="font-size:11.5px;color:var(--sub);line-height:1.6">${rec.reason}</div>
+  </div>
   ${sections.map(s=>`
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;padding:11px 13px;background:var(--surf2);border-radius:9px">
     <span class="badge badge-${s}" style="flex-shrink:0;min-width:46px;justify-content:center">${s}</span>

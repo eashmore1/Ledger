@@ -13,7 +13,7 @@ Persist any changes here so the plan survives future clears.
   - **Pro**: 20 MCQs per section per 24 hours (rate-limited) + on-demand topic-specific generation ("give me 10 questions on ASC 842 lease modifications").
   - **Free**: no AI bank.
   - Reuses the working /api/ask Anthropic endpoint (or a sibling /api/generate-questions).
-- [ ] **Step 7** — Section order recommendation at onboarding. Personalized ("Based on your background, start with REG"). High-trust 2-min build.
+- [x] **Step 7** — Section order recommendation at onboarding. SHIPPED. `recommendSectionOrder(disc,classYear,hoursPerWeek)` returns a personalized order + rationale (e.g. TCP + low time/working → REG first for momentum; BAR→FAR pairing; ISC→AUD pairing). Surfaced as a ✦ card at the top of onboarding Step 2 (exam-date step), with date inputs laid out in the recommended order. (pending commit)
 - [ ] **Step 5** — Cut the fat. (Reordered: do BEFORE landing page so we don't write copy around features we're about to cut.)
 - [ ] **Step 8** — "Works with any course" positioning. Ledger is the layer on top of Becker/Ninja/Roger — the tracker, community, coach they lack. Removes the "I already have a study tool" objection. Feeds into the landing page.
 - [ ] **Step 4** — Landing page. (Reordered: AFTER cut-the-fat and positioning. Don't sharpen the pitch until the product backs it up.)
