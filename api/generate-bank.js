@@ -129,9 +129,10 @@ function normQ(o){
   return {q,choices,correct,exp};
 }
 
-async function genTopic(section, topic){
+async function genTopic(section, topic, perTopic){
   const full=SECTION_FULL[section]||section;
-  const prompt='Generate exactly '+PER_TOPIC+' multiple-choice questions for the CPA exam section '+section+' ('+full+'), '
+  const n=perTopic||PER_TOPIC;
+  const prompt='Generate exactly '+n+' multiple-choice questions for the CPA exam section '+section+' ('+full+'), '
     + 'all focused on this topic: '+topic+'. '
     + 'Each question must be exam-realistic and test genuine conceptual understanding or a calculation, with exactly 4 answer choices and one unambiguously correct answer. '
     + 'Cover a range of subtopics and difficulty within the topic; do not repeat questions. '
@@ -174,6 +175,7 @@ module.exports = async (req, res) => {
 
   const from = Math.max(0, parseInt(q.from, 10) || 0);
   const count = Math.max(1, Math.min(parseInt(q.count, 10) || 10, 20));
+  const perTopic = Math.max(5, Math.min(parseInt(q.perTopic, 10) || PER_TOPIC, 25));
   const topics = TOPICS[section].slice(from, from + count);
 
   const db = admin.firestore();
@@ -184,7 +186,7 @@ module.exports = async (req, res) => {
     for (let i = 0; i < topics.length; i += CONCURRENCY) {
       const batch = topics.slice(i, i + CONCURRENCY);
       const results = await Promise.all(batch.map(async (topic) => {
-        try { return { topic, questions: await genTopic(section, topic) }; }
+        try { return { topic, questions: await genTopic(section, topic, perTopic) }; }
         catch (e) { return { topic, error: e.message }; }
       }));
       for (const r of results) {
