@@ -5470,6 +5470,7 @@ function _buildDashOverview(){
   const commitmentCard=buildWeeklyCommitment();
   const countdownAlerts=buildCountdownAlerts();
   const streakRecovery=buildStreakRecovery();
+  const burnoutCheckIn=buildBurnoutCheckIn();
 
   return`
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px">
@@ -5489,6 +5490,7 @@ function _buildDashOverview(){
 
   ${countdownAlerts}
   ${pacingAlert}
+  ${burnoutCheckIn}
 
   <div class="stats-grid" style="margin-bottom:var(--sp-5)">
     ${[
@@ -15690,6 +15692,76 @@ function buildCountdownAlerts(){
 // ═══════════════════════════════════════════════
 // STREAK RECOVERY
 // ═══════════════════════════════════════════════
+// ── BURNOUT CHECK-IN (Step 2) ──────────────────────────────────────────────
+// Subtle, never a nag. It should feel like the app noticing you, not warning you.
+// Compares this week's rhythm against an established 3-week baseline.
+function dismissBurnoutCheckIn(){
+  if(!S)return;
+  S._burnout={dismissedAt:Date.now()};
+  saveState();
+  renderTab();
+}
+function buildBurnoutCheckIn(){
+  if(!S)return'';
+  const acts=(S.activities||[]).filter(a=>a&&a.date);
+  if(acts.length<6)return''; // not enough history to notice a change in rhythm
+  const now=Date.now(), DAY=86400000;
+  // Respect a dismissal for 7 days — back off, don't nag.
+  const dAt=(S._burnout||{}).dismissedAt||0;
+  if(dAt && now-dAt<7*DAY) return '';
+
+  const ageDays=a=>(now-new Date(a.date).getTime())/DAY;
+  const wk=acts.filter(a=>{const d=ageDays(a);return d>=0&&d<7;});
+  const base=acts.filter(a=>{const d=ageDays(a);return d>=7&&d<28;}); // prior 3 weeks
+  const sum=arr=>arr.reduce((s,a)=>s+(a.hours||0),0);
+  const uniqDays=arr=>new Set(arr.map(a=>a.date.slice(0,10))).size;
+
+  const wkHrs=sum(wk), baseHrs=sum(base);
+  const baseWeekHrs=baseHrs/3, baseDaysPerWk=uniqDays(base)/3, wkDays=uniqDays(wk);
+  // Need an established baseline to have something to gently "notice."
+  if(baseWeekHrs<2 || uniqDays(base)<5) return '';
+
+  const pullingBack    = wkHrs>0 && wkHrs < 0.5*baseWeekHrs;
+  const shorterSessions= !pullingBack && wk.length>=2 && base.length>=4 &&
+                         (wkHrs/wk.length) < 0.6*(baseHrs/base.length);
+  const fewerDays      = !pullingBack && !shorterSessions && baseDaysPerWk>=4 &&
+                         wkDays>0 && wkDays<=baseDaysPerWk-2;
+
+  // consecutive active days ending today/yesterday
+  const dset=new Set(acts.map(a=>a.date.slice(0,10)));
+  let consec=0;
+  for(let i=0;i<16;i++){const d=new Date(now-i*DAY).toISOString().slice(0,10);if(dset.has(d))consec++;else if(i>0)break;}
+  const grinding = consec>=10 || (wkHrs>1.7*baseWeekHrs && wkHrs>=14 && wkDays>=6);
+
+  let icon,title,body,extraCta='';
+  if(pullingBack||shorterSessions||fewerDays){
+    icon='👋'; title='Just checking in';
+    body = pullingBack
+      ? `You've logged a bit less this week than your usual rhythm — no pressure at all. Some weeks are just like that. We're here whenever you're ready to pick back up.`
+      : shorterSessions
+      ? `Your sessions have been a little shorter this week — totally fine. Even 20 focused minutes keeps the momentum alive.`
+      : `Looks like a lighter week than your usual pace — life happens. Jump back in whenever it suits you.`;
+    extraCta=`<button onclick="openStrugglingModal()" style="padding:7px 13px;background:transparent;color:var(--sub);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0">What's going on?</button>`;
+  } else if(grinding){
+    icon='🌿'; title="You've been going hard";
+    body=`${consec>=10?`${consec} days straight`:'A huge week'} — that's seriously impressive. One real rest day actually helps your brain lock in what you've learned. Consider this your permission to take one. 💙`;
+  } else {
+    return '';
+  }
+
+  return`<div style="background:linear-gradient(135deg,var(--ind-bg),var(--surf));border:1px solid rgba(90,95,207,.22);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px">
+    <div style="font-size:26px;flex-shrink:0;line-height:1">${icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:3px">${title}</div>
+      <div style="font-size:12.5px;color:var(--sub);line-height:1.55">${body}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button onclick="dismissBurnoutCheckIn()" style="padding:7px 13px;background:var(--ind);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${grinding?"I'll rest 🌿":'Thanks 💙'}</button>
+        ${extraCta}
+      </div>
+    </div>
+  </div>`;
+}
+
 function buildStreakRecovery(){
   if(!S)return'';
   const streak=getStreak();
