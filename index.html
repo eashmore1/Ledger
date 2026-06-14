@@ -5688,7 +5688,8 @@ function _buildDashProgress(){
     ${buildHeatMap()}
   </div>
 
-  ${buildAdvancedAnalytics()}`;
+  ${buildAdvancedAnalytics()}
+  ${buildExamDayProtocolCard()}`;
 }
 
 function buildCalendar(){
@@ -10025,49 +10026,8 @@ function submitScore(section){
 // ═══════════════════════════════════════════════
 // EXAM TIPS TAB
 // ═══════════════════════════════════════════════
-function buildTips(){
-  // ── Section blueprint data ─────────────────────────────────────────────────
-  const BLUEPRINT = {
-    FAR:{topAreas:['Gov\'t & NFP Accounting (~36%)','Financial Statements & Reporting','Leases, Revenue Recognition & Fair Value','Governmental Fund Types (GRaSPP)'],note:'Budget 170+ hrs. GASB/NFP alone decides most FAR scores.'},
-    AUD:{topAreas:['Risk Assessment & Audit Planning','Audit Reports & Opinions','Professional Responsibilities & Ethics','Internal Controls & Substantive Testing'],note:'It\'s about professional judgment, not formulas. PCAOB applies to public company audits.'},
-    REG:{topAreas:['Individual Income Tax (~30%)','Entity Taxation (C-Corp, S-Corp, Partnership)','Business Law (Contracts, Agency, UCC)','Property Transactions & Credits'],note:'~60% tax / ~40% business law. Business law is consistently underprepared.'},
-    BAR:{topAreas:['Financial Statement Analysis & Ratios','Business Data Analytics & Modeling','Technical Accounting (ASC depth)','Budgeting, Forecasting & Variance Analysis'],note:'Hardest discipline section. Data analytics questions catch candidates off guard.'},
-    ISC:{topAreas:['SOC Engagements (SOC 1 / SOC 2 / SOC 3)','IT Audit Procedures & Controls','Security (CIA Triad, Access Controls)','Business Continuity & Disaster Recovery'],note:'82 MCQs — more than any section. SOC under-preparation is the #1 failure cause.'},
-    TCP:{topAreas:['Individual Tax Compliance & Credits','Entity Compliance (C-Corp, S-Corp, Partnership)','Tax Minimization & Planning Strategies','Estate, Gift & Trust Planning'],note:'Highest pass rate but tested at greater depth than REG. Builds directly on REG.'},
-  };
-
-  // ── Pass rate bars ─────────────────────────────────────────────────────────
-  const passRateChart=Object.entries(EXAMS).map(([k,ex])=>{
-    const pct=ex.passRate;
-    return`<div style="margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-        <span class="badge badge-${k}" style="min-width:42px;justify-content:center">${k}</span>
-        <span style="font-size:12px;font-weight:700;flex:1">${ex.full}</span>
-        <span style="font-size:11px;color:var(--mut)">${ex.difficulty} · ${ex.format}</span>
-        <span style="font-size:16px;font-weight:900;color:${ex.color};min-width:38px;text-align:right">${pct}%</span>
-      </div>
-      <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${pct}%;background:${ex.color}"></div></div>
-    </div>`;
-  }).join('');
-
-  // ── Section blueprint cards ────────────────────────────────────────────────
-  const blueprintCards=Object.entries(EXAMS).map(([k,ex])=>{
-    const bp=BLUEPRINT[k];
-    return`<div class="card card-pad" style="border-top:3px solid ${ex.color}">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-        <span style="font-size:24px">${ex.icon}</span>
-        <div>
-          <div style="font-size:13px;font-weight:900">${k} — ${ex.full}</div>
-          <div style="font-size:10px;color:var(--mut);margin-top:1px">${ex.format} · 4 hrs · ~${ex.studyHours} hrs recommended · ${ex.passRate}% pass rate</div>
-        </div>
-      </div>
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Highest-Weighted Topics</div>
-      ${bp.topAreas.map(a=>`<div style="font-size:11px;color:var(--sub);padding:2px 0;display:flex;align-items:flex-start;gap:6px"><span style="color:${ex.color};margin-top:1px;flex-shrink:0">▸</span>${a}</div>`).join('')}
-      <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr);font-size:11px;color:var(--sub);line-height:1.6;font-style:italic">${bp.note}</div>
-    </div>`;
-  }).join('');
-
-  // ── Exam Day Protocol (Pro gate) ───────────────────────────────────────────
+// Exam Day Protocol card — preserved on the Dashboard after the Exam Hub was retired.
+function buildExamDayProtocolCard(){
   const protocolSection = isPro()
     ? `<div class="card card-pad" style="border-top:3px solid var(--amb)">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
@@ -10093,36 +10053,9 @@ function buildTips(){
         <button class="btn btn-primary" style="font-size:13px;padding:10px 26px" onclick="openUpgradeModal('Exam Day Protocol')">Unlock with Pro — 7 days free</button>
         <div style="font-size:10px;color:var(--mut);margin-top:8px">Cancel anytime · No commitment</div>
       </div>`;
-
-  return`
-<div style="max-width:960px;margin:0 auto">
-  <div style="margin-bottom:24px">
-    <h1 style="font-size:26px;font-weight:900;margin-bottom:4px">◆ Exam Hub</h1>
-    <p style="color:var(--sub);font-size:13px">Real data, real section breakdowns, and your personal exam-day playbook — everything to go in prepared and come out passing.</p>
-  </div>
-
-  <!-- Pass Rates -->
-  <div class="card card-pad" style="margin-bottom:24px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:14px;font-weight:800">📈 2025 Pass Rates — AICPA / NASBA</div>
-      <div style="font-size:10px;color:var(--mut)">First-time ~51% · Retakers ~39%</div>
-    </div>
-    ${passRateChart}
-    <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.6">Source: AICPA quarterly pass rate data, 2025. Pass score: 75 on a 0–99 scaled score. Discipline sections available in first 2 months of each quarter.</div>
-  </div>
-
-  <!-- Section Blueprint -->
-  <div style="margin-bottom:8px;font-size:16px;font-weight:800">🗺 Section Blueprint</div>
-  <div style="margin-bottom:6px;font-size:12px;color:var(--sub)">Format, recommended hours, and the highest-weighted topics for each section — use this alongside your study materials.</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:28px">
-    ${blueprintCards}
-  </div>
-
-  <!-- Exam Day Protocol -->
-  <div style="margin-bottom:12px;font-size:16px;font-weight:800">📋 Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle;margin-left:6px">Pro</span></div>
-  ${protocolSection}
-</div>`;
+  return `<div style="margin:28px 0 12px;font-size:16px;font-weight:800">📋 Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle;margin-left:6px">Pro</span></div>${protocolSection}`;
 }
+
 // ═══════════════════════════════════════════════
 // SETTINGS MODAL
 // ═══════════════════════════════════════════════
@@ -11189,14 +11122,6 @@ function injectMobileNav(){
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
       <div class="mob-more-sub">AI-generated day-by-day calendar</div>
-    </div>
-    <span class="mob-more-chev">›</span>
-  </button>
-  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('studylab');setTimeout(()=>openStudyLabTab('examhub'),50)">
-    <div class="mob-more-icon" style="background:#fff7ed">◆</div>
-    <div class="mob-more-text">
-      <div class="mob-more-label">Exam Hub</div>
-      <div class="mob-more-sub">Tips, strategies &amp; resources</div>
     </div>
     <span class="mob-more-chev">›</span>
   </button>
@@ -12847,8 +12772,6 @@ function buildStudyLab() {
     { id:'qbank', label:'Question Bank', icon:'📋' },
     { id:'tools', label:'Study Tools', icon:'⚡' },
     { id:'coach', label:'Ask Ledger', icon:'🤖' },
-    { id:'aitools', label:'AI Tools', icon:'✦' },
-    { id:'examhub', label:'Exam Hub', icon:'◆' },
   ];
 
   const subNav =
@@ -12869,10 +12792,9 @@ function buildStudyLab() {
     body = _buildStudyToolsPanel();
   } else if (_studyLabTab === 'coach') {
     body = _buildCoachPanel();
-  } else if (_studyLabTab === 'aitools') {
-    body = _buildAIToolsPanel();
-  } else if (_studyLabTab === 'examhub') {
-    body = buildTips();
+  } else {
+    _studyLabTab = 'qbank';
+    body = _buildQBankPanel();
   }
 
   return '<div style="max-width:960px;margin:0 auto">' +
@@ -13100,118 +13022,8 @@ function _buildDecksView(){
 
 function _fcRender(){const el=document.getElementById('page-content');if(el&&currentTab==='studylab')el.innerHTML=buildStudyLab();}
 // ─── AI Tools panel (Elite) ──────────────────────────────────────────────────
-function _buildAIToolsPanel() {
-  if (!isElite()) {
-    return '<div style="text-align:center;padding:60px 24px">' +
-      '<div style="font-size:52px;margin-bottom:18px">✦</div>' +
-      '<div style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-.03em">Elite AI Tools</div>' +
-      '<div style="font-size:13px;color:var(--sub);max-width:400px;margin:0 auto 24px;line-height:1.7">AI Mnemonic Generator and Score Predictor — purpose-built for candidates who need every edge.</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:360px;margin:0 auto 28px">' +
-        '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:16px 12px;text-align:center">' +
-          '<div style="font-size:26px;margin-bottom:6px">🧠</div>' +
-          '<div style="font-size:12px;font-weight:800">Mnemonic<br>Generator</div>' +
-        '</div>' +
-        '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:16px 12px;text-align:center">' +
-          '<div style="font-size:26px;margin-bottom:6px">🔮</div>' +
-          '<div style="font-size:12px;font-weight:800">Score<br>Predictor</div>' +
-        '</div>' +
-      '</div>' +
-      '<button class="btn btn-primary" style="font-size:14px;padding:12px 32px;background:linear-gradient(135deg,var(--pur),#7c22c8);box-shadow:0 4px 18px rgba(147,51,234,.35)" onclick="openUpgradeModal(\'Elite AI Tools\')">Unlock Elite — $14/mo ✦</button>' +
-    '</div>';
-  }
-
-  // Score predictor data
-  const predData = _buildScorePrediction();
-
-  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start">' +
-    // LEFT: Mnemonic Generator
-    '<div>' +
-      '<div class="card card-pad" style="margin-bottom:16px;border-top:3px solid var(--pur)">' +
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">' +
-          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--pur),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🧠</div>' +
-          '<div>' +
-            '<div style="font-size:14px;font-weight:800">AI Mnemonic Generator</div>' +
-            '<div style="font-size:11px;color:var(--mut)">Turn any CPA concept into a memory hook</div>' +
-          '</div>' +
-        '</div>' +
-        '<div style="margin-bottom:10px">' +
-          '<label style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Enter a CPA concept</label>' +
-          '<div style="display:flex;gap:8px">' +
-            '<input id="mnem-input" type="text" placeholder="e.g. ASC 606, COSO framework, audit risk model…" ' +
-              'style="flex:1;padding:10px 13px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none" ' +
-              'onfocus="this.style.borderColor=\'var(--pur)\'" onblur="this.style.borderColor=\'var(--bdr)\'" ' +
-              'onkeydown="if(event.key===\'Enter\')generateMnemonic()">' +
-            '<button onclick="generateMnemonic()" style="padding:10px 18px;background:linear-gradient(135deg,var(--pur),#7c3aed);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Generate</button>' +
-          '</div>' +
-        '</div>' +
-        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">' +
-          ['ASC 606','COSO','Audit Risk','GASB vs FASB','Fraud Triangle','Going Concern','Consolidation','Lease Types'].map(function(t) {
-            return '<button onclick="document.getElementById(\'mnem-input\').value=\'' + t + '\';generateMnemonic()" ' +
-              'style="font-size:11px;padding:4px 10px;background:var(--pur-bg);border:1px solid rgba(147,51,234,.25);color:var(--pur);border-radius:20px;cursor:pointer;font-weight:600">' + t + '</button>';
-          }).join('') +
-        '</div>' +
-        '<div id="mnem-result" style="min-height:80px">' +
-          '<div style="font-size:12px;color:var(--mut);text-align:center;padding:20px">Choose a concept above or type your own to generate a mnemonic.</div>' +
-        '</div>' +
-        '<div id="mnem-history" style="margin-top:14px"></div>' +
-      '</div>' +
-    '</div>' +
-    // RIGHT: Score Predictor
-    '<div>' +
-      '<div class="card card-pad" style="border-top:3px solid var(--grn)">' +
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">' +
-          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--grn),#059669);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🔮</div>' +
-          '<div>' +
-            '<div style="font-size:14px;font-weight:800">Score Predictor</div>' +
-            '<div style="font-size:11px;color:var(--mut)">Estimated scaled score per section</div>' +
-          '</div>' +
-        '</div>' +
-        predData +
-      '</div>' +
-    '</div>' +
-  '</div>';
-}
 
 // ── Score Predictor ────────────────────────────────────────────────────────
-function _buildScorePrediction() {
-  const sections = S.sections || [];
-  if (!sections.length) {
-    return '<div style="font-size:12px;color:var(--mut);text-align:center;padding:16px">Add exam sections in your profile to see predictions.</div>';
-  }
-  return sections.map(function(sec) {
-    const logged = getSectionHours(sec);
-    const target = EXAMS[sec].studyHours;
-    const paceScore = Math.min(1, logged / target);
-    const qbProg = S.qbProgress && S.qbProgress[sec] ? S.qbProgress[sec] : {};
-    const mcqDone = qbProg.mcqDone || 0;
-    const mcqScore = Math.min(1, mcqDone / 30);
-    // Weighted prediction: pace 50%, QB activity 30%, base 20%
-    const rawPct = 0.20 * 0.65 + paceScore * 0.50 + mcqScore * 0.30;
-    const predictedScore = Math.round(55 + rawPct * 35); // range 55-90
-    const confidence = mcqDone >= 10 ? 'High' : mcqDone >= 3 ? 'Medium' : 'Low';
-    const confColor = confidence === 'High' ? 'var(--grn)' : confidence === 'Medium' ? 'var(--amb)' : 'var(--mut)';
-    const scoreColor = predictedScore >= 75 ? 'var(--grn)' : predictedScore >= 68 ? 'var(--amb)' : 'var(--red)';
-    const barW = Math.round((predictedScore - 50) / 50 * 100);
-    return '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr)">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
-          '<span class="badge badge-' + sec + '">' + sec + '</span>' +
-          '<span style="font-size:11px;color:var(--mut)">Confidence: <span style="color:' + confColor + ';font-weight:700">' + confidence + '</span></span>' +
-        '</div>' +
-        '<div style="font-size:22px;font-weight:900;color:' + scoreColor + ';letter-spacing:-.04em">' + predictedScore + '<span style="font-size:12px;font-weight:600;opacity:.6"> /99</span></div>' +
-      '</div>' +
-      '<div style="height:8px;background:var(--surf3);border-radius:4px;overflow:hidden">' +
-        '<div style="height:100%;width:' + barW + '%;background:' + scoreColor + ';border-radius:4px;transition:width .6s"></div>' +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;margin-top:4px">' +
-        '<span style="font-size:10px;color:var(--mut)">50</span>' +
-        '<span style="font-size:10px;color:var(--sub);font-weight:700">' + (predictedScore >= 75 ? '✓ On track to pass' : 'Need more practice') + '</span>' +
-        '<span style="font-size:10px;color:var(--mut)">99</span>' +
-      '</div>' +
-    '</div>';
-  }).join('') +
-  '<div style="font-size:10px;color:var(--mut);margin-top:4px;line-height:1.6">Prediction based on your hours logged and QB activity. Accuracy improves with more practice data. Pass score = 75.</div>';
-}
 
 // ── Exam Day Protocol ──────────────────────────────────────────────────────
 function _edpNearestSec() {
@@ -13479,67 +13291,6 @@ const MNEMONIC_DB = {
   },
 };
 
-function generateMnemonic() {
-  const input = (document.getElementById('mnem-input')?.value || '').trim().toLowerCase();
-  if (!input) { showToast('Enter a CPA concept first', 'err'); return; }
-
-  const resultEl = document.getElementById('mnem-result');
-  if (!resultEl) return;
-
-  // Show loading state briefly
-  resultEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mut);font-size:12px">Generating mnemonic…</div>';
-
-  setTimeout(function() {
-    // Try exact match first
-    let mnem = MNEMONIC_DB[input];
-
-    // Try partial match
-    if (!mnem) {
-      const keys = Object.keys(MNEMONIC_DB);
-      for (let i = 0; i < keys.length; i++) {
-        if (input.includes(keys[i]) || keys[i].includes(input)) {
-          mnem = MNEMONIC_DB[keys[i]];
-          break;
-        }
-      }
-    }
-
-    // Generate custom mnemonic if no match
-    if (!mnem) {
-      mnem = _generateCustomMnemonic(input);
-    }
-
-    // Save to history
-    if (!window._mnemHistory) window._mnemHistory = [];
-    window._mnemHistory = window._mnemHistory.filter(function(h) { return h.input !== input; });
-    window._mnemHistory.unshift({ input: input, mnem: mnem });
-    if (window._mnemHistory.length > 5) window._mnemHistory.pop();
-
-    // Render result
-    resultEl.innerHTML =
-      '<div style="background:' + mnem.color + '12;border:1.5px solid ' + mnem.color + '35;border-radius:14px;padding:18px">' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:' + mnem.color + ';margin-bottom:8px">' + mnem.title + '</div>' +
-        '<div style="font-size:32px;font-weight:900;letter-spacing:.04em;color:' + mnem.color + ';margin-bottom:6px;font-family:monospace">' + mnem.acronym + '</div>' +
-        '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:8px;line-height:1.5">' + mnem.expansion + '</div>' +
-        '<div style="background:var(--amb-bg);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px">' +
-          '<span style="font-size:11px;font-weight:800;color:var(--amb)">Memory Hook: </span>' +
-          '<span style="font-size:12px;color:var(--sub);font-style:italic">' + mnem.hook + '</span>' +
-        '</div>' +
-        '<div style="font-size:11px;color:var(--sub);line-height:1.7">' + mnem.detail + '</div>' +
-      '</div>';
-
-    // Render history
-    const histEl = document.getElementById('mnem-history');
-    if (histEl && window._mnemHistory.length > 1) {
-      histEl.innerHTML = '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:6px">Recent</div>' +
-        window._mnemHistory.slice(1).map(function(h) {
-          return '<button onclick="document.getElementById(\'mnem-input\').value=\'' + h.input + '\';generateMnemonic()" ' +
-            'style="font-size:11px;padding:3px 9px;background:var(--surf2);border:1px solid var(--bdr);color:var(--sub);border-radius:6px;cursor:pointer;margin-right:5px;margin-bottom:4px">' +
-            h.input + '</button>';
-        }).join('');
-    }
-  }, 380);
-}
 
 function _generateCustomMnemonic(input) {
   // Extract meaningful words (skip stop words)
