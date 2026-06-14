@@ -489,6 +489,53 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .my-club-card:hover{border-color:var(--ind);box-shadow:var(--shadow)}
 .club-ico{width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 
+/* ── DM MESSAGING CENTER ── */
+.dm-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100dvh - 64px);overflow:hidden;background:var(--bg)}
+@media(max-width:720px){.dm-layout{grid-template-columns:1fr;height:calc(100dvh - 56px)}}
+.dm-inbox-panel{border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;background:var(--surf)}
+.dm-conv-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.dm-inbox-hdr{padding:14px 14px 10px;flex-shrink:0;border-bottom:1px solid var(--bdr)}
+.dm-inbox-title{font-size:18px;font-weight:900;letter-spacing:-.02em;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.dm-inbox-search{width:100%;padding:8px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:22px;color:var(--txt);font-size:13px;outline:none;box-sizing:border-box;transition:border .15s}
+.dm-inbox-search:focus{border-color:var(--ind)}
+.dm-inbox-list{overflow-y:auto;flex:1}
+.dm-inbox-row{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background .1s;position:relative}
+.dm-inbox-row:hover{background:var(--surf2)}
+.dm-inbox-row.active{background:var(--ind-bg);border-right:3px solid var(--ind)}
+.dm-inbox-name{font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-inbox-preview{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.dm-inbox-row.dm-unread .dm-inbox-name{font-weight:800}
+.dm-inbox-row.dm-unread .dm-inbox-preview{color:var(--txt);font-weight:600}
+.dm-inbox-time{font-size:10px;color:var(--mut);flex-shrink:0;align-self:flex-start;padding-top:2px}
+.dm-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--ind);flex-shrink:0;margin-left:auto}
+.dm-conv-hdr{padding:12px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surf)}
+.dm-conv-msgs{flex:1;overflow-y:auto;padding:12px 18px 4px;display:flex;flex-direction:column}
+.dm-date-sep{text-align:center;font-size:10px;font-weight:700;color:var(--mut);padding:14px 0 6px;position:relative;letter-spacing:.04em;text-transform:uppercase}
+.dm-date-sep::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--bdr)}
+.dm-date-sep span{background:var(--bg);padding:0 12px;position:relative;z-index:1}
+.dm-group{display:flex;flex-direction:column;margin-bottom:8px}
+.dm-group.mine{align-items:flex-end}
+.dm-group.them{align-items:flex-start;padding-left:36px;position:relative}
+.dm-group-av{position:absolute;left:0;bottom:22px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.dm-sender-name{font-size:10px;font-weight:700;color:var(--mut);margin-bottom:3px;padding-left:2px}
+.dm-bubble{max-width:min(72%,480px);padding:9px 13px;border-radius:18px;font-size:14px;line-height:1.5;overflow-wrap:break-word;word-break:break-word;margin-bottom:2px;cursor:default}
+.dm-bubble-mine{background:var(--ind);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+.dm-bubble-them{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr);border-bottom-left-radius:5px}
+.dm-bubble:last-of-type.dm-bubble-mine{border-bottom-right-radius:18px}
+.dm-bubble:last-of-type.dm-bubble-them{border-bottom-left-radius:18px}
+.dm-bubble:not(:last-of-type).dm-bubble-mine{border-bottom-right-radius:5px;border-top-right-radius:5px}
+.dm-bubble:not(:last-of-type).dm-bubble-them{border-bottom-left-radius:5px;border-top-left-radius:5px}
+.dm-group-meta{font-size:10px;color:var(--mut);margin-top:3px;padding:0 2px}
+.dm-group.mine .dm-group-meta{text-align:right}
+.dm-system{text-align:center;font-size:11px;color:var(--mut);font-style:italic;padding:8px 0}
+.dm-empty-conv{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:40px;gap:10px}
+.dm-comp{flex-shrink:0;padding:10px 18px 14px;border-top:1px solid var(--bdr);background:var(--surf);display:flex;align-items:flex-end;gap:8px}
+.dm-comp-inp{flex:1;padding:10px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:22px;color:var(--txt);font-size:14px;outline:none;resize:none;line-height:1.45;font-family:inherit;transition:border .15s;max-height:120px;overflow-y:auto}
+.dm-comp-inp:focus{border-color:var(--ind)}
+.dm-comp-send{width:38px;height:38px;border-radius:50%;background:var(--ind);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .15s,transform .1s;line-height:1}
+.dm-comp-send:hover{opacity:.85;transform:scale(1.06)}
+.dm-new-btn{width:30px;height:30px;border-radius:50%;background:var(--ind);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.dm-new-btn:hover{opacity:.85}
 /* ── CLUB CHAT ── */
 .club-chat-area{min-height:240px;max-height:380px;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:10px}
 .chat-row{display:flex;gap:8px;align-items:flex-end}
@@ -3814,7 +3861,10 @@ window.addEventListener('popstate', function(e){
   else if(view==='userProfile' && AUTH && S){ _loadAndRenderProfilePage(e.state.userId); }
   else if(view==='activityPage' && AUTH && S){ _renderActivityPage(e.state.actId); }
   else if(view==='clubPage' && AUTH && S){ _renderClubPage(e.state.clubId); }
-  else if(view==='messagesPage' && AUTH && S){ _renderMessagesPage(); }
+  else if(view==='messagesPage' && AUTH && S){
+    if(e.state.convId){ _renderMessagesPage(e.state.convId,e.state.otherUserId,e.state.displayName,e.state.displayColor,e.state.displayInitials); }
+    else { _renderMessagesPage(); }
+  }
   else if(view==='app' && AUTH && S){ renderApp(); if(e.state?.fromTab)switchTab(e.state.fromTab); }
   else if(AUTH && S){ renderApp(); }
   else if(!AUTH) renderAuth();
@@ -7500,12 +7550,15 @@ function pingStudyPartner(partnerId, partnerName){
     `Hey! How's the CPA grind treating you this week? 📚`,
   ];
   const msg=msgs[Math.floor(Math.random()*msgs.length)];
-  const convId=[AUTH?.uid||'you',partnerId].sort().join('__');
-  _openFbChat(convId,'conversations',partnerName,'💬 Study Partner');
+  const f=REAL_USERS.find(x=>x.id===partnerId);
+  const color=f?.color||'#5a5fcf';
+  const initials=f?.initials||partnerName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'??';
+  const convId=_convId(AUTH?.uid||'you',partnerId);
+  openConversationPage(convId,partnerId,partnerName,color,initials);
   setTimeout(()=>{
-    const inp=document.getElementById('cci-'+convId);
-    if(inp){inp.value=msg;inp.focus();}
-  },350);
+    const inp=document.getElementById('dm-inp-'+convId);
+    if(inp){inp.value=msg;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';inp.focus();}
+  },400);
 }
 
 function openFollowModal(type){
@@ -8307,6 +8360,201 @@ function _openFbChat(channelId, collection, title, subtitle){
   setTimeout(()=>document.getElementById('cci-'+channelId)?.focus(), 100);
 }
 
+// ═══════════════════════════════════════════════
+// DM MESSAGING CENTER — Full revamp
+// ═══════════════════════════════════════════════
+
+let _activeDMConvId = null;
+let _dmConvUnsub = null;
+
+function _detachDMConvListener(){
+  if(_dmConvUnsub){ _dmConvUnsub(); _dmConvUnsub=null; }
+}
+
+function _dmDateLabel(ts){
+  const d=ts instanceof Date?ts:(ts?.toDate?.()||new Date(ts||Date.now()));
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const msgDay=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const diff=(today-msgDay)/86400000;
+  if(diff<1)return'Today';
+  if(diff<2)return'Yesterday';
+  if(diff<7)return d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  if(d.getFullYear()===now.getFullYear())return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function _dmTimeStr(ts){
+  const d=ts instanceof Date?ts:(ts?.toDate?.()||new Date(ts||Date.now()));
+  return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+function _renderMsgsDM(areaId, msgs, convId){
+  const area=document.getElementById(areaId); if(!area)return;
+  if(!msgs||!msgs.length){
+    area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:48px">👋</div><div style="font-size:14px;font-weight:700;color:var(--txt)">Start the conversation</div><div style="font-size:12px;color:var(--mut)">Send the first message below</div></div>`;
+    return;
+  }
+  // Build groups: date separators + sender groups
+  const output=[];
+  let lastDayLabel=null;
+  let currentGroup=null; // {isMine, from, name, initials, color, msgs:[]}
+
+  const flushGroup=()=>{
+    if(!currentGroup||!currentGroup.msgs.length)return;
+    const g=currentGroup;
+    const lastMsg=g.msgs[g.msgs.length-1];
+    const timeStr=_dmTimeStr(lastMsg.ts);
+    const canDelLast=g.isMine&&lastMsg.id;
+
+    const bubbles=g.msgs.map((m,idx)=>{
+      const canDel=g.isMine&&m.id;
+      const delHint=canDel?` oncontextmenu="event.preventDefault();if(confirm('Delete this message?'))deleteChatMessage('conversations','${convId}','${m.id}')"`:' ';
+      const cls=`dm-bubble ${g.isMine?'dm-bubble-mine':'dm-bubble-them'}`;
+      return`<div class="${cls}" title="${_dmTimeStr(m.ts)}"${delHint}>${esc(m.text)}</div>`;
+    }).join('');
+
+    if(g.isMine){
+      output.push(`<div class="dm-group mine">${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
+    } else {
+      const av=`<div class="dm-group-av" style="background:${g.color}">${g.initials}</div>`;
+      output.push(`<div class="dm-group them">${av}${g.msgs.length>1?`<div class="dm-sender-name">${esc(g.name)}</div>`:''}${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
+    }
+    currentGroup=null;
+  };
+
+  msgs.forEach((msg,i)=>{
+    if(msg.isSystem||msg.from==='system'){
+      flushGroup();
+      output.push(`<div class="dm-system">— ${esc(msg.text||'')} —</div>`);
+      return;
+    }
+    const ts=msg.timestamp?.toDate?.()??new Date(msg.timestamp||Date.now());
+    const isMine=msg.from===AUTH?.uid;
+    const dayLabel=_dmDateLabel(ts);
+    if(dayLabel!==lastDayLabel){
+      flushGroup();
+      output.push(`<div class="dm-date-sep"><span>${dayLabel}</span></div>`);
+      lastDayLabel=dayLabel;
+    }
+    const prev=i>0?msgs[i-1]:null;
+    const prevTs=prev?.timestamp?.toDate?.()??new Date(prev?.timestamp||0);
+    const sameGroup=prev&&!prev.isSystem&&prev.from===msg.from&&(ts-prevTs)<5*60*1000;
+    if(!sameGroup){
+      flushGroup();
+      const {name,initials,color}=_fbMsgAuthorInfo(msg.from);
+      currentGroup={isMine,from:msg.from,name,initials,color,msgs:[]};
+    }
+    currentGroup.msgs.push({...msg,ts,isMine});
+  });
+  flushGroup();
+  area.innerHTML=output.join('');
+  area.scrollTop=area.scrollHeight;
+}
+
+function _renderConvPanel(convId, otherUserId, displayName, displayColor, displayInitials){
+  _detachDMConvListener();
+  const convPanel=document.getElementById('dm-conv-panel');
+  if(!convPanel)return;
+  const isPartner=S.accountabilityPartner===otherUserId;
+  convPanel.innerHTML=`
+<div class="dm-conv-hdr">
+  <button onclick="_showDMInbox()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--mut);padding:4px 6px;border-radius:8px;flex-shrink:0;display:none;transition:background-color .15s" id="dm-back-btn" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='transparent'">←</button>
+  <div style="width:36px;height:36px;border-radius:50%;background:${displayColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${displayInitials}</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:14px;font-weight:800;color:var(--txt)">${esc(displayName)}${isPartner?'<span style="font-size:10px;color:var(--ind);font-weight:700;margin-left:6px">Study Partner</span>':''}</div>
+    <div style="font-size:11px;color:var(--mut)">Direct Message</div>
+  </div>
+  ${otherUserId?`<button class="btn btn-ghost btn-xs" onclick="openUserProfile('${otherUserId}')">Profile</button>`:''}
+</div>
+<div id="dm-msgs-area" class="dm-conv-msgs"><div class="dm-system" style="padding-top:20px">Loading…</div></div>
+<div class="dm-comp">
+  <textarea id="dm-inp-${convId}" class="dm-comp-inp" rows="1" placeholder="Message ${esc(displayName)}…"
+    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();_sendDM('${convId}')}"
+    oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+  <button class="dm-comp-send" onclick="_sendDM('${convId}')" title="Send">↑</button>
+</div>`;
+
+  // Show back button on mobile
+  if(window.innerWidth<720){
+    const btn=document.getElementById('dm-back-btn');
+    if(btn)btn.style.display='';
+  }
+
+  if(firebaseDb){
+    const msgsRef=firebaseDb.collection('conversations').doc(convId).collection('messages').orderBy('timestamp','asc').limitToLast(150);
+    _dmConvUnsub=msgsRef.onSnapshot(snap=>{
+      _renderMsgsDM('dm-msgs-area',snap.docs.map(d=>({...d.data(),id:d.id})),convId);
+      try{localStorage.setItem('pf2-lr-'+convId,Date.now());}catch(e){}
+    },err=>{
+      const el=document.getElementById('dm-msgs-area');
+      if(el)el.innerHTML=`<div class="dm-system">— ${err.code==='permission-denied'?'Firestore rules needed — ask admin':'Could not load messages'} —</div>`;
+    });
+  } else {
+    const el=document.getElementById('dm-msgs-area');
+    if(el)el.innerHTML='<div class="dm-system">— No connection —</div>';
+  }
+  setTimeout(()=>document.getElementById('dm-inp-'+convId)?.focus(),100);
+}
+
+function _openDMFromInbox(convId, otherUid){
+  const f=REAL_USERS.find(u=>u.id===otherUid);
+  const lDM=(S.clubs||[]).find(c=>c.isDM&&c.members.includes(otherUid));
+  const name=f?.name||lDM?.name||'User';
+  const initials=f?.initials||name.slice(0,2).toUpperCase();
+  const color=f?.color||lDM?.color||'#5a5fcf';
+  openConversationPage(convId, otherUid, name, color, initials);
+}
+
+function openConversationPage(convId, otherUserId, displayName, displayColor, displayInitials){
+  _activeDMConvId=convId;
+  try{localStorage.setItem('pf2-lr-'+convId,Date.now());}catch(e){}
+  // If already on messages page, just update the conv panel
+  const inboxPanel=document.getElementById('dm-inbox-panel');
+  if(inboxPanel){
+    if(window.innerWidth<720){inboxPanel.style.display='none';}
+    const convPanel=document.getElementById('dm-conv-panel');
+    if(convPanel)convPanel.style.display='flex';
+    _renderConvPanel(convId,otherUserId,displayName,displayColor,displayInitials);
+    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===convId));
+    return;
+  }
+  // Navigate to messages page
+  history.pushState({view:'messagesPage',convId,otherUserId,displayName,displayColor,displayInitials,fromTab:currentTab},'','/messages');
+  document.title=displayName+' — Messages — Ledger';
+  _renderMessagesPage(convId,otherUserId,displayName,displayColor,displayInitials);
+}
+
+function _showDMInbox(){
+  _activeDMConvId=null;
+  _detachDMConvListener();
+  const inboxPanel=document.getElementById('dm-inbox-panel');
+  const convPanel=document.getElementById('dm-conv-panel');
+  if(inboxPanel)inboxPanel.style.display='';
+  if(convPanel){
+    convPanel.style.display=window.innerWidth>=720?'flex':'none';
+    if(window.innerWidth>=720){
+      convPanel.innerHTML=`<div class="dm-empty-conv"><div style="font-size:44px">💬</div><div style="font-size:15px;font-weight:800;color:var(--txt)">Your Messages</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Select a conversation or tap + to start a new one</div></div>`;
+    }
+  }
+  document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.remove('active'));
+}
+
+async function _sendDM(convId){
+  const inp=document.getElementById('dm-inp-'+convId);
+  const text=inp?.value?.trim();
+  if(!text||!AUTH)return;
+  inp.value='';inp.style.height='auto';
+  try{
+    const convRef=firebaseDb.collection('conversations').doc(convId);
+    await convRef.set({participants:convId.split('__dm__').sort(),lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    await convRef.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+  }catch(e){
+    if(inp)inp.value=text;
+    showToast(e.code==='permission-denied'?'Firestore rules needed':'Failed to send','err');
+  }
+}
+
 async function openDirectMessage(userId, displayName, displayInitials){
   if(!AUTH){ showToast('Sign in to message users','err'); return; }
   const f=REAL_USERS.find(x=>x.id===userId);
@@ -8339,7 +8587,9 @@ async function openDirectMessage(userId, displayName, displayInitials){
   }
 
   closeUserProfile();
-  _openFbChat(convId,'conversations',name,'💬 Direct message');
+  document.getElementById('search-modal')?.remove();
+  document.getElementById('club-chat-modal')?.classList.remove('open');
+  openConversationPage(convId, userId, name, color, initials);
 }
 
 function promptInviteToClub(userId){
@@ -8531,7 +8781,10 @@ function openClubChat(clubId){
     const otherUid=club.members.find(m=>m!=='you'&&m!==AUTH?.uid);
     const realConvId=AUTH?.uid&&otherUid?_convId(AUTH.uid,otherUid):clubId;
     const f=REAL_USERS.find(x=>x.id===otherUid);
-    _openFbChat(realConvId,'conversations',club.name,'💬 Direct message');
+    const name=f?.name||club.name||'User';
+    const color=f?.color||club.color||'#5a5fcf';
+    const initials=f?.initials||name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'??';
+    openConversationPage(realConvId,otherUid,name,color,initials);
   } else {
     const memberCount=club.members.length;
     _openFbChat(clubId,'clubs',club.name,`👥 ${memberCount} member${memberCount!==1?'s':''}`);
@@ -8988,94 +9241,123 @@ function closeMessagesPage(){
   else { renderApp(); if(history.state?.fromTab) switchTab(history.state.fromTab); }
 }
 
-async function _renderMessagesPage(){
+async function _renderMessagesPage(openConvId, openOtherUid, openName, openColor, openInitials){
   _mountPageShell('messages-page-content');
   const el=document.getElementById('messages-page-content');
-  el.innerHTML='<div style="text-align:center;padding:60px;color:var(--mut);font-size:13px">Loading messages…</div>';
+  el.style.padding='0';el.style.maxWidth='none';
+  el.innerHTML='<div class="dm-layout"><div id="dm-inbox-panel" class="dm-inbox-panel"><div style="text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading…</div></div><div id="dm-conv-panel" class="dm-conv-panel"><div class="dm-empty-conv"><div style="font-size:44px">💬</div><div style="font-size:15px;font-weight:800;color:var(--txt)">Your Messages</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Select a conversation or tap + to start a new one</div></div></div></div>';
 
-  // Load DM conversations from Firestore where user is a participant
+  // Load Firestore DM conversations
   let firestoreDMs=[];
   if(firebaseDb&&AUTH){
     try{
-      const snap=await firebaseDb.collection('conversations')
-        .where('participants','array-contains',AUTH.uid)
-        .orderBy('lastAt','desc').limit(50).get();
+      const snap=await firebaseDb.collection('conversations').where('participants','array-contains',AUTH.uid).orderBy('lastAt','desc').limit(50).get();
       firestoreDMs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    }catch(e){ console.warn('DMs load error:',e); }
+    }catch(e){ console.warn('DMs load:',e); }
   }
-
-  // Merge local DMs not yet in Firestore
+  // Merge local-only DMs
   const localDMs=(S.clubs||[]).filter(c=>c.isDM);
-  const knownConvIds=new Set(firestoreDMs.map(d=>d.id));
+  const knownIds=new Set(firestoreDMs.map(d=>d.id));
   for(const dm of localDMs){
-    if(!knownConvIds.has(dm.id)){
+    if(!knownIds.has(dm.id)){
       const otherUid=dm.members.find(m=>m!=='you'&&m!==AUTH?.uid);
-      firestoreDMs.push({id:dm.id,participants:[AUTH?.uid||'you',otherUid||''],lastMessage:'',lastAt:null,_local:dm});
+      firestoreDMs.push({id:dm.id,participants:[AUTH?.uid||'you',otherUid||''],lastMessage:'',lastAt:null});
     }
   }
 
   const clubs=(S.clubs||[]).filter(c=>!c.isDM);
 
-  const dmHTML=firestoreDMs.length?firestoreDMs.map(conv=>{
+  // Build inbox
+  const inboxPanel=document.getElementById('dm-inbox-panel');
+  if(!inboxPanel)return;
+
+  const _dmRow=(conv)=>{
     const otherUid=(conv.participants||[]).find(p=>p!==AUTH?.uid)||'';
     const f=REAL_USERS.find(u=>u.id===otherUid);
     const lDM=(S.clubs||[]).find(c=>c.isDM&&c.members.includes(otherUid));
     const name=f?.name||lDM?.name||'User';
     const initials=f?.initials||name.slice(0,2).toUpperCase();
     const color=f?.color||'#5a5fcf';
-    const lastMsg=conv.lastMessage||'Start the conversation…';
+    const preview=conv.lastMessage||(conv.id?'Start the conversation…':'');
     const lastAtDate=conv.lastAt?.toDate?.();
-    const lastAt=lastAtDate?lastAtDate.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
     const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+conv.id)||'0',10);
-    const hasUnread=lastAtDate&&lastAtDate.getTime()>lastReadMs&&conv.lastMessage;
-    const unreadDot=hasUnread?'<div style="width:9px;height:9px;border-radius:50%;background:var(--ind);flex-shrink:0"></div>':'';
-    const safeName=name.replace(/'/g,'&#39;');
-    return '<div onclick="_openFbChat(\''+conv.id+'\',\'conversations\',\''+safeName+'\',\'💬 Direct message\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s;background:'+(hasUnread?'var(--ind-bg)':'transparent')+'" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\''+(hasUnread?'var(--ind-bg)':'transparent')+'\'">'+unreadDot
-      +'<div class="avatar av-md" style="background:'+color+';color:#fff;flex-shrink:0">'+initials+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:'+(hasUnread?'800':'700')+'">'+name+'</div><div style="font-size:10px;color:var(--mut)">'+lastAt+'</div></div>'
-      +'<div style="font-size:11px;color:'+(hasUnread?'var(--txt)':'var(--mut)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-weight:'+(hasUnread?'600':'400')+'">'+lastMsg+'</div></div></div>';
-  }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">💬</div><div class="empty-msg">No direct messages yet.<br>Visit a profile and tap 💬 to start a conversation.</div></div>';
+    const hasUnread=!!(lastAtDate&&lastAtDate.getTime()>lastReadMs&&conv.lastMessage);
+    const timeLabel=lastAtDate?_dmDateLabel(lastAtDate)==='Today'?_dmTimeStr(lastAtDate):_dmDateLabel(lastAtDate):'';
+    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${esc(conv.id)}" onclick="_openDMFromInbox('${esc(conv.id)}','${esc(otherUid)}')">
+      <div style="position:relative;flex-shrink:0"><div class="avatar" style="width:42px;height:42px;font-size:14px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">${initials}</div></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+          <div class="dm-inbox-name">${esc(name)}</div>
+          <div class="dm-inbox-time">${timeLabel}</div>
+        </div>
+        <div class="dm-inbox-preview">${hasUnread?'<span style="color:var(--txt);font-weight:600">':''}${esc(preview)}${hasUnread?'</span>':''}</div>
+      </div>
+      ${hasUnread?'<div class="dm-unread-dot"></div>':''}
+    </div>`;
+  };
 
-  const clubHTML=clubs.length?clubs.map(c=>{
+  const _clubRow=(c)=>{
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsgObj=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-    const lastMsg=lastMsgObj?(lastMsgObj.author==='you'?'You: ':(getClubMemberName(lastMsgObj.author)+': '))+lastMsgObj.text:'No messages yet';
-    const lastAt=lastMsgObj?timeAgo(lastMsgObj.time):'';
+    const preview=lastMsgObj?(lastMsgObj.author==='you'?'You: ':'')+lastMsgObj.text:'No messages yet';
     const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+c.id)||'0',10);
-    const hasUnread=lastMsgObj&&lastMsgObj.author!=='you'&&new Date(lastMsgObj.time).getTime()>lastReadMs;
-    const unreadDot=hasUnread?'<div style="width:9px;height:9px;border-radius:50%;background:var(--ind);flex-shrink:0;margin-left:auto"></div>':'';
-    return '<div onclick="openClubPage(\''+c.id+'\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .12s;background:'+(hasUnread?'var(--ind-bg)':'transparent')+'" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\''+(hasUnread?'var(--ind-bg)':'transparent')+'\'">'+
-      '<div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div>'+
-      '<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:13px;font-weight:'+(hasUnread?'800':'700')+'">'+c.name+'</div><div style="font-size:10px;color:var(--mut);flex-shrink:0">'+lastAt+'</div></div>'+
-      '<div style="font-size:11px;color:'+(hasUnread?'var(--txt)':'var(--mut)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-weight:'+(hasUnread?'600':'400')+'">'+lastMsg+'</div></div>'+unreadDot+'</div>';
-  }).join(''):'<div class="empty-state" style="padding:30px 0"><div class="empty-icon">🏛️</div><div class="empty-msg">No study clubs yet.<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="createClubModal()">+ Create a Club</button></div></div>';
+    const hasUnread=!!(lastMsgObj&&lastMsgObj.author!=='you'&&new Date(lastMsgObj.time).getTime()>lastReadMs);
+    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${c.id}" onclick="openClubPage('${c.id}')">
+      <div style="width:42px;height:42px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${c.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+          <div class="dm-inbox-name">${esc(c.name)}</div>
+          <div class="dm-inbox-time">${lastMsgObj?timeAgo(lastMsgObj.time):''}</div>
+        </div>
+        <div class="dm-inbox-preview">${esc(preview)}</div>
+      </div>
+      ${hasUnread?'<div class="dm-unread-dot"></div>':''}
+    </div>`;
+  };
 
-  el.innerHTML=`
-  <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
-    <div style="font-size:22px;font-weight:900;letter-spacing:-.02em">Messages</div>
-    <button class="btn btn-ghost btn-sm" onclick="createClubModal()">+ New Club</button>
+  const dmSection=firestoreDMs.length
+    ?firestoreDMs.map(_dmRow).join('')
+    :`<div style="padding:20px 16px;text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-size:12px;color:var(--mut);line-height:1.6">No DMs yet.<br>Visit someone's profile and tap 💬 Message.</div></div>`;
+
+  const clubSection=clubs.length
+    ?clubs.map(_clubRow).join('')
+    :`<div style="padding:16px;text-align:center"><button class="btn btn-ghost btn-sm" onclick="createClubModal()">+ Create a Club</button></div>`;
+
+  inboxPanel.innerHTML=`
+<div class="dm-inbox-hdr">
+  <div class="dm-inbox-title">Messages
+    <button class="dm-new-btn" onclick="openSearchModal()" title="New Message">+</button>
   </div>
-  <div class="profile-layout" style="margin-top:0">
-    <div>
-      <div style="font-size:15px;font-weight:800;margin-bottom:10px">💬 Direct Messages</div>
-      <div style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:24px">${dmHTML}</div>
-      <div style="font-size:15px;font-weight:800;margin-bottom:10px">🏛️ Study Clubs</div>
-      <div style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;overflow:hidden">${clubHTML}</div>
-    </div>
-    <div class="profile-sidebar">
-      <div class="sb-card">
-        <div class="sb-title">Explore Public Clubs</div>
-        <p style="font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:12px">Join study clubs to connect with CPA candidates studying the same sections.</p>
-        <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center" onclick="switchTab('explore')">Browse Clubs →</button>
-      </div>
-      <div class="sb-card" style="margin-top:0">
-        <div class="sb-title">Create a Private Club</div>
-        <p style="font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:12px">Start a private study club and invite people you follow.</p>
-        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="createClubModal()">+ New Club</button>
-      </div>
-    </div>
-  </div>`;
-  window.scrollTo({top:0});
+  <input class="dm-inbox-search" placeholder="Search…" oninput="_filterDMInbox(this.value)" id="dm-search-inp">
+</div>
+<div class="dm-inbox-list" id="dm-inbox-list">
+  ${firestoreDMs.length||clubs.length?`
+  <div style="padding:8px 14px 2px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Direct Messages</div>
+  ${dmSection}
+  <div style="padding:8px 14px 2px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:4px">Study Clubs</div>
+  ${clubSection}`
+  :`<div style="padding:32px 16px;text-align:center"><div style="font-size:40px;margin-bottom:12px">💬</div><div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px">No messages yet</div><div style="font-size:11px;color:var(--mut)">Find someone to message in Explore</div><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="switchTab('explore')">Find People →</button></div>`}
+</div>`;
+
+  // If a specific conv was requested, open it
+  if(openConvId){
+    _renderConvPanel(openConvId,openOtherUid,openName,openColor,openInitials);
+    if(window.innerWidth<720){
+      document.getElementById('dm-inbox-panel').style.display='none';
+    }
+    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===openConvId));
+  } else if(window.innerWidth<720){
+    document.getElementById('dm-conv-panel').style.display='none';
+  }
+}
+
+function _filterDMInbox(query){
+  const q=query.toLowerCase().trim();
+  document.querySelectorAll('#dm-inbox-list .dm-inbox-row').forEach(row=>{
+    const name=(row.querySelector('.dm-inbox-name')?.textContent||'').toLowerCase();
+    const preview=(row.querySelector('.dm-inbox-preview')?.textContent||'').toLowerCase();
+    row.style.display=(!q||name.includes(q)||preview.includes(q))?'':'none';
+  });
 }
 
 
