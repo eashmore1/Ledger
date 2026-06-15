@@ -833,6 +833,26 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,
 @media(max-width:700px){
   .dash-row-2col{grid-template-columns:1fr}
 }
+/* ── SCORE TRACKER ROWS ── */
+.score-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+.score-row:last-child{border-bottom:none;padding-bottom:0}
+.score-row-mid{flex:1;min-width:0;display:flex;gap:6px;flex-wrap:wrap}
+.score-row-right{text-align:right;flex-shrink:0;min-width:46px}
+/* ── MOBILE GLOBAL TIGHTENING ── */
+@media(max-width:640px){
+  .card-pad{padding:14px 14px}
+  .stat-box{padding:14px 12px}
+  .stat-val{font-size:26px}
+  .dash-heading{flex-direction:column;align-items:flex-start;gap:10px}
+  .dash-heading-actions{display:flex;gap:8px;width:100%}
+  .dash-heading-actions>button{flex:1;justify-content:center;font-size:11px;padding:8px 10px}
+  .score-tracker-subtext{display:none}
+}
+@media(max-width:480px){
+  .score-row-right{order:3;margin-left:auto;text-align:right}
+  .score-row>.btn-ghost{order:4}
+  .pc-name{flex-wrap:wrap;gap:4px}
+}
 /* ── ACTIVITY CARD FEED STAGGER ── */
 .activity-card:nth-child(1){animation-delay:0ms}
 .activity-card:nth-child(2){animation-delay:55ms}
@@ -4765,7 +4785,7 @@ function buildReadinessCard(){
       </div>
       ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
         <span>📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
-        <button onclick="document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">View Score Tracker →</button>
+        <button onclick="document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Log Practice Score →</button>
       </div>`:''}
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
@@ -5160,17 +5180,17 @@ function _buildDashOverview(){
   const streakRecovery=buildStreakRecovery();
 
   return`
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px">
-    <div>
-      <h1 style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em">${_getGreeting()}, ${S.name}.</h1>
+  <div class="dash-heading" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:10px">
+    <div style="min-width:0">
+      <h1 style="font-size:26px;font-weight:900;line-height:1;letter-spacing:-.03em">${_getGreeting()}, ${S.name}.</h1>
       <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">
-        📝 Log Exam Result
+    <div class="dash-heading-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0">
+      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+        📝 Log Result
       </button>
-      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:7px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;flex-shrink:0" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
-        <span style="font-size:14px">💪</span> Feeling stuck?
+      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
+        💪 Stuck?
       </button>
     </div>
   </div>
@@ -5195,8 +5215,8 @@ function _buildDashOverview(){
 
   <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div class="section-title" style="margin:0">Score Tracker</div>
-      <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
+      <div class="section-title" style="margin:0">Practice Exam Scores</div>
+      <span class="score-tracker-subtext" style="font-size:11px;color:var(--mut)">Becker · Gleim · Wiley · UWorld · Target: 75+</span>
     </div>
     ${buildScoreTracker()}
   </div>
@@ -9057,18 +9077,16 @@ function buildScoreTracker(){
     const avg=sScores.length?Math.round(sScores.reduce((a,b)=>a+b.score,0)/sScores.length):null;
     const trend=sScores.length>=2?(sScores[sScores.length-1].score>sScores[sScores.length-2].score?'📈':'📉'):'—';
     const passed=(S.sectionPassed||[]).includes(s);
-    return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)">
-      <span class="badge badge-${s}" style="min-width:46px;justify-content:center">${s}</span>
-      <div style="flex:1">
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${sScores.slice(-5).map((sc,i)=>`<div style="text-align:center">
-            <div style="width:34px;height:34px;border-radius:8px;background:${sc.score>=75?'var(--grn-bg)':sc.score>=65?'var(--amb-bg)':'var(--red-bg)'};border:1.5px solid ${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'}">${sc.score}</div>
-            <div style="font-size:10px;color:var(--mut);margin-top:2px">${sc.label||'P'+(i+1)}</div>
-          </div>`).join('')}
-          ${sScores.length===0?`<span style="font-size:12px;color:var(--mut)">No scores logged yet</span>`:''}
-        </div>
+    return`<div class="score-row">
+      <span class="badge badge-${s}" style="min-width:46px;justify-content:center;flex-shrink:0">${s}</span>
+      <div class="score-row-mid">
+        ${sScores.slice(-5).map((sc,i)=>`<div style="text-align:center">
+          <div style="width:34px;height:34px;border-radius:8px;background:${sc.score>=75?'var(--grn-bg)':sc.score>=65?'var(--amb-bg)':'var(--red-bg)'};border:1.5px solid ${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${sc.score>=75?'var(--grn)':sc.score>=65?'var(--amb)':'var(--red)'}">${sc.score}</div>
+          <div style="font-size:10px;color:var(--mut);margin-top:2px">${sc.label||'P'+(i+1)}</div>
+        </div>`).join('')}
+        ${sScores.length===0?`<span style="font-size:12px;color:var(--mut);align-self:center">No scores yet</span>`:''}
       </div>
-      <div style="text-align:right;flex-shrink:0">
+      <div class="score-row-right">
         ${avg!==null?`<div style="font-size:18px;font-weight:900;color:${avg>=75?'var(--grn)':avg>=65?'var(--amb)':'var(--red)'}">${avg}</div><div style="font-size:10px;color:var(--mut)">avg ${trend}</div>`:''}
         ${passed?`<div class="badge badge-passed" style="margin-top:4px">Passed ✅</div>`:''}
       </div>
