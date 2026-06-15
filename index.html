@@ -2790,7 +2790,7 @@ const PRO_FEATURES={
   // Pro tier
   examSimulator:    {label:'Question Bank',icon:'📝',desc:'Unlimited MCQs per section with explanations, timed sets, and random quizzes.'},
   unlimitedClubs:   {label:'Unlimited Study Clubs',icon:'🏛️',desc:'Create unlimited private clubs. Free tier is limited to 1 club.'},
-  priorityBadges:   {label:'Member Badge',icon:'🏅',desc:'Pro member badge visible on your public profile and leaderboard.'},
+  priorityBadges:   {label:'Member Badge',icon:'🏅',desc:'Pro member badge visible on your public profile and in your study circle.'},
   streakShield:     {label:'Streak Shield',icon:'🛡️',desc:'Miss a day? Use a Streak Shield to protect your streak — 3 shields per month.'},
   exportData:       {label:'Export Your Data',icon:'📤',desc:'Export all your sessions, scores, and progress to CSV or PDF at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'🎯',desc:'Set custom per-section weekly hour goals with smart reminders.'},
@@ -2858,7 +2858,7 @@ function openLegalModal(type){
     <h4>How We Use Your Data</h4>
     <ul>
       <li>To provide and improve the Ledger service.</li>
-      <li>To power leaderboards, social features, and study recommendations.</li>
+      <li>To power study circles, social features, and study recommendations.</li>
       <li>To send product updates and study reminders (you can opt out any time in Settings).</li>
       <li>We <strong>never</strong> sell your personal data to third parties.</li>
     </ul>
@@ -6010,70 +6010,7 @@ function buildProfile(){
 // EXPLORE
 // ═══════════════════════════════════════════════
 function buildExplore(){
-  // Full leaderboard (weekly hrs)
   const weekAgo=new Date(Date.now()-7*86400000);
-  const entries=[];
-  const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-  entries.push({name:S.name,hrs:myHrs,totalHrs:Math.round(getTotalHours()),initials:S.name.slice(0,2).toUpperCase(),color:'#6366f1',isYou:true,streak:getStreak(),section:S.sections[0]});
-  REAL_USERS.forEach(f=>{
-    const hrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-    entries.push({id:f.id,name:f.name,hrs,totalHrs:f.totalHours,initials:f.initials,color:f.color,isYou:false,streak:f.streak,section:f.currentSection||'CPA ✅',tier:f.tier||'free'});
-  });
-  entries.sort((a,b)=>b.hrs-a.hrs);
-  const medals=['🥇','🥈','🥉'];
-  const myRank=entries.findIndex(e=>e.isYou)+1;
-  const tierBadge=(tier)=>tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
-  let lbRows;
-  if(!isPro()){
-    const youEntry=entries.find(e=>e.isYou);
-    // Rows above the user — rendered but blurred
-    const aboveRows=entries.slice(0,myRank-1).map((e,i)=>`
-      <div class="lb-row" style="filter:blur(4px);user-select:none;pointer-events:none">
-        <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
-        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
-        <div class="lb-name">${e.name}</div>
-        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
-        <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
-      </div>`).join('');
-    // Rows below the user — visible
-    const belowRows=entries.slice(myRank).map((e,i)=>`
-      <div class="lb-row">
-        <div class="lb-rank">${myRank+i+1}</div>
-        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
-        <div class="lb-name">${e.name}</div>
-        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
-        <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
-      </div>`).join('');
-    lbRows=`
-      <div style="position:relative">
-        ${aboveRows}
-        ${myRank>1?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openUpgradeModal('Full Leaderboard')">
-          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;text-align:center;box-shadow:var(--shadow-md)">
-            <div style="font-size:11px;font-weight:800;color:var(--ora);margin-bottom:1px">${myRank-1} candidate${myRank>2?'s':''} ranked above you</div>
-            <div style="font-size:10px;color:var(--sub);font-weight:600">Unlock with Pro →</div>
-          </div>
-        </div>`:''}
-      </div>
-      <div class="lb-row lb-you">
-        <div class="lb-rank">${myRank}</div>
-        <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:#6366f1;color:#fff;flex-shrink:0">${youEntry?youEntry.initials:'?'}</div>
-        <div class="lb-name">You</div>
-        <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${youEntry?youEntry.streak:0}d</div>
-        <div class="lb-hrs">${youEntry?youEntry.hrs.toFixed(1):0}h</div>
-      </div>
-      ${belowRows}`;
-  } else {
-    lbRows=entries.map((e,i)=>{
-      const friendTier=e.isYou?(SUB.tier||'free'):(e.tier||'free');
-      return`<div class="lb-row${e.isYou?' lb-you':''}" style="${!e.isYou?'cursor:pointer;':''}" ${!e.isYou&&e.id?`onclick="openUserProfile('${e.id}')"`:''}>
-      <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
-      <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0">${e.initials}</div>
-      <div class="lb-name">${e.name}${e.isYou?' (you)':''}${tierBadge(friendTier)}</div>
-      <div style="font-size:10px;color:var(--mut);margin-right:8px">🔥${e.streak}d</div>
-      <div class="lb-hrs">${e.hrs.toFixed(1)}h</div>
-    </div>`;
-    }).join('');
-  }
 
   // Challenges
   const joinedChallengeIds=S.challenges||[];
@@ -9568,18 +9505,23 @@ async function _renderClubLeaderboard(clubId){
   const gStreak=_computeGroupStreak(docs);
   const weekHrsTotal=docs.reduce((s,m)=>s+(m.weekHrs||0),0);
   const myUid=AUTH&&AUTH.uid;
-  const members=docs.slice().sort((a,b)=>(b.weekHrs||0)-(a.weekHrs||0));
-  const rows=members.map((m,i)=>{
+  // Supportive view — members listed by who's active, not ranked against each other.
+  // Active-this-week first, then by name; no rank numbers or medals.
+  const members=docs.slice().sort((a,b)=>{
+    const aw=(a.weekHrs||0)>0?0:1, bw=(b.weekHrs||0)>0?0:1;
+    if(aw!==bw) return aw-bw;
+    return String(a.name||'').localeCompare(String(b.name||''));
+  });
+  const rows=members.map((m)=>{
     const isYou=(m.uid&&m.uid===myUid)||m.id===myUid;
     const initials=(m.initials||(m.name||'M').slice(0,2)).toString().toUpperCase();
     const color=m.color||'#5a5fcf';
-    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    const active=(m.weekHrs||0)>0;
     return '<div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--bdr)'+(isYou?';background:var(--ind-bg);padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;border-radius:8px':'')+'">'+
-      '<div style="width:20px;text-align:center;font-size:12px;font-weight:800;color:var(--mut);flex-shrink:0">'+medal+'</div>'+
-      '<div class="avatar" style="width:30px;height:30px;font-size:10px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(initials)+'</div>'+
+      '<div class="avatar" style="width:32px;height:32px;font-size:10px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(initials)+'</div>'+
       '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+esc(m.name||'Member')+(isYou?' (you)':'')+'</div>'+
         '<div style="font-size:10px;color:var(--mut);margin-top:1px">'+Math.round(m.totalHrs||0)+'h total · 🔥'+(m.streak||0)+'d streak</div></div>'+
-      '<div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:var(--ora)">'+(m.weekHrs||0).toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
+      '<div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:800;color:'+(active?'var(--ora)':'var(--mut)')+'">'+(m.weekHrs||0).toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">this week</div></div>'+
     '</div>';
   }).join('');
   const streakBanner='<div style="background:linear-gradient(135deg,#1c1206,#2a1a0a);border-radius:14px;padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px">'+
@@ -10629,7 +10571,7 @@ function buildSettingsNotifications(){
     {id:'club_messages',label:'Club Messages',sub:'New messages in your study clubs',def:true},
     {id:'achievements',label:'Achievements',sub:'When you unlock a new badge',def:true},
     {id:'weekly_recap',label:'Weekly Recap',sub:'Your study summary delivered every Sunday',def:false},
-    {id:'leaderboard',label:'Leaderboard Updates',sub:'Your position in the weekly study circle rankings',def:true},
+    {id:'leaderboard',label:'Study Circle Activity',sub:'When people in your circle log sessions and hit milestones',def:true},
   ];
   return`
 <div class="section-title">Push Notifications</div>
