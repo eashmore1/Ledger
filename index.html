@@ -10259,13 +10259,14 @@ function openAppSettings(section='account'){
     el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;backdrop-filter:blur(2px)';
     el.innerHTML=`
 <div id="as-panel" style="position:absolute;top:0;right:0;bottom:0;width:min(100vw,680px);background:var(--bg);display:flex;flex-direction:column;box-shadow:-12px 0 48px rgba(0,0,0,.18);animation:slideInRight .22s ease">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 14px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)">
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:18px">⚙️</span>
       <span style="font-size:17px;font-weight:800;letter-spacing:-.02em">Settings</span>
     </div>
     <button onclick="closeAppSettings()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1">×</button>
   </div>
+  <div id="as-mobile-nav" style="display:none;overflow-x:auto;padding:10px 12px;gap:6px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch"></div>
   <div style="display:flex;flex:1;min-height:0;overflow:hidden">
     <div id="as-sidebar" style="width:170px;flex-shrink:0;border-right:1px solid var(--bdr);padding:10px 8px;overflow-y:auto;background:var(--surf)"></div>
     <div id="as-body" style="flex:1;overflow-y:auto;padding:22px 24px 40px;min-width:0"></div>
@@ -10284,28 +10285,64 @@ function renderAppSettingsTabs(){
     {id:'account',  icon:'👤', label:'Account'},
     {id:'billing',  icon:'💳', label:'Billing'},
     {id:'security', icon:'🔒', label:'Security'},
-    {id:'notifications',icon:'🔔',label:'Notifications'},
+    {id:'notifications',icon:'🔔',label:'Notifs'},
     {id:'privacy',  icon:'🛡️', label:'Privacy'},
-    {id:'data',     icon:'💾', label:'Data & App'},
+    {id:'data',     icon:'💾', label:'Data'},
   ];
-  const el=document.getElementById('as-sidebar');
-  if(!el) return;
-  el.innerHTML = tabs.map(t=>{
-    const active = _settingsSection===t.id;
-    return `<button onclick="switchSettingsSection('${t.id}')" style="
-      display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
-      border:none;border-radius:9px;cursor:pointer;text-align:left;
-      background:${active?'var(--ora-bg)':'transparent'};
-      color:${active?'var(--ora)':'var(--sub)'};
-      font-size:13px;font-weight:${active?700:500};
-      margin-bottom:2px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s"
-      onmouseover="if('${t.id}'!=='${_settingsSection}')this.style.background='var(--surf2)';this.style.color='var(--txt)'"
-      onmouseout="if('${t.id}'!=='${_settingsSection}')this.style.background='transparent';this.style.color='var(--sub)'">
-      <span style="font-size:16px;flex-shrink:0">${t.icon}</span>
-      <span>${t.label}</span>
-      ${active?'<span style="width:4px;height:4px;border-radius:50%;background:var(--ora);margin-left:auto;flex-shrink:0"></span>':''}
-    </button>`;
-  }).join('');
+  const isMobile = window.innerWidth <= 600;
+
+  // Desktop sidebar
+  const sidebar = document.getElementById('as-sidebar');
+  if(sidebar){
+    sidebar.style.display = isMobile ? 'none' : '';
+    if(!isMobile){
+      sidebar.innerHTML = tabs.map(t=>{
+        const active = _settingsSection===t.id;
+        return `<button onclick="switchSettingsSection('${t.id}')" style="
+          display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+          border:none;border-radius:9px;cursor:pointer;text-align:left;
+          background:${active?'var(--ora-bg)':'transparent'};
+          color:${active?'var(--ora)':'var(--sub)'};
+          font-size:13px;font-weight:${active?700:500};
+          margin-bottom:2px;transition:background-color .15s,color .15s"
+          onmouseover="if('${t.id}'!=='${_settingsSection}'){this.style.background='var(--surf2)';this.style.color='var(--txt)'}"
+          onmouseout="if('${t.id}'!=='${_settingsSection}'){this.style.background='transparent';this.style.color='var(--sub)'}">
+          <span style="font-size:16px;flex-shrink:0">${t.icon}</span>
+          <span>${t.label}</span>
+          ${active?'<span style="width:4px;height:4px;border-radius:50%;background:var(--ora);margin-left:auto;flex-shrink:0"></span>':''}
+        </button>`;
+      }).join('');
+    }
+  }
+
+  // Mobile pill nav
+  const mobileNav = document.getElementById('as-mobile-nav');
+  if(mobileNav){
+    mobileNav.style.display = isMobile ? 'flex' : 'none';
+    if(isMobile){
+      mobileNav.innerHTML = tabs.map(t=>{
+        const active = _settingsSection===t.id;
+        return `<button onclick="switchSettingsSection('${t.id}')" style="
+          display:inline-flex;align-items:center;gap:5px;padding:6px 12px;flex-shrink:0;
+          border-radius:20px;border:1.5px solid ${active?'var(--ora)':'var(--bdr)'};
+          background:${active?'var(--ora-bg)':'transparent'};
+          color:${active?'var(--ora)':'var(--sub)'};
+          font-size:12px;font-weight:${active?700:500};
+          cursor:pointer;white-space:nowrap;transition:background-color .15s,color .15s,border-color .15s">
+          <span>${t.icon}</span><span>${t.label}</span>
+        </button>`;
+      }).join('');
+      // Scroll active tab into view
+      setTimeout(()=>{
+        const activeBtn = mobileNav.querySelector('[style*="var(--ora-bg)"]');
+        if(activeBtn) activeBtn.scrollIntoView({block:'nearest',inline:'center'});
+      }, 50);
+    }
+  }
+
+  // Tighten body padding on mobile
+  const body = document.getElementById('as-body');
+  if(body) body.style.padding = isMobile ? '16px 14px 80px' : '22px 24px 40px';
 }
 
 function switchSettingsSection(section){
