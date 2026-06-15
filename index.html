@@ -10725,8 +10725,6 @@ function buildSettingsData(){
   ${[{v:actCount,l:'Sessions'},{v:Math.round(totalHrs)+'h',l:'Hours Logged'},{v:clubCount,l:'Clubs'}].map(s=>`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">${s.v}</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">${s.l}</div></div>`).join('')}
 </div>
 
-<div style="background:linear-gradient(135deg,#0a0618,#18103a);border-radius:14px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px">
-
 <div class="section-title">Export</div>
 <button onclick="exportData()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
   <span style="font-size:18px">📥</span>
