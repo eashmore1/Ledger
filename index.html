@@ -3827,6 +3827,8 @@ function signOut(){
   clearAuth();
   AUTH=null;S=null;
   tsReset();clearInterval(timerInterval);timerInterval=null;
+  window._coachChat=[];
+  _askLedgerUsage=null;
   renderAuth();
   showToast('Signed out successfully','info');
 }
@@ -8141,6 +8143,8 @@ let _heatmapOwnOffset=0;
 let _heatmapOtherOffset=0;
 let _heatmapOtherActivities=[];
 let _clubViewMsgUnsub = null;
+const ASK_LEDGER_LIMIT = 100;
+let _askLedgerUsage = null; // {month:'2026-06', count:47} — loaded from Firestore
 
 function _detachMsgListener(){ if(_activeMsgUnsub){ _activeMsgUnsub(); _activeMsgUnsub=null; } }
 function _detachClubViewListener(){ if(_clubViewMsgUnsub){ _clubViewMsgUnsub(); _clubViewMsgUnsub=null; } }
@@ -12298,6 +12302,9 @@ function buildAIStudyCoach() {
     ? 'Next: <strong>' + nextMile + 'h</strong> milestone — only <strong>' + (nextMile-totalHrs) + 'h</strong> away!'
     : 'You\'ve passed all major milestones! 🏆';
 
+  // Load usage from Firestore (async, updates DOM when ready)
+  setTimeout(_loadAskLedgerUsage, 0);
+
   // Coach chat messages state
   if (!window._coachChat) window._coachChat = [];
 
@@ -12358,7 +12365,10 @@ function buildAIStudyCoach() {
     '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
         '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Ask Ledger</div>' +
-        '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<span id="ask-ledger-usage-count" style="font-size:10px;color:var(--mut)">— prompts left this month</span>' +
+          '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>' +
+        '</div>' +
       '</div>' +
       '<div id="coach-chat-msgs" style="min-height:60px;max-height:220px;overflow-y:auto;margin-bottom:10px">' +
         (chatMsgs || '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">Ask me anything — CPA concepts, exam strategy, study advice...</div>') +
@@ -12377,10 +12387,50 @@ function buildAIStudyCoach() {
   '</div>';
 }
 
+function _loadAskLedgerUsage() {
+  if (!AUTH || !firebaseDb) return;
+  const monthKey = new Date().toISOString().slice(0,7);
+  firebaseDb.collection('userState').doc(AUTH.uid).get().then(function(snap) {
+    const d = snap.exists ? snap.data() : {};
+    if (d.askLedgerMonth === monthKey) {
+      _askLedgerUsage = {month: monthKey, count: d.askLedgerCount || 0};
+    } else {
+      _askLedgerUsage = {month: monthKey, count: 0};
+    }
+    const countEl = document.getElementById('ask-ledger-usage-count');
+    if (countEl) countEl.textContent = Math.max(0, ASK_LEDGER_LIMIT - _askLedgerUsage.count) + ' prompts left this month';
+  }).catch(function() { _askLedgerUsage = {month: monthKey, count: 0}; });
+}
+
+function _incrementAskLedgerUsage() {
+  if (!AUTH || !firebaseDb) return;
+  const monthKey = new Date().toISOString().slice(0,7);
+  if (!_askLedgerUsage || _askLedgerUsage.month !== monthKey) {
+    _askLedgerUsage = {month: monthKey, count: 0};
+  }
+  _askLedgerUsage.count++;
+  const remaining = Math.max(0, ASK_LEDGER_LIMIT - _askLedgerUsage.count);
+  const countEl = document.getElementById('ask-ledger-usage-count');
+  if (countEl) countEl.textContent = remaining + ' prompts left this month';
+  firebaseDb.collection('userState').doc(AUTH.uid).set({
+    askLedgerMonth: monthKey,
+    askLedgerCount: _askLedgerUsage.count
+  }, {merge: true}).catch(function(e) { console.warn('ask usage write failed:', e.message); });
+}
+
 function sendCoachMessage() {
   const inp = document.getElementById('coach-input');
   if (!inp || !inp.value.trim()) return;
   const msg = inp.value.trim();
+
+  // Check monthly limit
+  const monthKey = new Date().toISOString().slice(0,7);
+  const usageCount = (_askLedgerUsage && _askLedgerUsage.month === monthKey) ? _askLedgerUsage.count : 0;
+  if (usageCount >= ASK_LEDGER_LIMIT) {
+    showToast('Monthly limit reached (' + ASK_LEDGER_LIMIT + ' prompts). Resets next month.', 'err');
+    return;
+  }
+
   inp.value = '';
   if (!window._coachChat) window._coachChat = [];
   window._coachChat.push({mine:true, text:msg});
@@ -12395,15 +12445,33 @@ function sendCoachMessage() {
   msgsEl.innerHTML += typingDiv;
   msgsEl.scrollTop = msgsEl.scrollHeight;
 
-  function _showReply(reply) {
+  function _showReply(reply, isAI) {
     window._coachChat.push({mine:false, text:reply});
     const typingEl = document.getElementById(typingId);
     if (typingEl) typingEl.remove();
     const replyWrap = document.createElement('div');
-    replyWrap.style.cssText = 'display:flex;margin-bottom:8px';
+    replyWrap.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;margin-bottom:8px';
     const replyBub = document.createElement('div');
     replyBub.style.cssText = 'max-width:82%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:12px;line-height:1.6;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);white-space:pre-wrap';
     replyWrap.appendChild(replyBub);
+    if (isAI) {
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      copyBtn.style.cssText = 'margin-top:5px;padding:3px 10px;font-size:10px;font-weight:700;background:transparent;color:var(--mut);border:1px solid var(--bdr);border-radius:6px;cursor:pointer;letter-spacing:.02em;transition:color .15s,border-color .15s';
+      copyBtn.onclick = function() {
+        navigator.clipboard.writeText(reply).then(function() {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.style.color = 'var(--grn)';
+          copyBtn.style.borderColor = 'var(--grn)';
+          setTimeout(function() {
+            copyBtn.textContent = 'Copy';
+            copyBtn.style.color = 'var(--mut)';
+            copyBtn.style.borderColor = 'var(--bdr)';
+          }, 2000);
+        }).catch(function() { showToast('Copy failed — select text manually', 'err'); });
+      };
+      replyWrap.appendChild(copyBtn);
+    }
     msgsEl.appendChild(replyWrap);
     msgsEl.scrollTop = msgsEl.scrollHeight;
     let i = 0;
@@ -12424,12 +12492,13 @@ function sendCoachMessage() {
   const _offlineNote = '⚠️ Live AI coaching is offline right now — here\'s a general pointer instead:\n\n';
   _coachAskAI(msg).then(function(aiReply) {
     if (aiReply) {
-      _showReply(aiReply);
+      _incrementAskLedgerUsage();
+      _showReply(aiReply, true);
     } else {
-      _showReply(_offlineNote + _coachReply(msg));
+      _showReply(_offlineNote + _coachReply(msg), false);
     }
   }).catch(function() {
-    _showReply(_offlineNote + _coachReply(msg));
+    _showReply(_offlineNote + _coachReply(msg), false);
   });
 }
 
