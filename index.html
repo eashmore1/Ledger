@@ -9905,33 +9905,36 @@ function submitScore(section){
 // EXAM TIPS TAB
 // ═══════════════════════════════════════════════
 // Exam Day Protocol card — preserved on the Dashboard after the Exam Hub was retired.
+function _toggleExamProtocol(){
+  const b=document.getElementById('exam-protocol-body');
+  const c=document.getElementById('exam-protocol-chev');
+  if(!b) return;
+  const open=b.style.display==='none';
+  b.style.display=open?'block':'none';
+  if(c) c.style.transform=open?'rotate(180deg)':'';
+}
 function buildExamDayProtocolCard(){
-  const protocolSection = isPro()
-    ? `<div class="card card-pad" style="border-top:3px solid var(--amb)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
-          <div>
-            <div style="font-size:15px;font-weight:800">Exam Day Protocol</div>
-            <div style="font-size:11px;color:var(--mut)">Your 5-phase pre-exam playbook — check off each milestone as you go</div>
-          </div>
+  // Collapsed by default — the full 5-phase checklist only opens on click, so the
+  // Progress tab stays clean.
+  if(isPro()){
+    return `<div class="card card-pad" style="border-top:3px solid var(--amb);margin-top:20px">
+      <div onclick="_toggleExamProtocol()" style="display:flex;align-items:center;gap:12px;cursor:pointer">
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:800">Exam Day Protocol</div>
+          <div style="font-size:11px;color:var(--mut)">Your 5-phase pre-exam playbook — tap to open</div>
         </div>
-        ${_buildExamDayProtocol()}
-      </div>`
-    : `<div class="card card-pad" style="text-align:center;padding:44px 24px;border:2px dashed var(--bdr2)">
-        <div style="font-size:48px;margin-bottom:14px">📋</div>
-        <div style="font-size:18px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em">Exam Day Protocol</div>
-        <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 8px;line-height:1.7">A structured 5-phase checklist — 14 days out through exam morning — so nothing falls through the cracks before you sit.</div>
-        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:22px">
-          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">14 days out</span>
-          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">7 days out</span>
-          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">3 days out</span>
-          <span style="font-size:11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;color:var(--sub)">Day before</span>
-          <span style="font-size:11px;background:var(--amb-bg,var(--ora-bg));border:1px solid var(--amb,var(--ora));border-radius:20px;padding:3px 10px;color:var(--amb,var(--ora));font-weight:700">Exam day</span>
-        </div>
-        <button class="btn btn-primary" style="font-size:13px;padding:10px 26px" onclick="openUpgradeModal('Exam Day Protocol')">Unlock with Pro — 7 days free</button>
-        <div style="font-size:10px;color:var(--mut);margin-top:8px">Cancel anytime · No commitment</div>
-      </div>`;
-  return `<div style="margin:28px 0 12px;font-size:16px;font-weight:800">📋 Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle;margin-left:6px">Pro</span></div>${protocolSection}`;
+        <span id="exam-protocol-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
+      </div>
+      <div id="exam-protocol-body" style="display:none;margin-top:16px">${_buildExamDayProtocol()}</div>
+    </div>`;
+  }
+  return `<div class="card card-pad" style="text-align:center;padding:40px 24px;border:2px dashed var(--bdr2);margin-top:20px">
+    <div style="font-size:44px;margin-bottom:12px">📋</div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em">Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle">Pro</span></div>
+    <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 18px;line-height:1.7">A structured 5-phase checklist — 14 days out through exam morning — so nothing falls through the cracks before you sit.</div>
+    <button class="btn btn-primary" style="font-size:13px;padding:10px 26px" onclick="openUpgradeModal('Exam Day Protocol')">Unlock with Pro — 7 days free</button>
+  </div>`;
 }
 
 // ═══════════════════════════════════════════════
