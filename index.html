@@ -4904,93 +4904,98 @@ function getDecayedSectionHours(section){
 
 function calcReadinessScore(){
   const passed=new Set(S.sectionPassed||[]);
-  if((S.sections||[]).every(s=>passed.has(s)))return{score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[],hasScores:false};
+  const allSections=(S.sections||[]);
+  // Only "all passed" when there is at least one section AND every one is passed.
+  if(allSections.length && allSections.every(s=>passed.has(s)))return{score:100,label:'All Sections Passed!',color:'var(--grn)',tier:'passed',breakdown:[],hasScores:false};
+
+  // ── Reliability helpers: every input is validated so the score can never be NaN ──
+  const now=Date.now();
+  const clampInt=(v,lo,hi)=>{ v=Math.round(Number(v)); if(!isFinite(v)) return lo; return Math.max(lo,Math.min(hi,v)); };
+  const dayMs=(str)=>{ if(!str) return null; const t=new Date(String(str).slice(0,10)+'T00:00:00').getTime(); return isFinite(t)?t:null; };
+  const num=(v)=>{ const n=Number(v); return isFinite(n)?n:0; };
 
   const s=getCurrentSection();
-  const logged=getSectionHours(s);
-  const decayed=getDecayedSectionHours(s);
-  const goal=getHourGoal(s);
-  const targetDate=S.examDates?.[s];
+  const logged=Math.max(0,num(getSectionHours(s)));
+  const decayed=Math.max(0,num(getDecayedSectionHours(s)));
+  const goal=Math.max(1,num(getHourGoal(s))||150);
+  const examMs=dayMs(S.examDates?.[s]); // null when missing or malformed
 
   // ── 1. Volume (0–25) — timeline-adjusted, recency-decayed hours ──────────────
   let volumePts;
-  if(targetDate){
-    const examMs=new Date(targetDate+' 00:00:00').getTime();
-    const sectionActs=(S.activities||[]).filter(a=>a.section===s).sort((a,b)=>a.date.localeCompare(b.date));
-    const startMs=sectionActs.length?new Date(sectionActs[0].date.slice(0,10)+'T00:00:00').getTime():(S.created||Date.now()-90*86400000);
+  if(examMs){
+    const sectionActs=(S.activities||[]).filter(a=>a&&a.section===s&&dayMs(a.date)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+    const startMs=(sectionActs.length?dayMs(sectionActs[0].date):null)||num(S.created)||(now-90*86400000);
     const totalMs=Math.max(1,examMs-startMs);
-    const fracElapsed=Math.max(0,Math.min(1.5,(Date.now()-startMs)/totalMs));
+    const fracElapsed=Math.max(0,Math.min(1.5,(now-startMs)/totalMs));
     const expectedNow=goal*fracElapsed;
-    volumePts=expectedNow<5
-      ?Math.min(25,Math.round(decayed/goal*25))
-      :Math.min(25,Math.round(decayed/expectedNow*25));
+    volumePts=expectedNow<5 ? (decayed/goal*25) : (decayed/expectedNow*25);
   } else {
-    volumePts=Math.min(25,Math.round(decayed/goal*25));
+    volumePts=decayed/goal*25;
   }
+  volumePts=clampInt(volumePts,0,25);
 
   // ── 2. Pacing (0–15) — on track for exam date ────────────────────────────────
-  let pacingPts=10;
-  if(targetDate){
-    const daysLeft=Math.round((new Date(targetDate+' 00:00:00')-Date.now())/86400000);
+  let pacingPts=10; // neutral credit when no exam date is set (can't assess pacing)
+  if(examMs){
+    const daysLeft=Math.round((examMs-now)/86400000);
     const weeksLeft=Math.max(0.5,daysLeft/7);
     const needed=Math.max(0,goal-logged);
     const hrsPerWeek=needed/weeksLeft;
-    const last28=(S.activities||[]).filter(a=>Date.now()-new Date(a.date).getTime()<28*86400000);
-    const actualPace=last28.reduce((a,b)=>a+(b.hours||0),0)/4;
-    const available=actualPace>0.5?actualPace:(S.hoursPerWeek||15);
+    const last28=(S.activities||[]).filter(a=>{const t=dayMs(a&&a.date);return t&&now-t<28*86400000;});
+    const actualPace=last28.reduce((acc,b)=>acc+Math.max(0,num(b.hours)),0)/4;
+    const available=actualPace>0.5?actualPace:Math.max(1,num(S.hoursPerWeek)||15);
     if(daysLeft<0) pacingPts=0;
     else if(hrsPerWeek<=0) pacingPts=15;
-    else{
-      const ratio=available/hrsPerWeek;
-      pacingPts=Math.max(0,Math.min(15,Math.round(15*Math.pow(Math.min(1.2,ratio)/1.2,1.5))));
-    }
+    else pacingPts=15*Math.pow(Math.min(1.2,available/hrsPerWeek)/1.2,1.5);
   }
+  pacingPts=clampInt(pacingPts,0,15);
 
   // ── 3. Practice Scores (0–40) — recency-weighted Becker/Gleim/Wiley/UWorld ──
   // Most predictive signal: candidates averaging 75+ on practice exams pass at high rates.
-  // Scores decay over time (studying 4 months ago matters less than last week).
-  const sScores=(S.practiceScores||{})[s]||[];
-  let practicePts=0;
+  // Only valid entries (finite score, real date) count; scores are clamped to 0–100.
+  const sScores=((S.practiceScores||{})[s]||[]).filter(sc=>sc&&isFinite(Number(sc.score))&&dayMs(sc.date));
   const hasScores=sScores.length>0;
+  let practicePts=0;
   if(sScores.length){
-    const now=Date.now();
     let totalWeight=0,weightedSum=0;
     sScores.forEach(sc=>{
-      const daysAgo=Math.max(0,(now-new Date(sc.date).getTime())/86400000);
-      // Exponential decay: full weight <30 days, ~50% weight at 3 months
-      const w=Math.max(0.3,Math.exp(-daysAgo/120));
-      weightedSum+=sc.score*w;
-      totalWeight+=w;
+      const score=Math.max(0,Math.min(100,Number(sc.score)));
+      const daysAgo=Math.max(0,(now-dayMs(sc.date))/86400000);
+      const w=Math.max(0.3,Math.exp(-daysAgo/120)); // full weight <30d, ~50% at 3mo
+      weightedSum+=score*w; totalWeight+=w;
     });
     const weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
-    // 75 = CPA passing threshold = 35 pts; 80+ = full 40 pts
-    practicePts=Math.min(40,Math.round((weightedAvg/75)*35));
-    if(weightedAvg>=75) practicePts=Math.min(40,practicePts+5);
+    practicePts=(weightedAvg/75)*35;          // 75 = passing = 35 pts
+    if(weightedAvg>=75) practicePts+=5;        // 80+ trends toward full 40
   }
+  practicePts=clampInt(practicePts,0,40);
 
   // ── 4. Momentum (0–10) — are your scores improving? ──────────────────────────
   let momentumPts=0;
   if(sScores.length===1){
     momentumPts=3; // credit for logging first score
   } else if(sScores.length>=2){
-    const latest=sScores[sScores.length-1].score;
-    const prevAvg=sScores.slice(0,-1).reduce((a,b)=>a+b.score,0)/(sScores.length-1);
+    const nums=sScores.map(sc=>Math.max(0,Math.min(100,Number(sc.score))));
+    const latest=nums[nums.length-1];
+    const prevAvg=nums.slice(0,-1).reduce((a,b)=>a+b,0)/(nums.length-1);
     const delta=latest-prevAvg;
     if(delta>=5) momentumPts=10;       // strong upward trend
     else if(delta>=2) momentumPts=7;   // improving
     else if(delta>=-2) momentumPts=4;  // flat — stable is fine
     else momentumPts=1;                // declining — still credit for trying
   }
+  momentumPts=clampInt(momentumPts,0,10);
 
   // ── 5. Consistency (0–10) — active days with ≥30 min in last 14 days ─────────
-  const twoWeeksAgo=Date.now()-14*86400000;
+  const twoWeeksAgo=now-14*86400000;
   const activeDays=new Set();
   (S.activities||[]).forEach(a=>{
-    if(new Date(a.date).getTime()>twoWeeksAgo&&(a.hours||0)>=0.5) activeDays.add(a.date.slice(0,10));
+    const t=dayMs(a&&a.date);
+    if(t&&t>twoWeeksAgo&&num(a.hours)>=0.5) activeDays.add(String(a.date).slice(0,10));
   });
-  const consistencyPts=Math.min(10,Math.round(activeDays.size/10*10));
+  const consistencyPts=clampInt(activeDays.size,0,10);
 
-  const score=Math.min(99,volumePts+pacingPts+practicePts+momentumPts+consistencyPts);
+  const score=clampInt(volumePts+pacingPts+practicePts+momentumPts+consistencyPts,0,99);
   const breakdown=[{section:s,score,volumePts,pacingPts,practicePts,momentumPts,consistencyPts,logged,decayed:Math.round(decayed),hasScores}];
 
   let label,color,tier;
