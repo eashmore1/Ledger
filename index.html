@@ -5046,7 +5046,7 @@ function buildReadinessCard(){
       </div>
       ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
         <span>📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
-        <button onclick="document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">View Score Tracker →</button>
+        <button onclick="_openScoreTracker()" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Log Practice Scores →</button>
       </div>`:''}
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
@@ -5477,24 +5477,28 @@ function _buildDashOverview(){
   </div>
 
   <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div class="section-title" style="margin:0">Score Tracker</div>
-      <span style="font-size:11px;color:var(--mut)">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</span>
-    </div>
-    ${buildScoreTracker()}
-  </div>
-
-  <!-- Ask Ledger teaser -->
-  <div class="card card-pad" style="margin-bottom:16px;background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border-color:rgba(90,95,207,.25)">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🤖</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:800;margin-bottom:3px">Ask Ledger</div>
-        <div style="font-size:12px;color:var(--sub)">Your AI study coach — get personalized pacing, weak-spot alerts, and instant answers.</div>
+    <div onclick="_toggleScoreTracker()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px">
+      <div>
+        <div class="section-title" style="margin:0">Score Tracker</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px">Log Becker · Gleim · Wiley · UWorld scores · Target: 75+</div>
       </div>
-      <button onclick="switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)" class="btn btn-ind btn-sm" style="flex-shrink:0;white-space:nowrap">Open →</button>
+      <span id="score-tracker-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
     </div>
+    <div id="score-tracker-body" style="display:none;margin-top:14px">${buildScoreTracker()}</div>
   </div>`;
+}
+function _toggleScoreTracker(){
+  const b=document.getElementById('score-tracker-body');
+  const c=document.getElementById('score-tracker-chev');
+  if(!b) return;
+  const open=b.style.display==='none';
+  b.style.display=open?'block':'none';
+  if(c) c.style.transform=open?'rotate(180deg)':'';
+}
+function _openScoreTracker(){
+  const b=document.getElementById('score-tracker-body');
+  if(b&&b.style.display==='none') _toggleScoreTracker();
+  document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 function _buildDashProgress(){
