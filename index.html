@@ -2536,6 +2536,7 @@ async function _loadFollowerCount(uid, elId){
 let S = loadState(AUTH?.uid) || null;
 let currentTab = 'feed';
 let _dashTab = 'overview'; // 'overview' | 'progress' | 'plan'
+let _readinessSection = null; // null = auto (soonest exam); else a forced section for the Readiness hero
 let _heatMapRange = 'year'; // 'week' | 'month' | 'year'
 let isDark = localStorage.getItem('pf2-theme')==='dark';
 
@@ -4924,7 +4925,7 @@ function getDecayedSectionHours(section){
     },0);
 }
 
-function calcReadinessScore(){
+function calcReadinessScore(overrideSection){
   const passed=new Set(S.sectionPassed||[]);
   const allSections=(S.sections||[]);
   // Only "all passed" when there is at least one section AND every one is passed.
@@ -4936,7 +4937,7 @@ function calcReadinessScore(){
   const dayMs=(str)=>{ if(!str) return null; const t=new Date(String(str).slice(0,10)+'T00:00:00').getTime(); return isFinite(t)?t:null; };
   const num=(v)=>{ const n=Number(v); return isFinite(n)?n:0; };
 
-  const s=getCurrentSection();
+  const s=(overrideSection&&(S.sections||[]).includes(overrideSection))?overrideSection:getCurrentSection();
   const logged=Math.max(0,num(getSectionHours(s)));
   const decayed=Math.max(0,num(getDecayedSectionHours(s)));
   const goal=Math.max(1,num(getHourGoal(s))||150);
@@ -5029,8 +5030,11 @@ function calcReadinessScore(){
   return{score,label,color,tier,breakdown,section:s,hasScores};
 }
 
+function setReadinessSection(sec){_readinessSection=sec;renderTab();}
 function buildReadinessCard(){
-  const r=calcReadinessScore();
+  const r=calcReadinessScore(_readinessSection);
+  const _secs=(S.sections||[]).filter(Boolean);
+  const _switcher=_secs.length>1?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">${_secs.map(sec=>{const on=sec===r.section;return`<button onclick="setReadinessSection('${sec}')" style="padding:3px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${on?(EXAMS[sec]?.color||'var(--ora)'):'var(--bdr)'};background:${on?(EXAMS[sec]?.color||'var(--ora)'):'var(--surf2)'};color:${on?'#fff':'var(--mut)'}">${sec}</button>`;}).join('')}</div>`:'';
   const circumference=2*Math.PI*52;
   const dash=circumference*(1-r.score/100);
   const glowStyle=r.tier==='ready'?'box-shadow:0 0 0 1.5px rgba(34,197,94,.25),var(--shadow)':'';
@@ -5048,7 +5052,8 @@ function buildReadinessCard(){
       </svg>
     </div>
     <div style="flex:1">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:4px">Readiness Score <span class="badge badge-${r.section}" style="font-size:10px;vertical-align:middle;margin-left:4px">${r.section}</span></div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px">Readiness Score</div>
+      ${_switcher}
       <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${r.breakdown.map(b=>[
@@ -5275,7 +5280,7 @@ function buildPacingAlert(){
         <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">At your current ${b.available}h/wk pace you won't make it. You need <strong>${b.hrsPerWeek}h/week</strong> — about <strong>${b.catchUpHrsToday}h/day</strong>. Either increase your hours or push your exam date.</div>
       </div>
-      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>{openDashTab('progress');setTimeout(()=>document.getElementById('schedule-section')?.scrollIntoView({behavior:'smooth'}),100)},50)">Reschedule →</button>
+      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>{const b=document.getElementById('fold-pacing-body');if(b){if(b.style.display==='none')_toggleFold('fold-pacing');b.scrollIntoView({behavior:'smooth',block:'center'});}},60)">Reschedule →</button>
     </div>`);
   });
 
@@ -5437,68 +5442,116 @@ function openStrugglingModal(){
 // DASHBOARD
 // ═══════════════════════════════════════════════
 function buildDashboard(){
-  const subTabs=[
-    {id:'overview',label:'Overview'},
-    {id:'progress',label:'Progress'},
-  ];
-  const subNav=`<div style="display:flex;gap:4px;margin-bottom:24px;background:var(--surf2);padding:4px;border-radius:12px;width:fit-content">
-    ${subTabs.map(t=>`<button onclick="openDashTab('${t.id}')" style="padding:7px 18px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;background:${_dashTab===t.id?'var(--surf)':'transparent'};color:${_dashTab===t.id?'var(--txt)':'var(--mut)'};box-shadow:${_dashTab===t.id?'var(--shadow)':'none'}">${t.label}</button>`).join('')}
-  </div>`;
-
-  let content='';
-  if(_dashTab==='overview') content=_buildDashOverview();
-  else if(_dashTab==='progress') content=_buildDashProgress();
-
-  return`<div style="max-width:880px;margin:0 auto">${subNav}${content}</div>`;
+  // Single-canvas dashboard (no sub-tabs): Readiness centerpiece up top, everything
+  // heavy collapsed into folds below. Replaces the old Overview/Progress split.
+  return`<div style="max-width:880px;margin:0 auto">${_buildDashMain()}</div>`;
 }
 
-function _buildDashOverview(){
+// Generic collapsible "fold" row used for the heavy detail panels (pacing, calendar, analytics).
+function _dashFold(id,title,sub,body){
+  return`<div class="card" style="margin-bottom:8px">
+    <div onclick="_toggleFold('${id}')" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;gap:8px">
+      <div><div style="font-size:14px;font-weight:700">${title}</div><div style="font-size:11px;color:var(--mut);margin-top:2px">${sub}</div></div>
+      <span id="${id}-chev" style="font-size:15px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
+    </div>
+    <div id="${id}-body" style="display:none;padding:0 20px 18px">${body}</div>
+  </div>`;
+}
+function _toggleFold(id){
+  const b=document.getElementById(id+'-body');const c=document.getElementById(id+'-chev');
+  if(!b)return;const o=b.style.display==='none';b.style.display=o?'block':'none';if(c)c.style.transform=o?'rotate(180deg)':'';
+}
+
+// Supportive (never competitive) line: how many people you follow studied this week.
+function _buildDashSocialLine(){
+  const wk=Date.now()-7*86400000;
+  const active=(REAL_USERS||[]).filter(f=>(f&&f.activities||[]).some(a=>{const t=new Date(a&&a.date).getTime();return isFinite(t)&&t>wk;})).length;
+  if(active>0){
+    return`<div onclick="switchTab('feed')" style="display:flex;align-items:center;gap:8px;margin:12px 2px 0;font-size:12px;color:var(--mut);cursor:pointer"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 0 3px var(--grn-bg);flex-shrink:0"></span><span>${active} study partner${active!==1?'s':''} ${active!==1?'were':'was'} active this week — you're not grinding alone.</span></div>`;
+  }
+  return`<div onclick="switchTab('explore')" style="display:flex;align-items:center;gap:8px;margin:12px 2px 0;font-size:12px;color:var(--mut);cursor:pointer"><span style="width:7px;height:7px;border-radius:50%;background:var(--bdr2);flex-shrink:0"></span><span>Studying solo? <span style="color:var(--ind);font-weight:600">Find a study partner →</span> Accountability makes a real difference.</span></div>`;
+}
+
+// Merged "This Week" card: weekly pacing chart + the weekly-commitment feature in one.
+function _buildWeekThisCard(){
+  const now=new Date();
+  const dayOfWeek=now.getDay()===0?6:now.getDay()-1;
+  const weekStart=new Date(Date.now()-dayOfWeek*86400000);weekStart.setHours(0,0,0,0);
+  const weekKey=weekStart.toISOString().slice(0,10);
+  if(!S.commitments)S.commitments={};
+  const commitment=S.commitments[weekKey];
+  const weekHrs=getWeekHours();
+  const weekGoal=S.hoursPerWeek||15;
+  const target=commitment||weekGoal;
+  const pct=Math.min(100,Math.round(weekHrs/Math.max(1,target)*100));
+  const met=weekHrs>=target;
+  const today=todayStr();
+  const last7=[];
+  for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*86400000).toISOString().slice(0,10);const hrs=S.activities.filter(a=>a.date.slice(0,10)===d).reduce((a,b)=>a+(b.hours||0),0);last7.push({d,hrs,isToday:d===today,day:new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})});}
+  const maxHrs=Math.max(...last7.map(d=>d.hrs),1);
+  const bars=last7.map(d=>`<div class="week-bar-wrap"><div class="week-bar${d.isToday?' today-bar':''}" style="height:${Math.max(4,Math.round(d.hrs/maxHrs*88))}px" title="${d.hrs}h"></div><div class="week-day-lbl">${d.day.slice(0,2)}</div></div>`).join('');
+  const col=pct>=100?'var(--grn)':pct>=70?'var(--amb)':'var(--ind)';
+  const commitRow=commitment
+    ?`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--sub)">🤝 ${met?'Goal crushed this week!':'Committed to '+commitment+'h this week'}</div><button onclick="clearWeeklyCommitment('${weekKey}')" style="background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer">Change goal</button></div>`
+    :`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--mut);margin-bottom:7px">🤝 Commit to a weekly goal — candidates who do are 3× more likely to stay on track</div><div style="display:flex;gap:6px;flex-wrap:wrap">${[10,15,20,25].map(h=>`<button onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">${h}h</button>`).join('')}<button onclick="setCustomCommitment()" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Custom</button></div></div>`;
+  return`<div class="card card-pad" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div class="section-title" style="margin-bottom:2px">This Week</div><div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${target} hrs${commitment?' · your commitment':' · weekly goal'}</div></div>
+      <div style="font-size:30px;font-weight:900;line-height:1;color:${col};font-family:var(--font-display)">${pct}<span style="font-size:15px;font-weight:700;opacity:.6">%</span></div>
+    </div>
+    <div class="prog-bar" style="height:9px;margin:12px 0 6px"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+    <div class="week-chart">${bars}</div>
+    <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> = today</div>
+    ${commitRow}
+  </div>`;
+}
+
+function _buildDashMain(){
   const totalHrs=getTotalHours();
   const weekHrs=getWeekHours();
   const streak=getStreak();
-  const pacingAlert=buildPacingAlert();
-  const readinessCard=buildReadinessCard();
-  const commitmentCard=buildWeeklyCommitment();
-  const countdownAlerts=buildCountdownAlerts();
-  const streakRecovery=buildStreakRecovery();
-  const burnoutCheckIn=buildBurnoutCheckIn();
+  const passed=(S.sectionPassed||[]).length;
+  const secCount=(S.sections||[]).length||4;
+
+  const stat=(v,l,c,border)=>`<div style="flex:1;padding:14px 16px;${border?'border-right:1px solid var(--bdr);':''}"><div style="font-size:24px;font-weight:700;font-family:var(--font-display);line-height:1;letter-spacing:-.01em;color:${c}">${v}</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-top:5px">${l}</div></div>`;
+  const statStrip=`<div style="display:flex;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px">
+    ${stat(Math.round(totalHrs),'Total Hours','var(--ora)',1)}
+    ${stat(weekHrs.toFixed(1)+'h','This Week','var(--ind)',1)}
+    ${stat((streak>1?'🔥 ':'')+streak,'Day Streak','#f59e0b',1)}
+    ${stat(passed+'/'+secCount,'Passed','var(--grn)',0)}
+  </div>`;
 
   return`
-  <div class="dash-heading" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:10px">
+  <div class="dash-heading" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0;gap:10px">
     <div style="min-width:0">
       <h1 style="font-size:26px;font-weight:900;line-height:1;letter-spacing:-.03em">${_getGreeting()}, ${S.name}.</h1>
       <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
     </div>
     <div class="dash-heading-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0">
-      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
-        📝 Log Result
-      </button>
-      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">
-        💪 Stuck?
-      </button>
+      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📝 Log Result</button>
+      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">💪 Stuck?</button>
     </div>
   </div>
 
-  ${countdownAlerts}
-  ${pacingAlert}
-  ${burnoutCheckIn}
+  ${_buildDashSocialLine()}
 
-  <div class="stats-grid" style="margin-bottom:var(--sp-5)">
-    ${[
-      {v:Math.round(totalHrs),l:'Total Hours',c:'var(--ora)',count:Math.round(totalHrs)},
-      {v:weekHrs.toFixed(1),l:'This Week',c:'var(--ind)',count:parseFloat(weekHrs.toFixed(1)),dec:1,suf:'h'},
-      {v:streak,l:'Day Streak',c:'#f59e0b',hot:streak>1,count:streak},
-      {v:(S.sectionPassed||[]).length+'/4',l:'Sections Passed',c:'var(--grn)'},
-    ].map(s=>`<div class="stat-box" style="border-top:3px solid ${s.c}${s.hot?';background:linear-gradient(160deg,var(--surf),var(--amb-bg));box-shadow:0 0 0 1.5px rgba(245,158,11,.22),var(--shadow)':''}">${s.hot?`<div style="font-size:16px;margin-bottom:2px">🔥</div>`:''}<div class="stat-val" style="color:${s.c}"${s.count!=null?` data-count="${s.count}"${s.dec?` data-decimals="${s.dec}"`:''} ${s.suf?`data-suffix="${s.suf}"`:''}`:''}>${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('')}
-  </div>
-  ${streakRecovery}
+  <div style="margin-top:18px">${buildCountdownAlerts()}${buildPacingAlert()}${buildBurnoutCheckIn()}${buildStreakRecovery()}</div>
 
-  <div class="dash-row-2col">
-    ${readinessCard}
-    ${commitmentCard}
+  ${buildReadinessCard()}
+
+  ${statStrip}
+
+  ${_buildWeekThisCard()}
+
+  <div style="margin-top:4px">
+    ${_dashFold('fold-pacing','Exam Pacing','Per-section progress, target dates & retakes',_buildPacingCardsHTML())}
+    ${_dashFold('fold-cal','Study Calendar','Log days, see exam targets',buildCalendar())}
+    ${_dashFold('fold-analytics','Analytics &amp; Heat Map','Trends, consistency, advanced insights','<div id="heat-map-card" style="margin-bottom:14px">'+buildHeatMap()+'</div>'+buildAdvancedAnalytics())}
   </div>
 
-  <div id="score-tracker-card" class="card card-pad" style="margin-bottom:20px">
+  ${buildExamDayProtocolCard()}
+
+  <div id="score-tracker-card" class="card card-pad" style="margin-top:8px">
     <div onclick="_toggleScoreTracker()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px">
       <div>
         <div class="section-title" style="margin:0">Practice Exam Scores</div>
@@ -5523,27 +5576,9 @@ function _openScoreTracker(){
   document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function _buildDashProgress(){
-  const weekHrs=getWeekHours();
-  const weekGoal=S.hoursPerWeek||15;
-  const weekPct=Math.min(100,Math.round(weekHrs/weekGoal*100));
-  const today=todayStr();
-
-  // 7-day chart data
-  const last7=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date(Date.now()-i*86400000).toISOString().slice(0,10);
-    const hrs=S.activities.filter(a=>a.date.slice(0,10)===d).reduce((a,b)=>a+(b.hours||0),0);
-    last7.push({d,hrs,isToday:d===today,day:new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})});
-  }
-  const maxHrs=Math.max(...last7.map(d=>d.hrs),1);
-  const chartBars=last7.map(d=>`
-  <div class="week-bar-wrap">
-    <div class="week-bar${d.isToday?' today-bar':''}" style="height:${Math.max(4,Math.round(d.hrs/maxHrs*88))}px" title="${d.hrs}h"></div>
-    <div class="week-day-lbl">${d.day.slice(0,2)}</div>
-  </div>`).join('');
-
-  // Pacing per section
+// Per-section pacing rows (rings, progress, pace message, target date, status, retake info).
+// Lives inside the "Exam Pacing" fold on the single-canvas dashboard.
+function _buildPacingCardsHTML(){
   const pacingCards=(S.sections||[]).map(s=>{
     const ex=EXAMS[s];
     const logged=getSectionHours(s);
@@ -5620,38 +5655,7 @@ function _buildDashProgress(){
     </div>`;
   }).join('');
 
-  const calHTML=buildCalendar();
-
-  return`
-  <div class="card card-pad" style="margin-bottom:20px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-      <div>
-        <div class="section-title" style="margin-bottom:2px">Weekly Pacing</div>
-        <div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${weekGoal} hrs</div>
-      </div>
-      <div style="font-size:32px;font-weight:900;letter-spacing:-.04em;line-height:1;color:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ora)'}">${weekPct}<span style="font-size:16px;font-weight:700;opacity:.6">%</span></div>
-    </div>
-    <div class="prog-bar" style="height:10px;margin-bottom:14px"><div class="prog-fill" style="width:${weekPct}%;background:${weekPct>=100?'var(--grn)':weekPct>=70?'var(--amb)':'var(--ind)'}"></div></div>
-    <div class="week-chart">${chartBars}</div>
-    <div style="font-size:10px;color:var(--mut);text-align:center">Last 7 days · <span style="color:var(--ind)">■</span> = today</div>
-  </div>
-
-  <div class="card card-pad" style="margin-bottom:36px">
-    <div class="section-title">Exam Pacing</div>
-    ${pacingCards}
-  </div>
-
-  <div class="card card-pad" style="margin-bottom:20px">
-    <div class="section-title">Study Calendar</div>
-    ${calHTML}
-  </div>
-
-  <div id="heat-map-card" class="card card-pad" style="margin-bottom:20px">
-    ${buildHeatMap()}
-  </div>
-
-  ${buildAdvancedAnalytics()}
-  ${buildExamDayProtocolCard()}`;
+  return pacingCards||'<div style="font-size:12px;color:var(--mut);text-align:center;padding:8px 0">No sections yet — add one in onboarding.</div>';
 }
 
 function buildCalendar(){
