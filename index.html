@@ -1304,6 +1304,8 @@ let _tourStep=0;
 
 function startTour(){
   if(localStorage.getItem('pf2-tour-done')) return;
+  // One-shot: mark done the moment we show it, so a reload mid-tour never re-pops it.
+  localStorage.setItem('pf2-tour-done','1');
   _tourStep=0;
   _showTourStep(0);
 }
@@ -2273,7 +2275,7 @@ function firestoreToFriend(u){
 }
 
 async function loadRealUsers(){
-  if(!firebaseDb||!AUTH?.uid||!S) return;
+  if(!firebaseDb||!AUTH?.uid||!S){ window._realUsersLoaded=true; return; }
   try{
     const followedIds=(S.following||[]).filter(id=>id&&typeof id==='string'&&id.length>4);
     const realMap={};
@@ -2291,6 +2293,7 @@ async function loadRealUsers(){
     });
     REAL_USERS=Object.values(realMap);
   }catch(e){console.warn('loadRealUsers:',e);}
+  window._realUsersLoaded=true; // feed can stop showing skeletons now (success or fail)
   try{ await loadFeedReactions(); }catch(e){}
 }
 
@@ -4294,7 +4297,11 @@ function renderApp(){
   if(!window._cohortEnsured){window._cohortEnsured=true;setTimeout(()=>{try{ensureFirmCohort();}catch(e){}},3500);}
   // Once per page load: grant referral rewards for any friends who joined via my invite.
   if(!window._refChecked){window._refChecked=true;setTimeout(()=>{try{checkReferralRewards();}catch(e){}},4200);}
-  history.pushState({view:'app'},'','/');
+  // Restore the active tab from the URL hash so a reload keeps you where you were
+  // (instead of always snapping back to the feed).
+  const _hashTab=(location.hash||'').replace(/^#/,'');
+  if(['feed','dashboard','plan','profile','explore','studylab'].includes(_hashTab)) currentTab=_hashTab;
+  history.pushState({view:'app'},'','/'+(currentTab&&currentTab!=='feed'?'#'+currentTab:''));
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
@@ -4407,6 +4414,8 @@ function switchTab(tab){
     void page.offsetWidth;
     page.classList.add(dir);
   }
+  // Persist the tab in the URL hash so reload restores it (no extra history entry).
+  try{const _h=tab&&tab!=='feed'?'#'+tab:'';if((location.hash||'')!==_h)history.replaceState(history.state,'',location.pathname+location.search+_h);}catch(e){}
   _animateNextRender=true;
   renderTab();
 }
@@ -4668,9 +4677,23 @@ function buildFeed(){
     </div>
   </div>`:'';
 
-  const feedCenter = allActivities.length===0 ?
-    `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
-    _crewCard+actCards.join('');
+  // First paint of the session, while a followed circle's activity is still loading from
+  // Firestore: show skeletons instead of the "yours only" feed, so it doesn't pop/jump when
+  // friends' sessions land. Only when you actually follow people — otherwise nothing to wait for.
+  const _friendsPending=(S.following||[]).some(id=>id&&typeof id==='string'&&id.length>4) && !window._realUsersLoaded;
+  const _feedSkeleton=Array.from({length:4}).map(()=>`<div class="card card-pad" style="margin-bottom:16px">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+        <div class="skeleton" style="width:40px;height:40px;border-radius:50%"></div>
+        <div style="flex:1"><div class="skeleton" style="height:12px;width:42%;margin-bottom:7px"></div><div class="skeleton" style="height:10px;width:26%"></div></div>
+      </div>
+      <div class="skeleton" style="height:46px;width:100%;border-radius:10px"></div>
+    </div>`).join('');
+
+  const feedCenter = _friendsPending ?
+    _crewCard+_feedSkeleton :
+    (allActivities.length===0 ?
+      `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
+      _crewCard+actCards.join(''));
 
   return`<div class="feed-layout">${leftSidebar}<div class="feed-center">${feedCenter}</div>${rightSidebar}</div>`;
 }
