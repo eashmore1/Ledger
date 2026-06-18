@@ -4693,13 +4693,14 @@ function buildFeed(){
 
   // Crew-building onboarding card: show until user follows 3+ people
   const _followingCount=(S.following||[]).filter(id=>id&&id.length>4).length;
-  const _crewCard=_followingCount<3?`<div class="card card-pad" style="margin-bottom:16px;border:1.5px solid var(--ind-bdr);background:var(--ind-bg)">
+  const _crewCard=(_followingCount<3 && !localStorage.getItem('ledger-crew-dismissed'))?`<div class="card card-pad" id="crew-onboard-card" style="margin-bottom:16px;border:1.5px solid var(--ind-bdr);background:var(--ind-bg)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <div style="font-size:26px">🤝</div>
-      <div>
+      <div style="flex:1">
         <div style="font-size:14px;font-weight:800;color:var(--txt)">Build Your Study Crew</div>
         <div style="font-size:11px;color:var(--mut);margin-top:1px">CPA candidates who study with others are 2× more likely to pass.</div>
       </div>
+      <button onclick="document.getElementById('crew-onboard-card').remove();localStorage.setItem('ledger-crew-dismissed','1')" title="Dismiss" aria-label="Dismiss" style="background:none;border:none;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0;align-self:flex-start">×</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
