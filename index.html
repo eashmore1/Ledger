@@ -3904,7 +3904,7 @@ function signOut(){
 // ONBOARDING
 // ═══════════════════════════════════════════════
 let obStep=0;
-let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},school:'',classYear:'',bio:'',avatar:'🎓',firmCode:'',firmName:'',studyIntensity:'standard'};
+let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','REG','TCP'],sectionStatus:{},examDates:{},passed:{},school:'',classYear:'',bio:'',avatar:'🎓',firmCode:'',firmName:'',studyIntensity:'standard'};
 function initObData(){obData.name=(AUTH?.displayName||'').split(' ')[0]||'';}
 initObData();
 
@@ -4076,26 +4076,41 @@ function recommendSectionOrder(disc, classYear, hoursPerWeek){
 function renderObStep2(){
   const rec=recommendSectionOrder(obData.disc,obData.classYear,obData.hoursPerWeek);
   const sections=rec.order;
+  const passed=obData.passed||{};
+  const remaining=rec.order.filter(s=>!passed[s]);
   return`
 <div class="ob-card">
   <h3>Set your target exam dates</h3>
-  <div style="font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.6">Set realistic target dates for each section. We'll calculate your pacing — how many hours/week you need to be ready on time.</div>
-  <div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:11px;padding:14px;margin-bottom:16px;text-align:left">
-    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ind);margin-bottom:8px">✦ Recommended order for you</div>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:10px;line-height:1.6">Set realistic target dates for each section. We'll calculate your pacing — how many hours/week you need to be ready on time.</div>
+  <div style="display:flex;align-items:flex-start;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:9px;padding:9px 12px;margin-bottom:16px;font-size:11.5px;color:var(--sub);line-height:1.5"><span style="flex-shrink:0">🎉</span><span><strong style="color:var(--grn)">Already passed a section?</strong> Tap <strong>Passed?</strong> next to it — we'll skip it and build your plan around what's left.</span></div>
+  ${remaining.length?`<div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:11px;padding:14px;margin-bottom:16px;text-align:left">
+    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ind);margin-bottom:8px">✦ ${remaining.length<rec.order.length?"Recommended order for what's left":'Recommended order for you'}</div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px">
-      ${rec.order.map((s,i)=>`<span class="badge badge-${s}" style="font-size:11px">${s}</span>${i<rec.order.length-1?'<span style="color:var(--mut);font-size:13px;font-weight:700">→</span>':''}`).join('')}
+      ${remaining.map((s,i,arr)=>`<span class="badge badge-${s}" style="font-size:11px">${s}</span>${i<arr.length-1?'<span style="color:var(--mut);font-size:13px;font-weight:700">→</span>':''}`).join('')}
     </div>
     <div style="font-size:11.5px;color:var(--sub);line-height:1.6">${rec.reason}</div>
-  </div>
-  ${sections.map(s=>`
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;padding:11px 13px;background:var(--surf2);border-radius:9px">
-    <span class="badge badge-${s}" style="flex-shrink:0;min-width:46px;justify-content:center">${s}</span>
-    <div style="flex:1;font-size:12px;color:var(--sub)">${EXAMS[s].full}<br><span style="color:var(--mut)">~${(()=>{const p=HOUR_GOAL_PRESETS[obData.studyIntensity||'standard'];return p?p.goals[s]:EXAMS[s].studyHours})()} hrs goal · ${EXAMS[s].passRate}% pass rate</span></div>
-    <input type="date" id="date-${s}" value="${obData.examDates[s]||''}" min="${new Date().toISOString().slice(0,10)}" style="padding:6px 9px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:12px;outline:none;max-width:140px">
-  </div>`).join('')}
+  </div>`:''}
+  ${sections.map(s=>{
+    const isPassed=!!passed[s];
+    const goal=(function(){const p=HOUR_GOAL_PRESETS[obData.studyIntensity||'standard'];return p?p.goals[s]:EXAMS[s].studyHours;})();
+    const meta=isPassed?'<span style="color:var(--grn);font-weight:700">✓ Already passed — skipped in your plan</span>':('~'+goal+' hrs goal · '+EXAMS[s].passRate+'% pass rate');
+    const control=isPassed
+      ?'<button type="button" onclick="obTogglePassed(\''+s+'\')" style="flex-shrink:0;padding:7px 12px;border-radius:8px;border:1.5px solid var(--grn);background:var(--grn-bg);color:var(--grn);font-size:12px;font-weight:800;cursor:pointer">✓ Passed</button>'
+      :'<input type="date" id="date-'+s+'" value="'+(obData.examDates[s]||'')+'" min="'+new Date().toISOString().slice(0,10)+'" style="padding:6px 9px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:12px;outline:none;max-width:118px"><button type="button" onclick="obTogglePassed(\''+s+'\')" title="I already passed this section" style="flex-shrink:0;padding:7px 9px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf);color:var(--mut);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">Passed?</button>';
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px;padding:11px 13px;background:var(--surf2);border-radius:9px;border:1.5px solid '+(isPassed?'var(--grn)':'transparent')+'"><span class="badge badge-'+s+'" style="flex-shrink:0;min-width:46px;justify-content:center">'+s+'</span><div style="flex:1;font-size:12px;color:var(--sub);min-width:0">'+EXAMS[s].full+'<br><span style="color:var(--mut)">'+meta+'</span></div>'+control+'</div>';
+  }).join('')}
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obNext()">Continue →</button>`;
+}
+
+function obTogglePassed(s){
+  // Preserve any dates typed before the re-render
+  ['FAR','AUD','REG',obData.disc].forEach(x=>{const el=document.getElementById('date-'+x);if(el)obData.examDates[x]=el.value||'';});
+  if(!obData.passed)obData.passed={};
+  obData.passed[s]=!obData.passed[s];
+  if(obData.passed[s])obData.examDates[s]='';
+  renderOnboarding();
 }
 
 function renderObStep3(){
@@ -4183,9 +4198,13 @@ function obFinish(){
   sections.forEach(s=>{if(!examDates[s])examDates[s]=document.getElementById('date-'+s)?.value||'';});
   const firmName=document.getElementById('ob-firm')?.value?.trim()||obData.firmName||'';
   obData.firmName=firmName;
+  const passedMap=obData.passed||{};
+  const sectionPassed=sections.filter(s=>passedMap[s]);
+  sectionPassed.forEach(s=>{examDates[s]='';}); // passed sections need no target date
   const sectionStatus={};
-  sections.forEach(s=>{sectionStatus[s]='planned';});
-  sectionStatus['FAR']='studying';
+  sections.forEach(s=>{sectionStatus[s]=passedMap[s]?'passed':'planned';});
+  const firstActive=sections.find(s=>!passedMap[s]);
+  if(firstActive)sectionStatus[firstActive]='studying';
   const _inv=_getPendingInvite(); // from memory or localStorage (survives OAuth redirect)
   const firmCode=(_inv&&_inv.code)||obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
   const intensity=obData.studyIntensity||'standard';
@@ -4197,7 +4216,7 @@ function obFinish(){
     disc:obData.disc,sections,examDates,sectionStatus,
     school:obData.school,classYear:obData.classYear,bio:obData.bio,avatar:obData.avatar,
     activities:[],following:[...((_inv&&_inv.fromUid&&typeof _inv.fromUid==='string'&&_inv.fromUid.length>4)?[_inv.fromUid]:[])],
-    achievements:[],sectionPassed:[],propsGiven:0,clubs:[],
+    achievements:[],sectionPassed,propsGiven:0,clubs:[],
     social:{linkedin:'',facebook:''},
     challenges:[],challengeCompleted:[],customChallenges:[],
     isPrivate:false,pendingRequests:[],followers:[],
