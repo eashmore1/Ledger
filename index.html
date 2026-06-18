@@ -833,6 +833,43 @@ body.no-app-nav .session-fab{display:none!important}
 /* ── SESSION FAB IDLE RING ── */
 @keyframes fab-ring{0%{transform:scale(1);opacity:.65}65%{transform:scale(1.75);opacity:0}100%{transform:scale(1.75);opacity:0}}
 .session-fab::before{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--ora);opacity:0;animation:fab-ring 3s cubic-bezier(.16,1,.3,1) infinite 1.5s;pointer-events:none}
+/* ── ASK LEDGER FLOATING ASSISTANT ── */
+.ledger-bubble{position:fixed;right:22px;bottom:22px;z-index:210;width:62px;height:62px;border-radius:20px;border:1px solid var(--bdr);cursor:pointer;background:linear-gradient(160deg,var(--surf),var(--surf2));box-shadow:0 10px 30px -8px rgba(91,95,207,.4),0 2px 8px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;padding:0;opacity:.94;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.ledger-bubble:hover{transform:translateY(-3px) scale(1.05);opacity:1;box-shadow:0 16px 40px -8px rgba(124,58,237,.5),0 3px 10px rgba(0,0,0,.18)}
+.ledger-bubble:hover .lb-smile{d:path('M25 39 Q32 45.5 39 39')}
+.ledger-bubble:active{transform:scale(.93)}
+.ledger-bubble .lb-live{display:none}
+.ledger-bubble.in-session .lb-live{display:block;position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:2px solid var(--surf);z-index:2}
+.ledger-bubble.in-session::after{content:'';position:absolute;inset:-3px;border-radius:23px;border:2px solid #22c55e;animation:lb-livering 2.1s ease-out infinite;pointer-events:none}
+@keyframes lb-livering{0%{transform:scale(1);opacity:.7}70%{transform:scale(1.16);opacity:0}100%{opacity:0}}
+.lb-face{display:block;margin:0 auto;animation:lb-float 4s ease-in-out infinite;overflow:visible}
+@keyframes lb-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+.lb-eyes{transform-box:fill-box;transform-origin:center;animation:lb-blink 4.8s infinite}
+@keyframes lb-blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}
+.lb-pupil{transform-box:fill-box;transform-origin:center;animation:lb-look 7s ease-in-out infinite}
+@keyframes lb-look{0%,42%{transform:translate(0,0)}52%,68%{transform:translate(-1.4px,.4px)}80%,100%{transform:translate(0,0)}}
+.lb-spark{transform-box:fill-box;transform-origin:center;animation:lb-spark 2.4s ease-in-out infinite}
+@keyframes lb-spark{0%,100%{opacity:.65;transform:scale(.82)}50%{opacity:1;transform:scale(1.18)}}
+.lb-smile{transition:d .25s ease}
+.ledger-panel{position:fixed;right:22px;bottom:96px;z-index:210;width:368px;max-width:calc(100vw - 32px);height:530px;max-height:calc(100vh - 150px);background:var(--surf);border:1px solid var(--bdr);border-radius:18px;box-shadow:0 24px 64px -12px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.16);display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right}
+.ledger-panel.open{display:flex;animation:lb-pop .26s cubic-bezier(.34,1.4,.5,1)}
+@keyframes lb-pop{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
+.lb-hd{display:flex;align-items:center;gap:10px;padding:13px 14px;background:linear-gradient(135deg,var(--ind),var(--pur));color:#fff;flex-shrink:0}
+.lb-hd-ava{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lb-hd-x{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.lb-hd-x:hover{background:rgba(255,255,255,.32)}
+.lb-msgs{flex:1;overflow-y:auto;padding:14px;background:var(--bg)}
+.lb-foot{flex-shrink:0;border-top:1px solid var(--bdr);background:var(--surf);padding:10px 12px}
+.lb-row{display:flex;gap:8px}
+.lb-input{flex:1;padding:10px 13px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;transition:border-color .15s}
+.lb-input:focus{border-color:var(--ind)}
+.lb-send{padding:10px 16px;background:var(--ind);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;transition:filter .15s}
+.lb-send:hover{filter:brightness(1.08)}
+@media(max-width:640px){
+  .ledger-bubble{right:14px;bottom:calc(142px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:17px}
+  .ledger-panel{right:8px;left:8px;width:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));top:62px;height:auto;max-height:none}
+}
+body.no-app-nav .ledger-bubble,body.no-app-nav .ledger-panel{display:none!important}
 /* ── ACTIVITY CARD ENTER ── */
 .activity-card{animation:fadeIn .3s cubic-bezier(.22,.61,.36,1) both}
 /* ── ACCESSIBILITY ── */
@@ -7280,6 +7317,7 @@ function updateNavChip(){
     chip.style.display='none';
     if(btn){btn.textContent='▶ Start Session';btn.onclick=()=>openSessionModal();}
   }
+  if(typeof updateAskBubbleSession==='function')updateAskBubbleSession();
 }
 
 function addConceptTag(){
@@ -10945,6 +10983,7 @@ function injectMobileNav(){
   }
 }
 injectMobileNav();
+injectAskBubble();
 
 function openMobileMoreSheet(){
   const sheet=document.getElementById('mob-more-sheet');
@@ -12474,8 +12513,11 @@ function _loadAskLedgerUsage() {
     } else {
       _askLedgerUsage = {month: monthKey, count: 0};
     }
+    const left = Math.max(0, ASK_LEDGER_LIMIT - _askLedgerUsage.count);
     const countEl = document.getElementById('ask-ledger-usage-count');
-    if (countEl) countEl.textContent = Math.max(0, ASK_LEDGER_LIMIT - _askLedgerUsage.count) + ' prompts left this month';
+    if (countEl) countEl.textContent = left + ' prompts left this month';
+    const lbEl = document.getElementById('lb-usage');
+    if (lbEl) lbEl.textContent = left + ' prompts left this month';
   }).catch(function() { _askLedgerUsage = {month: monthKey, count: 0}; });
 }
 
@@ -12489,6 +12531,8 @@ function _incrementAskLedgerUsage() {
   const remaining = Math.max(0, ASK_LEDGER_LIMIT - _askLedgerUsage.count);
   const countEl = document.getElementById('ask-ledger-usage-count');
   if (countEl) countEl.textContent = remaining + ' prompts left this month';
+  const lbEl = document.getElementById('lb-usage');
+  if (lbEl) lbEl.textContent = remaining + ' prompts left this month';
   firebaseDb.collection('userState').doc(AUTH.uid).set({
     askLedgerMonth: monthKey,
     askLedgerCount: _askLedgerUsage.count
@@ -12603,6 +12647,162 @@ function sendCoachMessage() {
   }).catch(function() {
     _showReply(_offlineNote + _coachReply(msg), false);
   });
+}
+
+// ═══════════════════════════════════════════════
+// ASK LEDGER — FLOATING ASSISTANT (animated mascot + popup chat)
+// ═══════════════════════════════════════════════
+// "Ledger" the mascot: a friendly, non-human helper — smart (idea spark) + kind (soft eyes, smile).
+function _ledgerMascotSVG(size){
+  size = size || 40;
+  return '<svg class="lb-face" viewBox="0 0 64 64" width="'+size+'" height="'+size+'" aria-hidden="true">'+
+    '<defs>'+
+      '<linearGradient id="lbBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d72e0"/><stop offset="1" stop-color="#9333ea"/></linearGradient>'+
+      '<radialGradient id="lbSpark" cx="0.5" cy="0.4" r="0.6"><stop offset="0" stop-color="#fff"/><stop offset="0.45" stop-color="#ffe9a8"/><stop offset="1" stop-color="#f5b73a"/></radialGradient>'+
+    '</defs>'+
+    '<line class="lb-stalk" x1="32" y1="15" x2="32" y2="7" stroke="#9aa0f0" stroke-width="2.4" stroke-linecap="round"/>'+
+    '<circle class="lb-spark" cx="32" cy="5.5" r="3.4" fill="url(#lbSpark)"/>'+
+    '<rect x="12" y="15" width="40" height="37" rx="15" fill="url(#lbBody)"/>'+
+    '<rect x="16.5" y="20" width="31" height="26" rx="11" fill="#1b1640" opacity="0.2"/>'+
+    '<g class="lb-eyes" fill="#fff">'+
+      '<g><ellipse cx="25" cy="31" rx="4.6" ry="5.4"/><circle class="lb-pupil" cx="25.6" cy="32" r="2.1" fill="#2a2360"/><circle cx="24.3" cy="29.8" r="1.1"/></g>'+
+      '<g><ellipse cx="39" cy="31" rx="4.6" ry="5.4"/><circle class="lb-pupil" cx="39.6" cy="32" r="2.1" fill="#2a2360"/><circle cx="38.3" cy="29.8" r="1.1"/></g>'+
+    '</g>'+
+    '<path class="lb-smile" d="M26 40 Q32 44 38 40" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity="0.92"/>'+
+    '<circle cx="19.6" cy="38" r="2" fill="#ff9bb0" opacity="0.45"/>'+
+    '<circle cx="44.4" cy="38" r="2" fill="#ff9bb0" opacity="0.45"/>'+
+  '</svg>';
+}
+
+function injectAskBubble(){
+  if(document.getElementById('ask-bubble'))return;
+  const btn=document.createElement('button');
+  btn.id='ask-bubble';
+  btn.className='ledger-bubble';
+  btn.title='Ask Ledger';
+  btn.setAttribute('aria-label','Ask Ledger — your CPA study coach');
+  btn.innerHTML='<span class="lb-live"></span>'+_ledgerMascotSVG(40);
+  btn.addEventListener('click',toggleAskBubble);
+  document.body.appendChild(btn);
+
+  const panel=document.createElement('div');
+  panel.id='ask-panel';
+  panel.className='ledger-panel';
+  panel.innerHTML=
+    '<div class="lb-hd">'+
+      '<div class="lb-hd-ava">'+_ledgerMascotSVG(30)+'</div>'+
+      '<div style="min-width:0"><div style="font-size:14px;font-weight:800;line-height:1.2">Ask Ledger</div>'+
+        '<div id="lb-subtitle" style="font-size:11px;opacity:.85;line-height:1.3">Your CPA study coach</div></div>'+
+      '<button class="lb-hd-x" onclick="toggleAskBubble()" aria-label="Close">×</button>'+
+    '</div>'+
+    '<div id="lb-msgs" class="lb-msgs"></div>'+
+    '<div class="lb-foot">'+
+      '<div class="lb-row">'+
+        '<input id="lb-input" class="lb-input" type="text" placeholder="Ask me anything about the CPA exam..." onkeydown="if(event.key===\'Enter\')sendBubbleMessage()">'+
+        '<button class="lb-send" onclick="sendBubbleMessage()">Send</button>'+
+      '</div>'+
+      '<div style="margin-top:7px;font-size:9.5px;color:var(--mut);line-height:1.45"><span id="lb-usage">—</span> · AI can make mistakes — verify exam content with your review course.</div>'+
+    '</div>';
+  document.body.appendChild(panel);
+  updateAskBubbleSession();
+}
+
+function toggleAskBubble(){
+  const panel=document.getElementById('ask-panel');
+  if(!panel)return;
+  if(panel.classList.contains('open')){ panel.classList.remove('open'); return; }
+  // Non-Elite: this is an Elite feature — show the upgrade prompt instead of opening.
+  if(!isElite()){ openUpgradeModal('Ask Ledger'); return; }
+  panel.classList.add('open');
+  updateAskBubbleSession();
+  renderBubbleChat();
+  setTimeout(_loadAskLedgerUsage,0);
+  setTimeout(function(){ const i=document.getElementById('lb-input'); if(i)i.focus(); },120);
+}
+
+// Reflect live-session state on the bubble + tailor the panel copy while studying.
+function updateAskBubbleSession(){
+  const btn=document.getElementById('ask-bubble');
+  if(!btn)return;
+  const inSession = typeof TS!=='undefined' && (TS.phase==='active'||TS.phase==='paused');
+  btn.classList.toggle('in-session',!!inSession);
+  const sub=document.getElementById('lb-subtitle');
+  const inp=document.getElementById('lb-input');
+  if(inSession){
+    if(sub)sub.textContent='Studying '+TS.section+' · I’m right here to help';
+    if(inp)inp.placeholder='Stuck on a '+TS.section+' concept? Ask away…';
+  } else {
+    if(sub)sub.textContent='Your CPA study coach';
+    if(inp)inp.placeholder='Ask me anything about the CPA exam...';
+  }
+}
+
+function _lbBubbleHTML(text,mine){
+  return '<div style="display:flex;'+(mine?'justify-content:flex-end;':'')+'margin-bottom:9px">'+
+    '<div style="max-width:82%;padding:9px 13px;border-radius:'+(mine?'16px 16px 4px 16px':'16px 16px 16px 4px')+';font-size:13px;line-height:1.6;white-space:pre-wrap;'+
+      (mine?'background:var(--ind);color:#fff':'background:var(--surf);border:1px solid var(--bdr);color:var(--txt)')+'">'+text+'</div></div>';
+}
+
+function renderBubbleChat(){
+  const el=document.getElementById('lb-msgs');
+  if(!el)return;
+  if(!window._coachChat)window._coachChat=[];
+  if(!window._coachChat.length){
+    el.innerHTML='<div style="text-align:center;color:var(--mut);padding:24px 12px">'+_ledgerMascotSVG(56)+
+      '<div style="font-size:13px;font-weight:700;margin-top:8px;color:var(--txt)">Hi, I’m Ledger 👋</div>'+
+      '<div style="font-size:12px;margin-top:4px;line-height:1.5">Ask me about any CPA concept, tax rule, audit standard, or your study strategy.</div></div>';
+    return;
+  }
+  el.innerHTML=window._coachChat.map(function(m){return _lbBubbleHTML(m.text,m.mine);}).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function sendBubbleMessage(){
+  const inp=document.getElementById('lb-input');
+  if(!inp||!inp.value.trim())return;
+  const msg=inp.value.trim();
+  const monthKey=new Date().toISOString().slice(0,7);
+  const usageCount=(_askLedgerUsage&&_askLedgerUsage.month===monthKey)?_askLedgerUsage.count:0;
+  if(usageCount>=ASK_LEDGER_LIMIT){ showToast('Monthly limit reached ('+ASK_LEDGER_LIMIT+' prompts). Resets next month.','err'); return; }
+  inp.value='';
+  if(!window._coachChat)window._coachChat=[];
+  const msgsEl=document.getElementById('lb-msgs');
+  if(!msgsEl)return;
+  if(!window._coachChat.length)msgsEl.innerHTML='';
+  window._coachChat.push({mine:true,text:msg});
+  msgsEl.innerHTML+=_lbBubbleHTML(msg,true);
+  const typingId='lb-typing-'+Date.now();
+  msgsEl.innerHTML+='<div id="'+typingId+'" style="display:flex;margin-bottom:9px"><div style="padding:11px 15px;border-radius:16px 16px 16px 4px;background:var(--surf);border:1px solid var(--bdr);display:flex;gap:5px">'+
+    '<span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite;display:inline-block"></span>'+
+    '<span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .2s;display:inline-block"></span>'+
+    '<span style="width:6px;height:6px;border-radius:50%;background:var(--mut);animation:ledger-dot 1.2s infinite .4s;display:inline-block"></span></div></div>';
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+
+  function showReply(reply,isAI){
+    window._coachChat.push({mine:false,text:reply});
+    const t=document.getElementById(typingId); if(t)t.remove();
+    const wrap=document.createElement('div');
+    wrap.style.cssText='display:flex;flex-direction:column;align-items:flex-start;margin-bottom:9px';
+    const bub=document.createElement('div');
+    bub.style.cssText='max-width:84%;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:13px;line-height:1.6;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);white-space:pre-wrap';
+    wrap.appendChild(bub);
+    if(isAI){
+      const cp=document.createElement('button');
+      cp.textContent='Copy';
+      cp.style.cssText='margin-top:5px;padding:3px 10px;font-size:10px;font-weight:700;background:transparent;color:var(--mut);border:1px solid var(--bdr);border-radius:6px;cursor:pointer';
+      cp.onclick=function(){navigator.clipboard.writeText(reply).then(function(){cp.textContent='Copied!';cp.style.color='var(--grn)';setTimeout(function(){cp.textContent='Copy';cp.style.color='var(--mut)';},2000);}).catch(function(){showToast('Copy failed','err');});};
+      wrap.appendChild(cp);
+    }
+    msgsEl.appendChild(wrap);
+    msgsEl.scrollTop=msgsEl.scrollHeight;
+    let i=0; const speed=Math.max(6,Math.min(18,Math.round(6000/reply.length)));
+    (function typeNext(){ if(i<=reply.length){ bub.textContent=reply.slice(0,i); i++; msgsEl.scrollTop=msgsEl.scrollHeight; if(i<=reply.length)setTimeout(typeNext,speed); } })();
+  }
+  const offlineNote='⚠️ Live AI coaching is offline right now — here’s a general pointer instead:\n\n';
+  _coachAskAI(msg).then(function(aiReply){
+    if(aiReply){ _incrementAskLedgerUsage(); showReply(aiReply,true); }
+    else { showReply(offlineNote+_coachReply(msg),false); }
+  }).catch(function(){ showReply(offlineNote+_coachReply(msg),false); });
 }
 
 // ═══════════════════════════════════════════════
