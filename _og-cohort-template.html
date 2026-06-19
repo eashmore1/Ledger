@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .card{
+    width:1200px;height:630px;position:relative;
+    background:
+      radial-gradient(900px 500px at 88% 50%, rgba(99,102,241,.22), transparent 60%),
+      radial-gradient(700px 500px at 12% 20%, rgba(245,158,11,.10), transparent 55%),
+      linear-gradient(135deg,#120f1f 0%,#0d0a18 55%,#161024 100%);
+    font-family:'Inter',sans-serif;color:#fff;padding:58px 64px;
+  }
+  /* dot grid */
+  .grid{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.045) 1.3px, transparent 1.3px);background-size:48px 48px}
+  .brand{display:flex;align-items:center;gap:14px;position:relative}
+  .logo{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#fff;box-shadow:0 8px 24px rgba(234,88,12,.35)}
+  .wordmark{font-size:30px;font-weight:800;letter-spacing:-.01em}
+  .body{position:relative;margin-top:70px}
+  h1{font-size:84px;font-weight:900;letter-spacing:-.035em;line-height:1.0}
+  h1 .o{color:#f59e0b}
+  .sub{font-size:25px;font-weight:500;color:#c5c2da;margin-top:26px;max-width:760px;line-height:1.5}
+  .sub b{color:#fff;font-weight:700}
+  .foot{position:absolute;left:64px;right:64px;bottom:54px;display:flex;align-items:center;justify-content:space-between}
+  .pills{display:flex;gap:10px}
+  .pill{font-size:18px;font-weight:700;padding:8px 16px;border-radius:100px;border:1px solid}
+  .p1{color:#f59e0b;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.12)}
+  .p2{color:#818cf8;border-color:rgba(129,140,248,.4);background:rgba(129,140,248,.12)}
+  .p3{color:#34d399;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.12)}
+  .url{font-size:24px;font-weight:800;color:#fff}
+</style></head>
+<body>
+  <div class="card">
+    <div class="grid"></div>
+    <div class="brand">
+      <div class="logo">L</div>
+      <div class="wordmark">Ledger</div>
+    </div>
+    <div class="body">
+      <h1>Study together.<br><span class="o">Pass together.</span></h1>
+      <div class="sub">The accountability layer for your CPA study group. Log hours side by side, keep a <b>group streak</b> alive, and see your cohort studying live — so nobody grinds alone.</div>
+    </div>
+    <div class="foot">
+      <div class="pills">
+        <span class="pill p1">🔥 Group streaks</span>
+        <span class="pill p2">👥 Your cohort</span>
+        <span class="pill p3">📊 Stay on pace</span>
+      </div>
+      <div class="url">ledgercpa.app</div>
+    </div>
+  </div>
+</body></html>
