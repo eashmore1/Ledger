@@ -11,11 +11,12 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&'
 
 export default function handler(req, res){
   const q = req.query || {};
-  // Rebuild the human destination, preserving invite params, with h=1 so the
-  // /?join= rewrite is bypassed and the static app is served (no redirect loop).
+  const code = first(q.c) || first(q.join) || '';
+  // Rebuild the human destination on the app root (/?join=...), which the SPA
+  // reads on load. /join is a separate path so there's no rewrite loop.
   const params = new URLSearchParams();
-  ['join','from','uid','fn'].forEach(k => { const v = first(q[k]); if (v != null && v !== '') params.set(k, v); });
-  params.set('h', '1');
+  if (code) params.set('join', code);
+  ['from','uid','fn'].forEach(k => { const v = first(q[k]); if (v != null && v !== '') params.set(k, v); });
   const humanUrl = '/?' + params.toString();
 
   const ua = req.headers['user-agent'] || '';

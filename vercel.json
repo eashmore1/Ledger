@@ -5,7 +5,7 @@
   "trailingSlash": false,
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/", "has": [{ "type": "query", "key": "join" }], "missing": [{ "type": "query", "key": "h" }], "destination": "/api/invite" },
+    { "source": "/join", "destination": "/api/invite" },
     { "source": "/login", "destination": "/" },
     { "source": "/signup", "destination": "/" },
     { "source": "/messages", "destination": "/" },

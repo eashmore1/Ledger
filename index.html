@@ -4135,7 +4135,7 @@ function renderObStep3(){
   const _invName=encodeURIComponent(obData.name||S?.name||'');
   const _invUid=AUTH?.uid||'';
   const _invFirm=encodeURIComponent(obData.firmName||S?.firmName||'');
-  const inviteUrl='https://ledgercpa.app/?join='+inviteCode+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
+  const inviteUrl='https://ledgercpa.app/join?c='+inviteCode+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
   return`
 <div class="ob-card">
   <h3>Invite your study group</h3>
@@ -4164,7 +4164,7 @@ function obUpdateInviteLink(val){
   const _invName=encodeURIComponent(obData.name||S?.name||'');
   const _invUid=AUTH?.uid||'';
   const _invFirm=encodeURIComponent(obData.firmName||'');
-  const url='https://ledgercpa.app/?join='+code+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
+  const url='https://ledgercpa.app/join?c='+code+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
   const linkEl=document.getElementById('ob-invite-link');
   const copyEl=document.getElementById('ob-invite-copy');
   if(linkEl)linkEl.textContent=url;
@@ -4830,7 +4830,7 @@ function _cohortClubId(){ if(!S||!S.firmCode)return ''; return 'firm_'+String(S.
 function buildCohortCard(){
   if(!S.firmCode)return '';
   const firmName=S.firmName||'Your Cohort';
-  const inviteUrl='https://ledgercpa.app/?join='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
+  const inviteUrl='https://ledgercpa.app/join?c='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
   // Hydrate live cohort stats after this string is inserted into the DOM.
   setTimeout(()=>{try{_loadCohortCardStats();}catch(e){}},60);
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
@@ -9337,7 +9337,7 @@ function openQRModal(){
   el=document.createElement('div');
   el.id='qr-modal';
   el.className='modal-overlay open';
-  const inviteUrl='https://ledgercpa.app/?join='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
+  const inviteUrl='https://ledgercpa.app/join?c='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
   const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(inviteUrl);
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
     <div class="modal-hdr">
