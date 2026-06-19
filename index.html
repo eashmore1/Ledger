@@ -4887,13 +4887,36 @@ async function _loadCohortCardStats(){
     const topMonth=Object.keys(mc).sort((a,b)=>mc[b]-mc[a])[0];
     alignHtml='<div style="display:flex;align-items:center;gap:7px;background:var(--surf2);border-radius:9px;padding:8px 11px;margin-bottom:8px"><span style="font-size:14px">🎯</span><div style="font-size:11.5px;color:var(--sub)"><strong style="color:var(--txt)">'+byExam[best].length+'</strong> of your cohort are sitting <strong style="color:var(--ind)">'+esc(best)+'</strong>'+(topMonth?' around <strong style="color:var(--txt)">'+topMonth+'</strong>':'')+' — you\'re in it together.</div></div>';
   }
+  // Supportive accountability nudge (never ranked) based on who studied today.
+  const iStudiedToday=(S.activities||[]).some(a=>(a.date||'').slice(0,10)===todayStr);
+  const othersToday=Math.max(0,activeToday-(iStudiedToday?1:0));
+  let nudgeHtml='';
+  if(othersToday>0 && !iStudiedToday){
+    nudgeHtml='<div style="display:flex;align-items:center;gap:8px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:9px;padding:9px 11px;margin-bottom:8px"><span style="font-size:14px">🌅</span><div style="font-size:11.5px;color:var(--sub)"><strong style="color:var(--ora)">'+othersToday+'</strong> of your cohort already studied today — your turn to keep the streak alive.</div></div>';
+  } else if(othersToday>0 && iStudiedToday){
+    nudgeHtml='<div style="display:flex;align-items:center;gap:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:9px;padding:9px 11px;margin-bottom:8px"><span style="font-size:14px">🔥</span><div style="font-size:11.5px;color:var(--sub)">You and <strong style="color:var(--grn)">'+othersToday+'</strong> cohort-mate'+(othersToday!==1?'s':'')+' studied today. Keep it going.</div></div>';
+  }
+  // Live "studying now" — one-shot presence read so the dashboard surfaces it too,
+  // not just the club Progress tab. Renders into a sub-slot once resolved.
   const stat=(v,l,c)=>'<div style="flex:1;text-align:center"><div style="font-size:17px;font-weight:900;color:'+c+'">'+v+'</div><div style="font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">'+l+'</div></div>';
-  slot.innerHTML='<div style="display:flex;gap:6px;background:var(--surf2);border-radius:10px;padding:11px 8px;margin-bottom:8px">'+
+  slot.innerHTML='<div id="cohort-live-slot"></div>'+nudgeHtml+
+    '<div style="display:flex;gap:6px;background:var(--surf2);border-radius:10px;padding:11px 8px;margin-bottom:8px">'+
       stat(weekHrs.toFixed(weekHrs<100?1:0)+'h','this week','var(--ora)')+
       stat('🔥'+gStreak,'group streak','var(--txt)')+
       stat(activeToday,'active today','var(--grn)')+
     '</div>'+alignHtml+
     '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="showCohortDigestCard()">📣 Share cohort progress</button>';
+  // Populate live-now after render.
+  try{
+    const psnap=await firebaseDb.collection('clubs').doc(clubId).collection('presence').get();
+    const now=Date.now();
+    const live=psnap.docs.map(d=>d.data()).filter(p=>p.lastBeat&&(now-p.lastBeat)<120000&&p.uid!==(AUTH&&AUTH.uid));
+    const ls=document.getElementById('cohort-live-slot');
+    if(ls&&live.length){
+      const who=live.length===1?(esc(live[0].name||'Someone')+(live[0].section?' is studying '+esc(live[0].section):' is studying')):(live.length+' cohort-mates are studying');
+      ls.innerHTML='<div style="display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#04301c,#065f33);border-radius:10px;padding:10px 12px;margin-bottom:8px"><span style="width:9px;height:9px;border-radius:50%;background:#22c55e;animation:pulse-glow 1.6s infinite;flex-shrink:0"></span><div style="flex:1;font-size:11.5px;color:#fff;font-weight:600">'+who+' right now</div><button onclick="if(typeof openSessionModal===\'function\')openSessionModal()" style="background:#22c55e;color:#04301c;border:none;border-radius:8px;padding:5px 11px;font-size:11px;font-weight:800;cursor:pointer">Join</button></div>';
+    }
+  }catch(e){}
 }
 
 function buildPartnerTeaserCard(){
@@ -9621,6 +9644,7 @@ async function syncClubActivity(){
     examDate:(()=>{try{const sec=getCurrentSection();return (S.examDates&&S.examDates[sec])||'';}catch(e){return '';}})(),
     totalHrs:(typeof getTotalHours==='function'?getTotalHours():acts.reduce((s,a)=>s+(a.hours||0),0)),
     weekHrs:acts.filter(a=>new Date(a.date).getTime()>weekAgo).reduce((s,a)=>s+(a.hours||0),0),
+    monthHrs:(()=>{const d=new Date();const mk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');return acts.filter(a=>(a.date||'').slice(0,7)===mk).reduce((s,a)=>s+(a.hours||0),0);})(),
     streak:(typeof getStreak==='function'?getStreak():0),
     studyDates:[...new Set(acts.map(a=>(a.date||'').slice(0,10)).filter(Boolean))].sort().slice(-60),
     updatedAt:Date.now()
@@ -9809,7 +9833,29 @@ async function _renderClubLeaderboard(clubId){
   const h=document.getElementById('club-lb-'+clubId); if(!h) return;
   const gStreak=_computeGroupStreak(docs);
   const weekHrsTotal=docs.reduce((s,m)=>s+(m.weekHrs||0),0);
+  const monthHrsTotal=docs.reduce((s,m)=>s+(m.monthHrs||0),0);
   const myUid=AUTH&&AUTH.uid;
+  // Shared cohort goal (collective, not ranked) — stored on the club doc.
+  let goalHrs=0;
+  try{ const cdoc=await firebaseDb.collection('clubs').doc(clubId).get(); goalHrs=(cdoc.exists&&Number(cdoc.data().monthlyGoalHrs))||0; }catch(e){}
+  const monthName=new Date().toLocaleDateString('en-US',{month:'long'});
+  let goalCard;
+  if(goalHrs>0){
+    const pct=Math.min(100,Math.round((monthHrsTotal/goalHrs)*100));
+    const done=monthHrsTotal>=goalHrs;
+    goalCard='<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:14px 16px;margin-bottom:14px">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:12px;font-weight:800;color:var(--txt)">🎯 '+monthName+' cohort goal</div><button onclick="openCohortGoalModal(\''+clubId+'\')" style="font-size:11px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer">Edit</button></div>'+
+      '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:7px"><span style="font-size:20px;font-weight:900;color:'+(done?'var(--grn)':'var(--ind)')+'">'+monthHrsTotal.toFixed(0)+'h</span><span style="font-size:12px;color:var(--mut)">of '+goalHrs+'h together'+(done?' — crushed it! 🎉':'')+'</span></div>'+
+      '<div style="height:9px;background:var(--bdr);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+(done?'#10b981,#34d399':'var(--ind),#818cf8')+');border-radius:6px;transition:width .5s"></div></div>'+
+      '<div style="font-size:10.5px;color:var(--mut);margin-top:5px">'+pct+'% there · everyone\'s hours count toward it</div>'+
+    '</div>';
+  } else {
+    goalCard='<div style="background:var(--surf2);border:1px dashed var(--bdr);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'+
+      '<div style="font-size:12.5px;font-weight:700;color:var(--sub);margin-bottom:3px">Set a shared goal for '+monthName+'</div>'+
+      '<div style="font-size:11px;color:var(--mut);margin-bottom:10px">A collective hours target the whole cohort works toward together.</div>'+
+      '<button class="btn btn-ind btn-sm" onclick="openCohortGoalModal(\''+clubId+'\')">🎯 Set cohort goal</button>'+
+    '</div>';
+  }
   // Supportive view — members listed by who's active, not ranked against each other.
   // Active-this-week first, then by name; no rank numbers or medals.
   const members=docs.slice().sort((a,b)=>{
@@ -9836,7 +9882,41 @@ async function _renderClubLeaderboard(clubId){
   const summary='<div style="display:flex;gap:10px;margin-bottom:14px">'+
     '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ora)">'+weekHrsTotal.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">team this week</div></div>'+
     '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ind)">'+members.length+'</div><div style="font-size:10px;color:var(--mut)">active member'+(members.length!==1?'s':'')+'</div></div></div>';
-  h.innerHTML=streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first! 💪</div>');
+  h.innerHTML=goalCard+streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first! 💪</div>');
+}
+
+// Shared cohort goal — collective monthly hours target, stored on the club doc so
+// every member sees the same number and contributes to it.
+function openCohortGoalModal(clubId){
+  let cur=0;
+  if(firebaseDb){ /* prefill happens after fetch below */ }
+  let el=document.getElementById('cohort-goal-modal'); if(el)el.remove();
+  el=document.createElement('div'); el.id='cohort-goal-modal'; el.className='modal-overlay open';
+  el.onclick=()=>{ if(event.target===el) el.remove(); };
+  const monthName=new Date().toLocaleDateString('en-US',{month:'long'});
+  el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:360px">'+
+    '<div class="modal-hdr"><div class="modal-title">🎯 '+monthName+' cohort goal</div><button class="modal-close" onclick="document.getElementById(\'cohort-goal-modal\').remove()">×</button></div>'+
+    '<div style="padding:4px 2px 0"><div style="font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:14px">Set a collective hours target for the whole cohort this month. Everyone\'s logged hours add up toward it — supportive, not a competition.</div>'+
+    '<label style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Total hours together</label>'+
+    '<input id="cohort-goal-input" type="number" min="1" step="10" placeholder="e.g. 200" style="width:100%;margin-top:6px;padding:11px 13px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:15px;font-weight:700;outline:none">'+
+    '<div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">'+[100,200,300,500].map(v=>'<button onclick="document.getElementById(\'cohort-goal-input\').value='+v+'" style="flex:1;min-width:60px;padding:7px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer">'+v+'h</button>').join('')+'</div>'+
+    '<button class="btn btn-ind" style="width:100%;justify-content:center;margin-top:16px" onclick="saveCohortGoal(\''+clubId+'\')">Set goal</button>'+
+    '</div></div>';
+  document.body.appendChild(el);
+  if(firebaseDb){ firebaseDb.collection('clubs').doc(clubId).get().then(d=>{ const v=d.exists&&Number(d.data().monthlyGoalHrs); const inp=document.getElementById('cohort-goal-input'); if(inp&&v) inp.value=v; }).catch(()=>{}); }
+  setTimeout(()=>document.getElementById('cohort-goal-input')?.focus(),60);
+}
+async function saveCohortGoal(clubId){
+  const inp=document.getElementById('cohort-goal-input');
+  const v=Math.max(0,Math.round(Number(inp&&inp.value)||0));
+  if(!v){ showToast('Enter an hours target','err'); return; }
+  if(!firebaseDb){ showToast('Offline — try again later','err'); return; }
+  try{
+    await firebaseDb.collection('clubs').doc(clubId).set({monthlyGoalHrs:v,monthlyGoalSetBy:(S&&S.name)||'',monthlyGoalAt:Date.now()},{merge:true});
+    document.getElementById('cohort-goal-modal')?.remove();
+    showToast('Cohort goal set: '+v+'h together this month 🎯','ok');
+    if(typeof _renderClubLeaderboard==='function') _renderClubLeaderboard(clubId);
+  }catch(e){ showToast('Could not save goal','err'); }
 }
 
 function sendClubViewMessage(clubId){
