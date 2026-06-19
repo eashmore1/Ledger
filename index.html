@@ -3323,7 +3323,7 @@ function _getPendingInvite(){
     if(raw){
       const inv=JSON.parse(raw);
       if(inv && inv.code && (Date.now()-(inv.ts||0) < 2*60*60*1000)){ // honor for 2 hours
-        _pendingInvite={code:inv.code,fromName:inv.fromName||'',fromUid:inv.fromUid||''};
+        _pendingInvite={code:inv.code,fromName:inv.fromName||'',fromUid:inv.fromUid||'',firmName:inv.firmName||''};
         return _pendingInvite;
       }
     }
@@ -3342,10 +3342,11 @@ function init(){
   if(urlJoinCode){
     const fromName=decodeURIComponent(_p.get('from')||'');
     const fromUid=_p.get('uid')||'';
-    _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid};
+    let firmName='';try{firmName=decodeURIComponent(_p.get('fn')||'');}catch(e){}
+    _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid,firmName};
     _savePendingInvite(_pendingInvite); // survive the OAuth redirect
-    if(obData)obData.firmCode=urlJoinCode.toUpperCase();
-    if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();saveState();}
+    if(obData){obData.firmCode=urlJoinCode.toUpperCase();if(firmName&&!obData.firmName)obData.firmName=firmName;}
+    if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();if(firmName&&!S.firmName)S.firmName=firmName;saveState();}
     history.replaceState({},'',window.location.pathname);
   }
 
@@ -3438,18 +3439,34 @@ function init(){
         // Read from memory OR localStorage so it survives the Google OAuth redirect.
         const _inv=_getPendingInvite();
         if(_inv && S){
+          // Always connect with the inviter, regardless of cohort.
           let changed=false;
-          if(!S.firmCode){S.firmCode=_inv.code;changed=true;}
           const fromUid=_inv.fromUid;
           if(fromUid&&fromUid.length>4&&!(S.following||[]).includes(fromUid)){
             S.following=[...(S.following||[]),fromUid];changed=true;
             saveFollowToFirestore(); // create the follower edge so the inviter's count is right
           }
-          if(changed){saveState();setTimeout(writeUserProfile,500);}
-          ensureFirmCohort(); // join the shared firm cohort club
-          if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+' 🎉','ok');
-          else showToast('Joined study group! 🎉','ok');
-          _clearPendingInvite();
+          const sameCohort = S.firmCode && String(S.firmCode).toUpperCase()===String(_inv.code).toUpperCase();
+          if(!S.firmCode){
+            // No cohort yet — adopt the invite's cohort outright.
+            S.firmCode=_inv.code; if(_inv.firmName&&!S.firmName)S.firmName=_inv.firmName; changed=true;
+            if(changed){saveState();setTimeout(writeUserProfile,500);}
+            ensureFirmCohort();
+            if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+' 🎉','ok');
+            else showToast('Joined study group! 🎉','ok');
+            _clearPendingInvite();
+          } else if(sameCohort){
+            // Already in this cohort — just confirm the connection.
+            if(changed){saveState();setTimeout(writeUserProfile,500);}
+            ensureFirmCohort();
+            if(_inv.fromName) showToast('Connected with '+_inv.fromName+' 🎉','ok');
+            _clearPendingInvite();
+          } else {
+            // Already in a DIFFERENT cohort — don't silently switch; ask.
+            if(changed){saveState();setTimeout(writeUserProfile,500);}
+            if(_inv.fromName) showToast('Connected with '+_inv.fromName+' 🎉','ok');
+            promptCohortSwitch(_inv);
+          }
         }
         // Show student verification banner if unverified student plan
         if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
@@ -4117,26 +4134,41 @@ function renderObStep3(){
   const inviteCode=obData.firmCode||(obData.firmCode=Math.random().toString(36).slice(2,8).toUpperCase());
   const _invName=encodeURIComponent(obData.name||S?.name||'');
   const _invUid=AUTH?.uid||'';
-  const inviteUrl='https://ledgercpa.app/?join='+inviteCode+'&from='+_invName+'&uid='+encodeURIComponent(_invUid);
+  const _invFirm=encodeURIComponent(obData.firmName||S?.firmName||'');
+  const inviteUrl='https://ledgercpa.app/?join='+inviteCode+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
   return`
 <div class="ob-card">
   <h3>Invite your study group</h3>
   <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.6">Ledger works best with your cohort. Add a firm or group name and share the invite link — everyone who joins sees each other's progress and can hold each other accountable.</div>
   <div class="form-grp">
     <label>Firm / Group Name <span style="color:var(--mut);font-weight:400">(optional)</span></label>
-    <input id="ob-firm" type="text" placeholder="e.g. Deloitte Dallas, Study Squad, Class of 2026" value="${obData.firmName||''}">
+    <input id="ob-firm" type="text" placeholder="e.g. Deloitte Dallas, Study Squad, Class of 2026" value="${obData.firmName||''}" oninput="obUpdateInviteLink(this.value)">
   </div>
   <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:16px">
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Your invite link</div>
     <div style="display:flex;gap:8px;align-items:center">
-      <div style="flex:1;font-size:11px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
-      <button class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
+      <div id="ob-invite-link" style="flex:1;font-size:11px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
+      <button id="ob-invite-copy" class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
     </div>
     <div style="font-size:11px;color:var(--mut);margin-top:8px">Share this link — anyone who joins can see your activity and support your progress.</div>
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
 <button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obFinish()">Build My Plan 🚀</button>`;
+}
+
+// Keep the displayed invite link in sync with the firm-name field as it's typed.
+function obUpdateInviteLink(val){
+  obData.firmName=(val||'').trim();
+  const code=obData.firmCode||'';
+  const _invName=encodeURIComponent(obData.name||S?.name||'');
+  const _invUid=AUTH?.uid||'';
+  const _invFirm=encodeURIComponent(obData.firmName||'');
+  const url='https://ledgercpa.app/?join='+code+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
+  const linkEl=document.getElementById('ob-invite-link');
+  const copyEl=document.getElementById('ob-invite-copy');
+  if(linkEl)linkEl.textContent=url;
+  if(copyEl)copyEl.dataset.url=url;
 }
 
 function obSetIntensity(key){
@@ -4793,21 +4825,75 @@ function buildMiniLeaderboard(){
   </div>`;
 }
 
+function _cohortClubId(){ if(!S||!S.firmCode)return ''; return 'firm_'+String(S.firmCode).toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
 function buildCohortCard(){
   if(!S.firmCode)return '';
   const firmName=S.firmName||'Your Cohort';
-  const inviteUrl='https://ledgercpa.app/?join='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'');
+  const inviteUrl='https://ledgercpa.app/?join='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
+  // Hydrate live cohort stats after this string is inserted into the DOM.
+  setTimeout(()=>{try{_loadCohortCardStats();}catch(e){}},60);
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <div class="section-title" style="margin-bottom:0">${firmName}</div>
+    <div style="min-width:0"><div class="section-title" style="margin-bottom:0">${esc(firmName)}</div><div id="cohort-card-count" style="font-size:10px;color:var(--mut);margin-top:1px">&nbsp;</div></div>
     <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
   </div>
+  <div id="cohort-stats-slot"></div>
   <div style="display:flex;align-items:flex-start;gap:8px;background:var(--surf2);border-radius:9px;padding:9px 11px;margin-bottom:8px">
     <span style="font-size:16px;flex-shrink:0">🎁</span>
     <div style="font-size:11.5px;color:var(--sub);line-height:1.5"><strong style="color:var(--txt)">Refer friends, you both get free Pro.</strong> Each friend who joins with your link gives you <strong style="color:var(--ind)">5 days of Pro</strong> — and they get 3 days too. Hit 3 referrals for a <strong style="color:var(--ind)">+10-day bonus</strong>.${referralProActive()?`<div style="margin-top:4px;color:var(--grn);font-weight:700">✓ You have ${referralProDaysLeft()} days of Pro from referrals</div>`:''}</div>
   </div>
   <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Copied!','ok'))" data-url="${inviteUrl}" title="Click to copy">${inviteUrl}</div>
 </div>`;
+}
+
+// Hydrate the dashboard cohort card with live cross-user stats: a founding-member
+// seeding state when you're alone, or a weekly digest + exam alignment when others joined.
+async function _loadCohortCardStats(){
+  const slot=document.getElementById('cohort-stats-slot');
+  if(!slot||!firebaseDb) return;
+  const clubId=_cohortClubId(); if(!clubId) return;
+  let docs=[];
+  try{ await syncClubActivity(); }catch(e){}
+  try{
+    const snap=await firebaseDb.collection('clubs').doc(clubId).collection('members').get();
+    docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ return; }
+  if(!document.getElementById('cohort-stats-slot')) return; // tab changed while loading
+  const n=docs.length;
+  const cntEl=document.getElementById('cohort-card-count');
+  if(cntEl) cntEl.textContent=n+' member'+(n!==1?'s':'');
+  if(n<=1){
+    // Founding-member seeding state — the captain's most important moment.
+    slot.innerHTML='<div style="background:linear-gradient(135deg,#1a1430,#241a3d);border:1px solid var(--ind-bdr);border-radius:12px;padding:14px 15px;margin-bottom:8px">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px">🌱</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
+      '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.55">Ledger comes alive when your crew is in it. Share your invite link below to bring '+esc(S.firmName||'your cohort')+' to life — you\'ll see each other study live, keep a group streak, and stay accountable through the exam grind.</div>'+
+      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="openQRModal()">Share invite</button>'+
+    '</div>';
+    return;
+  }
+  // Active cohort — weekly digest strip + exam alignment.
+  const todayStr=new Date().toISOString().slice(0,10);
+  const weekHrs=docs.reduce((s,m)=>s+(m.weekHrs||0),0);
+  const gStreak=(typeof _computeGroupStreak==='function')?_computeGroupStreak(docs):0;
+  const activeToday=docs.filter(m=>Array.isArray(m.studyDates)&&m.studyDates.includes(todayStr)).length;
+  // Exam alignment: the section the most cohort members are sitting next, + common month.
+  const todayMs=Date.now(); const byExam={};
+  docs.forEach(m=>{ const sec=m.examSection,d=m.examDate; if(sec&&d){ const t=new Date(d+' 00:00:00').getTime(); if(t>todayMs)(byExam[sec]=byExam[sec]||[]).push(t); } });
+  let best=null; Object.keys(byExam).forEach(sec=>{ if(!best||byExam[sec].length>byExam[best].length) best=sec; });
+  let alignHtml='';
+  if(best && byExam[best].length>=2){
+    const mc={}; byExam[best].forEach(t=>{const mo=new Date(t).toLocaleDateString('en-US',{month:'long'});mc[mo]=(mc[mo]||0)+1;});
+    const topMonth=Object.keys(mc).sort((a,b)=>mc[b]-mc[a])[0];
+    alignHtml='<div style="display:flex;align-items:center;gap:7px;background:var(--surf2);border-radius:9px;padding:8px 11px;margin-bottom:8px"><span style="font-size:14px">🎯</span><div style="font-size:11.5px;color:var(--sub)"><strong style="color:var(--txt)">'+byExam[best].length+'</strong> of your cohort are sitting <strong style="color:var(--ind)">'+esc(best)+'</strong>'+(topMonth?' around <strong style="color:var(--txt)">'+topMonth+'</strong>':'')+' — you\'re in it together.</div></div>';
+  }
+  const stat=(v,l,c)=>'<div style="flex:1;text-align:center"><div style="font-size:17px;font-weight:900;color:'+c+'">'+v+'</div><div style="font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">'+l+'</div></div>';
+  slot.innerHTML='<div style="display:flex;gap:6px;background:var(--surf2);border-radius:10px;padding:11px 8px;margin-bottom:8px">'+
+      stat(weekHrs.toFixed(weekHrs<100?1:0)+'h','this week','var(--ora)')+
+      stat('🔥'+gStreak,'group streak','var(--txt)')+
+      stat(activeToday,'active today','var(--grn)')+
+    '</div>'+alignHtml+
+    '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="showCohortDigestCard()">📣 Share cohort progress</button>';
 }
 
 function buildPartnerTeaserCard(){
@@ -9228,7 +9314,7 @@ function openQRModal(){
   el=document.createElement('div');
   el.id='qr-modal';
   el.className='modal-overlay open';
-  const inviteUrl='https://ledgercpa.app/?join='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'');
+  const inviteUrl='https://ledgercpa.app/?join='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
   const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(inviteUrl);
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
     <div class="modal-hdr">
@@ -9505,17 +9591,8 @@ function renderClubViewBody(clubId){
     }
     setTimeout(()=>document.getElementById('cva-inp-'+clubId)?.focus(),80);
   } else if(_clubViewTab==='members'){
-    const rows=club.members.map(m=>{
-      const name=getClubMemberName(m);
-      const initials=getClubMemberInitials(m);
-      const color=getClubMemberColor(m);
-      const isYou=m==='you';
-      const friend=isYou?null:REAL_USERS.find(f=>f.id===m);
-      const hrs=isYou?Math.round(getTotalHours()):(friend?.totalHours||0);
-      const streak=isYou?getStreak():(friend?.streak||0);
-      return'<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr);cursor:'+(isYou?'default':'pointer')+'" '+(isYou?'':'onclick="closeClubView();openUserProfile(\''+m+'\')"')+'><div class="avatar av-md" style="background:'+color+';color:#fff">'+initials+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+name+(isYou?' <span style="font-size:10px;background:var(--ora-bg);color:var(--ora);padding:1px 6px;border-radius:10px;font-weight:700">you</span>':'')+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+hrs+'h total · 🔥'+streak+'d streak</div></div>'+(isYou?'':'<span style="font-size:12px;color:var(--ind)">→</span>')+'</div>';
-    }).join('');
-    el.innerHTML='<div style="padding:16px 20px"><div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px">'+club.members.length+' Members</div>'+rows+'<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="promptInviteToClub(null,\''+clubId+'\')">+ Invite Someone</button></div>';
+    el.innerHTML='<div style="padding:16px 20px"><div id="club-mem-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading members…</div></div><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="promptInviteToClub(null,\''+clubId+'\')">+ Invite Someone</button></div>';
+    _renderClubMembersTab(clubId);
   } else if(_clubViewTab==='leaderboard'){
     // Live "studying now" presence (real-time) + real cross-user progress from Firestore.
     el.innerHTML='<div style="padding:16px 20px"><div id="club-live-'+clubId+'"></div><div id="club-lb-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading group progress…</div></div></div>';
@@ -9540,6 +9617,8 @@ async function syncClubActivity(){
     name,
     initials:(name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'M',
     section:(typeof getCurrentSection==='function'?getCurrentSection():'')||'',
+    examSection:(typeof getCurrentSection==='function'?getCurrentSection():'')||'',
+    examDate:(()=>{try{const sec=getCurrentSection();return (S.examDates&&S.examDates[sec])||'';}catch(e){return '';}})(),
     totalHrs:(typeof getTotalHours==='function'?getTotalHours():acts.reduce((s,a)=>s+(a.hours||0),0)),
     weekHrs:acts.filter(a=>new Date(a.date).getTime()>weekAgo).reduce((s,a)=>s+(a.hours||0),0),
     streak:(typeof getStreak==='function'?getStreak():0),
@@ -9564,7 +9643,24 @@ async function ensureFirmCohort(){
     saveState();
   } else if(local.name!==name && name!=='My Cohort'){ local.name=name; saveState(); }
   try{
-    await firebaseDb.collection('clubs').doc(clubId).set({name:name,icon:'🏢',desc:name+' — study cohort',isCohort:true,firmCode:code},{merge:true});
+    // Only write the display name when we have a REAL firm name — never clobber the
+    // shared cohort name with the "My Cohort" placeholder when a joiner didn't type one.
+    const hasRealName = !!(S.firmName && S.firmName.trim());
+    const clubPayload = {icon:'🏢',isCohort:true,firmCode:code};
+    if(hasRealName){ clubPayload.name=name; clubPayload.desc=name+' — study cohort'; }
+    await firebaseDb.collection('clubs').doc(clubId).set(clubPayload,{merge:true});
+    // If we joined a cohort whose name we don't know yet, adopt the existing shared name.
+    if(!hasRealName){
+      try{
+        const cdoc=await firebaseDb.collection('clubs').doc(clubId).get();
+        const remoteName=cdoc.exists && cdoc.data().name;
+        if(remoteName && remoteName.trim()){
+          S.firmName=remoteName.trim();
+          if(local){ local.name=S.firmName; }
+          saveState();
+        }
+      }catch(e){}
+    }
     const mref=firebaseDb.collection('clubs').doc(clubId).collection('members').doc(AUTH.uid);
     const snap=await mref.get();
     if(!snap.exists){
@@ -9573,6 +9669,51 @@ async function ensureFirmCohort(){
     }
     syncClubActivity();
   }catch(e){console.warn('ensureFirmCohort:',e);}
+}
+
+// An existing user with a different primary cohort clicked an invite — offer to switch
+// instead of silently ignoring it (they keep membership in their old cohort club too).
+function promptCohortSwitch(inv){
+  if(!inv||!inv.code) return;
+  const newName=(inv.firmName&&inv.firmName.trim())?inv.firmName.trim():'a new cohort';
+  const curName=(S.firmName&&S.firmName.trim())?S.firmName.trim():'your current cohort';
+  let el=document.getElementById('cohort-switch-modal');
+  if(el) el.remove();
+  el=document.createElement('div');
+  el.id='cohort-switch-modal';
+  el.className='modal-overlay open';
+  el.onclick=()=>dismissCohortSwitch();
+  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:380px;text-align:center">
+    <div style="font-size:34px;margin-bottom:6px">🏢</div>
+    <div class="modal-title" style="margin-bottom:8px">Join ${esc(newName)}?</div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:18px">You're currently in <strong>${esc(curName)}</strong>. Switching makes ${esc(newName)} your main cohort on the dashboard — you'll stay a member of ${esc(curName)} too.</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ind" onclick="confirmCohortSwitch()">Join ${esc(newName)}</button>
+      <button class="btn btn-ghost" onclick="dismissCohortSwitch()">Stay in ${esc(curName)}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  window._pendingCohortSwitch=inv;
+}
+function dismissCohortSwitch(){
+  document.getElementById('cohort-switch-modal')?.remove();
+  window._pendingCohortSwitch=null;
+  _clearPendingInvite(); // decision made — don't re-prompt next load
+}
+function confirmCohortSwitch(){
+  const inv=window._pendingCohortSwitch;
+  document.getElementById('cohort-switch-modal')?.remove();
+  if(inv&&S){
+    S.firmCode=inv.code;
+    S.firmName=(inv.firmName&&inv.firmName.trim())?inv.firmName.trim():'';
+    saveState();
+    setTimeout(writeUserProfile,300);
+    ensureFirmCohort();
+    showToast('Switched to '+(S.firmName||'the new cohort')+' 🎉','ok');
+    if(typeof renderTab==='function') setTimeout(renderTab,200);
+  }
+  window._pendingCohortSwitch=null;
+  _clearPendingInvite();
 }
 
 // Group streak = consecutive days (ending today, or yesterday if no session yet today) where ≥1 member studied.
@@ -9611,6 +9752,48 @@ function _attachClubPresence(clubId){
       ((window.AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">▶ Start studying with them</button>':'')+
     '</div>';
   },err=>{});
+}
+
+// Members tab — read the REAL cross-user member list from Firestore (the local
+// club.members array only ever holds 'you' for a firm cohort), so a 30-person
+// cohort actually shows 30 people, matching the header count and Progress tab.
+async function _renderClubMembersTab(clubId){
+  const host=document.getElementById('club-mem-'+clubId);
+  if(!host) return;
+  let docs=[];
+  if(firebaseDb){
+    try{ await syncClubActivity(); }catch(e){}
+    try{
+      const snap=await firebaseDb.collection('clubs').doc(clubId).collection('members').get();
+      docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){}
+  }
+  const h=document.getElementById('club-mem-'+clubId); if(!h) return;
+  const myUid=AUTH&&AUTH.uid;
+  if(!docs.length){
+    // Fallback to the local list (offline / brand-new cohort) so it's never blank.
+    const club=(S.clubs||[]).find(c=>c.id===clubId);
+    docs=((club&&club.members)||['you']).map(m=>{
+      const isYou=m==='you';
+      const friend=isYou?null:REAL_USERS.find(f=>f.id===m);
+      return {id:isYou?(myUid||'you'):m,uid:isYou?myUid:m,name:isYou?(S.name||'You'):getClubMemberName(m),
+        initials:isYou?((S.name||'Y').slice(0,2)):getClubMemberInitials(m),color:getClubMemberColor(m),
+        totalHrs:isYou?getTotalHours():(friend?.totalHours||0),streak:isYou?getStreak():(friend?.streak||0)};
+    });
+  }
+  docs.sort((a,b)=>(b.totalHrs||0)-(a.totalHrs||0));
+  const rows=docs.map(m=>{
+    const isYou=(m.uid&&m.uid===myUid)||m.id===myUid||m.id==='you';
+    const initials=(m.initials||(m.name||'M').slice(0,2)).toString().toUpperCase();
+    const color=m.color||'#5a5fcf';
+    const target=m.uid||m.id;
+    return '<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bdr);cursor:'+(isYou?'default':'pointer')+'" '+(isYou?'':'onclick="closeClubView();openUserProfile(\''+target+'\')"')+'>'+
+      '<div class="avatar av-md" style="background:'+color+';color:#fff">'+esc(initials)+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+esc(m.name||'Member')+(isYou?' <span style="font-size:10px;background:var(--ora-bg);color:var(--ora);padding:1px 6px;border-radius:10px;font-weight:700">you</span>':'')+'</div>'+
+      '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+Math.round(m.totalHrs||0)+'h total · 🔥'+(m.streak||0)+'d streak</div></div>'+
+      (isYou?'':'<span style="font-size:12px;color:var(--ind)">→</span>')+'</div>';
+  }).join('');
+  h.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px">'+docs.length+' Member'+(docs.length!==1?'s':'')+'</div>'+rows;
 }
 
 async function _renderClubLeaderboard(clubId){
@@ -15844,6 +16027,79 @@ function showMilestoneShareCard(milestoneId){
     const dl=document.getElementById('milestone-card-dl');
     if(dl)dl.onclick=()=>{const a=document.createElement('a');a.download='ledger-'+milestoneId+'.png';a.href=canvas.toDataURL('image/png');a.click();};
   });
+}
+
+// Shareable cohort weekly digest — the screenshot the captain posts in the group chat.
+async function showCohortDigestCard(){
+  const clubId=_cohortClubId();
+  if(!clubId||!firebaseDb){ showToast('Cohort progress unavailable offline','err'); return; }
+  let docs=[];
+  try{ await syncClubActivity(); const snap=await firebaseDb.collection('clubs').doc(clubId).collection('members').get(); docs=snap.docs.map(d=>({id:d.id,...d.data()})); }catch(e){ showToast('Could not load cohort','err'); return; }
+  const todayStr=new Date().toISOString().slice(0,10);
+  const stats={
+    firmName:S.firmName||'Our Cohort',
+    members:docs.length,
+    weekHrs:docs.reduce((s,m)=>s+(m.weekHrs||0),0),
+    gStreak:(typeof _computeGroupStreak==='function')?_computeGroupStreak(docs):0,
+    activeToday:docs.filter(m=>Array.isArray(m.studyDates)&&m.studyDates.includes(todayStr)).length
+  };
+  const shareText=stats.firmName+' logged '+stats.weekHrs.toFixed(0)+'h together this week on Ledger. ledgercpa.app';
+  const liUrl='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://ledgercpa.app')+'&summary='+encodeURIComponent(shareText);
+  let el=document.getElementById('cohort-digest-overlay'); if(el)el.remove();
+  el=document.createElement('div'); el.id='cohort-digest-overlay';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);max-height:90vh;overflow-y:auto">'+
+    '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;margin-bottom:4px">Cohort Weekly</div><div style="font-size:22px;font-weight:900;letter-spacing:-.03em">'+esc(stats.firmName)+'</div></div>'+
+    '<div style="margin-bottom:16px"><canvas id="cohort-digest-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
+    '<div style="display:flex;gap:8px"><button id="cohort-digest-dl" style="flex:1;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↓ Download Card</button>'+
+      '<a href="'+liUrl+'" target="_blank" rel="noopener" onclick="document.getElementById(\'cohort-digest-overlay\').remove()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:#0077b5;color:#fff;border-radius:11px;text-decoration:none;font-size:13px;font-weight:800">Share on LinkedIn</a></div>'+
+    '<button onclick="document.getElementById(\'cohort-digest-overlay\').remove()" style="width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--mut);border:none;font-size:13px;font-weight:600;cursor:pointer">Close</button>'+
+  '</div>';
+  document.body.appendChild(el);
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.fonts.ready.then(()=>{
+    const canvas=document.getElementById('cohort-digest-canvas'); if(!canvas)return;
+    drawCohortDigestCard(canvas,stats);
+    const dl=document.getElementById('cohort-digest-dl');
+    if(dl)dl.onclick=()=>{const a=document.createElement('a');a.download='ledger-cohort.png';a.href=canvas.toDataURL('image/png');a.click();};
+  });
+}
+function drawCohortDigestCard(canvas, stats){
+  const W=canvas.width,H=canvas.height,ctx=canvas.getContext('2d');
+  const acc='#6366f1';
+  ctx.fillStyle='#0d0a18';ctx.fillRect(0,0,W,H);
+  const glow=ctx.createRadialGradient(W*0.5,H*0.18,10,W*0.5,H*0.18,460);
+  glow.addColorStop(0,acc+'26');glow.addColorStop(0.5,acc+'0c');glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,.035)';
+  for(let x=40;x<W;x+=48)for(let y=40;y<H;y+=48){ctx.beginPath();ctx.arc(x,y,1.2,0,Math.PI*2);ctx.fill();}
+  const stripe=ctx.createLinearGradient(0,0,W,0);
+  stripe.addColorStop(0,acc);stripe.addColorStop(1,acc+'11');
+  ctx.fillStyle=stripe;ctx.fillRect(0,0,W,6);
+  ctx.textAlign='center';
+  ctx.fillStyle=acc;ctx.font='800 22px Inter,system-ui,sans-serif';
+  ctx.fillText('COHORT · THIS WEEK',W/2,92);
+  ctx.fillStyle='#ffffff';
+  let fn=String(stats.firmName||'Our Cohort');
+  ctx.font='900 64px Inter,system-ui,sans-serif';
+  if(ctx.measureText(fn).width>W-140) ctx.font='900 46px Inter,system-ui,sans-serif';
+  ctx.fillText(fn,W/2,172);
+  const cols=[
+    {v:stats.weekHrs.toFixed(stats.weekHrs<100?1:0)+'h',l:'STUDIED TOGETHER',c:'#f59e0b'},
+    {v:String(stats.gStreak),l:'DAY GROUP STREAK',c:'#ffffff'},
+    {v:String(stats.members),l:stats.members===1?'MEMBER':'MEMBERS',c:acc}
+  ];
+  const cw=W/3;
+  cols.forEach((co,i)=>{
+    const cx=cw*i+cw/2;
+    ctx.fillStyle=co.c;ctx.font='900 96px Inter,system-ui,sans-serif';
+    ctx.fillText(co.v,cx,408);
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='700 20px Inter,system-ui,sans-serif';
+    ctx.fillText(co.l,cx,452);
+  });
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='600 24px Inter,system-ui,sans-serif';
+  ctx.fillText('Tracked on Ledger · ledgercpa.app',W/2,564);
+  ctx.textAlign='left';
 }
 
 function showStreakMilestone(days){

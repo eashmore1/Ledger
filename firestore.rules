@@ -39,6 +39,9 @@ service cloud.firestore {
       match /referrals/{referredId} {
         allow read: if request.auth != null;
         allow create: if request.auth != null && request.auth.uid == referredId;
+        // The referred user (doc owner) may delete their own record — lets us clean
+        // stray test-probe docs without opening the door to tampering with others'.
+        allow delete: if request.auth != null && request.auth.uid == referredId;
       }
     }
 
