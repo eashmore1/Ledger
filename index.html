@@ -9666,20 +9666,22 @@ function renderClubView(clubId){
   const el=document.getElementById('club-view-content');if(!el)return;
   const tabs=[{id:'chat',label:'💬 Chat'},{id:'members',label:'👥 Members'},{id:'leaderboard',label:'📈 Progress'},{id:'about',label:'ℹ️ About'}];
   const tabNav=tabs.map(t=>'<button onclick="_clubViewTab=\''+t.id+'\';renderClubView(\''+clubId+'\');" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid '+(_clubViewTab===t.id?'var(--ind)':'transparent')+';background:transparent;font-size:11px;font-weight:'+(_clubViewTab===t.id?'700':'500')+';color:'+(_clubViewTab===t.id?'var(--ind)':'var(--mut)')+';cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;white-space:nowrap">'+t.label+'</button>').join('');
-  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+club.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">'+club.name+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · <span id="club-hdr-mc">'+club.members.length+'</span> members</div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
+  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+esc(club.icon||'🏢')+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(club.name||'Study Group')+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · <span id="club-hdr-mc">'+club.members.length+'</span> <span id="club-hdr-ml">members</span></div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
   renderClubViewBody(clubId);
   _loadClubMemberCount(clubId,'club-hdr-mc'); // show the real member count, not the local array length
 }
 async function _loadClubMemberCount(clubId, elId){
   if(!firebaseDb||!clubId) return;
-  try{ const s=await firebaseDb.collection('clubs').doc(clubId).collection('members').get(); const el=document.getElementById(elId); if(el) el.textContent=s.size; }catch(e){}
+  try{ const s=await firebaseDb.collection('clubs').doc(clubId).collection('members').get(); const el=document.getElementById(elId); if(el) el.textContent=s.size;
+    const lbl=document.getElementById('club-hdr-ml'); if(lbl&&elId==='club-hdr-mc') lbl.textContent=(s.size===1?'member':'members');
+  }catch(e){}
 }
 function renderClubViewBody(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
   const el=document.getElementById('club-view-body');if(!el)return;
   _detachClubPresence(); // only the leaderboard tab keeps a live presence listener
   if(_clubViewTab==='chat'){
-    el.innerHTML='<div class="club-chat-area" id="cva-chat-'+clubId+'" style="padding:12px 20px;min-height:200px;max-height:320px;overflow-y:auto"><div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">Loading…</div></div><div class="chat-footer" style="padding:10px 20px 16px;border-top:1px solid var(--bdr)"><input class="chat-inp" id="cva-inp-'+clubId+'" placeholder="Message '+club.name+'…" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendClubViewMessage(\''+clubId+'\');}"><button class="chat-send" onclick="sendClubViewMessage(\''+clubId+'\')">Send</button></div>';
+    el.innerHTML='<div class="club-chat-area" id="cva-chat-'+clubId+'" style="padding:12px 20px;min-height:200px;max-height:320px;overflow-y:auto"><div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">Loading…</div></div><div class="chat-footer" style="padding:10px 20px 16px;border-top:1px solid var(--bdr)"><input class="chat-inp" id="cva-inp-'+clubId+'" placeholder="Message '+esc(club.name||'group')+'…" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendClubViewMessage(\''+clubId+'\');}"><button class="chat-send" onclick="sendClubViewMessage(\''+clubId+'\')">Send</button></div>';
     _detachClubViewListener();
     if(firebaseDb){
       const _msgQ=firebaseDb.collection('clubs').doc(clubId).collection('messages').orderBy('timestamp','asc').limitToLast(100);
@@ -9708,7 +9710,8 @@ function renderClubViewBody(clubId){
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     const msgCount=((S.clubMessages||{})[clubId]||[]).filter(m=>!m.isSystem).length;
-    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="leaveClubFull(\''+clubId+'\')">Leave Club</button></div></div>';
+    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+esc(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)" id="club-about-mc">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="leaveClubFull(\''+clubId+'\')">Leave Club</button></div></div>';
+    _loadClubMemberCount(clubId,'club-about-mc');
   }
 }
 // ── Group activity sync: write my study stats to each club I'm in (shared, read by all members) ──
@@ -9965,15 +9968,13 @@ async function _renderClubLeaderboard(clubId){
       '<div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">'+(gStreak>0?'Keep it alive — someone must log a session today.':'Log a session today to start your group’s streak.')+'</div></div></div>';
   const summary='<div style="display:flex;gap:10px;margin-bottom:14px">'+
     '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ora)">'+weekHrsTotal.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">team this week</div></div>'+
-    '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ind)">'+members.length+'</div><div style="font-size:10px;color:var(--mut)">active member'+(members.length!==1?'s':'')+'</div></div></div>';
+    '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ind)">'+members.length+'</div><div style="font-size:10px;color:var(--mut)">cohort member'+(members.length!==1?'s':'')+'</div></div></div>';
   h.innerHTML=goalCard+streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first! 💪</div>');
 }
 
 // Shared cohort goal — collective monthly hours target, stored on the club doc so
 // every member sees the same number and contributes to it.
 function openCohortGoalModal(clubId){
-  let cur=0;
-  if(firebaseDb){ /* prefill happens after fetch below */ }
   let el=document.getElementById('cohort-goal-modal'); if(el)el.remove();
   el=document.createElement('div'); el.id='cohort-goal-modal'; el.className='modal-overlay open';
   el.onclick=()=>{ if(event.target===el) el.remove(); };
@@ -10027,7 +10028,23 @@ function sendClubViewMessage(clubId){
 function leaveClubFull(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);
   const nm=club?club.name:'this club';
-  if(!confirm('Leave '+nm+'? You can rejoin anytime.')) return;
+  const isCohort=clubId.indexOf('firm_')===0;
+  let el=document.getElementById('leave-club-modal'); if(el)el.remove();
+  el=document.createElement('div'); el.id='leave-club-modal'; el.className='modal-overlay open';
+  el.onclick=function(e){ if(e.target===el) el.remove(); };
+  el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">'+
+    '<div style="font-size:32px;margin-bottom:6px">👋</div>'+
+    '<div class="modal-title" style="margin-bottom:8px">Leave '+esc(nm)+'?</div>'+
+    '<div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:18px">'+(isCohort?'You\'ll stop seeing this cohort\'s progress and chat. You can rejoin anytime with the invite link.':'You can rejoin anytime.')+'</div>'+
+    '<div style="display:flex;gap:8px;justify-content:center"><button class="btn btn-ghost" onclick="document.getElementById(\'leave-club-modal\').remove()">Cancel</button>'+
+    '<button class="btn" style="background:var(--red);color:#fff" onclick="_confirmLeaveClub(\''+clubId+'\')">Leave</button></div>'+
+  '</div>';
+  document.body.appendChild(el);
+}
+function _confirmLeaveClub(clubId){
+  document.getElementById('leave-club-modal')?.remove();
+  const club=(S.clubs||[]).find(c=>c.id===clubId);
+  const nm=club?club.name:'this club';
   S.clubs=(S.clubs||[]).filter(c=>c.id!==clubId);
   saveState();
   // Firestore cleanup so the shared member count + leaderboard update for everyone.
