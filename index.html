@@ -4145,12 +4145,12 @@ function renderObStep3(){
     <input id="ob-firm" type="text" placeholder="e.g. Deloitte Dallas, Study Squad, Class of 2026" value="${obData.firmName||''}" oninput="obUpdateInviteLink(this.value)">
   </div>
   <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:16px">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Your invite link</div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div id="ob-invite-link" style="flex:1;font-size:11px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
-      <button id="ob-invite-copy" class="btn btn-ind btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
+    <button id="ob-invite-send" class="btn btn-ind" style="width:100%;justify-content:center;font-size:14px;padding:13px" onclick="obShareInvite()">💬 Text my invite</button>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+      <div id="ob-invite-link" style="flex:1;font-size:10.5px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
+      <button id="ob-invite-copy" class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
     </div>
-    <div style="font-size:11px;color:var(--mut);margin-top:8px">Share this link — anyone who joins can see your activity and support your progress.</div>
+    <div style="font-size:11px;color:var(--mut);margin-top:8px">Send your crew the link — anyone who joins studies alongside you, and you both get free Pro.</div>
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
@@ -4169,6 +4169,22 @@ function obUpdateInviteLink(val){
   const copyEl=document.getElementById('ob-invite-copy');
   if(linkEl)linkEl.textContent=url;
   if(copyEl)copyEl.dataset.url=url;
+}
+// Onboarding-time invite share (builds from obData since S isn't created yet).
+function _obInviteUrl(){
+  const code=obData.firmCode||'';
+  const _invName=encodeURIComponent(obData.name||'');
+  const _invUid=AUTH?.uid||'';
+  const _invFirm=encodeURIComponent(obData.firmName||'');
+  return 'https://ledgercpa.app/join?c='+code+'&from='+_invName+'&uid='+encodeURIComponent(_invUid)+(_invFirm?'&fn='+_invFirm:'');
+}
+function obShareInvite(){
+  const fEl=document.getElementById('ob-firm'); if(fEl)obData.firmName=(fEl.value||'').trim();
+  const url=_obInviteUrl();
+  const who=obData.name?obData.name+' here — ':'';
+  const grp=obData.firmName?('the '+obData.firmName+' study cohort'):'my CPA study cohort';
+  const message=who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join 🎁 '+url;
+  shareInvite({url,message});
 }
 
 function obSetIntensity(key){
@@ -4836,7 +4852,7 @@ function buildCohortCard(){
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <div style="min-width:0"><div class="section-title" style="margin-bottom:0">${esc(firmName)}</div><div id="cohort-card-count" style="font-size:10px;color:var(--mut);margin-top:1px">&nbsp;</div></div>
-    <button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${inviteUrl}').then(()=>showToast('Invite link copied!','ok'))">Invite</button>
+    <button class="btn btn-ind btn-xs" onclick="shareInvite()">💬 Invite</button>
   </div>
   <div id="cohort-stats-slot"></div>
   <div style="display:flex;align-items:flex-start;gap:8px;background:var(--surf2);border-radius:9px;padding:9px 11px;margin-bottom:8px">
@@ -4868,7 +4884,7 @@ async function _loadCohortCardStats(){
     slot.innerHTML='<div style="background:linear-gradient(135deg,#1a1430,#241a3d);border:1px solid var(--ind-bdr);border-radius:12px;padding:14px 15px;margin-bottom:8px">'+
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px">🌱</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
       '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.55">Ledger comes alive when your crew is in it. Share your invite link below to bring '+esc(S.firmName||'your cohort')+' to life — you\'ll see each other study live, keep a group streak, and stay accountable through the exam grind.</div>'+
-      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="openQRModal()">Share invite</button>'+
+      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="shareInvite()">💬 Text my invite</button>'+
     '</div>';
     return;
   }
@@ -9331,6 +9347,74 @@ function toggleFollowSearch(id, isReal){
 // ═══════════════════════════════════════════════
 // QR CODE MODAL
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// UNIFIED INVITE SHARING — text-message-first
+// One canonical flow used everywhere we ask a user to invite their cohort.
+// On mobile it opens the native share sheet (one tap → Messages); on desktop
+// it shows a focused popup whose primary action is "Send via Text".
+// ═══════════════════════════════════════════════
+function buildInviteLink(){
+  return 'https://ledgercpa.app/join?c='+(S&&S.firmCode||'')+
+    (AUTH&&AUTH.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+
+    (S&&S.name?'&from='+encodeURIComponent(S.name):'')+
+    (S&&S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
+}
+function buildInviteMessage(url){
+  const who=(S&&S.name)?S.name+' here — ':'';
+  const grp=(S&&S.firmName)?('the '+S.firmName+' study cohort'):'my CPA study cohort';
+  return who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join 🎁 '+url;
+}
+// opts: { url, message }  (both optional — derived from state if omitted)
+function shareInvite(opts){
+  opts=opts||{};
+  const url=opts.url||buildInviteLink();
+  const message=opts.message||buildInviteMessage(url);
+  // Native share sheet — best on mobile: one tap straight to Messages/iMessage.
+  if(navigator.share){
+    navigator.share({title:'Join me on Ledger',text:message}).catch(e=>{
+      if(e&&e.name==='AbortError')return; // user dismissed — do nothing
+      openInviteShareSheet(url,message);
+    });
+    return;
+  }
+  openInviteShareSheet(url,message);
+}
+function _smsHref(message){
+  // sms:?&body= is the most cross-platform form (works on iOS + Android).
+  return 'sms:?&body='+encodeURIComponent(message);
+}
+function openInviteShareSheet(url,message){
+  url=url||buildInviteLink();
+  message=message||buildInviteMessage(url);
+  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=0&data='+encodeURIComponent(url);
+  let el=document.getElementById('invite-share-sheet'); if(el)el.remove();
+  el=document.createElement('div'); el.id='invite-share-sheet'; el.className='modal-overlay open';
+  el.onclick=function(e){ if(e.target===el) el.remove(); };
+  const btn=(icon,label,onclick,bg,color)=>'<button onclick="'+onclick+'" style="display:flex;align-items:center;gap:11px;width:100%;padding:13px 15px;background:'+bg+';border:1px solid var(--bdr);border-radius:12px;color:'+(color||'var(--txt)')+';font-size:14px;font-weight:700;cursor:pointer;text-align:left;margin-bottom:9px"><span style="font-size:19px;width:24px;flex-shrink:0;text-align:center">'+icon+'</span><span style="flex:1">'+label+'</span><span style="font-size:15px;opacity:.5">→</span></button>';
+  el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:380px">'+
+    '<div class="modal-hdr"><div class="modal-title">Invite your cohort</div><button class="modal-close" onclick="document.getElementById(\'invite-share-sheet\').remove()">×</button></div>'+
+    '<div style="padding:4px 2px 2px">'+
+      '<div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:16px">Send your invite link the fastest way — you both get free Pro when they join. 🎁</div>'+
+      btn('💬','Send via Text','window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
+      btn('🟢','Share on WhatsApp','window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
+      btn('✉️','Email it','window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
+      btn('📋','Copy link','_copyInviteFromSheet(this)','var(--surf2)')+
+      '<div style="text-align:center;margin-top:14px;padding-top:16px;border-top:1px solid var(--bdr)">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Or scan in person</div>'+
+        '<div style="background:#fff;border-radius:14px;padding:12px;display:inline-block"><img src="'+qrUrl+'" alt="Invite QR" style="width:150px;height:150px;display:block;border-radius:6px"></div>'+
+      '</div>'+
+    '</div></div>';
+  document.body.appendChild(el);
+  // Stash data on the buttons (avoids quoting headaches in inline handlers).
+  const box=el.querySelector('.modal-box');
+  const sms=_smsHref(message), wa=message, mail='mailto:?subject='+encodeURIComponent('Join my CPA study cohort on Ledger')+'&body='+encodeURIComponent(message);
+  box.querySelectorAll('button').forEach(b=>{ b.dataset.sms=sms; b.dataset.msg=wa; b.dataset.mail=mail; b.dataset.url=url; });
+}
+function _copyInviteFromSheet(b){
+  const url=b.dataset.url||buildInviteLink();
+  (navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>showToast('Invite link copied! 📋','ok')).catch(()=>_execCommandShare(url));
+}
+
 function openQRModal(){
   let el=document.getElementById('qr-modal');
   if(el) el.remove();
@@ -9364,11 +9448,8 @@ function openQRModal(){
 function closeQRModal(){document.getElementById('qr-modal')?.remove();}
 
 function shareQRProfile(url){
-  if(navigator.share){
-    navigator.share({title:'Join me on Ledger',text:'Study for the CPA with me on Ledger — we both get free Pro when you join!',url}).catch(e=>{if(e.name!=='AbortError')_fallbackShare(url);});
-    return;
-  }
-  _fallbackShare(url);
+  closeQRModal();
+  shareInvite({url});
 }
 
 // ═══════════════════════════════════════════════
@@ -9614,7 +9695,10 @@ function renderClubViewBody(clubId){
     }
     setTimeout(()=>document.getElementById('cva-inp-'+clubId)?.focus(),80);
   } else if(_clubViewTab==='members'){
-    el.innerHTML='<div style="padding:16px 20px"><div id="club-mem-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading members…</div></div><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="promptInviteToClub(null,\''+clubId+'\')">+ Invite Someone</button></div>';
+    const _isCohort=clubId.indexOf('firm_')===0;
+    const _invOnclick=_isCohort?'shareInvite()':'promptInviteToClub(null,\''+clubId+'\')';
+    const _invLabel=_isCohort?'💬 Invite to cohort':'+ Invite Someone';
+    el.innerHTML='<div style="padding:16px 20px"><div id="club-mem-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading members…</div></div><button class="btn btn-ind btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="'+_invOnclick+'">'+_invLabel+'</button></div>';
     _renderClubMembersTab(clubId);
   } else if(_clubViewTab==='leaderboard'){
     // Live "studying now" presence (real-time) + real cross-user progress from Firestore.
