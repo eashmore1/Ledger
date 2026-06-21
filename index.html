@@ -1335,12 +1335,12 @@ function cancel2FALogin(){
 // ONBOARDING TOUR
 // ═══════════════════════════════════════════════
 const TOUR_STEPS = [
-  {title:'Welcome to Ledger! 🎉',body:"You're all set up. Let's take a 30-second tour so you know where everything lives.",target:null},
-  {title:'📊 Dashboard',body:'Your study command center — total hours, daily streak, section progress, and weekly pacing all in one place.',target:()=>document.querySelector('.nav-tab[onclick*="dashboard"]')||document.querySelector('[data-mnav="dashboard"]')},
-  {title:'▶ Start Session',body:'Tap here to begin a timed study session. Log hours, material, and how you felt — every session counts toward your goals.',target:()=>document.getElementById('nav-log-btn')},
+  {title:'Welcome to Ledger!',body:"You're all set up. Let's take a 30-second tour so you know where everything lives.",target:null},
+  {title:'Dashboard',body:'Your study command center — total hours, daily streak, section progress, and weekly pacing all in one place.',target:()=>document.querySelector('.nav-tab[onclick*="dashboard"]')||document.querySelector('[data-mnav="dashboard"]')},
+  {title:'Start Session',body:'Tap here to begin a timed study session. Log hours, material, and how you felt — every session counts toward your goals.',target:()=>document.getElementById('nav-log-btn')},
   {title:'⬡ Study Lab',body:'Practice MCQs with instant explanations, use AI flashcards, and access the Ask Ledger coach. Elite users also get a day-by-day AI Study Plan.',target:()=>document.querySelector('.nav-tab[onclick*="studylab"]')||document.querySelector('[data-mnav="studylab"]')},
   {title:'◎ Explore',body:'Find and follow other CPA candidates studying the same sections. The social accountability makes a real difference.',target:()=>document.querySelector('.nav-tab[onclick*="explore"]')||document.querySelector('[data-mnav="explore"]')},
-  {title:"You're ready. Let's pass the CPA. 🚀",body:'Your streak starts with your first session. Come back every day and let Ledger do the tracking.',target:null,isLast:true},
+  {title:"You're ready. Let's pass the CPA.",body:'Your streak starts with your first session. Come back every day and let Ledger do the tracking.',target:null,isLast:true},
 ];
 let _tourStep=0;
 
@@ -1412,7 +1412,7 @@ function _buildTourTooltip(step,idx,total,isLast){
       <div style="display:flex;gap:8px;align-items:center">
         ${idx>0?`<button onclick="prevTourStep()" style="background:none;border:1.5px solid var(--bdr);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;color:var(--mut);font-weight:600">← Back</button>`:''}
         <button onclick="${isLast?'endTour()':'nextTourStep()'}" style="background:var(--ind);color:#fff;border:none;border-radius:9px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.01em">
-          ${isLast?'Start studying 🚀':'Next →'}
+          ${isLast?'Start studying':'Next →'}
         </button>
       </div>
     </div>
@@ -2845,7 +2845,7 @@ function navProClass(){
 }
 function navProLabel(){
   if(SUB.tier==='elite')return'Elite';
-  if(SUB.tier==='cram')return'📚 Cram Plan';
+  if(SUB.tier==='cram')return'Cram Plan';
   if(isOnTrial()){const d=getTrialDaysLeft();return'Trial · '+d+'d left';}
   if(SUB.tier==='pro')return'Pro';
   return'Upgrade';
@@ -3113,7 +3113,7 @@ function renderUpgradeModal(featureHint){
   '<div class="cram-section">'+
   '<div class="cram-inner">'+
   '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">ONE-TIME PURCHASE</div>'+
-  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">📚 6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
+  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
   '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Full Elite access for 6 months — AI Study Plan, Ask Ledger, all analytics, and every Pro feature. Perfect if your exam window is fixed. No recurring charges — ever.</div>'+
   '<div class="cram-feat-row">'+
   '<span class="cram-feat-chip">✓ Full Elite Features</span>'+
@@ -4028,7 +4028,7 @@ function renderObStep0(){
   </div>
   <div class="form-grp">
     <label>Bio <span style="color:var(--mut);font-weight:400">(optional)</span></label>
-    <input id="ob-bio" type="text" placeholder="e.g. Big 4 associate grinding toward CPA 💪">
+    <input id="ob-bio" type="text" placeholder="e.g. Big 4 associate grinding toward CPA">
   </div>
   <div class="form-grp" style="margin-bottom:0">
     <label>Study Intensity <span style="color:var(--mut);font-weight:400">— sets your hour goals per section</span></label>
@@ -4145,7 +4145,7 @@ function renderObStep3(){
     <input id="ob-firm" type="text" placeholder="e.g. Deloitte Dallas, Study Squad, Class of 2026" value="${obData.firmName||''}" oninput="obUpdateInviteLink(this.value)">
   </div>
   <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:16px">
-    <button id="ob-invite-send" class="btn btn-ind" style="width:100%;justify-content:center;font-size:14px;padding:13px" onclick="obShareInvite()">💬 Text my invite</button>
+    <button id="ob-invite-send" class="btn btn-ind" style="width:100%;justify-content:center;font-size:14px;padding:13px" onclick="obShareInvite()">Text my invite</button>
     <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
       <div id="ob-invite-link" style="flex:1;font-size:10.5px;font-weight:600;color:var(--ind);word-break:break-all;background:var(--ind-bg);padding:8px 12px;border-radius:7px;border:1px solid rgba(90,95,207,.2)">${inviteUrl}</div>
       <button id="ob-invite-copy" class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Invite link copied!','ok'))" data-url="${inviteUrl}">Copy</button>
@@ -4154,7 +4154,7 @@ function renderObStep3(){
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
-<button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obFinish()">Build My Plan 🚀</button>`;
+<button class="ob-big-btn" style="width:auto;display:inline-block;padding:14px 36px" onclick="obFinish()">Build My Plan</button>`;
 }
 
 // Keep the displayed invite link in sync with the firm-name field as it's typed.
@@ -4183,7 +4183,7 @@ function obShareInvite(){
   const url=_obInviteUrl();
   const who=obData.name?obData.name+' here — ':'';
   const grp=obData.firmName?('the '+obData.firmName+' study cohort'):'my CPA study cohort';
-  const message=who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join 🎁 '+url;
+  const message=who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join '+url;
   shareInvite({url,message});
 }
 
@@ -4436,7 +4436,7 @@ function renderApp(){
       </div>
       <div class="nav-right">
         <span id="nav-sess-chip" style="display:none"></span>
-        <button class="post-btn" id="nav-log-btn" onclick="openSessionModal()">▶ Start Session</button>
+        <button class="post-btn" id="nav-log-btn" onclick="openSessionModal()">Start Session</button>
         <button class="nav-pro-chip ${navProClass()}" onclick="openUpgradeModal(null)">${navProLabel()}</button>
         <button onclick="openSearchModal()" title="Search Users" class="btn btn-ghost btn-sm" style="font-size:15px;padding:7px 9px;border-radius:9px">🔍</button>
         <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
@@ -4648,7 +4648,7 @@ function buildFeedChallengeCard(){
           <div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden;margin-bottom:4px">
             <div style="height:100%;background:${c.diffColor};width:${pct}%;border-radius:4px;transition:width .6s"></div>
           </div>
-          <div style="font-size:10px;color:var(--mut)">${prog} / ${c.target} &nbsp;·&nbsp; 🏅 Earn "${c.reward}"</div>
+          <div style="font-size:10px;color:var(--mut)">${prog} / ${c.target} &nbsp;·&nbsp; Earn "${c.reward}"</div>
         </div>
         <button onclick="switchTab('explore')" style="flex-shrink:0;margin-left:12px;padding:7px 13px;background:${joined?'var(--surf2)':'var(--ora)'};color:${joined?'var(--sub)':'#fff'};border:${joined?'1px solid var(--bdr)':'none'};border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${joined?'View →':'Join →'}</button>
       </div>`;
@@ -4692,7 +4692,7 @@ function buildFeed(){
         <div style="font-size:11px;color:var(--mut)">${S.state} · ${S.disc} Discipline</div>
       </div>
     </div>
-    <button class="btn btn-primary" style="width:100%;margin-top:4px;justify-content:center" onclick="openSessionModal()">▶ Start Session</button>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;justify-content:center" onclick="openSessionModal()">Start Session</button>
   </div>
   <div class="card card-pad">
     <div class="section-title">My Sections</div>
@@ -4802,7 +4802,7 @@ function buildFeed(){
   const feedCenter = _friendsPending ?
     _crewCard+_feedSkeleton :
     (allActivities.length===0 ?
-      `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">▶ Start First Session</button></div></div>` :
+      `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">📚</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">Start First Session</button></div></div>` :
       _crewCard+actCards.join(''));
 
   return`<div class="feed-layout">${leftSidebar}<div class="feed-center">${feedCenter}</div>${rightSidebar}</div>`;
@@ -4834,8 +4834,8 @@ function buildMiniLeaderboard(){
     <div class="prog-bar" style="height:8px;margin-bottom:8px"><div class="prog-fill" style="width:${pct}%;background:${pct>=100?'var(--grn)':pct>=60?'var(--ind)':'var(--ora)'}"></div></div>
     <div style="display:flex;gap:16px">
       <div style="font-size:11px;color:var(--mut)">🔥 <strong style="color:var(--txt)">${streak}d</strong> streak</div>
-      <div style="font-size:11px;color:var(--mut)">📅 <strong style="color:var(--txt)">${Math.round(getTotalHours())}h</strong> total</div>
-      <div style="font-size:11px;color:var(--mut)">💯 <strong style="color:var(--txt)">${pct}%</strong> of week goal</div>
+      <div style="font-size:11px;color:var(--mut)"><strong style="color:var(--txt)">${Math.round(getTotalHours())}h</strong> total</div>
+      <div style="font-size:11px;color:var(--mut)"><strong style="color:var(--txt)">${pct}%</strong> of week goal</div>
     </div>
   </div>`;
 }
@@ -4851,7 +4851,7 @@ function buildCohortCard(){
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <div style="min-width:0"><div class="section-title" style="margin-bottom:0">${esc(firmName)}</div><div id="cohort-card-count" style="font-size:10px;color:var(--mut);margin-top:1px">&nbsp;</div></div>
-    <button class="btn btn-ind btn-xs" onclick="shareInvite()">💬 Invite</button>
+    <button class="btn btn-ind btn-xs" onclick="shareInvite()">Invite</button>
   </div>
   <div id="cohort-stats-slot"></div>
   <div style="display:flex;align-items:flex-start;gap:8px;background:var(--surf2);border-radius:9px;padding:9px 11px;margin-bottom:8px">
@@ -4883,7 +4883,7 @@ async function _loadCohortCardStats(){
     slot.innerHTML='<div style="background:linear-gradient(135deg,#1a1430,#241a3d);border:1px solid var(--ind-bdr);border-radius:12px;padding:14px 15px;margin-bottom:8px">'+
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px">🌱</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
       '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.55">Ledger comes alive when your crew is in it. Share your invite link below to bring '+esc(S.firmName||'your cohort')+' to life — you\'ll see each other study live, keep a group streak, and stay accountable through the exam grind.</div>'+
-      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="shareInvite()">💬 Text my invite</button>'+
+      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="shareInvite()">Text my invite</button>'+
     '</div>';
     return;
   }
@@ -4920,7 +4920,7 @@ async function _loadCohortCardStats(){
       stat('🔥'+gStreak,'group streak','var(--txt)')+
       stat(activeToday,'active today','var(--grn)')+
     '</div>'+alignHtml+
-    '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="showCohortDigestCard()">📣 Share cohort progress</button>';
+    '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="showCohortDigestCard()">Share cohort progress</button>';
   // Populate live-now after render.
   try{
     const psnap=await firebaseDb.collection('clubs').doc(clubId).collection('presence').get();
@@ -5012,9 +5012,9 @@ function buildPassCard(a,ex){
       <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800;color:${hasGivenProps?'var(--ora)':'var(--mut)'}">${propCount}</span>
     </button>
     <button class="ac-action" onclick="openComments('${a.id}','${a.userId}')">
-      💬 Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
+      Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
     </button>
-    <button class="ac-action" onclick="shareActivity('${a.id}')">🔗 Share</button>
+    <button class="ac-action" onclick="shareActivity('${a.id}')">Share</button>
   </div>
 </div>`;
 }
@@ -5081,11 +5081,11 @@ function buildActivityCard(a){
     </div>`:''}
   </div>
   <div class="ac-body" style="padding:10px 16px 6px" ${a.isMine?`onclick="openActivityPage('${a.id}')" style="padding:10px 16px 6px;cursor:pointer"`:''}>
-    ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:5px">📖 ${a.material}</div>`:''}
+    ${a.material?`<div style="font-size:11px;color:var(--ind);font-weight:600;margin-bottom:5px">${a.material}</div>`:''}
     ${a.caption?`<div class="ac-caption" style="font-size:13px;margin:0 0 5px">"${a.caption}"</div>`:''}
     ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin:4px 0">${a.concepts.slice(0,5).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:2px 9px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>5?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-5} more</span>`:''}</div>`:''}
     ${a.photo?`<div style="margin:6px 0 2px;border-radius:10px;overflow:hidden;max-height:300px"><img src="${a.photo}" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy" alt="Study session photo"></div>`:''}
-    ${a.elapsed?`<div style="font-size:10px;color:var(--mut);margin-top:4px">⏱ ${fmtDur(a.elapsed)} actual timer</div>`:''}
+    ${a.elapsed?`<div style="font-size:10px;color:var(--mut);margin-top:4px">${fmtDur(a.elapsed)} actual timer</div>`:''}
     ${(()=>{if(!a.isMine)return'';const _sa=S.activities.filter(x=>x.section===a.section);const _sh=_sa.reduce((t,x)=>t+(x.hours||0),0);const _g=(S.hourGoals||{})[a.section]||0;if(!_g)return'';const _p=Math.min(100,Math.round((_sh/_g)*100));return`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${a.section} progress</span><span style="font-weight:700;color:var(--txt)">${_sh.toFixed(1)}h / ${_g}h &middot; ${_p}%</span></div><div style="background:var(--surf2);border-radius:4px;height:5px;overflow:hidden"><div style="height:100%;background:${(EXAMS[a.section]||{color:'var(--ind)'}).color};width:${_p}%;border-radius:4px;transition:width .4s"></div></div></div>`;})()}
   </div>
   <div class="ac-actions">
@@ -5093,9 +5093,9 @@ function buildActivityCard(a){
       <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800;color:${hasGivenProps?'var(--ora)':'var(--mut)'}">${propCount}</span>
     </button>
     <button class="ac-action" onclick="openComments('${a.id}','${a.userId}')">
-      💬 Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
+      Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span>
     </button>
-    <button class="ac-action" onclick="shareActivity('${a.id}')">🔗 Share</button>
+    <button class="ac-action" onclick="shareActivity('${a.id}')">Share</button>
   </div>
 </div>`;
 }
@@ -5236,7 +5236,7 @@ function calcReadinessScore(overrideSection){
   else if(score<50){label='Building Foundation';color='#f59e0b';tier='building';}
   else if(score<65){label='On Track';color='var(--ind)';tier='track';}
   else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
-  else{label='Exam Ready 🎯';color='var(--grn)';tier='ready';}
+  else{label='Exam Ready';color='var(--grn)';tier='ready';}
   return{score,label,color,tier,breakdown,section:s,hasScores};
 }
 
@@ -5289,7 +5289,7 @@ function buildReadinessCard(){
     </div>
   </div>
   <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-xs" onclick="openScoreModal('${r.section}')" style="background:var(--ora);color:#fff;border:none;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;flex-shrink:0">📝 Log Practice Score</button>
+    <button class="btn btn-xs" onclick="openScoreModal('${r.section}')" style="background:var(--ora);color:#fff;border:none;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;flex-shrink:0">Log Practice Score</button>
     <button class="btn btn-ghost btn-xs" onclick="openPacingTipsModal()" style="flex-shrink:0">How is this calculated? →</button>
   </div>
 </div>`;
@@ -5381,21 +5381,21 @@ function openPacingTipsModal(){
   let tips=[];
   r.breakdown.forEach(b=>{
     // Volume (max 25)
-    if(b.volumePts<12) tips.push(`📚 You're behind where you should be for <strong>${b.section}</strong> — log more sessions to close the gap`);
-    else if(b.volumePts<20) tips.push(`📚 <strong>${b.section}</strong> volume is building but you need to accelerate — you're behind your timeline target`);
+    if(b.volumePts<12) tips.push(`You're behind where you should be for <strong>${b.section}</strong> — log more sessions to close the gap`);
+    else if(b.volumePts<20) tips.push(`<strong>${b.section}</strong> volume is building but you need to accelerate — you're behind your timeline target`);
     // Pacing (max 15)
-    if(b.pacingPts<6) tips.push(`⚡ Your recent study pace isn't enough for <strong>${b.section}</strong> — hours per week are below what's needed. Study more or push your exam date`);
-    else if(b.pacingPts<11) tips.push(`📅 You're a bit tight on <strong>${b.section}</strong> pacing — adding 2-3 hrs/week builds a comfortable buffer`);
+    if(b.pacingPts<6) tips.push(`Your recent study pace isn't enough for <strong>${b.section}</strong> — hours per week are below what's needed. Study more or push your exam date`);
+    else if(b.pacingPts<11) tips.push(`You're a bit tight on <strong>${b.section}</strong> pacing — adding 2-3 hrs/week builds a comfortable buffer`);
     // Practice (max 40) — most important signal
-    if(!b.hasScores) tips.push(`📝 No practice scores logged for <strong>${b.section}</strong> — this is 50 points locked. Log a Becker, Gleim, Wiley, or UWorld score to unlock the strongest readiness signal`);
-    else if(b.practicePts<20) tips.push(`📈 Your <strong>${b.section}</strong> practice scores are below the 75 passing threshold — keep grinding and log each attempt to track your trajectory`);
-    else if(b.practicePts<32) tips.push(`📈 You're getting close on <strong>${b.section}</strong> practice — aim for 75+ consistently before scheduling`);
+    if(!b.hasScores) tips.push(`No practice scores logged for <strong>${b.section}</strong> — this is 50 points locked. Log a Becker, Gleim, Wiley, or UWorld score to unlock the strongest readiness signal`);
+    else if(b.practicePts<20) tips.push(`Your <strong>${b.section}</strong> practice scores are below the 75 passing threshold — keep grinding and log each attempt to track your trajectory`);
+    else if(b.practicePts<32) tips.push(`You're getting close on <strong>${b.section}</strong> practice — aim for 75+ consistently before scheduling`);
     // Momentum (max 10)
-    if(b.hasScores&&b.momentumPts<=1) tips.push(`📉 Your <strong>${b.section}</strong> practice scores are trending down — review weak areas and log another attempt`);
+    if(b.hasScores&&b.momentumPts<=1) tips.push(`Your <strong>${b.section}</strong> practice scores are trending down — review weak areas and log another attempt`);
     // Consistency (max 10)
     if(b.consistencyPts<5) tips.push(`🔥 Only ${activeDaysCount(b.section)} qualifying days in the last 14 — aim for at least 10 days with 30+ min sessions`);
     // Recency
-    if(b.decayed&&b.logged&&b.decayed<b.logged*0.7) tips.push(`⏰ Most of your <strong>${b.section}</strong> hours were logged a long time ago — recent study counts more, so revisit the material`);
+    if(b.decayed&&b.logged&&b.decayed<b.logged*0.7) tips.push(`Most of your <strong>${b.section}</strong> hours were logged a long time ago — recent study counts more, so revisit the material`);
   });
   if(!tips.length) tips=['✅ You\'re doing great — keep your current pace and keep logging practice scores!'];
 
@@ -5702,8 +5702,8 @@ function _buildWeekThisCard(){
   const bars=last7.map(d=>`<div class="week-bar-wrap"><div class="week-bar${d.isToday?' today-bar':''}" style="height:${Math.max(4,Math.round(d.hrs/maxHrs*88))}px" title="${d.hrs}h"></div><div class="week-day-lbl">${d.day.slice(0,2)}</div></div>`).join('');
   const col=pct>=100?'var(--grn)':pct>=70?'var(--amb)':'var(--ind)';
   const commitRow=commitment
-    ?`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--sub)">🤝 ${met?'Goal crushed this week!':'Committed to '+commitment+'h this week'}</div><button onclick="clearWeeklyCommitment('${weekKey}')" style="background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer">Change goal</button></div>`
-    :`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--mut);margin-bottom:7px">🤝 Commit to a weekly goal — candidates who do are 3× more likely to stay on track</div><div style="display:flex;gap:6px;flex-wrap:wrap">${[10,15,20,25].map(h=>`<button onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">${h}h</button>`).join('')}<button onclick="setCustomCommitment()" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Custom</button></div></div>`;
+    ?`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--sub)">${met?'Goal crushed this week!':'Committed to '+commitment+'h this week'}</div><button onclick="clearWeeklyCommitment('${weekKey}')" style="background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer">Change goal</button></div>`
+    :`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--mut);margin-bottom:7px">Commit to a weekly goal — candidates who do are 3× more likely to stay on track</div><div style="display:flex;gap:6px;flex-wrap:wrap">${[10,15,20,25].map(h=>`<button onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">${h}h</button>`).join('')}<button onclick="setCustomCommitment()" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Custom</button></div></div>`;
   return`<div class="card card-pad" style="margin-bottom:16px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div><div class="section-title" style="margin-bottom:2px">This Week</div><div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${target} hrs${commitment?' · your commitment':' · weekly goal'}</div></div>
@@ -5738,8 +5738,8 @@ function _buildDashMain(){
       <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
     </div>
     <div class="dash-heading-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0">
-      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📝 Log Result</button>
-      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">💪 Stuck?</button>
+      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log Result</button>
+      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">Stuck?</button>
     </div>
   </div>
 
@@ -5860,7 +5860,7 @@ function _buildPacingCardsHTML(){
           <option value="studying"${status==='studying'?' selected':''}>Studying</option>
           <option value="passed"${(S.sectionPassed||[]).includes(s)?' selected':''}>Passed ✓</option>
         </select>
-        ${!passed?`<div class="pc-log-btn"><button onclick="openLogResultModal('${s}')" style="margin-top:5px;padding:3px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap">📝 Log Result</button></div>`:''}
+        ${!passed?`<div class="pc-log-btn"><button onclick="openLogResultModal('${s}')" style="margin-top:5px;padding:3px 8px;background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--sub);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap">Log Result</button></div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -5897,7 +5897,7 @@ function buildCalendar(){
     const examToday=Object.entries(S.examDates||{}).find(([,v])=>v===ds);
     cells+=`<div class="cal-day${isT?' is-today':''}" onclick="openDayLog('${ds}')">
       <div class="cal-day-num">${d}</div>
-      ${examToday?`<div class="cal-pill" style="background:${EXAMS[examToday[0]].color}">🎯 ${examToday[0]}</div>`:''}
+      ${examToday?`<div class="cal-pill" style="background:${EXAMS[examToday[0]].color}">${examToday[0]}</div>`:''}
       ${logs.slice(0,2).map(a=>`<div class="cal-pill" style="background:${EXAMS[a.section]?.color||'#6366f1'}">✓ ${a.section} ${a.hours}h</div>`).join('')}
     </div>`;
   }
@@ -6054,9 +6054,9 @@ function buildProfile(){
         <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:6px">
           <span style="font-size:26px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${a.hours}</span>
           <span style="font-size:11px;color:var(--mut);font-weight:600;padding-bottom:2px">hrs</span>
-          ${a.elapsed?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· ⏱ ${fmtDur(a.elapsed)}</span>`:''}
+          ${a.elapsed?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· ${fmtDur(a.elapsed)}</span>`:''}
         </div>
-        ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">📖 ${a.material}</div>`:''}
+        ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">${a.material}</div>`:''}
         ${a.caption?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4">${a.caption}</div>`:''}
         ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${a.concepts.slice(0,3).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.09);border:1px solid rgba(212,64,0,.18);color:var(--ora);padding:2px 8px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>3?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-3}</span>`:''}</div>`:''}
         ${diffStars?`<div style="font-size:11px;margin-top:6px">${diffStars}</div>`:''}
@@ -6113,8 +6113,8 @@ function buildProfile(){
     const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     const ahead=myHrs>theirHrs+0.5;
     const behind=theirHrs>myHrs+0.5;
-    const statusMsg=ahead?`You're ahead by ${(myHrs-theirHrs).toFixed(1)}h this week 💪`:behind?`${partner.name.split(' ')[0]} is ahead by ${(theirHrs-myHrs).toFixed(1)}h — keep pushing!`:`Neck and neck this week 🔥`;
-    return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center">${statusMsg}</div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="font-size:10px" onclick="pingStudyPartner('${partner.id}','${partner.name.replace(/'/g,"&#39;")}')">👋 Check In</button><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
+    const statusMsg=ahead?`You're ahead by ${(myHrs-theirHrs).toFixed(1)}h this week`:behind?`${partner.name.split(' ')[0]} is ahead by ${(theirHrs-myHrs).toFixed(1)}h — keep pushing!`:`Neck and neck this week 🔥`;
+    return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center">${statusMsg}</div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="font-size:10px" onclick="pingStudyPartner('${partner.id}','${partner.name.replace(/'/g,"&#39;")}')">Check In</button><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
   })();
 
   _heatmapOwnOffset=0;
@@ -6178,7 +6178,7 @@ function buildProfile(){
         <div style="font-size:15px;font-weight:800">Recent Sessions</div>
         <div style="font-size:11px;color:var(--mut);margin-top:1px">${(S.activities||[]).length} total</div>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="openSessionModal()">▶ Log Session</button>
+      <button class="btn btn-primary btn-sm" onclick="openSessionModal()">Log Session</button>
     </div>
     ${_heatmapHTML}
     ${recentActs
@@ -6188,7 +6188,7 @@ function buildProfile(){
           <div style="font-size:15px;font-weight:800;margin-bottom:6px">Start your CPA journey</div>
           <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.5">Log your first session to build your streak and track progress toward passing.</div>
           ${_quickStartSecs?`<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">${_quickStartSecs}</div>`:''}
-          <button class="btn btn-primary" onclick="openSessionModal()">▶ Log First Session</button>
+          <button class="btn btn-primary" onclick="openSessionModal()">Log First Session</button>
         </div>`}
   </div>
 
@@ -6203,7 +6203,7 @@ function buildProfile(){
         <span style="font-size:12px;color:var(--mut);font-weight:600;padding-bottom:4px">of ${S.hoursPerWeek||15}h goal</span>
       </div>
       <div class="prog-bar" style="height:7px"><div class="prog-fill" style="width:${Math.min(100,Math.round(weekHrs/(S.hoursPerWeek||15)*100))}%;background:${weekHrs>=(S.hoursPerWeek||15)?'var(--grn)':'var(--ora)'}"></div></div>
-      ${isPro()?`<button class="btn btn-ghost btn-xs" style="margin-top:10px;width:100%" onclick="openProgressReport()">📊 View Weekly Report</button>`:''}
+      ${isPro()?`<button class="btn btn-ghost btn-xs" style="margin-top:10px;width:100%" onclick="openProgressReport()">View Weekly Report</button>`:''}
     </div>
 
     <!-- Exam Progress -->
@@ -6266,7 +6266,7 @@ function buildExplore(){
     else if(joined) actionBtn='<button class="btn btn-ghost btn-xs" style="color:var(--mut);font-size:10px" onclick="leaveChallenge(\''+c.id+'\')">Leave</button>';
     else actionBtn='<button class="btn btn-ghost btn-xs" onclick="joinChallenge(\''+c.id+'\')">Join</button>';
     const lockedStyle=!canAccess?'opacity:.55;filter:grayscale(.4);':'';
-    return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+c.icon+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div></div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">🏅 '+c.reward+'</div></div></div></div>';
+    return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+c.icon+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div></div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">'+c.reward+'</div></div></div></div>';
   }).join('')+
   ''+
   // Custom challenges the user created
@@ -6325,15 +6325,15 @@ function buildExplore(){
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
     return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .12s" onclick="openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:22px;width:38px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+' <span style="font-size:10px;color:'+(c.isPublic?'var(--grn)':'var(--ind)')+';font-weight:700">'+(c.isPublic?'🌐':'🔒')+'</span></div><div style="font-size:11px;color:var(--mut)"><span class="myclub-mc" data-cid="'+c.id+'">'+c.members.length+'</span> members</div>'+(lastMsg?'<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg.author==='you'?'You':getClubMemberName(lastMsg.author))+': '+lastMsg.text+'</div>':'')+'</div><span style="font-size:16px;color:var(--mut)">›</span></div>';
   }).join('');
-  const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
+  const discoverRows=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id)).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
   const clubSection=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverRows;
 
   // Show-more for discover clubs (limit initial to 3)
   const discoverRowItems=PUBLIC_CLUBS.filter(c=>!joinedPubIds.includes(c.id));
   const discoverVisible=discoverRowItems.slice(0,3);
   const discoverHidden=discoverRowItems.slice(3);
-  const discoverVisibleHtml=discoverVisible.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
-  const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">🌱 New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
+  const discoverVisibleHtml=discoverVisible.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('');
+  const discoverHiddenHtml=discoverHidden.length?'<div id="explore-more-clubs" style="display:none">'+discoverHidden.map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)"><div style="font-size:24px;width:40px;text-align:center;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:11px;color:var(--mut)">'+c.desc.slice(0,55)+'…</div><div style="font-size:10px;color:var(--mut);margin-top:2px">New club · be an early member</div></div><button class="btn btn-ind btn-xs" onclick="joinPublicClub(\''+c.id+'\')">Join</button></div>').join('')+'</div><button id="explore-show-more-btn" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="document.getElementById(\'explore-more-clubs\').style.display=\'block\';this.style.display=\'none\'">Show '+discoverHidden.length+' more clubs ↓</button>':'';
   const clubSectionNew=(myAllClubs.length?'<div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">'+myClubRows+'</div>':'')+'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:8px 0">Discover Clubs</div>'+discoverVisibleHtml+discoverHiddenHtml;
 
   // Study buddy matching — people studying the same section as you right now
@@ -6482,7 +6482,7 @@ function openPostModal(prefSection=''){
     <div style="font-size:11px;color:var(--mut)">Session shows as "logged a session" to others — details are just for you</div>
   </div>
 </div>
-<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:4px" onclick="submitPost()">📝 Log Session</button>`;
+<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:4px" onclick="submitPost()">Log Session</button>`;
   document.getElementById('post-modal').classList.add('open');
 }
 function closePostModal(){document.getElementById('post-modal').classList.remove('open');}
@@ -6569,10 +6569,10 @@ ${goal?`<div style="margin-bottom:20px">
   <div style="background:var(--surf2);border-radius:6px;height:10px;overflow:hidden">
     <div style="height:100%;background:${ex.color};width:${pct}%;border-radius:6px;transition:width .5s"></div>
   </div>
-  ${daysLeft!=null&&hrsLeft!=null?`<div style="font-size:11px;color:${onTrack?'var(--grn)':'var(--ora)'};margin-top:6px;font-weight:600">${onTrack?'✓ On track':'⚡ Push a little harder'} &mdash; ${hrsLeft.toFixed(0)}h left with ${daysLeft} days to exam</div>`:''}
+  ${daysLeft!=null&&hrsLeft!=null?`<div style="font-size:11px;color:${onTrack?'var(--grn)':'var(--ora)'};margin-top:6px;font-weight:600">${onTrack?'✓ On track':'Push a little harder'} &mdash; ${hrsLeft.toFixed(0)}h left with ${daysLeft} days to exam</div>`:''}
 </div>`:''}
 
-${delta>0?`<div style="padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--ind);font-weight:600">📈 Readiness +${delta} → ${newScore}</div>`:''}
+${delta>0?`<div style="padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--ind);font-weight:600">Readiness +${delta} → ${newScore}</div>`:''}
 
 ${milestoneLeft&&milestoneLeft>0?`<div style="padding:10px 14px;background:var(--surf2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--sub)">Next milestone: <strong>${nextMilestone}h for ${act.section}</strong> — just ${milestoneLeft}h away</div>`:''}
 
@@ -6619,7 +6619,7 @@ function giveProps(actId,userId){
     if(!hasProps){
       const r=btn.getBoundingClientRect();
       const p=document.createElement('div');
-      p.textContent='+1 👏';
+      p.textContent='+1';
       p.style.cssText=`position:fixed;left:${r.left+r.width/2}px;top:${r.top-6}px;font-size:12px;font-weight:800;color:var(--ora);pointer-events:none;z-index:1000;animation:propsFloat .65s cubic-bezier(.22,.61,.36,1) forwards;white-space:nowrap`;
       document.body.appendChild(p);
       setTimeout(()=>p.remove(),650);
@@ -6904,7 +6904,7 @@ function openDayLog(dateStr){
 <div style="font-size:13px;color:var(--sub);margin-bottom:14px;font-weight:600">${fmt}</div>
 ${html}
 <div style="display:flex;gap:8px;margin-top:8px">
-  <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closePostModal();openSessionModal()">▶ Start Session</button>
+  <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closePostModal();openSessionModal()">Start Session</button>
   <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closePostModal();openPostModal()">+ Quick Log</button>
 </div>`;
   document.getElementById('post-modal').querySelector('.modal-title').textContent=fmt;
@@ -6970,7 +6970,7 @@ function openActivityDetail(actId){
 
     ${act.material?`<div style="margin-bottom:14px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div>
-      <div style="font-size:13px;font-weight:600;color:var(--ind)">📖 ${act.material}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div>
     </div>`:''}
 
     ${act.caption?`<div style="margin-bottom:14px">
@@ -6988,8 +6988,8 @@ function openActivityDetail(actId){
     ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:260px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:260px;object-fit:cover;display:block" loading="lazy"></div>`:''}
 
     <div style="padding-top:12px;border-top:1px solid var(--bdr);display:flex;gap:8px">
-      <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;transition:opacity .12s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✏️ Edit Session</button>
-      <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">🗑 Delete</button>
+      <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;transition:opacity .12s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Edit Session</button>
+      <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:12px;font-weight:600;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-bg)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)';this.style.background='transparent'">Delete</button>
     </div>
   </div>
 </div>`;
@@ -7020,7 +7020,7 @@ function openEditActivityModal(actId){
   const conceptTagsHTML=_editConcepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeEditConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
   const photoHTML=_editPhoto
     ?`<div style="position:relative;display:inline-block;width:100%"><img src="${_editPhoto}" alt="Study session photo" loading="lazy" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block"><button onclick="clearEditPhoto()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`
-    :`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">📷 Add photo</label>`;
+    :`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">Add photo</label>`;
   const dateVal=act.date?act.date.slice(0,10):todayStr();
   document.getElementById('activity-detail-modal')?.remove();
   const el=document.createElement('div');
@@ -7122,7 +7122,7 @@ function _renderEditConceptTags(){
 function clearEditPhoto(){
   _editPhoto=null;
   const area=document.getElementById('edit-photo-area');
-  if(area)area.innerHTML=`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">📷 Add photo</label>`;
+  if(area)area.innerHTML=`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surf2);border:1.5px dashed var(--bdr);border-radius:10px;cursor:pointer;font-size:12px;color:var(--mut)"><input type="file" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">Add photo</label>`;
 }
 function handleEditPhoto(input){
   const file=input?.files?.[0];
@@ -7231,7 +7231,7 @@ function renderSessCard(){
           <input id="ss-date" type="date" value="${TS.date||todayStr()}">
         </div>
       </div>
-      <button class="sess-start-btn" onclick="startTimer()">▶ Start Session</button>
+      <button class="sess-start-btn" onclick="startTimer()">Start Session</button>
       <button onclick="closeSessOverlay()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--sub);cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
     </div>`;
   }
@@ -7264,9 +7264,9 @@ function renderSessCard(){
       </div>`:''}
       <div class="sess-ctrl-row">
         ${paused
-          ?`<button class="sess-ctrl sess-ctrl-resume" onclick="resumeTimer()">▶ Resume</button>`
-          :`<button class="sess-ctrl sess-ctrl-pause" onclick="pauseTimer()">⏸ Pause</button>`}
-        <button class="sess-ctrl sess-ctrl-end" onclick="endSession()">⏹ End Session</button>
+          ?`<button class="sess-ctrl sess-ctrl-resume" onclick="resumeTimer()">Resume</button>`
+          :`<button class="sess-ctrl sess-ctrl-pause" onclick="pauseTimer()">Pause</button>`}
+        <button class="sess-ctrl sess-ctrl-end" onclick="endSession()">End Session</button>
       </div>
     </div>`;
   }
@@ -7465,7 +7465,7 @@ function updateNavChip(){
     if(btn){btn.textContent='Resume';btn.onclick=()=>openSessionModal();}
   } else {
     chip.style.display='none';
-    if(btn){btn.textContent='▶ Start Session';btn.onclick=()=>openSessionModal();}
+    if(btn){btn.textContent='Start Session';btn.onclick=()=>openSessionModal();}
   }
   if(typeof updateAskBubbleSession==='function')updateAskBubbleSession();
 }
@@ -7695,9 +7695,9 @@ function removeStudyPartner(){
 function pingStudyPartner(partnerId, partnerName){
   const firstName=partnerName.split(' ')[0];
   const msgs=[
-    `Hey ${firstName}! Just checking in — how's the studying going? 👋`,
-    `Checking in on you! How are your sections coming along? 💪`,
-    `Hey! How's the CPA grind treating you this week? 📚`,
+    `Hey ${firstName}! Just checking in — how's the studying going?`,
+    `Checking in on you! How are your sections coming along?`,
+    `Hey! How's the CPA grind treating you this week?`,
   ];
   const msg=msgs[Math.floor(Math.random()*msgs.length)];
   const f=REAL_USERS.find(x=>x.id===partnerId);
@@ -7901,7 +7901,7 @@ function _appPageNavHTML(){
       <button onclick="history.back()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
       <div class="nav-logo" onclick="currentTab='feed';renderApp()" style="display:flex;align-items:center;gap:7px;margin:0 auto;cursor:pointer">${_LOGO_SVG}Ledger</div>
       <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">▶ Start Session</button>
+        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">Start Session</button>
         <button onclick="openEditProfile()" style="background:${avatarBg};border:2px solid var(--bdr);border-radius:50%;width:34px;height:34px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${avatarContent}</button>
       </div>
     </div>
@@ -7993,7 +7993,7 @@ function _renderActivityPage(actId){
   </div>
   <div style="padding:20px 16px 0">
     <div style="display:flex;gap:10px;margin-bottom:18px">${statBlocks}</div>
-    ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">📖 ${act.material}</div></div>`:''}
+    ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div></div>`:''}
     ${act.caption?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div><div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">"${act.caption}"</div></div>`:''}
     ${(act.concepts||[]).length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Concepts (${act.concepts.length})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${act.concepts.map(c=>`<span style="font-size:11px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:3px 10px;border-radius:20px;font-weight:600">${c}</span>`).join('')}</div></div>`:''}
     ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:300px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy"></div>`:''}
@@ -8003,13 +8003,13 @@ function _renderActivityPage(actId){
       <span>${hasGivenProps?'🧡':'🤍'}</span> Props <span style="font-weight:800">${propCount}</span>
     </button>
     <button class="ac-action" onclick="openComments('${act.id}','you')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">
-      💬 Comments <span style="font-weight:800">${commentCount}</span>
+      Comments <span style="font-weight:800">${commentCount}</span>
     </button>
-    <button class="ac-action" onclick="shareActivity('${act.id}')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">🔗 Share</button>
+    <button class="ac-action" onclick="shareActivity('${act.id}')" style="flex:1;padding:14px;border:none;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">Share</button>
   </div>
   <div style="padding:14px 16px;display:flex;gap:8px;border-top:1px solid var(--bdr)">
-    <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:700">✏️ Edit Session</button>
-    <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)'">🗑 Delete</button>
+    <button onclick="openEditActivityModal('${act.id}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:700">Edit Session</button>
+    <button onclick="deleteActivity('${act.id}')" style="flex:1;padding:11px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--mut);cursor:pointer;font-size:13px;font-weight:600" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--mut)'">Delete</button>
   </div>
 </div>`;
   window.scrollTo({top:0});
@@ -8046,7 +8046,7 @@ function _renderClubPage(clubId){
       <div style="width:64px;height:64px;border-radius:18px;background:var(--ind-bg);border:1.5px solid rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0">${pc.icon}</div>
       <div>
         <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">${pc.name}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">🌐 Public Club · <span id="pub-mc-${pc.id}">🌱 Be an early member</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px">Public Club · <span id="pub-mc-${pc.id}">Be an early member</span></div>
       </div>
     </div>
   </div>
@@ -8062,7 +8062,7 @@ function _renderClubPage(clubId){
         if(snap.exists&&snap.data().memberCount>0){
           const el2=document.getElementById('pub-mc-'+pc.id);
           const mc=snap.data().memberCount;
-          if(el2) el2.textContent='👥 '+mc.toLocaleString()+' member'+(mc!==1?'s':'');
+          if(el2) el2.textContent=''+mc.toLocaleString()+' member'+(mc!==1?'s':'');
         }
       }).catch(()=>{});
     }
@@ -8156,7 +8156,7 @@ function _renderFullUserProfile(u){
                 <span style="font-size:22px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${a.hours}</span>
                 <span style="font-size:11px;color:var(--mut);font-weight:600">hrs</span>
               </div>
-              ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📖 ${a.material}</div>`:''}
+              ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.material}</div>`:''}
               ${a.caption?`<div style="font-size:11px;color:var(--sub);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${a.caption}"</div>`:''}
               ${diffStars?`<div style="font-size:11px;margin-top:4px">${diffStars}</div>`:''}
             </div>
@@ -8220,7 +8220,7 @@ function _renderFullUserProfile(u){
           <div style="font-size:15px;font-weight:800">Activity</div>
           ${!isLocked&&u.activities.length?`<div style="font-size:11px;color:var(--mut);margin-top:1px">${u.activities.length} sessions logged</div>`:''}
         </div>
-        ${!isLocked?`<button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">💬 Message</button>`:''}
+        ${!isLocked?`<button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">Message</button>`:''}
       </div>
       ${activityFeed}
     </div>
@@ -8312,7 +8312,7 @@ function openProfileActivity(cardEl){
   const difficulty=parseInt(cardEl.dataset.difficulty)||0;
   const feeling=cardEl.dataset.feeling;
   const ex=EXAMS[section]||{color:'var(--ora)',full:section,icon:'📖'};
-  const feelingLabel={great:'Great 😄',good:'Good 🙂',okay:'Okay 😐',rough:'Rough 😓',bad:'Bad 😩'}[feeling]||'';
+  const feelingLabel={great:'Great',good:'Good',okay:'Okay',rough:'Rough',bad:'Bad'}[feeling]||'';
   const diffStars=difficulty?[1,2,3,4,5].map(i=>`<span style="color:${i<=difficulty?ex.color:'var(--surf3)'};font-size:18px">★</span>`).join(''):'';
   const el=document.createElement('div');
   el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2200;display:flex;align-items:flex-end;animation:fadeIn .2s ease';
@@ -8438,7 +8438,7 @@ function _fbMsgAuthorInfo(fromUid){
 
 function _renderFirebaseMsgs(areaId, msgs, collection, channelId){
   const area=document.getElementById(areaId); if(!area) return;
-  if(!msgs||!msgs.length){ area.innerHTML='<div class="chat-system">— No messages yet. Say hello! 👋 —</div>'; return; }
+  if(!msgs||!msgs.length){ area.innerHTML='<div class="chat-system">— No messages yet. Say hello! —</div>'; return; }
   area.innerHTML=msgs.map(msg=>{
     if(msg.isSystem||msg.from==='system') return `<div class="chat-system">— ${esc(msg.text)} —</div>`;
     const isMine=msg.from===AUTH?.uid;
@@ -8585,7 +8585,7 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
   const collection=opts.collection||'conversations';
   const isGroup=!!opts.isGroup; // club group chat: always show sender names for others
   if(!msgs||!msgs.length){
-    area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:46px">${isGroup?'👥':'👋'}</div><div style="font-size:14px;font-weight:700;color:var(--txt)">${isGroup?'No messages yet':'Start the conversation'}</div><div style="font-size:12px;color:var(--mut)">Say hello below 👇</div></div>`;
+    area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:46px">${isGroup?'👥':'👋'}</div><div style="font-size:14px;font-weight:700;color:var(--txt)">${isGroup?'No messages yet':'Start the conversation'}</div><div style="font-size:12px;color:var(--mut)">Say hello below</div></div>`;
     area.scrollTop=area.scrollHeight;
     return;
   }
@@ -8959,7 +8959,7 @@ function renderClubsModal(){
   body.innerHTML=`
 ${clubs.length?clubCards:`<div class="empty-state" style="padding:24px 0"><div class="empty-icon">🏛️</div><div class="empty-msg">No study clubs yet.<br>Create a private group and invite your fellow CPA candidates.</div></div>`}
 ${dmCards}
-<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="closeClubsModal();createClubModal()">✨ Create New Club</button>`;
+<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="closeClubsModal();createClubModal()">Create New Club</button>`;
 }
 function closeClubsModal(){document.getElementById('clubs-modal')?.classList.remove('open');}
 
@@ -9003,7 +9003,7 @@ ${friendOptions.length?`<div class="form-grp"><label>Invite Members</label><div 
   <span style="font-size:16px">🔒</span>
   <div style="font-size:12px;color:var(--ind)"><strong>Private Club</strong> — only you and invited members can see and join.</div>
 </div>
-<button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveNewClub()">Create Club ✨</button>`;
+<button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveNewClub()">Create Club</button>`;
   el.classList.add('open');
 }
 function selectClubIcon(icon,el){
@@ -9047,7 +9047,7 @@ function openClubChat(clubId){
     openConversationPage(realConvId,otherUid,name,color,initials);
   } else {
     const memberCount=club.members.length;
-    _openFbChat(clubId,'clubs',club.name,`👥 ${memberCount} member${memberCount!==1?'s':''}`);
+    _openFbChat(clubId,'clubs',club.name,`${memberCount} member${memberCount!==1?'s':''}`);
   }
 }
 
@@ -9092,7 +9092,7 @@ function renderClubChat_OLD(clubId){
     <button class="modal-close" onclick="closeClubChat()" style="flex-shrink:0">×</button>
   </div>
 </div>
-<div class="club-chat-area" id="cca-${clubId}" style="flex:1;padding:12px 20px;height:auto;min-height:0">${msgHTML||'<div class="chat-system">— No messages yet. Say hello! 👋 —</div>'}</div>
+<div class="club-chat-area" id="cca-${clubId}" style="flex:1;padding:12px 20px;height:auto;min-height:0">${msgHTML||'<div class="chat-system">— No messages yet. Say hello! —</div>'}</div>
 <div class="chat-footer" style="flex-shrink:0;padding:10px 20px 16px;border-top:1px solid var(--bdr)">
   <input class="chat-inp" id="cci-${clubId}" placeholder="Message ${placeholderName}…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendClubMessage('${clubId}');}">
   <button class="chat-send" onclick="sendClubMessage('${clubId}')">Send</button>
@@ -9118,7 +9118,7 @@ function sendClubMessage_DEAD(clubId_DEAD){
   const club=(S.clubs||[]).find(c=>c.id===clubId);
   const others=(club?.members||[]).filter(m=>m!=='you');
   if(others.length){
-    const replies=['Great session! 💪','Keep grinding! 🔥','Same! I just wrapped a session too.','How many MCQs did you do?',"That topic is no joke — you've got this though!",'🧠 Big brain energy','Let\'s crush this exam together 🎯','Nice work! What material did you cover?','On a roll!! 🔥','Solid. That chapter is super testable.'];
+    const replies=['Great session!','Keep grinding! 🔥','Same! I just wrapped a session too.','How many MCQs did you do?',"That topic is no joke — you've got this though!",'Big brain energy','Let\'s crush this exam together','Nice work! What material did you cover?','On a roll!! 🔥','Solid. That chapter is super testable.'];
     const reply=replies[Math.floor(Math.random()*replies.length)];
     const responder=others[Math.floor(Math.random()*others.length)];
     setTimeout(()=>{
@@ -9151,7 +9151,7 @@ async function joinPublicClub(pubId){
       });
       // Post welcome message
       await firebaseDb.collection('clubs').doc(pubId).collection('messages').add({
-        from:'system', text:(S.name||'Someone')+' joined '+pc.name+'! 👋',
+        from:'system', text:(S.name||'Someone')+' joined '+pc.name+'!',
         timestamp:firebase.firestore.FieldValue.serverTimestamp(), isSystem:true
       });
     }catch(e){ console.warn('Club join Firestore error:',e); }
@@ -9316,7 +9316,7 @@ function _searchUserCard(u, isReal){
     <div style="width:44px;height:44px;border-radius:50%;background:${u.color||colors[colorIdx]};display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${avatarHtml}</div>
     <div style="flex:1;min-width:0">
       <div style="font-size:13px;font-weight:700;color:var(--txt)">${name}</div>
-      <div style="font-size:11px;color:var(--mut);margin-top:2px">${state?'📍 '+state+' · ':''}${studyLine||'CPA Candidate'}${passed?' · ✅ '+passed+' passed':''}</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:2px">${state?''+state+' · ':''}${studyLine||'CPA Candidate'}${passed?' · ✅ '+passed+' passed':''}</div>
       ${bio?`<div style="font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${bio}</div>`:''}
     </div>
     ${uid===AUTH?.uid
@@ -9349,7 +9349,7 @@ function renderSearchResults(){
     let html='';
     if(!q){
       html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:8px 0 4px">Suggested Candidates</div>`;
-      html+=suggested.length?suggested.map(u=>_searchUserCard(u,u._real)).join(''):`<div style="color:var(--mut);font-size:12px;padding:10px 0">You're following everyone! 🎉</div>`;
+      html+=suggested.length?suggested.map(u=>_searchUserCard(u,u._real)).join(''):`<div style="color:var(--mut);font-size:12px;padding:10px 0">You're following everyone!</div>`;
       if(followingList.length){
         html+=`<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;padding:14px 0 4px">Following</div>`;
         html+=followingList.map(u=>_searchUserCard(u,u._real)).join('');
@@ -9407,7 +9407,7 @@ function buildInviteLink(){
 function buildInviteMessage(url){
   const who=(S&&S.name)?S.name+' here — ':'';
   const grp=(S&&S.firmName)?('the '+S.firmName+' study cohort'):'my CPA study cohort';
-  return who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join 🎁 '+url;
+  return who+'join '+grp+' on Ledger. We log study hours together and keep each other on pace — we both get free Pro when you join '+url;
 }
 // opts: { url, message }  (both optional — derived from state if omitted)
 function shareInvite(opts){
@@ -9439,7 +9439,7 @@ function openInviteShareSheet(url,message){
   el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:380px">'+
     '<div class="modal-hdr"><div class="modal-title">Invite your cohort</div><button class="modal-close" onclick="document.getElementById(\'invite-share-sheet\').remove()">×</button></div>'+
     '<div style="padding:4px 2px 2px">'+
-      '<div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:16px">Send your invite link the fastest way — you both get free Pro when they join. 🎁</div>'+
+      '<div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:16px">Send your invite link the fastest way — you both get free Pro when they join.</div>'+
       btn('💬','Send via Text','window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
       btn('🟢','Share on WhatsApp','window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
       btn('✉️','Email it','window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
@@ -9508,7 +9508,7 @@ function _openMessagesModal_legacy(){
     el=document.createElement('div');
     el.id='messages-modal';
     el.className='modal-overlay';
-    el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:520px;max-height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden"><div style="flex-shrink:0;padding:18px 22px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:16px;font-weight:800">💬 Messages</div><button class="modal-close" onclick="closeMessagesModal()">×</button></div><div style="display:flex;gap:0;background:var(--surf2);border-radius:8px;padding:3px;margin-bottom:12px" id="msg-tabs"></div></div><div id="msg-body" style="overflow-y:auto;flex:1;padding:12px 22px 20px"></div></div>';
+    el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:520px;max-height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden"><div style="flex-shrink:0;padding:18px 22px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:16px;font-weight:800">Messages</div><button class="modal-close" onclick="closeMessagesModal()">×</button></div><div style="display:flex;gap:0;background:var(--surf2);border-radius:8px;padding:3px;margin-bottom:12px" id="msg-tabs"></div></div><div id="msg-body" style="overflow-y:auto;flex:1;padding:12px 22px 20px"></div></div>';
     el.addEventListener('click',e=>{if(e.target===el)closeMessagesModal();});
     document.body.appendChild(el);
   }
@@ -9519,7 +9519,7 @@ function _openMessagesModal_legacy(){
 }
 function renderMessagesTabs(){
   const el=document.getElementById('msg-tabs');if(!el)return;
-  const tabs=[{id:'dms',label:'💬 Direct Messages'},{id:'clubs',label:'🏛️ Study Clubs'}];
+  const tabs=[{id:'dms',label:'Direct Messages'},{id:'clubs',label:'Study Clubs'}];
   el.innerHTML=tabs.map(t=>'<button onclick="_msgTab=\''+t.id+'\';renderMessagesTabs();renderMessagesBody();" style="flex:1;padding:7px 8px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;background:'+(_msgTab===t.id?'var(--surf)':'transparent')+';color:'+(_msgTab===t.id?'var(--txt)':'var(--mut)')+';box-shadow:'+(_msgTab===t.id?'var(--shadow)':'none')+'">'+t.label+'</button>').join('');
 }
 function renderMessagesBody(){
@@ -9548,7 +9548,7 @@ function renderMessagesBody(){
       const msgs=(S.clubMessages||{})[c.id]||[];
       const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
       const timeStr=lastMsg?timeAgo(lastMsg.time):'';
-      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">👥 '+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
+      return'<div style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:10px;cursor:pointer;transition:background .12s" onclick="closeMessagesModal();openClubPage(\''+c.id+'\')" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'transparent\'"><div style="width:44px;height:44px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+c.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--mut)">'+timeStr+'</div></div><div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--ind)">'+c.members.length+'</span><span style="font-size:10px;color:var(--mut)">·</span><div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg?((lastMsg.author==='you'?'You: ':getClubMemberName(lastMsg.author)+': ')+lastMsg.text):'No messages yet')+'</div></div></div></div>';
     }).join('');
   }
 }
@@ -9642,7 +9642,7 @@ async function _renderMessagesPage(openConv){
 
   const dmSection=firestoreDMs.length
     ?firestoreDMs.map(_dmRow).join('')
-    :`<div style="padding:20px 16px;text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-size:12px;color:var(--mut);line-height:1.6">No DMs yet.<br>Visit someone's profile and tap 💬 Message.</div></div>`;
+    :`<div style="padding:20px 16px;text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-size:12px;color:var(--mut);line-height:1.6">No DMs yet.<br>Visit someone's profile and tap Message.</div></div>`;
 
   const clubSection=clubs.length
     ?clubs.map(_clubRow).join('')
@@ -9709,9 +9709,9 @@ function openClubView(clubId){
 function renderClubView(clubId){
   const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
   const el=document.getElementById('club-view-content');if(!el)return;
-  const tabs=[{id:'chat',label:'💬 Chat'},{id:'members',label:'👥 Members'},{id:'leaderboard',label:'📈 Progress'},{id:'about',label:'ℹ️ About'}];
+  const tabs=[{id:'chat',label:'Chat'},{id:'members',label:'Members'},{id:'leaderboard',label:'Progress'},{id:'about',label:'About'}];
   const tabNav=tabs.map(t=>'<button onclick="_clubViewTab=\''+t.id+'\';renderClubView(\''+clubId+'\');" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid '+(_clubViewTab===t.id?'var(--ind)':'transparent')+';background:transparent;font-size:11px;font-weight:'+(_clubViewTab===t.id?'700':'500')+';color:'+(_clubViewTab===t.id?'var(--ind)':'var(--mut)')+';cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;white-space:nowrap">'+t.label+'</button>').join('');
-  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+esc(club.icon||'🏢')+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(club.name||'Study Group')+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'🌐 Public':'🔒 Private')+' · <span id="club-hdr-mc">'+club.members.length+'</span> <span id="club-hdr-ml">members</span></div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
+  el.innerHTML='<div style="flex-shrink:0;padding:16px 20px 0;border-bottom:1px solid var(--bdr)"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:48px;height:48px;border-radius:14px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+esc(club.icon||'🏢')+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(club.name||'Study Group')+'</div><div style="font-size:11px;color:var(--mut)">'+(club.isPublic?'Public':'🔒 Private')+' · <span id="club-hdr-mc">'+club.members.length+'</span> <span id="club-hdr-ml">members</span></div></div><button class="modal-close" onclick="closeClubView()">×</button></div><div style="display:flex;gap:0">'+tabNav+'</div></div><div id="club-view-body" style="overflow-y:auto;flex:1;min-height:0"></div>';
   renderClubViewBody(clubId);
   _loadClubMemberCount(clubId,'club-hdr-mc'); // show the real member count, not the local array length
 }
@@ -9744,7 +9744,7 @@ function renderClubViewBody(clubId){
   } else if(_clubViewTab==='members'){
     const _isCohort=clubId.indexOf('firm_')===0;
     const _invOnclick=_isCohort?'shareInvite()':'promptInviteToClub(null,\''+clubId+'\')';
-    const _invLabel=_isCohort?'💬 Invite to cohort':'+ Invite Someone';
+    const _invLabel=_isCohort?'Invite to cohort':'+ Invite Someone';
     el.innerHTML='<div style="padding:16px 20px"><div id="club-mem-'+clubId+'"><div style="text-align:center;color:var(--mut);font-size:12px;padding:24px">Loading members…</div></div><button class="btn btn-ind btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="'+_invOnclick+'">'+_invLabel+'</button></div>';
     _renderClubMembersTab(clubId);
   } else if(_clubViewTab==='leaderboard'){
@@ -9755,7 +9755,7 @@ function renderClubViewBody(clubId){
   } else if(_clubViewTab==='about'){
     const created=new Date(club.created||Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     const msgCount=((S.clubMessages||{})[clubId]||[]).filter(m=>!m.isSystem).length;
-    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+esc(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)" id="club-about-mc">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">📅 Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="leaveClubFull(\''+clubId+'\')">Leave Club</button></div></div>';
+    el.innerHTML='<div style="padding:20px"><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:18px">'+esc(club.desc||'No description set for this club.')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px"><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ind)" id="club-about-mc">'+club.members.length+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Members</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--ora)">'+msgCount+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Messages</div></div><div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--grn)">'+(club.isPublic?'🌐':'🔒')+'</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">'+(club.isPublic?'Public':'Private')+'</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:16px">Created '+created+'</div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="closeClubView();openMessagesPage()">View All Clubs</button><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="leaveClubFull(\''+clubId+'\')">Leave Club</button></div></div>';
     _loadClubMemberCount(clubId,'club-about-mc');
   }
 }
@@ -9905,7 +9905,7 @@ function _attachClubPresence(clubId){
           '<div class="avatar" style="width:24px;height:24px;font-size:9px;border-radius:50%;background:'+(p.color||'#5a5fcf')+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(p.initials||'?')+'</div>'+
           '<span style="font-size:11px;color:#fff;font-weight:600">'+esc(p.name||'Member')+(p.section?' · '+esc(p.section):'')+(mins?' · '+mins+'m':'')+'</span></div>';
       }).join('')+'</div>'+
-      ((window.AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">▶ Start studying with them</button>':'')+
+      ((window.AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">Start studying with them</button>':'')+
     '</div>';
   },err=>{});
 }
@@ -9976,8 +9976,8 @@ async function _renderClubLeaderboard(clubId){
     const pct=Math.min(100,Math.round((monthHrsTotal/goalHrs)*100));
     const done=monthHrsTotal>=goalHrs;
     goalCard='<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:14px 16px;margin-bottom:14px">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:12px;font-weight:800;color:var(--txt)">🎯 '+monthName+' cohort goal</div><button onclick="openCohortGoalModal(\''+clubId+'\')" style="font-size:11px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer">Edit</button></div>'+
-      '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:7px"><span style="font-size:20px;font-weight:900;color:'+(done?'var(--grn)':'var(--ind)')+'">'+monthHrsTotal.toFixed(0)+'h</span><span style="font-size:12px;color:var(--mut)">of '+goalHrs+'h together'+(done?' — crushed it! 🎉':'')+'</span></div>'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:12px;font-weight:800;color:var(--txt)">'+monthName+' cohort goal</div><button onclick="openCohortGoalModal(\''+clubId+'\')" style="font-size:11px;font-weight:700;color:var(--ind);background:none;border:none;cursor:pointer">Edit</button></div>'+
+      '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:7px"><span style="font-size:20px;font-weight:900;color:'+(done?'var(--grn)':'var(--ind)')+'">'+monthHrsTotal.toFixed(0)+'h</span><span style="font-size:12px;color:var(--mut)">of '+goalHrs+'h together'+(done?' — crushed it!':'')+'</span></div>'+
       '<div style="height:9px;background:var(--bdr);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+(done?'#10b981,#34d399':'var(--ind),#818cf8')+');border-radius:6px;transition:width .5s"></div></div>'+
       '<div style="font-size:10.5px;color:var(--mut);margin-top:5px">'+pct+'% there · everyone\'s hours count toward it</div>'+
     '</div>';
@@ -9985,7 +9985,7 @@ async function _renderClubLeaderboard(clubId){
     goalCard='<div style="background:var(--surf2);border:1px dashed var(--bdr);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'+
       '<div style="font-size:12.5px;font-weight:700;color:var(--sub);margin-bottom:3px">Set a shared goal for '+monthName+'</div>'+
       '<div style="font-size:11px;color:var(--mut);margin-bottom:10px">A collective hours target the whole cohort works toward together.</div>'+
-      '<button class="btn btn-ind btn-sm" onclick="openCohortGoalModal(\''+clubId+'\')">🎯 Set cohort goal</button>'+
+      '<button class="btn btn-ind btn-sm" onclick="openCohortGoalModal(\''+clubId+'\')">Set cohort goal</button>'+
     '</div>';
   }
   // Supportive view — members listed by who's active, not ranked against each other.
@@ -10014,7 +10014,7 @@ async function _renderClubLeaderboard(clubId){
   const summary='<div style="display:flex;gap:10px;margin-bottom:14px">'+
     '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ora)">'+weekHrsTotal.toFixed(1)+'h</div><div style="font-size:10px;color:var(--mut)">team this week</div></div>'+
     '<div style="flex:1;background:var(--surf2);border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:900;color:var(--ind)">'+members.length+'</div><div style="font-size:10px;color:var(--mut)">cohort member'+(members.length!==1?'s':'')+'</div></div></div>';
-  h.innerHTML=goalCard+streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first! 💪</div>');
+  h.innerHTML=goalCard+streakBanner+summary+(rows||'<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px">No member activity yet — log a session to be first!</div>');
 }
 
 // Shared cohort goal — collective monthly hours target, stored on the club doc so
@@ -10518,7 +10518,7 @@ function openEditProfile(){
 </div>
 <div class="form-grp">
   <label>Bio <span style="color:var(--mut);font-weight:400">(shown on your public profile)</span></label>
-  <textarea id="ep-bio" maxlength="200" style="min-height:64px" placeholder="e.g. Big 4 associate grinding toward CPA 💪 · FAR next">${esc(S.bio||'')}</textarea>
+  <textarea id="ep-bio" maxlength="200" style="min-height:64px" placeholder="e.g. Big 4 associate grinding toward CPA · FAR next">${esc(S.bio||'')}</textarea>
 </div>
 <div class="form-row">
   <div class="form-grp">
@@ -12101,7 +12101,7 @@ function _renderQuiz() {
   const actionBtn = answered
     ? (current < total - 1
         ? '<button onclick="_nextQuestion()" style="flex:1;padding:13px;background:' + color + ';color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">Next Question →</button>'
-        : '<button onclick="_finishQuiz()" style="flex:1;padding:13px;background:var(--grn);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">🎉 See Results</button>'
+        : '<button onclick="_finishQuiz()" style="flex:1;padding:13px;background:var(--grn);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">See Results</button>'
       )
     : '<button onclick="_submitAnswer()" style="flex:1;padding:13px;background:' + (selected===null?'var(--bdr)':'var(--ind)') + ';color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer" ' + (selected===null?'disabled':'') + '>Submit Answer</button>';
 
@@ -13190,7 +13190,7 @@ function renderBubbleChat(){
   if(!window._coachChat)window._coachChat=[];
   if(!window._coachChat.length){
     el.innerHTML='<div style="text-align:center;color:var(--mut);padding:24px 12px">'+_ledgerMascotSVG(56)+
-      '<div style="font-size:13px;font-weight:700;margin-top:8px;color:var(--txt)">Hi, I’m Ledger 👋</div>'+
+      '<div style="font-size:13px;font-weight:700;margin-top:8px;color:var(--txt)">Hi, I’m Ledger</div>'+
       '<div style="font-size:12px;margin-top:4px;line-height:1.5">Ask me about any CPA concept, tax rule, audit standard, or your study strategy.</div></div>';
     return;
   }
@@ -13419,8 +13419,8 @@ function _buildStudyToolsPanel(){
         <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Paste any CPA prep material — Ledger generates precise flashcards, MCQ quizzes, and summaries.</div>
         <textarea disabled placeholder="Upgrade to Pro to unlock AI Study Tools" style="width:100%;min-height:120px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--mut);font-size:12px;resize:none;opacity:.5"></textarea>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;opacity:.4;pointer-events:none">
-          <button class="btn btn-primary" style="justify-content:center" disabled>⚡ Flashcards</button>
-          <button class="btn btn-ind" style="justify-content:center" disabled>📝 Quiz</button>
+          <button class="btn btn-primary" style="justify-content:center" disabled>Flashcards</button>
+          <button class="btn btn-ind" style="justify-content:center" disabled>Quiz</button>
         </div>
       </div>
       <div class="card card-pad" style="text-align:center;padding:40px 24px">
@@ -13483,18 +13483,18 @@ function _buildStudyToolsPanel(){
         style="width:100%;min-height:180px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"
         onfocus="this.style.borderColor='var(--ind)'" onblur="this.style.borderColor='var(--bdr)'">${_fc.lastInput||''}</textarea>
       <div style="display:flex;gap:6px;margin-top:8px">
-        <button class="btn btn-ghost btn-xs" onclick="document.getElementById('fc-pdf-input').click()">📄 PDF</button>
+        <button class="btn btn-ghost btn-xs" onclick="document.getElementById('fc-pdf-input').click()">PDF</button>
         <input id="fc-pdf-input" type="file" accept=".pdf,application/pdf" style="display:none" onchange="fcLoadPdf(this)">
       </div>
       <div id="fc-pdf-status" style="display:none;margin-top:6px;font-size:11px;color:var(--grn);font-weight:600"></div>
       <div id="fc-gen-status" style="display:none;margin-top:10px;padding:10px 12px;background:var(--ind-bg);border-radius:8px;font-size:12px;font-weight:600;color:var(--ind)"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
         <button class="btn btn-primary" style="justify-content:center" onclick="fcGenerate('flashcard')" ${_fc.generating?'disabled':''}>
-          ${_fc.generating?'<span style="animation:spin 1s linear infinite;display:inline-block;margin-right:4px">⟳</span> Generating…':'⚡ Flashcards'}
+          ${_fc.generating?'<span style="animation:spin 1s linear infinite;display:inline-block;margin-right:4px">⟳</span> Generating…':'Flashcards'}
         </button>
-        <button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate('quiz')" ${_fc.generating?'disabled':''}>📝 Quiz</button>
+        <button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate('quiz')" ${_fc.generating?'disabled':''}>Quiz</button>
       </div>
-      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate('summary')" ${_fc.generating?'disabled':''}>📄 Summary</button>
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate('summary')" ${_fc.generating?'disabled':''}>Summary</button>
       ${!isElite()?`<div style="text-align:center;margin-top:10px;font-size:10px;color:var(--mut)"><span id="flashcard-usage-count">— AI generations left this month</span> · <span onclick="openUpgradeModal('Unlimited AI Study Tools')" style="color:var(--pur);font-weight:700;cursor:pointer">Elite = unlimited</span></div>`:''}
     </div>
     ${_fc.summaryText?`<div class="card card-pad"><div class="section-title">Summary</div><div style="font-size:12px;color:var(--sub);line-height:1.75;white-space:pre-wrap">${_fc.summaryText}</div></div>`:''}
@@ -13854,10 +13854,10 @@ function _buildAIFlashcardsLegacy() {
           '<textarea id="fc-input-text" placeholder="Paste your study notes, Becker MCQ explanations, Gleim outlines, or any CPA prep material here…&#10;&#10;Example:&#10;Revenue recognition under ASC 606 requires five steps: 1) Identify the contract, 2) Identify performance obligations, 3) Determine transaction price, 4) Allocate price, 5) Recognize revenue when obligation satisfied." style="width:100%;min-height:220px;padding:12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;line-height:1.65;resize:vertical;outline:none;font-family:inherit" onfocus="this.style.borderColor=\'var(--ind)\'" onblur="this.style.borderColor=\'var(--bdr)\'"></textarea>' +
           '<div id="fc-pdf-status" style="display:none;margin-top:8px;font-size:11px;color:var(--grn);font-weight:600"></div>' +
           '<div style="display:flex;gap:8px;margin-top:12px">' +
-            '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="fcGenerate(\'flashcard\')">⚡ Generate Flashcards</button>' +
-            '<button class="btn btn-ind" style="flex:1;justify-content:center" onclick="fcGenerate(\'quiz\')">📝 Generate Quiz</button>' +
+            '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="fcGenerate(\'flashcard\')">Generate Flashcards</button>' +
+            '<button class="btn btn-ind" style="flex:1;justify-content:center" onclick="fcGenerate(\'quiz\')">Generate Quiz</button>' +
           '</div>' +
-          '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate(\'summary\')">📄 Generate Summary</button>' +
+          '<button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate(\'summary\')">Generate Summary</button>' +
           '<div id="fc-gen-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:var(--mut)"></div>' +
         '</div>' +
 
@@ -13918,7 +13918,7 @@ function _buildFlashcardViewer(){
           <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcNav(1)"${_fc.current===total-1?' disabled':''}>Next →</button>
         </div>`}
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcShuffle()">🔀 Shuffle</button>
+      <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcShuffle()">Shuffle</button>
       <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="fcRestart()">↺ Restart</button>
     </div>
     <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:3px">
@@ -14766,8 +14766,8 @@ function toggleBlockDay(dateStr){
   const maxed=recip.length && recip.every(d=>d.hours>=8);
   if(blocking){
     showToast(maxed
-      ? "Day off saved — remaining days are near max. Consider a later exam date. 📅"
-      : "Day off saved — those hours moved to your other days 🔄",'ok');
+      ? "Day off saved — remaining days are near max. Consider a later exam date."
+      : "Day off saved — those hours moved to your other days",'ok');
   } else {
     showToast('Day reopened — plan rebalanced','ok');
   }
@@ -14973,7 +14973,7 @@ function _buildPlanSetup(){
         <input type="date" id="plan-exam-date" value="${examDate}" min="${new Date().toISOString().slice(0,10)}" onchange="_planUpdateSettings()" style="padding:9px 12px;background:var(--surf2);border:1.5px solid ${canGenerate?ex.color:'var(--bdr)'};border-radius:10px;color:var(--txt);font-size:14px;font-weight:700;outline:none;cursor:pointer">
         ${canGenerate?`<span style="font-size:13px;font-weight:700;color:${ex.color}">${daysLeft} days away</span>`:''}
       </div>
-      ${!canGenerate&&examDate?`<div style="font-size:11px;color:#ef4444;margin-top:8px">⚠️ That date is in the past — pick a future date</div>`:!examDate?`<div style="font-size:11px;color:var(--amb);margin-top:8px">📅 Pick your exam date to continue</div>`:''}
+      ${!canGenerate&&examDate?`<div style="font-size:11px;color:#ef4444;margin-top:8px">⚠️ That date is in the past — pick a future date</div>`:!examDate?`<div style="font-size:11px;color:var(--amb);margin-top:8px">Pick your exam date to continue</div>`:''}
     </div>
 
     <!-- Daily hours + study days -->
@@ -15013,7 +15013,7 @@ function _buildPlanSetup(){
     <!-- Generate button -->
     <button onclick="submitPlanSetup()" ${!canGenerate?'disabled':''}
       style="width:100%;padding:16px;background:${canGenerate?'linear-gradient(135deg,var(--ora),#b03500)':'var(--surf3)'};color:${canGenerate?'#fff':'var(--mut)'};border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:${canGenerate?'pointer':'not-allowed'};box-shadow:${canGenerate?'0 6px 24px rgba(212,64,0,.35)':'none'};transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;letter-spacing:-.01em">
-      ${canGenerate?'✨ Build My Study Plan →':'Set an exam date to continue'}
+      ${canGenerate?'Build My Study Plan →':'Set an exam date to continue'}
     </button>
     ${canGenerate?`<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:10px">Focused on ${selectedSec} only · ${daysLeft} days · Rebuild anytime for free</div>`:''}
     ${S.aiStudyPlan?`<button onclick="_planSettings=null;renderTab()" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">← Back to existing plan</button>`:''}
@@ -15178,7 +15178,7 @@ function _buildPlanCalendar(plan){
       </div>
       <div style="font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px">${todayEntry.hours}h${todayEntry.isLong?' <span style="font-size:14px;background:#f9731620;color:#f97316;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:800;vertical-align:middle">🔥 Long Day</span>':''}</div>
       <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${m.desc}</div>
-      <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">💡 ${_getPlanTip(todayEntry.mode)}</div>
+      <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">${_getPlanTip(todayEntry.mode)}</div>
       ${todayEntry.done
         ?`<div style="background:#10b98120;color:#10b981;border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:700">✓ Day Complete!</div>`
         :`<button onclick="markPlanDayDone('${todayStr}')" style="width:100%;padding:10px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Today Done ✓</button>`}
@@ -15229,7 +15229,7 @@ function _buildPlanCalendar(plan){
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0">
         <button onclick="openTimeOffModal()" style="padding:8px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">✈️ Add time off</button>
-        <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">⚙️ Edit &amp; Rebuild</button>
+        <button onclick="regeneratePlan()" style="padding:8px 16px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Edit &amp; Rebuild</button>
       </div>
     </div>
 
@@ -15343,8 +15343,8 @@ function openPlanDayDetail(dateStr){
           <div style="font-size:12px;color:var(--mut);line-height:1.5">${offRange?'Part of your scheduled time off. Those study hours are spread across your remaining days — you\'re still on track.':'You marked this day unavailable. Its study hours were spread across your remaining days — you\'re still on track.'}</div>
         </div>
         ${offRange
-          ?`<button onclick="removeTimeOff('${offRange.id}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">🗑 Remove this time off</button>`
-          :dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">↩️ Reopen this day</button>`:''}
+          ?`<button onclick="removeTimeOff('${offRange.id}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">Remove this time off</button>`
+          :dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">Reopen this day</button>`:''}
       `:day.isStudy?`
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
           <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${m.icon} ${m.label}</div>
@@ -15352,12 +15352,12 @@ function openPlanDayDetail(dateStr){
           <span style="font-size:15px;font-weight:900;color:var(--txt)">${day.hours}h</span>
         </div>
         <div style="font-size:13px;color:var(--sub);line-height:1.6;background:var(--surf2);border-radius:10px;padding:12px 14px;margin-bottom:14px">${m.desc}</div>
-        <div style="font-size:11px;color:var(--mut);font-style:italic;margin-bottom:16px">💡 ${_getPlanTip(day.mode)}</div>
+        <div style="font-size:11px;color:var(--mut);font-style:italic;margin-bottom:16px">${_getPlanTip(day.mode)}</div>
         ${day.done
           ?`<div style="background:#10b98120;color:#10b981;border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
           :dateStr<=todayStr?`<button onclick="markPlanDayDone('${dateStr}');document.getElementById('plan-day-modal')?.remove()" style="width:100%;padding:11px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Done ✓</button>`
           :`<div style="background:var(--surf2);border-radius:10px;padding:10px;text-align:center;font-size:12px;color:var(--mut)">Upcoming — not yet</div>`}
-        ${dateStr>todayStr&&!day.done?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">🚫 Can't study this day — life happens</button>`:''}
+        ${dateStr>todayStr&&!day.done?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">Can't study this day — life happens</button>`:''}
       `:`
         <div style="text-align:center;padding:20px 0">
           <div style="font-size:40px;margin-bottom:10px">🛌</div>
@@ -15418,7 +15418,7 @@ function _buildAIPlanUI(){
     '<div style="font-size:20px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px">AI Study Plan</div>'+
     '<div style="font-size:13px;color:var(--mut);max-width:340px;margin:0 auto 10px;line-height:1.65">Ledger analyzes your exam date, hours logged per section, and weekly goal to build a personalized time-blocking plan.</div>'+
     '<div style="font-size:12px;color:var(--sub);max-width:300px;margin:0 auto 24px;line-height:1.6;background:var(--surf2);border-radius:10px;padding:10px 14px">Your Becker, Gleim, or Roger material tells you <em>what</em> to study. This plan tells you <em>when</em>, <em>how long</em>, and <em>which mode</em> to be in each day.</div>'+
-    '<button onclick="runGeneratePlan()" style="padding:14px 36px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.38);animation:pulse-glow 2s infinite">✨ Generate My Plan</button>'+
+    '<button onclick="runGeneratePlan()" style="padding:14px 36px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.38);animation:pulse-glow 2s infinite">Generate My Plan</button>'+
     '<div style="font-size:11px;color:var(--mut);margin-top:14px">Takes ~2 seconds · Regenerate any time</div>'+
     '</div>';
 
@@ -15465,7 +15465,7 @@ function _buildAIPlanUI(){
       '</div>'+
       // What to actually do
       '<div style="font-size:13px;color:var(--txt);line-height:1.55;margin-bottom:8px">'+m.desc+'</div>'+
-      '<div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid var(--bdr);padding-top:8px">💡 '+_getPlanTip(todayEntry.mode)+'</div>'+
+      '<div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid var(--bdr);padding-top:8px">'+_getPlanTip(todayEntry.mode)+'</div>'+
     '</div>';
   } else if(todayEntry&&!todayEntry.isStudy){
     todayBlock='<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">'+
@@ -15498,7 +15498,7 @@ function _buildAIPlanUI(){
     const m=ACTIVITY_MODES[d.mode]||ACTIVITY_MODES.new_material;
     const exCol=d.isStudy&&EXAMS[d.section]?EXAMS[d.section].color:'var(--mut)';
     return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);'+(isT?'background:var(--ora-bg);border-radius:8px;padding:10px 8px;margin:0 -4px;':'')+'">'+
-      '<div style="width:86px;flex-shrink:0;font-size:11px;font-weight:'+(isT?'800':'600')+';color:'+(isT?'var(--ora)':'var(--sub)')+'">'+lbl+(isT?' 📍':'')+'</div>'+
+      '<div style="width:86px;flex-shrink:0;font-size:11px;font-weight:'+(isT?'800':'600')+';color:'+(isT?'var(--ora)':'var(--sub)')+'">'+lbl+(isT?'':'')+'</div>'+
       (d.isStudy
         ?'<div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">'+
             '<span style="font-size:14px;flex-shrink:0">'+m.icon+'</span>'+
@@ -15613,7 +15613,7 @@ function buildStudySchedule(){
       '<span style="font-size:11px;color:var(--mut)">hrs</span>'+
     '</div>';
     return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);'+(isToday?'background:var(--ora-bg);border-radius:8px;padding:10px 8px;margin:0 -4px;':'')+'">'+
-      '<div style="width:34px;font-size:11px;font-weight:800;color:'+(isToday?'var(--ora)':'var(--sub)')+'">'+item.day+(isToday?' 📍':'')+'</div>'+
+      '<div style="width:34px;font-size:11px;font-weight:800;color:'+(isToday?'var(--ora)':'var(--sub)')+'">'+item.day+(isToday?'':'')+'</div>'+
       (item.active&&item.section
         ?'<div style="flex:1;background:'+color+'18;border:1px solid '+color+'33;border-radius:7px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;font-weight:700;color:'+color+'">'+item.section+' — '+EXAMS[item.section]?.full?.split(' ')[0]+'</span><span style="font-size:12px;font-weight:800;color:'+color+'">'+item.hours+'h</span></div>'
         :'<div style="flex:1;background:var(--surf2);border-radius:7px;padding:7px 11px;font-size:11px;color:var(--mut);font-style:italic">Rest day 🛌</div>')+
@@ -15637,10 +15637,10 @@ function buildStudySchedule(){
       '<div><div class="section-title" style="margin-bottom:2px">Study Schedule</div>'+
       '<div style="font-size:11px;color:var(--mut)">'+totalPlanned.toFixed(1)+'h planned this week</div></div>'+
       (pro
-        ?'<button onclick="toggleScheduleEdit()" style="padding:6px 14px;background:'+(editMode?'var(--ind)':'var(--surf2)')+';border:1.5px solid '+(editMode?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:11px;font-weight:700;color:'+(editMode?'#fff':'var(--sub)')+';cursor:pointer">✏️ Customize</button>'
-        :'<button onclick="openUpgradeModal(null)" style="padding:6px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer">🤖 AI Plan (Elite)</button>')+
+        ?'<button onclick="toggleScheduleEdit()" style="padding:6px 14px;background:'+(editMode?'var(--ind)':'var(--surf2)')+';border:1.5px solid '+(editMode?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:11px;font-weight:700;color:'+(editMode?'#fff':'var(--sub)')+';cursor:pointer">Customize</button>'
+        :'<button onclick="openUpgradeModal(null)" style="padding:6px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer">AI Plan (Elite)</button>')+
     '</div>'+editControls+dayRows+
-    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">🤖 Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Elite members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Elite ✦</button></div>':'') +
+    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Elite members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Elite ✦</button></div>':'') +
   '</div></div>';
 }
 
@@ -15863,7 +15863,7 @@ function showReviewPrompt(){
   <div style="font-size:34px;margin-bottom:10px">⭐</div>
   <div style="font-size:19px;font-weight:900;color:var(--txt);margin-bottom:6px;letter-spacing:-.03em">Enjoying Ledger?</div>
   <div style="font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:24px">You've logged ${count} session${count===1?'':'s'} — that's real progress.<br>A quick review helps other CPA candidates find this.</div>
-  <button onclick="openReviewUrl()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:-.01em">Write a Review ✍️</button>
+  <button onclick="openReviewUrl()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:-.01em">Write a Review</button>
   <button onclick="closeReviewPrompt()" style="width:100%;padding:12px;background:transparent;border:none;font-size:13px;color:var(--mut);cursor:pointer;font-weight:600">Maybe later</button>
 </div>`;
   document.body.appendChild(el);
@@ -16451,7 +16451,7 @@ function buildBurnoutCheckIn(){
     extraCta=`<button onclick="openStrugglingModal()" style="padding:7px 13px;background:transparent;color:var(--sub);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0">What's going on?</button>`;
   } else if(grinding){
     icon='🌿'; title="You've been going hard";
-    body=`${consec>=10?`${consec} days straight`:'A huge week'} — that's seriously impressive. One real rest day actually helps your brain lock in what you've learned. Consider this your permission to take one. 💙`;
+    body=`${consec>=10?`${consec} days straight`:'A huge week'} — that's seriously impressive. One real rest day actually helps your brain lock in what you've learned. Consider this your permission to take one.`;
   } else {
     return '';
   }
@@ -16462,7 +16462,7 @@ function buildBurnoutCheckIn(){
       <div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:3px">${title}</div>
       <div style="font-size:12.5px;color:var(--sub);line-height:1.55">${body}</div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button onclick="dismissBurnoutCheckIn()" style="padding:7px 13px;background:var(--ind);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${grinding?"I'll rest 🌿":'Thanks 💙'}</button>
+        <button onclick="dismissBurnoutCheckIn()" style="padding:7px 13px;background:var(--ind);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">${grinding?"I'll rest":'Thanks'}</button>
         ${extraCta}
       </div>
     </div>
