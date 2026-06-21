@@ -1291,7 +1291,7 @@ function show2FALoginPrompt(secretBase32){
       document.body.appendChild(el);
     }
     el.innerHTML = `<div class="modal-box" style="max-width:340px">
-      <div class="modal-hdr"><span style="font-size:14px;font-weight:800">🔐 Two-Factor Authentication</span></div>
+      <div class="modal-hdr"><span style="font-size:14px;font-weight:800">Two-Factor Authentication</span></div>
       <div style="padding:18px;text-align:center">
         <p style="font-size:13px;color:var(--mut);margin:0 0 16px">Enter the 6-digit code from your authenticator app</p>
         <input type="text" id="2fa-login-code" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000 000"
@@ -1464,7 +1464,7 @@ function showStudentVerifyBanner(){ return; // disabled until student discount l
   bar.id = 'student-verify-banner';
   bar.style.cssText = 'background:#92400e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;font-family:Inter,system-ui,sans-serif;z-index:900';
   bar.innerHTML = `
-    <span>🎓 <strong>Verify your student discount</strong> — confirm your .edu email to keep your $5/month rate.
+    <span><strong>Verify your student discount</strong> — confirm your .edu email to keep your $5/month rate.
     <a onclick="openStudentVerifyModal()" style="color:#fcd34d;cursor:pointer;text-decoration:underline;margin-left:6px">Verify now →</a></span>
     <button onclick="document.getElementById('student-verify-banner').remove();localStorage.setItem('ledger-student-verify-dismissed',Date.now())"
       style="background:transparent;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>
@@ -1547,7 +1547,7 @@ async function submitStudentVerify(){
     saveSub(SUB);
     document.getElementById('student-verify-modal')?.remove();
     document.getElementById('student-verify-banner')?.remove();
-    showToast('🎓 Student status verified! Enjoy your discount.','ok');
+    showToast('Student status verified! Enjoy your discount.','ok');
   }catch(e){
     if(btn){ btn.disabled=false; btn.textContent='✓ Verify Student Status'; }
     inp.disabled = false;
@@ -1704,7 +1704,7 @@ async function reactivateSubscription(){
     SUB.cancelAtPeriodEnd=false;
     SUB.cancelAt=null;
     saveSub(SUB);
-    showToast('Subscription reactivated — you\'re all set! 🎉','ok');
+    showToast('Subscription reactivated — you\'re all set!','ok');
     renderAppSettingsTabs();
     renderAppSettingsSection();
   }catch(e){
@@ -1720,7 +1720,7 @@ async function reactivateSubscription(){
   if(isSuccess){
     history.replaceState({},'',window.location.pathname);
     // Show immediate feedback so user knows payment was received
-    showToast('🎉 Payment received — activating your plan…','ok');
+    showToast('Payment received — activating your plan…','ok');
     // Poll Firestore until webhook fires and upgrades the user (usually <3s)
     let attempts = 0;
     const pollSub = async () => {
@@ -1733,7 +1733,7 @@ async function reactivateSubscription(){
             SUB = {...SUB, ...data.sub};
             saveSub(SUB);
             logLedgerEvent('purchase', {tier: SUB.tier});
-            showToast('✅ Subscription activated! Welcome to ' + navProLabel() + '.','ok');
+            showToast('Subscription activated! Welcome to ' + navProLabel() + '.','ok');
             renderApp();
             return;
           }
@@ -1741,7 +1741,7 @@ async function reactivateSubscription(){
       }catch(e){}
       attempts++;
       if(attempts < 12) setTimeout(pollSub, 1500);
-      else showToast('✅ Payment confirmed — your account will activate within a minute.','ok');
+      else showToast('Payment confirmed — your account will activate within a minute.','ok');
     };
     setTimeout(pollSub, 1200);
   } else if(p.get('billing')==='cancel'){
@@ -2814,7 +2814,7 @@ async function checkReferralRewards(){
     _grantReferralPro(days);
     S.referralRewarded=count;
     saveState(); writeUserProfile();
-    showToast('🎁 '+newOnes+' friend'+(newOnes>1?'s':'')+' joined with your invite — +'+days+' days of Pro'+(milestone?' (3-referral bonus!)':'')+'!','ok');
+    showToast(''+newOnes+' friend'+(newOnes>1?'s':'')+' joined with your invite — +'+days+' days of Pro'+(milestone?' (3-referral bonus!)':'')+'!','ok');
     if(['profile','dashboard','explore'].includes(currentTab)) renderTab();
   }catch(e){}
 }
@@ -3175,7 +3175,7 @@ function activatePlan(tier){
     SUB={...SUB,tier:'trial',billingCycle:_upgradeBilling,startDate:Date.now(),trialEnd:Date.now()+7*86400000,trialUsed:true};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('🎉 7-day free trial started! Enjoy all Pro features.','ok');
+    showToast('7-day free trial started! Enjoy all Pro features.','ok');
   } else if(tier==='pro'){
     SUB={...SUB,tier:'pro',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
@@ -3185,12 +3185,12 @@ function activatePlan(tier){
     SUB={...SUB,tier:'elite',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('⚡ Ledger Elite activated! You\'re unstoppable.','ok');
+    showToast('Ledger Elite activated! You\'re unstoppable.','ok');
   } else if(tier==='cram'){
     SUB={...SUB,tier:'cram',billingCycle:'one_time',startDate:Date.now(),cramEnd:Date.now()+183*86400000};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('📚 6-Month Cram Plan activated! Let\'s get you that CPA.','ok');
+    showToast('6-Month Cram Plan activated! Let\'s get you that CPA.','ok');
   }
   renderApp();
 }
@@ -3202,7 +3202,7 @@ function openStudentDiscount(){
   el.addEventListener('click',e=>{if(e.target===el)el.remove();});
   el.innerHTML=
   '<div class="modal-box" onclick="event.stopPropagation()">'+
-  '<div class="modal-hdr"><div class="modal-title">🎓 Student Discount</div><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">×</button></div>'+
+  '<div class="modal-hdr"><div class="modal-title">Student Discount</div><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">×</button></div>'+
   '<div class="modal-body">'+
   '<div style="font-size:13px;color:var(--sub);margin-bottom:18px;line-height:1.7">Verify your student status to unlock <strong>35% off Pro</strong> — that\'s just <strong>$13/month</strong> (or $10.40/mo on annual). Valid for currently enrolled accounting students.</div>'+
   '<div class="form-grp"><label>Your .edu Email Address</label><input type="email" id="student-email" placeholder="you@university.edu" style="width:100%"/></div>'+
@@ -3222,7 +3222,7 @@ function submitStudentDiscount(){
   }
   document.querySelector('.modal-overlay.open:last-child')?.remove();
   SUB.studentVerified=true; saveSub(SUB);
-  showToast('📧 Verification email sent! Check your inbox.','ok');
+  showToast('Verification email sent! Check your inbox.','ok');
 }
 
 // Pro paywall gate — call before rendering a locked feature
@@ -3261,7 +3261,7 @@ function showPostOnboardingOffer(){
   '<div style="background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);padding:32px 32px 24px;text-align:center;position:relative;overflow:hidden">'+
   '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,64,0,.35),transparent 60%)"></div>'+
   '<div style="position:relative;z-index:1">'+
-  '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px">🎉 Account Created</div>'+
+  '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px">Account Created</div>'+
   '<div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px">Choose your plan.<br>First 7 days are free.</div>'+
   '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(14,165,116,.15);border:1px solid rgba(14,165,116,.3);color:#34d399;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px">✓ No credit card required to start</div>'+
   '</div>'+
@@ -3452,19 +3452,19 @@ function init(){
             S.firmCode=_inv.code; if(_inv.firmName&&!S.firmName)S.firmName=_inv.firmName; changed=true;
             if(changed){saveState();setTimeout(writeUserProfile,500);}
             ensureFirmCohort();
-            if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+' 🎉','ok');
-            else showToast('Joined study group! 🎉','ok');
+            if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+'','ok');
+            else showToast('Joined study group!','ok');
             _clearPendingInvite();
           } else if(sameCohort){
             // Already in this cohort — just confirm the connection.
             if(changed){saveState();setTimeout(writeUserProfile,500);}
             ensureFirmCohort();
-            if(_inv.fromName) showToast('Connected with '+_inv.fromName+' 🎉','ok');
+            if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
             _clearPendingInvite();
           } else {
             // Already in a DIFFERENT cohort — don't silently switch; ask.
             if(changed){saveState();setTimeout(writeUserProfile,500);}
-            if(_inv.fromName) showToast('Connected with '+_inv.fromName+' 🎉','ok');
+            if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
             promptCohortSwitch(_inv);
           }
         }
@@ -3599,7 +3599,7 @@ function renderAuth(){
     <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
     ${_invName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px 14px;margin-bottom:18px">
       <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d44000,#ff6a2b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_invInitials)}</div>
-      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div><div style="font-size:11px;color:var(--ora);margin-top:1px;font-weight:600">🎁 You'll both get free Pro to start</div></div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div><div style="font-size:11px;color:var(--ora);margin-top:1px;font-weight:600">You'll both get free Pro to start</div></div>
     </div>`:''}
     <div id="auth-heading" style="margin-bottom:26px">
       <div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_invName?'Join '+esc(_invName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
@@ -4291,11 +4291,11 @@ function obFinish(){
     }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
   }
   if(_inv&&_inv.fromName){
-    showToast(`Welcome! You're connected with ${_inv.fromName} — enjoy 3 days of Pro on us 🎁`,'ok');
+    showToast(`Welcome! You're connected with ${_inv.fromName} — enjoy 3 days of Pro on us`,'ok');
   } else if(_inv&&_inv.code){
-    showToast(`Welcome! You joined the ${firmName||'study'} cohort — 3 days of Pro on us 🎁`,'ok');
+    showToast(`Welcome! You joined the ${firmName||'study'} cohort — 3 days of Pro on us`,'ok');
   } else {
-    showToast(`Welcome to Ledger, ${S.name}! 🎉`,'ok');
+    showToast(`Welcome to Ledger, ${S.name}!`,'ok');
   }
   _clearPendingInvite(); // invite consumed
   renderApp();
@@ -4353,7 +4353,7 @@ function joinChallenge(chId){
   S.challenges.push(chId);
   saveState();
   renderTab();
-  showToast('Challenge joined! Progress tracks automatically 🎯','ok');
+  showToast('Challenge joined! Progress tracks automatically','ok');
 }
 function leaveChallenge(chId){
   S.challenges=(S.challenges||[]).filter(id=>id!==chId);
@@ -4368,7 +4368,7 @@ function useStreakShield(){
   if(used>=max){showToast('No shields left this month. Resets on the 1st.','err');return;}
   S.shieldsUsed=(used+1);
   saveState();
-  showToast('🛡️ Streak Shield used! Your streak is protected.','ok');
+  showToast('Streak Shield used! Your streak is protected.','ok');
   renderTab();
 }
 function checkChallengeAchievements(){
@@ -4387,7 +4387,7 @@ function checkChallengeAchievements(){
   if(newlyCompleted.length){
     saveState();
     newlyCompleted.forEach((ch,i)=>{
-      setTimeout(()=>showToast('🏅 Challenge complete: '+ch.title+'! Reward: '+ch.reward,'ok'),500+i*600);
+      setTimeout(()=>showToast('Challenge complete: '+ch.title+'! Reward: '+ch.reward,'ok'),500+i*600);
     });
   }
 }
@@ -4715,7 +4715,6 @@ function buildFeed(){
 <div class="sidebar-right">
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <span style="font-size:16px">🤓</span>
       <div class="section-title" style="margin-bottom:0">Did You Know?</div>
     </div>
     <p style="font-size:12px;color:var(--sub);line-height:1.8;margin:0">${tip.text}</p>
@@ -5283,7 +5282,7 @@ function buildReadinessCard(){
         </div>`).join('')).join('')}
       </div>
       ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-        <span>📝 <strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
+        <span><strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
         <button onclick="_openScoreTracker()" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Log Practice Score →</button>
       </div>`:''}
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
@@ -5571,7 +5570,7 @@ function setWeeklyCommitment(hrs){
   S.commitments[weekKey]=hrs;
   saveState();
   switchTab('dashboard');
-  showToast(`Committed to ${hrs}h this week 🤝 Let's go!`,'ok');
+  showToast(`Committed to ${hrs}h this week Let's go!`,'ok');
 }
 
 function setCustomCommitment(){
@@ -6575,7 +6574,7 @@ ${goal?`<div style="margin-bottom:20px">
 
 ${delta>0?`<div style="padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--ind);font-weight:600">📈 Readiness +${delta} → ${newScore}</div>`:''}
 
-${milestoneLeft&&milestoneLeft>0?`<div style="padding:10px 14px;background:var(--surf2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--sub)">🎯 Next milestone: <strong>${nextMilestone}h for ${act.section}</strong> — just ${milestoneLeft}h away</div>`:''}
+${milestoneLeft&&milestoneLeft>0?`<div style="padding:10px 14px;background:var(--surf2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--sub)">Next milestone: <strong>${nextMilestone}h for ${act.section}</strong> — just ${milestoneLeft}h away</div>`:''}
 
 <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="closeSessionLoggedModal()">View My Log</button>
 `;
@@ -6592,7 +6591,7 @@ function closeSessionLoggedModal(){
 // SOCIAL ACTIONS
 // ═══════════════════════════════════════════════
 function giveProps(actId,userId){
-  if(userId==='you'){showToast("Can't give yourself props 😄",'err');return;}
+  if(userId==='you'){showToast("Can't give yourself props",'err');return;}
   if(!AUTH){showToast('Sign in to give props','err');return;}
   const me=AUTH.uid;
   const authorUid=userId;
@@ -6626,7 +6625,7 @@ function giveProps(actId,userId){
       setTimeout(()=>p.remove(),650);
     }
   }
-  if(!hasProps)showToast('Props given! 👏','ok');
+  if(!hasProps)showToast('Props given!','ok');
   setTimeout(()=>renderTab(), hasProps?0:480);
 }
 
@@ -6699,7 +6698,7 @@ function shareActivity(actId){
 function _fallbackShare(url){
   if(navigator.clipboard?.writeText){
     navigator.clipboard.writeText(url)
-      .then(()=>showToast('Link copied! 📋','ok'))
+      .then(()=>showToast('Link copied!','ok'))
       .catch(()=>_execCommandShare(url));
     return;
   }
@@ -6723,7 +6722,7 @@ function _execCommandShare(url){
     ta.setSelectionRange(0,99999);
     const ok=document.execCommand('copy');
     document.body.removeChild(ta);
-    if(ok){showToast('Link copied! 📋','ok');return;}
+    if(ok){showToast('Link copied!','ok');return;}
   }catch(e){}
   _showShareDialog(url);
 }
@@ -6742,7 +6741,7 @@ function _showShareDialog(url){
         'onclick="this.select();this.setSelectionRange(0,9999)" ' +
         'onfocus="this.select();this.setSelectionRange(0,9999)">' +
       '<div style="display:flex;gap:8px;margin-top:14px">' +
-        '<button onclick="const i=document.getElementById(\'_share-url-inp\');i.select();i.setSelectionRange(0,9999);try{document.execCommand(\'copy\');showToast(\'Copied! 📋\',\'ok\');}catch(e){}document.getElementById(\'_share-overlay\').remove();" ' +
+        '<button onclick="const i=document.getElementById(\'_share-url-inp\');i.select();i.setSelectionRange(0,9999);try{document.execCommand(\'copy\');showToast(\'Copied!\',\'ok\');}catch(e){}document.getElementById(\'_share-overlay\').remove();" ' +
           'style="flex:1;padding:11px;background:var(--ind);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer">Copy Link</button>' +
         '<button onclick="document.getElementById(\'_share-overlay\').remove()" ' +
           'style="padding:11px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;color:var(--txt)">Close</button>' +
@@ -6892,7 +6891,7 @@ function openDayLog(dateStr){
   const fmt=new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const examOn=Object.entries(S.examDates||{}).find(([,v])=>v===dateStr);
   let html='';
-  if(examOn)html+=`<div style="background:${EXAMS[examOn[0]].color}15;border:1px solid ${EXAMS[examOn[0]].color}44;border-radius:10px;padding:12px 14px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:${EXAMS[examOn[0]].color}">🎯 EXAM TARGET DATE</div><div style="font-size:14px;font-weight:700">${examOn[0]} — ${EXAMS[examOn[0]].full}</div></div>`;
+  if(examOn)html+=`<div style="background:${EXAMS[examOn[0]].color}15;border:1px solid ${EXAMS[examOn[0]].color}44;border-radius:10px;padding:12px 14px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:${EXAMS[examOn[0]].color}">EXAM TARGET DATE</div><div style="font-size:14px;font-weight:700">${examOn[0]} — ${EXAMS[examOn[0]].full}</div></div>`;
   if(logs.length){
     html+=logs.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surf2);border-radius:8px;margin-bottom:6px">
       <div><span class="badge badge-${a.section}" style="margin-right:6px">${a.section}</span><strong>${a.hours}h</strong>${a.caption?`<div style="font-size:11px;color:var(--mut);margin-top:2px">${a.caption}</div>`:''}</div>
@@ -7031,7 +7030,7 @@ function openEditActivityModal(actId){
 <div style="background:var(--surf);border-radius:22px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3);max-height:90vh;display:flex;flex-direction:column">
   <div style="height:5px;background:${ex.color};flex-shrink:0"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px;flex-shrink:0;border-bottom:1px solid var(--bdr)">
-    <div style="font-size:16px;font-weight:900;color:var(--txt)">✏️ Edit Session</div>
+    <div style="font-size:16px;font-weight:900;color:var(--txt)">Edit Session</div>
     <button onclick="closeActivityDetail()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0">×</button>
   </div>
   <div style="overflow-y:auto;padding:20px">
@@ -7620,7 +7619,7 @@ function openSupportModal(){
   el.innerHTML=
     '<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">' +
       '<div class="modal-hdr">' +
-        '<div class="modal-title">💬 Contact Support</div>' +
+        '<div class="modal-title">Contact Support</div>' +
         '<button class="modal-close" onclick="document.getElementById(\'support-modal\').classList.remove(\'open\')">×</button>' +
       '</div>' +
       '<div class="modal-body">' +
@@ -7648,7 +7647,7 @@ function openPrioritySupport(){
   el.innerHTML=
     '<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">' +
       '<div class="modal-hdr">' +
-        '<div class="modal-title">🎧 Elite Priority Support</div>' +
+        '<div class="modal-title">Elite Priority Support</div>' +
         '<button class="modal-close" onclick="document.getElementById(\'support-modal\').classList.remove(\'open\')">×</button>' +
       '</div>' +
       '<div class="modal-body">' +
@@ -7677,7 +7676,7 @@ function sendSupportMessage(){
   const body=encodeURIComponent('From: '+email+'\n\n'+msg);
   window.location.href='mailto:support@ledgercpa.app?subject='+subject+'&body='+body;
   document.getElementById('support-modal')?.classList.remove('open');
-  showToast('Message sent — expect a reply within 2 hours ⚡','ok');
+  showToast('Message sent — expect a reply within 2 hours','ok');
 }
 
 function setStudyPartner(id){
@@ -7686,7 +7685,7 @@ function setStudyPartner(id){
   S.accountabilityPartner=id;
   saveState();
   renderTab();
-  showToast((f?f.name.split(' ')[0]:'Partner')+' is now your study partner 🤝','ok');
+  showToast((f?f.name.split(' ')[0]:'Partner')+' is now your study partner','ok');
 }
 function removeStudyPartner(){
   S.accountabilityPartner=null;
@@ -7712,7 +7711,18 @@ function pingStudyPartner(partnerId, partnerName){
   },400);
 }
 
-function openFollowModal(type){
+// Build a follow-row-compatible profile object from a raw Firestore user doc
+// (for followers not already loaded into REAL_USERS).
+function _followShapeFromDoc(id,u){
+  u=u||{};
+  const name=u.displayName||u.name||'CPA Candidate';
+  const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';
+  const colors=['#d44000','#5a5fcf','#0ea574','#9333ea','#0fb5aa'];
+  const color=u.color||colors[(name.charCodeAt(0)||0)%colors.length];
+  return {id,name,initials,color,state:u.state||'',currentSection:u.currentSection||u.disc||'',streak:u.streak||0,passedSections:u.passedSections||u.sectionPassed||[],bio:u.bio||'',activities:[]};
+}
+
+async function openFollowModal(type){
   let el=document.getElementById('follow-modal');
   if(!el){
     el=document.createElement('div');
@@ -7722,14 +7732,40 @@ function openFollowModal(type){
     el.addEventListener('click',e=>{if(e.target===el)closeFollowModal();});
     document.body.appendChild(el);
   }
+  el.classList.add('open');
   const weekAgo=new Date(Date.now()-7*86400000);
+  const titleEl=document.getElementById('follow-modal-title');
+  const bodyEl=document.getElementById('follow-modal-body');
   let users;
   if(type==='followers'){
-    users=REAL_USERS.filter(f=>(S.followers||[]).includes(f.id));
-    document.getElementById('follow-modal-title').textContent=`Followers (${(S.followers||[]).length})`;
+    // Followers live in the Firestore subcollection users/{uid}/followers (source of
+    // truth, matches the profile count) — NOT the local S.followers array, which is
+    // never updated when someone else follows you.
+    titleEl.textContent='Followers';
+    bodyEl.innerHTML='<div style="text-align:center;padding:32px;color:var(--mut);font-size:13px">Loading…</div>';
+    try{
+      let ids=[];
+      if(firebaseDb&&AUTH?.uid){
+        const snap=await firebaseDb.collection('users').doc(AUTH.uid).collection('followers').get();
+        ids=snap.docs.map(d=>d.id).filter(id=>id&&id!==AUTH.uid);
+      }
+      titleEl.textContent=`Followers (${ids.length})`;
+      const resolved=await Promise.all(ids.map(async id=>{
+        const known=REAL_USERS.find(u=>u.id===id);
+        if(known) return known;
+        try{
+          const doc=await firebaseDb.collection('users').doc(id).get();
+          return doc.exists?_followShapeFromDoc(id,doc.data()):null;
+        }catch(e){ return null; }
+      }));
+      users=resolved.filter(Boolean);
+    }catch(e){
+      bodyEl.innerHTML='<div class="empty-state" style="padding:24px 0"><div class="empty-msg">Could not load followers. Try again.</div></div>';
+      return;
+    }
   } else {
     users=REAL_USERS.filter(f=>(S.following||[]).includes(f.id));
-    document.getElementById('follow-modal-title').textContent=`Following (${(S.following||[]).filter(id=>id&&id.length>4).length})`;
+    titleEl.textContent=`Following (${(S.following||[]).filter(id=>id&&id.length>4).length})`;
   }
   const rows=users.map(f=>{
     const isFollowing=(S.following||[]).includes(f.id);
@@ -7744,8 +7780,7 @@ function openFollowModal(type){
       <button class="follow-btn${isFollowing?' following':''}" onclick="event.stopPropagation();toggleFollow('${f.id}',this);this.textContent=((S.following||[]).includes('${f.id}')?'Following':'Follow');this.className='follow-btn'+((S.following||[]).includes('${f.id}')?' following':'')">${isFollowing?'Following':'Follow'}</button>
     </div>`;
   }).join('');
-  document.getElementById('follow-modal-body').innerHTML=users.length?rows:`<div class="empty-state" style="padding:24px 0"><div class="empty-icon">👥</div><div class="empty-msg">${type==='followers'?'No followers yet — share your profile to get found!':'Not following anyone yet.<br>Go to <strong>Explore</strong> to find fellow candidates.'}</div></div>`;
-  el.classList.add('open');
+  bodyEl.innerHTML=users.length?rows:`<div class="empty-state" style="padding:24px 0"><div class="empty-icon">👥</div><div class="empty-msg">${type==='followers'?'No followers yet — share your profile to get found!':'Not following anyone yet.<br>Go to <strong>Explore</strong> to find fellow candidates.'}</div></div>`;
 }
 function closeFollowModal(){document.getElementById('follow-modal')?.classList.remove('open');}
 
@@ -8854,7 +8889,7 @@ function inviteToClub(clubId,userId,el){
   S.clubMessages[clubId].push({author:'system',text:`${f.name} was invited to the club`,time:new Date().toISOString(),isSystem:true});
   saveState();
   document.getElementById('invite-club-modal')?.classList.remove('open');
-  showToast(`${f.name} invited to ${club.name}! 🎉`,'ok');
+  showToast(`${f.name} invited to ${club.name}!`,'ok');
   renderTab();
 }
 
@@ -9122,7 +9157,7 @@ async function joinPublicClub(pubId){
     }catch(e){ console.warn('Club join Firestore error:',e); }
   }
   renderTab();
-  showToast('Joined '+pc.name+'! 🎉','ok');
+  showToast('Joined '+pc.name+'!','ok');
 }
 
 // ═══════════════════════════════════════════════
@@ -9172,7 +9207,7 @@ function openNotificationCenter(){
   }).join(''):`<div style="text-align:center;padding:40px 20px;color:var(--mut)"><div style="font-size:36px;margin-bottom:12px">🔔</div><div style="font-size:14px;font-weight:600">No notifications yet</div><div style="font-size:12px;margin-top:6px">Interactions on your posts will appear here</div></div>`;
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:420px;max-height:85vh;display:flex;flex-direction:column">
     <div class="modal-hdr" style="flex-shrink:0">
-      <div class="modal-title">🔔 Notifications${unread>0?` <span style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 7px;font-size:11px;font-weight:700;margin-left:6px">${unread}</span>`:''}
+      <div class="modal-title">Notifications${unread>0?` <span style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 7px;font-size:11px;font-weight:700;margin-left:6px">${unread}</span>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         ${notifs.length?`<button onclick="clearAllNotifs()" style="background:none;border:none;color:var(--mut);font-size:11px;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:6px;hover:background:var(--surf2)">Clear all</button>`:''}
@@ -9245,7 +9280,7 @@ function openSearchModal(){
   el.className='modal-overlay open';
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:460px;max-height:90vh;display:flex;flex-direction:column">
     <div class="modal-hdr" style="flex-shrink:0">
-      <div class="modal-title">🔍 Find CPA Candidates</div>
+      <div class="modal-title">Find CPA Candidates</div>
       <button class="modal-close" onclick="closeSearchModal()">×</button>
     </div>
     <div style="padding:0 22px 12px;flex-shrink:0">
@@ -9349,7 +9384,7 @@ function toggleFollowSearch(id, isReal){
       const f=REAL_USERS.find(x=>x.id===id);
       if(f) addNotification('follow','👤','You followed '+f.name+'.',f.id,'user',f.id);
     }
-    showToast('Following! 🎉','ok');
+    showToast('Following!','ok');
     saveState();saveFollowToFirestore();renderSearchResults();
   }
 }
@@ -9422,7 +9457,7 @@ function openInviteShareSheet(url,message){
 }
 function _copyInviteFromSheet(b){
   const url=b.dataset.url||buildInviteLink();
-  (navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>showToast('Invite link copied! 📋','ok')).catch(()=>_execCommandShare(url));
+  (navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>showToast('Invite link copied!','ok')).catch(()=>_execCommandShare(url));
 }
 
 function openQRModal(){
@@ -9435,7 +9470,7 @@ function openQRModal(){
   const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(inviteUrl);
   el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
     <div class="modal-hdr">
-      <div class="modal-title">⬛ Invite QR Code</div>
+      <div class="modal-title">Invite QR Code</div>
       <button class="modal-close" onclick="closeQRModal()">×</button>
     </div>
     <div style="padding:24px 22px">
@@ -9444,7 +9479,7 @@ function openQRModal(){
         <img src="${qrUrl}" alt="Invite QR Code" style="width:200px;height:200px;border-radius:8px;display:block">
       </div>
       <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:4px">${esc(S.name||'CPA Candidate')}'s invite</div>
-      <div style="font-size:12px;color:var(--ora);font-weight:600;margin-bottom:20px">🎁 You both get free Pro</div>
+      <div style="font-size:12px;color:var(--ora);font-weight:600;margin-bottom:20px">You both get free Pro</div>
       <div style="display:flex;gap:10px">
         <button onclick="shareQRProfile('${inviteUrl}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Share Invite Link</button>
         <button onclick="closeQRModal()" style="padding:11px 16px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:10px;color:var(--txt);font-size:13px;font-weight:600;cursor:pointer">Done</button>
@@ -9830,7 +9865,7 @@ function confirmCohortSwitch(){
     saveState();
     setTimeout(writeUserProfile,300);
     ensureFirmCohort();
-    showToast('Switched to '+(S.firmName||'the new cohort')+' 🎉','ok');
+    showToast('Switched to '+(S.firmName||'the new cohort')+'','ok');
     if(typeof renderTab==='function') setTimeout(renderTab,200);
   }
   window._pendingCohortSwitch=null;
@@ -9990,7 +10025,7 @@ function openCohortGoalModal(clubId){
   el.onclick=()=>{ if(event.target===el) el.remove(); };
   const monthName=new Date().toLocaleDateString('en-US',{month:'long'});
   el.innerHTML='<div class="modal-box" onclick="event.stopPropagation()" style="max-width:360px">'+
-    '<div class="modal-hdr"><div class="modal-title">🎯 '+monthName+' cohort goal</div><button class="modal-close" onclick="document.getElementById(\'cohort-goal-modal\').remove()">×</button></div>'+
+    '<div class="modal-hdr"><div class="modal-title">'+monthName+' cohort goal</div><button class="modal-close" onclick="document.getElementById(\'cohort-goal-modal\').remove()">×</button></div>'+
     '<div style="padding:4px 2px 0"><div style="font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:14px">Set a collective hours target for the whole cohort this month. Everyone\'s logged hours add up toward it — supportive, not a competition.</div>'+
     '<label style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Total hours together</label>'+
     '<input id="cohort-goal-input" type="number" min="1" step="10" placeholder="e.g. 200" style="width:100%;margin-top:6px;padding:11px 13px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:15px;font-weight:700;outline:none">'+
@@ -10009,7 +10044,7 @@ async function saveCohortGoal(clubId){
   try{
     await firebaseDb.collection('clubs').doc(clubId).set({monthlyGoalHrs:v,monthlyGoalSetBy:(S&&S.name)||'',monthlyGoalAt:Date.now()},{merge:true});
     document.getElementById('cohort-goal-modal')?.remove();
-    showToast('Cohort goal set: '+v+'h together this month 🎯','ok');
+    showToast('Cohort goal set: '+v+'h together this month','ok');
     if(typeof _renderClubLeaderboard==='function') _renderClubLeaderboard(clubId);
   }catch(e){ showToast('Could not save goal','err'); }
 }
@@ -10391,7 +10426,7 @@ function submitScore(section){
   S.practiceScores[section].push({score,label,date});
   saveState();
   closePostModal();
-  showToast(`${section} score ${score} logged! ${score>=75?'🎯 Exam-ready territory!':'Keep grinding 💪'}`,'ok');
+  showToast(`${section} score ${score} logged! ${score>=75?'Exam-ready territory!':'Keep grinding'}`,'ok');
   renderTab();
 }
 
@@ -10848,7 +10883,7 @@ function buildSettingsBilling(){
     </div>
     ${!isFreePlan?`<span class="pro-plan-badge ${subTierClass()}" style="font-size:11px;padding:4px 12px">Active</span>`:''}
   </div>
-  ${isOnTrial()?`<div style="font-size:12px;color:var(--tea);font-weight:600;margin-bottom:4px">⏳ Trial ends ${trialEnd} — ${getTrialDaysLeft()} days left</div>`:''}
+  ${isOnTrial()?`<div style="font-size:12px;color:var(--tea);font-weight:600;margin-bottom:4px">Trial ends ${trialEnd} — ${getTrialDaysLeft()} days left</div>`:''}
   ${SUB.cancelAtPeriodEnd?`<div style="font-size:12px;color:#f59e0b;font-weight:600">⚠️ Cancels ${SUB.cancelAt?new Date(SUB.cancelAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'at end of billing period'} — you keep access until then</div>`
     :!isFreePlan&&SUB.billingCycle!=='one_time'?`<div style="font-size:12px;color:var(--mut)">Next billing: <strong style="color:var(--sub)">${nextBilling}</strong></div>`:''}
   ${SUB.billingCycle==='one_time'?`<div style="font-size:12px;color:var(--mut)">One-time purchase · expires ${new Date((SUB.startDate||Date.now())+183*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`:''}
@@ -10908,7 +10943,7 @@ ${[
 <!-- Beta tier switcher -->
 ${!STRIPE_ENABLED||STRIPE_CONFIG.paymentLinks.pro_monthly.includes('REPLACE')?`
 <div style="margin-top:8px;padding:14px 16px;background:var(--ind-bg);border:1.5px dashed rgba(99,102,241,.4);border-radius:10px">
-  <div style="font-size:12px;font-weight:700;color:var(--ind);margin-bottom:10px">🧪 Beta Mode — Switch Tier Freely</div>
+  <div style="font-size:12px;font-weight:700;color:var(--ind);margin-bottom:10px">Beta Mode — Switch Tier Freely</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     ${['free','pro','elite','cram'].map(t=>'<button onclick="activatePlan(\''+t+'\');buildSettingsBilling&&renderAppSettingsSection()" style="padding:6px 14px;background:'+(SUB.tier===t||isOnTrial()&&t==='pro'?'var(--ind)':'var(--surf2)')+';color:'+(SUB.tier===t||isOnTrial()&&t==='pro'?'#fff':'var(--txt)')+';border:1.5px solid '+(SUB.tier===t||isOnTrial()&&t==='pro'?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">'+t.charAt(0).toUpperCase()+t.slice(1)+'</button>').join('')}
   </div>
@@ -12058,7 +12093,7 @@ function _renderQuiz() {
 
   const expHTML = answered
     ? '<div style="background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:14px 16px;margin-top:4px">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ind);margin-bottom:6px">📖 Explanation</div>' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ind);margin-bottom:6px">Explanation</div>' +
         '<div style="font-size:13px;color:var(--sub);line-height:1.65">' + q.exp + '</div>' +
       '</div>'
     : '';
@@ -12084,7 +12119,7 @@ function _renderQuiz() {
     '<div style="height:5px;background:var(--bdr);border-radius:4px;margin-bottom:12px;overflow:hidden">' +
       '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;transition:width .4s"></div>' +
     '</div>' +
-    '<div style="font-size:11px;color:var(--mut);text-align:right;margin-bottom:16px;font-style:italic">🤖 AI-generated — verify answers with your review course</div>' +
+    '<div style="font-size:11px;color:var(--mut);text-align:right;margin-bottom:16px;font-style:italic">AI-generated — verify answers with your review course</div>' +
     // Question card
     '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:26px;margin-bottom:16px;box-shadow:var(--shadow-md)">' +
       '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:' + color + ';margin-bottom:12px">Question ' + (current+1) + ' of ' + total + '</div>' +
@@ -12336,7 +12371,7 @@ function buildQuestionBank() {
       '<p style="color:var(--mut);font-size:13px;margin-top:4px">Select a section to start practicing.</p>' +
     '</div>' +
     '<div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--sub);line-height:1.6">' +
-      '<strong>📋 Practice Question Disclaimer:</strong> These questions are original educational content created by Ledger and are <strong>not</strong> official AICPA CPA Exam questions. ' +
+      '<strong>Practice Question Disclaimer:</strong> These questions are original educational content created by Ledger and are <strong>not</strong> official AICPA CPA Exam questions. ' +
       'Ledger is not affiliated with or endorsed by the AICPA, NASBA, or any exam review provider. ' +
       'Always study from your official review course (Becker, Gleim, Roger, Wiley, or UWorld) for authentic exam preparation material.' +
     '</div>' +
@@ -12457,7 +12492,7 @@ function renderProgressReport() {
     '<div style="max-width:860px;margin:0 auto;padding:32px 24px 80px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">' +
         '<div>' +
-          '<h1 style="font-size:26px;font-weight:900;letter-spacing:-.03em">📊 Your Progress Report</h1>' +
+          '<h1 style="font-size:26px;font-weight:900;letter-spacing:-.03em">Your Progress Report</h1>' +
           '<p style="font-size:12px;color:var(--mut);margin-top:3px">' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) + ' · ' + S.name + '</p>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:8px">' +
@@ -12755,7 +12790,7 @@ ${ctx}`;
 function buildAIStudyCoach() {
   if (!isElite()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
-      '<div class="section-title">🤖 Ask Ledger</div>' +
+      '<div class="section-title">Ask Ledger</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.3;pointer-events:none;user-select:none">' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Today\'s Focus</div><div style="font-size:11px;color:var(--mut)">FAR — Gov. Accounting<br>Rec: 2.5 hrs today</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Weak Spot Alert</div><div style="font-size:11px;color:var(--mut)">Behind on REG by 12h<br>Need 2.5h/day to catch up</div></div>' +
@@ -12840,7 +12875,7 @@ function buildAIStudyCoach() {
       '<div style="font-size:11px;color:var(--mut)">Personalized insights based on your data</div></div>' +
     '</div>' +
     '<div style="background:var(--amb-bg);border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:11px;color:var(--sub);margin-bottom:14px">' +
-      '⚗️ <strong style="color:var(--amb)">Beta</strong> — Insights are calculated from your logged data. Always verify study advice with your Becker or Gleim review course.' +
+      '<strong style="color:var(--amb)">Beta</strong> — Insights are calculated from your logged data. Always verify study advice with your Becker or Gleim review course.' +
     '</div>' +
 
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">' +
@@ -13588,7 +13623,7 @@ function _buildExamDayProtocol() {
     '<div style="height:100%;width:' + pct + '%;background:var(--amb);border-radius:2px;transition:width .4s ease"></div>' +
     '</div>';
   } else {
-    html += '<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--mut)">📅 Set your exam date in your profile to activate your personalized protocol.</div>';
+    html += '<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--mut)">Set your exam date in your profile to activate your personalized protocol.</div>';
   }
 
   // Phase cards
@@ -14760,12 +14795,12 @@ function openTimeOffModal(){
   el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;box-shadow:0 24px 80px rgba(0,0,0,.3);overflow:hidden">
     <div style="padding:20px 22px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div style="font-size:17px;font-weight:900;letter-spacing:-.02em">✈️ Add time off</div>
+        <div style="font-size:17px;font-weight:900;letter-spacing:-.02em">Add time off</div>
         <button onclick="document.getElementById('timeoff-modal').remove()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub)">×</button>
       </div>
       <div style="font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:16px">Block out vacation, work crunch, or any days you can't study. Your plan reshuffles those hours across the rest of your schedule.</div>
       <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">What's the occasion?</label>
-      <input id="timeoff-label" type="text" placeholder="e.g. Vacation at the beach 🏖️" maxlength="60" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;margin-bottom:14px">
+      <input id="timeoff-label" type="text" placeholder="e.g. Vacation at the beach" maxlength="60" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;margin-bottom:14px">
       <div style="display:flex;gap:10px;margin-bottom:4px">
         <div style="flex:1">
           <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">From</label>
@@ -14796,7 +14831,7 @@ function saveTimeOff(){
   rebalanceStudyPlan();
   document.getElementById('timeoff-modal')?.remove();
   if(currentTab==='plan') renderTab();
-  showToast('Time off added — your plan adapted around it 🔄','ok');
+  showToast('Time off added — your plan adapted around it','ok');
 }
 
 function removeTimeOff(id){
@@ -15066,7 +15101,7 @@ function submitPlanSetup(){
     _planGenerating=false;
     _planViewMonth=null;
     renderTab();
-    showToast('Your study plan is ready! 🗓','ok');
+    showToast('Your study plan is ready!','ok');
   },2600);
 }
 
@@ -15136,7 +15171,7 @@ function _buildPlanCalendar(plan){
     const ex=EXAMS[todayEntry.section]||{color:'var(--ora)'};
     const m=ACTIVITY_MODES[todayEntry.mode]||ACTIVITY_MODES.new_material;
     todaySide=`<div style="background:linear-gradient(135deg,${ex.color}14,${ex.color}06);border:1.5px solid ${ex.color}44;border-radius:14px;padding:16px;margin-bottom:14px">
-      <div style="font-size:10px;font-weight:800;color:${ex.color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">📍 Today — Day ${todayEntry.dayNum}</div>
+      <div style="font-size:10px;font-weight:800;color:${ex.color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Today — Day ${todayEntry.dayNum}</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
         <div style="background:${m.color};color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:800">${m.icon} ${m.label}</div>
         <span class="badge badge-${todayEntry.section}">${todayEntry.section}</span>
@@ -15214,7 +15249,7 @@ function _buildPlanCalendar(plan){
           ${Object.entries(ACTIVITY_MODES).filter(([k])=>k!=='rest').map(([k,m])=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${m.icon} ${m.label}</div>`).join('')}
           <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">✅ Done &nbsp;🛌 Rest &nbsp;✈️ Off</div>
         </div>
-        <div style="font-size:10px;color:var(--mut);margin-bottom:12px;font-style:italic">💡 Life happens — tap any upcoming day to mark it off. Your hours move to the rest of the plan automatically.</div>
+        <div style="font-size:10px;color:var(--mut);margin-bottom:12px;font-style:italic">Life happens — tap any upcoming day to mark it off. Your hours move to the rest of the plan automatically.</div>
         <!-- Day headers + grid -->
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px">${dayHdrs}</div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${cells.join('')}</div>
@@ -15357,7 +15392,7 @@ function markPlanDayDone(dateStr){
     const el=document.getElementById('schedule-section');
     if(el) el.outerHTML=buildStudySchedule();
   }
-  showToast('Day complete! Keep the streak going 🔥','ok');
+  showToast('Day complete! Keep the streak going','ok');
   checkAchievements();
 }
 
@@ -15382,7 +15417,7 @@ function _buildAIPlanUI(){
     '<div style="font-size:52px;margin-bottom:14px">🤖</div>'+
     '<div style="font-size:20px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px">AI Study Plan</div>'+
     '<div style="font-size:13px;color:var(--mut);max-width:340px;margin:0 auto 10px;line-height:1.65">Ledger analyzes your exam date, hours logged per section, and weekly goal to build a personalized time-blocking plan.</div>'+
-    '<div style="font-size:12px;color:var(--sub);max-width:300px;margin:0 auto 24px;line-height:1.6;background:var(--surf2);border-radius:10px;padding:10px 14px">📖 Your Becker, Gleim, or Roger material tells you <em>what</em> to study. This plan tells you <em>when</em>, <em>how long</em>, and <em>which mode</em> to be in each day.</div>'+
+    '<div style="font-size:12px;color:var(--sub);max-width:300px;margin:0 auto 24px;line-height:1.6;background:var(--surf2);border-radius:10px;padding:10px 14px">Your Becker, Gleim, or Roger material tells you <em>what</em> to study. This plan tells you <em>when</em>, <em>how long</em>, and <em>which mode</em> to be in each day.</div>'+
     '<button onclick="runGeneratePlan()" style="padding:14px 36px;background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.38);animation:pulse-glow 2s infinite">✨ Generate My Plan</button>'+
     '<div style="font-size:11px;color:var(--mut);margin-top:14px">Takes ~2 seconds · Regenerate any time</div>'+
     '</div>';
@@ -15417,7 +15452,7 @@ function _buildAIPlanUI(){
     const exCol=EXAMS[todayEntry.section]?.color||'var(--ora)';
     todayBlock='<div style="background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:2px solid var(--ora);border-radius:14px;padding:18px;margin-bottom:20px">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
-        '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.1em">📍 Today — Day '+todayEntry.dayNum+' of '+plan.daysLeft+'</div>'+
+        '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.1em">Today — Day '+todayEntry.dayNum+' of '+plan.daysLeft+'</div>'+
         (todayEntry.done
           ?'<span style="background:#10b981;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">✓ Done</span>'
           :'<button onclick="markPlanDayDone(\''+today+'\')" style="background:var(--ora);color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer">Mark Done ✓</button>')+
@@ -15486,7 +15521,7 @@ function _buildAIPlanUI(){
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'+
       '<div>'+
         '<div style="display:flex;align-items:center;gap:8px">'+
-          '<div class="section-title" style="margin-bottom:0">🤖 AI Study Plan</div>'+
+          '<div class="section-title" style="margin-bottom:0">AI Study Plan</div>'+
           '<span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>'+
         '</div>'+
         '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+daysLeft+' days to exam · '+Math.round(totalHrsPlanned)+'h planned · '+pct+'% done</div>'+
@@ -15917,7 +15952,7 @@ async function submitReview(){
     closeReviewModal();
     S.reviewLeft=true;
     saveState();
-    showToast('Thank you — your review means a lot 🙏','ok');
+    showToast('Thank you — your review means a lot','ok');
   }catch(e){
     if(btn){btn.disabled=false;btn.textContent='Submit Review';}
     showToast('Could not send — please try again','err');
@@ -16091,7 +16126,7 @@ async function logExamResult(){
     const hrs=Math.round(getSectionHours(section));
     setTimeout(()=>showPassCelebration(section,scoreRaw,hrs),400);
   } else {
-    showToast(`${section} result logged — score ${scoreRaw}. You've got this on the retake 💪`,'info');
+    showToast(`${section} result logged — score ${scoreRaw}. You've got this on the retake`,'info');
   }
 }
 
