@@ -3372,6 +3372,16 @@ function init(){
         }
       }
     })();
+    // If the Firebase SDK failed to load (flaky network / blocked CDN), don't die on a
+    // black splash screen — fall back to the cached local session.
+    if(!firebaseAuth){
+      _hideSplash();
+      const cachedAuth=loadAuth();
+      if(cachedAuth){ AUTH=cachedAuth; if(!S) S=loadState(AUTH.uid)||null; }
+      if(AUTH&&S) renderApp(); else renderAuth();
+      showToast('Couldn\'t reach Ledger servers — working offline from your last session.','info');
+      return;
+    }
     // onAuthStateChanged fires once on load — single source of truth for auth state
     const unsub = firebaseAuth.onAuthStateChanged(async user => {
       unsub(); // only need first event
@@ -4397,6 +4407,10 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  // Leaving the messages page: kill live messaging listeners so background snapshots
+  // don't keep marking the open conversation as read.
+  if(typeof _detachDMConvListener==='function') _detachDMConvListener();
+  if(typeof _detachDMInboxListener==='function') _detachDMInboxListener();
   // Once per page load: rehydrate an in-progress study session so a reload never loses the timer.
   if(!window._tsRestored){window._tsRestored=true;if(tsRestore())showToast('Paused study session restored — resume or save it.','info');}
   // Once per page load: push my current study stats to my clubs' shared leaderboards.
@@ -7909,6 +7923,10 @@ function _appPageNavHTML(){
 }
 
 function _mountPageShell(contentId){
+  // Kill any live messaging listeners from a previous view — a leaked conversation
+  // listener keeps marking that conversation "read" while the user isn't viewing it.
+  if(typeof _detachDMConvListener==='function') _detachDMConvListener();
+  if(typeof _detachDMInboxListener==='function') _detachDMInboxListener();
   document.body.classList.remove('no-app-nav');
   document.body.style.overflow='';
   document.getElementById('root').innerHTML=`<div class="app-wrap">${_appPageNavHTML()}<div class="uprofile-page-wrap"><div id="${contentId}" style="max-width:1160px;margin:0 auto;padding:var(--sp-5) var(--sp-5) 96px"></div></div></div>`;
@@ -8425,20 +8443,64 @@ function _detachClubViewListener(){ if(_clubViewMsgUnsub){ _clubViewMsgUnsub(); 
 
 function _convId(uid1, uid2){ return [uid1,uid2].sort().join('__dm__'); }
 
+// ── User profile cache — resolves display info for ANY uid (not just REAL_USERS) ──
+// REAL_USERS only holds followed + recently-active users, so DMs with anyone else
+// used to render as "User"/"Member ??". This cache backfills from users/{uid}.
+const _userProfileCache = {};        // uid -> {name, initials, color} (null = fetch failed/missing)
+const _userProfileFetching = new Set();
+
+function _cachedUserInfo(uid){
+  const f=REAL_USERS.find(u=>u.id===uid);
+  if(f) return {name:f.name,initials:f.initials||f.name.slice(0,2).toUpperCase(),color:f.color||'#5a5fcf'};
+  const c=_userProfileCache[uid];
+  if(c) return c;
+  return null;
+}
+
+async function _resolveUserProfiles(uids){
+  if(!firebaseDb) return false;
+  const need=[...new Set(uids)].filter(u=>u&&u!=='system'&&u!=='you'&&u!==AUTH?.uid&&!_cachedUserInfo(u)&&!_userProfileFetching.has(u)&&!(u in _userProfileCache));
+  if(!need.length) return false;
+  need.forEach(u=>_userProfileFetching.add(u));
+  let found=false;
+  await Promise.all(need.map(async uid=>{
+    try{
+      const doc=await firebaseDb.collection('users').doc(uid).get();
+      if(doc.exists){
+        const u=doc.data();
+        const name=u.displayName||'CPA Candidate';
+        _userProfileCache[uid]={name,initials:name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?',color:u.color||hashColor(uid)};
+        found=true;
+      } else {
+        _userProfileCache[uid]=null; // remember the miss so we don't refetch forever
+      }
+    }catch(e){ _userProfileCache[uid]=null; }
+    finally{ _userProfileFetching.delete(uid); }
+  }));
+  return found;
+}
+
 function _fbMsgAuthorInfo(fromUid){
   if(!fromUid||fromUid==='system') return {name:'System',initials:'SY',color:'var(--mut)'};
   if(fromUid===AUTH?.uid||fromUid==='you'){
     const n=S?.name||'You';
     return {name:'You',initials:n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'ME',color:'var(--ora)'};
   }
-  const f=REAL_USERS.find(u=>u.id===fromUid);
-  if(f) return {name:f.name,initials:f.initials||f.name.slice(0,2).toUpperCase(),color:f.color||'#5a5fcf'};
-  return {name:'Member',initials:'??',color:'#5a5fcf'};
+  const c=_cachedUserInfo(fromUid);
+  if(c) return c;
+  return {name:'Member',initials:(fromUid||'??').slice(0,2).toUpperCase(),color:hashColor(fromUid)};
 }
 
 function _renderFirebaseMsgs(areaId, msgs, collection, channelId){
   const area=document.getElementById(areaId); if(!area) return;
   if(!msgs||!msgs.length){ area.innerHTML='<div class="chat-system">— No messages yet. Say hello! —</div>'; return; }
+  // Backfill unknown sender names from Firestore, then re-render once
+  const _unknown=msgs.map(m=>m.from).filter(u=>u&&u!=='system'&&u!==AUTH?.uid&&!_cachedUserInfo(u)&&!(u in _userProfileCache));
+  if(_unknown.length){
+    _resolveUserProfiles(_unknown).then(found=>{
+      if(found&&document.getElementById(areaId)) _renderFirebaseMsgs(areaId,msgs,collection,channelId);
+    });
+  }
   area.innerHTML=msgs.map(msg=>{
     if(msg.isSystem||msg.from==='system') return `<div class="chat-system">— ${esc(msg.text)} —</div>`;
     const isMine=msg.from===AUTH?.uid;
@@ -8501,13 +8563,15 @@ async function sendFirebaseMessage(channelId, collection){
       await convRef.set({
         participants:channelId.split('__dm__').sort(),
         lastMessage:text,
+        lastFrom:AUTH.uid,
         lastAt:firebase.firestore.FieldValue.serverTimestamp()
       },{merge:true});
       await convRef.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
     } else {
       await firebaseDb.collection(collection).doc(channelId).collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-      await firebaseDb.collection(collection).doc(channelId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      await firebaseDb.collection(collection).doc(channelId).set({lastMessage:text,lastFrom:AUTH.uid,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
     }
+    try{localStorage.setItem('pf2-lr-'+channelId,Date.now()+5000);}catch(e){}
   }catch(e){
     console.warn('sendFirebaseMessage error:',e.code,e.message);
     if(inp) inp.value=text;
@@ -8584,6 +8648,8 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
   opts=opts||{};
   const collection=opts.collection||'conversations';
   const isGroup=!!opts.isGroup; // club group chat: always show sender names for others
+  // If the user scrolled up to read history, don't yank them down when new messages arrive
+  const nearBottom=area.scrollHeight-area.scrollTop-area.clientHeight<120;
   if(!msgs||!msgs.length){
     area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:46px">${isGroup?'👥':'👋'}</div><div style="font-size:14px;font-weight:700;color:var(--txt)">${isGroup?'No messages yet':'Start the conversation'}</div><div style="font-size:12px;color:var(--mut)">Say hello below</div></div>`;
     area.scrollTop=area.scrollHeight;
@@ -8617,6 +8683,7 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
     currentGroup=null;
   };
 
+  const unknownUids=new Set();
   msgs.forEach((msg,i)=>{
     const from=msg.from||msg.author;
     if(msg.isSystem||from==='system'){
@@ -8626,6 +8693,7 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
     }
     const ts=msg.timestamp?.toDate?.()??new Date(msg.timestamp||msg.time||Date.now());
     const isMine=from===AUTH?.uid||from==='you';
+    if(!isMine&&from&&!_cachedUserInfo(from)&&!(from in _userProfileCache)) unknownUids.add(from);
     const dayLabel=_dmDateLabel(ts);
     if(dayLabel!==lastDayLabel){
       flushGroup();
@@ -8645,7 +8713,13 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
   });
   flushGroup();
   area.innerHTML=output.join('');
-  area.scrollTop=area.scrollHeight;
+  if(nearBottom) area.scrollTop=area.scrollHeight;
+  // Backfill unknown sender names from Firestore, then re-render once with real info
+  if(unknownUids.size){
+    _resolveUserProfiles([...unknownUids]).then(found=>{
+      if(found&&document.getElementById(areaId)) _renderMsgsDM(areaId,msgs,channelId,opts);
+    });
+  }
 }
 
 // Unified conversation panel — handles both DMs (kind:'dm') and study clubs (kind:'club').
@@ -8721,11 +8795,11 @@ async function _renderConvPanel(opts){
 }
 
 function _openDMFromInbox(convId, otherUid){
-  const f=REAL_USERS.find(u=>u.id===otherUid);
+  const cached=_cachedUserInfo(otherUid);
   const lDM=(S.clubs||[]).find(c=>c.isDM&&c.members.includes(otherUid));
-  const name=f?.name||lDM?.name||'User';
-  const initials=f?.initials||name.slice(0,2).toUpperCase();
-  const color=f?.color||lDM?.color||'#5a5fcf';
+  const name=cached?.name||lDM?.name||'User';
+  const initials=cached?.initials||name.slice(0,2).toUpperCase();
+  const color=cached?.color||lDM?.color||hashColor(otherUid);
   openConversationPage(convId, otherUid, name, color, initials);
 }
 
@@ -8788,12 +8862,14 @@ async function _sendConvMessage(kind, channelId){
     if(kind==='club'){
       const ref=firebaseDb.collection('clubs').doc(channelId);
       await ref.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-      await ref.set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      await ref.set({lastMessage:text,lastFrom:AUTH.uid,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
     } else {
       const ref=firebaseDb.collection('conversations').doc(channelId);
-      await ref.set({participants:channelId.split('__dm__').sort(),lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      await ref.set({participants:channelId.split('__dm__').sort(),lastMessage:text,lastFrom:AUTH.uid,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
       await ref.collection('messages').add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
     }
+    // Own send shouldn't flag the conversation unread in the inbox
+    try{localStorage.setItem('pf2-lr-'+channelId,Date.now()+5000);}catch(e){}
   }catch(e){
     if(inp){inp.value=text;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
     if(sendBtn)sendBtn.disabled=false;
@@ -8807,10 +8883,10 @@ function _sendDM(convId){ return _sendConvMessage('dm',convId); }
 
 async function openDirectMessage(userId, displayName, displayInitials){
   if(!AUTH){ showToast('Sign in to message users','err'); return; }
-  const f=REAL_USERS.find(x=>x.id===userId);
-  const name=f?.name||displayName||'User';
-  const initials=f?.initials||displayInitials||(name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())||'??';
-  const color=f?.color||'#5a5fcf';
+  const cached=_cachedUserInfo(userId);
+  const name=cached?.name||displayName||'User';
+  const initials=cached?.initials||displayInitials||(name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())||'??';
+  const color=cached?.color||hashColor(userId);
 
   // Deterministic conversation ID
   const convId=_convId(AUTH.uid, userId);
@@ -9566,49 +9642,32 @@ function closeMessagesPage(){
   else { renderApp(); if(history.state?.fromTab) switchTab(history.state.fromTab); }
 }
 
+let _dmInboxUnsub=null;
+function _detachDMInboxListener(){ if(_dmInboxUnsub){ _dmInboxUnsub(); _dmInboxUnsub=null; } }
+
 async function _renderMessagesPage(openConv){
   _mountPageShell('messages-page-content');
   const el=document.getElementById('messages-page-content');
   el.style.padding='0';el.style.maxWidth='none';
   el.innerHTML='<div class="dm-layout"><div id="dm-inbox-panel" class="dm-inbox-panel"><div style="text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading…</div></div><div id="dm-conv-panel" class="dm-conv-panel"><div class="dm-empty-conv"><div style="font-size:44px">💬</div><div style="font-size:15px;font-weight:800;color:var(--txt)">Your Messages</div><div style="font-size:12px;color:var(--mut);margin-top:4px">Select a conversation or tap + to start a new one</div></div></div></div>';
 
-  // Load Firestore DM conversations
-  let firestoreDMs=[];
-  if(firebaseDb&&AUTH){
-    try{
-      const snap=await firebaseDb.collection('conversations').where('participants','array-contains',AUTH.uid).orderBy('lastAt','desc').limit(50).get();
-      firestoreDMs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    }catch(e){ console.warn('DMs load:',e); }
-  }
-  // Merge local-only DMs
-  const localDMs=(S.clubs||[]).filter(c=>c.isDM);
-  const knownIds=new Set(firestoreDMs.map(d=>d.id));
-  for(const dm of localDMs){
-    if(!knownIds.has(dm.id)){
-      const otherUid=dm.members.find(m=>m!=='you'&&m!==AUTH?.uid);
-      firestoreDMs.push({id:dm.id,participants:[AUTH?.uid||'you',otherUid||''],lastMessage:'',lastAt:null});
-    }
-  }
-
-  const clubs=(S.clubs||[]).filter(c=>!c.isDM);
-
-  // Build inbox
-  const inboxPanel=document.getElementById('dm-inbox-panel');
-  if(!inboxPanel)return;
+  // Firestore lastMessage/lastAt for the user's clubs (local S.clubMessages goes stale)
+  const clubFsMeta={};
 
   const _dmRow=(conv)=>{
     const otherUid=(conv.participants||[]).find(p=>p!==AUTH?.uid)||'';
-    const f=REAL_USERS.find(u=>u.id===otherUid);
+    const cached=_cachedUserInfo(otherUid);
     const lDM=(S.clubs||[]).find(c=>c.isDM&&c.members.includes(otherUid));
-    const name=f?.name||lDM?.name||'User';
-    const initials=f?.initials||name.slice(0,2).toUpperCase();
-    const color=f?.color||'#5a5fcf';
-    const preview=conv.lastMessage||(conv.id?'Start the conversation…':'');
+    const name=cached?.name||lDM?.name||'User';
+    const initials=cached?.initials||name.slice(0,2).toUpperCase();
+    const color=cached?.color||lDM?.color||hashColor(otherUid);
+    const isMineLast=conv.lastFrom&&conv.lastFrom===AUTH?.uid;
+    const preview=conv.lastMessage?(isMineLast?'You: ':'')+conv.lastMessage:(conv.id?'Start the conversation…':'');
     const lastAtDate=conv.lastAt?.toDate?.();
     const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+conv.id)||'0',10);
-    const hasUnread=!!(lastAtDate&&lastAtDate.getTime()>lastReadMs&&conv.lastMessage);
+    const hasUnread=!!(lastAtDate&&lastAtDate.getTime()>lastReadMs&&conv.lastMessage&&!isMineLast);
     const timeLabel=lastAtDate?_dmDateLabel(lastAtDate)==='Today'?_dmTimeStr(lastAtDate):_dmDateLabel(lastAtDate):'';
-    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${esc(conv.id)}" onclick="_openDMFromInbox('${esc(conv.id)}','${esc(otherUid)}')">
+    return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${esc(conv.id)}" data-other-uid="${esc(otherUid)}" onclick="_openDMFromInbox('${esc(conv.id)}','${esc(otherUid)}')">
       <div style="position:relative;flex-shrink:0"><div class="avatar" style="width:42px;height:42px;font-size:14px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">${initials}</div></div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
@@ -9622,17 +9681,21 @@ async function _renderMessagesPage(openConv){
   };
 
   const _clubRow=(c)=>{
-    const msgs=(S.clubMessages||{})[c.id]||[];
-    const lastMsgObj=msgs.filter(m=>!m.isSystem).slice(-1)[0];
-    const preview=lastMsgObj?(lastMsgObj.author==='you'?'You: ':'')+lastMsgObj.text:'No messages yet';
+    const fs=clubFsMeta[c.id];
+    const localMsgs=(S.clubMessages||{})[c.id]||[];
+    const lastLocal=localMsgs.filter(m=>!m.isSystem).slice(-1)[0];
+    const lastAtDate=fs?.lastAt?.toDate?.();
+    const preview=fs?.lastMessage||(lastLocal?(lastLocal.author==='you'?'You: ':'')+lastLocal.text:'No messages yet');
     const lastReadMs=parseInt(localStorage.getItem('pf2-lr-'+c.id)||'0',10);
-    const hasUnread=!!(lastMsgObj&&lastMsgObj.author!=='you'&&new Date(lastMsgObj.time).getTime()>lastReadMs);
+    const lastActivityMs=lastAtDate?lastAtDate.getTime():(lastLocal?new Date(lastLocal.time).getTime():0);
+    const hasUnread=!!(lastActivityMs&&lastActivityMs>lastReadMs&&(fs?.lastMessage||lastLocal));
+    const timeLabel=lastAtDate?(_dmDateLabel(lastAtDate)==='Today'?_dmTimeStr(lastAtDate):_dmDateLabel(lastAtDate)):(lastLocal?timeAgo(lastLocal.time):'');
     return `<div class="dm-inbox-row${hasUnread?' dm-unread':''}" data-conv-id="${esc(c.id)}" onclick="openClubInDMCenter('${esc(c.id)}')">
       <div style="width:42px;height:42px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${c.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
           <div class="dm-inbox-name">${esc(c.name)}</div>
-          <div class="dm-inbox-time">${lastMsgObj?timeAgo(lastMsgObj.time):''}</div>
+          <div class="dm-inbox-time">${timeLabel}</div>
         </div>
         <div class="dm-inbox-preview">${esc(preview)}</div>
       </div>
@@ -9640,15 +9703,37 @@ async function _renderMessagesPage(openConv){
     </div>`;
   };
 
-  const dmSection=firestoreDMs.length
-    ?firestoreDMs.map(_dmRow).join('')
-    :`<div style="padding:20px 16px;text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-size:12px;color:var(--mut);line-height:1.6">No DMs yet.<br>Visit someone's profile and tap Message.</div></div>`;
+  let _lastDMs=[]; // latest conversation docs, kept for name-backfill re-renders
 
-  const clubSection=clubs.length
-    ?clubs.map(_clubRow).join('')
-    :`<div style="padding:16px;text-align:center"><button class="btn btn-ghost btn-sm" onclick="createClubModal()">+ Create a Club</button></div>`;
+  const renderInbox=(firestoreDMs, loadErr)=>{
+    const inboxPanel=document.getElementById('dm-inbox-panel');
+    if(!inboxPanel)return;
+    _lastDMs=firestoreDMs;
+    // Merge local-only DMs (started offline / not yet in Firestore)
+    const localDMs=(S.clubs||[]).filter(c=>c.isDM);
+    const merged=firestoreDMs.slice();
+    const knownIds=new Set(merged.map(d=>d.id));
+    for(const dm of localDMs){
+      if(!knownIds.has(dm.id)){
+        const otherUid=dm.members.find(m=>m!=='you'&&m!==AUTH?.uid);
+        merged.push({id:dm.id,participants:[AUTH?.uid||'you',otherUid||''],lastMessage:'',lastAt:null});
+      }
+    }
+    const clubs=(S.clubs||[]).filter(c=>!c.isDM);
 
-  inboxPanel.innerHTML=`
+    const dmSection=merged.length
+      ?merged.map(_dmRow).join('')
+      :(loadErr?`<div style="padding:20px 16px;text-align:center;font-size:12px;color:var(--mut);line-height:1.6">Couldn't load conversations${loadErr.code?' ('+loadErr.code+')':''}.<br>Check your connection and try again.</div>`
+        :`<div style="padding:20px 16px;text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div style="font-size:12px;color:var(--mut);line-height:1.6">No DMs yet.<br>Visit someone's profile and tap Message.</div></div>`);
+
+    const clubSection=clubs.length
+      ?clubs.map(_clubRow).join('')
+      :`<div style="padding:16px;text-align:center"><button class="btn btn-ghost btn-sm" onclick="createClubModal()">+ Create a Club</button></div>`;
+
+    // Preserve the search text across live re-renders
+    const prevSearch=document.getElementById('dm-search-inp')?.value||'';
+
+    inboxPanel.innerHTML=`
 <div class="dm-inbox-hdr">
   <div class="dm-inbox-title">Messages
     <button class="dm-new-btn" onclick="openSearchModal()" title="New Message">+</button>
@@ -9656,7 +9741,7 @@ async function _renderMessagesPage(openConv){
   <input class="dm-inbox-search" placeholder="Search…" oninput="_filterDMInbox(this.value)" id="dm-search-inp">
 </div>
 <div class="dm-inbox-list" id="dm-inbox-list">
-  ${firestoreDMs.length||clubs.length?`
+  ${merged.length||clubs.length?`
   <div style="padding:8px 14px 2px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em">Direct Messages</div>
   ${dmSection}
   <div style="padding:8px 14px 2px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:4px">Study Clubs</div>
@@ -9664,15 +9749,53 @@ async function _renderMessagesPage(openConv){
   :`<div style="padding:32px 16px;text-align:center"><div style="font-size:40px;margin-bottom:12px">💬</div><div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px">No messages yet</div><div style="font-size:11px;color:var(--mut)">Find someone to message in Explore</div><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="switchTab('explore')">Find People →</button></div>`}
 </div>`;
 
+    if(prevSearch){
+      const inp=document.getElementById('dm-search-inp');
+      if(inp){inp.value=prevSearch;_filterDMInbox(prevSearch);}
+    }
+    // Keep the open conversation highlighted across live re-renders
+    if(_activeDMConvId){
+      document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===_activeDMConvId));
+    }
+    // Backfill names for participants we don't know yet, then re-render once
+    const unknown=merged.map(c=>(c.participants||[]).find(p=>p!==AUTH?.uid)).filter(u=>u&&!_cachedUserInfo(u)&&!(u in _userProfileCache));
+    if(unknown.length){
+      _resolveUserProfiles(unknown).then(found=>{
+        if(found&&document.getElementById('dm-inbox-panel')) renderInbox(_lastDMs,loadErr);
+      });
+    }
+  };
+
+  // Live inbox: conversations update in real time (new messages, unread dots, ordering)
+  if(firebaseDb&&AUTH){
+    const q=firebaseDb.collection('conversations').where('participants','array-contains',AUTH.uid).orderBy('lastAt','desc').limit(50);
+    _dmInboxUnsub=q.onSnapshot(
+      snap=>renderInbox(snap.docs.map(d=>({id:d.id,...d.data()}))),
+      err=>{ console.warn('DM inbox listener:',err.code,err.message); renderInbox([],err); }
+    );
+    // Pull real club previews (lastMessage/lastAt live on the club doc)
+    const myClubs=(S.clubs||[]).filter(c=>!c.isDM).slice(0,20);
+    if(myClubs.length){
+      Promise.all(myClubs.map(c=>firebaseDb.collection('clubs').doc(c.id).get().catch(()=>null))).then(docs=>{
+        let any=false;
+        docs.forEach(d=>{ if(d&&d.exists){clubFsMeta[d.id]=d.data();any=true;} });
+        if(any&&document.getElementById('dm-inbox-panel')) renderInbox(_lastDMs);
+      });
+    }
+  } else {
+    renderInbox([]);
+  }
+
   // If a specific conversation was requested, open it
   if(openConv){
     _renderConvPanel(openConv);
     if(window.innerWidth<720){
-      document.getElementById('dm-inbox-panel').style.display='none';
+      const p=document.getElementById('dm-inbox-panel');
+      if(p)p.style.display='none';
     }
-    document.querySelectorAll('.dm-inbox-row').forEach(r=>r.classList.toggle('active',r.dataset.convId===openConv.channelId));
   } else if(window.innerWidth<720){
-    document.getElementById('dm-conv-panel').style.display='none';
+    const p=document.getElementById('dm-conv-panel');
+    if(p)p.style.display='none';
   }
 }
 
@@ -10057,7 +10180,7 @@ function sendClubViewMessage(clubId){
   inp.value='';
   firebaseDb.collection('clubs').doc(clubId).collection('messages')
     .add({from:AUTH.uid,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()})
-    .then(()=>firebaseDb.collection('clubs').doc(clubId).set({lastMessage:text,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}))
+    .then(()=>firebaseDb.collection('clubs').doc(clubId).set({lastMessage:text,lastFrom:AUTH.uid,lastAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}))
     .catch(e=>{
       console.warn('sendClubViewMessage error:',e.code,e.message);
       if(inp) inp.value=text;
