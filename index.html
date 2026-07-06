@@ -610,10 +610,10 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .concept-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.25);color:var(--ora);font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px}
 .concept-tag-x{cursor:pointer;opacity:.55;font-size:14px;line-height:1}
 .concept-tag-x:hover{opacity:1}
-.feeling-row-r{display:flex;gap:7px;margin-top:6px}
-.feeling-r-btn{flex:1;padding:9px 4px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:19px;text-align:center;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s}
-.feeling-r-btn:hover{border-color:var(--bdr2);transform:scale(1.05)}
-.feeling-r-btn.sel{border-color:var(--ora);background:var(--ora-bg);transform:scale(1.08)}
+.feeling-row-r{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
+.feeling-r-btn{width:100%;min-width:0;padding:8px 0;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:17px;line-height:1;text-align:center;transition:background-color .15s,border-color .15s,box-shadow .15s}
+.feeling-r-btn:hover{border-color:var(--bdr2)}
+.feeling-r-btn.sel{border-color:var(--ora);background:var(--ora-bg);box-shadow:0 0 0 1px var(--ora) inset}
 .diff-r-row{display:flex;gap:7px;margin-top:6px}
 .diff-r-btn{flex:1;padding:9px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:700;text-align:center;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s;color:var(--mut)}
 .diff-r-btn:hover{border-color:var(--bdr2)}
@@ -7304,7 +7304,7 @@ function renderSessCard(){
       `<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeConceptTag(${i})">×</span></span>`
     ).join('');
     const feelings=['💪','😤','😅','🤔','😵','🔥'];
-    const feelHTML=feelings.map(f=>`<div style="text-align:center"><button class="feeling-r-btn${TS.feeling===f?' sel':''}" onclick="setSessFeeling('${f}')">${f}</button></div>`).join('');
+    const feelHTML=feelings.map(f=>`<button class="feeling-r-btn${TS.feeling===f?' sel':''}" onclick="setSessFeeling('${f}')">${f}</button>`).join('');
     const diffHTML=[1,2,3,4,5].map(d=>`<button class="diff-r-btn${TS.difficulty===d?' sel':''}" onclick="setSessDiff(${d})">${d}</button>`).join('');
     const sectionOpts=(S.sections||[]).map(s=>`<option value="${s}"${s===TS.section?' selected':''}>${s}</option>`).join('');
     box.innerHTML=`
