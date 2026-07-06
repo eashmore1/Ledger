@@ -618,6 +618,12 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .diff-r-btn{flex:1;padding:9px;border-radius:10px;border:2px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:700;text-align:center;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s;color:var(--mut)}
 .diff-r-btn:hover{border-color:var(--bdr2)}
 .diff-r-btn.sel{border-color:var(--ind);background:var(--ind-bg);color:var(--ind)}
+.sess-loc-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.sess-loc-btn{padding:7px 13px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:12px;font-weight:600;color:var(--sub);transition:background-color .13s,border-color .13s,color .13s;white-space:nowrap}
+.sess-loc-btn:hover{border-color:var(--bdr2)}
+.sess-loc-btn.sel{border-color:var(--ora);background:var(--ora-bg);color:var(--ora);font-weight:700}
+.sess-loc-other{flex:1;min-width:90px;padding:7px 12px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--surf2);color:var(--txt);font-size:12px;outline:none;transition:border-color .13s}
+.sess-loc-other:focus{border-color:var(--ora)}
 .sess-notes-ta{width:100%;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none;resize:vertical;min-height:72px;font-family:inherit;transition:border .15s}
 .sess-notes-ta:focus{border-color:var(--ora)}
 .sess-save-btn{width:100%;padding:14px;background:var(--grn);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -2593,8 +2599,9 @@ let TS = {
   startTime: null, elapsed: 0, date: '',
   concepts: [], notes: '', feeling: '💪', difficulty: 3,
   sessionPhoto: null, // base64 image attached at recap
+  location: '',       // where the session happened (optional)
 };
-function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null};try{localStorage.removeItem(tsPersistKey());}catch(e){}}
+function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null,location:''};try{localStorage.removeItem(tsPersistKey());}catch(e){}}
 // ── In-progress session persistence (survives page reload) ──────────────────
 function tsPersistKey(){return 'pf2-active-session-'+((typeof AUTH!=='undefined'&&AUTH&&AUTH.uid)||'anon');}
 function tsPersist(){
@@ -6069,6 +6076,7 @@ function buildProfile(){
           <span style="font-size:26px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${a.hours}</span>
           <span style="font-size:11px;color:var(--mut);font-weight:600;padding-bottom:2px">hrs</span>
           ${a.elapsed?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· ${fmtDur(a.elapsed)}</span>`:''}
+          ${a.location?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· 📍 ${esc(a.location)}</span>`:''}
         </div>
         ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">${a.material}</div>`:''}
         ${a.caption?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4">${a.caption}</div>`:''}
@@ -6987,6 +6995,11 @@ function openActivityDetail(actId){
       <div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div>
     </div>`:''}
 
+    ${act.location?`<div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Location</div>
+      <div style="font-size:13px;font-weight:600;color:var(--sub)">📍 ${esc(act.location)}</div>
+    </div>`:''}
+
     ${act.caption?`<div style="margin-bottom:14px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div>
       <div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">${act.caption}</div>
@@ -7348,6 +7361,15 @@ function renderSessCard(){
               }
             </div>
           </div>
+          <div class="sess-fgrp">
+            <label>Location <span style="font-size:10px;color:var(--mut);font-weight:400">optional</span></label>
+            <div class="sess-loc-row" id="sess-loc-row">
+              ${['Home','Library','Café','Office','Campus'].map(l=>`<button class="sess-loc-btn${TS.location===l?' sel':''}" onclick="setSessLocation('${l}')">${l}</button>`).join('')}
+              <input class="sess-loc-other" id="sess-loc-other" placeholder="Other…" maxlength="40"
+                value="${['Home','Library','Café','Office','Campus'].includes(TS.location)?'':esc(TS.location||'')}"
+                oninput="setSessLocation(this.value,true)" onclick="event.stopPropagation()">
+            </div>
+          </div>
           <div class="sess-2col" style="margin-bottom:16px">
             <div class="sess-fgrp" style="margin-bottom:0">
               <label>Section</label>
@@ -7463,6 +7485,8 @@ function endSession(){
   clearInterval(timerInterval);timerInterval=null;
   if(TS.phase==='active')TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='recap';
+  // Preselect the last place they studied
+  if(!TS.location){try{TS.location=localStorage.getItem('pf2-last-loc')||'';}catch(e){}}
   tsPersist(); // phase is 'recap' → clears the persisted active-session key
   _stopPresence();
   renderSessCard();updateNavChip();
@@ -7507,6 +7531,18 @@ function setSessFeeling(f){
   document.querySelectorAll('.feeling-r-btn').forEach(b=>b.classList.toggle('sel',b.textContent===f));
 }
 
+function setSessLocation(loc, isCustom){
+  loc=(loc||'').trim();
+  // Tapping the already-selected pill clears it
+  if(!isCustom&&TS.location===loc) loc='';
+  TS.location=loc;
+  document.querySelectorAll('.sess-loc-btn').forEach(b=>b.classList.toggle('sel',b.textContent===loc));
+  if(!isCustom){
+    const other=document.getElementById('sess-loc-other');
+    if(other) other.value='';
+  }
+}
+
 function setSessDiff(d){
   TS.difficulty=d;
   document.querySelectorAll('.diff-r-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===d));
@@ -7533,8 +7569,10 @@ function saveSession(){
     concepts:[...TS.concepts],
     elapsed:TS.elapsed,
     photo:TS.sessionPhoto||null,
+    location:(TS.location||'').slice(0,40)||null,
     kudos:[],comments:[]
   };
+  if(TS.location){try{localStorage.setItem('pf2-last-loc',TS.location);}catch(e){}}
   const _priorScore=calcReadinessScore().score;
   S.activities.push(act);
   logLedgerEvent('session_logged', {section: act.section, hours: act.hours});
@@ -8012,6 +8050,7 @@ function _renderActivityPage(actId){
   <div style="padding:20px 16px 0">
     <div style="display:flex;gap:10px;margin-bottom:18px">${statBlocks}</div>
     ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div></div>`:''}
+    ${act.location?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Location</div><div style="font-size:13px;font-weight:600;color:var(--sub)">📍 ${esc(act.location)}</div></div>`:''}
     ${act.caption?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div><div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">"${act.caption}"</div></div>`:''}
     ${(act.concepts||[]).length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Concepts (${act.concepts.length})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${act.concepts.map(c=>`<span style="font-size:11px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:3px 10px;border-radius:20px;font-weight:600">${c}</span>`).join('')}</div></div>`:''}
     ${act.photo?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:300px"><img src="${act.photo}" alt="Study session photo" style="width:100%;max-height:300px;object-fit:cover;display:block" loading="lazy"></div>`:''}
