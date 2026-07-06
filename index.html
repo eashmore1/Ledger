@@ -3192,7 +3192,7 @@ function activatePlan(tier){
     SUB={...SUB,tier:'elite',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('Ledger Elite activated! You\'re unstoppable.','ok');
+    showToast('Ledger Elite activated.','ok');
   } else if(tier==='cram'){
     SUB={...SUB,tier:'cram',billingCycle:'one_time',startDate:Date.now(),cramEnd:Date.now()+183*86400000};
     saveSub(SUB);
@@ -5409,7 +5409,7 @@ function openPacingTipsModal(){
     else if(b.pacingPts<11) tips.push(`You're a bit tight on <strong>${b.section}</strong> pacing — adding 2-3 hrs/week builds a comfortable buffer`);
     // Practice (max 40) — most important signal
     if(!b.hasScores) tips.push(`No practice scores logged for <strong>${b.section}</strong> — this is 50 points locked. Log a Becker, Gleim, Wiley, or UWorld score to unlock the strongest readiness signal`);
-    else if(b.practicePts<20) tips.push(`Your <strong>${b.section}</strong> practice scores are below the 75 passing threshold — keep grinding and log each attempt to track your trajectory`);
+    else if(b.practicePts<20) tips.push(`Your <strong>${b.section}</strong> practice scores are below the 75 passing threshold — log each attempt to track your trajectory`);
     else if(b.practicePts<32) tips.push(`You're getting close on <strong>${b.section}</strong> practice — aim for 75+ consistently before scheduling`);
     // Momentum (max 10)
     if(b.hasScores&&b.momentumPts<=1) tips.push(`Your <strong>${b.section}</strong> practice scores are trending down — review weak areas and log another attempt`);
@@ -5418,7 +5418,7 @@ function openPacingTipsModal(){
     // Recency
     if(b.decayed&&b.logged&&b.decayed<b.logged*0.7) tips.push(`Most of your <strong>${b.section}</strong> hours were logged a long time ago — recent study counts more, so revisit the material`);
   });
-  if(!tips.length) tips=['✅ You\'re doing great — keep your current pace and keep logging practice scores!'];
+  if(!tips.length) tips=['On pace — keep logging sessions and practice scores.'];
 
   const el=document.createElement('div');
   el.className='modal-overlay open';
@@ -5563,7 +5563,7 @@ function buildWeeklyCommitment(){
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div>
         <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">This Week — <span class="badge badge-${curSec}" style="font-size:10px;vertical-align:middle">${curSec}</span></div>
-        <div style="font-size:16px;font-weight:900;margin-top:2px">${met?'✅ Goal Crushed!':remaining+'h left to hit your '+commitment+'h goal'}</div>
+        <div style="font-size:16px;font-weight:900;margin-top:2px">${met?'Weekly goal met':remaining+'h left to hit your '+commitment+'h goal'}</div>
       </div>
       <div style="text-align:right">
         <div style="font-size:28px;font-weight:900;color:${met?'var(--grn)':'var(--ind)'};line-height:1">${pct}<span style="font-size:14px">%</span></div>
@@ -5591,7 +5591,7 @@ function setWeeklyCommitment(hrs){
   S.commitments[weekKey]=hrs;
   saveState();
   switchTab('dashboard');
-  showToast(`Committed to ${hrs}h this week Let's go!`,'ok');
+  showToast(`Weekly goal set: ${hrs}h`,'ok');
 }
 
 function setCustomCommitment(){
@@ -9167,83 +9167,7 @@ function openClubChat(clubId){
 }
 
 function renderClubChat(clubId){ openClubChat(clubId); }
-function renderClubChat_OLD(clubId){
-  const club=(S.clubs||[]).find(c=>c.id===clubId);if(!club)return;
-  const msgs=(S.clubMessages||{})[clubId]||[];
-  const memberAvatars=club.members.slice(0,6).map((m,i)=>`<div class="avatar" style="width:26px;height:26px;font-size:10px;border-radius:50%;background:${getClubMemberColor(m)};color:#fff;border:2px solid var(--surf);margin-left:${i===0?0:-8}px;flex-shrink:0" title="${getClubMemberName(m)}">${getClubMemberInitials(m)}</div>`).join('');
-  const msgHTML=msgs.map(msg=>{
-    if(msg.isSystem)return`<div class="chat-system">— ${msg.text} —</div>`;
-    const isMine=msg.author==='you';
-    const name=getClubMemberName(msg.author);
-    const initials=getClubMemberInitials(msg.author);
-    const color=getClubMemberColor(msg.author);
-    const timeStr=new Date(msg.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    return`<div class="chat-row${isMine?' mine':''}">
-      <div class="avatar" style="width:26px;height:26px;font-size:10px;border-radius:50%;background:${color};color:#fff;flex-shrink:0">${initials}</div>
-      <div>
-        ${!isMine?`<div style="font-size:10px;color:var(--mut);margin-bottom:2px;font-weight:600">${name}</div>`:''}
-        <div class="chat-bub ${isMine?'chat-bub-mine':'chat-bub-them'}">${msg.text}</div>
-        <div class="chat-meta${!isMine?' chat-meta-them':''}">${timeStr}</div>
-      </div>
-    </div>`;
-  }).join('');
-  const el=document.getElementById('club-chat-content');
-  if(!el)return;
-  const memberCount=club.members.length;
-  const dmOtherId=club.isDM?club.members.find(m=>m!=='you'):null;
-  const dmFriend=dmOtherId?REAL_USERS.find(f=>f.id===dmOtherId):null;
-  const dmAvatarHtml=dmFriend?('<div class="avatar" style="width:34px;height:34px;border-radius:50%;background:'+getClubMemberColor(dmOtherId)+';color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">'+getClubMemberInitials(dmOtherId)+'</div>'):'💬';
-  const iconHtml=club.isDM?dmAvatarHtml:('<span style="font-size:24px">'+club.icon+'</span>');
-  const placeholderName=club.isDM&&dmFriend?dmFriend.name.split(' ')[0]:club.name;
-  el.innerHTML=`
-<div style="flex-shrink:0;padding:16px 20px 14px;border-bottom:1px solid var(--bdr)">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="flex-shrink:0">${iconHtml}</div>
-    <div style="min-width:0;flex:1">
-      <div style="font-size:15px;font-weight:800">${club.name}</div>
-      <div style="font-size:10px;color:var(--mut);margin-top:1px">${club.isDM?'Direct message':'🔒 Private · '+memberCount+' member'+(memberCount!==1?'s':'')}</div>
-    </div>
-    <div style="display:flex;align-items:center;padding-right:4px">${memberAvatars}</div>
-    <button class="modal-close" onclick="closeClubChat()" style="flex-shrink:0">×</button>
-  </div>
-</div>
-<div class="club-chat-area" id="cca-${clubId}" style="flex:1;padding:12px 20px;height:auto;min-height:0">${msgHTML||'<div class="chat-system">— No messages yet. Say hello! —</div>'}</div>
-<div class="chat-footer" style="flex-shrink:0;padding:10px 20px 16px;border-top:1px solid var(--bdr)">
-  <input class="chat-inp" id="cci-${clubId}" placeholder="Message ${placeholderName}…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendClubMessage('${clubId}');}">
-  <button class="chat-send" onclick="sendClubMessage('${clubId}')">Send</button>
-</div>`;
-  setTimeout(()=>{
-    const area=document.getElementById('cca-'+clubId);
-    if(area)area.scrollTop=area.scrollHeight;
-    document.getElementById('cci-'+clubId)?.focus();
-  },50);
-}
-
 function sendClubMessage(clubId){ sendFirebaseMessage(clubId,'clubs'); }
-function sendClubMessage_DEAD(clubId_DEAD){
-  const inp_DEAD=document.getElementById('cci-'+clubId_DEAD);
-  const text=inp?.value?.trim();if(!text)return;
-  if(!S.clubMessages)S.clubMessages={};
-  if(!S.clubMessages[clubId])S.clubMessages[clubId]=[];
-  S.clubMessages[clubId].push({author:'you',text,time:new Date().toISOString()});
-  saveState();
-  inp.value='';
-  renderClubChat(clubId);
-  // Simulate a reply from a club member for live feel
-  const club=(S.clubs||[]).find(c=>c.id===clubId);
-  const others=(club?.members||[]).filter(m=>m!=='you');
-  if(others.length){
-    const replies=['Great session!','Keep grinding! 🔥','Same! I just wrapped a session too.','How many MCQs did you do?',"That topic is no joke — you've got this though!",'Big brain energy','Let\'s crush this exam together','Nice work! What material did you cover?','On a roll!! 🔥','Solid. That chapter is super testable.'];
-    const reply=replies[Math.floor(Math.random()*replies.length)];
-    const responder=others[Math.floor(Math.random()*others.length)];
-    setTimeout(()=>{
-      if(!(S.clubMessages||{})[clubId])return;
-      S.clubMessages[clubId].push({author:responder,text:reply,time:new Date().toISOString()});
-      saveState();
-      renderClubChat(clubId);
-    },1100+Math.random()*1200);
-  }
-}
 function closeClubChat(){_detachMsgListener();document.getElementById('club-chat-modal')?.classList.remove('open');}
 
 async function joinPublicClub(pubId){
@@ -10588,7 +10512,7 @@ function submitScore(section){
   S.practiceScores[section].push({score,label,date});
   saveState();
   closePostModal();
-  showToast(`${section} score ${score} logged! ${score>=75?'Exam-ready territory!':'Keep grinding'}`,'ok');
+  showToast(`${section} score ${score} logged${score>=75?' — at passing level':''}`,'ok');
   renderTab();
 }
 
@@ -12326,7 +12250,7 @@ function _finishQuiz() {
   const pct = Math.round(score / total * 100);
   const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
   const color = sec ? sec.color : '#6366f1';
-  const grade = pct >= 75 ? {label:'Great job!', icon:'🎉', c:'var(--grn)'} : pct >= 55 ? {label:'Keep pushing', icon:'📈', c:'var(--amb)'} : {label:'Keep studying', icon:'📚', c:'var(--red)'};
+  const grade = pct >= 75 ? {label:'Passing level', icon:'✓', c:'var(--grn)'} : pct >= 55 ? {label:'Getting close', icon:'', c:'var(--amb)'} : {label:'Needs review', icon:'', c:'var(--red)'};
 
   // Save progress
   S.qbProgress = S.qbProgress || {};
@@ -12358,7 +12282,7 @@ function _finishQuiz() {
     '<div style="background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:20px;padding:36px 28px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(212,64,0,.6),transparent 50%),radial-gradient(ellipse at 100% 0%,rgba(90,95,207,.2),transparent 40%)"></div>' +
       '<div style="position:relative;z-index:1">' +
-        '<div style="font-size:44px;margin-bottom:10px">' + grade.icon + '</div>' +
+        (grade.icon ? '<div style="font-size:44px;margin-bottom:10px;color:' + grade.c + '">' + grade.icon + '</div>' : '') +
         '<div style="font-size:68px;font-weight:900;color:' + grade.c + ';line-height:1;letter-spacing:-3px">' + pct + '%</div>' +
         '<div style="font-size:16px;font-weight:800;color:' + grade.c + ';margin-top:6px">' + grade.label + '</div>' +
         '<div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:8px">' + score + ' of ' + total + ' correct</div>' +
@@ -13005,7 +12929,7 @@ function buildAIStudyCoach() {
   const hrsPerDay = daysLeft > 0 ? (focusRemain / daysLeft).toFixed(1) : '?';
   const coachMsg = 'You\'re ' + focusRemain + 'h away from your ' + focusSection + ' target. ' +
     'At your current pace, you need ' + hrsPerDay + 'h/day' + (daysLeft<60?' over the next ' + daysLeft + ' days':'') + ' to hit your goal. ' +
-    (overallPct >= 70 ? 'Your overall pace is strong — keep it up.' : 'Increasing consistency now will compound significantly by exam day.');
+    (overallPct >= 70 ? 'Your overall pace is on track.' : 'More consistent sessions now will raise your readiness score before exam day.');
 
   // Next milestone
   const totalHrs = Math.round(totalLogged);
@@ -16288,7 +16212,7 @@ async function logExamResult(){
     const hrs=Math.round(getSectionHours(section));
     setTimeout(()=>showPassCelebration(section,scoreRaw,hrs),400);
   } else {
-    showToast(`${section} result logged — score ${scoreRaw}. You've got this on the retake`,'info');
+    showToast(`${section} result logged — score ${scoreRaw}.`,'info');
   }
 }
 
