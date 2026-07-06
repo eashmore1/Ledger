@@ -9991,7 +9991,7 @@ function _attachClubPresence(clubId){
           '<div class="avatar" style="width:24px;height:24px;font-size:9px;border-radius:50%;background:'+(p.color||'#5a5fcf')+';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+esc(p.initials||'?')+'</div>'+
           '<span style="font-size:11px;color:#fff;font-weight:600">'+esc(p.name||'Member')+(p.section?' · '+esc(p.section):'')+(mins?' · '+mins+'m':'')+'</span></div>';
       }).join('')+'</div>'+
-      ((window.AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">Start studying with them</button>':'')+
+      ((AUTH&&!live.some(p=>p.uid===AUTH.uid))?'<button onclick="closeClubView();openSessionModal()" style="margin-top:12px;width:100%;padding:9px;background:#22c55e;color:#04301c;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer">Start studying with them</button>':'')+
     '</div>';
   },err=>{});
 }
