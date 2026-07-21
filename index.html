@@ -932,6 +932,16 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,
 @media(max-width:700px){
   .dash-row-2col{grid-template-columns:1fr}
 }
+/* ── EXPLORE 2-COL ── */
+.explore-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto}
+@media(max-width:760px){.explore-2col{grid-template-columns:1fr}}
+/* Page-shell nav (messages/profile/club pages): compact on mobile */
+@media(max-width:640px){
+  .page-nav-session{display:none}
+  .page-nav-back{padding:8px 10px!important;font-size:12px!important}
+}
+/* Never allow sideways scroll — clips tab-slide animations and any stray overflow */
+html,body{overflow-x:hidden}
 /* ── SCORE TRACKER ROWS ── */
 .score-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);flex-wrap:wrap}
 .score-row:last-child{border-bottom:none;padding-bottom:0}
@@ -2812,7 +2822,7 @@ async function checkReferralRewards(){
   if(!firebaseDb||!AUTH||!AUTH.uid||!S) return;
   try{
     const snap=await firebaseDb.collection('users').doc(AUTH.uid).collection('referrals').get();
-    const count=snap.size;
+    const count=snap.size||0;
     const rewarded=S.referralRewarded||0;
     if(count<=rewarded) return;
     const newOnes=count-rewarded;
@@ -6147,8 +6157,8 @@ function buildProfile(){
 <!-- HERO — full width -->
 <div class="profile-hero" style="margin-bottom:20px;border-radius:14px">
   <div class="profile-hero-inner">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
-      <div style="display:flex;align-items:center;gap:18px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:16px;min-width:0;flex:1 1 240px">
         <div class="profile-av-wrap" onclick="openEditProfile()" title="Edit profile" style="width:88px;height:88px;font-size:32px">
           ${S.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:30px;font-weight:900;letter-spacing:-.03em">${initials}</span>`}
           <div class="profile-av-edit-overlay">Edit</div>
@@ -6164,7 +6174,7 @@ function buildProfile(){
         <button onclick="openQRModal()" title="Invite QR Code" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);border-radius:8px;padding:8px 11px;font-size:14px;cursor:pointer">⬛</button>
       </div>
     </div>
-    <div style="display:flex;gap:0;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12)">
+    <div style="display:flex;gap:0;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap;row-gap:12px">
       <button onclick="${(S.followRequests||[]).length?'openFollowRequestsModal()':'openFollowModal(\'followers\')'}" style="background:none;border:none;cursor:pointer;text-align:center;padding:0 24px 0 0;position:relative">
         <div id="my-foll-cnt" style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1">${followersCount}</div>
         <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">Followers</div>
@@ -6402,7 +6412,7 @@ function buildExplore(){
   const inactiveCount=circleEntries.length-activeThisWeek.length;
 
   return`
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto">
+<div class="explore-2col">
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
@@ -7950,10 +7960,10 @@ function _appPageNavHTML(){
   const avatarContent=S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
   return`<nav class="topnav">
     <div class="topnav-inner">
-      <button onclick="history.back()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
+      <button onclick="history.back()" class="page-nav-back" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
       <div class="nav-logo" onclick="currentTab='feed';renderApp()" style="display:flex;align-items:center;gap:7px;margin:0 auto;cursor:pointer">${_LOGO_SVG}Ledger</div>
       <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="openSessionModal()" class="post-btn" style="font-size:12px;padding:7px 14px">Start Session</button>
+        <button onclick="openSessionModal()" class="post-btn page-nav-session" style="font-size:12px;padding:7px 14px">Start Session</button>
         <button onclick="openEditProfile()" style="background:${avatarBg};border:2px solid var(--bdr);border-radius:50%;width:34px;height:34px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${avatarContent}</button>
       </div>
     </div>
@@ -10855,7 +10865,7 @@ function openAppSettings(section='account'){
     </div>
     <button onclick="closeAppSettings()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1">×</button>
   </div>
-  <div id="as-mobile-nav" style="display:none;overflow-x:auto;padding:10px 12px;gap:6px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch"></div>
+  <div id="as-mobile-nav" style="display:none;flex-wrap:wrap;padding:10px 12px;gap:6px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0"></div>
   <div style="display:flex;flex:1;min-height:0;overflow:hidden">
     <div id="as-sidebar" style="width:170px;flex-shrink:0;border-right:1px solid var(--bdr);padding:10px 8px;overflow-y:auto;background:var(--surf)"></div>
     <div id="as-body" style="flex:1;overflow-y:auto;padding:22px 24px 40px;min-width:0"></div>
