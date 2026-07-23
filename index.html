@@ -947,7 +947,8 @@ html,body{overflow-x:hidden}
 .onb-card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:11001;width:min(400px,calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:var(--surf);border:1.5px solid var(--bdr2);border-radius:18px;padding:20px;box-shadow:0 16px 50px rgba(0,0,0,.4);animation:onbPop .28s cubic-bezier(.22,.61,.36,1)}
 @keyframes onbPop{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .onb-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.onb-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.onb-avatar{width:42px;height:42px;border-radius:12px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.onb-avatar svg{display:block}
 .onb-name{font-size:14px;font-weight:800;color:var(--txt);line-height:1.2}
 .onb-sub{font-size:10.5px;color:var(--mut);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
 .onb-x{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--mut);font-size:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s}
@@ -1470,7 +1471,7 @@ function _renderOnbCard(){
   card.id='onb-card'; card.className='onb-card';
   card.innerHTML=
     '<div class="onb-head">'+
-      '<div class="onb-avatar">🤖</div>'+
+      '<div class="onb-avatar">'+_ledgerMascotSVG(34)+'</div>'+
       '<div style="flex:1;min-width:0">'+
         '<div class="onb-name">Ask Ledger</div>'+
         '<div class="onb-sub">'+secLabel+'</div>'+
@@ -6233,7 +6234,7 @@ function buildProfile(){
     const myHrs=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     const ahead=myHrs>theirHrs+0.5;
     const behind=theirHrs>myHrs+0.5;
-    const statusMsg=ahead?`You're ahead by ${(myHrs-theirHrs).toFixed(1)}h this week`:behind?`${partner.name.split(' ')[0]} is ahead by ${(theirHrs-myHrs).toFixed(1)}h — keep pushing!`:`Neck and neck this week 🔥`;
+    const statusMsg=ahead?`You're ahead by ${(myHrs-theirHrs).toFixed(1)}h this week`:behind?`${partner.name.split(' ')[0]} is ahead by ${(theirHrs-myHrs).toFixed(1)}h this week`:`Neck and neck this week`;
     return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">YOU</div><div style="font-size:18px;font-weight:900;color:var(--ora)">${myHrs.toFixed(1)}h</div></div><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--mut);margin-bottom:2px">${partner.name.split(' ')[0].toUpperCase()}</div><div style="font-size:18px;font-weight:900;color:var(--ind)">${theirHrs.toFixed(1)}h</div></div></div><div style="font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center">${statusMsg}</div><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px;background:${partner.color};color:#fff">${partner.initials}</div><span style="font-size:12px;font-weight:600;flex:1">${partner.name}</span><button class="btn btn-ghost btn-xs" style="font-size:10px" onclick="pingStudyPartner('${partner.id}','${partner.name.replace(/'/g,"&#39;")}')">Check In</button><button class="btn btn-ghost btn-xs" style="color:var(--mut)" onclick="removeStudyPartner()">✕</button></div>`;
   })();
 
@@ -6259,7 +6260,6 @@ function buildProfile(){
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0;padding-top:2px">
         <button onclick="openEditProfile()" style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer">Edit Profile</button>
-        <button onclick="openQRModal()" title="Invite QR Code" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);border-radius:8px;padding:8px 11px;font-size:14px;cursor:pointer">⬛</button>
       </div>
     </div>
     <div style="display:flex;gap:0;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12);flex-wrap:wrap;row-gap:12px">
@@ -9597,43 +9597,6 @@ function _copyInviteFromSheet(b){
   (navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>showToast('Invite link copied!','ok')).catch(()=>_execCommandShare(url));
 }
 
-function openQRModal(){
-  let el=document.getElementById('qr-modal');
-  if(el) el.remove();
-  el=document.createElement('div');
-  el.id='qr-modal';
-  el.className='modal-overlay open';
-  const inviteUrl='https://ledgercpa.app/join?c='+(S.firmCode||'')+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
-  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data='+encodeURIComponent(inviteUrl);
-  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:340px;text-align:center">
-    <div class="modal-hdr">
-      <div class="modal-title">Invite QR Code</div>
-      <button class="modal-close" onclick="closeQRModal()">×</button>
-    </div>
-    <div style="padding:24px 22px">
-      <div style="font-size:13px;color:var(--mut);margin-bottom:20px">Have a friend scan this to join your study group — you both get free Pro when they sign up.</div>
-      <div style="background:#fff;border-radius:16px;padding:18px;display:inline-block;margin-bottom:18px;box-shadow:0 4px 20px rgba(0,0,0,.12)">
-        <img src="${qrUrl}" alt="Invite QR Code" style="width:200px;height:200px;border-radius:8px;display:block">
-      </div>
-      <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:4px">${esc(S.name||'CPA Candidate')}'s invite</div>
-      <div style="font-size:12px;color:var(--ora);font-weight:600;margin-bottom:20px">You both get free Pro</div>
-      <div style="display:flex;gap:10px">
-        <button onclick="shareQRProfile('${inviteUrl}')" style="flex:1;padding:11px;background:var(--ora);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Share Invite Link</button>
-        <button onclick="closeQRModal()" style="padding:11px 16px;background:var(--surf2);border:1.5px solid var(--bdr2);border-radius:10px;color:var(--txt);font-size:13px;font-weight:600;cursor:pointer">Done</button>
-      </div>
-    </div>
-  </div>`;
-  el.addEventListener('click',e=>{if(e.target===el)closeQRModal();});
-  document.body.appendChild(el);
-}
-
-function closeQRModal(){document.getElementById('qr-modal')?.remove();}
-
-function shareQRProfile(url){
-  closeQRModal();
-  shareInvite({url});
-}
-
 // ═══════════════════════════════════════════════
 // MESSAGES MODAL
 // ═══════════════════════════════════════════════
@@ -11417,7 +11380,7 @@ function buildSettingsData(){
 
 <div class="section-title" style="margin-top:20px">App Preferences</div>
 <button onclick="restartOnboarding()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.borderColor='var(--ind)'" onmouseout="this.style.borderColor='var(--bdr)'">
-  <span style="font-size:18px">🤖</span>
+  <span style="display:flex;flex-shrink:0">${_ledgerMascotSVG(22)}</span>
   <div style="text-align:left">
     <div style="font-size:13px;font-weight:700;color:var(--txt)">Restart Tutorial</div>
     <div style="font-size:11px;color:var(--mut)">Have Ask Ledger walk you through each section again</div>
@@ -13035,7 +12998,7 @@ function buildAIStudyCoach() {
   const nextMile = milestones.find(function(m){ return m > totalHrs; }) || null;
   const milestoneHTML = nextMile
     ? 'Next: <strong>' + nextMile + 'h</strong> milestone — only <strong>' + (nextMile-totalHrs) + 'h</strong> away!'
-    : 'You\'ve passed all major milestones! 🏆';
+    : 'You\'ve passed all major milestones.';
 
   // Load usage from Firestore (async, updates DOM when ready)
   setTimeout(_loadAskLedgerUsage, 0);
@@ -14821,7 +14784,7 @@ function generateAIPlan(settings){
       {n:2,mode:'final_review',name:'Phase 2 — Final Sprint',icon:'🚀',start:p1+1,end:planDays,focus:'Targeted TBS practice, a mock exam, and final-week mental prep.',color:'#9333ea'},
     ];
   } else {
-    phases=[{n:1,mode:'final_review',name:'Exam Crunch 🔥',icon:'🔥',start:1,end:planDays,focus:'High-yield MCQs and key TBS only. No new material. Stay sharp and rested.',color:'#ef4444'}];
+    phases=[{n:1,mode:'final_review',name:'Exam Crunch',icon:'🔥',start:1,end:planDays,focus:'High-yield MCQs and key TBS only. No new material. Stay sharp and rested.',color:'#ef4444'}];
   }
 
   // Sprint alternating modes for final phase
