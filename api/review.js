@@ -11,6 +11,31 @@
 // send from noreply@ledgercpa.app. Until then, Resend will use their sandbox.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── In-memory per-IP rate limiter (5 submissions / IP / hour) ─────────────────
+// Best-effort only — Vercel serverless instances don't share memory, so this
+// caps abuse from a single warm instance rather than guaranteeing a hard global
+// limit. Good enough to blunt casual spam/quota-exhaustion without adding a
+// dependency; swap for Vercel KV if this ever needs to be airtight.
+const _reviewRateLimiter = new Map();
+function checkReviewRateLimit(ip, max = 5) {
+  const now = Date.now();
+  const windowMs = 60 * 60 * 1000; // 1 hour
+  const entry = _reviewRateLimiter.get(ip) || { count: 0, reset: now + windowMs };
+  if (now > entry.reset) { entry.count = 0; entry.reset = now + windowMs; }
+  entry.count++;
+  _reviewRateLimiter.set(ip, entry);
+  return entry.count <= max;
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 module.exports = async (req, res) => {
   // CORS
   const origin = req.headers.origin || '';
@@ -21,14 +46,19 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  const ip = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
+  if (!checkReviewRateLimit(ip)) {
+    return res.status(429).json({ error: 'Too many submissions — try again later' });
+  }
+
   const { stars, text, name } = req.body || {};
-  const trimmedText = (text || '').trim();
+  const trimmedText = (text || '').trim().slice(0, 2000);
 
   if (!trimmedText) return res.status(400).json({ error: 'Review text is required' });
 
   const starCount = Math.min(5, Math.max(1, parseInt(stars) || 5));
   const starDisplay = '⭐'.repeat(starCount);
-  const displayName = (name || '').trim() || 'Anonymous';
+  const displayName = ((name || '').trim() || 'Anonymous').slice(0, 80);
 
   const toEmail = process.env.REVIEW_EMAIL || 'support@ledgercpa.app';
   const fromEmail = 'Ledger Reviews <noreply@ledgercpa.app>';
@@ -64,9 +94,9 @@ module.exports = async (req, res) => {
   </div>
   <div style="border:1px solid #e5e7eb;border-top:none;border-radius:0 0 14px 14px;padding:24px">
     <div style="font-size:28px;margin-bottom:12px">${starDisplay}</div>
-    <div style="font-size:14px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">${starCount} / 5 stars — ${displayName}</div>
+    <div style="font-size:14px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">${starCount} / 5 stars — ${escapeHtml(displayName)}</div>
     <blockquote style="margin:16px 0;padding:16px 20px;background:#f9fafb;border-left:4px solid #d44000;border-radius:0 10px 10px 0;font-size:15px;line-height:1.65;font-style:italic;color:#374151">
-      "${trimmedText}"
+      "${escapeHtml(trimmedText)}"
     </blockquote>
     <div style="font-size:12px;color:#9ca3af;margin-top:16px">Submitted via Ledger app · ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
   </div>

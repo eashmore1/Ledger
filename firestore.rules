@@ -69,8 +69,22 @@ service cloud.firestore {
     // Any authenticated user can join (write to their own member doc).
     match /clubs/{clubId} {
       allow read: if request.auth != null;
-      // Allow create/update so users can join and update club metadata
-      allow create, update: if request.auth != null;
+      // Create/update club metadata — any signed-in user (joining a firm cohort
+      // writes this doc before their own members/ record exists, so we can't
+      // require membership here without breaking that flow). To still block
+      // arbitrary field injection, only these known fields may be written.
+      allow create: if request.auth != null &&
+        request.resource.data.keys().hasOnly([
+          'name','desc','icon','isPrivate','isPublic','isCohort','firmCode',
+          'members','lastMessage','lastFrom','lastAt','memberCount',
+          'monthlyGoalHrs','monthlyGoalSetBy','monthlyGoalAt','created'
+        ]);
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name','desc','icon','isPrivate','isPublic','isCohort','firmCode',
+          'members','lastMessage','lastFrom','lastAt','memberCount',
+          'monthlyGoalHrs','monthlyGoalSetBy','monthlyGoalAt','created'
+        ]);
 
       match /messages/{msgId} {
         allow read: if request.auth != null;

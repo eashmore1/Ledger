@@ -46,22 +46,30 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   // ── Auth — verify Firebase ID token ──────────────────────────────────────────
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-  let uid = null;
-
-  if (token && admin.apps.length) {
-    try {
-      const decoded = await admin.auth().verifyIdToken(token);
-      uid = decoded.uid;
-    } catch (e) {
-      // Token invalid — still allow (unauthenticated fallback for dev/testing)
-      console.warn('Token verification failed:', e.message);
-    }
+  // A valid token is required: this endpoint proxies a paid Anthropic API key,
+  // so an unauthenticated path would let anyone run up the bill with no cap.
+  if (!admin.apps.length) {
+    console.error('Firebase Admin not initialized — check FIREBASE_SERVICE_ACCOUNT');
+    return res.status(500).json({ error: 'Auth service not configured' });
   }
 
-  // ── Rate limit (only for authenticated users) ─────────────────────────────────
-  if (uid && !checkRateLimit(uid)) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (!token) {
+    return res.status(401).json({ error: 'Sign in to use Ask Ledger' });
+  }
+
+  let uid;
+  try {
+    const decoded = await admin.auth().verifyIdToken(token);
+    uid = decoded.uid;
+  } catch (e) {
+    console.warn('Token verification failed:', e.message);
+    return res.status(401).json({ error: 'Your session expired — sign in again' });
+  }
+
+  // ── Rate limit ─────────────────────────────────────────────────────────────
+  if (!checkRateLimit(uid)) {
     return res.status(429).json({ error: 'Rate limit reached — you can ask 30 questions per hour.' });
   }
 
