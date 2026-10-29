@@ -105,7 +105,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .success-msg{display:none;text-align:center;padding:var(--sp-3) 0}
 .success-msg .check{font-size:36px;margin-bottom:var(--sp-1)}
 .success-msg h3{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px}
-.success-msg p{font-size:13px;color:var(--sub)}
+.success-msg p{font-size:13px;color:var(--sub);line-height:1.6}
+.success-msg a{color:var(--ora);font-weight:600;text-decoration:none}
+.success-msg a:hover{text-decoration:underline}
 
 /* FOOTER */
 .lg-footer{background:#0c0a14;color:rgba(255,255,255,.78);padding:var(--sp-7) var(--sp-3) var(--sp-4);font-family:var(--font);margin-top:var(--sp-8)}
@@ -158,7 +160,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
       <a href="/landing" class="nav-link">Home</a>
       <a href="/about" class="nav-link">About</a>
       <a href="/pricing" class="nav-link">Pricing</a>
-      <a href="/" class="nav-cta show-mobile">Open App →</a>
+      <a href="/faq" class="nav-link">FAQ</a>
+      <a href="/" class="nav-link show-mobile">Sign In</a>
+      <a href="/" class="nav-cta">Open App →</a>
     </div>
   </div>
 </nav>
@@ -243,9 +247,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
         <button type="submit" class="submit-btn">Send Message →</button>
       </form>
       <div class="success-msg" id="success-msg">
-        <div class="check">✓</div>
-        <h3>Message sent.</h3>
-        <p>We'll get back to you at the email you provided, usually within a day.</p>
+        <div class="check">✉️</div>
+        <h3>Opening your email app…</h3>
+        <p>We've pre-filled a message to support@ledgercpa.app — hit send there to reach us. If nothing opened (common on work/school computers), email us directly: <a href="mailto:support@ledgercpa.app">support@ledgercpa.app</a></p>
       </div>
     </div>
   </div>
