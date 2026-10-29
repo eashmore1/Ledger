@@ -57,7 +57,7 @@
 <!-- Stripe.js intentionally NOT loaded — checkout uses hosted Payment Links (redirects),
      so the ~1MB Stripe SDK is unnecessary on every page. Re-add only if embedding Stripe Elements. -->
 <!-- canvas-confetti — used for exam pass celebration -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" crossorigin="anonymous"></script>
 <!-- OTPAuth — TOTP for two-factor authentication -->
 <script defer src="https://cdn.jsdelivr.net/npm/otpauth@9.3.6/dist/otpauth.umd.min.js"></script>
 <style>
@@ -313,7 +313,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .week-day-lbl{font-size:10px;color:var(--mut);font-weight:600;text-transform:uppercase}
 
 /* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:500;align-items:center;justify-content:center;padding:var(--sp-4);backdrop-filter:blur(4px)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:500;align-items:center;justify-content:center;padding:var(--sp-4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
@@ -350,7 +350,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-brand{font-size:42px;font-weight:800;color:#fff;letter-spacing:0;margin-bottom:6px;line-height:1;font-family:var(--font-display)}
 .auth-brand-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:48px;line-height:1.6}
 .auth-feature{display:flex;align-items:flex-start;gap:15px;margin-bottom:22px}
-.auth-feature-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;backdrop-filter:blur(4px)}
+.auth-feature-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .auth-feature-text strong{display:block;font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;letter-spacing:-.01em}
 .auth-feature-text span{font-size:12px;color:rgba(255,255,255,.5);line-height:1.55}
 .auth-social-proof{margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.4)}
@@ -540,7 +540,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── CLUB CHAT ── */
 .club-member-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;font-size:11px;font-weight:600;margin:2px}
 /* ── SESSION TIMER OVERLAY ── */
-.sess-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(10px)}
+.sess-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .sess-overlay.open{display:flex}
 .sess-box{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:600px;overflow:hidden;animation:modalIn .2s ease}
 .sess-box.sess-box-wide{max-width:820px}
@@ -709,7 +709,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .soc-link-name{font-size:13px;font-weight:700;letter-spacing:-.01em}
 .soc-link-url{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* ── PRO LOCK OVERLAY ── */
-.pro-lock-overlay{position:absolute;inset:0;background:rgba(var(--bg-rgb,242,237,230),.88);backdrop-filter:blur(4px);border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;padding:20px;cursor:pointer;transition:background var(--transition)}
+.pro-lock-overlay{position:absolute;inset:0;background:rgba(var(--bg-rgb,242,237,230),.88);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;padding:20px;cursor:pointer;transition:background var(--transition)}
 .pro-lock-overlay:hover{background:rgba(var(--bg-rgb,242,237,230),.95)}
 .pro-lock-icon{font-size:28px}
 .pro-lock-title{font-size:13px;font-weight:800;color:var(--txt);text-align:center;letter-spacing:-.02em}
@@ -931,7 +931,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,
 /* Never allow sideways scroll — clips tab-slide animations and any stray overflow */
 html,body{overflow-x:hidden}
 /* ── CONTEXTUAL ONBOARDING (Ask Ledger guide) ── */
-.onb-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:11000;backdrop-filter:blur(2px);animation:fadeIn .2s}
+.onb-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:11000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);animation:fadeIn .2s}
 .onb-card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:11001;width:min(400px,calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:var(--surf);border:1.5px solid var(--bdr2);border-radius:18px;padding:20px;box-shadow:0 16px 50px rgba(0,0,0,.4);animation:onbPop .28s cubic-bezier(.22,.61,.36,1)}
 @keyframes onbPop{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .onb-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
@@ -1564,85 +1564,6 @@ function showStudentVerifyBanner(){ return; // disabled until student discount l
   else wrap.prepend(bar);
 }
 
-function openStudentVerifyModal(){
-  const existing = document.getElementById('student-verify-modal');
-  if(existing) existing.remove();
-  const email = AUTH?.email || '';
-  const isEdu = email.toLowerCase().endsWith('.edu');
-  const modal = document.createElement('div');
-  modal.id = 'student-verify-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:#1e1730;border-radius:16px;padding:32px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.5);font-family:Inter,system-ui,sans-serif;color:#fff;position:relative">
-      <button onclick="document.getElementById('student-verify-modal').remove()"
-        style="position:absolute;top:16px;right:16px;background:transparent;border:none;color:rgba(255,255,255,.5);font-size:22px;cursor:pointer;line-height:1">×</button>
-      <div style="font-size:28px;margin-bottom:8px">🎓</div>
-      <h2 style="margin:0 0 8px;font-size:18px;font-weight:700">Student Discount Verification</h2>
-      <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,.65);line-height:1.6">
-        Your student plan ($5/mo) requires a university <strong>.edu email address</strong>.
-        Enter it below to confirm your enrollment status.
-      </p>
-      ${isEdu ? `
-        <div style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:16px;color:#6ee7b7">
-          ✅ Your current sign-in email <strong>${email}</strong> is already a .edu address! Click below to verify instantly.
-        </div>
-      ` : `
-        <p style="font-size:12px;color:rgba(255,255,255,.5);margin:0 0 8px">Current sign-in email: <strong>${email}</strong> <span style="color:#f87171">(not a .edu)</span></p>
-      `}
-      <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:6px">YOUR .EDU EMAIL ADDRESS</label>
-      <input id="student-edu-input" type="email" placeholder="yourname@university.edu"
-        value="${isEdu ? email : ''}"
-        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;outline:none;margin-bottom:16px"
-        oninput="document.getElementById('student-edu-err').textContent=''"
-      />
-      <div id="student-edu-err" style="color:#f87171;font-size:12px;margin-bottom:10px;min-height:16px"></div>
-      <button onclick="submitStudentVerify()"
-        style="width:100%;background:#d44000;border:none;color:#fff;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">
-        ✓ Verify Student Status
-      </button>
-      <p style="margin:0;font-size:11px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5">
-        By verifying you confirm you are currently enrolled at an accredited institution.<br>
-        Need help? <a href="mailto:support@ledgercpa.app" style="color:#d44000">support@ledgercpa.app</a>
-      </p>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  setTimeout(()=>{ const inp=document.getElementById('student-edu-input'); if(inp) inp.focus(); }, 100);
-}
-
-async function submitStudentVerify(){
-  const inp = document.getElementById('student-edu-input');
-  const err = document.getElementById('student-edu-err');
-  if(!inp || !err) return;
-  const val = inp.value.trim().toLowerCase();
-  if(!val){ err.textContent='Please enter your .edu email address.'; return; }
-  if(!val.endsWith('.edu')){ err.textContent='Must be a .edu email address (e.g. you@university.edu).'; return; }
-  // Simple format check
-  if(!val.includes('@') || val.split('@')[0].length < 2){ err.textContent='Please enter a valid email address.'; return; }
-  // Mark verified
-  inp.disabled = true;
-  const btn = inp.parentElement.querySelector('button[onclick="submitStudentVerify()"]');
-  if(btn){ btn.disabled=true; btn.textContent='Verifying…'; }
-  try{
-    if(firebaseDb && AUTH?.uid){
-      await firebaseDb.collection('users').doc(AUTH.uid).update({
-        'sub.studentVerified': true,
-        'sub.studentEduEmail': val,
-        'sub.updatedAt': Date.now(),
-      });
-    }
-    SUB.studentVerified = true;
-    SUB.studentEduEmail = val;
-    saveSub(SUB);
-    document.getElementById('student-verify-modal')?.remove();
-    document.getElementById('student-verify-banner')?.remove();
-    showToast('Student status verified! Enjoy your discount.','ok');
-  }catch(e){
-    if(btn){ btn.disabled=false; btn.textContent='✓ Verify Student Status'; }
-    inp.disabled = false;
-    err.textContent = 'Could not save — please try again.';
-  }
-}
 // ─────────────────────────────────────────────────────────────────────────────
 
 function redirectToStripeCheckout(planKey){
@@ -3261,36 +3182,6 @@ function activatePlan(tier){
   renderApp();
 }
 
-function openStudentDiscount(){
-  closeUpgradeModal();
-  const el=document.createElement('div');
-  el.className='modal-overlay open';
-  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
-  el.innerHTML=
-  '<div class="modal-box" onclick="event.stopPropagation()">'+
-  '<div class="modal-hdr"><div class="modal-title">Student Discount</div><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">×</button></div>'+
-  '<div class="modal-body">'+
-  '<div style="font-size:13px;color:var(--sub);margin-bottom:18px;line-height:1.7">Verify your student status to unlock <strong>35% off Pro</strong> — that\'s just <strong>$13/month</strong> (or $10.40/mo on annual). Valid for currently enrolled accounting students.</div>'+
-  '<div class="form-grp"><label>Your .edu Email Address</label><input type="email" id="student-email" placeholder="you@university.edu" style="width:100%"/></div>'+
-  '<div class="form-grp"><label>School Name</label><input type="text" id="student-school" placeholder="University of Texas, Austin"/></div>'+
-  '<div class="form-grp"><label>Expected Graduation Year</label><input type="text" id="student-year" placeholder="2026 or 2027"/></div>'+
-  '<div style="background:var(--tea-bg);border:1px solid rgba(20,184,166,.25);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--sub);margin-bottom:16px;line-height:1.7">We\'ll send a verification email within minutes. Once verified, the discount applies automatically to your next billing cycle.</div>'+
-  '<button onclick="submitStudentDiscount()" style="width:100%;padding:13px;background:var(--tea);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">Send Verification Email</button>'+
-  '</div>'+
-  '</div>';
-  document.body.appendChild(el);
-}
-
-function submitStudentDiscount(){
-  const email=document.getElementById('student-email')?.value||'';
-  if(!email.includes('.edu')&&!email.includes('edu')){
-    showToast('Please use your .edu email address','err'); return;
-  }
-  document.querySelector('.modal-overlay.open:last-child')?.remove();
-  SUB.studentVerified=true; saveSub(SUB);
-  showToast('Verification email sent! Check your inbox.','ok');
-}
-
 // Pro paywall gate — call before rendering a locked feature
 function requirePro(featureName,onGranted){
   if(isPro()){onGranted();return;}
@@ -3674,7 +3565,7 @@ function renderAuth(){
       <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div></div>
     </div>`:''}
     <div id="auth-heading" style="margin-bottom:26px">
-      <div style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_invName?'Join '+esc(_invName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</div>
+      <h1 style="font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-.03em">${_invName?'Join '+esc(_invName)+'\'s study group':authMode==='signin'?'Welcome back':'Create your account'}</h1>
       <div style="font-size:13.5px;color:var(--sub);line-height:1.5">${_invName?'Create your free account to connect':authMode==='signin'?'Sign in to continue your CPA journey':'Join a focused community grinding toward the CPA'}</div>
     </div>
 
@@ -5055,7 +4946,7 @@ function buildPassCard(a,ex){
   const hasGivenProps=Array.isArray(a.kudos)&&(a.kudos.includes('you')||a.kudos.includes(AUTH?.uid));
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const _pic=a.userPic||(a.isMine?S?.profilePic:'')||'';
-  const _avatarHtml=_pic?`<img src="${_pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials||''}`;
+  const _avatarHtml=_pic?`<img src="${_pic}" alt="${esc(a.userName||'User')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials||''}`;
   const scoreLine=(typeof a.score==='number')?`<div style="font-size:13px;color:rgba(255,255,255,.85);font-weight:700;margin-top:2px">Score: ${a.score}</div>`:'';
   return`<div class="activity-card pass-card" style="margin-bottom:16px;overflow:hidden;border:1px solid ${ex.color}55" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header">
@@ -5097,8 +4988,8 @@ function buildActivityCard(a){
   const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
-  const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
-  const _avatarHtmlFriend=a.userPic?`<img src="${a.userPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`;
+  const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
+  const _avatarHtmlFriend=a.userPic?`<img src="${a.userPic}" alt="${esc(a.userName||'User')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`;
   if(a.private && a.isMine){
     return`<div class="activity-card" style="margin-bottom:16px;border-left:3px solid var(--bdr);border-style:dashed" data-aid="${a.id}" data-uid="${a.userId}">
   <div class="ac-header" style="padding:14px 16px 12px">
@@ -7991,7 +7882,7 @@ const _LOGO_SVG=`<svg width="20" height="20" viewBox="0 0 180 180" style="border
 
 function _appPageNavHTML(){
   const avatarBg=S?.profilePic?'transparent':'linear-gradient(135deg,#5a5fcf,#9333ea)';
-  const avatarContent=S?.profilePic?`<img src="${S.profilePic}" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
+  const avatarContent=S?.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:(AUTH?.displayName||'?').charAt(0).toUpperCase();
   return`<nav class="topnav">
     <div class="topnav-inner">
       <button onclick="history.back()" class="page-nav-back" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--txt);flex-shrink:0;transition:background .15s" onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">← Back</button>
@@ -8482,7 +8373,7 @@ async function openUserFollowList(uid, type, name){
       const col=colors[n.charCodeAt(0)%colors.length];
       const isFollowing=(S.following||[]).includes(p.id);
       return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)">
-        <div style="width:40px;height:40px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden;cursor:pointer" onclick="this.closest('[style*=fixed]').remove();openUserProfile('${p.id}')">${u.profilePic?`<img src="${u.profilePic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${initials}`}</div>
+        <div style="width:40px;height:40px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden;cursor:pointer" onclick="this.closest('[style*=fixed]').remove();openUserProfile('${p.id}')">${u.profilePic?`<img src="${u.profilePic}" alt="${esc(n)}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${initials}`}</div>
         <div style="flex:1;min-width:0;cursor:pointer" onclick="this.closest('[style*=fixed]').remove();openUserProfile('${p.id}')">
           <div style="font-size:13px;font-weight:700">${n}</div>
           <div style="font-size:11px;color:var(--mut)">${u.state||''}</div>
@@ -10143,6 +10034,58 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+// ── Modal accessibility layer ───────────────────────────────────────────────
+// Retrofits dialog semantics, a focus trap, and focus return onto every
+// .modal-overlay the app opens, without having to touch each of the 60+
+// individual open*Modal() functions scattered through this file. It watches
+// for the `open` class (how every modal here is shown/hidden) and layers
+// behavior on top — purely additive, no existing modal markup or logic changes.
+(function(){
+  const FOCUSABLE='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  let lastTrigger=null, trapEl=null;
+  function trapKeydown(e){
+    if(e.key!=='Tab'||!trapEl||!document.body.contains(trapEl))return;
+    const focusables=[...trapEl.querySelectorAll(FOCUSABLE)].filter(el=>el.offsetParent!==null);
+    if(!focusables.length)return;
+    const first=focusables[0],last=focusables[focusables.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+  function onModalOpened(overlay){
+    if(!overlay.hasAttribute('role'))overlay.setAttribute('role','dialog');
+    overlay.setAttribute('aria-modal','true');
+    lastTrigger=document.activeElement;
+    trapEl=overlay.querySelector('.modal-box')||overlay;
+    document.removeEventListener('keydown',trapKeydown,true);
+    document.addEventListener('keydown',trapKeydown,true);
+    setTimeout(()=>{
+      if(!trapEl||!document.body.contains(trapEl))return;
+      const target=trapEl.querySelector(FOCUSABLE);
+      if(target){target.focus({preventScroll:true});}
+      else{if(!trapEl.hasAttribute('tabindex'))trapEl.setAttribute('tabindex','-1');trapEl.focus({preventScroll:true});}
+    },30);
+  }
+  function onModalClosed(){
+    document.removeEventListener('keydown',trapKeydown,true);
+    trapEl=null;
+    if(lastTrigger&&document.body.contains(lastTrigger)&&typeof lastTrigger.focus==='function'){
+      lastTrigger.focus({preventScroll:true});
+    }
+    lastTrigger=null;
+  }
+  new MutationObserver(muts=>{
+    muts.forEach(m=>{
+      if(m.type!=='attributes'||m.attributeName!=='class')return;
+      const el=m.target;
+      if(!(el instanceof HTMLElement)||!el.classList.contains('modal-overlay'))return;
+      const isOpen=el.classList.contains('open');
+      const wasOpen=(m.oldValue||'').split(' ').includes('open');
+      if(isOpen&&!wasOpen)onModalOpened(el);
+      else if(!isOpen&&wasOpen)onModalClosed();
+    });
+  }).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true,attributeOldValue:true});
+})();
+
 // ═══════════════════════════════════════════════
 // HEAT MAP
 // ═══════════════════════════════════════════════
@@ -10565,15 +10508,23 @@ function handleProfilePicUpload(input){
   reader.readAsDataURL(file);
 }
 
+function closeCropModal(){
+  if(window._cropMouseMove) document.removeEventListener('mousemove',window._cropMouseMove);
+  if(window._cropMouseUp) document.removeEventListener('mouseup',window._cropMouseUp);
+  document.getElementById('crop-modal')?.classList.remove('open');
+}
 function openCropModal(dataUrl){
   let cropEl=document.getElementById('crop-modal');
-  if(cropEl) cropEl.remove();
-  cropEl=document.createElement('div');
-  cropEl.id='crop-modal';
-  cropEl.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center';
+  if(!cropEl){
+    cropEl=document.createElement('div');
+    cropEl.id='crop-modal';
+    cropEl.className='modal-overlay';
+    cropEl.addEventListener('click',e=>{if(e.target===cropEl)closeCropModal();});
+    document.body.appendChild(cropEl);
+  }
   // Note: img src is NOT set here — we set it after onload is wired (fixes data URL onload timing)
   cropEl.innerHTML=
-    '<div style="background:var(--surf);border-radius:20px;padding:24px;max-width:400px;width:90%;box-shadow:var(--shadow-lg)">' +
+    '<div class="modal-box" onclick="event.stopPropagation()" style="padding:24px;max-width:400px">' +
       '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>' +
       '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Scroll to zoom</div>' +
       '<div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">' +
@@ -10585,10 +10536,10 @@ function openCropModal(dataUrl){
       '</div>' +
       '<div style="display:flex;gap:8px;margin-top:18px">' +
         '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Apply</button>' +
-        '<button class="btn btn-ghost" onclick="document.getElementById(\'crop-modal\').remove()">Cancel</button>' +
+        '<button class="btn btn-ghost" onclick="closeCropModal()">Cancel</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(cropEl);
+  cropEl.classList.add('open');
 
   const img=document.getElementById('crop-img');
   const circle=document.getElementById('crop-circle');
@@ -10674,11 +10625,8 @@ function applyCrop(){
   const preview=document.getElementById('ep-avatar-preview');
   if(preview) preview.innerHTML='<img src="'+dataUrl+'" alt="Profile photo preview" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   window._pendingProfilePic=dataUrl;
-  // Clean up event listeners
-  if(window._cropMouseMove) document.removeEventListener('mousemove',window._cropMouseMove);
-  if(window._cropMouseUp) document.removeEventListener('mouseup',window._cropMouseUp);
   window._cropData=null;
-  document.getElementById('crop-modal')?.remove();
+  closeCropModal();
   showToast('Photo cropped — click Save Profile to apply ✓','ok');
 }
 
@@ -10733,7 +10681,7 @@ function openAppSettings(section='account'){
   if(!el){
     el=document.createElement('div');
     el.id='app-settings-modal';
-    el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;backdrop-filter:blur(2px)';
+    el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)';
     el.innerHTML=`
 <div id="as-panel" style="position:absolute;top:0;right:0;bottom:0;width:min(100vw,680px);background:var(--bg);display:flex;flex-direction:column;box-shadow:-12px 0 48px rgba(0,0,0,.18);animation:slideInRight .22s ease">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 14px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)">
@@ -12202,7 +12150,7 @@ function openQBSection(code) {
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'qb-section-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:650;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:650;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) closeQBSection(); });
     document.body.appendChild(overlay);
   }
@@ -14748,13 +14696,20 @@ function toggleBlockDay(dateStr){
 }
 
 // ── LABELED TIME OFF (Step 3.5) — block a range like a real calendar ──────────
+function closeTimeOffModal(){
+  document.getElementById('timeoff-modal')?.classList.remove('open');
+}
 function openTimeOffModal(){
   const plan=S.aiStudyPlan; if(!plan) return;
   const today=new Date().toISOString().slice(0,10);
-  document.getElementById('timeoff-modal')?.remove();
-  const el=document.createElement('div');
-  el.id='timeoff-modal';
-  el.style.cssText='position:fixed;inset:0;z-index:1600;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  let el=document.getElementById('timeoff-modal');
+  if(!el){
+    el=document.createElement('div');
+    el.id='timeoff-modal';
+    el.className='modal-overlay';
+    el.addEventListener('click',e=>{if(e.target===el)closeTimeOffModal();});
+    document.body.appendChild(el);
+  }
   const ranges=(plan.timeOff||[]).slice().sort((a,b)=>(a.start||'').localeCompare(b.start||''));
   const fmt=ds=>new Date(ds+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const existing=ranges.length?`<div style="margin-top:18px;border-top:1px solid var(--bdr);padding-top:14px">
@@ -14766,11 +14721,11 @@ function openTimeOffModal(){
       <button onclick="removeTimeOff('${t.id}')" style="background:transparent;border:1px solid var(--bdr);border-radius:8px;color:var(--mut);width:28px;height:28px;cursor:pointer;flex-shrink:0;font-size:14px">×</button>
     </div>`).join('')}
   </div>`:'';
-  el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;box-shadow:0 24px 80px rgba(0,0,0,.3);overflow:hidden">
+  el.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()" style="max-width:440px;overflow:hidden">
     <div style="padding:20px 22px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="font-size:17px;font-weight:900;letter-spacing:-.02em">Add time off</div>
-        <button onclick="document.getElementById('timeoff-modal').remove()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub)">×</button>
+        <button onclick="closeTimeOffModal()" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub)">×</button>
       </div>
       <div style="font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:16px">Block out vacation, work crunch, or any days you can't study. Your plan reshuffles those hours across the rest of your schedule.</div>
       <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">What's the occasion?</label>
@@ -14789,8 +14744,7 @@ function openTimeOffModal(){
       ${existing}
     </div>
   </div>`;
-  document.body.appendChild(el);
-  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  el.classList.add('open');
 }
 
 function saveTimeOff(){
@@ -14803,7 +14757,7 @@ function saveTimeOff(){
   plan.timeOff=plan.timeOff||[];
   plan.timeOff.push({id:'to_'+Date.now(), start, end, label});
   rebalanceStudyPlan();
-  document.getElementById('timeoff-modal')?.remove();
+  closeTimeOffModal();
   if(currentTab==='plan') renderTab();
   showToast('Time off added — your plan adapted around it','ok');
 }
@@ -14812,7 +14766,7 @@ function removeTimeOff(id){
   const plan=S.aiStudyPlan; if(!plan) return;
   plan.timeOff=(plan.timeOff||[]).filter(t=>t.id!==id);
   rebalanceStudyPlan();
-  document.getElementById('timeoff-modal')?.remove();
+  closeTimeOffModal();
   document.getElementById('plan-day-modal')?.remove();
   if(currentTab==='plan') renderTab();
   showToast('Time off removed — plan rebalanced','ok');
@@ -16130,7 +16084,7 @@ function showPassCelebration(section,score,hours){
   if(el)el.remove();
   el=document.createElement('div');
   el.id='pass-celebration-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   // Determine which SHARE_MILESTONES key applies
   const passedCount=(S.sectionPassed||[]).length;
   const milestoneId=passedCount>=4?'all_pass':passedCount===3?'three_sections':passedCount===2?'two_sections':'section_pass';
@@ -16211,7 +16165,7 @@ function showMilestoneShareCard(milestoneId){
   if(typeof confetti==='function'){confetti({particleCount:90,spread:80,origin:{y:0.5},colors:[cfg.accent,'#ffffff',cfg.accent+'99']});}
   let el=document.getElementById('milestone-card-overlay'); if(el)el.remove();
   el=document.createElement('div'); el.id='milestone-card-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1);max-height:90vh;overflow-y:auto">'+
     '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:'+cfg.accent+';margin-bottom:4px">'+cfg.label+'</div><div style="font-size:25px;font-weight:900;letter-spacing:-.03em">'+cfg.headline+'</div><div style="font-size:13px;color:var(--mut);margin-top:4px">'+cfg.sub+'</div></div>'+
     '<div style="margin-bottom:16px"><canvas id="milestone-card-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
@@ -16247,7 +16201,7 @@ async function showCohortDigestCard(){
   const liUrl='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://ledgercpa.app')+'&summary='+encodeURIComponent(shareText);
   let el=document.getElementById('cohort-digest-overlay'); if(el)el.remove();
   el=document.createElement('div'); el.id='cohort-digest-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);max-height:90vh;overflow-y:auto">'+
     '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;margin-bottom:4px">Cohort Weekly</div><div style="font-size:22px;font-weight:900;letter-spacing:-.03em">'+esc(stats.firmName)+'</div></div>'+
     '<div style="margin-bottom:16px"><canvas id="cohort-digest-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
@@ -16314,7 +16268,7 @@ function showStreakMilestone(days){
   };
   const cfg=configs[days]||{label:`${days}-day streak.`,sub:'Keep going.'};
   const el=document.createElement('div');
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.3);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
   <div style="font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:16px">Study Streak</div>
