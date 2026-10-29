@@ -16,41 +16,67 @@
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ora:#d44000;--ora-dk:#b03500;
+  --ora:#d44000;--ora-dk:#ac3400;--ora-lt:#ff7a3d;
   --bg:#f2ede6;--surf:#fff;
-  --txt:#0d1117;--sub:#4a5568;--mut:#6b665c;
+  --txt:#0d1117;--sub:#43495a;--mut:#5c5748;
   --bdr:#e2dbd2;
-  --font:'Inter',system-ui,sans-serif;
-  --display:'Barlow Condensed','Inter',system-ui,sans-serif;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --display:'Fraunces','Iowan Old Style',Georgia,serif;
+
+  --sp-1:8px;--sp-2:16px;--sp-3:24px;--sp-4:32px;--sp-5:40px;
+  --sp-6:48px;--sp-7:56px;--sp-8:64px;--sp-9:72px;--sp-10:80px;
+
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-pill:999px;
+
+  --shadow-sm:0 1px 2px rgba(13,17,23,.05);
+  --shadow-md:0 6px 16px rgba(13,17,23,.07);
+  --shadow-lg:0 16px 40px rgba(13,17,23,.11);
+  --shadow-ora:0 10px 24px rgba(212,64,0,.26);
+
+  --ease:cubic-bezier(.22,.61,.36,1);
 }
 html,body{height:100%}
-body{font-family:var(--font);background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);color:#fff;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;position:relative}
-body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(212,64,0,.14),transparent 55%),radial-gradient(ellipse at 75% 30%,rgba(90,95,207,.07),transparent 50%)}
+body{font-family:var(--font);background:linear-gradient(155deg,#0a0805,#15100b,#1c1510);color:#fff;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:var(--sp-4);position:relative;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(212,64,0,.16),transparent 55%),radial-gradient(ellipse at 75% 30%,rgba(90,95,207,.08),transparent 50%)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ora);outline-offset:3px;border-radius:4px}
 
 .inner{position:relative;z-index:1;max-width:480px}
 
-.num{font-family:var(--display);font-size:clamp(100px,20vw,160px);font-weight:900;line-height:.9;letter-spacing:-.04em;color:rgba(255,255,255,.07);user-select:none;margin-bottom:-12px}
+.num{font-family:var(--display);font-size:clamp(100px,20vw,160px);font-weight:700;font-style:italic;line-height:.9;letter-spacing:-.03em;color:rgba(255,255,255,.08);user-select:none;margin-bottom:calc(var(--sp-1) * -1.5)}
 
-.icon{font-size:40px;margin-bottom:20px}
+.icon{font-size:40px;margin-bottom:var(--sp-3)}
 
-h1{font-family:var(--display);font-size:clamp(28px,5vw,40px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.02em;margin-bottom:12px}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,38px);font-weight:600;color:#fff;line-height:1.1;letter-spacing:-.01em;margin-bottom:var(--sp-2)}
 
-p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:36px;max-width:38ch;margin-left:auto;margin-right:auto}
+p{font-size:15px;color:rgba(255,255,255,.62);line-height:1.7;margin-bottom:var(--sp-7);max-width:38ch;margin-left:auto;margin-right:auto}
 
-.links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.links{display:flex;flex-wrap:wrap;gap:var(--sp-1);justify-content:center}
 
-.btn-primary{font-size:14px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:12px 24px;border-radius:10px;transition:all .18s}
-.btn-primary:hover{background:var(--ora-dk);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,64,0,.25)}
+.btn-primary{font-size:14px;font-weight:700;color:#fff;background:var(--ora);text-decoration:none;padding:var(--sp-2) var(--sp-3);border-radius:var(--r-md);transition:background-color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
+.btn-primary:hover{background:var(--ora-dk);transform:translateY(-2px);box-shadow:var(--shadow-ora)}
+.btn-primary:active{transform:translateY(0)}
 
-.btn-ghost{font-size:14px;font-weight:600;color:rgba(255,255,255,.55);text-decoration:none;padding:12px 20px;border-radius:10px;border:1.5px solid rgba(255,255,255,.12);transition:all .18s}
-.btn-ghost:hover{border-color:rgba(255,255,255,.28);color:#fff;background:rgba(255,255,255,.05)}
+.btn-ghost{font-size:14px;font-weight:600;color:rgba(255,255,255,.68);text-decoration:none;padding:var(--sp-2) var(--sp-2);border-radius:var(--r-md);border:1.5px solid rgba(255,255,255,.16);transition:border-color .2s var(--ease),color .2s var(--ease),background-color .2s var(--ease)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.34);color:#fff;background:rgba(255,255,255,.06)}
 
-.brand{position:absolute;top:24px;left:28px;display:flex;align-items:center;gap:8px;text-decoration:none}
-.brand-text{font-family:var(--display);font-size:20px;font-weight:800;color:var(--ora)}
+.brand{position:absolute;top:var(--sp-3);left:var(--sp-4);display:flex;align-items:center;gap:var(--sp-1);text-decoration:none}
+.brand-text{font-family:var(--display);font-size:20px;font-weight:700;font-style:italic;color:var(--ora-lt);letter-spacing:-.01em}
+
+/* ── COOKIE BANNER ── */
+.cookie-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#18103a;border-top:1px solid rgba(255,255,255,.12);padding:var(--sp-2) var(--sp-3);align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:wrap;font-family:var(--font);box-shadow:0 -8px 24px rgba(0,0,0,.25)}
+.cookie-text{margin:0;font-size:13px;color:rgba(255,255,255,.8);line-height:1.5;max-width:680px}
+.cookie-text a{color:var(--ora-lt);text-decoration:underline}
+.cookie-actions{display:flex;gap:var(--sp-1);flex-shrink:0}
+.cookie-btn{padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm);font-size:13px;cursor:pointer;transition:background-color .18s var(--ease),border-color .18s var(--ease),transform .18s var(--ease)}
+.cookie-btn:active{transform:scale(.97)}
+.cookie-btn-decline{background:transparent;border:1px solid rgba(255,255,255,.32);color:rgba(255,255,255,.78)}
+.cookie-btn-decline:hover{border-color:rgba(255,255,255,.55);color:#fff}
+.cookie-btn-accept{background:var(--ora);border:1px solid var(--ora);color:#fff;font-weight:600;padding:var(--sp-1) var(--sp-3)}
+.cookie-btn-accept:hover{background:var(--ora-dk)}
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
@@ -76,14 +102,14 @@ p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:36px;m
 
 
 <!-- ── Cookie / GDPR Consent Banner ── -->
-<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
-  <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
+<div id="cookie-banner" class="cookie-banner">
+  <p class="cookie-text">
     We use cookies and analytics to improve your experience. By continuing to use Ledger you agree to our
-    <a href="/privacy" style="color:#d44000;text-decoration:underline">Privacy Policy</a>.
+    <a href="/privacy">Privacy Policy</a>.
   </p>
-  <div style="display:flex;gap:10px;flex-shrink:0">
-    <button onclick="dismissCookieBanner(false)" style="background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer">Decline</button>
-    <button onclick="dismissCookieBanner(true)" style="background:#d44000;border:none;color:#fff;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">Accept</button>
+  <div class="cookie-actions">
+    <button onclick="dismissCookieBanner(false)" class="cookie-btn cookie-btn-decline">Decline</button>
+    <button onclick="dismissCookieBanner(true)" class="cookie-btn cookie-btn-accept">Accept</button>
   </div>
 </div>
 <script>
