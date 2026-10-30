@@ -1252,7 +1252,7 @@ async function open2FASetupModal(){
     document.body.appendChild(el);
   }
   el.innerHTML = `<div class="modal-box" style="max-width:380px">
-    <div class="modal-hdr"><span style="font-size:14px;font-weight:800">🔐 Set Up Two-Factor Auth</span><button class="modal-close" onclick="close2FAModal()">✕</button></div>
+    <div class="modal-hdr"><span style="font-size:14px;font-weight:800">${LedgerIcon('lock')} Set Up Two-Factor Auth</span><button class="modal-close" onclick="close2FAModal()">${LedgerIcon('x')}</button></div>
     <div style="padding:18px;text-align:center">
       <p style="font-size:12px;color:var(--mut);margin:0 0 14px">Scan this QR code with <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app</p>
       <img src="${qrUrl}" alt="Invite QR code" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
@@ -1601,8 +1601,8 @@ function showManageSubMenu(){
   const portalUrl=STRIPE_CONFIG.portalUrl;
   const hasPortal=STRIPE_ENABLED&&!portalUrl.includes('REPLACE');
   const actions=[
-    {icon:'💳',label:'Update Payment Method',sub:'Change your credit card or billing info',fn:()=>openBillingPortal()},
-    {icon:'🔄',label:'Change Plan',sub:'Upgrade, downgrade, or switch billing cycle',fn:()=>{closeAppSettings();openUpgradeModal(null);}},
+    {icon:'creditCard',label:'Update Payment Method',sub:'Change your credit card or billing info',fn:()=>openBillingPortal()},
+    {icon:'refresh',label:'Change Plan',sub:'Upgrade, downgrade, or switch billing cycle',fn:()=>{closeAppSettings();openUpgradeModal(null);}},
   ];
   el.innerHTML=`
 <div style="background:var(--surf2);border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:10px;overflow:hidden">
@@ -1611,7 +1611,7 @@ function showManageSubMenu(){
     <button onclick="renderAppSettingsSection()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--mut);line-height:1;padding:0 2px">×</button>
   </div>
   ${actions.map((a,i)=>`<button onclick="(${a.fn.toString()})()" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;background:transparent;border:none;border-bottom:${i<actions.length-1?'1px solid var(--bdr)':'none'};cursor:pointer;text-align:left;transition:background .12s" onmouseover="this.style.background='var(--surf)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;flex-shrink:0">${a.icon}</span>
+    <span style="font-size:20px;flex-shrink:0">${LedgerIcon(a.icon)}</span>
     <div style="flex:1;min-width:0">
       <div style="font-size:13px;font-weight:700;color:var(--txt)">${a.label}</div>
       <div style="font-size:11px;color:var(--mut);margin-top:1px">${a.sub}</div>
@@ -1764,12 +1764,12 @@ async function reactivateSubscription(){
 // EXAM DATA
 // ═══════════════════════════════════════════════
 const EXAMS = {
-  FAR:{code:'FAR',full:'Financial Accounting & Reporting',color:'#dc2626',studyHours:170,passRate:43,difficulty:'Hardest',format:'50 MCQ + 7 TBS',isCore:true,icon:'📊'},
-  AUD:{code:'AUD',full:'Auditing & Attestation',color:'#2563eb',studyHours:140,passRate:46,difficulty:'Hard',format:'50 MCQ + 7 TBS',isCore:true,icon:'🔍'},
-  REG:{code:'REG',full:'Regulation',color:'#059669',studyHours:130,passRate:59,difficulty:'Moderate',format:'50 MCQ + 7 TBS',isCore:true,icon:'⚖️'},
-  BAR:{code:'BAR',full:'Business Analysis & Reporting',color:'#d97706',studyHours:130,passRate:42,difficulty:'Hard',format:'50 MCQ + 7 TBS',isCore:false,icon:'📈'},
-  ISC:{code:'ISC',full:'Information Systems & Controls',color:'#9333ea',studyHours:110,passRate:68,difficulty:'Moderate',format:'82 MCQ + 6 TBS',isCore:false,icon:'💻'},
-  TCP:{code:'TCP',full:'Tax Compliance & Planning',color:'#0d9488',studyHours:110,passRate:78,difficulty:'Moderate',format:'68 MCQ + 7 TBS',isCore:false,icon:'🧮'},
+  FAR:{code:'FAR',full:'Financial Accounting & Reporting',color:'#dc2626',studyHours:170,passRate:43,difficulty:'Hardest',format:'50 MCQ + 7 TBS',isCore:true,icon:'barChart'},
+  AUD:{code:'AUD',full:'Auditing & Attestation',color:'#2563eb',studyHours:140,passRate:46,difficulty:'Hard',format:'50 MCQ + 7 TBS',isCore:true,icon:'magnifier'},
+  REG:{code:'REG',full:'Regulation',color:'#059669',studyHours:130,passRate:59,difficulty:'Moderate',format:'50 MCQ + 7 TBS',isCore:true,icon:'scales'},
+  BAR:{code:'BAR',full:'Business Analysis & Reporting',color:'#d97706',studyHours:130,passRate:42,difficulty:'Hard',format:'50 MCQ + 7 TBS',isCore:false,icon:'lineChart'},
+  ISC:{code:'ISC',full:'Information Systems & Controls',color:'#9333ea',studyHours:110,passRate:68,difficulty:'Moderate',format:'82 MCQ + 6 TBS',isCore:false,icon:'monitor'},
+  TCP:{code:'TCP',full:'Tax Compliance & Planning',color:'#0d9488',studyHours:110,passRate:78,difficulty:'Moderate',format:'68 MCQ + 7 TBS',isCore:false,icon:'calculator'},
 };
 
 // ═══════════════════════════════════════════════
@@ -1805,51 +1805,51 @@ function getHourGoal(section){
 // ═══════════════════════════════════════════════
 const ACHIEVEMENTS = [
   // ── FIRST STEPS ──
-  {id:'first_session',icon:'🔥',name:'First Step',desc:'Log your first study session'},
-  {id:'sessions_5',icon:'👣',name:'Getting Started',desc:'Log 5 study sessions'},
-  {id:'sessions_10',icon:'🎯',name:'In the Zone',desc:'Log 10 study sessions'},
-  {id:'sessions_25',icon:'🎖️',name:'Quarter Century',desc:'Log 25 study sessions'},
-  {id:'sessions_50',icon:'🏅',name:'Fifty Strong',desc:'Log 50 study sessions'},
-  {id:'sessions_100',icon:'💪',name:'Centurion',desc:'Log 100 study sessions'},
+  {id:'first_session',icon:'flame',name:'First Step',desc:'Log your first study session'},
+  {id:'sessions_5',icon:'footprints',name:'Getting Started',desc:'Log 5 study sessions'},
+  {id:'sessions_10',icon:'target',name:'In the Zone',desc:'Log 10 study sessions'},
+  {id:'sessions_25',icon:'medalRibbon',name:'Quarter Century',desc:'Log 25 study sessions'},
+  {id:'sessions_50',icon:'medal',name:'Fifty Strong',desc:'Log 50 study sessions'},
+  {id:'sessions_100',icon:'bicep',name:'Centurion',desc:'Log 100 study sessions'},
   // ── HOURS ──
-  {id:'hrs_10',icon:'⚡',name:'First 10',desc:'Log 10 total study hours'},
-  {id:'hrs_25',icon:'📈',name:'Gaining Ground',desc:'Log 25 total study hours'},
-  {id:'hrs_50',icon:'💡',name:'50 Hours In',desc:'Log 50 total hours'},
-  {id:'hrs_100',icon:'💯',name:'Century Club',desc:'Log 100 total hours'},
-  {id:'hrs_150',icon:'🔩',name:'Iron Candidate',desc:'Log 150 total study hours'},
-  {id:'hrs_250',icon:'🏔️',name:'Summit Seeker',desc:'Log 250 total hours'},
-  {id:'hrs_500',icon:'🦾',name:'500 Strong',desc:'Log 500 total study hours'},
+  {id:'hrs_10',icon:'bolt',name:'First 10',desc:'Log 10 total study hours'},
+  {id:'hrs_25',icon:'lineChart',name:'Gaining Ground',desc:'Log 25 total study hours'},
+  {id:'hrs_50',icon:'bulb',name:'50 Hours In',desc:'Log 50 total hours'},
+  {id:'hrs_100',icon:'percent',name:'Century Club',desc:'Log 100 total hours'},
+  {id:'hrs_150',icon:'nut',name:'Iron Candidate',desc:'Log 150 total study hours'},
+  {id:'hrs_250',icon:'mountain',name:'Summit Seeker',desc:'Log 250 total hours'},
+  {id:'hrs_500',icon:'roboticArm',name:'500 Strong',desc:'Log 500 total study hours'},
   // ── STREAKS ──
-  {id:'streak_3',icon:'🔥',name:'3-Day Spark',desc:'3-day study streak'},
-  {id:'streak_7',icon:'📅',name:'Week Warrior',desc:'7-day study streak'},
-  {id:'streak_14',icon:'✊',name:'Two Weeks',desc:'14-day study streak'},
-  {id:'streak_30',icon:'🗓️',name:'Month Machine',desc:'30-day study streak'},
-  {id:'streak_60',icon:'💥',name:'Unstoppable',desc:'60-day study streak'},
-  {id:'streak_100',icon:'👑',name:'Legend',desc:'100-day study streak'},
+  {id:'streak_3',icon:'flame',name:'3-Day Spark',desc:'3-day study streak'},
+  {id:'streak_7',icon:'calendar',name:'Week Warrior',desc:'7-day study streak'},
+  {id:'streak_14',icon:'fist',name:'Two Weeks',desc:'14-day study streak'},
+  {id:'streak_30',icon:'calendarDays',name:'Month Machine',desc:'30-day study streak'},
+  {id:'streak_60',icon:'burst',name:'Unstoppable',desc:'60-day study streak'},
+  {id:'streak_100',icon:'crown',name:'Legend',desc:'100-day study streak'},
   // ── INTENSITY ──
-  {id:'consistent',icon:'💎',name:'Consistent',desc:'Study 5 days in a week'},
-  {id:'perfect_week',icon:'⭐',name:'Perfect Week',desc:'Study all 7 days in a week'},
-  {id:'big_week',icon:'🚀',name:'Big Week',desc:'Log 20+ hours in a single week'},
-  {id:'daily_double',icon:'🎲',name:'Daily Double',desc:'Log 2 sessions in one day'},
-  {id:'marathon',icon:'🧠',name:'Marathon',desc:'Log 5+ hrs in one session'},
-  {id:'deep_work',icon:'🧘',name:'Deep Work',desc:'Log 6+ hours in one session'},
-  {id:'all_day',icon:'🦁',name:'All-Day Grind',desc:'Log 8+ hours in one session'},
+  {id:'consistent',icon:'gem',name:'Consistent',desc:'Study 5 days in a week'},
+  {id:'perfect_week',icon:'starFilled',name:'Perfect Week',desc:'Study all 7 days in a week'},
+  {id:'big_week',icon:'rocket',name:'Big Week',desc:'Log 20+ hours in a single week'},
+  {id:'daily_double',icon:'dice',name:'Daily Double',desc:'Log 2 sessions in one day'},
+  {id:'marathon',icon:'brain',name:'Marathon',desc:'Log 5+ hrs in one session'},
+  {id:'deep_work',icon:'lotus',name:'Deep Work',desc:'Log 6+ hours in one session'},
+  {id:'all_day',icon:'lion',name:'All-Day Grind',desc:'Log 8+ hours in one session'},
   // ── TIME OF DAY ──
-  {id:'early_bird',icon:'☀️',name:'Early Bird',desc:'Log a session starting before 6am'},
-  {id:'night_owl',icon:'🦉',name:'Night Owl',desc:'Log a session after midnight'},
+  {id:'early_bird',icon:'sun',name:'Early Bird',desc:'Log a session starting before 6am'},
+  {id:'night_owl',icon:'owl',name:'Night Owl',desc:'Log a session after midnight'},
   // ── SECTIONS ──
-  {id:'section_diverse',icon:'📚',name:'Well-Rounded',desc:'Log hours on all 4 sections'},
-  {id:'section_pass',icon:'🎯',name:'Section Slayer',desc:'Pass your first section'},
-  {id:'two_sections',icon:'✌️',name:'Double Down',desc:'Pass 2 CPA sections'},
-  {id:'three_sections',icon:'🔱',name:'Almost There',desc:'Pass 3 CPA sections'},
-  {id:'all_pass',icon:'🏆',name:'CPA Achieved',desc:'Pass all 4 sections'},
+  {id:'section_diverse',icon:'book',name:'Well-Rounded',desc:'Log hours on all 4 sections'},
+  {id:'section_pass',icon:'target',name:'Section Slayer',desc:'Pass your first section'},
+  {id:'two_sections',icon:'peace',name:'Double Down',desc:'Pass 2 CPA sections'},
+  {id:'three_sections',icon:'trident',name:'Almost There',desc:'Pass 3 CPA sections'},
+  {id:'all_pass',icon:'trophy',name:'CPA Achieved',desc:'Pass all 4 sections'},
   // ── SOCIAL ──
-  {id:'first_follow',icon:'🤝',name:'First Connection',desc:'Follow your first CPA candidate'},
-  {id:'social',icon:'🌟',name:'Study Crew',desc:'Follow 5 or more candidates'},
-  {id:'social_10',icon:'🏟️',name:'Squad Goals',desc:'Follow 10 or more candidates'},
-  {id:'props_10',icon:'👏',name:'Hype Machine',desc:'Give Props 10 times'},
-  {id:'props_25',icon:'📣',name:'Props Machine',desc:'Give Props 25 times'},
-  {id:'props_50',icon:'🎺',name:'Hype Legend',desc:'Give Props 50 times'},
+  {id:'first_follow',icon:'handshake',name:'First Connection',desc:'Follow your first CPA candidate'},
+  {id:'social',icon:'sparkles',name:'Study Crew',desc:'Follow 5 or more candidates'},
+  {id:'social_10',icon:'stadium',name:'Squad Goals',desc:'Follow 10 or more candidates'},
+  {id:'props_10',icon:'clap',name:'Hype Machine',desc:'Give Props 10 times'},
+  {id:'props_25',icon:'megaphone',name:'Props Machine',desc:'Give Props 25 times'},
+  {id:'props_50',icon:'trumpet',name:'Hype Legend',desc:'Give Props 50 times'},
 ];
 
 // ═══════════════════════════════════════════════
@@ -4513,7 +4513,7 @@ function buildPassCard(a,ex){
     <div class="avatar av-md" style="background:${a.userColor};color:#fff;cursor:pointer;overflow:hidden" onclick="openUserProfile('${a.userId}')" title="View ${a.userName}'s profile">${_avatarHtml}</div>
     <div style="flex:1;min-width:0">
       <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}</span>
-      <div class="ac-meta">${timeAgo(a.date)} · ${ex.icon} ${ex.full}</div>
+      <div class="ac-meta">${timeAgo(a.date)} · ${LedgerIcon(ex.icon)} ${ex.full}</div>
     </div>
     <span class="badge badge-passed">Passed ✅</span>
   </div>
@@ -4556,7 +4556,7 @@ function buildActivityCard(a){
     <div class="avatar av-md" style="background:${a.userColor};color:#fff;overflow:hidden;flex-shrink:0">${_avatarHtmlMine}</div>
     <div style="flex:1;min-width:0;padding-left:10px">
       <span class="ac-user-name">${a.userName} <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span></span>
-      <div class="ac-meta" style="margin-top:2px">${ex.icon} ${ex.full} · Private · ${a.hours}h</div>
+      <div class="ac-meta" style="margin-top:2px">${LedgerIcon(ex.icon)} ${ex.full} · Private · ${a.hours}h</div>
     </div>
     <span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:20px;font-weight:700;flex-shrink:0">Private</span>
   </div>
@@ -4579,7 +4579,7 @@ function buildActivityCard(a){
       </div>
       <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
         <span class="badge badge-${a.section}" style="font-size:9px">${a.section}</span>
-        <span style="font-size:11px;color:var(--sub)">${ex.icon} ${ex.full} Session</span>
+        <span style="font-size:11px;color:var(--sub)">${LedgerIcon(ex.icon)} ${ex.full} Session</span>
       </div>
     </div>
   </div>
@@ -5432,7 +5432,7 @@ function _achPreviewHTML(earnedIds, sectionId, showInfoBtn){
   const makeItem=a=>{
     const e=earned.has(a.id);
     return`<div class="ach-item${e?' earned':''}"${showInfoBtn?' style="position:relative"':''}>
-      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-icon">${LedgerIcon(a.icon)}</div>
       <div class="ach-name">${a.name}</div>
       ${showInfoBtn?`<button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:10px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>`:''}
     </div>`;
@@ -6075,7 +6075,7 @@ function openSessionLoggedModal(act, priorReadiness){
 <div style="text-align:center;margin-bottom:20px">
   <div style="font-size:40px;margin-bottom:8px">✅</div>
   <div style="font-size:18px;font-weight:800;color:var(--txt)">Session logged!</div>
-  <div style="font-size:13px;color:var(--mut);margin-top:4px">${act.hours}h of ${ex.icon} ${ex.full} · ${streak} day streak</div>
+  <div style="font-size:13px;color:var(--mut);margin-top:4px">${act.hours}h of ${LedgerIcon(ex.icon)} ${ex.full} · ${streak} day streak</div>
 </div>
 
 ${goal?`<div style="margin-bottom:20px">
@@ -6460,7 +6460,7 @@ function openActivityDetail(actId){
   <div style="height:5px;background:${ex.color};flex-shrink:0"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 0;flex-shrink:0">
     <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:42px;height:42px;border-radius:13px;background:${ex.color}18;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${ex.icon}</div>
+      <div style="width:42px;height:42px;border-radius:13px;background:${ex.color}18;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${LedgerIcon(ex.icon)}</div>
       <div>
         <div style="font-size:15px;font-weight:900;color:var(--txt)">${ex.full}</div>
         <div style="font-size:11px;color:var(--mut)">${dateStr} · ${timeStr}</div>
@@ -7146,7 +7146,7 @@ function removeSocialLink(platform){
 // Also show achievement info tooltip
 function showAchInfo(id){
   const a=ACHIEVEMENTS.find(x=>x.id===id);
-  if(a)showToast(`${a.icon} ${a.name}: ${a.desc}`,'info');
+  if(a)showToast(`${a.name}: ${a.desc}`,'info');
 }
 
 // ═══════════════════════════════════════════════
@@ -7533,7 +7533,7 @@ function _renderActivityPage(actId){
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,${ex.color}55,transparent 45%)"></div>
     <div style="position:relative;z-index:1">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}22;border:1px solid ${ex.color}44;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${ex.icon}</div>
+        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}22;border:1px solid ${ex.color}44;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${LedgerIcon(ex.icon)}</div>
         <div>
           <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-.02em">${ex.full} Session</div>
           <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:2px">${dateStr} · ${timeStr}</div>
@@ -7873,7 +7873,7 @@ function openProfileActivity(cardEl){
     <div style="width:40px;height:4px;border-radius:2px;background:var(--bdr2);margin:12px auto 20px"></div>
     <div style="padding:0 20px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}18;border:1.5px solid ${ex.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${ex.icon}</div>
+        <div style="width:48px;height:48px;border-radius:14px;background:${ex.color}18;border:1.5px solid ${ex.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${LedgerIcon(ex.icon)}</div>
         <div>
           <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-${section}">${section}</span><span style="font-size:16px;font-weight:900">${hours}h</span></div>
           <div style="font-size:12px;color:var(--mut);margin-top:2px">${new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
@@ -10267,12 +10267,12 @@ function openAppSettings(section='account'){
 
 function renderAppSettingsTabs(){
   const tabs=[
-    {id:'account',  icon:'👤', label:'Account'},
-    {id:'billing',  icon:'💳', label:'Billing'},
-    {id:'security', icon:'🔒', label:'Security'},
-    {id:'notifications',icon:'🔔',label:'Notifs'},
-    {id:'privacy',  icon:'🛡️', label:'Privacy'},
-    {id:'data',     icon:'💾', label:'Data'},
+    {id:'account',  icon:'user', label:'Account'},
+    {id:'billing',  icon:'creditCard', label:'Billing'},
+    {id:'security', icon:'lock', label:'Security'},
+    {id:'notifications',icon:'bell',label:'Notifs'},
+    {id:'privacy',  icon:'shield', label:'Privacy'},
+    {id:'data',     icon:'database', label:'Data'},
   ];
   const isMobile = window.innerWidth <= 600;
 
@@ -10292,7 +10292,7 @@ function renderAppSettingsTabs(){
           margin-bottom:2px;transition:background-color .15s,color .15s"
           onmouseover="if('${t.id}'!=='${_settingsSection}'){this.style.background='var(--surf2)';this.style.color='var(--txt)'}"
           onmouseout="if('${t.id}'!=='${_settingsSection}'){this.style.background='transparent';this.style.color='var(--sub)'}">
-          <span style="font-size:16px;flex-shrink:0">${t.icon}</span>
+          <span style="font-size:16px;flex-shrink:0">${LedgerIcon(t.icon)}</span>
           <span>${t.label}</span>
           ${active?'<span style="width:4px;height:4px;border-radius:50%;background:var(--ora);margin-left:auto;flex-shrink:0"></span>':''}
         </button>`;
@@ -10314,7 +10314,7 @@ function renderAppSettingsTabs(){
           color:${active?'var(--ora)':'var(--sub)'};
           font-size:12px;font-weight:${active?700:500};
           cursor:pointer;white-space:nowrap;transition:background-color .15s,color .15s,border-color .15s">
-          <span>${t.icon}</span><span>${t.label}</span>
+          <span>${LedgerIcon(t.icon)}</span><span>${t.label}</span>
         </button>`;
       }).join('');
       // Scroll active tab into view
@@ -10395,7 +10395,7 @@ ${isFreePlan?`
 <div id="cancel-sub-section">
   ${SUB.cancelAtPeriodEnd?`
   <button id="reactivate-btn" onclick="reactivateSubscription()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:var(--grn-bg);border:1.5px solid var(--grn);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--grn);transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-    <span style="font-size:18px">✅</span>
+    <span style="font-size:18px">${LedgerIcon('check')}</span>
     <div style="text-align:left;flex:1">
       <div style="font-weight:700">Reactivate Subscription</div>
       <div style="font-size:11px;color:var(--mut);font-weight:400">Resume your plan — cancellation will be reversed</div>
@@ -10403,7 +10403,7 @@ ${isFreePlan?`
     <span style="font-size:12px;color:var(--grn)">›</span>
   </button>`:`
   <button onclick="showCancelConfirm()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:10px;font-size:13px;font-weight:600;color:#ef4444;transition:all .15s" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--bdr)'">
-    <span style="font-size:18px">🚫</span>
+    <span style="font-size:18px">${LedgerIcon('x')}</span>
     <div style="text-align:left;flex:1">
       <div style="font-weight:700">Cancel Subscription</div>
       <div style="font-size:11px;color:var(--mut)">End your plan at the current billing period</div>
@@ -10739,7 +10739,7 @@ ${isElite()?`
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <button onclick="openPrioritySupport()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:transparent;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt);font-size:13px;font-weight:600;text-align:left">
-      <span style="font-size:18px">🎧</span><div style="flex:1"><div>Priority Support</div><div style="font-size:11px;color:var(--mut);font-weight:400">Responses within 2 hours (business hours)</div></div><span style="color:var(--mut)">›</span>
+      <span style="font-size:18px">${LedgerIcon('headset')}</span><div style="flex:1"><div>Priority Support</div><div style="font-size:11px;color:var(--mut);font-weight:400">Responses within 2 hours (business hours)</div></div><span style="color:var(--mut)">›</span>
     </button>
   </div>
 </div>`:''}
@@ -15705,7 +15705,7 @@ function showAchievementUnlock(ach){
   const el=document.createElement('div');
   el.style.cssText=`position:fixed;bottom:28px;right:24px;z-index:1050;background:var(--surf);border:1.5px solid rgba(245,158,11,.4);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,.2);max-width:300px;animation:modalIn .4s cubic-bezier(.22,.61,.36,1);transition:opacity .4s`;
   el.innerHTML=`
-    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b22,#d9770622);border:1.5px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;animation:badgeBurst .5s cubic-bezier(.22,.61,.36,1)">${ach.icon}</div>
+    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b22,#d9770622);border:1.5px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;animation:badgeBurst .5s cubic-bezier(.22,.61,.36,1)">${LedgerIcon(ach.icon)}</div>
     <div style="flex:1;min-width:0">
       <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:3px">Achievement</div>
       <div style="font-size:14px;font-weight:800;color:var(--txt)">${ach.name}</div>
