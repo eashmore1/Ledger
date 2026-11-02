@@ -1380,7 +1380,7 @@ const ONB_INTRO = {
   intro: true,
 };
 
-const ONB_ORDER = ['feed','dashboard','plan','studylab','explore','profile'];
+const ONB_ORDER = ['feed','dashboard','studylab','plan','explore','profile'];
 
 const ONBOARD_GUIDE = {
   feed: { label:'Feed', steps:[
@@ -3933,12 +3933,15 @@ function renderApp(){
       <div class="nav-logo" onclick="switchTab('feed')" style="display:flex;align-items:center;gap:7px"><svg width="22" height="22" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div>
       <div class="nav-tabs">
         ${[
+          // Ordered by how often a candidate actually opens them. Study Lab is
+          // the paid surface (MCQs, flashcards, AI coach) and was last; Profile
+          // is a weekly visit at best and now lives behind the avatar, which is
+          // where people look for it anyway.
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
-          {id:'plan',icon:'🗓',label:'Study Plan'},
-          {id:'profile',icon:'◉',label:'Profile'},
-          {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
+          {id:'plan',icon:'🗓',label:'Study Plan'},
+          {id:'explore',icon:'◎',label:'Explore'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -3949,7 +3952,7 @@ function renderApp(){
         <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
         <button onclick="openMessagesPage()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
         <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
-        <button onclick="openEditProfile()" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
+        <button id="nav-avatar-btn" onclick="switchTab('profile')" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;box-shadow:${currentTab==='profile'?'0 0 0 2px var(--ora)':'var(--shadow-btn)'};color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
       </div>
     </div>
   </nav>
@@ -3986,6 +3989,7 @@ function renderApp(){
   </footer>
 </div>`;
   renderTab();
+  syncNavActive(currentTab);
   updateNavChip(); // reflect any restored in-progress session in the top bar
   // Handle direct deep-link navigation on page reload
   const _profMatch=window.location.pathname.match(/^\/user\/(.+)/);
@@ -4008,20 +4012,32 @@ function renderApp(){
   }
 }
 
+// Keeps every nav surface in sync with the active tab. Called from switchTab and
+// from renderApp, which can land on a tab from the URL hash without going through
+// switchTab at all.
+function syncNavActive(tab){
+  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Study Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab'};
+  document.querySelectorAll('.nav-tab').forEach(b=>{
+    b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
+  });
+  // Study Plan and Explore live in the More sheet, so highlight More while you're
+  // on one of them — otherwise the bottom bar shows nothing selected.
+  const mobBar=['feed','dashboard','studylab','profile'];
+  document.querySelectorAll('[data-mnav]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mnav==='more' ? !mobBar.includes(tab) : b.dataset.mnav===tab);
+  });
+  // Profile has no tab button any more — the avatar is its entry point.
+  const av=document.getElementById('nav-avatar-btn');
+  if(av) av.style.boxShadow = tab==='profile' ? '0 0 0 2px var(--ora)' : 'var(--shadow-btn)';
+}
 function switchTab(tab){
   // close more sheet if open
   const _moreSheet=document.getElementById('mob-more-sheet');
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','plan','profile','explore','studylab'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Study Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab'};
-  document.querySelectorAll('.nav-tab').forEach(b=>{
-    b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
-  });
-  document.querySelectorAll('[data-mnav]').forEach(b=>{
-    b.classList.toggle('active',b.dataset.mnav===tab);
-  });
+  const tabOrder=['feed','dashboard','studylab','plan','explore','profile'];
+  syncNavActive(tab);
   const page=document.getElementById('page-content');
   if(page){
     const prevIdx=tabOrder.indexOf(prevTab);
@@ -10849,8 +10865,8 @@ function injectMobileNav(){
   const tabs=[
     {id:'feed',icon:'◈',label:'Feed'},
     {id:'dashboard',icon:'▦',label:'Dash'},
+    {id:'studylab',icon:'⬡',label:'Lab'},
     {id:'profile',icon:'◉',label:'You'},
-    {id:'explore',icon:'◎',label:'Explore'},
     {id:'more',icon:'···',label:'More',isMore:true}
   ];
   const nav=document.createElement('nav');
@@ -10893,6 +10909,14 @@ function injectMobileNav(){
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
       <div class="mob-more-sub">AI-generated day-by-day calendar</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('explore')">
+    <div class="mob-more-icon" style="background:#f5f3ff">◎</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Explore</div>
+      <div class="mob-more-sub">Find candidates, clubs &amp; leaderboards</div>
     </div>
     <span class="mob-more-chev">›</span>
   </button>
