@@ -48,7 +48,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
 <!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -91,7 +91,8 @@
   --transition:.18s cubic-bezier(.4,0,.2,1);
   /* ── SPACING SCALE (4pt) ── */
   --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;
-  --font-display:'Barlow Condensed','Inter',system-ui,sans-serif;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
 }
 body.dark{
   --bg:#0c0905;--surf:#15100b;--surf2:#1e1812;--surf3:#261f17;
@@ -108,7 +109,7 @@ body.dark{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{min-height:100%;background:var(--bg)}
-html,body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html,body{font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 button,input,select,textarea{font-family:inherit;font-size:inherit}
 a{color:var(--ind);text-decoration:none;transition:opacity var(--transition)}
 a:hover{opacity:.75}
@@ -124,7 +125,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .app-wrap{display:flex;flex-direction:column;min-height:100vh}
 .topnav{background:var(--surf);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
 .topnav-inner{max-width:1160px;margin:0 auto;padding:0 var(--sp-5);height:64px;display:flex;align-items:center;gap:var(--sp-5)}
-.nav-logo{font-size:22px;font-weight:800;color:var(--ora);letter-spacing:0;font-family:var(--font-display);flex-shrink:0;cursor:pointer;transition:opacity var(--transition)}
+.nav-logo{font-size:22px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;font-family:var(--font-display);flex-shrink:0;cursor:pointer;transition:opacity var(--transition)}
 .nav-logo:hover{opacity:.85}
 .nav-logo span{color:var(--ind)}
 .nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
@@ -207,10 +208,10 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .ac-stat-row{display:flex;align-items:stretch;gap:0;padding:12px 16px;border-bottom:1px solid var(--bdr)}
 .ac-stat-blk{display:flex;flex-direction:column;gap:2px}
 .ac-stat-blk+.ac-stat-blk{padding-left:18px;border-left:1px solid var(--bdr);margin-left:18px}
-.ac-stat-v{font-size:24px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--txt);font-family:var(--font-display)}
+.ac-stat-v{font-size:24px;font-weight:900;letter-spacing:-.015em;line-height:1;color:var(--txt);font-family:var(--font-display)}
 .ac-stat-l{font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
-/* Unit suffix on a big stat number. The display face is set at -.04em tracking,
-   which collides the glyph with the digit before it — so the unit gets its own
+/* Unit suffix on a big stat number. The display face is tracked in, which
+   collides the glyph with the digit before it — so the unit gets its own
    size, weight and normal tracking instead of being jammed onto the number. */
 .stat-unit{font-size:.58em;font-weight:700;letter-spacing:0;margin-left:.1em;color:var(--mut);font-family:var(--font)}
 
@@ -259,7 +260,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── LEADERBOARD ── */
 .lb-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--bdr)}
 .lb-row:last-child{border-bottom:none}
-.lb-rank{font-size:15px;font-weight:700;color:var(--mut);width:28px;text-align:center;flex-shrink:0;font-family:var(--font-display);font-variant-numeric:tabular-nums}
+.lb-rank{font-size:15px;font-weight:700;color:var(--mut);width:34px;text-align:center;flex-shrink:0;font-family:var(--font-display);font-variant-numeric:tabular-nums}
 .lb-rank.gold{color:#f59e0b;font-size:20px}
 .lb-rank.silver{color:#94a3b8;font-size:18px}
 .lb-rank.bronze{color:#d97706;font-size:17px}
@@ -356,7 +357,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 80%,rgba(212,64,0,.28),transparent 45%),radial-gradient(ellipse at 90% 10%,rgba(90,95,207,.12),transparent 40%)}
 .auth-left::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(212,64,0,.4),transparent 60%)}
 .auth-left-inner{position:relative;z-index:1}
-.auth-brand{font-size:42px;font-weight:800;color:#fff;letter-spacing:0;margin-bottom:6px;line-height:1;font-family:var(--font-display)}
+.auth-brand{font-size:42px;font-weight:700;font-style:italic;color:#fff;letter-spacing:-.01em;margin-bottom:6px;line-height:1;font-family:var(--font-display)}
 .auth-brand-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:48px;line-height:1.6}
 .auth-feature{display:flex;align-items:flex-start;gap:15px;margin-bottom:22px}
 .auth-feature-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
@@ -366,7 +367,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-social-proof strong{color:rgba(255,255,255,.65)}
 
 .auth-right{width:500px;display:flex;flex-direction:column;justify-content:center;padding:52px;background:var(--surf)}
-.auth-right-logo{font-size:26px;font-weight:800;color:var(--ora);letter-spacing:0;margin-bottom:6px;font-family:var(--font-display)}
+.auth-right-logo{font-size:26px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;margin-bottom:6px;font-family:var(--font-display)}
 .auth-tabs{display:flex;gap:0;background:var(--surf2);border-radius:11px;padding:4px;margin-bottom:26px;border:1px solid var(--bdr)}
 .auth-tab{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-radius:8px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);letter-spacing:-.01em}
 .auth-tab.active{background:var(--surf);color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
@@ -396,7 +397,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── ONBOARDING ── */
 .onboard-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
 .onboard-box{width:100%;max-width:540px}
-.onboard-logo{font-size:44px;font-weight:800;color:var(--ora);letter-spacing:0;line-height:1;font-family:var(--font-display)}
+.onboard-logo{font-size:44px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;line-height:1;font-family:var(--font-display)}
 .onboard-logo span{color:var(--ind)}
 .onboard-sub{font-size:15px;color:var(--sub);margin-top:8px;line-height:1.6;margin-bottom:28px;letter-spacing:-.01em}
 .ob-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -577,7 +578,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-start-btn{width:100%;padding:15px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .sess-start-btn:hover{background:#b03500;transform:translateY(-1px)}
 .sess-exam-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px}
-.sess-clock{font-size:68px;font-weight:700;letter-spacing:-.01em;line-height:1;text-align:center;font-family:var(--font-display);font-variant-numeric:tabular-nums;transition:color .3s;margin:10px 0 6px}
+.sess-clock{font-size:clamp(44px,13vw,68px);font-weight:700;letter-spacing:-.01em;line-height:1;text-align:center;font-family:var(--font-display);font-variant-numeric:tabular-nums;transition:color .3s;margin:10px 0 6px}
 .sess-clock-lbl{text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:18px}
 .sess-topic-row{text-align:center;margin-bottom:24px}
 .sess-topic-lbl{font-size:12px;color:var(--mut);margin-bottom:3px}
@@ -3108,7 +3109,7 @@ function renderAuth(){
 
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
-    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
+    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-family:var(--font);font-style:normal;font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
     ${_invName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px 14px;margin-bottom:18px">
       <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d44000,#ff6a2b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_invInitials)}</div>
       <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div></div>
@@ -3971,7 +3972,7 @@ function renderApp(){
     <div class="lg-foot-inner">
       <div class="lg-foot-grid">
         <div class="lg-foot-brand">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:'Barlow Condensed','Inter',sans-serif;font-size:21px;font-weight:800;color:#fff;letter-spacing:.3px">Ledger</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:var(--font-display);font-style:italic;font-size:21px;font-weight:700;color:#fff;letter-spacing:-.01em">Ledger</span></div>
           <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
           <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45)">A product of <strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></div>
         </div>
@@ -7496,7 +7497,7 @@ function _renderActivityPage(actId){
   const feelEmoji={'great':'😄','good':'🙂','okay':'😐','rough':'😓','bad':'😩'}[act.feeling]||'';
   const statBlocks=[
     `<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
-      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1;font-family:var(--font-display)">${act.hours}<span class="stat-unit">h</span></div>
+      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.015em;line-height:1;font-family:var(--font-display)">${act.hours}<span class="stat-unit">h</span></div>
       <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Duration</div>
     </div>`,
     act.elapsed?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
@@ -15813,7 +15814,7 @@ function showStreakMilestone(days){
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.3);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
   <div style="font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:16px">Study Streak</div>
-  <div style="font-size:80px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--txt);margin-bottom:12px;font-family:var(--font-display)">${days}</div>
+  <div style="font-size:80px;font-weight:900;letter-spacing:-.02em;line-height:1;color:var(--txt);margin-bottom:12px;font-family:var(--font-display)">${days}</div>
   <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px">${cfg.label}</div>
   <div style="font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:28px">${cfg.sub}</div>
   <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.3)">Keep Going</button>
