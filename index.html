@@ -4688,18 +4688,24 @@ function calcReadinessScore(overrideSection){
   // Only valid entries (finite score, real date) count; scores are clamped to 0–100.
   const sScores=((S.practiceScores||{})[s]||[]).filter(sc=>sc&&isFinite(Number(sc.score))&&dayMs(sc.date));
   const hasScores=sScores.length>0;
-  let practicePts=0;
+  let practicePts=0,weightedAvg=0,daysSinceScore=Infinity;
   if(sScores.length){
     let totalWeight=0,weightedSum=0;
     sScores.forEach(sc=>{
       const score=Math.max(0,Math.min(100,Number(sc.score)));
       const daysAgo=Math.max(0,(now-dayMs(sc.date))/86400000);
+      daysSinceScore=Math.min(daysSinceScore,daysAgo);
       const w=Math.max(0.3,Math.exp(-daysAgo/120)); // full weight <30d, ~50% at 3mo
       weightedSum+=score*w; totalWeight+=w;
     });
-    const weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
-    practicePts=(weightedAvg/75)*35;          // 75 = passing = 35 pts
-    if(weightedAvg>=75) practicePts+=5;        // 80+ trends toward full 40
+    weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
+    // 75 is the pass line, so it anchors 35 of the 40 points. Below it the curve
+    // is convex rather than linear: a 60 average is not 80% of the way to passing,
+    // and the old straight line said it was (28/35). Above 75, the last 5 points
+    // accrue to 80, which is where candidates have real margin.
+    practicePts = weightedAvg>=75
+      ? 35+Math.min(5,(weightedAvg-75)/5*5)
+      : 35*Math.pow(weightedAvg/75,1.6);
   }
   practicePts=clampInt(practicePts,0,40);
 
@@ -4731,13 +4737,41 @@ function calcReadinessScore(overrideSection){
   const score=clampInt(volumePts+pacingPts+practicePts+momentumPts+consistencyPts,0,99);
   const breakdown=[{section:s,score,volumePts,pacingPts,practicePts,momentumPts,consistencyPts,logged,decayed:Math.round(decayed),hasScores}];
 
-  let label,color,tier;
-  if(score<35){label='Just Getting Started';color='#ef4444';tier='start';}
-  else if(score<50){label='Building Foundation';color='#f59e0b';tier='building';}
-  else if(score<65){label='On Track';color='var(--ind)';tier='track';}
-  else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
-  else{label='Exam Ready';color='var(--grn)';tier='ready';}
-  return{score,label,color,tier,breakdown,section:s,hasScores};
+  // ── Label gating ────────────────────────────────────────────────────────────
+  // 60 of the 100 points measure effort (volume, pacing, consistency, momentum);
+  // only Practice measures whether you can actually pass. So the headline label
+  // is capped by the evidence of mastery, not by the raw total. Without this a
+  // 70 practice average — a failing average — reads "Exam Ready" on a full
+  // effort score, which is the single most dangerous thing this app could say.
+  const TIERS=[
+    {max:35,label:'Just Getting Started',color:'#ef4444',tier:'start'},
+    {max:50,label:'Building Foundation',color:'#f59e0b',tier:'building'},
+    {max:65,label:'On Track',color:'var(--ind)',tier:'track'},
+    {max:80,label:'Strong Progress',color:'var(--grn)',tier:'strong'},
+    {max:Infinity,label:'Exam Ready',color:'var(--grn)',tier:'ready'}
+  ];
+  let idx=TIERS.findIndex(t=>score<t.max); if(idx<0) idx=TIERS.length-1;
+  let capReason='';
+  // The caveat is shown whenever it applies, not only when it actually lowered
+  // the label — "Strong Progress" off a 70 average needs the same footnote as
+  // a capped one, or the gating is invisible exactly where it matters most.
+  const capTo=(i,why)=>{ if(idx>i) idx=i; if(why) capReason=why; };
+  if(!hasScores){
+    // Nothing here measures whether you can pass. Effort alone tops out at
+    // "Building Foundation" no matter how many hours are logged. No caveat text:
+    // the card already shows the "50 pts locked" prompt right below this.
+    capTo(1,null);
+  } else if(weightedAvg<68){
+    capTo(2,`Your practice average is ${Math.round(weightedAvg)}. Passing is 75.`);
+  } else if(weightedAvg<75){
+    capTo(3,`Your practice average is ${Math.round(weightedAvg)} — close, but passing is 75.`);
+  } else if(sScores.length<2){
+    capTo(3,'One practice score above 75 is a good sign, not yet a trend. Log another.');
+  } else if(daysSinceScore>60){
+    capTo(3,`Your most recent practice score is ${Math.round(daysSinceScore)} days old — too stale to call you exam ready.`);
+  }
+  const {label,color,tier}=TIERS[idx];
+  return{score,label,color,tier,breakdown,section:s,hasScores,practiceAvg:hasScores?Math.round(weightedAvg):null,capReason};
 }
 
 function setReadinessSection(sec){_readinessSection=sec;renderTab();}
@@ -4764,7 +4798,8 @@ function buildReadinessCard(){
     <div style="flex:1">
       <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px">Readiness Score</div>
       ${_switcher}
-      <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
+      <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:${r.capReason?'4px':'10px'}">${r.label}</div>
+      ${r.capReason?`<div style="font-size:10px;color:var(--mut);line-height:1.5;margin-bottom:10px">${esc(r.capReason)}</div>`:''}
       <div style="display:flex;flex-direction:column;gap:8px">
         ${r.breakdown.map(b=>[
           ['📝','Practice',b.practicePts,40],
@@ -12048,7 +12083,8 @@ function _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, 
     'Sessions: ' + sessions + '\n' +
     'Active streak: ' + streak + ' days\n' +
     'Habit score: ' + habitScore + '% (' + daysStudied30 + '/30 days studied)\n' +
-    'Readiness score: ' + readiness.score + '/100\n' +
+    'Readiness score: ' + readiness.score + '/100 (' + readiness.label + ')\n' +
+    'Weighted practice-exam average: ' + (readiness.practiceAvg!=null ? readiness.practiceAvg + ' (75 is the pass line)' : 'none logged yet — treat readiness as unproven') + '\n' +
     'Section progress:\n' + sectionLines + '\n\n' +
     'Give 4-5 specific, actionable bullet points of advice. Be direct and concrete — name specific sections, concepts, or exam areas they should focus on. Mention any red flags you see in the data. End with one motivating sentence. Format as bullet points starting with •.';
 
@@ -12146,7 +12182,8 @@ function _coachBuildContext() {
     'Total hours: ' + totalHrs + 'h\n' +
     'This week: ' + weekHrs + 'h\n' +
     'Streak: ' + streak + ' days\n' +
-    'Readiness score: ' + readiness.score + '/100\n' +
+    'Readiness score: ' + readiness.score + '/100 (' + readiness.label + ')\n' +
+    'Weighted practice-exam average: ' + (readiness.practiceAvg!=null ? readiness.practiceAvg + ' (75 is the pass line)' : 'none logged yet — treat readiness as unproven') + '\n' +
     'Section progress:\n' + sectionData;
 }
 
