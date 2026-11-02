@@ -85,7 +85,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 
 /* ── PLAN GRID ── */
 .plans-wrap{max-width:1040px;margin:0 auto;padding:0 var(--sp-4) var(--sp-10)}
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3);align-items:start;margin-bottom:var(--sp-3)}
+.plans-grid{display:grid;grid-template-columns:1fr 1.12fr;gap:var(--sp-3);align-items:start;margin-bottom:var(--sp-3);max-width:720px;margin-left:auto;margin-right:auto}
 
 .plan-card{background:var(--surf);border:1.5px solid var(--bdr);border-radius:var(--r-xl);padding:var(--sp-4) var(--sp-3);position:relative;transition:box-shadow .22s var(--ease),transform .22s var(--ease),border-color .22s var(--ease)}
 .plan-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
@@ -229,14 +229,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 <div class="hero">
   <div class="hero-label">Pricing</div>
   <h1 class="hero-h1">Simple pricing.<br><em>No surprises.</em></h1>
-  <p class="hero-sub">Start free. Upgrade when you're ready. Every paid plan includes a 7-day free trial.</p>
+  <p class="hero-sub">Start free and stay free as long as you like. One paid plan with everything in it, or a one-time pass if your exam date is already set.</p>
 
   <div class="billing-wrap">
     <div class="billing-toggle">
       <button class="bill-opt active" id="bill-monthly" onclick="setBilling('monthly')">Monthly</button>
       <button class="bill-opt" id="bill-annual" onclick="setBilling('annual')">Annual</button>
     </div>
-    <span class="save-badge" id="save-badge" style="display:none">Save 20%</span>
+    <span class="save-badge" id="save-badge" style="display:none">Save 21%</span>
   </div>
 </div>
 
@@ -255,50 +255,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
       <div class="feat-row"><span class="feat-check">✓</span><span>Streaks &amp; achievement badges</span></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>1 study club</span></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Personal challenges &amp; milestones</span></div>
-      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">AI coaching (Ask Ledger)</span></div>
-      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Smart study schedule</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">AI question bank</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Ask Ledger (AI coach)</span></div>
+      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">AI Study Plan</span></div>
       <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Streak Shield</span></div>
-      <div class="feat-row"><span class="feat-x feat-dim">–</span><span class="feat-dim">Weekly progress reports</span></div>
       <a href="/" class="plan-cta free">Get Started Free</a>
     </div>
 
-    <!-- PRO -->
+    <!-- PRO — the only paid subscription -->
     <div class="plan-card popular">
-      <div class="popular-badge">MOST POPULAR</div>
+      <div class="popular-badge">EVERYTHING INCLUDED</div>
       <div class="plan-name ora">Pro</div>
-      <div class="plan-price ora" id="pro-price"><sup>$</sup>9</div>
+      <div class="plan-price ora" id="pro-price"><sup>$</sup>14</div>
       <div class="plan-period" id="pro-period">per month</div>
-      <div class="plan-was" id="pro-was" style="display:none">$9/mo without annual</div>
-      <div class="plan-trial">7-day free trial included</div>
+      <div class="plan-was" id="pro-was" style="display:none">$14/mo without annual</div>
+      <div class="plan-trial">7 days free — card required, cancel anytime</div>
       <div class="plan-sep"></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Free</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Ask Ledger — AI CPA coach</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Smart study schedule</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Advanced analytics &amp; heatmaps</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Question bank — 20 fresh AI questions/section daily</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Streak Shield — 3/month</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited study clubs</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Data export (CSV/PDF)</span></div>
-      <a href="/" class="plan-cta pro">Start Free Trial →</a>
-    </div>
-
-    <!-- ELITE -->
-    <div class="plan-card elite">
-      <div class="plan-name pur">Elite</div>
-      <div class="plan-price pur" id="elite-price"><sup>$</sup>14</div>
-      <div class="plan-period" id="elite-period">per month</div>
-      <div class="plan-was" id="elite-was" style="display:none">$14/mo without annual</div>
-      <div class="plan-trial" style="color:var(--pur)">AI Tools + Priority Support</div>
-      <div class="plan-sep"></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Everything in Pro</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited AI question bank — no daily cap</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited AI question bank — every section, no daily cap</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Ask Ledger — AI CPA coach, 100 answers/month</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>AI Study Plan — day-by-day calendar</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Advanced analytics + year-view heatmap</span></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Custom topic generator — drill any topic on demand</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Study Partner Pairing</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Full Exam Simulator</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited Streak Shield</span></div>
-      <div class="feat-row"><span class="feat-check">✓</span><span>Exclusive Elite badges</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Exam Day Protocol + score tracker</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Study partner pairing</span></div>
+      <div class="feat-row"><span class="feat-check">✓</span><span>Unlimited study clubs &amp; streak shields</span></div>
       <div class="feat-row"><span class="feat-check">✓</span><span>Priority support</span></div>
-      <a href="/" class="plan-cta elite-cta">Start Free Trial →</a>
+      <a href="/" class="plan-cta pro">Start 7-Day Free Trial →</a>
     </div>
 
   </div>
@@ -306,34 +289,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
   <!-- CRAM -->
   <div class="cram-card">
     <div class="cram-left">
-      <div class="cram-eyebrow">One-Time Purchase</div>
-      <div class="cram-title">📚 6-Month CPA Cram Plan</div>
-      <div class="cram-sub">Everything in Elite for 6 months, a structured exam-day protocol, and a personal milestone check-in. Perfect if your exam window is fixed. No recurring charges, ever.</div>
+      <div class="cram-eyebrow">One-Time Purchase · Best if your exam date is set</div>
+      <div class="cram-title">6-Month Exam Window Pass</div>
+      <div class="cram-sub">Six months of everything in Pro, paid once. Nothing auto-renews and there is nothing to cancel — when the six months are up, you simply go back to Free. Built for candidates who already know their test date.</div>
       <div class="cram-chips">
-        <span class="cram-chip">✓ Full Elite Features</span>
+        <span class="cram-chip">✓ Everything in Pro</span>
         <span class="cram-chip">✓ 6 Months Access</span>
-        <span class="cram-chip">✓ Exam Protocol PDF</span>
         <span class="cram-chip">✓ Unlimited Question Bank</span>
-        <span class="cram-chip">✓ No Subscription</span>
+        <span class="cram-chip">✓ Exam Day Protocol</span>
+        <span class="cram-chip">✓ No Subscription, No Auto-Renew</span>
       </div>
     </div>
     <div class="cram-right">
       <div class="cram-price"><sup>$</sup>75</div>
       <div class="cram-price-sub">one-time · 6 months</div>
-      <div class="cram-vs">vs $84 for 6 × Elite monthly + extras included</div>
-      <a href="/" class="cram-cta">Get the Cram Plan →</a>
+      <div class="cram-vs">vs $84 for 6 months of Pro billed monthly</div>
+      <a href="/" class="cram-cta">Get the Window Pass →</a>
     </div>
   </div>
 
-  <!-- STUDENT -->
-  <div class="student-card">
-    <span class="student-icon">🎓</span>
+  <!-- FIRM COHORTS -->
+  <div class="student-card" style="opacity:1">
+    <span class="student-icon">🏢</span>
     <div style="flex:1">
       <div class="student-title-row">
-        <span class="student-title">Student Discount</span>
-        <span class="student-soon">Coming Soon</span>
+        <span class="student-title">Firm &amp; university cohorts</span>
       </div>
-      <div class="student-desc">A discounted rate for students is coming. Stay tuned.</div>
+      <div class="student-desc">Putting a whole start class or accounting program on Ledger? Cohort plans are billed to the firm or school, per candidate, for one exam window — with a shared dashboard for whoever is running it. Email <a href="mailto:support@ledgercpa.app" style="color:var(--ora);font-weight:600">support@ledgercpa.app</a> and we'll set it up.</div>
     </div>
   </div>
 </div>
@@ -345,31 +327,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Do I need a credit card for the free trial?</div>
-    <div class="faq-a">No. The 7-day free trial for Pro and Elite requires no payment information. You only enter billing details if you decide to keep your subscription after the trial ends.</div>
+    <div class="faq-a">Yes — starting the 7-day Pro trial requires a card, and the subscription auto-renews after day 7 unless you cancel. You are charged $0 today, and if you cancel before the trial ends you are never charged at all. The Free plan needs no card and never expires, so you can use Ledger indefinitely without entering payment details.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
     <div class="faq-a">Yes. Cancel before the trial ends and you won't be charged. Cancel a paid subscription at any time, and you keep access through the end of your billing period.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">What's the difference between Pro and Elite?</div>
-    <div class="faq-a">Pro covers everything most candidates need: the full question bank with 20 fresh AI questions per section every day, smart scheduling, advanced analytics, streak protection, and weekly progress insights. Elite unlocks Ask Ledger (AI coach), the day-by-day AI Study Plan, the unlimited AI question bank with custom topic generation, Study Partner Pairing, and the full Exam Simulator. If you're not sure, start with Pro.</div>
+    <div class="faq-q" onclick="toggleFaq(this)">What's the difference between Free and Pro?</div>
+    <div class="faq-a">Free is the tracker: log every session, see your pacing across all four sections, keep a streak, and study alongside a club or your firm's cohort. It stays free forever and is not a trial. Pro adds the study material and the AI on top — the unlimited question bank, Ask Ledger (100 coach answers a month), the day-by-day AI Study Plan, advanced analytics, the Exam Day Protocol, and study partner pairing. There is only one paid plan, so there is nothing else to upgrade to later.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">What is the 6-Month Cram Plan?</div>
-    <div class="faq-a">It's a one-time purchase (not a subscription) that gives you full Elite access for 6 months, plus an exam-day protocol PDF and a personal milestone check-in. At $75 it's cheaper than 6 months of Elite billed monthly ($84) and includes extras. Designed for candidates with a fixed exam window.</div>
+    <div class="faq-q" onclick="toggleFaq(this)">What is the 6-Month Exam Window Pass?</div>
+    <div class="faq-a">A one-time $75 purchase — not a subscription — that gives you six months of everything in Pro. Nothing auto-renews, so there is nothing to remember to cancel. It works out cheaper than six months of Pro billed monthly ($84), and it's the right pick if your exam date is already scheduled. If you'd rather pay the lowest monthly rate and don't mind a renewal, annual Pro is $132/yr ($11/mo).</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Does the annual plan auto-renew?</div>
     <div class="faq-a">Yes, annual plans renew automatically unless cancelled. You can manage or cancel your subscription at any time from your account settings.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Is there a student discount?</div>
-    <div class="faq-a">A student discount is coming soon. For now, Pro is $9/mo, already well below what other CPA tools charge. Stay tuned.</div>
+    <div class="faq-q" onclick="toggleFaq(this)">Do you have cohort or group pricing?</div>
+    <div class="faq-a">Yes. If a firm's start class, a university accounting program, or a Beta Alpha Psi chapter wants to put a group on Ledger, we bill the organization per candidate for one exam window rather than asking each person for a card. Email support@ledgercpa.app with roughly how many candidates and when they sit.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later?</div>
-    <div class="faq-a">Yes. Upgrade or downgrade at any time. Upgrades take effect immediately. Downgrades take effect at the end of your current billing period.</div>
+    <div class="faq-q" onclick="toggleFaq(this)">Can I switch or cancel later?</div>
+    <div class="faq-a">Yes. Cancel Pro at any time from Settings → Subscription and you keep access through the end of the period you've already paid for, then drop back to Free — your logged hours, streak, and history stay put either way. There's a 30-day money-back guarantee on your first purchase, and refunds within 7 days of any later charge — email support@ledgercpa.app.</div>
   </div>
 </div>
 
@@ -425,21 +407,14 @@ function setBilling(type) {
   document.getElementById('save-badge').style.display = type === 'annual' ? 'inline-flex' : 'none';
 
   if (type === 'annual') {
-    document.getElementById('pro-price').innerHTML = '<sup>$</sup>7';
-    document.getElementById('pro-period').textContent = 'per month · billed $84/yr';
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>11';
+    document.getElementById('pro-period').textContent = 'per month · billed $132/yr';
     document.getElementById('pro-was').style.display = 'block';
-    document.getElementById('pro-was').textContent = '$9/mo without annual';
-    document.getElementById('elite-price').innerHTML = '<sup>$</sup>11';
-    document.getElementById('elite-period').textContent = 'per month · billed $132/yr';
-    document.getElementById('elite-was').style.display = 'block';
-    document.getElementById('elite-was').textContent = '$14/mo without annual';
+    document.getElementById('pro-was').textContent = '$14/mo without annual';
   } else {
-    document.getElementById('pro-price').innerHTML = '<sup>$</sup>9';
+    document.getElementById('pro-price').innerHTML = '<sup>$</sup>14';
     document.getElementById('pro-period').textContent = 'per month';
     document.getElementById('pro-was').style.display = 'none';
-    document.getElementById('elite-price').innerHTML = '<sup>$</sup>14';
-    document.getElementById('elite-period').textContent = 'per month';
-    document.getElementById('elite-was').style.display = 'none';
   }
 }
 
