@@ -1090,6 +1090,17 @@ function initFirebase(){
 function logLedgerEvent(name, params){
   try{ if(firebaseAnalytics) firebaseAnalytics.logEvent(name, params||{}); }catch(e){}
 }
+// Milestone events (first session, week-2 return, onboarding complete) are only
+// meaningful the first time they happen. The guard is per-device in localStorage:
+// a re-install double-counts, which is the right trade for not needing a server
+// round-trip before every log. Key is namespaced per uid so shared devices and
+// account switches don't suppress each other's milestones.
+function logLedgerEventOnce(name, params){
+  const key='pf2-ev-'+name+'-'+((typeof AUTH!=='undefined'&&AUTH&&AUTH.uid)||'anon');
+  try{ if(localStorage.getItem(key)) return false; localStorage.setItem(key,'1'); }catch(e){}
+  logLedgerEvent(name, params);
+  return true;
+}
 
 async function signInWithGoogle(){
   if(!FIREBASE_ENABLED){ simulateGoogleSignIn(); return; }
@@ -1596,6 +1607,9 @@ function redirectToStripeCheckout(planKey){
   }
   const url = STRIPE_CONFIG.paymentLinks[planKey];
   if(!url||url.includes('REPLACE')){ showToast('Stripe not configured yet','err'); return; }
+  // Last event before the user leaves the app for Stripe. The gap between this
+  // and 'purchase' (fired by the webhook path) is the checkout drop-off rate.
+  logLedgerEvent('checkout_started',{plan:planKey});
   // Pass Firebase UID + plan key so webhook can identify the user
   const uid   = AUTH?.uid   || '';
   const email = AUTH?.email || '';
@@ -2455,6 +2469,9 @@ function openUpgradeModal(featureHint){
   }
   renderUpgradeModal(featureHint||null);
   el.classList.add('open');
+  // Which locked feature drove someone to the paywall — the input you need to
+  // decide what belongs in the paid tier.
+  logLedgerEvent('upgrade_modal_viewed',{hint:featureHint||'none',tier:(typeof SUB!=='undefined'&&SUB.tier)||'free'});
 }
 function closeUpgradeModal(){
   const el=document.getElementById('upgrade-modal');
@@ -2852,6 +2869,9 @@ function init(){
     let firmName='';try{firmName=decodeURIComponent(_p.get('fn')||'');}catch(e){}
     _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid,firmName};
     _savePendingInvite(_pendingInvite); // survive the OAuth redirect
+    // Top of the referral funnel: the link was opened. Pairs with 'invite_shared'
+    // on the sender's side and 'cohort_joined' if they make it through signup.
+    logLedgerEvent('invite_opened',{has_inviter:!!fromUid,has_firm:!!firmName});
     if(obData){obData.firmCode=urlJoinCode.toUpperCase();if(firmName&&!obData.firmName)obData.firmName=firmName;}
     if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();if(firmName&&!S.firmName)S.firmName=firmName;saveState();}
     history.replaceState({},'',window.location.pathname);
@@ -3802,6 +3822,15 @@ function obFinish(){
   } else {
     showToast(`Welcome to Ledger, ${S.name}!`,'ok');
   }
+  // Activation funnel: signup -> onboarding_complete -> first_session_logged.
+  // cohort_joined is the payoff for the whole invite chain, so it carries enough
+  // to tell an invited join apart from someone typing in a code.
+  logLedgerEvent('onboarding_complete',{
+    sections:sections.length, intensity, has_exam_date:sections.some(x=>examDates[x]),
+    invited:!!(_inv&&_inv.code)
+  });
+  if(_inv&&_inv.code) logLedgerEvent('cohort_joined',{via:'invite_link',has_inviter:!!(_inv&&_inv.fromUid)});
+  else if(obData.firmCode&&firmName) logLedgerEvent('cohort_joined',{via:'created_cohort',has_inviter:false});
   _clearPendingInvite(); // invite consumed
   renderApp();
   // Show upgrade offer after a short delay so the app renders first
@@ -3902,6 +3931,18 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  // Retention buckets. Firebase can derive retention from app_open alone, but
+  // only as a cohort chart — these fire once per user so they can be used as
+  // conversion goals and audience definitions, and so day-N return is visible
+  // next to the activation events above it in the same funnel.
+  (function(){
+    const created=Number(S&&S.created);
+    if(!isFinite(created)||!created) return;
+    const days=(Date.now()-created)/86400000;
+    if(days>=1&&days<7)       logLedgerEventOnce('return_day_2_7');
+    else if(days>=7&&days<21) logLedgerEventOnce('return_week_2');
+    else if(days>=28)         logLedgerEventOnce('return_day_30');
+  })();
   // Leaving the messages page: kill live messaging listeners so background snapshots
   // don't keep marking the open conversation as read.
   if(typeof _detachDMConvListener==='function') _detachDMConvListener();
@@ -7105,6 +7146,9 @@ function saveSession(){
   const _priorScore=calcReadinessScore().score;
   S.activities.push(act);
   logLedgerEvent('session_logged', {section: act.section, hours: act.hours});
+  // The activation moment. Everything before this is setup; a user who never
+  // reaches it never had a chance to retain.
+  if((S.activities||[]).length===1) logLedgerEventOnce('first_session_logged',{section:act.section,hours:act.hours});
   const _priorAch=new Set(S.achievements||[]);
   saveState();checkAchievements();checkChallengeAchievements();
   syncClubActivity(); // push updated study stats to my clubs' shared leaderboard
@@ -8862,6 +8906,7 @@ function shareInvite(opts){
   const message=opts.message||buildInviteMessage(url);
   // Native share sheet — best on mobile: one tap straight to Messages/iMessage.
   if(navigator.share){
+    logLedgerEvent('invite_shared',{method:'native_sheet'});
     navigator.share({title:'Join me on Ledger',text:message}).catch(e=>{
       if(e&&e.name==='AbortError')return; // user dismissed — do nothing
       openInviteShareSheet(url,message);
@@ -8886,10 +8931,10 @@ function openInviteShareSheet(url,message){
     '<div class="modal-hdr"><div class="modal-title">Invite your cohort</div><button class="modal-close" onclick="document.getElementById(\'invite-share-sheet\').remove()">×</button></div>'+
     '<div style="padding:4px 2px 2px">'+
       '<div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:16px">Send your invite link the fastest way.</div>'+
-      btn('💬','Send via Text','window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
-      btn('🟢','Share on WhatsApp','window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
-      btn('✉️','Email it','window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
-      btn('📋','Copy link','_copyInviteFromSheet(this)','var(--surf2)')+
+      btn('💬','Send via Text','logLedgerEvent(\'invite_shared\',{method:\'sms\'});window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
+      btn('🟢','Share on WhatsApp','logLedgerEvent(\'invite_shared\',{method:\'whatsapp\'});window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
+      btn('✉️','Email it','logLedgerEvent(\'invite_shared\',{method:\'email\'});window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
+      btn('📋','Copy link','logLedgerEvent(\'invite_shared\',{method:\'copy_link\'});_copyInviteFromSheet(this)','var(--surf2)')+
       '<div style="text-align:center;margin-top:14px;padding-top:16px;border-top:1px solid var(--bdr)">'+
         '<div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Or scan in person</div>'+
         '<div style="background:#fff;border-radius:14px;padding:12px;display:inline-block"><img src="'+qrUrl+'" alt="Invite QR" style="width:150px;height:150px;display:block;border-radius:6px"></div>'+
@@ -9935,6 +9980,11 @@ function submitScore(section){
   if(!S.practiceScores)S.practiceScores={};
   if(!S.practiceScores[section])S.practiceScores[section]=[];
   S.practiceScores[section].push({score,label,date});
+  // Practice scores are the only readiness input that measures mastery, and the
+  // one the score card nags for — worth knowing how many users ever log one.
+  logLedgerEvent('practice_score_logged',{section,score,passing:score>=75,
+    nth:S.practiceScores[section].length});
+  if(S.practiceScores[section].length===1) logLedgerEventOnce('first_practice_score',{section,score});
   saveState();
   closePostModal();
   showToast(`${section} score ${score} logged${score>=75?' — at passing level':''}`,'ok');
