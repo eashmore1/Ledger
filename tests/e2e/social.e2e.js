@@ -77,6 +77,7 @@ test('social features between two real users', async (t) => {
     await b.waitForTimeout(500);
     await b.evaluate(() => openClubView('firm_' + S.firmCode));
     const inp = b.locator('[id^="cva-inp-"]');
+    await b.waitForTimeout(1500); // the view re-renders once its member list loads
     await inp.fill('Hello cohort');
     await inp.press('Enter');
     await b.waitForSelector('.modal-overlay.open :text("Hello cohort")');
@@ -103,6 +104,7 @@ test('social features between two real users', async (t) => {
     await a.waitForFunction(() => S.clubs.some((c) => c.name === 'FAR Night Crew'), null, { timeout: 15000 });
     await a.evaluate((id) => openClubView(id), clubId);
     const inp = a.locator('[id^="cva-inp-"]');
+    await a.waitForTimeout(1500);
     await inp.fill('Thanks for the add');
     await inp.press('Enter');
     await a.waitForSelector('.modal-overlay.open :text("Thanks for the add")');

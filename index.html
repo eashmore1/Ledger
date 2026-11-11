@@ -1065,6 +1065,7 @@ function initFirebase(){
     if(!firebase.apps.length) firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
     else firebaseApp = firebase.app();
     firebaseAuth = firebase.auth();
+    installFirestoreSanitizer();
     try{
       firebaseDb = firebase.firestore();
     }catch(e){
@@ -1077,6 +1078,65 @@ function initFirebase(){
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     // Auth state changes handled in init() via onAuthStateChanged
   } catch(e){ console.warn('Firebase init failed:', e.message); }
+}
+
+// ═══════════════════════════════════════════════
+// UNTRUSTED-TEXT BOUNDARY
+// Every screen in this app is built by concatenating strings into innerHTML,
+// and hundreds of those strings are text other users typed (names, bios, club
+// names, captions, comments). Rather than rely on every template remembering
+// to escape, text is made inert at the two places it ENTERS the app:
+//   1. anything read from Firestore (snapshot.data() is wrapped below), and
+//   2. invite-link URL parameters.
+// safeText() swaps the characters that can break out of HTML text, an HTML
+// attribute, or a quoted JS string inside an inline handler for look-alike
+// characters. It is idempotent, so text that is later esc()'d as well still
+// displays correctly.
+// ═══════════════════════════════════════════════
+function safeText(v){
+  if(typeof v!=='string') return v;
+  return v.replace(/</g,'\u2039').replace(/>/g,'\u203A')
+          .replace(/"/g,'\u201D').replace(/'/g,'\u2019').replace(/`/g,'\u2019')
+          .replace(/&/g,'\uFF06').replace(/\\/g,'\u2044')
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u2028\u2029]/g,'');
+}
+function deepSafe(v, depth){
+  depth=depth||0;
+  if(typeof v==='string') return safeText(v);
+  if(!v||typeof v!=='object'||depth>8) return v;
+  if(Array.isArray(v)) return v.map(x=>deepSafe(x,depth+1));
+  // Leave Firestore value types (Timestamp, GeoPoint, references…) alone.
+  if(Object.getPrototypeOf(v)!==Object.prototype) return v;
+  const out={};
+  for(const k of Object.keys(v)) out[safeText(k)]=deepSafe(v[k],depth+1);
+  return out;
+}
+function installFirestoreSanitizer(){
+  try{
+    // QueryDocumentSnapshot overrides data(), so both classes need wrapping.
+    [firebase.firestore.DocumentSnapshot, firebase.firestore.QueryDocumentSnapshot].forEach(cls=>{
+      const proto=cls&&cls.prototype;
+      if(!proto||Object.prototype.hasOwnProperty.call(proto,'__ledgerSafe')) return;
+      const raw=proto.data;
+      proto.data=function(){
+        const d=raw.apply(this,arguments);
+        if(!d) return d;
+        const path=(this.ref&&this.ref.path)||'';
+        // userState/{uid} is the signed-in user's OWN private blob (a JSON string
+        // plus counters) — it must round-trip byte-for-byte.
+        if(path.indexOf('userState/')===0) return d;
+        return deepSafe(d);
+      };
+      Object.defineProperty(proto,'__ledgerSafe',{value:true});
+    });
+    // Document IDs are chosen by whoever creates the document and end up in
+    // inline handlers (openClubView('<id>')), so they get the same treatment.
+    const base=firebase.firestore.DocumentSnapshot.prototype;
+    const desc=Object.getOwnPropertyDescriptor(base,'id');
+    if(desc&&desc.get&&desc.configurable){
+      Object.defineProperty(base,'id',{configurable:true,enumerable:desc.enumerable,get(){ return safeText(desc.get.call(this)); }});
+    }
+  }catch(e){ console.warn('[Ledger] Firestore sanitizer not installed:',e.message); }
 }
 
 function initAnalyticsIfConsented(){
@@ -2020,6 +2080,8 @@ function loadState(uid){
 function saveState(){
   if(!S)return;
   S._rev=Date.now(); // last-modified stamp — lets another device tell whose copy is newer
+  // Profile text I typed gets rendered into my own pages and published to others.
+  ['name','bio','school','city','firmName','state','locationState','classYear'].forEach(k=>{ if(typeof S[k]==='string') S[k]=safeText(S[k]); });
   try{localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S));}
   catch(e){showToast('Storage full — clear old data in Settings','err');}
   // Sync to Firestore for cross-domain/device access (debounced)
@@ -2089,7 +2151,7 @@ async function writeUserProfile(){
       followingCount: (S.following||[]).filter(id=>id&&id.length>4).length,
       followersCount: (S.followers||[]).filter(id=>id&&id.length>4).length,
       // Recent non-private activities — used by followers' feeds
-      recentActivities: !privacyPref('share_activity') ? [] : (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
+      recentActivities: !privacyPref('share_activity') ? [] : (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>deepSafe({
         id:a.id,date:a.date,section:a.section,hours:a.hours,
         type:a.type||'session',score:(typeof a.score==='number'?a.score:null),
         material:a.material||'',caption:a.caption||'',
@@ -2940,7 +3002,7 @@ function _getPendingInvite(){
     if(raw){
       const inv=JSON.parse(raw);
       if(inv && inv.code && (Date.now()-(inv.ts||0) < 2*60*60*1000)){ // honor for 2 hours
-        _pendingInvite={code:inv.code,fromName:inv.fromName||'',fromUid:inv.fromUid||'',firmName:inv.firmName||''};
+        _pendingInvite={code:safeText(String(inv.code)).slice(0,24),fromName:safeText(String(inv.fromName||'')).slice(0,60),fromUid:safeText(String(inv.fromUid||'')).slice(0,128),firmName:safeText(String(inv.firmName||'')).slice(0,60)};
         return _pendingInvite;
       }
     }
@@ -3085,14 +3147,19 @@ function init(){
   // Handle invite URL params
   const _p=new URLSearchParams(window.location.search);
   const urlJoinCode=_p.get('join');
-  if(urlJoinCode){
-    const fromName=decodeURIComponent(_p.get('from')||'');
-    const fromUid=_p.get('uid')||'';
-    let firmName='';try{firmName=decodeURIComponent(_p.get('fn')||'');}catch(e){}
-    _pendingInvite={code:urlJoinCode.toUpperCase(),fromName,fromUid,firmName};
+  if(urlJoinCode && urlJoinCode.replace(/[^A-Za-z0-9]/g,'')){
+    // Everything in an invite link is attacker-controllable: constrain the code
+    // to its real alphabet and make the display strings inert. (URLSearchParams
+    // has already percent-decoded these; decoding again threw on a literal "%"
+    // and stopped the whole app from loading.)
+    const _code=urlJoinCode.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,24);
+    const fromName=safeText(_p.get('from')||'').slice(0,60);
+    const fromUid=(_p.get('uid')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,128);
+    const firmName=safeText(_p.get('fn')||'').slice(0,60);
+    _pendingInvite={code:_code,fromName,fromUid,firmName};
     _savePendingInvite(_pendingInvite); // survive the OAuth redirect
-    if(obData){obData.firmCode=urlJoinCode.toUpperCase();if(firmName&&!obData.firmName)obData.firmName=firmName;}
-    if(S&&!S.firmCode){S.firmCode=urlJoinCode.toUpperCase();if(firmName&&!S.firmName)S.firmName=firmName;saveState();}
+    if(obData){obData.firmCode=_code;if(firmName&&!obData.firmName)obData.firmName=firmName;}
+    if(S&&!S.firmCode){S.firmCode=_code;if(firmName&&!S.firmName)S.firmName=firmName;saveState();}
     history.replaceState({},'',window.location.pathname);
   }
 

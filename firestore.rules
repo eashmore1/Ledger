@@ -2,6 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Document IDs end up inside the app's HTML, so IDs that clients choose are
+    // restricted to a harmless alphabet.
+    function safeId(id) { return id.matches('^[A-Za-z0-9_-]{1,128}$'); }
+
     // True unless the club is a private, member-listed club the caller isn't in.
     function canReadClub(clubId) {
       let path = /databases/$(database)/documents/clubs/$(clubId);
@@ -50,7 +54,7 @@ service cloud.firestore {
       // create/delete a prop attributed to your own uid.
       match /props/{propId} {
         allow read: if request.auth != null;
-        allow create: if request.auth != null && request.resource.data.reactor == request.auth.uid;
+        allow create: if request.auth != null && request.resource.data.reactor == request.auth.uid && safeId(propId);
         // The reactor can take their kudos back; the profile owner can clear
         // them (needed for account deletion).
         allow delete: if request.auth != null &&
@@ -61,7 +65,7 @@ service cloud.firestore {
       // create/delete a comment attributed to your own uid.
       match /comments/{commentId} {
         allow read: if request.auth != null;
-        allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+        allow create: if request.auth != null && request.resource.data.from == request.auth.uid && safeId(commentId);
         // The commenter can delete their comment; the post's author can remove
         // any comment left on their own activity.
         allow delete: if request.auth != null &&
@@ -106,7 +110,7 @@ service cloud.firestore {
         // Create: sender must match the from field AND be a participant —
         // otherwise any signed-in user could inject messages into any thread.
         allow create: if request.auth != null &&
-          request.resource.data.from == request.auth.uid &&
+          request.resource.data.from == request.auth.uid && safeId(msgId) &&
           request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
         // Delete: only the original sender can delete their own message
         allow delete: if request.auth != null &&
@@ -131,7 +135,7 @@ service cloud.firestore {
       // writes this doc before their own members/ record exists, so we can't
       // require membership here without breaking that flow). To still block
       // arbitrary field injection, only these known fields may be written.
-      allow create: if request.auth != null &&
+      allow create: if request.auth != null && safeId(clubId) &&
         request.resource.data.keys().hasOnly([
           'name','desc','icon','isPrivate','isPublic','isCohort','firmCode',
           'members','lastMessage','lastFrom','lastAt','memberCount',
@@ -154,7 +158,7 @@ service cloud.firestore {
         allow read: if request.auth != null && canReadClub(clubId);
         // Only the sender can create a message with their own UID
         allow create: if request.auth != null &&
-          request.resource.data.from == request.auth.uid && canReadClub(clubId);
+          request.resource.data.from == request.auth.uid && safeId(msgId) && canReadClub(clubId);
         // Only the original sender can delete their own message
         allow delete: if request.auth != null &&
           resource.data.from == request.auth.uid;
