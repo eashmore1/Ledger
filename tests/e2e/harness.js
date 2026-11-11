@@ -182,6 +182,8 @@ async function clearFirstRun(p) {
   await p.waitForTimeout(1500);
   await p.evaluate(() => {
     try { onbSkipAll(); } catch (e) {}
+    // The "leave a review" sheet opens 5s after milestone sessions and covers the page.
+    window.showReviewPrompt = () => {};
     document.getElementById('post-ob-offer')?.remove();
     document.getElementById('study-nudge-banner')?.remove();
   });

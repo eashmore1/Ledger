@@ -1070,11 +1070,20 @@ function initFirebase(){
     }catch(e){
       setTimeout(()=>{ try{ firebaseDb=firebase.firestore(); }catch(e2){} },500);
     }
-    try{ firebaseAnalytics = firebase.analytics(); }catch(e){}
+    // Analytics is opt-in: the cookie banner promises a choice, so nothing is
+    // collected unless the visitor pressed Accept.
+    initAnalyticsIfConsented();
     // Persist auth across page reloads
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     // Auth state changes handled in init() via onAuthStateChanged
   } catch(e){ console.warn('Firebase init failed:', e.message); }
+}
+
+function initAnalyticsIfConsented(){
+  if(firebaseAnalytics||!firebaseApp) return;
+  let ok=false; try{ ok=localStorage.getItem('ledger-cookie-consent')==='accepted'; }catch(e){}
+  if(!ok) return;
+  try{ firebaseAnalytics = firebase.analytics(); }catch(e){}
 }
 
 // Thin wrapper — never throws, safe to call anywhere
@@ -1868,6 +1877,8 @@ function firestoreToFriend(u){
     bio:u.bio||'',
     activities:(u.recentActivities||[]).map(a=>({...a,userId:u.uid})),
     isPrivate:!!u.isPrivate,
+    allowMessages:u.allowMessages!==false,
+    discoverable:u.discoverable!==false,
     profilePic:u.profilePic||'',
     avatar:u.avatar||'',
     firmName:u.firmName||'',
@@ -1900,7 +1911,8 @@ async function loadRealUsers(){
     const discSnap=await firebaseDb.collection('users').orderBy('updatedAt','desc').limit(40).get();
     discSnap.docs.forEach(d=>{
       const u=d.data();
-      if(u.uid&&u.uid!==AUTH.uid&&!realMap[u.uid])realMap[u.uid]=firestoreToFriend(u);
+      // People who switched off "Discoverable" only ever appear to those already following them.
+      if(u.uid&&u.uid!==AUTH.uid&&!realMap[u.uid]&&u.discoverable!==false)realMap[u.uid]=firestoreToFriend(u);
     });
     REAL_USERS=Object.values(realMap);
   }catch(e){console.warn('loadRealUsers:',e);}
@@ -2183,7 +2195,8 @@ async function searchFirestoreUsers(q){
       snap=await firebaseDb.collection('users')
         .orderBy('createdAt','desc').limit(30).get();
     }
-    return snap.docs.map(d=>d.data());
+    const _fol=new Set((S&&S.following)||[]);
+    return snap.docs.map(d=>d.data()).filter(u=>u.discoverable!==false||_fol.has(u.uid)||u.uid===AUTH?.uid);
   }catch(e){return [];}
 }
 
@@ -2424,7 +2437,10 @@ function checkAchievements(){
   // Queue achievement unlocks with staggered delay
   newOnes.forEach((id,i)=>{
     const ach=ACHIEVEMENTS.find(a=>a.id===id);
-    if(ach) setTimeout(()=>showAchievementUnlock(ach), 500+i*900);
+    if(ach){
+      addNotification('achievement','🏆','You earned the “'+esc(ach.name)+'” achievement.',null,'profile',null);
+      if(notifPref('achievements')) setTimeout(()=>showAchievementUnlock(ach), 500+i*900);
+    }
   });
 }
 
@@ -6435,6 +6451,7 @@ function _isUserPrivate(uid){
 
 function toggleAccountPrivacy(val){
   S.isPrivate=val;
+  S.privacyPrefs={...(S.privacyPrefs||{}),public_profile:!val};
   const track=document.getElementById('privacy-toggle-track');
   if(track){
     track.style.background=val?'var(--ind)':'var(--surf3)';
@@ -8406,6 +8423,15 @@ function _sendDM(convId){ return _sendConvMessage('dm',convId); }
 
 async function openDirectMessage(userId, displayName, displayInitials){
   if(!AUTH){ showToast('Sign in to message users','err'); return; }
+  // Respect the other person's "Allow Direct Messages" setting — unless a
+  // thread already exists, in which case let the conversation continue.
+  const _hasThread=(S.clubs||[]).some(c=>c.isDM&&(c.members||[]).includes(userId));
+  if(!_hasThread && firebaseDb){
+    try{
+      const _d=await firebaseDb.collection('users').doc(userId).get();
+      if(_d.exists && _d.data().allowMessages===false){ showToast((_d.data().displayName||'This user')+' isn\'t accepting direct messages.','info'); return; }
+    }catch(e){}
+  }
   const cached=_cachedUserInfo(userId);
   const name=cached?.name||displayName||'User';
   const initials=cached?.initials||displayInitials||(name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())||'??';
@@ -10900,10 +10926,9 @@ function buildSettingsNotifications(){
     {id:'study_reminders',label:'Daily Study Reminders',sub:'Nudge you to log a session if you haven\'t studied',def:true},
     {id:'streak_alerts',label:'Streak Alerts',sub:'Warn you before your streak is about to break',def:true},
     {id:'props_notifs',label:'Props & Comments',sub:'When someone gives you props or comments',def:true},
-    {id:'club_messages',label:'Club Messages',sub:'New messages in your study clubs',def:true},
+    {id:'club_messages',label:'Study Clubs',sub:'When someone adds you to a study club',def:true},
     {id:'achievements',label:'Achievements',sub:'When you unlock a new badge',def:true},
-    {id:'weekly_recap',label:'Weekly Recap',sub:'Your study summary delivered every Sunday',def:false},
-    {id:'leaderboard',label:'Study Circle Activity',sub:'When people in your circle log sessions and hit milestones',def:true},
+    {id:'leaderboard',label:'Followers',sub:'New followers, follow requests, and accepted requests',def:true},
   ];
   return`
 <div class="section-title">Push Notifications</div>
@@ -10925,7 +10950,7 @@ ${rows.map(r=>`
 
 function saveNotifPrefs(){
   if(!S.notifPrefs)S.notifPrefs={};
-  ['study_reminders','streak_alerts','props_notifs','club_messages','achievements','weekly_recap','leaderboard'].forEach(id=>{
+  ['study_reminders','streak_alerts','props_notifs','club_messages','achievements','leaderboard'].forEach(id=>{
     const el=document.getElementById('notif-'+id);
     if(el)S.notifPrefs[id]=el.checked;
   });
@@ -10934,14 +10959,14 @@ function saveNotifPrefs(){
 }
 
 function buildSettingsPrivacy(){
-  const prefs=S?.privacyPrefs||{};
+  const prefs={...(S?.privacyPrefs||{}),public_profile:!(S&&S.isPrivate)};
   return`
 <div class="section-title">Profile Visibility</div>
 ${[
-  {id:'public_profile',label:'Public Profile',sub:'Anyone can view your profile and sessions',def:true},
-  {id:'show_streak',label:'Show Study Streak',sub:'Display your streak count publicly',def:true},
-  {id:'show_hours',label:'Show Total Hours',sub:'Display your total logged hours',def:true},
-  {id:'show_scores',label:'Show Practice Scores',sub:'Display your practice exam scores on your profile',def:false},
+  {id:'public_profile',label:'Public Profile',sub:'Off = private account: people must request to follow you',def:true},
+  {id:'show_streak',label:'Show Study Streak',sub:'Publish your streak count to other users',def:true},
+  {id:'show_hours',label:'Show Total Hours',sub:'Publish your total logged hours to other users',def:true},
+  {id:'show_scores',label:'Share Exam Scores',sub:'Publish your logged exam results, including attempts you did not pass',def:false},
 ].map(r=>`
 <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bdr)">
   <div style="flex:1;min-width:0;padding-right:16px">
@@ -10955,7 +10980,7 @@ ${[
 
 <div class="section-title" style="margin-top:20px">Activity & Data Sharing</div>
 ${[
-  {id:'appear_leaderboard',label:'Appear in Study Circle',sub:'Show up in the weekly community activity view',def:true},
+  {id:'appear_leaderboard',label:'Discoverable',sub:'Appear in search and suggestions for people who don\'t follow you yet',def:true},
   {id:'allow_messages',label:'Allow Direct Messages',sub:'Let other Ledger users message you',def:true},
   {id:'share_activity',label:'Share Activity to Feed',sub:'New sessions appear in followers\' feeds',def:true},
 ].map(r=>`
@@ -10977,7 +11002,9 @@ function savePrivacyPrefs(){
     const el=document.getElementById('priv-'+id);
     if(el)S.privacyPrefs[id]=el.checked;
   });
+  S.isPrivate=!S.privacyPrefs.public_profile; // one source of truth for "private account"
   saveState();
+  writeUserProfile(); // apply immediately — these control what is published
   showToast('Privacy settings saved ✓','ok');
 }
 
@@ -11065,31 +11092,59 @@ function exportData(){
 
 async function confirmDeleteAccount(){
   const input=prompt('Type DELETE to permanently delete your account and all data:');
-  if(input==='DELETE'){
-    // Delete from Firebase if available
-    if(firebaseAuth?.currentUser){
-      try{
-        // Delete Firestore profile doc
-        if(firebaseDb&&AUTH?.uid){
-          try{await firebaseDb.collection('users').doc(AUTH.uid).delete();}catch(e){}
-        }
-        await firebaseAuth.currentUser.delete();
-      }catch(e){
-        // If requires re-auth, sign out and clear locally
-        if(e.code==='auth/requires-recent-login'){
-          showToast('Please sign out and sign back in, then try again.','err');
-          return;
-        }
-      }
+  if(input===null) return;
+  if(input!=='DELETE'){ showToast('Type DELETE exactly to confirm','err'); return; }
+  clearTimeout(saveState._t); // a pending autosave must not re-create the docs we're about to delete
+  clearInterval(window._socialSyncTimer);
+  const user=firebaseAuth?.currentUser;
+  if(user){
+    const uid=user.uid, db=firebaseDb;
+    // Firebase only allows deleting an account shortly after signing in. Check
+    // that FIRST so we never wipe someone's data and then fail to remove the login.
+    try{ await user.getIdToken(true); }catch(e){}
+    const lastLogin=Date.parse(user.metadata?.lastSignInTime||'')||0;
+    if(Date.now()-lastLogin > 4.5*60*1000){
+      showToast('For your security, sign out and sign back in, then delete your account right away.','err');
+      return;
     }
-    clearAuth();
-    localStorage.clear();
-    AUTH=null;S=null;
-    showToast('Account deleted.','info');
-    setTimeout(()=>location.reload(),800);
-  } else if(input!==null){
-    showToast('Type DELETE exactly to confirm','err');
+    if(db){
+      const del=ref=>ref.delete().catch(()=>{});
+      const delAll=async q=>{ try{ const sn=await q.get(); await Promise.all(sn.docs.map(d=>del(d.ref))); }catch(e){} };
+      try{
+        const me=db.collection('users').doc(uid);
+        // What I published about myself under other people's profiles and clubs
+        await Promise.all((S?.following||[]).filter(id=>id&&id.length>4).map(t=>del(db.collection('users').doc(t).collection('followers').doc(uid))));
+        await Promise.all((S?.pendingRequests||[]).filter(id=>id&&id.length>4).map(t=>del(db.collection('users').doc(t).collection('followRequests').doc(uid))));
+        await Promise.all((S?.clubs||[]).filter(c=>!c.isDM).map(async c=>{
+          const cref=db.collection('clubs').doc(c.id);
+          await del(cref.collection('members').doc(uid));
+          await del(cref.collection('presence').doc(uid));
+          const upd={memberCount:firebase.firestore.FieldValue.increment(-1)};
+          if(!c.isCohort&&!c.isPublic) upd.members=firebase.firestore.FieldValue.arrayRemove(uid);
+          await cref.set(upd,{merge:true}).catch(()=>{});
+        }));
+        // Everything stored under my own profile, then the profile and private state
+        await delAll(me.collection('followers'));
+        await delAll(me.collection('followRequests'));
+        await delAll(me.collection('comments'));
+        await delAll(me.collection('props'));
+        await del(db.collection('userState').doc(uid));
+        await del(me);
+      }catch(e){ console.warn('[Ledger] account data cleanup:',e.code||e.message); }
+    }
+    try{ await user.delete(); }
+    catch(e){
+      showToast(e.code==='auth/requires-recent-login'
+        ?'Your data was removed, but the login could not be deleted. Sign in again and repeat this step.'
+        :'Could not delete the login: '+(e.message||e.code),'err');
+      if(e.code!=='auth/requires-recent-login') return;
+    }
   }
+  clearAuth();
+  localStorage.clear();
+  AUTH=null;S=null;
+  showToast('Account deleted.','info');
+  setTimeout(()=>location.reload(),800);
 }
 
 function closeAppSettings(){ const el=document.getElementById('app-settings-modal'); if(el) el.style.display='none'; }
@@ -16262,6 +16317,12 @@ function checkStudyNudge(){
   if(hasLoggedToday())return;
   const today=todayStr();
   if(localStorage.getItem('nudgeDismissedDate')===today)return;
+  if(document.getElementById('post-ob-offer'))return; // don't stack on the first-run plan offer
+  // A streak that ends tonight is a "streak alert"; otherwise it's the daily reminder.
+  const _atRisk=(typeof getStreak==='function'?getStreak():0);
+  const _streakMsg=_atRisk>0 && notifPref('streak_alerts');
+  if(!_streakMsg && !notifPref('study_reminders'))return;
+  if(!_streakMsg && !(S.activities||[]).length)return; // nothing to remind a brand-new account about yet
   const banner=document.createElement('div');
   banner.id='study-nudge-banner';
   // Bottom-RIGHT corner (not dead-center) so it never covers primary action buttons (Send, Flashcards, etc.)
@@ -16269,8 +16330,8 @@ function checkStudyNudge(){
   banner.innerHTML=`<div style="background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px">
     <div style="font-size:22px;flex-shrink:0">📚</div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:700">You haven't studied today.</div>
-      <div style="font-size:11px;opacity:.7;margin-top:2px">Every session counts.</div>
+      <div style="font-size:13px;font-weight:700">${_streakMsg?('Your '+_atRisk+'-day streak ends tonight.'):"You haven't studied today."}</div>
+      <div style="font-size:11px;opacity:.7;margin-top:2px">${_streakMsg?'Log a session today to keep it going.':'Every session counts.'}</div>
     </div>
     <button onclick="document.getElementById('study-nudge-banner').remove();openSessionModal()" style="padding:7px 12px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log a session →</button>
     <button onclick="document.getElementById('study-nudge-banner').remove();localStorage.setItem('nudgeDismissedDate','${today}')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1">×</button>
@@ -16410,10 +16471,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
   var banner = document.getElementById('cookie-banner');
   if(!banner) return;
   var consent = localStorage.getItem(COOKIE_KEY);
-  if(!consent) banner.style.display = 'flex';
+  // While the banner is up, pad the page by its height so it can never sit on
+  // top of a primary button (it used to cover onboarding's "Continue").
+  function pad(){ document.body.style.paddingBottom = banner.style.display==='none' ? '' : banner.offsetHeight+'px'; }
+  if(!consent){ banner.style.display = 'flex'; pad(); window.addEventListener('resize', pad); }
   window.dismissCookieBanner = function(accepted){
-    localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined');
+    try{ localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined'); }catch(e){}
     banner.style.display = 'none';
+    pad();
+    if(accepted && typeof initAnalyticsIfConsented==='function') initAnalyticsIfConsented();
   };
 })();
 
