@@ -73,10 +73,47 @@ module.exports = async (req, res) => {
     return res.status(429).json({ error: 'Rate limit reached — you can ask 30 questions per hour.' });
   }
 
+  // ── Plan + monthly quota, enforced HERE ──────────────────────────────────
+  // The app hides AI features from free accounts, but that is only UI: without
+  // this check any signed-in user could call this endpoint directly and spend
+  // the Anthropic budget. The tier comes from users/{uid}.sub, which only the
+  // Stripe webhook can write (Firestore rules block client writes to `sub`).
+  // Usage is counted in aiUsage/{uid}, a collection no client can read or write.
+  const MONTHLY_LIMIT = { pro: 150, elite: 2000, cram: 2000 };
+  try {
+    const db = admin.firestore();
+    const userSnap = await db.collection('users').doc(uid).get();
+    const tier = (userSnap.exists && userSnap.data().sub && userSnap.data().sub.tier) || 'free';
+    const limit = MONTHLY_LIMIT[tier];
+    if (!limit) {
+      return res.status(403).json({ error: 'AI features are part of Ledger Pro and Elite. Upgrade to use them.' });
+    }
+    const month = new Date().toISOString().slice(0, 7);
+    const usageRef = db.collection('aiUsage').doc(uid);
+    const allowedNow = await db.runTransaction(async (tx) => {
+      const snap = await tx.get(usageRef);
+      const cur = snap.exists && snap.data().month === month ? (snap.data().count || 0) : 0;
+      if (cur >= limit) return false;
+      tx.set(usageRef, { month, count: cur + 1, updatedAt: Date.now() });
+      return true;
+    });
+    if (!allowedNow) {
+      return res.status(429).json({ error: 'You have reached this month\'s AI limit for your plan. It resets on the 1st.' });
+    }
+  } catch (e) {
+    console.error('ask.js plan check failed:', e.message);
+    return res.status(500).json({ error: 'Could not verify your plan — please try again.' });
+  }
+
   // ── Validate body ─────────────────────────────────────────────────────────────
   const { messages, system, maxTokens } = req.body || {};
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array is required' });
+  }
+  // Bound the request so one call can't be made arbitrarily expensive.
+  const size = JSON.stringify(messages).length + String(system || '').length;
+  if (messages.length > 60 || size > 200000) {
+    return res.status(413).json({ error: 'That request is too long — try a shorter question or less source text.' });
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {

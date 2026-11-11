@@ -88,15 +88,36 @@ runner — no extra test framework needed beyond `npm install`).
 - `index.html` loads without unhandled JS errors and renders a working
   sign-in/sign-up screen for a signed-out visitor.
 
-**What's *not* covered, and why:** authenticated in-app flows (logging a
-study session, sending a DM, upgrading to Pro, etc.) aren't tested here
-because they need a real Firebase project, real auth, and in most cases a
-real Stripe test-mode account — none of which exist in this environment. If
-you want coverage there, point the test suite's Firebase config at a
-**Firebase emulator** or a disposable test project and extend
-`tests/app-auth-screen.test.js` with a real sign-up → log session → verify
-dashboard update flow. That's the single highest-value next testing
-investment once you have a test Firebase project to point at.
+- `/api/ask` (the AI endpoint) rejects signed-out and free-plan callers,
+  counts usage, and enforces the monthly limit — run with its dependencies
+  stubbed, so no real API call is made.
+
+### End-to-end tests (signed-in app)
+
+```bash
+npm run test:e2e      # needs Java 11+ for the Firebase emulators
+```
+
+This boots the **Firebase Auth and Firestore emulators** with this repo's real
+`firestore.rules`, serves the production `index.html` (only change: two
+injected lines pointing the SDK at the emulators), and drives real accounts
+through the UI in headless Chromium. Third-party CDN scripts are served from
+`node_modules`, so it runs offline. `npm run test:all` runs both suites.
+
+| File | What it proves |
+|---|---|
+| `tests/e2e/core.e2e.js` | Sign-up → email verification → onboarding; live-timer and past-session logging; streaks; timer survives reload; exam results; practice quiz; password change and reset |
+| `tests/e2e/sync.e2e.js` | Signing in on a second device restores data; two devices merge instead of overwriting each other; deletions stay deleted |
+| `tests/e2e/social.e2e.js` | Invite links, feed, kudos, comments, real-time DMs, cohort chat, public and user-created clubs — plus negative checks that the security rules block an outsider |
+| `tests/e2e/notifications.e2e.js` | Follow requests to private accounts; notifications for followers, kudos, comments |
+| `tests/e2e/privacy.e2e.js` | Privacy switches control what is published; cookie Decline keeps analytics off; account deletion removes the data |
+| `tests/e2e/security.e2e.js` | Hostile text in every user-writable field never executes in another user's browser |
+
+Because these run against the actual rules file, **a rules change that breaks
+a feature fails a test** — run them before `npm run deploy:rules`.
+
+**Still not covered:** Stripe checkout and webhooks (need a Stripe test-mode
+account), Google sign-in (needs a real OAuth popup), and live AI responses.
 
 If a test fails after a change, that's the suite doing its job — don't
 delete the assertion to make it pass; figure out whether the change or the
@@ -118,7 +139,7 @@ file here).
 | Variable | Used by | Purpose |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `api/ask.js` | Powers Ask Ledger (AI tutor). Get from console.anthropic.com |
-| `FIREBASE_SERVICE_ACCOUNT` | `api/ask.js` | Service-account JSON string, used to verify user auth tokens server-side |
+| `FIREBASE_SERVICE_ACCOUNT` | all `api/*` except `invite.js`, `review.js` | Service-account JSON string: verifies user auth tokens, reads the caller's plan, and stores AI usage counts (`aiUsage/{uid}`) |
 | `RESEND_API_KEY` | `api/review.js` | Sends in-app review submissions by email. Free tier: 3,000 emails/month |
 | `REVIEW_EMAIL` | `api/review.js` | Where review emails are sent |
 | `STRIPE_SECRET_KEY` | `api/billing-portal.js`, `api/cancel-subscription.js`, `api/reactivate-subscription.js`, `api/stripe-webhook.js` | Stripe API access for subscription billing |
@@ -135,7 +156,9 @@ npm run deploy:rules
 ```
 
 Deploys `firestore.rules` and `firestore.indexes.json` to your Firebase
-project. **Do this whenever `firestore.rules` changes** — the rules file in
+project. The rules are part of the app, not just a safety net: direct messages,
+user-created clubs, follow requests and the lock on the subscription field all
+depend on the version in this repo being the one that is live. **Do this whenever `firestore.rules` changes** — the rules file in
 this repo is the intended security policy, but it only takes effect once
 deployed. If messaging/clubs/follows start throwing "permission-denied"
 errors in production, this is almost always the reason.

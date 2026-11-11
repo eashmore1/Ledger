@@ -11,7 +11,10 @@
     "cap:ios": "npx cap sync ios && npx cap open ios",
     "cap:android": "npx cap sync android && npx cap open android",
     "cap:sync": "npx cap sync",
-    "cap:copy": "npx cap copy"
+    "cap:copy": "npx cap copy",
+    "test:e2e": "firebase emulators:exec --only auth,firestore --project ledger-cpa \"node --test --test-concurrency=1 tests/e2e/*.e2e.js\"",
+    "test:all": "npm test && npm run test:e2e",
+    "emulators": "firebase emulators:start --only auth,firestore --project ledger-cpa"
   },
   "dependencies": {
     "@capacitor/core": "^6.0.0",
@@ -22,6 +25,10 @@
     "@capacitor/android": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
     "@capacitor/ios": "^6.0.0",
+    "canvas-confetti": "^1.9.3",
+    "firebase": "^10.12.2",
+    "firebase-tools": "^13.35.1",
+    "otpauth": "^9.3.6",
     "playwright": "^1.48.0"
   },
   "engines": {

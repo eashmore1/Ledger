@@ -104,5 +104,68 @@ test('core study-tracking flows', async (t) => {
     await a.evaluate(() => discardSession());
   });
 
+  await t.test('an exam result is recorded; a pass marks the section, a fail does not', async () => {
+    const log = async (section, score) => {
+      await a.evaluate((s) => openLogResultModal(s), section);
+      await a.fill('#lr-score', String(score));
+      await a.fill('#lr-sitdate', '2026-11-01');
+      await a.evaluate(() => logExamResult());
+      await a.waitForTimeout(1500);
+      await a.evaluate(() => document.querySelectorAll('.modal-overlay.open').forEach((e) => e.remove()));
+    };
+    await log('FAR', 82);
+    await a.waitForSelector('#pass-celebration-overlay'); // the "you passed" celebration
+    await a.evaluate(() => document.getElementById('pass-celebration-overlay').remove());
+    await log('AUD', 70);
+    const st = await a.evaluate(() => ({ passed: S.sectionPassed, results: S.examResults.map((r) => [r.section, r.score, r.passed]) }));
+    assert.deepEqual(st.passed, ['FAR']);
+    assert.deepEqual(st.results, [['FAR', 82, true], ['AUD', 70, false]]);
+  });
+
+  await t.test('a practice quiz can be completed and progress is saved', async () => {
+    await a.evaluate(() => { document.getElementById('share-card-overlay')?.remove(); switchTab('studylab'); openQuizModal('FAR', 'mcq'); });
+    await a.waitForSelector('[onclick^="_selectAnswer(1)"]');
+    // Answer every question (free tier serves a 5-question set), then finish.
+    for (let i = 0; i < 20; i++) {
+      if (!(await a.locator('[onclick^="_selectAnswer(1)"]').count())) break;
+      await a.evaluate(() => { _selectAnswer(1); _submitAnswer(); });
+      await a.locator('#quiz-overlay button:has-text("Next Question"), #quiz-overlay button:has-text("See Results")').first().click();
+    }
+    await a.waitForSelector('#quiz-overlay :text("Review")', { timeout: 5000 }).catch(() => {});
+    assert.ok(await a.evaluate(() => (S.qbProgress.FAR || {}).mcqDone) >= 5);
+    await a.evaluate(() => closeQuizOverlay());
+  });
+
+  await t.test('password can be changed, and the old one stops working', async () => {
+    await a.evaluate(() => openAppSettings('security'));
+    await a.fill('#sec-cur-pass', 'Passw0rd!x');
+    await a.fill('#sec-new-pass', 'N3wPassw0rd!');
+    await a.fill('#sec-conf-pass', 'N3wPassw0rd!');
+    await a.evaluate(() => changePassword());
+    await a.waitForFunction(() => document.getElementById('sec-cur-pass').value === '');
+    const oldPw = await H.signIn(env, { email: 'alice@example.com' });
+    await oldPw.page.waitForTimeout(2000);
+    assert.equal(await oldPw.page.locator('.nav-tab').count(), 0, 'old password rejected');
+    await oldPw.context.close();
+    const newPw = await H.signIn(env, { email: 'alice@example.com', password: 'N3wPassw0rd!' });
+    await newPw.page.waitForSelector('.nav-tab', { timeout: 15000 });
+    // 2 study sessions + the "passed FAR" milestone entry
+    assert.equal(await newPw.page.evaluate(() => S.activities.length), 3, 'data follows the account');
+    await newPw.context.close();
+  });
+
+  await t.test('"Forgot password" sends a reset email', async () => {
+    const v = await H.newUser(env);
+    await v.page.goto(env.server.url + '/', { waitUntil: 'load' });
+    await v.page.waitForSelector('.auth-tab');
+    await v.page.click('#cookie-banner button:has-text("Accept")');
+    await v.page.fill('#auth-email', 'alice@example.com');
+    await v.page.click('text=Forgot password?');
+    await v.page.waitForTimeout(1500);
+    const codes = await H.oobCodes();
+    assert.ok(codes.some((c) => c.email === 'alice@example.com' && c.requestType === 'PASSWORD_RESET'));
+    await v.context.close();
+  });
+
   assert.deepEqual(H.appErrors(A), []);
 });
