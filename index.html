@@ -2999,6 +2999,7 @@ async function enterSignedIn(user){
   setTimeout(writeUserProfile, 1200);
   setTimeout(backfillLongestStreak, 2000);
   setTimeout(checkStudyNudge, 1800);
+  setTimeout(syncMyClubs, 2500);
 }
 
 function _showRestoreLoader(){
@@ -6222,7 +6223,7 @@ function giveProps(actId,userId){
   }
   else{
     act.kudos.push(me);S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();
-    if(_ref)_ref.set({activityId:actId,reactor:me,author:authorUid,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Publish updated Firestore rules to enable props','err');});
+    if(_ref)_ref.set({activityId:actId,reactor:me,author:authorUid,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t save that — please try again.','err');});
   }
   // Animate button
   const btn=document.querySelector(`[data-aid="${actId}"][data-uid="${userId}"] .ac-action`)||
@@ -6292,7 +6293,7 @@ function addComment(actId,userId){
   if(!act.comments)act.comments=[];
   act.comments.push({user:myName,text,from:me});
   // Persist to the author's comments subcollection so the comment reaches them + everyone.
-  if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Publish updated Firestore rules to enable comments','err');});}
+  if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t post that comment — please try again.','err');});}
   if(authorUid===me)saveState();
   input.value='';
   openComments(actId,userId);
@@ -8129,7 +8130,7 @@ function deleteChatMessage(collection, channelId, msgId){
     .then(()=>showToast('Message deleted','info'))
     .catch(e=>{
       console.warn('deleteChatMessage error:',e.code,e.message);
-      showToast(e.code==='permission-denied'?'Publish the updated Firestore rules to enable delete':'Could not delete: '+(e.code||e.message),'err');
+      showToast(e.code==='permission-denied'?'You can only delete your own messages.':'Could not delete: '+(e.code||e.message),'err');
     });
   // The onSnapshot listener re-renders automatically once the doc is removed.
 }
@@ -8474,10 +8475,13 @@ function inviteToClub(clubId,userId,el){
   if(!club)return;
   if(club.members.includes(userId)){showToast(`${f.name} is already in this club!`,'info');return;}
   club.members.push(userId);
-  if(!S.clubMessages)S.clubMessages={};
-  if(!S.clubMessages[clubId])S.clubMessages[clubId]=[];
-  S.clubMessages[clubId].push({author:'system',text:`${f.name} was invited to the club`,time:new Date().toISOString(),isSystem:true});
   saveState();
+  if(firebaseDb&&AUTH?.uid){
+    const ref=firebaseDb.collection('clubs').doc(clubId);
+    ref.set({members:firebase.firestore.FieldValue.arrayUnion(AUTH.uid,userId)},{merge:true})
+      .then(()=>ref.collection('messages').add({from:AUTH.uid,isSystem:true,text:(S.name||'Someone')+' added '+f.name,timestamp:firebase.firestore.FieldValue.serverTimestamp()}))
+      .catch(e=>{ console.warn('inviteToClub:',e.code,e.message); showToast('Couldn\'t add '+f.name+' — please try again.','err'); });
+  }
   document.getElementById('invite-club-modal')?.classList.remove('open');
   showToast(`${f.name} invited to ${club.name}!`,'ok');
   renderTab();
@@ -8602,27 +8606,66 @@ function selectClubIcon(icon,el){
   el.style.borderColor='var(--ind)';el.style.background='var(--ind-bg)';
 }
 function closeCreateClubModal(){document.getElementById('create-club-modal')?.classList.remove('open');}
-function saveNewClub(){
+// Create a study club that actually exists for the people invited to it. The
+// club lives at clubs/{id} with a `members` uid array; each invitee's app finds
+// it via syncMyClubs() (array-contains query). It used to be written only to
+// the creator's local state, so "invited" friends never saw anything.
+async function saveNewClub(){
   const name=document.getElementById('ncn')?.value?.trim();
   if(!name){showToast('Enter a club name','err');return;}
   const desc=document.getElementById('ncd')?.value?.trim()||'';
   const icon=window._selectedClubIcon||'📚';
-  const members=['you'];
-  document.querySelectorAll('[id^="cm-"]').forEach(cb=>{if(cb.checked)members.push(cb.value);});
-  const clubId='c'+Date.now();
-  const club={id:clubId,name,icon,desc,isPrivate:true,members,created:Date.now()};
+  const invited=[];
+  document.querySelectorAll('[id^="cm-"]').forEach(cb=>{if(cb.checked&&cb.value)invited.push(cb.value);});
+  const shared=!!(firebaseDb&&AUTH&&AUTH.uid);
+  const clubId=shared?firebaseDb.collection('clubs').doc().id:'c'+Date.now();
+  const club={id:clubId,name,icon,desc,isPrivate:true,members:['you',...invited],created:Date.now()};
   if(!S.clubs)S.clubs=[];
   S.clubs.push(club);
-  if(!S.clubMessages)S.clubMessages={};
-  S.clubMessages[clubId]=[
-    {author:'system',text:`${S.name} created "${name}"`,time:new Date().toISOString(),isSystem:true},
-    ...members.filter(m=>m!=='you').map(m=>({author:'system',text:`${getClubMemberName(m)} was invited`,time:new Date().toISOString(),isSystem:true}))
-  ];
   saveState();
   closeCreateClubModal();
-  showToast(`${icon} "${name}" created!`,'ok');
+  if(shared){
+    try{
+      const ref=firebaseDb.collection('clubs').doc(clubId);
+      await ref.set({name,icon,desc,isPrivate:true,members:[AUTH.uid,...invited],memberCount:1,created:Date.now()});
+      await ref.collection('members').doc(AUTH.uid).set({uid:AUTH.uid,name:S.name||AUTH.displayName||'Member',joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      await ref.collection('messages').add({from:AUTH.uid,isSystem:true,text:(S.name||'Someone')+' created "'+name+'"',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+      syncClubActivity();
+    }catch(e){
+      console.warn('saveNewClub:',e.code,e.message);
+      showToast('Club saved on this device, but we couldn\'t share it yet. Check your connection.','err');
+      renderTab();
+      return;
+    }
+  }
+  showToast(`"${name}" created${invited.length?' — '+invited.length+' invited':''}`,'ok');
   renderTab();
   setTimeout(()=>openClubChat(clubId),200);
+}
+
+// Pull in clubs other people added me to, and drop ones I was removed from.
+async function syncMyClubs(){
+  if(!firebaseDb||!AUTH?.uid||!S) return;
+  let snap;
+  try{ snap=await firebaseDb.collection('clubs').where('members','array-contains',AUTH.uid).get(); }
+  catch(e){ console.warn('syncMyClubs:',e.code,e.message); return; }
+  if(!S.clubs)S.clubs=[];
+  let changed=false;
+  for(const d of snap.docs){
+    const c=d.data();
+    if(S.clubs.find(x=>x.id===d.id)) continue;
+    S.clubs.push({id:d.id,name:c.name||'Study Club',icon:c.icon||'📚',desc:c.desc||'',isPrivate:true,isDM:false,members:['you'],created:c.created||Date.now()});
+    changed=true;
+    try{
+      const mref=firebaseDb.collection('clubs').doc(d.id).collection('members').doc(AUTH.uid);
+      if(!(await mref.get()).exists){
+        await mref.set({uid:AUTH.uid,name:S.name||AUTH.displayName||'Member',joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        await firebaseDb.collection('clubs').doc(d.id).set({memberCount:firebase.firestore.FieldValue.increment(1)},{merge:true});
+      }
+    }catch(e){}
+    addNotification('club','👥','You were added to the study club "'+(c.name||'Study Club')+'".',d.id,'club',null);
+  }
+  if(changed){ saveState(); syncClubActivity(); if(typeof renderTab==='function'&&document.querySelector('.nav-tab')) renderTab(); }
 }
 
 function openClubChat(clubId){
@@ -8662,7 +8705,7 @@ async function joinPublicClub(pubId){
       });
       // Post welcome message
       await firebaseDb.collection('clubs').doc(pubId).collection('messages').add({
-        from:'system', text:(S.name||'Someone')+' joined '+pc.name+'!',
+        from:AUTH.uid, text:(S.name||'Someone')+' joined '+pc.name+'!',
         timestamp:firebase.firestore.FieldValue.serverTimestamp(), isSystem:true
       });
     }catch(e){ console.warn('Club join Firestore error:',e); }
@@ -9587,7 +9630,7 @@ function sendClubViewMessage(clubId){
       if(inp){inp.value=text;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
       if(sendBtn)sendBtn.disabled=false;
       if(e.code==='permission-denied'||e.code==='PERMISSION_DENIED'){
-        showToast('Firestore rules not deployed — run: npm run deploy:rules','err');
+        showToast('Couldn\'t send that message — please try again.','err');
       } else if(e.code==='unavailable'||e.code==='failed-precondition'){
         showToast('Offline — message will send when reconnected','info');
       } else {
@@ -9620,7 +9663,11 @@ function _confirmLeaveClub(clubId){
   // Firestore cleanup so the shared member count + leaderboard update for everyone.
   if(firebaseDb&&AUTH&&AUTH.uid){
     firebaseDb.collection('clubs').doc(clubId).collection('members').doc(AUTH.uid).delete().catch(()=>{});
-    firebaseDb.collection('clubs').doc(clubId).set({memberCount:firebase.firestore.FieldValue.increment(-1)},{merge:true}).catch(()=>{});
+    const _upd={memberCount:firebase.firestore.FieldValue.increment(-1)};
+    // Shared (user-created) clubs track membership in a uid array; leaving it
+    // is what stops syncMyClubs() from adding the club straight back.
+    if(club&&!club.isCohort&&!club.isPublic) _upd.members=firebase.firestore.FieldValue.arrayRemove(AUTH.uid);
+    firebaseDb.collection('clubs').doc(clubId).set(_upd,{merge:true}).catch(()=>{});
   }
   closeClubView();
   renderTab();
