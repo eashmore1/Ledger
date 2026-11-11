@@ -1369,7 +1369,7 @@ const ONB_ORDER = ['feed','dashboard','plan','studylab','explore','profile'];
 const ONBOARD_GUIDE = {
   feed: { label:'Feed', steps:[
     { t:'Your Feed', b:"This is your home base. Every study session you and the people you follow log shows up here, newest first — so you can see who's putting in the work and stay motivated to keep pace." },
-    { t:'Give props and comment', b:"Tap the heart to give props on a session, or leave a comment to encourage someone. Candidates who study alongside others are measurably more likely to pass — the accountability is the point." },
+    { t:'Give props and comment', b:"Tap the heart to give props on a session, or leave a comment to encourage someone. The accountability is the point." },
     { t:'Build your study crew', b:"The card at the top helps you follow other candidates and join study clubs. The more people you connect with, the more useful your feed becomes." },
   ]},
   dashboard: { label:'Dashboard', steps:[
@@ -1416,6 +1416,9 @@ function _maybeAutoStartOnboarding(){
 function _maybeShowOnboard(tab){
   if(localStorage.getItem('pf2-onb-active')!=='1') return;
   if(document.getElementById('onb-card')) return;      // one card at a time
+  // First run shows the plan chooser first; the tour waits until it is closed
+  // instead of opening on top of it (two stacked modals on a brand-new account).
+  if(window._firstRunOfferPending || document.getElementById('post-ob-offer')) return;
   if(_onbSeen()[tab]) return;                           // already completed this section
   const guide=ONBOARD_GUIDE[tab];
   if(!guide||!guide.steps||!guide.steps.length) return;
@@ -1954,12 +1957,12 @@ const CHALLENGES = [
   {id:'sessions_5',icon:'📖',title:'5-Session Builder',desc:'Complete 5 study sessions',difficulty:'Easy',diffColor:'#10b981',type:'sessions_total',target:5,reward:'Builder',participants:6100,endDate:'Ongoing',free:true},
   {id:'week_warrior',icon:'📅',title:'Week Warrior',desc:'Study every day for 7 days straight',difficulty:'Medium',diffColor:'#f59e0b',type:'streak',target:7,reward:'Week Warrior',participants:2180,endDate:'Ongoing'},
   {id:'hrs_50',icon:'💯',title:'50-Hour Club',desc:'Log 50 total study hours',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_total',target:50,reward:'Dedicated',participants:1890,endDate:'Ongoing'},
-  {id:'far_sprint',icon:'📊',title:'FAR Weekly Sprint',desc:'Log 20+ hours on FAR this week',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_section_week',target:20,section:'FAR',reward:'FAR Warrior',participants:342,endDate:'Apr 30'},
+  {id:'far_sprint',icon:'📊',title:'FAR Weekly Sprint',desc:'Log 20+ hours on FAR this week',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_section_week',target:20,section:'FAR',reward:'FAR Warrior',participants:342,endDate:'Ongoing'},
   {id:'sessions_10',icon:'🎯',title:'10-Session Grinder',desc:'Complete 10 study sessions',difficulty:'Medium',diffColor:'#f59e0b',type:'sessions_total',target:10,reward:'Grinder',participants:2760,endDate:'Ongoing'},
   {id:'hrs_20_week',icon:'🚀',title:'20-Hour Week',desc:'Log 20 hours in a single week',difficulty:'Medium',diffColor:'#f59e0b',type:'hours_week',target:20,reward:'Weekly Beast',participants:1340,endDate:'Ongoing'},
   {id:'streak_30',icon:'🗓️',title:'30-Day Machine',desc:'Study every day for 30 days straight',difficulty:'Hard',diffColor:'#ef4444',type:'streak',target:30,reward:'Month Machine',participants:218,endDate:'Ongoing'},
   {id:'hrs_100',icon:'🏆',title:'100 Hours Club',desc:'Log 100 total study hours',difficulty:'Hard',diffColor:'#ef4444',type:'hours_total',target:100,reward:'Century Club',participants:1204,endDate:'Ongoing'},
-  {id:'first_pass',icon:'✅',title:'First Section Pass',desc:'Pass your first CPA exam section',difficulty:'Hard',diffColor:'#ef4444',type:'pass_section',target:1,reward:'Section Slayer',participants:567,endDate:'Jun 30'},
+  {id:'first_pass',icon:'✅',title:'First Section Pass',desc:'Pass your first CPA exam section',difficulty:'Hard',diffColor:'#ef4444',type:'pass_section',target:1,reward:'Section Slayer',participants:567,endDate:'Ongoing'},
   {id:'multi_section',icon:'🎓',title:'Multi-Section Master',desc:'Log hours on 3 different sections',difficulty:'Hard',diffColor:'#ef4444',type:'sections_studied',target:3,reward:'Well-Rounded',participants:823,endDate:'Ongoing'},
   {id:'marathon_sess',icon:'🧠',title:'Study Marathon',desc:'Log 5+ hours in a single session',difficulty:'Elite',diffColor:'#a855f7',type:'hours_session',target:5,reward:'Marathon',participants:445,endDate:'Ongoing'},
   {id:'hrs_250',icon:'🏔️',title:'Summit Seeker',desc:'Log 250 total study hours',difficulty:'Elite',diffColor:'#a855f7',type:'hours_total',target:250,reward:'Summit Seeker',participants:312,endDate:'Ongoing'},
@@ -2859,7 +2862,13 @@ function upsellBannerHTML(text,cta,featureName,tier){
 
 // Post-onboarding offer — shown once after completing onboarding
 function showPostOnboardingOffer(){
+  window._firstRunOfferPending=false;
   const el=document.createElement('div');
+  // When the chooser goes away (any of its buttons), start the guided tour.
+  const _mo=new MutationObserver(()=>{
+    if(!document.body.contains(el)){ _mo.disconnect(); setTimeout(()=>{ try{_maybeShowOnboard(currentTab||'feed');}catch(e){} },300); }
+  });
+  _mo.observe(document.body,{childList:true});
   el.className='modal-overlay open';
   el.id='post-ob-offer';
   el.style.cssText='overflow-y:auto;align-items:flex-start;padding:20px 16px';
@@ -3468,8 +3477,10 @@ async function handleEmailAuth(){
     } finally {
       // Re-enable the button if we're still on the auth screen (failed login/signup),
       // so a failure never dead-ends the user on a stuck "Please wait…" button.
-      const b=document.querySelector('.auth-form-btn');
-      if(b){b.disabled=false;b.textContent=btnLabel||(authMode==='signup'?'Create Account →':'Sign In →');}
+      // Only restore the ORIGINAL button. The verification screen that replaces
+      // the form has its own .auth-form-btn ("Resend Verification Email"), which
+      // this used to relabel "Create Account →".
+      if(btn&&document.body.contains(btn)){btn.disabled=false;btn.textContent=btnLabel||(authMode==='signup'?'Create Account →':'Sign In →');}
     }
     return;
   }
@@ -3951,7 +3962,7 @@ function obFinish(){
   refreshRealUsers();
   startBackgroundSync();
   // Show upgrade offer after a short delay so the app renders first
-  if(!SUB.trialUsed) setTimeout(showPostOnboardingOffer, 1200);
+  if(!SUB.trialUsed){ window._firstRunOfferPending=true; setTimeout(showPostOnboardingOffer, 1200); }
 }
 
 // ═══════════════════════════════════════════════
@@ -4413,20 +4424,20 @@ function buildFeed(){
       <div style="font-size:26px">🤝</div>
       <div style="flex:1">
         <div style="font-size:14px;font-weight:800;color:var(--txt)">Build Your Study Crew</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:1px">CPA candidates who study with others are 2× more likely to pass.</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:1px">Studying alongside other candidates keeps you accountable.</div>
       </div>
       <button onclick="document.getElementById('crew-onboard-card').remove();localStorage.setItem('ledger-crew-dismissed','1')" title="Dismiss" aria-label="Dismiss" style="background:none;border:none;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0;align-self:flex-start">×</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
-        <div style="width:26px;height:26px;border-radius:50%;background:${_followingCount>=1?'var(--grn)':'var(--ind)'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${_followingCount>=1?'✓':'1'}</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:${_followingCount>=3?'var(--grn)':'var(--ind)'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${_followingCount>=3?'✓':'1'}</div>
         <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Follow 3 candidates</div><div style="font-size:11px;color:var(--mut)">See their sessions in your feed · ${_followingCount}/3 done</div></div>
         ${_followingCount<3?`<button class="btn btn-ind btn-xs" onclick="switchTab('explore')">Find →</button>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
-        <div style="width:26px;height:26px;border-radius:50%;background:${(S.clubs||[]).filter(c=>!c.isDM).length?'var(--grn)':'var(--surf2)'};color:${(S.clubs||[]).filter(c=>!c.isDM).length?'#fff':'var(--mut)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${(S.clubs||[]).filter(c=>!c.isDM).length?'✓':'2'}</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:${(S.clubs||[]).filter(c=>!c.isDM&&!c.isCohort).length?'var(--grn)':'var(--surf2)'};color:${(S.clubs||[]).filter(c=>!c.isDM&&!c.isCohort).length?'#fff':'var(--mut)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${(S.clubs||[]).filter(c=>!c.isDM&&!c.isCohort).length?'✓':'2'}</div>
         <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Join a study club</div><div style="font-size:11px;color:var(--mut)">Chat with candidates on the same sections</div></div>
-        ${!(S.clubs||[]).filter(c=>!c.isDM).length?`<button class="btn btn-ghost btn-xs" onclick="switchTab('explore')">Browse →</button>`:''}
+        ${!(S.clubs||[]).filter(c=>!c.isDM&&!c.isCohort).length?`<button class="btn btn-ghost btn-xs" onclick="switchTab('explore')">Browse →</button>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;border:1px solid var(--bdr)">
         <div style="width:26px;height:26px;border-radius:50%;background:${S.accountabilityPartner?'var(--grn)':'var(--surf2)'};color:${S.accountabilityPartner?'#fff':'var(--mut)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${S.accountabilityPartner?'✓':'3'}</div>
@@ -5167,7 +5178,7 @@ function buildWeeklyCommitment(){
         <div style="font-size:28px;flex-shrink:0">🤝</div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:800;margin-bottom:3px">Set Your <span class="badge badge-${curSec}" style="vertical-align:middle;margin:0 2px">${curSec}</span> Goal This Week</div>
-          <div style="font-size:12px;color:var(--sub)">Candidates who commit to a weekly goal are <strong>3× more likely</strong> to stay on track. How many hours of ${curEx?.full||curSec} this week?</div>
+          <div style="font-size:12px;color:var(--sub)">A weekly goal gives you something concrete to hit. How many hours of ${curEx?.full||curSec} this week?</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -5348,7 +5359,7 @@ function _buildWeekThisCard(){
   const col=pct>=100?'var(--grn)':pct>=70?'var(--amb)':'var(--ind)';
   const commitRow=commitment
     ?`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--sub)">${met?'Goal crushed this week!':'Committed to '+commitment+'h this week'}</div><button onclick="clearWeeklyCommitment('${weekKey}')" style="background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer">Change goal</button></div>`
-    :`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--mut);margin-bottom:7px">Commit to a weekly goal — candidates who do are 3× more likely to stay on track</div><div style="display:flex;gap:6px;flex-wrap:wrap">${[10,15,20,25].map(h=>`<button onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">${h}h</button>`).join('')}<button onclick="setCustomCommitment()" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Custom</button></div></div>`;
+    :`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--mut);margin-bottom:7px">Commit to a weekly goal to stay on track</div><div style="display:flex;gap:6px;flex-wrap:wrap">${[10,15,20,25].map(h=>`<button onclick="setWeeklyCommitment(${h})" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">${h}h</button>`).join('')}<button onclick="setCustomCommitment()" style="flex:1;min-width:52px;padding:6px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">Custom</button></div></div>`;
   return`<div class="card card-pad" style="margin-bottom:16px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div><div class="section-title" style="margin-bottom:2px">This Week</div><div style="font-size:12px;color:var(--mut)">${weekHrs.toFixed(1)} of ${target} hrs${commitment?' · your commitment':' · weekly goal'}</div></div>
@@ -6881,10 +6892,21 @@ function renderSessCard(){
         </div>
         <div class="sess-fgrp">
           <label>Session Date</label>
-          <input id="ss-date" type="date" value="${TS.date||todayStr()}">
+          <input id="ss-date" type="date" max="${todayStr()}" value="${TS.date||todayStr()}">
         </div>
       </div>
-      <button class="sess-start-btn" onclick="startTimer()">Start Session</button>
+      <button class="sess-start-btn" id="ss-start-btn" onclick="startTimer()">Start Session</button>
+      <div id="ss-manual" style="display:none;margin-top:4px">
+        <div class="sess-fgrp">
+          <label>How long did you study?</label>
+          <div class="sess-2col" style="margin-bottom:0">
+            <input id="ss-man-h" type="number" inputmode="numeric" min="0" max="16" step="1" placeholder="Hours" aria-label="Hours studied">
+            <input id="ss-man-m" type="number" inputmode="numeric" min="0" max="59" step="5" placeholder="Minutes" aria-label="Minutes studied">
+          </div>
+        </div>
+        <button class="sess-start-btn" onclick="logPastSession()">Continue</button>
+      </div>
+      <button id="ss-manual-toggle" onclick="toggleManualLog()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:none;color:var(--ind);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">Already studied? Log a past session</button>
       <button onclick="closeSessOverlay()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--sub);cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
     </div>`;
   }
@@ -7078,6 +7100,37 @@ function startTimer(){
   updateNavChip();
 }
 
+// Log a session that already happened (forgot the timer, studied on paper,
+// studied away from the phone). Skips the live timer and goes straight to the
+// same recap screen a timed session ends on.
+function toggleManualLog(){
+  const box=document.getElementById('ss-manual'), start=document.getElementById('ss-start-btn'), tog=document.getElementById('ss-manual-toggle');
+  if(!box)return;
+  const open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  if(start)start.style.display=open?'none':'';
+  if(tog)tog.textContent=open?'Use the live timer instead':'Already studied? Log a past session';
+  if(open)document.getElementById('ss-man-h')?.focus();
+}
+function logPastSession(){
+  const sec=document.getElementById('ss-sec')?.value||TS.section;
+  const mat=document.getElementById('ss-mat')?.value?.trim()||'';
+  const date=document.getElementById('ss-date')?.value||todayStr();
+  const h=parseFloat(document.getElementById('ss-man-h')?.value)||0;
+  const m=parseFloat(document.getElementById('ss-man-m')?.value)||0;
+  const secs=Math.round(h*3600+m*60);
+  if(!sec){showToast('Select a section','err');return;}
+  if(h<0||m<0||secs<60){showToast('Enter how long you studied','err');return;}
+  if(secs>16*3600){showToast('A single session can be at most 16 hours','err');return;}
+  if(date>todayStr()){showToast('The session date can\'t be in the future','err');return;}
+  clearInterval(timerInterval);timerInterval=null;
+  TS.section=sec;TS.material=mat;TS.goalHours=0;TS.date=date;
+  TS.startTime=null;TS.elapsed=secs;TS.manual=true;TS.phase='recap';
+  if(!TS.location){try{TS.location=localStorage.getItem('pf2-last-loc')||'';}catch(e){}}
+  tsPersist();
+  renderSessCard();updateNavChip();
+}
+
 function pauseTimer(){
   if(TS.phase!=='active')return;
   clearInterval(timerInterval);timerInterval=null;
@@ -7183,6 +7236,7 @@ function saveSession(){
   const hours=parseFloat((TS.elapsed/3600).toFixed(2));
   if(!section){showToast('No section selected','err');return;}
   if(TS.elapsed<30){showToast('Sessions must be at least 30 seconds to save','err');return;}
+  if(date>todayStr()){showToast('The session date can\'t be in the future','err');return;}
   if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving…';}
   const act={
     id:'u'+Date.now(),
@@ -7194,6 +7248,7 @@ function saveSession(){
     feeling:TS.feeling,
     concepts:[...TS.concepts],
     elapsed:TS.elapsed,
+    manual:TS.manual?true:undefined,
     photo:TS.sessionPhoto||null,
     location:(TS.location||'').slice(0,40)||null,
     kudos:[],comments:[]
