@@ -48,7 +48,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
 <!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -57,7 +57,12 @@
 <!-- Stripe.js intentionally NOT loaded — checkout uses hosted Payment Links (redirects),
      so the ~1MB Stripe SDK is unnecessary on every page. Re-add only if embedding Stripe Elements. -->
 <!-- canvas-confetti — used for exam pass celebration -->
-<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-Rv68Y7adOjMMJc1/xFMcdNvXre/HF51to4GZjBALmXr7ABnVl5V4UajJwBu7zbhN" crossorigin="anonymous"></script>
+<!-- NOTE: points at dist/confetti.browser.js, NOT .min.js. canvas-confetti does not
+     publish a .min.js — jsdelivr auto-minifies that path on the fly, so its bytes
+     (and therefore its SRI hash) are not stable, which silently broke the integrity
+     check and blocked confetti entirely. This hash is the real published artifact,
+     verified byte-identical between the npm registry tarball and jsdelivr. -->
+<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.js" integrity="sha384-/Ko/tqVwPYurnBe+Mj8WWw+39WmyOZn/kU+neqXn4hRxGI575k07mB/hIekAT51+" crossorigin="anonymous"></script>
 <!-- OTPAuth — TOTP for two-factor authentication -->
 <script defer src="https://cdn.jsdelivr.net/npm/otpauth@9.3.6/dist/otpauth.umd.min.js"></script>
 <style>
@@ -86,7 +91,8 @@
   --transition:.18s cubic-bezier(.4,0,.2,1);
   /* ── SPACING SCALE (4pt) ── */
   --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;
-  --font-display:'Barlow Condensed','Inter',system-ui,sans-serif;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
 }
 body.dark{
   --bg:#0c0905;--surf:#15100b;--surf2:#1e1812;--surf3:#261f17;
@@ -103,7 +109,7 @@ body.dark{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{min-height:100%;background:var(--bg)}
-html,body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html,body{font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 button,input,select,textarea{font-family:inherit;font-size:inherit}
 a{color:var(--ind);text-decoration:none;transition:opacity var(--transition)}
 a:hover{opacity:.75}
@@ -119,13 +125,13 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .app-wrap{display:flex;flex-direction:column;min-height:100vh}
 .topnav{background:var(--surf);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
 .topnav-inner{max-width:1160px;margin:0 auto;padding:0 var(--sp-5);height:64px;display:flex;align-items:center;gap:var(--sp-5)}
-.nav-logo{font-size:22px;font-weight:800;color:var(--ora);letter-spacing:0;font-family:var(--font-display);flex-shrink:0;cursor:pointer;transition:opacity var(--transition)}
+.nav-logo{font-size:22px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;font-family:var(--font-display);flex-shrink:0;cursor:pointer;transition:opacity var(--transition)}
 .nav-logo:hover{opacity:.85}
 .nav-logo span{color:var(--ind)}
 .nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
 .nav-tab{padding:7px 16px;border-radius:9px;border:none;background:transparent;color:var(--mut);font-size:13px;font-weight:500;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);display:flex;align-items:center;gap:5px;white-space:nowrap;letter-spacing:-.01em}
 .nav-tab:hover{background:var(--surf2);color:var(--sub)}
-.nav-tab.active{background:var(--ora-bg);color:var(--ora);font-weight:700;box-shadow:0 0 0 1px var(--ora-bdr)}
+.nav-tab.active{background:var(--ora-bg);color:var(--ora-dk);font-weight:700;box-shadow:0 0 0 1px var(--ora-bdr)}
 .nav-right{display:flex;gap:var(--sp-2);align-items:center;flex-shrink:0}
 .page{max-width:1160px;margin:0 auto;padding:var(--sp-6) var(--sp-5) 96px;width:100%}
 .feed-layout{display:grid;grid-template-columns:284px 1fr 264px;gap:var(--sp-6);align-items:start}
@@ -202,8 +208,12 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .ac-stat-row{display:flex;align-items:stretch;gap:0;padding:12px 16px;border-bottom:1px solid var(--bdr)}
 .ac-stat-blk{display:flex;flex-direction:column;gap:2px}
 .ac-stat-blk+.ac-stat-blk{padding-left:18px;border-left:1px solid var(--bdr);margin-left:18px}
-.ac-stat-v{font-size:24px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--txt);font-family:var(--font-display)}
+.ac-stat-v{font-size:24px;font-weight:900;letter-spacing:-.015em;line-height:1;color:var(--txt);font-family:var(--font-display)}
 .ac-stat-l{font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+/* Unit suffix on a big stat number. The display face is tracked in, which
+   collides the glyph with the digit before it — so the unit gets its own
+   size, weight and normal tracking instead of being jammed onto the number. */
+.stat-unit{font-size:.58em;font-weight:700;letter-spacing:0;margin-left:.1em;color:var(--mut);font-family:var(--font)}
 
 /* ── FEED CHALLENGE CARD ── */
 .feed-ch-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
@@ -250,7 +260,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── LEADERBOARD ── */
 .lb-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--bdr)}
 .lb-row:last-child{border-bottom:none}
-.lb-rank{font-size:15px;font-weight:700;color:var(--mut);width:28px;text-align:center;flex-shrink:0;font-family:var(--font-display);font-variant-numeric:tabular-nums}
+.lb-rank{font-size:15px;font-weight:700;color:var(--mut);width:34px;text-align:center;flex-shrink:0;font-family:var(--font-display);font-variant-numeric:tabular-nums}
 .lb-rank.gold{color:#f59e0b;font-size:20px}
 .lb-rank.silver{color:#94a3b8;font-size:18px}
 .lb-rank.bronze{color:#d97706;font-size:17px}
@@ -347,7 +357,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at -10% 80%,rgba(212,64,0,.28),transparent 45%),radial-gradient(ellipse at 90% 10%,rgba(90,95,207,.12),transparent 40%)}
 .auth-left::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(212,64,0,.4),transparent 60%)}
 .auth-left-inner{position:relative;z-index:1}
-.auth-brand{font-size:42px;font-weight:800;color:#fff;letter-spacing:0;margin-bottom:6px;line-height:1;font-family:var(--font-display)}
+.auth-brand{font-size:42px;font-weight:700;font-style:italic;color:#fff;letter-spacing:-.01em;margin-bottom:6px;line-height:1;font-family:var(--font-display)}
 .auth-brand-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:48px;line-height:1.6}
 .auth-feature{display:flex;align-items:flex-start;gap:15px;margin-bottom:22px}
 .auth-feature-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
@@ -357,7 +367,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-social-proof strong{color:rgba(255,255,255,.65)}
 
 .auth-right{width:500px;display:flex;flex-direction:column;justify-content:center;padding:52px;background:var(--surf)}
-.auth-right-logo{font-size:26px;font-weight:800;color:var(--ora);letter-spacing:0;margin-bottom:6px;font-family:var(--font-display)}
+.auth-right-logo{font-size:26px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;margin-bottom:6px;font-family:var(--font-display)}
 .auth-tabs{display:flex;gap:0;background:var(--surf2);border-radius:11px;padding:4px;margin-bottom:26px;border:1px solid var(--bdr)}
 .auth-tab{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-radius:8px;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);letter-spacing:-.01em}
 .auth-tab.active{background:var(--surf);color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
@@ -387,7 +397,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── ONBOARDING ── */
 .onboard-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
 .onboard-box{width:100%;max-width:540px}
-.onboard-logo{font-size:44px;font-weight:800;color:var(--ora);letter-spacing:0;line-height:1;font-family:var(--font-display)}
+.onboard-logo{font-size:44px;font-weight:700;font-style:italic;color:var(--ora);letter-spacing:-.01em;line-height:1;font-family:var(--font-display)}
 .onboard-logo span{color:var(--ind)}
 .onboard-sub{font-size:15px;color:var(--sub);margin-top:8px;line-height:1.6;margin-bottom:28px;letter-spacing:-.01em}
 .ob-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -568,7 +578,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-start-btn{width:100%;padding:15px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .sess-start-btn:hover{background:#b03500;transform:translateY(-1px)}
 .sess-exam-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px}
-.sess-clock{font-size:68px;font-weight:700;letter-spacing:-.01em;line-height:1;text-align:center;font-family:var(--font-display);font-variant-numeric:tabular-nums;transition:color .3s;margin:10px 0 6px}
+.sess-clock{font-size:clamp(44px,13vw,68px);font-weight:700;letter-spacing:-.01em;line-height:1;text-align:center;font-family:var(--font-display);font-variant-numeric:tabular-nums;transition:color .3s;margin:10px 0 6px}
 .sess-clock-lbl{text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:18px}
 .sess-topic-row{text-align:center;margin-bottom:24px}
 .sess-topic-lbl{font-size:12px;color:var(--mut);margin-bottom:3px}
@@ -648,7 +658,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .billing-opt{padding:7px 24px;border-radius:26px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,.55);transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);white-space:nowrap;letter-spacing:-.01em}
 .billing-opt.active{background:rgba(255,255,255,.15);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .savings-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.22);border:1px solid rgba(16,185,129,.38);color:#6ee7b7;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;margin-left:8px;vertical-align:middle}
-.plan-cards-row{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:14px;padding:32px 36px 22px;align-items:start}
+.plan-cards-row{display:grid;grid-template-columns:1fr 1.15fr;gap:16px;padding:32px 36px 22px;align-items:start;max-width:720px;margin:0 auto}
 /* FIXED: overflow:visible so badge isn't clipped */
 .plan-card{background:var(--surf);border:2px solid var(--bdr);border-radius:20px;padding:24px;position:relative;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition);overflow:visible}
 .plan-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
@@ -756,7 +766,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
   .page{padding:var(--sp-4) var(--sp-3) calc(88px + env(safe-area-inset-bottom,0px))}
   .nav-tabs{display:none}
   .topnav-inner{height:56px;padding:0 var(--sp-3)}
-  #nav-log-btn,.nav-btn-msg,.nav-btn-set{display:none!important}
+  #nav-log-btn,.nav-btn-msg,.nav-btn-set,#nav-avatar-btn{display:none!important}
   .form-row{grid-template-columns:1fr}
   .disc-opts{grid-template-columns:1fr 1fr 1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
@@ -773,7 +783,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── MOBILE BOTTOM NAV ── */
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);z-index:200;padding:5px 0;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))}
 .mob-nav-inner{display:flex;justify-content:space-around;align-items:stretch}
-.mob-nav-btn{background:none;border:none;cursor:pointer;padding:5px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--mut);font-size:10px;font-weight:700;letter-spacing:.03em;min-width:54px;border-radius:var(--r-sm);transition:color var(--transition);-webkit-tap-highlight-color:transparent}
+.mob-nav-btn{background:none;border:none;cursor:pointer;padding:5px 4px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--mut);font-size:10px;font-weight:700;letter-spacing:.03em;min-width:54px;border-radius:var(--r-sm);transition:color var(--transition);-webkit-tap-highlight-color:transparent}
 .mob-nav-btn.active{color:var(--ora)}
 .mob-nav-btn:active{opacity:.6}
 .mob-nav-icon{font-size:17px;line-height:1.1}
@@ -1150,6 +1160,17 @@ function initAnalyticsIfConsented(){
 function logLedgerEvent(name, params){
   try{ if(firebaseAnalytics) firebaseAnalytics.logEvent(name, params||{}); }catch(e){}
 }
+// Milestone events (first session, week-2 return, onboarding complete) are only
+// meaningful the first time they happen. The guard is per-device in localStorage:
+// a re-install double-counts, which is the right trade for not needing a server
+// round-trip before every log. Key is namespaced per uid so shared devices and
+// account switches don't suppress each other's milestones.
+function logLedgerEventOnce(name, params){
+  const key='pf2-ev-'+name+'-'+((typeof AUTH!=='undefined'&&AUTH&&AUTH.uid)||'anon');
+  try{ if(localStorage.getItem(key)) return false; localStorage.setItem(key,'1'); }catch(e){}
+  logLedgerEvent(name, params);
+  return true;
+}
 
 async function signInWithGoogle(){
   if(!FIREBASE_ENABLED){ simulateGoogleSignIn(); return; }
@@ -1424,7 +1445,7 @@ const ONB_INTRO = {
   intro: true,
 };
 
-const ONB_ORDER = ['feed','dashboard','plan','studylab','explore','profile'];
+const ONB_ORDER = ['feed','dashboard','studylab','plan','explore','profile'];
 
 const ONBOARD_GUIDE = {
   feed: { label:'Feed', steps:[
@@ -1446,7 +1467,7 @@ const ONBOARD_GUIDE = {
     { t:'The Study Lab', b:"This is your practice hub, with three areas: a Question Bank of practice multiple-choice questions, AI Study Tools, and Ask Ledger — that's me." },
     { t:'Question Bank', b:"Work through practice multiple-choice questions with a full explanation for every answer choice. These are original practice questions written to mirror exam style — not actual AICPA exam content." },
     { t:'AI Study Tools', b:"Generate custom flashcards and quizzes on any CPA topic in seconds. It's the fastest way to drill a weak spot without hunting for materials." },
-    { t:'Ask Ledger — that’s me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Elite members get 100 questions a month, and you can copy any answer straight into your notes." },
+    { t:'Ask Ledger — that’s me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes." },
   ]},
   explore: { label:'Explore', steps:[
     { t:'Explore and connect', b:"Find other CPA candidates studying the same sections as you, follow them, and join study clubs. Building a network of people on the same journey keeps you accountable." },
@@ -1582,13 +1603,24 @@ function _cleanOnb(){
 // ═══════════════════════════════════════════════
 const STRIPE_CONFIG = {
   publishableKey: 'pk_live_51TZhxJDF8JDLWEuc1LwSbrdN3Am5SDHhuo64V1JhgnirRlXpkAKTEP3YHY7AqPebKqgmvz0gUqLRQmW1oCxWIfZ700KAr62PPL',
-  // Create these Payment Links in your Stripe dashboard
+  // Payment Links from the Stripe dashboard.
+  // ── NAMING NOTE (2026-11-02) ──────────────────────────────────────────────
+  // Pro/Elite collapsed into ONE paid tier called "Pro" ($14/mo, $132/yr).
+  // It bills on the Stripe prices that are still *named* "Ledger Elite", so the
+  // webhook keeps resolving them to tier 'elite' — which now unlocks everything.
+  // Price IDs and links are unchanged; only the marketing name collapsed.
+  // TODO (30s, Stripe dashboard): rename product "Ledger Elite" -> "Ledger Pro"
+  // and "Ledger Cram Plan" -> "Ledger Exam Window Pass" so checkout matches the
+  // site. Renaming a product does NOT change its price IDs or Payment Links.
   paymentLinks: {
-    pro_monthly:  'https://buy.stripe.com/eVqdR94mN1D63eb9Ja7ss0c',
-    pro_annual:   'https://buy.stripe.com/cNi9AT1aBbdG4ifaNe7ss0b',
-    elite_monthly:'https://buy.stripe.com/dRm14n3iJchK3ebg7y7ss0a',
-    elite_annual: 'https://buy.stripe.com/bJe5kD5qR1D6163bRi7ss09',
-    cram_plan:    'https://buy.stripe.com/fZubJ1bPf4Pi7ur5sU7ss0d',
+    pro_monthly:  'https://buy.stripe.com/dRm14n3iJchK3ebg7y7ss0a', // $14/mo, 7-day trial
+    pro_annual:   'https://buy.stripe.com/bJe5kD5qR1D6163bRi7ss09', // $132/yr, 7-day trial
+    elite_monthly:'https://buy.stripe.com/dRm14n3iJchK3ebg7y7ss0a', // same tier (legacy key)
+    elite_annual: 'https://buy.stripe.com/bJe5kD5qR1D6163bRi7ss09', // same tier (legacy key)
+    cram_plan:    'https://buy.stripe.com/fZubJ1bPf4Pi7ur5sU7ss0d', // $75 one-time, 6 months
+    // Retired $9/$7 two-tier Pro links — kept only for reference:
+    legacy_pro_monthly: 'https://buy.stripe.com/eVqdR94mN1D63eb9Ja7ss0c',
+    legacy_pro_annual:  'https://buy.stripe.com/cNi9AT1aBbdG4ifaNe7ss0b',
     student_pro:  '',
   },
   // After activating subscription, Stripe redirects to your site
@@ -1632,6 +1664,9 @@ function redirectToStripeCheckout(planKey){
   }
   const url = STRIPE_CONFIG.paymentLinks[planKey];
   if(!url||url.includes('REPLACE')){ showToast('Stripe not configured yet','err'); return; }
+  // Last event before the user leaves the app for Stripe. The gap between this
+  // and 'purchase' (fired by the webhook path) is the checkout drop-off rate.
+  logLedgerEvent('checkout_started',{plan:planKey});
   // Pass Firebase UID + plan key so webhook can identify the user
   const uid   = AUTH?.uid   || '';
   const email = AUTH?.email || '';
@@ -2521,36 +2556,36 @@ function saveSub(sub){localStorage.setItem(SUB_KEY,JSON.stringify(sub));}
 let SUB = loadSub() || {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
 
 function isPro(){return SUB.tier==='pro'||SUB.tier==='elite'||SUB.tier==='cram'||isOnTrial();}
-function isElite(){return SUB.tier==='elite'||SUB.tier==='cram';}
+// ONE PAID TIER (2026-11-02): Pro includes everything that used to be Elite.
+// Kept as its own helper so the ~20 Elite-gated call sites keep working, and so
+// legacy 'elite' subscribers and Exam Window Pass ('cram') holders keep access.
+// Side effect, intended: the 7-day trial now unlocks the full tier.
+function isElite(){return isPro();}
 function isOnTrial(){return SUB.tier==='trial'&&SUB.trialEnd&&Date.now()<SUB.trialEnd;}
 function getTrialDaysLeft(){if(!isOnTrial())return 0;return Math.ceil((SUB.trialEnd-Date.now())/86400000);}
 function subTierLabel(){
-  if(SUB.tier==='elite')return'Elite';
-  if(SUB.tier==='cram')return'6-Month Cram';
+  if(SUB.tier==='cram')return'Exam Window Pass';
   if(isOnTrial())return'Pro Trial';
-  if(SUB.tier==='pro')return'Pro';
+  if(SUB.tier==='pro'||SUB.tier==='elite')return'Pro';
   return'Free';
 }
 function subTierClass(){
-  if(SUB.tier==='elite')return'badge-elite';
   if(SUB.tier==='cram')return'badge-cram';
   if(isOnTrial())return'badge-trial';
-  if(SUB.tier==='pro')return'badge-pro';
+  if(SUB.tier==='pro'||SUB.tier==='elite')return'badge-pro';
   return'';
 }
 // Nav chip class
 function navProClass(){
-  if(SUB.tier==='elite')return'nav-pro-chip-elite';
   if(SUB.tier==='cram')return'nav-pro-chip-elite';
   if(isOnTrial())return'nav-pro-chip-trial';
-  if(SUB.tier==='pro')return'nav-pro-chip-pro';
+  if(SUB.tier==='pro'||SUB.tier==='elite')return'nav-pro-chip-pro';
   return'nav-pro-chip-free';
 }
 function navProLabel(){
-  if(SUB.tier==='elite')return'Elite';
-  if(SUB.tier==='cram')return'Cram Plan';
+  if(SUB.tier==='cram')return'Window Pass';
   if(isOnTrial()){const d=getTrialDaysLeft();return'Trial · '+d+'d left';}
-  if(SUB.tier==='pro')return'Pro';
+  if(SUB.tier==='pro'||SUB.tier==='elite')return'Pro';
   return'Upgrade';
 }
 
@@ -2561,13 +2596,13 @@ const PRO_FEATURES={
   unlimitedClubs:   {label:'Unlimited Study Clubs',icon:'🏛️',desc:'Create unlimited private clubs. Free tier is limited to 1 club.'},
   priorityBadges:   {label:'Member Badge',icon:'🏅',desc:'Pro member badge visible on your public profile and in your study circle.'},
   streakShield:     {label:'Streak Shield',icon:'🛡️',desc:'Miss a day? Use a Streak Shield to protect your streak — 3 shields per month.'},
-  exportData:       {label:'Export Your Data',icon:'📤',desc:'Export all your sessions, scores, and progress to CSV or PDF at any time.'},
+  exportData:       {label:'Export Your Data',icon:'📤',desc:'Download all your sessions, scores, and progress as a JSON file at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'🎯',desc:'Set custom per-section weekly hour goals with smart reminders.'},
-  // Elite tier
-  aiStudyCoach:     {label:'Ask Ledger (Elite)',icon:'🤖',desc:'AI coach that adapts to your pace, flags weak spots, and builds your daily study focus.'},
-  advancedAnalytics:{label:'Advanced Analytics (Elite)',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and year-view activity.'},
-  studySchedule:    {label:'AI Study Plan (Elite)',icon:'📅',desc:'Day-by-day personalized calendar built around your exam date, study hours, and style.'},
-  partnerSync:      {label:'Study Partner Pairing (Elite)',icon:'🤝',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
+  // Formerly the Elite tier — all included in Pro as of 2026-11-02
+  aiStudyCoach:     {label:'Ask Ledger',icon:'🤖',desc:'AI coach that adapts to your pace, flags weak spots, and builds your daily study focus. 100 answers per month.'},
+  advancedAnalytics:{label:'Advanced Analytics',icon:'📊',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and year-view activity.'},
+  studySchedule:    {label:'AI Study Plan',icon:'📅',desc:'Day-by-day personalized calendar built around your exam date, study hours, and style.'},
+  partnerSync:      {label:'Study Partner Pairing',icon:'🤝',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
 };
 
 let _upgradeBilling='annual';
@@ -2583,6 +2618,9 @@ function openUpgradeModal(featureHint){
   }
   renderUpgradeModal(featureHint||null);
   el.classList.add('open');
+  // Which locked feature drove someone to the paywall — the input you need to
+  // decide what belongs in the paid tier.
+  logLedgerEvent('upgrade_modal_viewed',{hint:featureHint||'none',tier:(typeof SUB!=='undefined'&&SUB.tier)||'free'});
 }
 function closeUpgradeModal(){
   const el=document.getElementById('upgrade-modal');
@@ -2613,7 +2651,7 @@ function openLegalModal(type){
     <h4>Third-Party Services We Use</h4>
     <ul>
       <li><strong>Google Firebase</strong> (Google LLC) — authentication, database, and hosting. Data stored on US-based servers (us-central1 region). Google's privacy policy applies: policies.google.com/privacy.</li>
-      <li><strong>Stripe, Inc.</strong> — payment processing for Pro/Elite subscriptions. Ledger does not store your credit card details. Stripe's privacy policy applies: stripe.com/privacy.</li>
+      <li><strong>Stripe, Inc.</strong> — payment processing for Ledger Pro subscriptions. Ledger does not store your credit card details. Stripe's privacy policy applies: stripe.com/privacy.</li>
       <li><strong>Anthropic, PBC</strong> — powers the "Ask Ledger" AI coach feature. Study questions you submit may be processed by Anthropic's API. Anthropic's privacy policy applies: anthropic.com/privacy.</li>
     </ul>
     <h4>Cookies & Analytics</h4>
@@ -2652,9 +2690,9 @@ function openLegalModal(type){
       <li>By posting in clubs or feeds, you grant Ledger a license to display that content to other users.</li>
       <li>Don't post spam, harassment, or anything that violates others' rights.</li>
     </ul>
-    <h4>Pro & Elite Plans — Billing & Refunds</h4>
-    <p>Paid plans are billed monthly and <strong>auto-renew automatically</strong> until cancelled. Your free trial converts to a paid subscription at the end of the trial period unless you cancel before it ends. To cancel, go to Settings → Subscription at any time.</p>
-    <p><strong>Refund Policy:</strong> Refunds are available within <strong>7 days</strong> of a charge. To request a refund, email <strong>support@ledgercpa.app</strong> within 7 days of the charge date. After 7 days, charges are non-refundable. Trial periods are free — no charge occurs if you cancel before the trial ends.</p>
+    <h4>Ledger Pro — Billing & Refunds</h4>
+    <p>Ledger Pro is billed monthly or annually and <strong>auto-renews</strong> until cancelled (the Exam Window Pass is a one-time charge and never renews). Your free trial converts to a paid subscription at the end of the trial period unless you cancel before it ends. To cancel, go to Settings → Subscription at any time.</p>
+    <p><strong>Refund Policy:</strong> We offer a <strong>30-day money-back guarantee on your first purchase</strong> of any paid plan. After that, refunds are available within <strong>7 days</strong> of a charge. To request either, email <strong>support@ledgercpa.app</strong>. Trial periods are free — no charge occurs if you cancel before the trial ends.</p>
     <h4>Disclaimers</h4>
     <p>Ledger is a study tracking aid, not a guarantee of exam success. We make no warranty about pass rates or outcomes. The service is provided "as is" without warranties of any kind. Results vary by individual study habits and effort.</p>
     <p>Ledger is an independent product and is <strong>not affiliated with, endorsed by, or approved by</strong> the American Institute of CPAs (AICPA), NASBA, Prometric, Becker Professional Education, Gleim, Roger, Wiley, UWorld, or any other exam review provider. "CPA," "CPA Exam," and related terms are trademarks of the AICPA and NASBA.</p>
@@ -2683,15 +2721,12 @@ function closeLegalModal(){
 function renderUpgradeModal(featureHint){
   const el=document.getElementById('upgrade-modal');if(!el)return;
   const isAnnual=_upgradeBilling==='annual';
-  const proMonthly=9,proAnnual=7;
-  const eliteMonthly=14,eliteAnnual=11;
+  // ONE PAID TIER: Pro — $14/mo, $132/yr ($11/mo). Window Pass = $75 one-time.
+  const proMonthly=14,proAnnual=11;
   const cramPrice=75;
   const proDisplay=isAnnual?proAnnual:proMonthly;
-  const eliteDisplay=isAnnual?eliteAnnual:eliteMonthly;
-
-  const _eliteFeatures=['AI Study Plan','Ask Ledger','Advanced Analytics','Full Activity History','Unlimited AI Question Bank'];
-  const _hintIsElite=featureHint&&_eliteFeatures.some(f=>featureHint.includes(f));
-  const hintHTML=featureHint?('<div style="background:'+(_hintIsElite?'var(--pur-bg)':'var(--ora-bg)')+';border:1px solid '+(_hintIsElite?'rgba(147,51,234,.25)':'var(--ora-bdr)')+';border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:'+(_hintIsElite?'var(--pur)':'var(--ora)')+'"><span style="font-size:18px">'+(_hintIsElite?'✦':'🔒')+'</span><span>Unlock <strong>'+featureHint+'</strong> — '+(_hintIsElite?'Elite feature':'requires Pro or higher')+'</span></div>'):'';
+  const _hintIsElite=false; // one paid tier — no separate Elite styling any more
+  const hintHTML=featureHint?('<div style="background:'+(_hintIsElite?'var(--pur-bg)':'var(--ora-bg)')+';border:1px solid '+(_hintIsElite?'rgba(147,51,234,.25)':'var(--ora-bdr)')+';border-radius:10px;padding:10px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:'+(_hintIsElite?'var(--pur)':'var(--ora)')+'"><span style="font-size:18px">'+(_hintIsElite?'✦':'🔒')+'</span><span>Unlock <strong>'+featureHint+'</strong> — '+'included with Pro'+'</span></div>'):'';
 
   // Feature rows per plan
   const free=[
@@ -2709,47 +2744,31 @@ function renderUpgradeModal(featureHint){
   ];
   const pro=[
     {on:true,text:'Everything in Free'},
-    {on:true,text:'Question Bank — 20 fresh AI questions/section daily'},
+    {on:true,text:'Unlimited AI Question Bank — every section, no daily cap'},
+    {on:true,text:'Ask Ledger (AI Coach) — 100 answers/month'},
+    {on:true,text:'AI Study Plan — day-by-day calendar'},
+    {on:true,text:'Advanced Analytics + Year-View Heatmap'},
+    {on:true,text:'Custom Topic Generator — drill any topic on demand'},
     {on:true,text:'Exam Day Protocol'},
-    {on:true,text:'Full Activity Heatmap (Week & Month)'},
-    {on:true,text:'Score Tracker'},
+    {on:true,text:'Score Tracker + Custom Per-Section Goals'},
     {on:true,text:'Study Partner Pairing'},
     {on:true,text:'Unlimited Study Clubs + Challenges'},
-    {on:true,text:'Streak Shield (3×/mo) — miss a day without breaking your streak'},
+    {on:true,text:'Unlimited Streak Shields'},
     {on:true,text:'Weekly Progress Insights'},
-    {on:true,text:'Custom Per-Section Goals'},
-    {on:true,text:'Full Study Circle + Profile Browsing'},
-    {on:true,text:'Data Export (CSV/PDF)'},
-    {on:true,text:'Pro Member Badge'},
-    {on:false,text:'AI Study Plan'},
-    {on:false,text:'Ask Ledger (AI Coach)'},
-    {on:false,text:'Advanced Analytics'},
-  ];
-  const elite=[
-    {on:true,text:'Everything in Pro'},
-    {on:true,text:'AI Study Plan — day-by-day calendar'},
-    {on:true,text:'Ask Ledger (AI Coach)'},
-    {on:true,text:'Advanced Analytics'},
-    {on:true,text:'Activity Heatmap Year View'},
-    {on:true,text:'Unlimited AI Question Bank — every section, no daily cap'},
-    {on:true,text:'Custom Topic Generator — drill any topic on demand'},
-    {on:true,text:'Unlimited Streak Shields — never lose your streak for a missed day'},
-    {on:true,text:'Priority Support (response <2h)'},
-    {on:true,text:'Elite Member Badge'},
+    {on:true,text:'Export your data any time (JSON)'},
+    {on:true,text:'Priority Support'},
   ];
 
   const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
 
   const isFree=SUB.tier==='free'&&!isOnTrial();
-  const isProActive=SUB.tier==='pro'||isOnTrial();
-  const isEliteActive=SUB.tier==='elite';
+  const isProActive=SUB.tier==='pro'||SUB.tier==='elite'||isOnTrial();
   const isCramActive=SUB.tier==='cram';
 
   const freeCTA=isFree?'<button class="plan-cta plan-cta-active" disabled>✓ Current Plan</button>':'<button class="plan-cta plan-cta-ghost" onclick="closeUpgradeModal()">Stay Free</button>';
   const proCTA=isProActive?'<button class="plan-cta plan-cta-active" disabled>✓ Active'+(isOnTrial()?' (Trial)':'')+'</button>':'<button class="plan-cta plan-cta-pro" onclick="activatePlan(\'pro\')">Start 7-Day Free Trial</button>';
-  const eliteCTA=isEliteActive?'<button class="plan-cta plan-cta-active" disabled>✓ Current Plan</button>':'<button class="plan-cta plan-cta-elite" onclick="activatePlan(\'elite\')">Upgrade to Elite</button>';
 
-  const cramCTA=isCramActive?'<div class="plan-feat-on" style="text-align:center;font-size:16px;margin-top:10px">✓ Active</div>':'<button class="cram-cta" onclick="activatePlan(\'cram\')">Get Cram Plan — $'+cramPrice+'</button>';
+  const cramCTA=isCramActive?'<div class="plan-feat-on" style="text-align:center;font-size:16px;margin-top:10px">✓ Active</div>':'<button class="cram-cta" onclick="activatePlan(\'cram\')">Get the Window Pass — $'+cramPrice+'</button>';
 
   el.innerHTML=
   '<div class="upgrade-modal-box">'+
@@ -2770,7 +2789,7 @@ function renderUpgradeModal(featureHint){
   '</div>'+
   '<div class="billing-toggle">'+
   '<button class="billing-opt'+(isAnnual?'':' active')+'" onclick="_upgradeBilling=\'monthly\';renderUpgradeModal(null)">Monthly</button>'+
-  '<button class="billing-opt'+(isAnnual?' active':'')+'" onclick="_upgradeBilling=\'annual\';renderUpgradeModal(null)">Annual<span class="savings-pill">Save 20%</span></button>'+
+  '<button class="billing-opt'+(isAnnual?' active':'')+'" onclick="_upgradeBilling=\'annual\';renderUpgradeModal(null)">Annual<span class="savings-pill">Save 21%</span></button>'+
   '</div>'+
   '</div>'+
   '<button onclick="closeUpgradeModal()" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>'+
@@ -2793,33 +2812,22 @@ function renderUpgradeModal(featureHint){
   '<div class="plan-popular-badge">MOST POPULAR</div>'+
   '<div class="plan-name" style="color:var(--ora)">Pro</div>'+
   '<div class="plan-price" style="color:var(--ora)"><sup>$</sup>'+proDisplay+'</div>'+
-  '<div class="plan-period">per month'+(isAnnual?' · billed $'+(proAnnual*12)+'/yr':'')+'</div>'+
+  '<div class="plan-period">per month'+(isAnnual?' · billed $132/yr':'')+'</div>'+
   (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+proMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--grn);font-weight:700;margin-top:3px">7-day free trial included</div>'+
+  '<div style="font-size:10px;color:var(--grn);font-weight:700;margin-top:3px">7 days free — card required, cancel anytime</div>'+
   '<div class="plan-sep"></div>'+
   pro.map(fRow).join('')+
   proCTA+
-  '</div>'+
-  // Elite
-  '<div class="plan-card" style="border-color:var(--pur);background:linear-gradient(160deg,var(--surf),var(--pur-bg))">'+
-  '<div class="plan-name" style="color:var(--pur)">Elite</div>'+
-  '<div class="plan-price" style="color:var(--pur)"><sup>$</sup>'+eliteDisplay+'</div>'+
-  '<div class="plan-period">per month'+(isAnnual?' · billed $'+(eliteAnnual*12)+'/yr':'')+'</div>'+
-  (isAnnual?'<div style="font-size:10px;color:var(--mut);text-decoration:line-through;margin-top:2px">$'+eliteMonthly+'/mo without annual</div>':'')+
-  '<div style="font-size:10px;color:var(--pur);font-weight:700;margin-top:3px">AI Study Plan · AI Coach · Analytics · Priority Support</div>'+
-  '<div class="plan-sep"></div>'+
-  elite.map(fRow).join('')+
-  eliteCTA+
   '</div>'+
   '</div>'+
   // Cram plan
   '<div class="cram-section">'+
   '<div class="cram-inner">'+
   '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">ONE-TIME PURCHASE</div>'+
-  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">6-Month CPA Cram Plan <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
-  '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Full Elite access for 6 months — AI Study Plan, Ask Ledger, all analytics, and every Pro feature. Perfect if your exam window is fixed. No recurring charges — ever.</div>'+
+  '<div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px">6-Month Exam Window Pass <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6)">— $'+cramPrice+' one-time</span></div>'+
+  '<div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;max-width:480px">Six months of everything in Pro, paid once. Best pick if your exam date is already scheduled — no subscription, no auto-renew, nothing to cancel.</div>'+
   '<div class="cram-feat-row">'+
-  '<span class="cram-feat-chip">✓ Full Elite Features</span>'+
+  '<span class="cram-feat-chip">✓ Everything in Pro</span>'+
   '<span class="cram-feat-chip">✓ 6-Month Access</span>'+
   '<span class="cram-feat-chip">✓ Exam Protocol PDF</span>'+
   '<span class="cram-feat-chip">✓ Unlimited Question Bank</span>'+
@@ -2830,17 +2838,17 @@ function renderUpgradeModal(featureHint){
   '<div style="text-align:center;margin-bottom:10px">'+
   '<div style="font-size:28px;font-weight:900;color:#fff">$'+cramPrice+'</div>'+
   '<div style="font-size:11px;color:rgba(255,255,255,.5)">one-time · 6 months</div>'+
-  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $84 for 6×Elite monthly</div>'+
+  '<div style="font-size:10px;color:rgba(16,185,129,.8);margin-top:2px">vs $84 for 6 months of Pro monthly</div>'+
   '</div>'+
   cramCTA+
   '</div>'+
   '</div>'+
-  // Student discount
-  '<div class="student-section" style="cursor:default;opacity:.7">'+
-  '<span style="font-size:26px">🎓</span>'+
+  // Firm cohorts
+  '<div class="student-section" style="cursor:default">'+
+  '<span style="font-size:26px">🏢</span>'+
   '<div style="flex:1">'+
-  '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:800;color:var(--txt)">Student Discount</span><span style="font-size:10px;font-weight:800;background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em">Coming Soon</span></div>'+
-  '<div style="font-size:11px;color:var(--mut);margin-top:2px">A discounted rate for students is on the way.</div>'+
+  '<div style="font-size:13px;font-weight:800;color:var(--txt)">Studying with your firm\'s start class?</div>'+
+  '<div style="font-size:11px;color:var(--mut);margin-top:2px">Firm cohort plans are billed to the firm, per candidate, for one exam window. Email <strong>support@ledgercpa.app</strong> and we\'ll set it up.</div>'+
   '</div>'+
   '</div>'+
   // Testimonials
@@ -2856,7 +2864,7 @@ function renderUpgradeModal(featureHint){
   '</div>'+
   '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">'+
     'By subscribing you agree to our <a href="/terms" target="_blank" style="color:var(--mut)">Terms of Service</a> and <a href="/privacy" target="_blank" style="color:var(--mut)">Privacy Policy</a>. '+
-    'All prices in USD. Refunds within 7 days of charge — email support@ledgercpa.app. After 7 days, no refunds.'+
+    'All prices in USD. 30-day money-back guarantee on your first purchase; after that, refunds within 7 days of a charge — email support@ledgercpa.app.'+
   '</div>'+
   '</div>';
 }
@@ -2888,7 +2896,7 @@ function activatePlan(tier){
     SUB={...SUB,tier:'elite',billingCycle:_upgradeBilling,startDate:Date.now()};
     saveSub(SUB);
     closeUpgradeModal();
-    showToast('Ledger Elite activated.','ok');
+    showToast('Ledger Pro activated.','ok');
   } else if(tier==='cram'){
     SUB={...SUB,tier:'cram',billingCycle:'one_time',startDate:Date.now(),cramEnd:Date.now()+183*86400000};
     saveSub(SUB);
@@ -2912,8 +2920,8 @@ function proLockHTML(featureName,btnLabel){
 }
 function eliteLockHTML(featureName,btnLabel){
   if(isElite())return'';
-  const lbl=btnLabel||'Unlock with Elite';
-  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(147,51,234,.04));border:1.5px solid rgba(147,51,234,.25)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Elite</div>'+'<button class="pro-lock-cta" style="background:linear-gradient(135deg,var(--pur),#7c22c8)">'+lbl+'</button>'+'</div>';
+  const lbl=btnLabel||'Unlock with Pro';
+  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(147,51,234,.04));border:1.5px solid rgba(147,51,234,.25)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Pro</div>'+'<button class="pro-lock-cta" style="background:linear-gradient(135deg,var(--pur),#7c22c8)">'+lbl+'</button>'+'</div>';
 }
 
 // Inline upsell banner (used inside cards)
@@ -2942,12 +2950,12 @@ function showPostOnboardingOffer(){
   '<div style="position:relative;z-index:1">'+
   '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px">Account Created</div>'+
   '<div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px">Choose your plan.<br>First 7 days are free.</div>'+
-  '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(14,165,116,.15);border:1px solid rgba(14,165,116,.3);color:#34d399;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px">✓ No credit card required to start</div>'+
+  '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(14,165,116,.15);border:1px solid rgba(14,165,116,.3);color:#34d399;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px">✓ Free forever plan — no card needed</div>'+
   '</div>'+
   '</div>'+
   // Plan cards
   '<div style="padding:20px 20px 24px">'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
   // Free
   '<div style="border:1.5px solid var(--bdr);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column">'+
   '<div style="font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Free</div>'+
@@ -2960,21 +2968,13 @@ function showPostOnboardingOffer(){
   '<div style="border:2px solid var(--ora);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--surf),var(--ora-bg));position:relative">'+
   '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em">Most Popular</div>'+
   '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Pro</div>'+
-  '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$9</div>'+
-  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
-  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Question bank + 20 fresh AI questions/section daily<br>Exam Day Protocol<br>Streak Shield (3×/mo)<br>Weekly progress insights</div>'+
-  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
-  '</div>'+
-  // Elite
-  '<div style="border:1.5px solid var(--pur);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--surf),var(--pur-bg))">'+
-  '<div style="font-size:10px;font-weight:800;color:var(--pur);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Elite</div>'+
-  '<div style="font-size:26px;font-weight:900;color:var(--pur);line-height:1;margin-bottom:2px">$14</div>'+
-  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month</div>'+
-  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Pro<br>AI Study Plan (day-by-day)<br>Ask Ledger (AI Coach)<br>Advanced Analytics<br>Unlimited AI question bank + custom topics</div>'+
-  '<button onclick="activatePlan(\'elite\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--pur);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Try Free 7 Days →</button>'+
+  '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$14</div>'+
+  '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month · or $132/yr</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Unlimited AI question bank<br>Ask Ledger AI coach (100/mo)<br>AI Study Plan + analytics<br>Exam Day Protocol<br>Study partner pairing</div>'+
+  '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Start 7-Day Free Trial →</button>'+
   '</div>'+
   '</div>'+
-  '<div style="text-align:center;font-size:11px;color:var(--mut)">7-day free trial on Pro &amp; Elite · No card needed · Cancel anytime</div>'+
+  '<div style="text-align:center;font-size:11px;color:var(--mut);line-height:1.6">Exam date already set? The <strong>$75 Exam Window Pass</strong> is 6 months of Pro, paid once — see Settings → Subscription.<br>The trial needs a card to start. Cancel before day 7 and you are never charged.</div>'+
   '</div>'+
   '</div>';
   // After offer closes (via any button), fire the tour
@@ -3158,6 +3158,9 @@ function init(){
     const firmName=safeText(_p.get('fn')||'').slice(0,60);
     _pendingInvite={code:_code,fromName,fromUid,firmName};
     _savePendingInvite(_pendingInvite); // survive the OAuth redirect
+    // Top of the referral funnel: the link was opened. Pairs with 'invite_shared'
+    // on the sender's side and 'cohort_joined' if they make it through signup.
+    logLedgerEvent('invite_opened',{has_inviter:!!fromUid,has_firm:!!firmName});
     if(obData){obData.firmCode=_code;if(firmName&&!obData.firmName)obData.firmName=firmName;}
     if(S&&!S.firmCode){S.firmCode=_code;if(firmName&&!S.firmName)S.firmName=firmName;saveState();}
     history.replaceState({},'',window.location.pathname);
@@ -3332,7 +3335,7 @@ function renderAuth(){
 
   <!-- RIGHT PANEL — auth form -->
   <div class="auth-right">
-    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
+    <div class="auth-right-logo" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:8px"><svg width="26" height="26" viewBox="0 0 180 180" style="border-radius:6px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div><a href="/landing" style="font-family:var(--font);font-style:normal;font-size:12px;color:var(--mut);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--surf2);transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s" onmouseover="this.style.color='var(--txt)';this.style.borderColor='var(--bdr2)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bdr)'">← Home</a></div>
     ${_invName?`<div style="display:flex;align-items:center;gap:10px;background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:10px;padding:12px 14px;margin-bottom:18px">
       <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d44000,#ff6a2b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(_invInitials)}</div>
       <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${esc(_invName)} invited you to study together</div></div>
@@ -4024,6 +4027,15 @@ function obFinish(){
   } else {
     showToast(`Welcome to Ledger, ${S.name}!`,'ok');
   }
+  // Activation funnel: signup -> onboarding_complete -> first_session_logged.
+  // cohort_joined is the payoff for the whole invite chain, so it carries enough
+  // to tell an invited join apart from someone typing in a code.
+  logLedgerEvent('onboarding_complete',{
+    sections:sections.length, intensity, has_exam_date:sections.some(x=>examDates[x]),
+    invited:!!(_inv&&_inv.code)
+  });
+  if(_inv&&_inv.code) logLedgerEvent('cohort_joined',{via:'invite_link',has_inviter:!!(_inv&&_inv.fromUid)});
+  else if(obData.firmCode&&firmName) logLedgerEvent('cohort_joined',{via:'created_cohort',has_inviter:false});
   _clearPendingInvite(); // invite consumed
   renderApp();
   refreshRealUsers();
@@ -4126,6 +4138,18 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  // Retention buckets. Firebase can derive retention from app_open alone, but
+  // only as a cohort chart — these fire once per user so they can be used as
+  // conversion goals and audience definitions, and so day-N return is visible
+  // next to the activation events above it in the same funnel.
+  (function(){
+    const created=Number(S&&S.created);
+    if(!isFinite(created)||!created) return;
+    const days=(Date.now()-created)/86400000;
+    if(days>=1&&days<7)       logLedgerEventOnce('return_day_2_7');
+    else if(days>=7&&days<21) logLedgerEventOnce('return_week_2');
+    else if(days>=28)         logLedgerEventOnce('return_day_30');
+  })();
   // Leaving the messages page: kill live messaging listeners so background snapshots
   // don't keep marking the open conversation as read.
   if(typeof _detachDMConvListener==='function') _detachDMConvListener();
@@ -4157,12 +4181,15 @@ function renderApp(){
       <div class="nav-logo" onclick="switchTab('feed')" style="display:flex;align-items:center;gap:7px"><svg width="22" height="22" viewBox="0 0 180 180" style="border-radius:5px;flex-shrink:0"><rect width="180" height="180" fill="#18103a"/><rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".12"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/><circle cx="142" cy="44" r="13" fill="#d44000"/></svg>Ledger</div>
       <div class="nav-tabs">
         ${[
+          // Ordered by how often a candidate actually opens them. Study Lab is
+          // the paid surface (MCQs, flashcards, AI coach) and was last; Profile
+          // is a weekly visit at best and now lives behind the avatar, which is
+          // where people look for it anyway.
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
-          {id:'plan',icon:'🗓',label:'Study Plan'},
-          {id:'profile',icon:'◉',label:'Profile'},
-          {id:'explore',icon:'◎',label:'Explore'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
+          {id:'plan',icon:'🗓',label:'Study Plan'},
+          {id:'explore',icon:'◎',label:'Explore'},
         ].map(t=>`<button class="nav-tab${currentTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
       </div>
       <div class="nav-right">
@@ -4173,7 +4200,7 @@ function renderApp(){
         <button onclick="openNotificationCenter()" title="Notifications" class="btn btn-ghost btn-sm" id="notif-bell-btn" style="font-size:15px;padding:7px 9px;border-radius:9px;position:relative">🔔${(()=>{const uc=(S&&S.notifications?S.notifications.filter(n=>!n.read).length:0);return uc>0?`<span style="position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;padding:0 3px">${uc>9?'9+':uc}</span>`:'';})()}</button>
         <button onclick="openMessagesPage()" title="Messages" class="btn btn-ghost btn-sm nav-btn-msg" style="font-size:15px;padding:7px 9px;border-radius:9px">💬</button>
         <button onclick="openAppSettings()" title="Settings" class="btn btn-ghost btn-sm nav-btn-set" style="font-size:15px;padding:7px 9px;border-radius:9px">⚙️</button>
-        <button onclick="openEditProfile()" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
+        <button id="nav-avatar-btn" onclick="switchTab('profile')" title="${AUTH?.displayName||'Profile'}" style="background:${avatarBg};border:${avatarBorder};border-radius:50%;width:34px;height:34px;box-shadow:${currentTab==='profile'?'0 0 0 2px var(--ora)':'var(--shadow-btn)'};color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;transition:transform var(--transition);box-shadow:var(--shadow-btn)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">${avatarContent}</button>
       </div>
     </div>
   </nav>
@@ -4196,7 +4223,7 @@ function renderApp(){
     <div class="lg-foot-inner">
       <div class="lg-foot-grid">
         <div class="lg-foot-brand">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:'Barlow Condensed','Inter',sans-serif;font-size:21px;font-weight:800;color:#fff;letter-spacing:.3px">Ledger</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:var(--font-display);font-style:italic;font-size:21px;font-weight:700;color:#fff;letter-spacing:-.01em">Ledger</span></div>
           <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
           <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45)">A product of <strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></div>
         </div>
@@ -4210,6 +4237,7 @@ function renderApp(){
   </footer>
 </div>`;
   renderTab();
+  syncNavActive(currentTab);
   updateNavChip(); // reflect any restored in-progress session in the top bar
   // Handle direct deep-link navigation on page reload
   const _profMatch=window.location.pathname.match(/^\/user\/(.+)/);
@@ -4232,20 +4260,32 @@ function renderApp(){
   }
 }
 
+// Keeps every nav surface in sync with the active tab. Called from switchTab and
+// from renderApp, which can land on a tab from the URL hash without going through
+// switchTab at all.
+function syncNavActive(tab){
+  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Study Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab'};
+  document.querySelectorAll('.nav-tab').forEach(b=>{
+    b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
+  });
+  // Study Plan and Explore live in the More sheet, so highlight More while you're
+  // on one of them — otherwise the bottom bar shows nothing selected.
+  const mobBar=['feed','dashboard','studylab','profile'];
+  document.querySelectorAll('[data-mnav]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mnav==='more' ? !mobBar.includes(tab) : b.dataset.mnav===tab);
+  });
+  // Profile has no tab button any more — the avatar is its entry point.
+  const av=document.getElementById('nav-avatar-btn');
+  if(av) av.style.boxShadow = tab==='profile' ? '0 0 0 2px var(--ora)' : 'var(--shadow-btn)';
+}
 function switchTab(tab){
   // close more sheet if open
   const _moreSheet=document.getElementById('mob-more-sheet');
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   const prevTab=currentTab;
   currentTab=tab;
-  const tabOrder=['feed','dashboard','plan','profile','explore','studylab'];
-  const labelMap={feed:'Feed',dashboard:'Dashboard',plan:'Study Plan',profile:'Profile',explore:'Explore',studylab:'Study Lab'};
-  document.querySelectorAll('.nav-tab').forEach(b=>{
-    b.classList.toggle('active',b.textContent.trim().startsWith(labelMap[tab]||tab));
-  });
-  document.querySelectorAll('[data-mnav]').forEach(b=>{
-    b.classList.toggle('active',b.dataset.mnav===tab);
-  });
+  const tabOrder=['feed','dashboard','studylab','plan','explore','profile'];
+  syncNavActive(tab);
   const page=document.getElementById('page-content');
   if(page){
     const prevIdx=tabOrder.indexOf(prevTab);
@@ -4412,6 +4452,7 @@ function buildFeed(){
   });
   // Sort newest first
   allActivities.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
 
   const leftSidebar=`
 <div class="sidebar-left">
@@ -4751,7 +4792,7 @@ function buildActivityCard(a){
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">✅ ${_actFriend.passedSections.length} Passed</span>`:'';
-  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Elite</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
+  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
   const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
@@ -4791,7 +4832,7 @@ function buildActivityCard(a){
   </div>
   <div class="ac-stat-row">
     <div class="ac-stat-blk">
-      <div class="ac-stat-v">${a.hours}h</div>
+      <div class="ac-stat-v">${a.hours}<span class="stat-unit">h</span></div>
       <div class="ac-stat-l">Duration</div>
     </div>
     ${_diffLabel?`<div class="ac-stat-blk">
@@ -4911,18 +4952,24 @@ function calcReadinessScore(overrideSection){
   // Only valid entries (finite score, real date) count; scores are clamped to 0–100.
   const sScores=((S.practiceScores||{})[s]||[]).filter(sc=>sc&&isFinite(Number(sc.score))&&dayMs(sc.date));
   const hasScores=sScores.length>0;
-  let practicePts=0;
+  let practicePts=0,weightedAvg=0,daysSinceScore=Infinity;
   if(sScores.length){
     let totalWeight=0,weightedSum=0;
     sScores.forEach(sc=>{
       const score=Math.max(0,Math.min(100,Number(sc.score)));
       const daysAgo=Math.max(0,(now-dayMs(sc.date))/86400000);
+      daysSinceScore=Math.min(daysSinceScore,daysAgo);
       const w=Math.max(0.3,Math.exp(-daysAgo/120)); // full weight <30d, ~50% at 3mo
       weightedSum+=score*w; totalWeight+=w;
     });
-    const weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
-    practicePts=(weightedAvg/75)*35;          // 75 = passing = 35 pts
-    if(weightedAvg>=75) practicePts+=5;        // 80+ trends toward full 40
+    weightedAvg=totalWeight>0?weightedSum/totalWeight:0;
+    // 75 is the pass line, so it anchors 35 of the 40 points. Below it the curve
+    // is convex rather than linear: a 60 average is not 80% of the way to passing,
+    // and the old straight line said it was (28/35). Above 75, the last 5 points
+    // accrue to 80, which is where candidates have real margin.
+    practicePts = weightedAvg>=75
+      ? 35+Math.min(5,(weightedAvg-75)/5*5)
+      : 35*Math.pow(weightedAvg/75,1.6);
   }
   practicePts=clampInt(practicePts,0,40);
 
@@ -4954,13 +5001,41 @@ function calcReadinessScore(overrideSection){
   const score=clampInt(volumePts+pacingPts+practicePts+momentumPts+consistencyPts,0,99);
   const breakdown=[{section:s,score,volumePts,pacingPts,practicePts,momentumPts,consistencyPts,logged,decayed:Math.round(decayed),hasScores}];
 
-  let label,color,tier;
-  if(score<35){label='Just Getting Started';color='#ef4444';tier='start';}
-  else if(score<50){label='Building Foundation';color='#f59e0b';tier='building';}
-  else if(score<65){label='On Track';color='var(--ind)';tier='track';}
-  else if(score<80){label='Strong Progress';color='var(--grn)';tier='strong';}
-  else{label='Exam Ready';color='var(--grn)';tier='ready';}
-  return{score,label,color,tier,breakdown,section:s,hasScores};
+  // ── Label gating ────────────────────────────────────────────────────────────
+  // 60 of the 100 points measure effort (volume, pacing, consistency, momentum);
+  // only Practice measures whether you can actually pass. So the headline label
+  // is capped by the evidence of mastery, not by the raw total. Without this a
+  // 70 practice average — a failing average — reads "Exam Ready" on a full
+  // effort score, which is the single most dangerous thing this app could say.
+  const TIERS=[
+    {max:35,label:'Just Getting Started',color:'#ef4444',tier:'start'},
+    {max:50,label:'Building Foundation',color:'#f59e0b',tier:'building'},
+    {max:65,label:'On Track',color:'var(--ind)',tier:'track'},
+    {max:80,label:'Strong Progress',color:'var(--grn)',tier:'strong'},
+    {max:Infinity,label:'Exam Ready',color:'var(--grn)',tier:'ready'}
+  ];
+  let idx=TIERS.findIndex(t=>score<t.max); if(idx<0) idx=TIERS.length-1;
+  let capReason='';
+  // The caveat is shown whenever it applies, not only when it actually lowered
+  // the label — "Strong Progress" off a 70 average needs the same footnote as
+  // a capped one, or the gating is invisible exactly where it matters most.
+  const capTo=(i,why)=>{ if(idx>i) idx=i; if(why) capReason=why; };
+  if(!hasScores){
+    // Nothing here measures whether you can pass. Effort alone tops out at
+    // "Building Foundation" no matter how many hours are logged. No caveat text:
+    // the card already shows the "50 pts locked" prompt right below this.
+    capTo(1,null);
+  } else if(weightedAvg<68){
+    capTo(2,`Your practice average is ${Math.round(weightedAvg)}. Passing is 75.`);
+  } else if(weightedAvg<75){
+    capTo(3,`Your practice average is ${Math.round(weightedAvg)} — close, but passing is 75.`);
+  } else if(sScores.length<2){
+    capTo(3,'One practice score above 75 is a good sign, not yet a trend. Log another.');
+  } else if(daysSinceScore>60){
+    capTo(3,`Your most recent practice score is ${Math.round(daysSinceScore)} days old — too stale to call you exam ready.`);
+  }
+  const {label,color,tier}=TIERS[idx];
+  return{score,label,color,tier,breakdown,section:s,hasScores,practiceAvg:hasScores?Math.round(weightedAvg):null,capReason};
 }
 
 function setReadinessSection(sec){_readinessSection=sec;renderTab();}
@@ -4977,7 +5052,7 @@ function buildReadinessCard(){
       <svg width="120" height="120" viewBox="0 0 120 120">
         <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surf3)" stroke-width="8"/>
         <circle id="readiness-ring" cx="60" cy="60" r="52" fill="none" stroke="${r.color}" stroke-width="8"
-          stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${dash}"
           stroke-linecap="round" transform="rotate(-90 60 60)"
           style="transition:stroke-dashoffset 1.1s cubic-bezier(.22,.61,.36,1)"/>
         <text x="60" y="55" text-anchor="middle" font-size="28" font-weight="900" fill="var(--txt)">${r.score}</text>
@@ -4987,7 +5062,8 @@ function buildReadinessCard(){
     <div style="flex:1">
       <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px">Readiness Score</div>
       ${_switcher}
-      <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:10px">${r.label}</div>
+      <div style="font-size:20px;font-weight:900;color:${r.color};line-height:1.1;margin-bottom:${r.capReason?'4px':'10px'}">${r.label}</div>
+      ${r.capReason?`<div style="font-size:11.5px;color:var(--sub);line-height:1.5;margin-bottom:10px">${esc(r.capReason)}</div>`:''}
       <div style="display:flex;flex-direction:column;gap:8px">
         ${r.breakdown.map(b=>[
           ['📝','Practice',b.practicePts,40],
@@ -4997,7 +5073,7 @@ function buildReadinessCard(){
           ['🔥','Consist.',b.consistencyPts,10]
         ].map(([icon,lbl,pts,max])=>`<div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:12px;width:18px;text-align:center;flex-shrink:0">${icon}</span>
-          <span style="font-size:11px;color:var(--mut);width:52px;flex-shrink:0">${lbl}</span>
+          <span style="font-size:11px;color:var(--mut);width:62px;flex-shrink:0">${lbl}</span>
           <div style="flex:1;height:5px;background:var(--surf3);border-radius:4px;overflow:hidden">
             <div style="height:100%;width:${Math.round(pts/max*100)}%;background:${EXAMS[b.section]?.color||'var(--ind)'};border-radius:4px"></div>
           </div>
@@ -5856,7 +5932,7 @@ function buildProfile(){
           <div class="profile-av-edit-overlay">Edit</div>
         </div>
         <div>
-          <div class="profile-name" style="margin-top:0;font-size:24px">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Elite</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
+          <div class="profile-name" style="margin-top:0;font-size:24px">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
           <div class="profile-state">${[S.state,S.classYear,S.school?'@ '+S.school:''].filter(Boolean).join(' · ')}</div>
           ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.72);margin-top:5px;max-width:500px;line-height:1.55">${S.bio}</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.38);margin-top:5px;cursor:pointer" onclick="openEditProfile()">+ Add a bio…</div>`}
         </div>
@@ -6031,7 +6107,7 @@ function buildExplore(){
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Elite</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?'🏆':''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">🔒</span>':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
         ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:10px">${s} ✓</span>`).join('')}</div>`:''}
@@ -7324,6 +7400,9 @@ function saveSession(){
   const _priorScore=calcReadinessScore().score;
   S.activities.push(act);
   logLedgerEvent('session_logged', {section: act.section, hours: act.hours});
+  // The activation moment. Everything before this is setup; a user who never
+  // reaches it never had a chance to retain.
+  if((S.activities||[]).length===1) logLedgerEventOnce('first_session_logged',{section:act.section,hours:act.hours});
   const _priorAch=new Set(S.achievements||[]);
   saveState();checkAchievements();checkChallengeAchievements();
   syncClubActivity(); // push updated study stats to my clubs' shared leaderboard
@@ -7409,7 +7488,7 @@ function showAchInfo(id){
 // ELITE FEATURES — SUPPORT
 // ═══════════════════════════════════════════════
 function openSupportModal(){
-  // Works for all users; Elite get the priority label
+  // Works for all users; paid (Pro) accounts get the priority label
   let el=document.getElementById('support-modal');
   if(el)el.remove();
   el=document.createElement('div');
@@ -7424,7 +7503,7 @@ function openSupportModal(){
       '</div>' +
       '<div class="modal-body">' +
         (isEliteUser
-          ?'<div style="display:flex;align-items:center;gap:10px;background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:11px 14px;margin-bottom:16px"><span style="font-size:20px">⚡</span><div style="font-size:12px;color:var(--pur);font-weight:600">Elite members get responses within 2 hours (9am–6pm CT, Mon–Fri)</div></div>'
+          ?'<div style="display:flex;align-items:center;gap:10px;background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:11px 14px;margin-bottom:16px"><span style="font-size:20px">⚡</span><div style="font-size:12px;color:var(--pur);font-weight:600">Pro members get responses within 2 hours (9am–6pm CT, Mon–Fri)</div></div>'
           :'<div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.6">We read every message and reply within 1 business day. For bug reports, feature ideas, or anything on your mind.</div>'
         ) +
         '<div class="form-grp" style="margin-bottom:8px"><label>What\'s going on?</label><textarea id="support-msg-ta" style="min-height:100px" placeholder="Describe your issue, question, or feedback…"></textarea></div>' +
@@ -7447,13 +7526,13 @@ function openPrioritySupport(){
   el.innerHTML=
     '<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">' +
       '<div class="modal-hdr">' +
-        '<div class="modal-title">Elite Priority Support</div>' +
+        '<div class="modal-title">Priority Support</div>' +
         '<button class="modal-close" onclick="document.getElementById(\'support-modal\').classList.remove(\'open\')">×</button>' +
       '</div>' +
       '<div class="modal-body">' +
         '<div style="display:flex;align-items:center;gap:10px;background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);border-radius:10px;padding:11px 14px;margin-bottom:16px">' +
           '<span style="font-size:20px">⚡</span>' +
-          '<div style="font-size:12px;color:var(--pur);font-weight:600">Elite members get responses within 2 hours during business hours (9am–6pm CT, Mon–Fri)</div>' +
+          '<div style="font-size:12px;color:var(--pur);font-weight:600">Pro members get responses within 2 hours during business hours (9am–6pm CT, Mon–Fri)</div>' +
         '</div>' +
         '<div class="form-grp" style="margin-bottom:8px"><label>What do you need help with?</label><textarea id="support-msg-ta" style="min-height:100px" placeholder="Describe your issue, bug, or question…"></textarea></div>' +
         '<div class="form-grp" style="margin-bottom:16px"><label>Your email</label><input type="email" id="support-email-inp" value="'+(AUTH?.email||'')+'" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none"></div>' +
@@ -7472,7 +7551,7 @@ function sendSupportMessage(){
   if(!S.supportTickets)S.supportTickets=[];
   S.supportTickets.push({sentAt:new Date().toISOString(),message:msg,email,status:'sent'});
   saveState();
-  const subject=encodeURIComponent('[Ledger Elite Support] '+msg.slice(0,60));
+  const subject=encodeURIComponent('[Ledger Pro Support] '+msg.slice(0,60));
   const body=encodeURIComponent('From: '+email+'\n\n'+msg);
   window.location.href='mailto:support@ledgercpa.app?subject='+subject+'&body='+body;
   document.getElementById('support-modal')?.classList.remove('open');
@@ -7759,7 +7838,7 @@ function _renderActivityPage(actId){
   const feelEmoji={'great':'😄','good':'🙂','okay':'😐','rough':'😓','bad':'😩'}[act.feeling]||'';
   const statBlocks=[
     `<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
-      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1;font-family:var(--font-display)">${act.hours}h</div>
+      <div style="font-size:32px;font-weight:900;color:${ex.color};letter-spacing:-.015em;line-height:1;font-family:var(--font-display)">${act.hours}<span class="stat-unit">h</span></div>
       <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;font-weight:700">Duration</div>
     </div>`,
     act.elapsed?`<div style="flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center">
@@ -7889,7 +7968,7 @@ function _renderFullUserProfile(u){
   const isPendingRequest=!isFollowing&&(S.pendingRequests||[]).includes(u.uid);
   const isLocked=!!(u.isPrivate)&&!isFollowing;
   const avatarInner=u.profilePic?`<img src="${u.profilePic}" alt="Member profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${u.avatar}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
-  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Elite</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
 
   // Follow / Message buttons (compact, hero top-right)
   const followBtnStyle=`background:${isFollowing?'rgba(255,255,255,.15)':isPendingRequest?'rgba(255,255,255,.1)':'var(--ora)'};border:1px solid ${(isFollowing||isPendingRequest)?'rgba(255,255,255,.28)':'transparent'};color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap`;
@@ -8214,7 +8293,7 @@ let _heatmapOtherActivities=[];
 let _clubViewMsgUnsub = null;
 const ASK_LEDGER_LIMIT = 100;
 let _askLedgerUsage = null; // {month:'2026-06', count:47} — loaded from Firestore
-const FLASHCARD_LIMIT = 50; // monthly AI Study-Tools generations (flashcards/quizzes/summaries) for Pro; Elite/Cram = unlimited
+const FLASHCARD_LIMIT = 50; // monthly AI Study-Tools generations (flashcards/quizzes/summaries); every paid tier = unlimited
 let _flashcardUsage = null; // {month, count} — loaded from Firestore userState (mirrors Ask Ledger)
 
 function _detachClubViewListener(){ if(_clubViewMsgUnsub){ _clubViewMsgUnsub(); _clubViewMsgUnsub=null; } }
@@ -9253,6 +9332,7 @@ function shareInvite(opts){
   const message=opts.message||buildInviteMessage(url);
   // Native share sheet — best on mobile: one tap straight to Messages/iMessage.
   if(navigator.share){
+    logLedgerEvent('invite_shared',{method:'native_sheet'});
     navigator.share({title:'Join me on Ledger',text:message}).catch(e=>{
       if(e&&e.name==='AbortError')return; // user dismissed — do nothing
       openInviteShareSheet(url,message);
@@ -9277,10 +9357,10 @@ function openInviteShareSheet(url,message){
     '<div class="modal-hdr"><div class="modal-title">Invite your cohort</div><button class="modal-close" onclick="document.getElementById(\'invite-share-sheet\').remove()">×</button></div>'+
     '<div style="padding:4px 2px 2px">'+
       '<div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:16px">Send your invite link the fastest way.</div>'+
-      btn('💬','Send via Text','window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
-      btn('🟢','Share on WhatsApp','window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
-      btn('✉️','Email it','window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
-      btn('📋','Copy link','_copyInviteFromSheet(this)','var(--surf2)')+
+      btn('💬','Send via Text','logLedgerEvent(\'invite_shared\',{method:\'sms\'});window.open(this.dataset.sms,\'_blank\')','linear-gradient(135deg,#16a34a,#15803d)','#fff')+
+      btn('🟢','Share on WhatsApp','logLedgerEvent(\'invite_shared\',{method:\'whatsapp\'});window.open(\'https://wa.me/?text=\'+encodeURIComponent(this.dataset.msg),\'_blank\')','var(--surf2)')+
+      btn('✉️','Email it','logLedgerEvent(\'invite_shared\',{method:\'email\'});window.open(this.dataset.mail,\'_blank\')','var(--surf2)')+
+      btn('📋','Copy link','logLedgerEvent(\'invite_shared\',{method:\'copy_link\'});_copyInviteFromSheet(this)','var(--surf2)')+
       '<div style="text-align:center;margin-top:14px;padding-top:16px;border-top:1px solid var(--bdr)">'+
         '<div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Or scan in person</div>'+
         '<div style="background:#fff;border-radius:14px;padding:12px;display:inline-block"><img src="'+qrUrl+'" alt="Invite QR" style="width:150px;height:150px;display:block;border-radius:6px"></div>'+
@@ -10330,6 +10410,11 @@ function submitScore(section){
   if(!S.practiceScores)S.practiceScores={};
   if(!S.practiceScores[section])S.practiceScores[section]=[];
   S.practiceScores[section].push({score,label,date});
+  // Practice scores are the only readiness input that measures mastery, and the
+  // one the score card nags for — worth knowing how many users ever log one.
+  logLedgerEvent('practice_score_logged',{section,score,passing:score>=75,
+    nth:S.practiceScores[section].length});
+  if(S.practiceScores[section].length===1) logLedgerEventOnce('first_practice_score',{section,score});
   saveState();
   closePostModal();
   showToast(`${section} score ${score} logged${score>=75?' — at passing level':''}`,'ok');
@@ -10846,9 +10931,8 @@ ${isFreePlan?`
 <div class="section-title">All Plans</div>
 ${[
   {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements, limited MCQ',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
-  {name:'Pro',price:'$9/mo',desc:'Full question bank, streak shields, exam protocol, heatmap, progress reports, study partner',active:SUB.tier==='pro'||isOnTrial(),color:'var(--ora)',action:isFreePlan?'upgrade_pro':SUB.tier==='pro'?null:'switch'},
-  {name:'Elite',price:'$14/mo',desc:'Everything Pro + AI Study Plan, Ask Ledger, Advanced Analytics, year heatmap, AI tools, priority support',active:SUB.tier==='elite',color:'var(--pur)',action:SUB.tier==='elite'?null:'upgrade_elite'},
-  {name:'6-Month Cram','price':'$75 once',desc:'Full Elite access for 6 months — no recurring charge',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
+  {name:'Pro',price:'$14/mo',desc:'Everything: unlimited AI question bank, Ask Ledger (100 answers/mo), AI Study Plan, advanced analytics, exam protocol, study partner, unlimited clubs and shields, data export. $132/yr billed annually.',active:SUB.tier==='pro'||SUB.tier==='elite'||isOnTrial(),color:'var(--ora)',action:(SUB.tier==='pro'||SUB.tier==='elite')?null:'upgrade_pro'},
+  {name:'6-Month Exam Window Pass','price':'$75 once',desc:'Six months of everything in Pro, paid once — no subscription, no auto-renew',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
 <!-- Beta tier switcher -->
@@ -11164,7 +11248,7 @@ function buildSettingsData(){
 ${isElite()?`
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bdr)">
   <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
-    <div class="section-title" style="margin-bottom:0">Elite</div>
+    <div class="section-title" style="margin-bottom:0">Pro</div>
     <span style="font-size:10px;font-weight:700;background:var(--pur-bg);color:var(--pur);border:1px solid rgba(147,51,234,.25);border-radius:20px;padding:2px 8px">Active</span>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
@@ -11290,8 +11374,8 @@ function injectMobileNav(){
   const tabs=[
     {id:'feed',icon:'◈',label:'Feed'},
     {id:'dashboard',icon:'▦',label:'Dash'},
+    {id:'studylab',icon:'⬡',label:'Lab'},
     {id:'profile',icon:'◉',label:'You'},
-    {id:'explore',icon:'◎',label:'Explore'},
     {id:'more',icon:'···',label:'More',isMore:true}
   ];
   const nav=document.createElement('nav');
@@ -11322,7 +11406,7 @@ function injectMobileNav(){
     <button class="mob-more-close" onclick="closeMobileMoreSheet()">✕</button>
   </div>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openMessagesPage()">
-    <div class="mob-more-icon" style="background:#eff6ff">💬</div>
+    <div class="mob-more-icon" style="background:var(--aud-bg)">💬</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Messages</div>
       <div class="mob-more-sub">Study groups &amp; direct messages</div>
@@ -11330,15 +11414,23 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('plan')">
-    <div class="mob-more-icon" style="background:#fff7ed">🗓</div>
+    <div class="mob-more-icon" style="background:var(--ora-bg)">🗓</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
       <div class="mob-more-sub">AI-generated day-by-day calendar</div>
     </div>
     <span class="mob-more-chev">›</span>
   </button>
+  <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('explore')">
+    <div class="mob-more-icon" style="background:var(--pur-bg)">🧭</div>
+    <div class="mob-more-text">
+      <div class="mob-more-label">Explore</div>
+      <div class="mob-more-sub">Find candidates, clubs &amp; leaderboards</div>
+    </div>
+    <span class="mob-more-chev">›</span>
+  </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openNotificationCenter()">
-    <div class="mob-more-icon" style="background:#fef9c3">🔔</div>
+    <div class="mob-more-icon" style="background:var(--amb-bg)">🔔</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Notifications</div>
       <div class="mob-more-sub">Activity &amp; alerts</div>
@@ -11346,7 +11438,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openAppSettings()">
-    <div class="mob-more-icon" style="background:#f0fdf4">⚙️</div>
+    <div class="mob-more-icon" style="background:var(--grn-bg)">⚙️</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Settings</div>
       <div class="mob-more-sub">Account, plan &amp; preferences</div>
@@ -11780,7 +11872,7 @@ let _quiz = {
 
 // ── AI QUESTION GENERATION (Step 6) ───────────────────────────────────────────
 // Free: none (upgrade gate). Pro: 20 fresh MCQs per section per 24h + topic focus.
-// Elite: unlimited. Generated sets feed the existing quiz engine and are cached
+// Paid: unlimited. Generated sets feed the existing quiz engine and are cached
 // per-user in S.aiQbCache so retries/repeats cost nothing.
 const AI_QB_PRO_DAILY = 20;
 const AI_QB_SET_SIZE  = 10;
@@ -11847,7 +11939,7 @@ async function generateAIQuestions(section, topic){
   const quota = _aiQbQuota(section);
   if(!quota.unlimited){
     if(quota.remaining <= 0){
-      showToast("You've used today's " + AI_QB_PRO_DAILY + " AI questions for " + section + ". Resets in 24h — Elite is unlimited.", 'info');
+      showToast("You've used today's " + AI_QB_PRO_DAILY + " AI questions for " + section + ". Resets in 24h.", 'info');
       return;
     }
     count = Math.min(count, quota.remaining);
@@ -11944,14 +12036,14 @@ async function openQuizModal(section, type) {
   if (!pool.length) { closeQuizOverlay(); showToast('Questions coming soon for ' + section, 'info'); return; }
 
   const elite = isElite(), pro = isPro();
-  // Per-attempt size by type, then capped by tier: Free taster / Pro daily quota / Elite full.
+  // Per-attempt size by type, then capped by tier: Free taster / paid unlimited.
   const want = type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20;
   let cap;
   if (!pro) cap = 5;
   else if (elite) cap = Math.min(want, pool.length);
   else {
     const rem = _aiQbQuota(section).remaining;
-    if (rem <= 0) { closeQuizOverlay(); showToast("You've used today's " + AI_QB_PRO_DAILY + " " + section + " questions — resets in 24h, or go Elite for unlimited.", 'info'); return; }
+    if (rem <= 0) { closeQuizOverlay(); showToast("You've used today's " + AI_QB_PRO_DAILY + " " + section + " questions — resets in 24h.", 'info'); return; }
     cap = Math.min(want, rem);
   }
 
@@ -12204,13 +12296,13 @@ function openQBSection(code) {
         '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
         '<div onclick="openUpgradeModal(\'AI Question Generator\')" style="background:var(--surf2);border:1px dashed var(--bdr2);border-radius:13px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px">' +
           '<div style="font-size:24px">🔒</div>' +
-          '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--txt)">Unlimited fresh questions with AI</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Pro: 20 new questions/section daily · Elite: unlimited + topic focus</div></div>' +
+          '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--txt)">Unlimited fresh questions with AI</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Pro: unlimited new questions, every section, plus topic focus</div></div>' +
           '<span style="font-size:10px;font-weight:800;color:var(--ora);background:var(--ora-bg);padding:3px 9px;border-radius:20px">PRO</span>' +
         '</div>' +
       '</div>';
   } else {
     const disabled = !elite && quota.remaining <= 0;
-    const quotaLabel = elite ? '✦ Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today · Elite is unlimited');
+    const quotaLabel = elite ? '✦ Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today');
     aiBlock =
       '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
         '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
@@ -12524,7 +12616,8 @@ function _prLoadAIAdvice(totalHrs, sessions, streak, habitScore, daysStudied30, 
     'Sessions: ' + sessions + '\n' +
     'Active streak: ' + streak + ' days\n' +
     'Habit score: ' + habitScore + '% (' + daysStudied30 + '/30 days studied)\n' +
-    'Readiness score: ' + readiness.score + '/100\n' +
+    'Readiness score: ' + readiness.score + '/100 (' + readiness.label + ')\n' +
+    'Weighted practice-exam average: ' + (readiness.practiceAvg!=null ? readiness.practiceAvg + ' (75 is the pass line)' : 'none logged yet — treat readiness as unproven') + '\n' +
     'Section progress:\n' + sectionLines + '\n\n' +
     'Give 4-5 specific, actionable bullet points of advice. Be direct and concrete — name specific sections, concepts, or exam areas they should focus on. Mention any red flags you see in the data. End with one motivating sentence. Format as bullet points starting with •.';
 
@@ -12622,7 +12715,8 @@ function _coachBuildContext() {
     'Total hours: ' + totalHrs + 'h\n' +
     'This week: ' + weekHrs + 'h\n' +
     'Streak: ' + streak + ' days\n' +
-    'Readiness score: ' + readiness.score + '/100\n' +
+    'Readiness score: ' + readiness.score + '/100 (' + readiness.label + ')\n' +
+    'Weighted practice-exam average: ' + (readiness.practiceAvg!=null ? readiness.practiceAvg + ' (75 is the pass line)' : 'none logged yet — treat readiness as unproven') + '\n' +
     'Section progress:\n' + sectionData;
 }
 
@@ -12737,7 +12831,7 @@ function buildAIStudyCoach() {
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Pass Probability</div><div style="font-size:22px;font-weight:900;color:var(--grn)">67%</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Next Milestone</div><div style="font-size:11px;color:var(--mut)">50h → Dedicated badge<br>Almost there!</div></div>' +
       '</div>' +
-      eliteLockHTML('Ask Ledger', 'Unlock Elite') +
+      eliteLockHTML('Ask Ledger', 'Unlock Pro') +
     '</div>';
   }
 
@@ -13090,7 +13184,7 @@ function toggleAskBubble(){
   const panel=document.getElementById('ask-panel');
   if(!panel)return;
   if(panel.classList.contains('open')){ panel.classList.remove('open'); return; }
-  // Non-Elite: this is an Elite feature — show the upgrade prompt instead of opening.
+  // Free users: Ask Ledger is a Pro feature — show the upgrade prompt instead of opening.
   if(!isElite()){ openUpgradeModal('Ask Ledger'); return; }
   panel.classList.add('open');
   updateAskBubbleSession();
@@ -13435,7 +13529,7 @@ function _buildStudyToolsPanel(){
         <button class="btn btn-ind" style="justify-content:center" onclick="fcGenerate('quiz')" ${_fc.generating?'disabled':''}>Quiz</button>
       </div>
       <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="fcGenerate('summary')" ${_fc.generating?'disabled':''}>Summary</button>
-      ${!isElite()?`<div style="text-align:center;margin-top:10px;font-size:10px;color:var(--mut)"><span id="flashcard-usage-count">— AI generations left this month</span> · <span onclick="openUpgradeModal('Unlimited AI Study Tools')" style="color:var(--pur);font-weight:700;cursor:pointer">Elite = unlimited</span></div>`:''}
+      ${!isElite()?`<div style="text-align:center;margin-top:10px;font-size:10px;color:var(--mut)"><span id="flashcard-usage-count">— AI generations left this month</span> · <span onclick="openUpgradeModal('Unlimited AI Study Tools')" style="color:var(--pur);font-weight:700;cursor:pointer">Pro = unlimited</span></div>`:''}
     </div>
     ${_fc.summaryText?`<div class="card card-pad"><div class="section-title">Summary</div><div style="font-size:12px;color:var(--sub);line-height:1.75;white-space:pre-wrap">${_fc.summaryText}</div></div>`:''}
   </div>`;
@@ -13493,7 +13587,7 @@ function _buildDecksView(){
 }
 
 function _fcRender(){const el=document.getElementById('page-content');if(el&&currentTab==='studylab')el.innerHTML=buildStudyLab();}
-// ─── AI Tools panel (Elite) ──────────────────────────────────────────────────
+// ─── AI Tools panel (Pro) ──────────────────────────────────────────────────
 
 
 // ── Exam Day Protocol ──────────────────────────────────────────────────────
@@ -13940,12 +14034,12 @@ function fcGenerate(type){
 async function _fcGenerateAsync(type){
   const text=(document.getElementById('fc-input-text')?.value||'').trim();
   if(!text||text.length<20){showToast('Paste study material first','err');return;}
-  // Monthly AI-generation cap for Pro (Elite/Cram are unlimited). Mirrors Ask Ledger.
+  // Monthly AI-generation cap for free users (every paid tier is unlimited). Mirrors Ask Ledger.
   if(!isElite()){
     const monthKey=new Date().toISOString().slice(0,7);
     const used=(_flashcardUsage&&_flashcardUsage.month===monthKey)?_flashcardUsage.count:0;
     if(used>=FLASHCARD_LIMIT){
-      showToast('Monthly AI limit reached ('+FLASHCARD_LIMIT+' generations). Resets next month — or upgrade to Elite for unlimited.','err');
+      showToast('Monthly AI limit reached ('+FLASHCARD_LIMIT+' generations). Resets next month — Pro is unlimited.','err');
       return;
     }
   }
@@ -14388,7 +14482,7 @@ function buildAdvancedAnalytics() {
         '<div class="stat-box"><div class="stat-val" style="color:var(--grn)">—</div><div class="stat-lbl">Avg Session</div></div>' +
         '<div class="stat-box"><div class="stat-val" style="color:var(--amb)">—</div><div class="stat-lbl">Peak Hour</div></div>' +
       '</div>' +
-      eliteLockHTML('Advanced Analytics', 'Unlock Elite') +
+      eliteLockHTML('Advanced Analytics', 'Unlock Pro') +
     '</div>';
   }
 
@@ -14459,7 +14553,7 @@ function buildAdvancedAnalytics() {
 }
 
 // ═══════════════════════════════════════════════
-// AI PERSONALIZED STUDY PLAN (Elite)
+// AI PERSONALIZED STUDY PLAN (Pro)
 // + BASIC SCHEDULE (Pro/Free)
 // ═══════════════════════════════════════════════
 
@@ -14825,8 +14919,8 @@ function _buildPlanGate(){
         <div style="font-size:11px;color:var(--mut);line-height:1.5">${desc}</div>
       </div>`).join('')}
     </div>
-    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Elite — Get Your Plan ✦</button>
-    <div style="font-size:11px;color:var(--mut);margin-top:12px">Exclusive to Elite ($14/mo) · Includes AI Coach, Analytics & more</div>
+    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Pro — Get Your Plan ✦</button>
+    <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($14/mo) · Also unlocks Ask Ledger, analytics &amp; the unlimited question bank</div>
   </div>`;
 }
 
@@ -15169,7 +15263,7 @@ function _buildPlanCalendar(plan){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
           <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin:0">Study Plan</h1>
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
-          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>
+          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>
         </div>
         <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete${(()=>{const n=[..._planBlockedSet(plan)].filter(bd=>bd>=todayStr).length;return n?` · ✈️ ${n} day${n>1?'s':''} off`:'';})()}</p>
       </div>
@@ -15468,7 +15562,7 @@ function _buildAIPlanUI(){
       '<div>'+
         '<div style="display:flex;align-items:center;gap:8px">'+
           '<div class="section-title" style="margin-bottom:0">AI Study Plan</div>'+
-          '<span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Elite</span>'+
+          '<span style="background:linear-gradient(135deg,var(--ora),#b03500);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>'+
         '</div>'+
         '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+daysLeft+' days to exam · '+Math.round(totalHrsPlanned)+'h planned · '+pct+'% done</div>'+
       '</div>'+
@@ -15584,9 +15678,9 @@ function buildStudySchedule(){
       '<div style="font-size:11px;color:var(--mut)">'+totalPlanned.toFixed(1)+'h planned this week</div></div>'+
       (pro
         ?'<button onclick="toggleScheduleEdit()" style="padding:6px 14px;background:'+(editMode?'var(--ind)':'var(--surf2)')+';border:1.5px solid '+(editMode?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:11px;font-weight:700;color:'+(editMode?'#fff':'var(--sub)')+';cursor:pointer">Customize</button>'
-        :'<button onclick="openUpgradeModal(null)" style="padding:6px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer">AI Plan (Elite)</button>')+
+        :'<button onclick="openUpgradeModal(null)" style="padding:6px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer">AI Plan (Pro)</button>')+
     '</div>'+editControls+dayRows+
-    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Elite members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Elite ✦</button></div>':'') +
+    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Pro members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Pro ✦</button></div>':'') +
   '</div></div>';
 }
 
@@ -16290,7 +16384,7 @@ function showStreakMilestone(days){
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.3);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
   <div style="font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:16px">Study Streak</div>
-  <div style="font-size:80px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--txt);margin-bottom:12px;font-family:var(--font-display)">${days}</div>
+  <div style="font-size:80px;font-weight:900;letter-spacing:-.02em;line-height:1;color:var(--txt);margin-bottom:12px;font-family:var(--font-display)">${days}</div>
   <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px">${cfg.label}</div>
   <div style="font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:28px">${cfg.sub}</div>
   <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(212,64,0,.3)">Keep Going</button>

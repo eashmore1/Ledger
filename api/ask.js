@@ -79,7 +79,10 @@ module.exports = async (req, res) => {
   // the Anthropic budget. The tier comes from users/{uid}.sub, which only the
   // Stripe webhook can write (Firestore rules block client writes to `sub`).
   // Usage is counted in aiUsage/{uid}, a collection no client can read or write.
-  const MONTHLY_LIMIT = { pro: 150, elite: 2000, cram: 2000 };
+  // An abuse backstop, deliberately far above what the app allows through its
+  // own UI (100 Ask Ledger answers/month; generators are advertised as
+  // unlimited), so a normal paying user never meets it.
+  const MONTHLY_LIMIT = { pro: 2000, elite: 2000, cram: 2000 };
   try {
     const db = admin.firestore();
     const userSnap = await db.collection('users').doc(uid).get();

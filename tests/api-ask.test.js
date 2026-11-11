@@ -75,10 +75,10 @@ test('a paid account gets an answer and its usage is counted', async () => {
 
 test('the monthly limit is enforced and resets with the month', async () => {
   const month = new Date().toISOString().slice(0, 7);
-  let h = loadHandler({ tier: 'pro', usage: { month, count: 150 } });
+  let h = loadHandler({ tier: 'pro', usage: { month, count: 2000 } });
   assert.equal((await call(h.handler)).code, 429);
   assert.equal(h.store.anthropicCalls, 0);
-  h = loadHandler({ tier: 'pro', usage: { month: '2000-01', count: 150 } });
+  h = loadHandler({ tier: 'pro', usage: { month: '2000-01', count: 2000 } });
   assert.equal((await call(h.handler)).code, 200);
   assert.equal(h.store.usage.count, 1);
 });
