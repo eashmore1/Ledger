@@ -2014,6 +2014,11 @@ function saveState(){
   // what followers' feeds, search, and leaderboards read — without it a newly
   // logged session stayed invisible to everyone else until the next app load.
   saveState._t=setTimeout(()=>{ if(firebaseDb&&AUTH?.uid&&S) writeUserProfile(); },3000);
+  // Follow requests to private accounts have to be published for the other
+  // person to ever see them.
+  const _pr=JSON.stringify(S.pendingRequests||[]);
+  if(saveState._pr!==undefined && saveState._pr!==_pr){ clearTimeout(saveState._prt); saveState._prt=setTimeout(()=>{ if(typeof syncSocial==='function') syncSocial(); },400); }
+  saveState._pr=_pr;
 }
 
 // ── FIRESTORE HELPERS ──
@@ -2922,6 +2927,15 @@ function _clearPendingInvite(){ _pendingInvite=null; try{ localStorage.removeIte
 const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname) || new URLSearchParams(window.location.search).get('auth')==='1';
 if(_isLoginRoute){ window._forceAuth = true; history.replaceState({},'','/'); }
 
+// Periodic pulls for things other users do (clubs I was added to, followers,
+// follow requests, kudos, comments). Started for returning AND brand-new users.
+function startBackgroundSync(){
+  setTimeout(syncMyClubs, 2500);
+  setTimeout(syncSocial, 3000);
+  clearInterval(window._socialSyncTimer);
+  window._socialSyncTimer=setInterval(()=>{ if(!document.hidden&&AUTH&&S){ syncSocial(); syncMyClubs(); } }, 120000);
+}
+
 // ═══════════════════════════════════════════════
 // SIGNED-IN ENTRY — the ONE path every successful sign-in goes through
 // (persisted session on page load, email/password form, Google popup).
@@ -2999,7 +3013,7 @@ async function enterSignedIn(user){
   setTimeout(writeUserProfile, 1200);
   setTimeout(backfillLongestStreak, 2000);
   setTimeout(checkStudyNudge, 1800);
-  setTimeout(syncMyClubs, 2500);
+  startBackgroundSync();
 }
 
 function _showRestoreLoader(){
@@ -3919,6 +3933,7 @@ function obFinish(){
   _clearPendingInvite(); // invite consumed
   renderApp();
   refreshRealUsers();
+  startBackgroundSync();
   // Show upgrade offer after a short delay so the app renders first
   if(!SUB.trialUsed) setTimeout(showPostOnboardingOffer, 1200);
 }
@@ -7485,6 +7500,8 @@ function acceptFollowRequest(uid){
   // which is how an accepted private-account request becomes a real, counted follow).
   if(firebaseDb&&AUTH&&AUTH.uid){
     firebaseDb.collection('users').doc(AUTH.uid).collection('followers').doc(uid).set({uid:uid,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    firebaseDb.collection('users').doc(AUTH.uid).collection('followRequests').doc(uid).delete().catch(()=>{});
+    S._seenFollowers=[...new Set([...(S._seenFollowers||[]),uid])];
   }
   showToast('Follow request accepted — '+req.name+' can now see your activity','ok');
   _renderFollowRequestsModal();
@@ -7493,6 +7510,7 @@ function acceptFollowRequest(uid){
 
 function denyFollowRequest(uid){
   if(!S.followRequests) return;
+  if(firebaseDb&&AUTH?.uid) firebaseDb.collection('users').doc(AUTH.uid).collection('followRequests').doc(uid).delete().catch(()=>{});
   S.followRequests=S.followRequests.filter(r=>r.uid!==uid);
   saveState();
   _renderFollowRequestsModal();
@@ -7500,23 +7518,12 @@ function denyFollowRequest(uid){
 }
 
 function acceptAllFollowRequests(){
-  const reqs=S.followRequests||[];
-  reqs.forEach(r=>{
-    if(!S.followers) S.followers=[];
-    if(!S.followers.includes(r.uid)) S.followers.push(r.uid);
-  });
-  S.followRequests=[];
-  saveState();
+  [...(S.followRequests||[])].forEach(r=>acceptFollowRequest(r.uid));
   showToast('All follow requests accepted','ok');
-  _renderFollowRequestsModal();
-  renderTab();
 }
 
 function denyAllFollowRequests(){
-  S.followRequests=[];
-  saveState();
-  _renderFollowRequestsModal();
-  renderTab();
+  [...(S.followRequests||[])].forEach(r=>denyFollowRequest(r.uid));
 }
 
 // ═══════════════════════════════════════════════
@@ -8718,9 +8725,29 @@ async function joinPublicClub(pubId){
 // NOTIFICATION CENTER
 // ═══════════════════════════════════════════════
 function _defaultNotifications(){
-  return [
-    {id:'n4',type:'achievement',icon:'🏆',text:'You earned the "Early Bird" achievement!',from:null,targetType:'profile',targetId:null,time:new Date(Date.now()-48*3600000).toISOString(),read:true},
-  ];
+  return []; // a new account starts with no notifications — never a made-up one
+}
+
+// Settings → Notifications. Each in-app notification type maps to one toggle;
+// a switched-off type is simply never recorded.
+const NOTIF_PREF_DEFAULTS={study_reminders:true,streak_alerts:true,props_notifs:true,club_messages:true,achievements:true,leaderboard:true};
+const NOTIF_TYPE_TO_PREF={props:'props_notifs',kudos:'props_notifs',comment:'props_notifs',club:'club_messages',achievement:'achievements',follow:'leaderboard',request:'leaderboard'};
+function notifPref(id){
+  const p=(S&&S.notifPrefs)||{};
+  return p[id]!==undefined ? !!p[id] : NOTIF_PREF_DEFAULTS[id]!==false;
+}
+function refreshNotifBadge(){
+  const btn=document.getElementById('notif-bell-btn'); if(!btn) return;
+  const uc=((S&&S.notifications)||[]).filter(n=>!n.read).length;
+  let badge=btn.querySelector('span');
+  if(!uc){ if(badge) badge.style.display='none'; return; }
+  if(!badge){
+    badge=document.createElement('span');
+    badge.style.cssText='position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px';
+    btn.appendChild(badge);
+  }
+  badge.style.display='flex';
+  badge.textContent=uc>9?'9+':String(uc);
 }
 
 function openNotificationCenter(){
@@ -8813,6 +8840,8 @@ function clearAllNotifs(){
 }
 
 function addNotification(type, icon, text, fromId, targetType, targetId){
+  const _pref=NOTIF_TYPE_TO_PREF[type];
+  if(_pref && !notifPref(_pref)) return;
   if(!S.notifications) S.notifications=_defaultNotifications();
   S.notifications.unshift({
     id:'n'+Date.now(),type,icon,text,from:fromId||null,
@@ -8821,6 +8850,111 @@ function addNotification(type, icon, text, fromId, targetType, targetId){
   });
   if(S.notifications.length>50) S.notifications=S.notifications.slice(0,50);
   saveState();
+  refreshNotifBadge();
+}
+
+// ───────────────────────────────────────────────
+// SOCIAL SYNC — what other people did since I last looked.
+// There is no server pushing notifications, so on load (and periodically) we
+// read the edges other users are allowed to write under my profile — follower
+// edges, follow requests, kudos, comments — and diff them against what this
+// account has already seen.
+// ───────────────────────────────────────────────
+async function _userName(uid){
+  const c=(REAL_USERS||[]).find(u=>u.id===uid);
+  if(c) return c.name;
+  try{ const d=await firebaseDb.collection('users').doc(uid).get(); if(d.exists) return d.data().displayName||'Someone'; }catch(e){}
+  return 'Someone';
+}
+let _socialSyncBusy=false;
+async function syncSocial(){
+  if(!firebaseDb||!AUTH?.uid||!S||_socialSyncBusy) return;
+  _socialSyncBusy=true;
+  const me=AUTH.uid, meRef=firebaseDb.collection('users').doc(me);
+  let dirty=false;
+  try{
+    // 1) Followers — keep S.followers in step with the real edges, announce new ones.
+    try{
+      const snap=await meRef.collection('followers').get();
+      const ids=snap.docs.map(d=>d.id).filter(id=>id!==me);
+      const firstRun=!Array.isArray(S._seenFollowers);
+      const seen=new Set(S._seenFollowers||[]);
+      if(!firstRun){
+        for(const id of ids.filter(x=>!seen.has(x)).slice(0,10)){
+          addNotification('follow','👤',esc(await _userName(id))+' started following you.',id,'user',id);
+        }
+      }
+      if(firstRun || ids.length!==seen.size || ids.some(x=>!seen.has(x))){ S._seenFollowers=ids; S.followers=ids; dirty=true; }
+    }catch(e){}
+
+    // 2) Incoming follow requests (private accounts).
+    try{
+      const snap=await meRef.collection('followRequests').get();
+      const prev=new Set((S.followRequests||[]).map(r=>r.uid));
+      const next=snap.docs.map(d=>{const x=d.data();const nm=esc(String(x.name||'CPA Candidate').slice(0,60));
+        return {uid:d.id,name:nm,initials:esc((nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'?'),color:hashColor(d.id),at:Date.now()};});
+      next.filter(r=>!prev.has(r.uid)).forEach(r=>addNotification('request','👤',r.name+' requested to follow you.',r.uid,'user',r.uid));
+      if(next.length!==prev.size || next.some(r=>!prev.has(r.uid))){ S.followRequests=next; dirty=true; }
+    }catch(e){}
+
+    // 3) My outgoing requests — publish new ones, withdraw cancelled ones, and
+    //    notice when one has been accepted (my follower edge now exists) or declined.
+    try{
+      const pending=(S.pendingRequests||[]).filter(id=>id&&id.length>4);
+      const sent=new Set(S._sentRequests||[]);
+      for(const uid of [...sent].filter(x=>!pending.includes(x))){
+        await firebaseDb.collection('users').doc(uid).collection('followRequests').doc(me).delete().catch(()=>{});
+        sent.delete(uid); dirty=true;
+      }
+      for(const uid of pending){
+        const tRef=firebaseDb.collection('users').doc(uid);
+        const edge=await tRef.collection('followers').doc(me).get().catch(()=>null);
+        if(edge&&edge.exists){
+          S.pendingRequests=(S.pendingRequests||[]).filter(x=>x!==uid);
+          if(!(S.following||[]).includes(uid)) S.following=[...(S.following||[]),uid];
+          sent.delete(uid);
+          await tRef.collection('followRequests').doc(me).delete().catch(()=>{});
+          addNotification('follow','✅',esc(await _userName(uid))+' accepted your follow request.',uid,'user',uid);
+          dirty=true; saveFollowToFirestore(); refreshRealUsers();
+          continue;
+        }
+        if(!sent.has(uid)){
+          await tRef.collection('followRequests').doc(me).set({uid:me,name:S.name||'CPA Candidate',at:firebase.firestore.FieldValue.serverTimestamp()});
+          sent.add(uid); dirty=true;
+        } else {
+          const req=await tRef.collection('followRequests').doc(me).get().catch(()=>null);
+          if(req&&!req.exists){ // declined
+            S.pendingRequests=(S.pendingRequests||[]).filter(x=>x!==uid); sent.delete(uid); dirty=true;
+          }
+        }
+      }
+      S._sentRequests=[...sent];
+    }catch(e){ console.warn('[Ledger] follow-request sync:',e.code||e.message); }
+
+    // 4) Kudos and comments on my sessions.
+    try{
+      const [propsSnap,commentsSnap]=await Promise.all([meRef.collection('props').get(),meRef.collection('comments').get()]);
+      const firstRun=!S._seenReactions;
+      const seen=new Set(S._seenReactions||[]);
+      const all=[];
+      const label=actId=>{const a=(S.activities||[]).find(x=>x.id===actId);return a?(a.section||'study')+' session':'session';};
+      for(const d of propsSnap.docs){
+        const x=d.data(); all.push(d.id);
+        if(firstRun||seen.has(d.id)||!x.reactor||x.reactor===me) continue;
+        addNotification('props','👏',esc(await _userName(x.reactor))+' gave you props on your '+esc(label(x.activityId))+'.',x.reactor,'activity',x.activityId);
+      }
+      for(const d of commentsSnap.docs){
+        const x=d.data(); all.push(d.id);
+        if(firstRun||seen.has(d.id)||!x.from||x.from===me) continue;
+        addNotification('comment','💬',esc(String(x.name||'Someone').slice(0,60))+' commented: “'+esc(String(x.text||'').slice(0,80))+'”',x.from,'activity',x.activityId);
+      }
+      if(firstRun || all.length!==seen.size || all.some(id=>!seen.has(id))){ S._seenReactions=all.slice(-400); dirty=true; }
+    }catch(e){}
+  }finally{
+    _socialSyncBusy=false;
+    if(dirty){ saveState(); if(document.querySelector('.nav-tab')&&(currentTab==='profile'||currentTab==='feed')){ try{renderTab();}catch(e){} } }
+    refreshNotifBadge();
+  }
 }
 
 // ═══════════════════════════════════════════════
