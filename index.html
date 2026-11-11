@@ -1105,35 +1105,8 @@ async function signInWithGoogle(){
 }
 
 async function _processGoogleUser(user){
-  AUTH = {
-    uid: user.uid,
-    displayName: user.displayName || user.email.split('@')[0],
-    email: user.email,
-    method: 'google',
-    photoURL: user.photoURL || null,
-    created: Date.now()
-  };
-  saveAuth(AUTH);
-  S = loadState(AUTH.uid) || null;
-  if(!S){
-    const restored = await restoreStateFromFirestore(user.uid);
-    if(!restored){ renderOnboarding(); return; }
-  }
-  SUB = {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
-  saveSub(SUB);
-  try{
-    if(firebaseDb){
-      const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
-      if(userDoc.exists){
-        const fsub = userDoc.data().sub;
-        if(fsub && fsub.tier){ SUB={...SUB,...fsub}; saveSub(SUB); }
-      }
-    }
-  }catch(e){}
   logLedgerEvent('login', {method:'google'});
-  renderApp();
-  loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
-  setTimeout(writeUserProfile, 1200);
+  await enterSignedIn(user);
 }
 
 async function signInWithEmailFirebase(email, password){
@@ -1145,13 +1118,7 @@ async function signInWithEmailFirebase(email, password){
       return 'unverified';
     }
     // Check for 2FA before granting access
-    let totpSecret = null;
-    if(firebaseDb){
-      try{
-        const doc = await firebaseDb.collection('users').doc(cred.user.uid).get();
-        if(doc.exists) totpSecret = doc.data().totp_secret || null;
-      }catch(e){}
-    }
+    let totpSecret = await _fetch2FASecret(cred.user.uid);
     if(!totpSecret) totpSecret = localStorage.getItem('pf2-2fa-secret');
     if(totpSecret && window.OTPAuth){
       const passed = await show2FALoginPrompt(totpSecret);
@@ -1218,19 +1185,33 @@ function signOut(){
 let _2fa_pending_resolve = null;
 let _2fa_login_secret = null;
 
+// The TOTP secret lives in the PRIVATE userState/{uid} doc. It used to be on
+// the public users/{uid} profile, readable by every signed-in user; if we still
+// find it there we move it across and delete the public copy.
+async function _fetch2FASecret(uid){
+  if(!firebaseDb||!uid) return null;
+  try{
+    const priv = await firebaseDb.collection('userState').doc(uid).get();
+    if(priv.exists && priv.data().totp_secret) return priv.data().totp_secret;
+  }catch(e){}
+  try{
+    const pub = await firebaseDb.collection('users').doc(uid).get();
+    const legacy = pub.exists ? pub.data().totp_secret : null;
+    if(legacy){
+      await firebaseDb.collection('userState').doc(uid).set({totp_secret:legacy},{merge:true});
+      await firebaseDb.collection('users').doc(uid).update({totp_secret:firebase.firestore.FieldValue.delete()}).catch(()=>{});
+      return legacy;
+    }
+  }catch(e){}
+  return null;
+}
 async function get2FASecret(){
   // Check localStorage cache first, then Firestore
   const cached = localStorage.getItem('pf2-2fa-secret');
   if(cached) return cached;
-  if(!firebaseDb||!AUTH?.uid) return null;
-  try{
-    const doc = await firebaseDb.collection('users').doc(AUTH.uid).get();
-    if(doc.exists && doc.data().totp_secret){
-      localStorage.setItem('pf2-2fa-secret', doc.data().totp_secret);
-      return doc.data().totp_secret;
-    }
-  }catch(e){}
-  return null;
+  const secret = await _fetch2FASecret(AUTH?.uid);
+  if(secret) localStorage.setItem('pf2-2fa-secret', secret);
+  return secret;
 }
 
 async function open2FASetupModal(){
@@ -1288,7 +1269,7 @@ async function verify2FASetup(){
     const delta = totp.validate({token:code,window:1});
     if(delta===null){ showToast('Incorrect code — try again','err'); return; }
     // Save secret
-    if(firebaseDb&&AUTH?.uid) await firebaseDb.collection('users').doc(AUTH.uid).update({totp_secret:secretBase32}).catch(()=>{});
+    if(firebaseDb&&AUTH?.uid) await firebaseDb.collection('userState').doc(AUTH.uid).set({totp_secret:secretBase32},{merge:true}).catch(()=>{});
     localStorage.setItem('pf2-2fa-secret', secretBase32);
     close2FAModal();
     showToast('Two-factor auth enabled ✓','ok');
@@ -1301,7 +1282,10 @@ async function verify2FASetup(){
 
 async function disable2FA(){
   if(!confirm('Disable two-factor authentication? Your account will be less secure.')) return;
-  if(firebaseDb&&AUTH?.uid) await firebaseDb.collection('users').doc(AUTH.uid).update({totp_secret:firebase.firestore.FieldValue.delete()}).catch(()=>{});
+  if(firebaseDb&&AUTH?.uid){
+    await firebaseDb.collection('userState').doc(AUTH.uid).set({totp_secret:firebase.firestore.FieldValue.delete()},{merge:true}).catch(()=>{});
+    await firebaseDb.collection('users').doc(AUTH.uid).update({totp_secret:firebase.firestore.FieldValue.delete()}).catch(()=>{});
+  }
   localStorage.removeItem('pf2-2fa-secret');
   showToast('2FA disabled','info');
   // Refresh settings UI
@@ -1895,6 +1879,12 @@ function firestoreToFriend(u){
   };
 }
 
+// Re-pull followed/discover users and repaint the feed. Call after anything that
+// changes who I follow, and once after onboarding (a brand-new account never
+// went through the returning-user load path, so its feed sat on skeletons forever).
+function refreshRealUsers(){
+  return loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
+}
 async function loadRealUsers(){
   if(!firebaseDb||!AUTH?.uid||!S){ window._realUsersLoaded=true; return; }
   try{
@@ -2014,29 +2004,41 @@ function loadState(uid){
 }
 function saveState(){
   if(!S)return;
+  S._rev=Date.now(); // last-modified stamp — lets another device tell whose copy is newer
   try{localStorage.setItem(getStateKey(AUTH?.uid),JSON.stringify(S));}
   catch(e){showToast('Storage full — clear old data in Settings','err');}
   // Sync to Firestore for cross-domain/device access (debounced)
   clearTimeout(saveState._t);
-  saveState._t=setTimeout(()=>{
-    if(firebaseDb&&AUTH?.uid){
-      firebaseDb.collection('userState').doc(AUTH.uid).set({
-        state:JSON.stringify(S),updatedAt:Date.now()
-      }).catch(e=>console.warn('[Ledger] Firestore sync failed:',e.code,e.message));
-    }
-  },3000);
+  // writeUserProfile() writes BOTH the private userState doc and the public
+  // users/{uid} profile (hours, streak, recentActivities). The public half is
+  // what followers' feeds, search, and leaderboards read — without it a newly
+  // logged session stayed invisible to everyone else until the next app load.
+  saveState._t=setTimeout(()=>{ if(firebaseDb&&AUTH?.uid&&S) writeUserProfile(); },3000);
 }
 
 // ── FIRESTORE HELPERS ──
+// Privacy preferences (Settings → Privacy). Stored on S.privacyPrefs and applied
+// HERE, at the point data leaves the device, so a switched-off item is never
+// published at all rather than merely hidden in the UI.
+const PRIVACY_DEFAULTS={show_streak:true,show_hours:true,show_scores:false,appear_leaderboard:true,allow_messages:true,share_activity:true};
+function privacyPref(id){
+  const p=(S&&S.privacyPrefs)||{};
+  return p[id]!==undefined ? !!p[id] : !!PRIVACY_DEFAULTS[id];
+}
+
 async function writeUserProfile(){
   if(!AUTH?.uid||!S) return;
   if(!firebaseDb){ setTimeout(writeUserProfile, 800); return; }
   try{
+    const showHours=privacyPref('show_hours'), showStreak=privacyPref('show_streak');
     const doc={
       uid: AUTH.uid,
       displayName: S.name||'',
       displayNameLower: (S.name||'').toLowerCase(),
-      email: AUTH.email||'',
+      // Email and the 2FA secret used to be written here. This document is
+      // readable by every signed-in user, so both are removed from it.
+      email: firebase.firestore.FieldValue.delete(),
+      totp_secret: firebase.firestore.FieldValue.delete(),
       state: S.state||'',
       city: S.city||'',
       locationState: S.locationState||'',
@@ -2046,14 +2048,19 @@ async function writeUserProfile(){
       disc: S.disc||'',
       sections: S.sections||[],
       sectionPassed: S.sectionPassed||[],
-      examResults: S.examResults||[],
-      longestStreak: S.longestStreak||0,
+      // Exam scores (including failed attempts) are private unless the user opts in.
+      examResults: privacyPref('show_scores') ? (S.examResults||[]) : [],
+      longestStreak: showStreak ? (S.longestStreak||0) : 0,
       longestStreakMigrated: S.longestStreakMigrated||false,
       firmName: S.firmName||'',
       firmCode: S.firmCode||'',
-      tier: (()=>{const t=localStorage.getItem('pf2-tier');return t||'free';})(),
-      hoursTotal: parseFloat((()=>{try{return(S.activities||[]).reduce((s,a)=>s+(a.hours||0),0).toFixed(1);}catch{return 0;}})()),
-      currentStreak: getStreak(),
+      tier: (SUB&&SUB.tier)||'free',
+      hoursTotal: showHours ? parseFloat((()=>{try{return(S.activities||[]).reduce((s,a)=>s+(a.hours||0),0).toFixed(1);}catch{return 0;}})()) : 0,
+      currentStreak: showStreak ? getStreak() : 0,
+      hideHours: !showHours,
+      hideStreak: !showStreak,
+      allowMessages: privacyPref('allow_messages'),
+      discoverable: privacyPref('appear_leaderboard'),
       avatar: S.avatar||'',
       profilePic: S.profilePic||'',
       isPrivate: S.isPrivate||false,
@@ -2062,7 +2069,7 @@ async function writeUserProfile(){
       followingCount: (S.following||[]).filter(id=>id&&id.length>4).length,
       followersCount: (S.followers||[]).filter(id=>id&&id.length>4).length,
       // Recent non-private activities — used by followers' feeds
-      recentActivities: (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
+      recentActivities: !privacyPref('share_activity') ? [] : (S.activities||[]).filter(a=>!a.private).slice(-20).map(a=>({
         id:a.id,date:a.date,section:a.section,hours:a.hours,
         type:a.type||'session',score:(typeof a.score==='number'?a.score:null),
         material:a.material||'',caption:a.caption||'',
@@ -2073,33 +2080,88 @@ async function writeUserProfile(){
       createdAt: S.created||Date.now()
     };
     await firebaseDb.collection('users').doc(AUTH.uid).set(doc,{merge:true});
-    // Also save full study state for cross-domain/device sync
-    try{
-      await firebaseDb.collection('userState').doc(AUTH.uid).set({
-        state: JSON.stringify(S),
-        updatedAt: Date.now()
-      });
-    }catch(e){}
-  }catch(e){}
+    // Also save full study state for cross-device sync. merge:true is required:
+    // this doc also holds the AI usage counters and the 2FA secret, which a
+    // plain set() silently wiped on every save.
+    try{ await pushStateToCloud(); }
+    catch(e){console.warn('[Ledger] Firestore state sync failed:',e.code,e.message);}
+  }catch(e){console.warn('[Ledger] Firestore profile sync failed:',e.code,e.message);}
 }
 
-async function restoreStateFromFirestore(uid){
-  if(!firebaseDb) return false;
+// Revision of the cloud copy this device last read or wrote. If the cloud's
+// revision is anything else when we go to save, another device has written in
+// the meantime and we must merge before overwriting.
+let _cloudRev=null;
+async function pushStateToCloud(){
+  if(!firebaseDb||!AUTH?.uid||!S) return;
+  const ref=firebaseDb.collection('userState').doc(AUTH.uid);
   try{
-    const doc = await firebaseDb.collection('userState').doc(uid).get();
-    if(doc.exists){
-      const data = doc.data();
-      if(data.state){
-        const restored = JSON.parse(data.state);
-        if(restored && restored.name){
-          S = restored;
-          saveState();
-          return true;
-        }
+    const cur=await ref.get();
+    const curRev=cur.exists ? (cur.data().rev||null) : null;
+    if(cur.exists && curRev!==_cloudRev && cur.data().state){
+      let remote=null; try{ remote=JSON.parse(cur.data().state); }catch(e){}
+      if(remote && remote.name && (remote._rev||0)!==(S._rev||0)){
+        const before=(S.activities||[]).length;
+        S = (remote._rev||0)>(S._rev||0) ? mergeStates(remote,S) : mergeStates(S,remote);
+        S._rev=Date.now();
+        try{localStorage.setItem(getStateKey(AUTH.uid),JSON.stringify(S));}catch(e){}
+        if((S.activities||[]).length!==before && typeof renderTab==='function' && document.querySelector('.nav-tab')){ try{renderTab();}catch(e){} }
       }
     }
-  }catch(e){}
-  return false;
+  }catch(e){ /* offline: fall through and let the write queue */ }
+  const rev=S._rev||Date.now();
+  await ref.set({state:JSON.stringify(S),updatedAt:Date.now(),rev},{merge:true});
+  _cloudRev=rev;
+}
+
+// Combine two copies of a user's state. `base` is the newer copy and wins for
+// every scalar/setting; study sessions and exam results are UNIONED so work
+// logged on either device survives (minus anything explicitly deleted).
+function mergeStates(base, other){
+  if(!other) return base;
+  const out={...base};
+  const dead=new Set([...(base.deletedActs||[]),...(other.deletedActs||[])]);
+  const byId=new Map();
+  [...(other.activities||[]),...(base.activities||[])].forEach(a=>{ if(a&&a.id&&!dead.has(a.id)) byId.set(a.id,a); });
+  out.activities=[...byId.values()].sort((x,y)=>String(x.date||'').localeCompare(String(y.date||'')));
+  out.deletedActs=[...dead].slice(-500);
+  const exKey=r=>[r.section,r.sitDate,r.score,r.attempt].join('|');
+  const ex=new Map();
+  [...(other.examResults||[]),...(base.examResults||[])].forEach(r=>{ if(r) ex.set(exKey(r),r); });
+  out.examResults=[...ex.values()].sort((x,y)=>(x.loggedAt||0)-(y.loggedAt||0));
+  out.sectionPassed=[...new Set([...(base.sectionPassed||[]),...(other.sectionPassed||[])])];
+  out.achievements=[...new Set([...(base.achievements||[]),...(other.achievements||[])])];
+  out.longestStreak=Math.max(base.longestStreak||0,other.longestStreak||0);
+  return out;
+}
+
+// Bring local state and the cloud copy into agreement at sign-in / app load.
+// Returns 'ok' (cloud copy found and merged), 'none' (no cloud copy exists —
+// genuinely new account, or local-only data that will upload on next save) or
+// 'error' (cloud unreachable; caller must not treat that as "new user").
+async function reconcileStateWithCloud(uid){
+  if(!firebaseDb) return 'error';
+  let doc;
+  try{
+    doc = await Promise.race([
+      firebaseDb.collection('userState').doc(uid).get(),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),S?6000:15000))
+    ]);
+  }catch(e){ console.warn('[Ledger] cloud state read failed:',e.code||e.message); return 'error'; }
+  // A cache-only answer while offline can't prove the account is new.
+  if(!doc.exists) return (doc.metadata&&doc.metadata.fromCache) ? 'error' : 'none';
+  let remote=null;
+  try{ remote=JSON.parse(doc.data().state||'null'); }catch(e){}
+  if(!remote||!remote.name) return 'none';
+  const remoteRev=remote._rev||doc.data().updatedAt||0;
+  _cloudRev=doc.data().rev||null;
+  if(!S){ S=remote; }
+  else{
+    const localRev=S._rev||0;
+    S = remoteRev>localRev ? mergeStates(remote,S) : mergeStates(S,remote);
+  }
+  try{localStorage.setItem(getStateKey(uid),JSON.stringify(S));}catch(e){}
+  return 'ok';
 }
 
 async function searchFirestoreUsers(q){
@@ -2860,6 +2922,125 @@ function _clearPendingInvite(){ _pendingInvite=null; try{ localStorage.removeIte
 const _isLoginRoute = ['/login','/signup'].includes(window.location.pathname) || new URLSearchParams(window.location.search).get('auth')==='1';
 if(_isLoginRoute){ window._forceAuth = true; history.replaceState({},'','/'); }
 
+// ═══════════════════════════════════════════════
+// SIGNED-IN ENTRY — the ONE path every successful sign-in goes through
+// (persisted session on page load, email/password form, Google popup).
+// Previously each path had its own copy; the email-form copy skipped the cloud
+// restore entirely, so signing in on a new device dropped a returning user into
+// onboarding and then overwrote their cloud data with a blank account.
+// ═══════════════════════════════════════════════
+async function enterSignedIn(user){
+  const method = user.providerData[0]?.providerId==='google.com' ? 'google' : 'email';
+  AUTH = { uid:user.uid, displayName:user.displayName||user.email.split('@')[0], email:user.email, method, photoURL:user.photoURL||null, created:Date.now() };
+  saveAuth(AUTH);
+  S = loadState(AUTH.uid)||null;
+  // Reconcile with the cloud copy BEFORE deciding between app and onboarding.
+  // Covers: new device (no local state), a second device with stale local
+  // state, and cloud-unreachable (must NOT fall through to onboarding — a
+  // returning user finishing onboarding would overwrite their saved data).
+  _showRestoreLoader();
+  const sync = await reconcileStateWithCloud(user.uid);
+  _hideRestoreLoader();
+  if(!S){
+    if(sync==='error'){ renderCloudUnavailable(); return; }
+    renderOnboarding(); return;
+  }
+  await loadSubFromCloud(user.uid);
+  // Auto-verify student plan if signed in with .edu email
+  if(SUB.studentPlan && !SUB.studentVerified){
+    if(AUTH.email && AUTH.email.toLowerCase().endsWith('.edu')){
+      SUB.studentVerified = true;
+      saveSub(SUB);
+      try{
+        if(firebaseDb) await firebaseDb.collection('users').doc(user.uid).update({'sub.studentVerified':true,'sub.studentEduEmail':AUTH.email.toLowerCase()});
+      }catch(e){}
+    }
+  }
+  // Redirect after login if coming from /login or /signup
+  if(window._postAuthRedirect){ history.replaceState({},'',window._postAuthRedirect); window._postAuthRedirect=null; }
+  renderApp();
+  // Handle pending invite for existing users (new users are handled in obFinish).
+  // Read from memory OR localStorage so it survives the Google OAuth redirect.
+  const _inv=_getPendingInvite();
+  if(_inv && S){
+    // Always connect with the inviter, regardless of cohort.
+    let changed=false;
+    const fromUid=_inv.fromUid;
+    if(fromUid&&fromUid.length>4&&!(S.following||[]).includes(fromUid)){
+      S.following=[...(S.following||[]),fromUid];changed=true;
+      saveFollowToFirestore(); // create the follower edge so the inviter's count is right
+    }
+    const sameCohort = S.firmCode && String(S.firmCode).toUpperCase()===String(_inv.code).toUpperCase();
+    if(!S.firmCode){
+      // No cohort yet — adopt the invite's cohort outright.
+      S.firmCode=_inv.code; if(_inv.firmName&&!S.firmName)S.firmName=_inv.firmName; changed=true;
+      if(changed){saveState();setTimeout(writeUserProfile,500);}
+      ensureFirmCohort();
+      if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+'','ok');
+      else showToast('Joined study group!','ok');
+      _clearPendingInvite();
+    } else if(sameCohort){
+      // Already in this cohort — just confirm the connection.
+      if(changed){saveState();setTimeout(writeUserProfile,500);}
+      ensureFirmCohort();
+      if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
+      _clearPendingInvite();
+    } else {
+      // Already in a DIFFERENT cohort — don't silently switch; ask.
+      if(changed){saveState();setTimeout(writeUserProfile,500);}
+      if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
+      promptCohortSwitch(_inv);
+    }
+  }
+  // Show student verification banner if unverified student plan
+  if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
+  // Load real users from Firestore (replaces fake MOCK_FRIENDS)
+  loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
+  setTimeout(writeUserProfile, 1200);
+  setTimeout(backfillLongestStreak, 2000);
+  setTimeout(checkStudyNudge, 1800);
+}
+
+function _showRestoreLoader(){
+  if(document.getElementById('restore-loader')) return;
+  const d=document.createElement('div');
+  d.id='restore-loader';
+  d.style.cssText='position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:9999';
+  d.innerHTML='<div style="font-size:15px;font-weight:700;color:var(--txt)">Syncing your account…</div><div style="font-size:12px;color:var(--mut);margin-top:6px">Just a moment</div>';
+  // Only show it if the sync is actually slow — avoids a flash on every load.
+  d.style.opacity='0'; setTimeout(()=>{ d.style.opacity='1'; },400);
+  document.body.appendChild(d);
+}
+function _hideRestoreLoader(){ document.getElementById('restore-loader')?.remove(); }
+
+// Shown when we know who the user is but can reach neither a local nor a cloud
+// copy of their data. Never route this case to onboarding.
+function renderCloudUnavailable(){
+  const root=document.getElementById('root');
+  root.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:var(--bg);color:var(--txt)">'+
+    '<div style="font-size:20px;font-weight:800">We couldn\'t load your account</div>'+
+    '<div style="font-size:14px;color:var(--sub);max-width:380px;line-height:1.6">Ledger couldn\'t reach its servers to load your study data. Your data is safe. Check your connection and try again.</div>'+
+    '<button class="btn btn-primary" onclick="location.reload()">Try again</button>'+
+    '<button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>'+
+  '</div>';
+}
+
+// Subscription tier comes from Firestore (written only by the Stripe webhook).
+// The local cache is tagged with the uid so one account's tier never leaks to
+// another on a shared device; if the read fails we keep the cache for the SAME
+// user rather than silently downgrading a paying customer who is offline.
+async function loadSubFromCloud(uid){
+  const FREE={tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
+  if(!SUB || SUB._uid!==uid){ SUB={...FREE,_uid:uid}; saveSub(SUB); }
+  try{
+    if(!firebaseDb) return;
+    const userDoc = await firebaseDb.collection('users').doc(uid).get();
+    const fsub = userDoc.exists ? userDoc.data().sub : null;
+    SUB = (fsub && fsub.tier) ? {...FREE,...fsub,_uid:uid} : {...FREE,_uid:uid,trialUsed:!!(fsub&&fsub.trialUsed)};
+    saveSub(SUB);
+  }catch(e){ console.warn('[Ledger] subscription sync failed:',e.code||e.message); }
+}
+
 function init(){
   // Handle invite URL params
   const _p=new URLSearchParams(window.location.search);
@@ -2925,91 +3106,7 @@ function init(){
       if(user){
         const isEmailUser = user.providerData.some(p=>p.providerId==='password');
         if(isEmailUser && !user.emailVerified){ renderAuth(); return; }
-        const method = user.providerData[0]?.providerId==='google.com' ? 'google' : 'email';
-        AUTH = { uid:user.uid, displayName:user.displayName||user.email.split('@')[0], email:user.email, method, photoURL:user.photoURL||null, created:Date.now() };
-        saveAuth(AUTH);
-        if(!S) S = loadState(AUTH.uid)||null;
-        // If no local state, try restoring from Firestore (cross-domain/device sync)
-        if(!S){
-          // Show a loading state while we check Firestore
-          const splashEl = document.getElementById('splash-screen');
-          const splashMsg = splashEl?.querySelector('.splash-sub');
-          if(splashMsg) splashMsg.textContent = 'Restoring your account…';
-          _hideSplash(); // hide splash so we can show a loader
-          document.body.innerHTML += '<div id="restore-loader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:9999"><div style="font-size:28px;margin-bottom:12px">📚</div><div style="font-size:15px;font-weight:700;color:var(--txt)">Restoring your account…</div><div style="font-size:12px;color:var(--mut);margin-top:6px">Syncing from Firestore</div></div>';
-          const restored = await restoreStateFromFirestore(user.uid);
-          document.getElementById('restore-loader')?.remove();
-          if(!restored){ renderOnboarding(); return; }
-        }
-        // Sync subscription tier from Firestore — always reset to free first so
-        // leftover localStorage from a previous session/test never leaks to new accounts.
-        SUB = {tier:'free',billingCycle:'monthly',startDate:null,trialUsed:false,studentVerified:false};
-        saveSub(SUB);
-        try{
-          if(firebaseDb){
-            const userDoc = await firebaseDb.collection('users').doc(user.uid).get();
-            if(userDoc.exists){
-              const fsub = userDoc.data().sub;
-              if(fsub && fsub.tier){
-                SUB = {...SUB, ...fsub};
-                saveSub(SUB);
-              }
-            }
-          }
-        }catch(e){}
-        // Auto-verify student plan if signed in with .edu email
-        if(SUB.studentPlan && !SUB.studentVerified){
-          if(AUTH.email && AUTH.email.toLowerCase().endsWith('.edu')){
-            SUB.studentVerified = true;
-            saveSub(SUB);
-            try{
-              if(firebaseDb) await firebaseDb.collection('users').doc(user.uid).update({'sub.studentVerified':true,'sub.studentEduEmail':AUTH.email.toLowerCase()});
-            }catch(e){}
-          }
-        }
-        // Redirect after login if coming from /login or /signup
-        if(window._postAuthRedirect){ history.replaceState({},'',window._postAuthRedirect); window._postAuthRedirect=null; }
-        renderApp();
-        // Handle pending invite for existing users (new users are handled in obFinish).
-        // Read from memory OR localStorage so it survives the Google OAuth redirect.
-        const _inv=_getPendingInvite();
-        if(_inv && S){
-          // Always connect with the inviter, regardless of cohort.
-          let changed=false;
-          const fromUid=_inv.fromUid;
-          if(fromUid&&fromUid.length>4&&!(S.following||[]).includes(fromUid)){
-            S.following=[...(S.following||[]),fromUid];changed=true;
-            saveFollowToFirestore(); // create the follower edge so the inviter's count is right
-          }
-          const sameCohort = S.firmCode && String(S.firmCode).toUpperCase()===String(_inv.code).toUpperCase();
-          if(!S.firmCode){
-            // No cohort yet — adopt the invite's cohort outright.
-            S.firmCode=_inv.code; if(_inv.firmName&&!S.firmName)S.firmName=_inv.firmName; changed=true;
-            if(changed){saveState();setTimeout(writeUserProfile,500);}
-            ensureFirmCohort();
-            if(_inv.fromName) showToast('Joined '+(S.firmName||'study group')+' — connected with '+_inv.fromName+'','ok');
-            else showToast('Joined study group!','ok');
-            _clearPendingInvite();
-          } else if(sameCohort){
-            // Already in this cohort — just confirm the connection.
-            if(changed){saveState();setTimeout(writeUserProfile,500);}
-            ensureFirmCohort();
-            if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
-            _clearPendingInvite();
-          } else {
-            // Already in a DIFFERENT cohort — don't silently switch; ask.
-            if(changed){saveState();setTimeout(writeUserProfile,500);}
-            if(_inv.fromName) showToast('Connected with '+_inv.fromName+'','ok');
-            promptCohortSwitch(_inv);
-          }
-        }
-        // Show student verification banner if unverified student plan
-        if(SUB.studentPlan && !SUB.studentVerified) setTimeout(showStudentVerifyBanner, 500);
-        // Load real users from Firestore (replaces fake MOCK_FRIENDS)
-        loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
-        setTimeout(writeUserProfile, 1200);
-        setTimeout(backfillLongestStreak, 2000);
-        setTimeout(checkStudyNudge, 1800);
+        await enterSignedIn(user);
       } else {
         AUTH=null;
         renderAuth();
@@ -3020,7 +3117,8 @@ function init(){
       if(document.getElementById('splash-screen')){
         _hideSplash();
         if(!AUTH){ renderAuth(); return; }
-        if(!S){ renderOnboarding(); return; }
+        if(!S) S=loadState(AUTH.uid)||null;
+        if(!S){ renderCloudUnavailable(); return; }
         renderApp();
       }
     }, 4000);
@@ -3332,9 +3430,8 @@ async function handleEmailAuth(){
         if(result==='unverified'){
           renderEmailVerificationScreen(email,true);
         } else if(result===true){
-          // Restore this user's saved state (survives signout)
-          S = loadState(AUTH?.uid) || null;
-          if(!S) renderOnboarding(); else renderApp();
+          logLedgerEvent('login',{method:'email'});
+          await enterSignedIn(firebaseAuth.currentUser);
         }
       }
     } finally {
@@ -3809,9 +3906,7 @@ function obFinish(){
   ensureFirmCohort(); // join the shared firm cohort club if a firm code was set
   // Also write userState directly so cross-device restore works immediately
   if(firebaseDb&&AUTH?.uid){
-    firebaseDb.collection('userState').doc(AUTH.uid).set({
-      state:JSON.stringify(S),updatedAt:Date.now()
-    }).catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
+    pushStateToCloud().catch(e=>console.warn('[Ledger] userState write failed:',e.code,e.message));
   }
   if(_inv&&_inv.fromName){
     showToast(`Welcome! You're connected with ${_inv.fromName}`,'ok');
@@ -3822,6 +3917,7 @@ function obFinish(){
   }
   _clearPendingInvite(); // invite consumed
   renderApp();
+  refreshRealUsers();
   // Show upgrade offer after a short delay so the app renders first
   if(!SUB.trialUsed) setTimeout(showPostOnboardingOffer, 1200);
 }
@@ -6431,6 +6527,8 @@ ${html}
 function deleteActivity(id){
   if(!confirm('Delete this session? This cannot be undone.'))return;
   S.activities=(S.activities||[]).filter(a=>a.id!==id);
+  // Tombstone so a cross-device merge doesn't resurrect the deleted session.
+  S.deletedActs=[...(S.deletedActs||[]),id].slice(-500);
   saveState();
   checkAchievements();
   closeActivityDetail();
@@ -7959,6 +8057,7 @@ function toggleFollowProfile(userId,btn){
   btn.style.flex='1';btn.style.justifyContent='center';
   showToast(isNow?'Following! Sessions will appear in your feed.':'Unfollowed','ok');
   renderUserProfile(userId);
+  if(isNow) refreshRealUsers();
 }
 
 // ── FIREBASE MESSAGING HELPERS ────────────────────────────────────────────
@@ -8210,7 +8309,7 @@ async function _renderConvPanel(opts){
     try{localStorage.setItem('pf2-lr-'+channelId,Date.now());}catch(e){}
   },err=>{
     const el=document.getElementById('dm-msgs-area');
-    if(el)el.innerHTML=`<div class="dm-system">${err.code==='permission-denied'?'Messaging needs Firestore rules published.':'Could not load messages ('+err.code+')'}</div>`;
+    if(el)el.innerHTML=`<div class="dm-system">${err.code==='permission-denied'?'Messages are unavailable right now. Please try again shortly.':'Could not load messages ('+err.code+')'}</div>`;
   });
   setTimeout(()=>document.getElementById('dm-inp-'+channelId)?.focus(),100);
 }
@@ -8289,7 +8388,7 @@ async function _sendConvMessage(kind, channelId){
   }catch(e){
     if(inp){inp.value=text;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';}
     if(sendBtn)sendBtn.disabled=false;
-    if(e.code==='permission-denied'){ showToast('Publish Firestore rules to enable messaging','err'); }
+    if(e.code==='permission-denied'){ showToast('Couldn\'t send that message — please try again.','err'); }
     else if(e.code==='unavailable'){ showToast('Offline — will send when reconnected','info'); }
     else { showToast('Could not send ('+(e.code||'error')+')','err'); }
   }
@@ -8313,7 +8412,7 @@ async function openDirectMessage(userId, displayName, displayInitials){
       const convRef=firebaseDb.collection('conversations').doc(convId);
       const snap=await convRef.get();
       if(!snap.exists){
-        await convRef.set({participants:[AUTH.uid,userId],createdAt:firebase.firestore.FieldValue.serverTimestamp(),lastMessage:'',lastAt:firebase.firestore.FieldValue.serverTimestamp()});
+        await convRef.set({participants:[AUTH.uid,userId].sort(),createdAt:firebase.firestore.FieldValue.serverTimestamp(),lastMessage:'',lastAt:firebase.firestore.FieldValue.serverTimestamp()});
       }
     }catch(e){ console.warn('DM create error:',e); }
   }
@@ -8798,6 +8897,7 @@ function toggleFollowSearch(id, isReal){
     }
     showToast('Following!','ok');
     saveState();saveFollowToFirestore();renderSearchResults();
+    refreshRealUsers();
   }
 }
 
@@ -15602,7 +15702,7 @@ async function logExamResult(){
   if(firebaseDb&&AUTH?.uid){
     try{
       await firebaseDb.collection('users').doc(AUTH.uid).update({
-        examResults:firebase.firestore.FieldValue.arrayUnion(newResult),
+        examResults:privacyPref('show_scores')?(S.examResults||[]):[],
         sectionPassed:S.sectionPassed||[],
         updatedAt:Date.now()
       });
