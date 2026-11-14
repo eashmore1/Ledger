@@ -957,6 +957,17 @@ html,body{overflow-x:hidden}
 .onb-dots{display:flex;gap:5px;margin-bottom:16px}
 .onb-dot{width:6px;height:6px;border-radius:3px;background:var(--bdr2);transition:width .3s,background .3s}
 .onb-dot.on{width:20px;background:var(--ind)}
+/* Guided tour: spotlight cut-out (the huge shadow dims everything else) */
+.onb-spot{position:fixed;z-index:11000;pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 2px var(--ora);transition:left .25s,top .25s,width .25s,height .25s}
+.onb-spot-click{animation:onbPulse 1.6s ease-in-out infinite}
+@keyframes onbPulse{0%,100%{box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 2px var(--ora),0 0 0 2px rgba(232,93,4,.6)}50%{box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 2px var(--ora),0 0 0 10px rgba(232,93,4,0)}}
+@media(prefers-reduced-motion:reduce){.onb-spot{transition:none}.onb-spot-click{animation:none}}
+.onb-card.onb-anchored{overflow:visible;transform:none;animation:onbFade .22s ease;transition:left .25s,top .25s;max-height:calc(100vh - 24px)}
+@keyframes onbFade{from{opacity:0}to{opacity:1}}
+.onb-arrow{display:none;position:absolute;width:12px;height:12px;background:var(--surf);border:1.5px solid var(--bdr2);transform:rotate(45deg)}
+.onb-arrow.up{top:-7.5px;border-right:none;border-bottom:none}
+.onb-arrow.down{bottom:-7.5px;border-left:none;border-top:none}
+.onb-card:not(.onb-anchored) .onb-arrow{display:none!important}
 .onb-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .onb-skip{background:none;border:none;color:var(--mut);font-size:12px;font-weight:600;cursor:pointer;padding:6px 2px}
 .onb-skip:hover{color:var(--sub)}
@@ -1441,23 +1452,81 @@ function cancel2FALogin(){
 // ═══════════════════════════════════════════════
 const ONB_INTRO = {
   t: "Hi, I'm Ask Ledger",
-  b: "I'm your study guide. I'll pop in the first time you open each part of the app and walk you through it — just a few quick notes per section, no long tour up front. You can hit <strong>Skip tour</strong> anytime, and replay this whenever you like from <strong>Settings → Restart Tutorial</strong>. Let's take a look around.",
+  b: "I'm your study guide. I'll walk you through each part of Ledger one section at a time, highlighting what to look at and where to click next. You can hit <strong>Skip tour</strong> anytime, and replay it later from <strong>Settings → Data → Restart Tutorial</strong>.",
   intro: true,
 };
 
+// The order the tour walks through the app. Matches the order of the nav tabs.
 const ONB_ORDER = ['feed','dashboard','studylab','plan','explore','profile'];
+
+// ── Tour targets ────────────────────────────────────────────────
+// Each step can name the element it is about (`target`). The tour spotlights
+// that element and anchors the card next to it. A target that isn't on screen
+// (e.g. a card that only exists once you have data) falls back to a centered card.
+function _onbVisible(el){
+  if(!el||!el.isConnected) return false;
+  const r=el.getBoundingClientRect();
+  if(r.width<4||r.height<4) return false;
+  const cs=getComputedStyle(el);
+  return cs.visibility!=='hidden'&&cs.display!=='none'&&(el.offsetParent!==null||cs.position==='fixed');
+}
+function _onbFirst(...sels){
+  for(const s of sels){
+    const list=typeof s==='function'?[s()]:[...document.querySelectorAll(s)];
+    const el=list.find(_onbVisible);
+    if(el) return el;
+  }
+  return null;
+}
+// A card on the current page whose heading starts with `text`.
+function _onbCard(text){
+  const root=document.getElementById('page-content')||document;
+  const want=text.toLowerCase();
+  return [...root.querySelectorAll('.card,.sb-card')].find(c=>_onbVisible(c)&&(c.innerText||'').trim().toLowerCase().startsWith(want))||null;
+}
+const _onbIsMobile=()=>_onbVisible(document.getElementById('mobile-nav'));
+
+// Where to click to open each tab. Desktop uses the top bar (Profile is the
+// avatar); mobile uses the bottom bar, with Study Plan and Explore inside "More".
+const ONB_NAV = {
+  feed:      {label:'Feed',       sels:[".nav-tab[onclick=\"switchTab('feed')\"]", "[data-mnav='feed']"]},
+  dashboard: {label:'Dashboard', mobileLabel:'Dash', sels:[".nav-tab[onclick=\"switchTab('dashboard')\"]", "[data-mnav='dashboard']"]},
+  studylab:  {label:'Study Lab', mobileLabel:'Lab', sels:[".nav-tab[onclick=\"switchTab('studylab')\"]", "[data-mnav='studylab']"]},
+  plan:      {label:'Study Plan', sels:[".nav-tab[onclick=\"switchTab('plan')\"]", ".mob-more-sheet.open .mob-more-row[onclick*=\"switchTab('plan')\"]", "[data-mnav='more']"], inMore:true},
+  explore:   {label:'Explore',    sels:[".nav-tab[onclick=\"switchTab('explore')\"]", ".mob-more-sheet.open .mob-more-row[onclick*=\"switchTab('explore')\"]", "[data-mnav='more']"], inMore:true},
+  profile:   {label:'Profile', mobileLabel:'You', sels:['#nav-avatar-btn', "[data-mnav='profile']"], desktopHint:'your avatar in the top bar'},
+};
+function _onbNavTarget(tab){ const n=ONB_NAV[tab]; return n?_onbFirst(...n.sels):null; }
+function _onbNavHint(tab){
+  const n=ONB_NAV[tab]; if(!n) return '';
+  if(_onbIsMobile()){
+    if(n.inMore){
+      const open=document.querySelector('.mob-more-sheet.open');
+      return open ? 'Tap <strong>'+n.label+'</strong> to continue.' : 'Tap <strong>More</strong> at the bottom, then <strong>'+n.label+'</strong>.';
+    }
+    return 'Tap <strong>'+(n.mobileLabel||n.label)+'</strong> in the bar at the bottom of the screen.';
+  }
+  return 'Click '+(n.desktopHint?'<strong>'+n.desktopHint+'</strong>':'<strong>'+n.label+'</strong> in the top bar')+' to continue.';
+}
 
 const ONBOARD_GUIDE = {
   feed: { label:'Feed', steps:[
-    { t:'Your Feed', b:"This is your home base. Every study session you and the people you follow log shows up here, newest first — so you can see who's putting in the work and stay motivated to keep pace." },
-    { t:'Give props and comment', b:"Tap the heart to give props on a session, or leave a comment to encourage someone. The accountability is the point." },
-    { t:'Build your study crew', b:"The card at the top helps you follow other candidates and join study clubs. The more people you connect with, the more useful your feed becomes." },
+    { t:'Your Feed', b:"This is your home base. Every study session you and the people you follow log shows up here, newest first — so you can see who's putting in the work and stay motivated to keep pace.",
+      target:()=>_onbFirst('.activity-card',()=>[...document.querySelectorAll('#page-content button[onclick="openSessionModal()"]')].find(b=>/first session/i.test(b.innerText))?.closest('.card')) },
+    { t:'Give props and comment', b:"Tap the heart to give props on a session, or leave a comment to encourage someone. The accountability is the point.",
+      target:()=>_onbFirst('[onclick*="giveProps"]',()=>document.querySelector('[onclick*="openComments"]'),'.activity-card') },
+    { t:'Build your study crew', b:"This card helps you follow other candidates and join study clubs. The more people you connect with, the more useful your feed becomes.",
+      target:()=>_onbFirst('#crew-onboard-card',()=>_onbCard('your cohort')) },
   ]},
   dashboard: { label:'Dashboard', steps:[
-    { t:'Your command center', b:"The Dashboard tracks your progress at a glance: total hours logged, current day streak, sections passed, and how you're pacing this week." },
-    { t:'Readiness Score', b:"This score out of 100 estimates how prepared you are for your current section. It blends your practice-exam scores, study volume, pacing against your exam date, and consistency — practice scores carry the most weight." },
-    { t:'Practice Exam Scores', b:"Log your Becker, Gleim, Wiley, or UWorld mock-exam scores here. Scoring 75 or higher consistently on practice exams is the single strongest sign that you're ready for the real thing." },
-    { t:'The Progress tab', b:"Switch to the Progress tab for your weekly pacing chart, per-section hour targets, and a full study calendar." },
+    { t:'Your command center', b:"The Dashboard tracks your progress at a glance: total hours logged, current day streak, sections passed, and how you're pacing this week.",
+      target:()=>_onbCard('this week') },
+    { t:'Readiness Score', b:"This score out of 100 estimates how prepared you are for your current section. It blends your practice-exam scores, study volume, pacing against your exam date, and consistency — practice scores carry the most weight.",
+      target:()=>_onbFirst(()=>document.getElementById('readiness-ring')?.closest('.card')) },
+    { t:'Practice Exam Scores', b:"Log your Becker, Gleim, Wiley, or UWorld mock-exam scores here. Scoring 75 or higher consistently on practice exams is the single strongest sign that you're ready for the real thing.",
+      target:'#score-tracker-card' },
+    { t:'Pacing, calendar and analytics', b:"Open <strong>Exam Pacing</strong> for per-section hour targets and retake dates, <strong>Study Calendar</strong> for the days you've logged, and <strong>Analytics</strong> for trends and your heat map.",
+      target:()=>_onbCard('exam pacing') },
   ]},
   plan: { label:'Study Plan', steps:[
     { t:'Your Study Plan', b:"Tell Ledger your exam date and how many hours you can study each week, and it builds a day-by-day plan that keeps you on pace to finish each section in time." },
@@ -1465,23 +1534,35 @@ const ONBOARD_GUIDE = {
   ]},
   studylab: { label:'Study Lab', steps:[
     { t:'The Study Lab', b:"This is your practice hub, with three areas: a Question Bank of practice multiple-choice questions, AI Study Tools, and Ask Ledger — that's me." },
-    { t:'Question Bank', b:"Work through practice multiple-choice questions with a full explanation for every answer choice. These are original practice questions written to mirror exam style — not actual AICPA exam content." },
-    { t:'AI Study Tools', b:"Generate custom flashcards and quizzes on any CPA topic in seconds. It's the fastest way to drill a weak spot without hunting for materials." },
-    { t:'Ask Ledger — that’s me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes." },
+    { t:'Question Bank', b:"Work through practice multiple-choice questions with a full explanation for every answer choice. These are original practice questions written to mirror exam style — not actual AICPA exam content.",
+      target:"[onclick=\"openStudyLabTab('qbank')\"]" },
+    { t:'AI Study Tools', b:"Generate custom flashcards and quizzes on any CPA topic in seconds. It's the fastest way to drill a weak spot without hunting for materials.",
+      target:"[onclick=\"openStudyLabTab('tools')\"]" },
+    { t:'Ask Ledger — that’s me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes.",
+      target:"[onclick=\"openStudyLabTab('coach')\"]" },
   ]},
   explore: { label:'Explore', steps:[
-    { t:'Explore and connect', b:"Find other CPA candidates studying the same sections as you, follow them, and join study clubs. Building a network of people on the same journey keeps you accountable." },
-    { t:'Study Circle', b:"See who in your network studied this week and keep a shared group streak going. A little friendly momentum from people around you goes a long way." },
-    { t:'Live study sessions', b:"When someone in one of your clubs starts a session, you'll see them studying live. You can start your own to study alongside them — like sitting at a virtual library table together." },
+    { t:'Explore and connect', b:"Find other CPA candidates studying the same sections as you, follow them, and join study clubs. Building a network of people on the same journey keeps you accountable.",
+      target:()=>_onbCard('find cpa candidates') },
+    { t:'Study Circle', b:"See who in your network studied this week and keep a shared group streak going. A little friendly momentum from people around you goes a long way.",
+      target:()=>_onbCard('study circle') },
+    { t:'Live study sessions', b:"When someone in one of your clubs starts a session, you'll see them studying live. You can start your own to study alongside them — like sitting at a virtual library table together.",
+      target:()=>_onbCard('study clubs') },
   ]},
   profile: { label:'Profile', steps:[
-    { t:'Your Profile', b:"This is what other candidates see: your sections, total hours, day streak, and recent sessions. Tap Edit Profile to add a photo, a short bio, and your school." },
-    { t:'Your activity heatmap', b:"The calendar shows the days you studied. Keeping it filled in is the simplest habit that predicts passing — aim for at least one logged session a day." },
-    { t:'You control your privacy', b:"Everything here is yours to share or hide. Go to Settings → Privacy to make your account private or hide specific stats like your hours or streak." },
+    { t:'Your Profile', b:"This is what other candidates see: your sections, total hours, day streak, and recent sessions. Tap <strong>Edit Profile</strong> to add a photo, a short bio, and your school.",
+      target:()=>_onbFirst('#page-content button[onclick="openEditProfile()"]') },
+    { t:'Your activity heatmap', b:"The calendar shows the days you studied. Keeping it filled in is the simplest habit to build — aim for at least one logged session a day.",
+      target:'#heatmap-own' },
+    { t:'You control your privacy', b:"Everything here is yours to share or hide. Open <strong>Settings → Privacy</strong> to make your account private or hide specific stats like your hours or streak.",
+      target:()=>_onbFirst('.nav-right button[onclick="openAppSettings()"]') },
   ]},
 };
 
-let _onbState = null; // {tab, steps, idx}
+// _onbState: {tab, steps, idx}            explaining a section
+//            {goto:<tab>}                  waiting for the user to open the next tab
+//            {finale:true}                 last card
+let _onbState = null;
 
 function _onbSeen(){ try{ return JSON.parse(localStorage.getItem('pf2-onb-seen')||'{}'); }catch(e){ return {}; } }
 function _onbSaveSeen(m){ try{ localStorage.setItem('pf2-onb-seen', JSON.stringify(m)); }catch(e){} }
@@ -1496,11 +1577,13 @@ function _maybeAutoStartOnboarding(){
 // Called after every tab render; shows that tab's guide once, if onboarding is live.
 function _maybeShowOnboard(tab){
   if(localStorage.getItem('pf2-onb-active')!=='1') return;
+  // Arriving on any tab ends the "click here next" pointer.
+  if(_onbState&&_onbState.goto){ _cleanOnb(); _onbState=null; }
   if(document.getElementById('onb-card')) return;      // one card at a time
   // First run shows the plan chooser first; the tour waits until it is closed
   // instead of opening on top of it (two stacked modals on a brand-new account).
   if(window._firstRunOfferPending || document.getElementById('post-ob-offer')) return;
-  if(_onbSeen()[tab]) return;                           // already completed this section
+  if(_onbSeen()[tab]){ _onbPointToNext(); return; }      // this section is done — show where to go next
   const guide=ONBOARD_GUIDE[tab];
   if(!guide||!guide.steps||!guide.steps.length) return;
   let steps=guide.steps;
@@ -1512,65 +1595,220 @@ function _maybeShowOnboard(tab){
   _renderOnbCard();
 }
 
+// Called by switchTab() the moment the user navigates, so the spotlight never
+// lingers over the new page while it renders.
+function _onbOnNavigate(){
+  if(_onbState&&_onbState.goto){ _cleanOnb(); _onbState=null; }
+}
+
+function _onbNextTab(){
+  const seen=_onbSeen();
+  return ONB_ORDER.find(t=>!seen[t])||null;
+}
+
+// Between sections: spotlight the tab to open next.
+function _onbPointToNext(){
+  const next=_onbNextTab();
+  if(!next){ _onbState={finale:true}; _renderOnbCard(); return; }
+  if(next===currentTab){ _maybeShowOnboard(next); return; }
+  _onbState={goto:next};
+  _renderOnbCard();
+}
+
+function _onbCurrentStep(){
+  const st=_onbState; if(!st) return null;
+  if(st.goto){
+    const n=ONB_NAV[st.goto];
+    const done=Object.keys(_onbSeen()).filter(k=>ONB_ORDER.includes(k)).length;
+    return {
+      kind:'goto', sub:'Next up · '+done+' of '+ONB_ORDER.length+' done',
+      t:'Open '+n.label, b:()=>_onbNavHint(st.goto),
+      target:()=>_onbNavTarget(st.goto), click:true,
+    };
+  }
+  if(st.finale){
+    return {
+      kind:'finale', sub:'Tour complete',
+      t:"You're all set", b:"That's everything. The best next step is to log your first study session — every hour you log feeds your streak, your pacing and your readiness score.",
+      target:()=>_onbFirst('#nav-log-btn','#session-fab'),
+    };
+  }
+  const {tab,steps,idx}=st;
+  const step=steps[idx];
+  const guide=ONBOARD_GUIDE[tab];
+  const hasIntro=steps[0]&&steps[0].intro;
+  const denom=hasIntro?steps.length-1:steps.length;
+  const pos=hasIntro?idx:idx+1;
+  return {kind:'step', sub:step.intro?'Welcome':(guide.label+' · '+pos+' of '+denom), t:step.t, b:step.b, target:step.target, idx, total:steps.length, last:idx===steps.length-1};
+}
+
+function _onbResolveTarget(target){
+  if(!target) return null;
+  if(typeof target==='function'){ try{ const el=target(); return _onbVisible(el)?el:null; }catch(e){ return null; } }
+  return _onbFirst(target);
+}
+
 function _renderOnbCard(){
   _cleanOnb();
   if(!_onbState) return;
-  const {tab, steps, idx}=_onbState;
-  const step=steps[idx];
-  const guide=ONBOARD_GUIDE[tab];
-  const total=steps.length;
-  const isLast=idx===total-1;
-  // The one-time intro is prepended to the first section's steps; don't let it
-  // distort that section's "X of N" counter.
-  const hasIntro=steps[0]&&steps[0].intro;
-  const denom=hasIntro?total-1:total;
-  const pos=hasIntro?idx:idx+1; // intro=0; first real step=1
-  const secLabel=step.intro ? 'Welcome' : (guide.label+' · '+pos+' of '+denom);
+  const step=_onbCurrentStep();
+  if(!step) return;
 
-  const bg=document.createElement('div');
-  bg.id='onb-bg'; bg.className='onb-bg';
-  document.body.appendChild(bg);
-
-  const dots=steps.map((_,i)=>'<span class="onb-dot'+(i===idx?' on':'')+'"></span>').join('');
+  let dots='', nav='';
+  if(step.kind==='step'){
+    dots='<div class="onb-dots">'+Array.from({length:step.total},(_,i)=>'<span class="onb-dot'+(i===step.idx?' on':'')+'"></span>').join('')+'</div>';
+    const nextTab=step.last?ONB_ORDER.find(t=>t!==_onbState.tab&&!_onbSeen()[t]):null;
+    nav=(step.idx>0?'<button class="onb-back" onclick="onbBack()">Back</button>':'')+
+        '<button class="onb-next" onclick="onbNext()">'+(step.last?(nextTab?'Next: '+ONB_NAV[nextTab].label+' →':'Finish'):'Next →')+'</button>';
+  } else if(step.kind==='finale'){
+    nav='<button class="onb-next" onclick="onbSkipAll()">Finish</button>';
+  }
 
   const card=document.createElement('div');
   card.id='onb-card'; card.className='onb-card';
+  card.setAttribute('role','dialog'); card.setAttribute('aria-live','polite');
+  card.setAttribute('aria-label','Ledger tour: '+step.t);
   card.innerHTML=
+    '<div class="onb-arrow" aria-hidden="true"></div>'+
     '<div class="onb-head">'+
       '<div class="onb-avatar">'+_ledgerMascotSVG(34)+'</div>'+
       '<div style="flex:1;min-width:0">'+
         '<div class="onb-name">Ask Ledger</div>'+
-        '<div class="onb-sub">'+secLabel+'</div>'+
+        '<div class="onb-sub">'+step.sub+'</div>'+
       '</div>'+
-      '<button class="onb-x" onclick="onbSkipAll()" title="Skip tutorial">✕</button>'+
+      '<button class="onb-x" onclick="onbSkipAll()" title="Skip tutorial" aria-label="Skip tutorial">✕</button>'+
     '</div>'+
     '<div class="onb-title">'+step.t+'</div>'+
-    '<div class="onb-body">'+step.b+'</div>'+
-    '<div class="onb-dots">'+dots+'</div>'+
+    '<div class="onb-body" id="onb-body">'+(typeof step.b==='function'?step.b():step.b)+'</div>'+
+    dots+
     '<div class="onb-foot">'+
       '<button class="onb-skip" onclick="onbSkipAll()">Skip tour</button>'+
-      '<div class="onb-nav">'+
-        (idx>0?'<button class="onb-back" onclick="onbBack()">Back</button>':'')+
-        '<button class="onb-next" onclick="onbNext()">'+(isLast?'Got it':'Next →')+'</button>'+
-      '</div>'+
+      '<div class="onb-nav">'+nav+'</div>'+
     '</div>';
   document.body.appendChild(card);
+
+  // Spotlight + click shield. The shield is four panels AROUND the spotlight
+  // hole, so outside clicks are swallowed; in "click here" steps the hole itself
+  // stays open so the highlighted control is the one thing you can press.
+  const spot=document.createElement('div'); spot.id='onb-spot'; spot.className='onb-spot'+(step.click?' onb-spot-click':'');
+  document.body.appendChild(spot);
+  const shield=document.createElement('div'); shield.id='onb-shield';
+  shield.innerHTML='<div></div><div></div><div></div><div></div>'+(step.click?'':'<div class="onb-hole"></div>');
+  document.body.appendChild(shield);
+  const bg=document.createElement('div'); bg.id='onb-bg'; bg.className='onb-bg';
+  document.body.appendChild(bg);
+
+  // Bring the target on screen. The top bar scrolls away with the page, so a
+  // "click here" target in it needs this too.
+  const first=_onbResolveTarget(step.target);
+  if(first){
+    const r=first.getBoundingClientRect();
+    if(step.click){
+      if(r.top<0||r.bottom>innerHeight) first.scrollIntoView({block:'nearest'});
+    } else {
+      // Leave room for the card underneath: put the target near the top of the
+      // screen when target + card fit together, otherwise just center it.
+      const ch=card.offsetHeight+28, top=80;
+      const fitsBelow=r.top>=top-8&&r.bottom+ch<=innerHeight;
+      if(!fitsBelow){
+        if(r.height+ch<=innerHeight-top) window.scrollBy({top:r.top-top,behavior:'smooth'});
+        else if(r.top<top||r.bottom>innerHeight-24) first.scrollIntoView({block:'center',behavior:'smooth'});
+      }
+    }
+  }
+  _onbStartTracking(step);
+  setTimeout(()=>{ const b=card.querySelector('.onb-next'); if(b&&!step.click) b.focus({preventScroll:true}); },60);
+}
+
+// Keep the spotlight and card glued to the target while the page scrolls,
+// resizes, animates, or (on mobile) the "More" sheet slides open.
+let _onbRaf=0;
+function _onbStartTracking(step){
+  cancelAnimationFrame(_onbRaf);
+  let lastHint='', lastScrollFix=0;
+  const started=performance.now();
+  const tick=()=>{
+    const card=document.getElementById('onb-card'), spot=document.getElementById('onb-spot'), shield=document.getElementById('onb-shield'), bg=document.getElementById('onb-bg');
+    if(!card||!spot||!shield) return;
+    const el=_onbResolveTarget(step.target);
+    // A target that has ended up off screen (the user scrolled with the wheel,
+    // or the page re-rendered) is scrolled back into view.
+    if(el){
+      const rr=el.getBoundingClientRect();
+      const off=rr.bottom<8||rr.top>innerHeight-8;
+      const now=performance.now();
+      if(off&&now-started>700&&now-lastScrollFix>700){ lastScrollFix=now; el.scrollIntoView({block:'nearest'}); }
+    }
+    const panes=shield.children;
+    if(!el){
+      // Nothing to point at: classic centered card over a dimmed page.
+      spot.style.display='none';
+      bg.style.display='block';
+      for(const p of panes){ p.style.cssText='position:fixed;inset:0;z-index:11000'; }
+      card.classList.remove('onb-anchored');
+      card.style.left=card.style.top='';
+    } else {
+      bg.style.display='none';
+      const pad=step.click?6:8;
+      const r=el.getBoundingClientRect();
+      const x=Math.max(0,r.left-pad), y=Math.max(0,r.top-pad);
+      const w=Math.max(0,Math.min(innerWidth,r.right+pad)-x), h=Math.max(0,Math.min(innerHeight,r.bottom+pad)-y);
+      spot.style.display='block';
+      spot.style.left=x+'px'; spot.style.top=y+'px'; spot.style.width=w+'px'; spot.style.height=h+'px';
+      const radius=parseFloat(getComputedStyle(el).borderRadius)||8;
+      spot.style.borderRadius=Math.min(radius+pad,24)+'px';
+      const P='position:fixed;z-index:11000;';
+      panes[0].style.cssText=P+'left:0;top:0;width:100%;height:'+y+'px';
+      panes[1].style.cssText=P+'left:0;top:'+(y+h)+'px;width:100%;bottom:0';
+      panes[2].style.cssText=P+'left:0;top:'+y+'px;width:'+x+'px;height:'+h+'px';
+      panes[3].style.cssText=P+'left:'+(x+w)+'px;top:'+y+'px;right:0;height:'+h+'px';
+      if(panes[4]) panes[4].style.cssText=P+'left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px';
+      // Card: below the target if it fits, else above, else beside the screen edge.
+      card.classList.add('onb-anchored');
+      const cw=card.offsetWidth, ch=card.offsetHeight, gap=16, m=12;
+      let top, left, arrowUp;
+      const cx=x+w/2;
+      left=Math.max(m,Math.min(innerWidth-cw-m,cx-cw/2));
+      if(y+h+gap+ch<=innerHeight-m){ top=y+h+gap; arrowUp=true; }
+      else if(y-gap-ch>=m){ top=y-gap-ch; arrowUp=false; }
+      else if(innerWidth-(x+w)>=cw+gap+m){ left=x+w+gap; top=Math.max(m,Math.min(innerHeight-ch-m,y)); arrowUp=null; }
+      else if(x>=cw+gap+m){ left=x-gap-cw; top=Math.max(m,Math.min(innerHeight-ch-m,y)); arrowUp=null; }
+      else { top=innerHeight-ch-m; arrowUp=null; } // tall target: dock at the bottom edge
+      card.style.left=left+'px'; card.style.top=top+'px';
+      const arrow=card.querySelector('.onb-arrow');
+      if(arrow){
+        if(arrowUp===null){ arrow.style.display='none'; }
+        else{
+          arrow.style.display='block';
+          arrow.className='onb-arrow '+(arrowUp?'up':'down');
+          arrow.style.left=Math.max(18,Math.min(cw-30,cx-left-6))+'px';
+        }
+      }
+    }
+    // The "go to tab" hint changes when the mobile More sheet opens.
+    if(step.kind==='goto'){
+      const hint=typeof step.b==='function'?step.b():step.b;
+      if(hint!==lastHint){ const bd=document.getElementById('onb-body'); if(bd) bd.innerHTML=hint; lastHint=hint; }
+    }
+    _onbRaf=requestAnimationFrame(tick);
+  };
+  _onbRaf=requestAnimationFrame(tick);
 }
 
 function onbNext(){
-  if(!_onbState) return;
+  if(!_onbState||!_onbState.steps) return;
   if(_onbState.idx < _onbState.steps.length-1){ _onbState.idx++; _renderOnbCard(); }
   else { _onbFinishSection(); }
 }
 function onbBack(){
-  if(_onbState && _onbState.idx>0){ _onbState.idx--; _renderOnbCard(); }
+  if(_onbState && _onbState.steps && _onbState.idx>0){ _onbState.idx--; _renderOnbCard(); }
 }
 function _onbFinishSection(){
   const seen=_onbSeen();
-  if(_onbState) seen[_onbState.tab]=1;
+  if(_onbState&&_onbState.tab) seen[_onbState.tab]=1;
   _onbSaveSeen(seen);
   _cleanOnb(); _onbState=null;
-  if(Object.keys(ONBOARD_GUIDE).every(k=>seen[k])) _onbComplete(); // every section done
+  _onbPointToNext(); // spotlight the next tab, or show the closing card
 }
 function onbSkipAll(){
   _cleanOnb(); _onbState=null; _onbComplete();
@@ -1592,8 +1830,8 @@ function restartOnboarding(){
   setTimeout(()=>_maybeShowOnboard('feed'), 500);
 }
 function _cleanOnb(){
-  document.getElementById('onb-bg')?.remove();
-  document.getElementById('onb-card')?.remove();
+  cancelAnimationFrame(_onbRaf);
+  ['onb-bg','onb-card','onb-spot','onb-shield'].forEach(id=>document.getElementById(id)?.remove());
 }
 
 // ═══════════════════════════════════════════════
@@ -4282,6 +4520,7 @@ function switchTab(tab){
   // close more sheet if open
   const _moreSheet=document.getElementById('mob-more-sheet');
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
+  if(typeof _onbOnNavigate==='function') _onbOnNavigate(tab);
   const prevTab=currentTab;
   currentTab=tab;
   const tabOrder=['feed','dashboard','studylab','plan','explore','profile'];

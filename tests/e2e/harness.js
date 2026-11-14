@@ -130,8 +130,8 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 } 
 module.exports = { loadRules, launch, newUser, emulatorsUp, resetEmulators, verifyEmail, oobCodes, PROJECT, AUTH_EMU, FS_HOST };
 
 // Full new-account path through the real UI: sign up, verify, sign in, onboard.
-async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api } = {}) {
-  const u = await newUser(env, { api });
+async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api, viewport } = {}) {
+  const u = await newUser(env, { api, viewport });
   const p = u.page;
   await p.goto(env.server.url + url, { waitUntil: 'load' });
   await p.waitForSelector('.auth-tab');
@@ -158,7 +158,8 @@ async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', fir
   await p.waitForSelector('#ob-firm');
   if (firm) await p.fill('#ob-firm', firm);
   await p.click('.ob-big-btn');               // finish
-  await p.waitForSelector('.nav-tab');
+  // The top tab bar is hidden at phone width, so wait on the page itself.
+  await p.waitForSelector('#page-content');
   u.uid = await p.evaluate(() => AUTH.uid);
   return u;
 }

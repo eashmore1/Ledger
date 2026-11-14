@@ -53,7 +53,8 @@ test('social features between two real users', async (t) => {
     await b.waitForTimeout(1500);
     await a.reload();
     await a.waitForSelector('.nav-tab');
-    await a.waitForTimeout(3500);
+    // Reactions are fetched after the feed loads; wait for them rather than a fixed delay.
+    await a.waitForFunction(() => S && S.activities[0] && (S.activities[0].comments || []).length > 0, null, { timeout: 15000 });
     const act = await a.evaluate(() => { const x = S.activities[0]; return { kudos: (x.kudos || []).length, comments: (x.comments || []).map((c) => c.text) }; });
     assert.equal(act.kudos, 1);
     assert.deepEqual(act.comments, ['Nice work on leases!']);
