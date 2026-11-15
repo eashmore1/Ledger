@@ -135,6 +135,47 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .nav-right{display:flex;gap:var(--sp-2);align-items:center;flex-shrink:0}
 .page{max-width:1160px;margin:0 auto;padding:var(--sp-6) var(--sp-5) 96px;width:100%}
 .feed-layout{display:grid;grid-template-columns:284px 1fr 264px;gap:var(--sp-6);align-items:start}
+/* ── Study rooms ── */
+.room-row{display:flex;align-items:center;gap:10px;padding:9px 0}
+.room-row + .room-row{border-top:1px solid var(--bdr)}
+.room-row-mine{cursor:pointer;background:var(--grn-bg);border-radius:10px;padding:9px 10px;margin-bottom:6px}
+.room-row-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-row-meta{font-size:11px;color:var(--mut);margin-top:1px}
+.room-overlay{position:fixed;inset:0;z-index:650;background:radial-gradient(ellipse at 50% 0%,#2a1d5c 0%,#18103a 45%,#0a0618 100%);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;color:#fff;animation:fadeIn .2s ease}
+.room-box{width:100%;max-width:560px;margin:auto 0}
+.room-hdr{display:flex;align-items:center;gap:8px;margin-bottom:22px}
+.room-name{font-size:19px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+.room-hbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.room-hbtn:hover{background:rgba(255,255,255,.18)}
+.room-clock-wrap{text-align:center;padding:10px 0 22px}
+.room-phase{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.room-phase.focus{color:#ff9a66}.room-phase.break{color:#6ee7b7}
+.room-clock{font-size:84px;font-weight:800;line-height:1.05;letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:6px 0 12px}
+.room-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;max-width:320px;margin:0 auto}
+.room-bar-fill{height:100%;border-radius:3px;background:#ff7a3d;transition:width 1s linear}
+.room-bar-fill.break{background:#34d399}
+.room-phase-sub{font-size:12.5px;color:rgba(255,255,255,.55);margin-top:12px}
+.room-me{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;margin-bottom:18px}
+.room-my-time{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.room-sec-sel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:8px;padding:4px 8px;font-size:12px;font-weight:700;font-family:inherit}
+.room-sec-sel option{color:#111}
+.room-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:11px;padding:11px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.room-btn:hover{background:rgba(255,255,255,.18)}
+.room-btn-main{background:var(--ora);border-color:var(--ora);flex:1}
+.room-btn-main:hover{background:var(--ora-dk)}
+.room-members-hdr{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px}
+.room-members{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:22px}
+.room-member{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;min-width:0}
+.room-member.paused{opacity:.55}
+.room-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;position:relative}
+.room-av-dot{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid #1b1340}
+.room-member.paused .room-av-dot{background:#a1a1aa}
+.room-m-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-m-meta{font-size:11px;color:rgba(255,255,255,.55);margin-top:1px}
+.room-foot{display:flex;gap:10px}
+@media(max-width:640px){.room-clock{font-size:64px}.room-overlay{padding:16px 14px calc(24px + env(safe-area-inset-bottom,0px))}}
+@media(prefers-reduced-motion:reduce){.room-overlay{animation:none}.room-bar-fill{transition:none}}
 /* ── Today ── */
 .today-wrap{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:var(--sp-6);align-items:start;max-width:1060px;margin:0 auto}
 .today-main,.today-side{min-width:0}
@@ -1616,8 +1657,8 @@ const ONBOARD_GUIDE = {
       target:()=>_onbCard('find cpa candidates') },
     { t:'Study Circle', b:"See who in your network studied this week and keep a shared group streak going. A little friendly momentum from people around you goes a long way.",
       target:()=>_onbCard('study circle') },
-    { t:'Live study sessions', b:"When someone in one of your clubs starts a session, you'll see them studying live. You can start your own to study alongside them — like sitting at a virtual library table together.",
-      target:()=>_onbCard('study clubs') },
+    { t:'Study rooms and clubs', b:"Open a study room to work alongside other candidates on a shared focus timer — like sitting at the same library table. Clubs give you a group chat and a shared leaderboard for the long haul.",
+      target:'#rooms-card' },
   ]},
   profile: { label:'Profile', steps:[
     { t:'Your Profile', b:"This is what other candidates see: your sections, total hours, day streak, and recent sessions. Tap <strong>Edit Profile</strong> to add a photo, a short bio, and your school.",
@@ -2648,6 +2689,9 @@ async function _loadFollowerCount(uid, elId){
 
 let S = loadState(AUTH?.uid) || null;
 let currentTab = 'today';
+// The address the app was opened with — renderApp() rewrites the URL, so deep-link
+// parameters (study-room invites, shortcuts) are read from this copy.
+const _BOOT_SEARCH = location.search;
 let _dashTab = 'overview'; // 'overview' | 'progress' | 'plan'
 let _readinessSection = null; // null = auto (soonest exam); else a forced section for the Readiness hero
 let _heatMapRange = 'year'; // 'week' | 'month' | 'year'
@@ -3958,6 +4002,7 @@ function renderEmailVerificationScreen(email, isResend){
 
 function signOut(){
   if(!confirm('Sign out of Ledger?'))return;
+  try{ if(typeof _room!=='undefined'&&_room) leaveRoom(true); }catch(e){}
   if(S) saveState(); // persist latest state under UID key before clearing auth
   clearAuth();
   AUTH=null;S=null;
@@ -4561,6 +4606,15 @@ function renderApp(){
   else if(_actMatch){setTimeout(()=>openActivityPage(decodeURIComponent(_actMatch[1])),80);}
   else if(_clubMatch){setTimeout(()=>openClubPage(decodeURIComponent(_clubMatch[1])),80);}
   else if(window.location.pathname==='/messages'){setTimeout(()=>openMessagesPage(),80);}
+  // Study-room invite link: /?room=<id>[&club=<clubId>]
+  try{
+    const _q=new URLSearchParams(_BOOT_SEARCH), _rid=_q.get('room');
+    if(_rid&&!window._roomInviteHandled){
+      window._roomInviteHandled=true;
+      const _cid=_q.get('club')||'';
+      setTimeout(()=>openRoomInvite(_rid,_cid),1200);
+    }
+  }catch(e){}
   setTimeout(checkStreakUrgency, 800);
   setTimeout(checkTrialUrgency, 1600);
   setTimeout(checkStudyNudge, 1000);
@@ -4669,6 +4723,7 @@ function renderTab(){
   else if(currentTab==='studylab')el.innerHTML=buildStudyLab();
   attachTabHandlers();
   if(currentTab==='today') _todayAfterRender();
+  else if(currentTab==='explore'&&typeof watchRooms==='function') watchRooms();
   const shouldAnimate=_animateNextRender;
   _animateNextRender=false;
   // All entrance animations only fire on deliberate tab switches — never on data re-renders
@@ -5252,6 +5307,377 @@ function buildSatCard(a,ex){
     <button class="ac-action" onclick="openComments('${a.id}','${a.userId}')">Comment <span style="font-weight:800;color:var(--mut)">${commentCount}</span></button>
   </div>
 </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// STUDY ROOMS — study alongside other people on one shared clock.
+// A room is a small Firestore doc (rooms/{id}, or clubs/{clubId}/rooms/{id}
+// for a club-only room) plus a members/ list that each person keeps fresh
+// with a heartbeat. Joining a room starts your own session timer; the shared
+// focus/break clock is derived from the room's start time, so nobody has to
+// "run" it and everyone sees the same countdown.
+// ═══════════════════════════════════════════════
+const ROOM_FRESH_MS=150000;           // a member/room with no heartbeat for 2.5 min is gone
+const ROOM_STALE_MS=6*3600000;        // rooms idle this long are swept
+const ROOM_TIMERS=[{f:50,b:10,l:'50 min focus · 10 min break'},{f:25,b:5,l:'25 min focus · 5 min break'},{f:90,b:15,l:'90 min focus · 15 min break'},{f:0,b:0,l:'No timer — open study'}];
+let _room=null;                       // the room I'm in: {id,clubId,ref,data,members,beat,tick,unsubM,unsubR,lastPhase,autoPaused,joinedAt}
+let _roomsCache=[];
+let _roomsTimer=null;
+
+function _roomsCol(clubId){return clubId?firebaseDb.collection('clubs').doc(clubId).collection('rooms'):firebaseDb.collection('rooms');}
+function _fmtMS(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+// Where the shared clock is right now.
+function _roomPhase(r,now){
+  now=now||Date.now();
+  const f=(r.focusMin||0)*60000, b=(r.breakMin||0)*60000;
+  if(!f) return {k:'open'};
+  const cyc=f+b, since=Math.max(0,now-(r.timerStart||now)), pos=since%cyc;
+  const round=Math.floor(since/cyc)+1;
+  return pos<f?{k:'focus',left:f-pos,total:f,round}:{k:'break',left:cyc-pos,total:b,round};
+}
+function _roomPhaseText(r){
+  const p=_roomPhase(r);
+  if(p.k==='open') return 'Open study';
+  return (p.k==='focus'?'Focus':'Break')+' · '+Math.max(1,Math.ceil(p.left/60000))+'m left';
+}
+function _roomFreshMembers(){const now=Date.now();return ((_room&&_room.members)||[]).filter(m=>m&&m.lastBeat&&now-m.lastBeat<ROOM_FRESH_MS);}
+
+// ── The rooms card (Today and Explore) ──────────────────────────
+function buildRoomsCard(){
+  return `<div class="card card-pad today-card" id="rooms-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px">
+      <div class="section-title" style="margin:0">Study rooms</div>
+      <button class="btn btn-ghost btn-xs" onclick="openCreateRoom()">+ New room</button>
+    </div>
+    <div id="rooms-list">${_roomsListHTML()}</div>
+  </div>`;
+}
+function _roomsListHTML(){
+  const now=Date.now();
+  const live=_roomsCache.filter(r=>r.lastActive&&now-r.lastActive<ROOM_FRESH_MS&&!(_room&&_room.id===r.id));
+  let mine='';
+  if(_room){
+    mine=`<div class="room-row room-row-mine" onclick="openRoomView()">
+      <span class="today-live-dot"></span>
+      <div style="flex:1;min-width:0"><div class="room-row-name">${esc(_room.data.name||'Study room')}</div><div class="room-row-meta">You're in this room · ${_roomPhaseText(_room.data)}</div></div>
+      <button class="btn btn-xs" style="background:#22c55e;color:#04301c;border:none;font-weight:800">Open</button>
+    </div>`;
+  }
+  if(!live.length&&!_room){
+    return `<div style="font-size:13px;color:var(--sub);line-height:1.55;margin-bottom:12px">No rooms open right now. Start one and anyone can sit down next to you — same clock, same breaks.</div>
+      <button class="btn btn-ind btn-sm" onclick="openCreateRoom()">Start a room</button>`;
+  }
+  return mine+live.map(r=>{
+    const n=Math.max(1,r.count||1);
+    return `<div class="room-row" data-room="${esc(r.id)}">
+      <span class="today-live-dot"></span>
+      <div style="flex:1;min-width:0">
+        <div class="room-row-name">${esc(r.name||'Study room')}</div>
+        <div class="room-row-meta">${n} studying · ${_roomPhaseText(r)}${r.clubName?' · '+esc(r.clubName):''}</div>
+      </div>
+      <button class="btn btn-ind btn-xs" onclick="joinRoom('${esc(r.id)}','${esc(r.clubId||'')}')">Join</button>
+    </div>`;
+  }).join('');
+}
+function _refreshRoomsList(){const el=document.getElementById('rooms-list');if(el)el.innerHTML=_roomsListHTML();}
+
+// Load open rooms (public ones, plus rooms in my clubs) and keep the card fresh
+// while it's on screen. A poll, not a listener: the card is glanceable, and a
+// collection listener per visitor would cost far more reads.
+async function watchRooms(){
+  clearTimeout(_roomsTimer);
+  if(!document.getElementById('rooms-card')) return;
+  await loadRooms();
+  _refreshRoomsList();
+  _roomsTimer=setTimeout(()=>{ if(!document.hidden) watchRooms(); else _roomsTimer=setTimeout(watchRooms,30000); },30000);
+}
+async function loadRooms(){
+  if(!firebaseDb||!AUTH||!AUTH.uid) return;
+  const out=[], now=Date.now();
+  const take=(d,clubId,clubName)=>{
+    const r=d.data()||{};
+    if(r.lastActive&&now-r.lastActive>ROOM_STALE_MS){ d.ref.delete().catch(()=>{}); return; } // sweep the long-dead
+    out.push(Object.assign({},r,{id:d.id,clubId:clubId||'',clubName:clubName||''}));
+  };
+  const jobs=[firebaseDb.collection('rooms').orderBy('lastActive','desc').limit(15).get().then(s=>s.docs.forEach(d=>take(d,''))).catch(()=>{})];
+  (S.clubs||[]).filter(c=>!c.isDM&&c.id).slice(0,6).forEach(c=>{
+    jobs.push(_roomsCol(c.id).get().then(s=>s.docs.forEach(d=>take(d,c.id,c.name))).catch(()=>{}));
+  });
+  await Promise.all(jobs);
+  _roomsCache=out.sort((a,b)=>(b.count||0)-(a.count||0)||(b.lastActive||0)-(a.lastActive||0));
+}
+
+// ── Create ──────────────────────────────────────────────────────
+function openCreateRoom(){
+  if(!firebaseDb||!AUTH||!AUTH.uid){showToast('Study rooms need a connection','err');return;}
+  document.getElementById('room-create-modal')?.remove();
+  const first=(S.name||'My').split(' ')[0];
+  const clubs=(S.clubs||[]).filter(c=>!c.isDM&&c.id);
+  const el=document.createElement('div');
+  el.id='room-create-modal';
+  el.className='modal-overlay open';
+  el.style.zIndex='2000';
+  el.innerHTML=`<div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">Start a study room</div><button class="modal-close" onclick="document.getElementById('room-create-modal').remove()">×</button></div>
+    <div style="padding:4px 22px 22px">
+      <div class="form-grp"><label>Room name</label><input id="rc-name" type="text" maxlength="60" value="${esc(first)}'s study room"></div>
+      <div class="form-grp"><label>Shared timer</label><select id="rc-timer">${ROOM_TIMERS.map((t,i)=>`<option value="${i}">${t.l}</option>`).join('')}</select></div>
+      <div class="form-grp"><label>Who can join</label><select id="rc-who"><option value="">Anyone on Ledger</option>${clubs.map(c=>`<option value="${esc(c.id)}">Only ${esc(c.name||'my club')}</option>`).join('')}</select></div>
+      <button class="btn btn-primary" id="rc-go" style="width:100%;justify-content:center" onclick="createRoom()">Open room and start studying</button>
+      <div style="font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5;text-align:center">Your session timer starts when the room opens.</div>
+    </div></div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
+}
+async function createRoom(){
+  const btn=document.getElementById('rc-go'); if(btn&&btn.disabled) return;
+  const name=safeText((document.getElementById('rc-name')?.value||'').trim()).slice(0,60);
+  const t=ROOM_TIMERS[parseInt(document.getElementById('rc-timer')?.value)||0]||ROOM_TIMERS[0];
+  const clubId=document.getElementById('rc-who')?.value||'';
+  if(!name){showToast('Give the room a name','err');return;}
+  if(btn){btn.disabled=true;btn.textContent='Opening…';}
+  const id='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  const now=Date.now();
+  try{
+    await _roomsCol(clubId).doc(id).set({name,hostUid:AUTH.uid,hostName:S.name||'Host',focusMin:t.f,breakMin:t.b,timerStart:now,createdAt:now,lastActive:now,count:1});
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Open room and start studying';}
+    showToast('Could not open the room — try again','err');return;
+  }
+  document.getElementById('room-create-modal')?.remove();
+  logLedgerEvent('room_created',{timer:t.f,club:!!clubId});
+  await joinRoom(id,clubId);
+  if(typeof notifyEvent==='function') notifyEvent('room_started',{roomId:id,clubId});
+}
+
+// ── Join / leave ────────────────────────────────────────────────
+async function joinRoom(id,clubId){
+  if(!firebaseDb||!AUTH||!AUTH.uid){showToast('Study rooms need a connection','err');return;}
+  if(_room){ if(_room.id===id){openRoomView();return;} await leaveRoom(true); }
+  if(TS.phase==='recap'){ showToast('Save or discard your finished session first','info'); document.getElementById('sess-overlay')?.classList.add('open'); renderSessCard(); return; }
+  clubId=clubId||'';
+  const ref=_roomsCol(clubId).doc(id);
+  let snap=null;
+  try{ snap=await ref.get(); }catch(e){}
+  if(!snap||!snap.exists){showToast('That room has closed','info');watchRooms();return;}
+  _room={id,clubId,ref,data:snap.data()||{},members:[],joinedAt:Date.now(),lastPhase:null,autoPaused:false};
+  // Being in a room means studying: start (or pick back up) my own session.
+  if(TS.phase==='paused') resumeTimer();
+  else if(TS.phase!=='active') startTimer({section:TS.section||getCurrentSection(),material:TS.material||''});
+  _room.lastPhase=_roomPhase(_room.data).k;
+  _roomBeat();
+  _room.beat=setInterval(_roomBeat,45000);
+  _room.unsubM=ref.collection('members').onSnapshot(s=>{ if(!_room) return; _room.members=s.docs.map(d=>d.data()); _renderRoomMembers(); },()=>{});
+  _room.unsubR=ref.onSnapshot(d=>{
+    if(!_room) return;
+    if(!d.exists){
+      // Only the server saying "gone" closes the room — a local delete that the
+      // rules then refuse shows up here first as "missing".
+      const r=_room;
+      const settle=firebaseDb.waitForPendingWrites?firebaseDb.waitForPendingWrites().catch(()=>{}):Promise.resolve();
+      settle.then(()=>ref.get({source:'server'})).then(x=>{ if(_room===r&&!x.exists) _roomClosed(); }).catch(()=>{});
+      return;
+    }
+    _room.data=d.data()||_room.data; _renderRoomClock();
+  },()=>{});
+  _room.tick=setInterval(_roomTick,1000);
+  logLedgerEvent('room_joined',{});
+  openRoomView();
+  _refreshRoomsList();
+}
+// Heartbeat: my row in the room, and the room's "still alive" stamp.
+function _roomBeat(){
+  if(!_room||!firebaseDb||!AUTH||!AUTH.uid) return;
+  const name=S.name||'Member', now=Date.now();
+  const me={uid:AUTH.uid,name,initials:(name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'M',color:(S&&S.profileColor)||hashColor(AUTH.uid),
+    section:TS.section||'',material:(TS.material||'').slice(0,80),joinedAt:_room.joinedAt,lastBeat:now,
+    status:TS.phase==='active'?'studying':'paused',elapsed:TS.elapsed||0};
+  _room.ref.collection('members').doc(AUTH.uid).set(me).catch(()=>{});
+  const others=_roomFreshMembers().filter(m=>m.uid!==AUTH.uid).length;
+  _room.ref.update({lastActive:now,count:others+1}).catch(()=>{});
+}
+async function leaveRoom(silent){
+  const r=_room; if(!r) return;
+  _room=null;
+  clearInterval(r.beat);clearInterval(r.tick);
+  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){}
+  document.getElementById('room-overlay')?.remove();
+  const now=Date.now();
+  const others=(r.members||[]).filter(m=>m&&m.uid!==AUTH.uid&&m.lastBeat&&now-m.lastBeat<ROOM_FRESH_MS).length;
+  try{ await r.ref.collection('members').doc(AUTH.uid).delete(); }catch(e){}
+  try{
+    // Last one out closes the room (only its host is allowed to); otherwise just step out.
+    if(!others&&r.data.hostUid===AUTH.uid) await r.ref.delete();
+    else await r.ref.update({count:Math.max(0,others),lastActive:others?now:now-ROOM_FRESH_MS});
+  }catch(e){}
+  _roomsCache=_roomsCache.filter(x=>x.id!==r.id||others>0);
+  if(!silent) showToast('You left the room','info');
+  if(document.getElementById('rooms-card')) watchRooms();
+}
+function _roomClosed(){
+  if(!_room) return;
+  const r=_room; _room=null;
+  clearInterval(r.beat);clearInterval(r.tick);
+  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){}
+  document.getElementById('room-overlay')?.remove();
+  showToast('The room closed — your session is still running','info');
+  if(TS.phase==='active'||TS.phase==='paused') openSessionModal();
+  _refreshRoomsList();
+}
+// Keep studying on my own, without the room.
+function leaveRoomKeepStudying(){
+  leaveRoom(true).then(()=>{ showToast('You left the room — your timer is still running','info'); });
+}
+function endRoomSession(){
+  leaveRoom(true);
+  document.getElementById('sess-overlay')?.classList.add('open');
+  endSession();
+}
+window.addEventListener('beforeunload',()=>{ try{ if(_room&&AUTH&&AUTH.uid) _room.ref.collection('members').doc(AUTH.uid).delete(); }catch(e){} });
+
+// ── The room itself ─────────────────────────────────────────────
+function openRoomView(){
+  if(!_room) return;
+  let el=document.getElementById('room-overlay');
+  if(!el){ el=document.createElement('div'); el.id='room-overlay'; el.className='room-overlay'; document.body.appendChild(el); }
+  const r=_room.data;
+  const secOpts=(S.sections||[]).map(s=>`<option value="${s}"${s===TS.section?' selected':''}>${s}</option>`).join('');
+  el.innerHTML=`<div class="room-box" role="dialog" aria-label="Study room">
+    <div class="room-hdr">
+      <div style="min-width:0;flex:1">
+        <div class="room-name">${esc(r.name||'Study room')}</div>
+        <div class="room-sub">Hosted by ${esc(r.hostName||'a candidate')}${_room.clubId?' · club room':' · open to anyone'}</div>
+      </div>
+      <button class="room-hbtn" onclick="copyRoomInvite()" title="Copy invite link">Invite</button>
+      <button class="room-hbtn" onclick="minimizeRoom()" title="Keep studying in the background" aria-label="Minimize">—</button>
+    </div>
+    <div class="room-clock-wrap" id="room-clock-wrap"></div>
+    <div class="room-me">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.5)">Your session</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <span id="room-my-time" class="room-my-time">${fmtElapsed(TS.elapsed||0)}</span>
+          <select id="room-my-sec" onchange="TS.section=this.value;tsPersist();_roomBeat();updateNavChip()" class="room-sec-sel" aria-label="Section">${secOpts}</select>
+        </div>
+      </div>
+      <button class="room-btn" id="room-pause-btn" onclick="roomTogglePause()">${TS.phase==='paused'?'Resume':'Pause'}</button>
+    </div>
+    <div class="room-members-hdr"><span id="room-count"></span></div>
+    <div class="room-members" id="room-members"></div>
+    <div class="room-foot">
+      <button class="room-btn room-btn-main" onclick="endRoomSession()">End &amp; log session</button>
+      <button class="room-btn" onclick="leaveRoomKeepStudying()">Leave room</button>
+    </div>
+  </div>`;
+  _renderRoomClock();_renderRoomMembers();
+}
+function minimizeRoom(){ document.getElementById('room-overlay')?.remove(); showToast('Still in the room — tap the timer up top to come back','info'); }
+function roomTogglePause(){
+  if(!_room) return;
+  _room.autoPaused=false;
+  if(TS.phase==='active') pauseTimer(); else if(TS.phase==='paused') resumeTimer();
+  const b=document.getElementById('room-pause-btn'); if(b) b.textContent=TS.phase==='paused'?'Resume':'Pause';
+}
+function _renderRoomClock(){
+  const host=document.getElementById('room-clock-wrap'); if(!host||!_room) return;
+  const p=_roomPhase(_room.data);
+  if(p.k==='open'){
+    host.innerHTML=`<div class="room-phase">Open study</div><div class="room-clock" id="room-clock">${fmtElapsed(Math.floor((Date.now()-(_room.data.timerStart||Date.now()))/1000))}</div><div class="room-phase-sub">No shared timer — the room has been open this long.</div>`;
+    return;
+  }
+  const pct=Math.max(0,Math.min(100,100-(p.left/p.total*100)));
+  host.innerHTML=`<div class="room-phase ${p.k}">${p.k==='focus'?'Focus':'Break'} · round ${p.round}</div>
+    <div class="room-clock" id="room-clock">${_fmtMS(p.left)}</div>
+    <div class="room-bar"><div class="room-bar-fill ${p.k}" id="room-bar-fill" style="width:${pct}%"></div></div>
+    <div class="room-phase-sub">${p.k==='focus'?'Heads down. Everyone here is on the same clock.':'Stretch, water, eyes off the screen. Your timer is paused.'}</div>`;
+}
+function _renderRoomMembers(){
+  const host=document.getElementById('room-members'); if(!host||!_room) return;
+  const now=Date.now();
+  const list=_roomFreshMembers().sort((a,b)=>(b.uid===AUTH.uid)-(a.uid===AUTH.uid)||(a.joinedAt||0)-(b.joinedAt||0));
+  const cnt=document.getElementById('room-count'); if(cnt) cnt.textContent=list.length+(list.length===1?' person here':' people here');
+  host.innerHTML=list.map(m=>{
+    const me=m.uid===AUTH.uid;
+    const secs=me?(TS.elapsed||0):(m.elapsed||0)+(m.status==='studying'?Math.floor((now-m.lastBeat)/1000):0);
+    return `<div class="room-member${m.status==='paused'?' paused':''}" data-member="${esc(m.uid)}">
+      <div class="room-av" style="background:${esc(m.color||'#5a5fcf')}">${esc(m.initials||'?')}<span class="room-av-dot"></span></div>
+      <div style="min-width:0;flex:1">
+        <div class="room-m-name">${esc(m.name||'Member')}${me?' <span style="opacity:.5;font-weight:500">(you)</span>':''}</div>
+        <div class="room-m-meta">${m.section?esc(m.section)+' · ':''}${m.status==='paused'?'paused':Math.floor(secs/60)+'m in'}</div>
+      </div>
+    </div>`;
+  }).join('')||'<div style="font-size:12px;color:rgba(255,255,255,.5)">Connecting…</div>';
+}
+// Runs every second while I'm in a room: clocks, and the focus↔break hand-off.
+function _roomTick(){
+  if(!_room) return;
+  const p=_roomPhase(_room.data);
+  if(p.k!==_room.lastPhase){
+    const was=_room.lastPhase; _room.lastPhase=p.k;
+    if(p.k==='break'){
+      if(TS.phase==='active'){ pauseTimer(); _room.autoPaused=true; }
+      _roomChime(); showToast('Break — '+(_room.data.breakMin||5)+' minutes. Your timer is paused.','info');
+    } else if(p.k==='focus'&&was==='break'){
+      if(_room.autoPaused&&TS.phase==='paused') resumeTimer();
+      _room.autoPaused=false;
+      _roomChime(); showToast('Back to focus','ok');
+    }
+    const b=document.getElementById('room-pause-btn'); if(b) b.textContent=TS.phase==='paused'?'Resume':'Pause';
+    _renderRoomClock();
+  }
+  const c=document.getElementById('room-clock');
+  if(c){
+    if(p.k==='open') c.textContent=fmtElapsed(Math.floor((Date.now()-(_room.data.timerStart||Date.now()))/1000));
+    else{ c.textContent=_fmtMS(p.left); const f=document.getElementById('room-bar-fill'); if(f) f.style.width=Math.max(0,Math.min(100,100-(p.left/p.total*100)))+'%'; }
+  }
+  const mt=document.getElementById('room-my-time'); if(mt) mt.textContent=fmtElapsed(TS.elapsed||0);
+  if(new Date().getSeconds()%20===0) _renderRoomMembers();
+}
+function _roomChime(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext; if(!C) return;
+    const ctx=_roomChime._c||(_roomChime._c=new C());
+    [660,880].forEach((hz,i)=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.value=hz; o.connect(g); g.connect(ctx.destination);
+      const t=ctx.currentTime+i*0.18;
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+      o.start(t); o.stop(t+0.55);
+    });
+  }catch(e){}
+}
+
+// ── Invites ─────────────────────────────────────────────────────
+function _roomInviteUrl(){
+  if(!_room) return '';
+  const base=(location.origin&&/^https?:/.test(location.origin)&&!/localhost|127\.0\.0\.1/.test(location.origin))?location.origin:'https://ledgercpa.app';
+  return base+'/?room='+encodeURIComponent(_room.id)+(_room.clubId?'&club='+encodeURIComponent(_room.clubId):'');
+}
+function copyRoomInvite(){
+  const url=_roomInviteUrl(); if(!url) return;
+  const text='Study with me on Ledger — I\'m in "'+(_room.data.name||'a study room')+'" right now: '+url;
+  if(navigator.share){ navigator.share({title:'Join my study room',text}).catch(()=>{}); return; }
+  (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(text):Promise.reject()).then(()=>showToast('Invite link copied','ok')).catch(()=>{ prompt('Copy this invite link:',url); });
+}
+// Opening an invite link: show the room and let the person decide to sit down.
+async function openRoomInvite(id,clubId){
+  if(!firebaseDb||!AUTH||!AUTH.uid||!/^[A-Za-z0-9_-]{1,128}$/.test(id||'')||(clubId&&!/^[A-Za-z0-9_-]{1,128}$/.test(clubId))) return;
+  let snap=null; try{ snap=await _roomsCol(clubId||'').doc(id).get(); }catch(e){}
+  if(!snap||!snap.exists||!(snap.data().lastActive&&Date.now()-snap.data().lastActive<ROOM_FRESH_MS)){ showToast('That study room has closed','info'); return; }
+  const r=snap.data();
+  document.getElementById('room-invite-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='room-invite-modal';
+  el.className='modal-overlay open';
+  el.style.zIndex='2000';
+  el.innerHTML=`<div class="modal-box" style="max-width:380px" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">${esc(r.name||'Study room')}</div><button class="modal-close" onclick="document.getElementById('room-invite-modal').remove()">×</button></div>
+    <div style="padding:4px 22px 22px">
+      <div style="font-size:13px;color:var(--sub);line-height:1.55;margin-bottom:16px">${esc(r.hostName||'A candidate')} is studying now with ${Math.max(1,r.count||1)} ${Math.max(1,r.count||1)===1?'person':'people'} in the room · ${_roomPhaseText(r)}. Joining starts your session timer.</div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="document.getElementById('room-invite-modal').remove();joinRoom('${esc(id)}','${esc(clubId||'')}')">Join the room</button>
+    </div></div>`;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
 }
 
 // ═══════════════════════════════════════════════
@@ -7073,6 +7499,7 @@ function buildExplore(){
       ${buddyCards}
       <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openSearchModal()">Search all candidates →</button>
     </div>`:''}
+    ${buildRoomsCard()}
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="section-title" style="margin-bottom:0">Study Clubs</div>
@@ -7860,6 +8287,8 @@ function openSessionModal(prefSection='', prefMaterial=''){
   const overlay=document.getElementById('sess-overlay');
   if(!overlay)return;
   if(!S){showToast('Complete setup first','err');return;}
+  // In a study room the room is the timer screen.
+  if(typeof _room!=='undefined'&&_room&&(TS.phase==='active'||TS.phase==='paused')){openRoomView();return;}
   if(TS.phase==='active'||TS.phase==='paused'){overlay.classList.add('open');renderSessCard();return;}
   if(prefSection)TS.section=prefSection;
   else if(!TS.section&&S.sections?.length)TS.section=S.sections[0];
@@ -8091,11 +8520,14 @@ function _startPresence(){ _writeClubPresence(); clearInterval(_presenceHeartbea
 function _stopPresence(){ clearInterval(_presenceHeartbeat); _presenceHeartbeat=null; _clearClubPresence(); }
 window.addEventListener('beforeunload',()=>{ try{ if(_presenceHeartbeat) _clearClubPresence(); }catch(e){} });
 
-function startTimer(){
-  const sec=document.getElementById('ss-sec')?.value||TS.section;
-  const mat=document.getElementById('ss-mat')?.value?.trim()||'';
-  const goal=parseFloat(document.getElementById('ss-goal')?.value)||0;
-  const date=document.getElementById('ss-date')?.value||todayStr();
+// Called from the setup form (reads its fields) or directly with {section,material}
+// when a session starts without the form, e.g. on joining a study room.
+function startTimer(opts){
+  const direct=!!(opts&&opts.section);
+  const sec=direct?opts.section:(document.getElementById('ss-sec')?.value||TS.section);
+  const mat=direct?(opts.material||''):(document.getElementById('ss-mat')?.value?.trim()||'');
+  const goal=direct?0:(parseFloat(document.getElementById('ss-goal')?.value)||0);
+  const date=direct?todayStr():(document.getElementById('ss-date')?.value||todayStr());
   if(!sec){showToast('Select a section','err');return;}
   TS.section=sec;TS.material=mat;TS.goalHours=goal;TS.date=date;
   TS.elapsed=0;TS.startTime=Date.now();TS.phase='active';
@@ -8154,6 +8586,7 @@ function pauseTimer(){
   tsPersist();
   _stopPresence();
   renderSessCard();updateNavChip();
+  if(typeof _room!=='undefined'&&_room) _roomBeat();
 }
 
 function resumeTimer(){
@@ -8173,9 +8606,11 @@ function resumeTimer(){
   tsPersist();
   _startPresence();
   renderSessCard();updateNavChip();
+  if(typeof _room!=='undefined'&&_room) _roomBeat();
 }
 
 function endSession(){
+  if(typeof _room!=='undefined'&&_room) leaveRoom(true);
   clearInterval(timerInterval);timerInterval=null;
   if(TS.phase==='active')TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
   TS.phase='recap';
@@ -8287,6 +8722,7 @@ function saveSession(){
 }
 
 function discardSession(){
+  if(typeof _room!=='undefined'&&_room) leaveRoom(true);
   clearInterval(timerInterval);timerInterval=null;
   tsReset();
   document.getElementById('sess-overlay')?.classList.remove('open');
