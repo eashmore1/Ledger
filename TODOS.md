@@ -26,18 +26,13 @@ immediately follow with distribution.
 
 ## P2 — Next Quarter
 
-### Firebase Cloud Messaging (FCM) Push Notifications
-**What:** Real push notifications that reach users when the browser is closed. Requires
-service worker registration + FCM setup in Firebase console.
+### Native push + home-screen widget
+**What:** Web push, evening reminders and the Sunday recap are built (see README →
+Notifications). Still open: push inside the native iOS/Android apps (add Firebase to
+the Xcode / Android Studio projects, then register the device token the same way the
+web app does) and a home-screen widget showing streak and today's hours (WidgetKit /
+AppWidget — native code).
 
-**Why:** The current in-app nudge (shows banner on app open) validates that users
-want reminders. FCM is the upgrade path once you have users who've opted into nudges
-and want them off-device.
-
-**When to build:** When 10+ users have been shown the in-app nudge and at least 5
-have expressed wanting a real notification.
-
-**Effort:** human ~1 day / CC ~2 hrs  
 **Priority:** P2
 
 ---

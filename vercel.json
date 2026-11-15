@@ -5,12 +5,54 @@
   "trailingSlash": false,
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/join", "destination": "/api/invite" },
-    { "source": "/login", "destination": "/" },
-    { "source": "/signup", "destination": "/" },
-    { "source": "/messages", "destination": "/" },
-    { "source": "/club/:id", "destination": "/" },
-    { "source": "/user/:id", "destination": "/" },
-    { "source": "/activity/:id", "destination": "/" }
+    {
+      "source": "/join",
+      "destination": "/api/invite"
+    },
+    {
+      "source": "/login",
+      "destination": "/"
+    },
+    {
+      "source": "/signup",
+      "destination": "/"
+    },
+    {
+      "source": "/messages",
+      "destination": "/"
+    },
+    {
+      "source": "/club/:id",
+      "destination": "/"
+    },
+    {
+      "source": "/user/:id",
+      "destination": "/"
+    },
+    {
+      "source": "/activity/:id",
+      "destination": "/"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-reminders",
+      "schedule": "0 1 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
+    }
   ]
 }

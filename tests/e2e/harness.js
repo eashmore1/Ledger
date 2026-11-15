@@ -83,8 +83,9 @@ async function launch() {
 }
 
 // A fresh browser profile (= one user's device). `api` maps '/api/x' -> handler(route, request).
-async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 } } = {}) {
-  const context = await env.browser.newContext({ viewport });
+async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 }, context: extra = {} } = {}) {
+  // The service worker would answer requests itself and bypass the routing below.
+  const context = await env.browser.newContext({ viewport, serviceWorkers: 'block', ...extra });
   const errors = [];
   const isEmu = (url) => url.href.startsWith(AUTH_EMU) || url.host === FS_HOST;
   // Emulator traffic is left un-intercepted: routing it breaks CORS preflights.
@@ -130,8 +131,8 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 } 
 module.exports = { loadRules, launch, newUser, emulatorsUp, resetEmulators, verifyEmail, oobCodes, PROJECT, AUTH_EMU, FS_HOST };
 
 // Full new-account path through the real UI: sign up, verify, sign in, onboard.
-async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api, viewport } = {}) {
-  const u = await newUser(env, { api, viewport });
+async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api, viewport, context } = {}) {
+  const u = await newUser(env, { api, viewport, context });
   const p = u.page;
   await p.goto(env.server.url + url, { waitUntil: 'load' });
   await p.waitForSelector('.auth-tab');

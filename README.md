@@ -149,6 +149,29 @@ Firebase client config (the `apiKey` etc. visible in `index.html`) is
 expected to be public for a Firebase web app — that's normal and not a
 leak; real access control is enforced by `firestore.rules`.
 
+### Notifications (push, reminders, weekly recap)
+
+The code is in place; it needs these one-time settings to go live.
+
+| What | Where | Needed for |
+| --- | --- | --- |
+| `CRON_SECRET` (any long random string) | Vercel → Settings → Environment Variables | The evening reminder job refuses to run without it. Vercel sends it automatically with the scheduled call. |
+| `FIREBASE_SERVICE_ACCOUNT` | already set for `/api/ask` | Sending pushes |
+| Cloud Messaging API enabled | Firebase console → Project settings → Cloud Messaging | Sending pushes |
+| Web Push certificate key (optional) | same page → *Web Push certificates* → paste the public key into `FCM_VAPID_KEY` in `index.html` | Recommended; without it the Firebase SDK uses its default key |
+| `RESEND_API_KEY`, `RECAP_FROM` (optional) | Vercel env vars; a verified sending domain at resend.com | The Sunday recap **email**. Without the key no email is ever sent. |
+| Deploy the rules | `npm run deploy:rules` | `notify/{uid}` (private profile + device tokens) and study rooms |
+
+How it fits together:
+
+- `sw.js` — service worker. Shows pushes while the app is closed, opens the right page on tap, and lets the app load offline.
+- `notify/{uid}` — written by the user's device: time zone, streak, last study day, this week, exam dates, preferences, device tokens. Owner-only.
+- `api/notify.js` — the app reports an event (props, comment, follow, message, session, room). The server checks the record exists and writes the notification text itself.
+- `api/cron-reminders.js` — runs daily at 01:00 UTC (`vercel.json`), which is evening across the US. One message per person per evening at most: streak about to end, "haven't studied today", exam or score tomorrow, or the Sunday recap. For exact 8pm-local delivery in every time zone, call `/api/cron-reminders?mode=hourly` every hour instead (Vercel Pro cron or any scheduler, with `Authorization: Bearer $CRON_SECRET`).
+- Limits: 8 pushes per person per day, 3 of them "someone you follow studied".
+
+Not done yet: push in the native iOS/Android apps (needs Firebase set up inside the Xcode/Android Studio projects) and a home-screen widget (native code). The native apps do get a local 8pm reminder through `@capacitor/local-notifications` after `npm run cap:sync`.
+
 ### Deploying Firestore rules
 
 ```bash

@@ -1,17 +1,80 @@
 {
-  "name": "Ledger",
+  "id": "/",
+  "name": "Ledger \u2014 CPA Study Tracker",
   "short_name": "Ledger",
-  "description": "Social CPA Study — grind smarter, pass faster.",
+  "description": "Stay on pace for the CPA exam with people who keep you accountable.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#18103a",
   "theme_color": "#18103a",
+  "categories": [
+    "education",
+    "productivity"
+  ],
   "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start a study session",
+      "short_name": "Start session",
+      "url": "/?action=start",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Log a past session",
+      "short_name": "Log session",
+      "url": "/?action=log",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Study rooms",
+      "short_name": "Rooms",
+      "url": "/?action=rooms",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
