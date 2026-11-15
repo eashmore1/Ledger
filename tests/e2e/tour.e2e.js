@@ -48,22 +48,31 @@ test('guided first-run tour', async (t) => {
     await a.click('#post-ob-offer button:has-text("Free")');
     await a.waitForSelector('#onb-card');
 
-    // Walk the Feed section.
-    for (const title of ["Hi, I'm Ask Ledger", 'Your Feed', 'Give props and comment', 'Build your study crew']) {
+    // Walk the Today section (the screen a new account lands on).
+    for (const title of ["Hi, I'm Ask Ledger", 'Start here every day', 'Your crew today', 'Study rooms', 'Your exam journey']) {
       assert.equal((await state(a)).title, title);
       await a.click('.onb-next');
     }
-    // Between sections: Dashboard is highlighted...
+    // Between sections: Feed is highlighted...
     let st = await state(a);
-    assert.equal(st.title, 'Open Dashboard');
-    assert.match(await underSpot(a), /switchTab\('dashboard'\)/);
+    assert.equal(st.title, 'Open Feed');
+    assert.match(await underSpot(a), /switchTab\('feed'\)/);
     // ...clicking anything else does nothing...
     await a.mouse.click(5, 450);
     const exploreTab = await a.locator(".nav-tab[onclick=\"switchTab('explore')\"]").boundingBox();
     await a.mouse.click(exploreTab.x + exploreTab.width / 2, exploreTab.y + exploreTab.height / 2);
     await a.waitForTimeout(400);
-    assert.equal((await state(a)).tab, 'feed', 'clicks outside the highlight are blocked');
+    assert.equal((await state(a)).tab, 'today', 'clicks outside the highlight are blocked');
     // ...and clicking the highlight continues the tour on that page.
+    await a.mouse.click(st.spot.x, st.spot.y);
+    await a.waitForFunction(() => document.querySelector('.onb-title')?.innerText === 'Your Feed');
+    assert.equal((await state(a)).tab, 'feed');
+    for (const title of ['Your Feed', 'Give props and comment', 'Build your study crew']) {
+      assert.equal((await state(a)).title, title);
+      await a.click('.onb-next');
+    }
+    st = await state(a);
+    assert.equal(st.title, 'Open Dashboard');
     await a.mouse.click(st.spot.x, st.spot.y);
     await a.waitForFunction(() => document.querySelector('.onb-title')?.innerText === 'Your command center');
     assert.equal((await state(a)).tab, 'dashboard');
@@ -107,7 +116,7 @@ test('guided first-run tour', async (t) => {
         }
       },
     });
-    assert.ok(sawMore, 'Study Plan / Explore were reached via More');
+    assert.ok(sawMore, 'Study Plan / Explore / Profile were reached via More');
     assert.equal(await b.evaluate(() => localStorage.getItem('pf2-onb-done')), '1');
     assert.deepEqual(H.appErrors(B), []);
   });
