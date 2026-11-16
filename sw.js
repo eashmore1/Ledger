@@ -9,8 +9,8 @@
  *     sync when the connection returns.
  */
 'use strict';
-const VERSION = 'ledger-v3';
-const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=2', '/manifest.json', '/icons/icon-192.png'];
+const VERSION = 'ledger-v4';
+const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=2', '/calc.js?v=1', '/manifest.json', '/icons/icon-192.png'];
 // Third-party scripts and fonts the app shell needs to boot offline.
 const CDN_OK = /^https:\/\/(www\.gstatic\.com\/firebasejs\/|cdn\.jsdelivr\.net\/npm\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 
@@ -34,15 +34,25 @@ self.addEventListener('fetch', (event) => {
   const sameOrigin = url.origin === self.location.origin;
   if (sameOrigin && (url.pathname.startsWith('/api/') || url.pathname.startsWith('/_vercel/'))) return;
 
-  // Pages: network first, cached shell when offline.
+  // Pages: network first, cached shell when offline. On a weak connection the
+  // app used to sit on a blank screen until the whole page downloaded; now, if
+  // the network hasn't answered in 3.5s and a cached copy exists, that copy is
+  // shown and the download carries on in the background for next time.
   if (req.mode === 'navigate') {
     if (!sameOrigin) return;
-    event.respondWith(
-      fetch(req).then((res) => {
-        if (res.ok && url.pathname === '/') { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('/', copy)); }
-        return res;
-      }).catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match('/')))
-    );
+    const net = fetch(req).then((res) => {
+      if (res.ok && url.pathname === '/') { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('/', copy)); }
+      return res;
+    });
+    const cached = () => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match('/'));
+    event.waitUntil(net.catch(() => {}));
+    event.respondWith(new Promise((resolve) => {
+      let done = false;
+      const fallback = () => cached().then((hit) => { if (!done && hit) { done = true; resolve(hit); } return hit; });
+      const timer = setTimeout(fallback, 3500);
+      net.then((res) => { clearTimeout(timer); if (!done) { done = true; resolve(res); } })
+        .catch(() => { clearTimeout(timer); fallback().then((hit) => { if (!done) { done = true; resolve(hit || Response.error()); } }); });
+    }));
     return;
   }
 

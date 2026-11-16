@@ -988,6 +988,60 @@ body.no-app-nav .ledger-bubble,body.no-app-nav .ledger-panel{display:none!import
 .ledger-bubble.in-session{z-index:620}
 .ledger-panel.in-session{z-index:620}
 #upgrade-modal{z-index:700}
+/* Phones: a full-screen blur behind every sheet and modal is one of the most
+   expensive things a mobile GPU can be asked to do, and it made opening them
+   stutter. The dim backdrop alone reads the same on a small screen. */
+@media(max-width:640px){
+  .modal-overlay,.sess-overlay,.onb-bg,[style*="backdrop-filter"]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+/* ── SOLO SESSION: same look as a study room ── */
+.sess-overlay.sess-live{background:radial-gradient(ellipse at 50% 0%,#2a1d5c 0%,#18103a 45%,#0a0618 100%);-webkit-backdrop-filter:none;backdrop-filter:none;align-items:flex-start;overflow-y:auto;padding:24px 16px;color:#fff}
+.sess-box.sess-box-solo{background:none;border:none;border-radius:0;max-width:560px;overflow:visible;margin:auto 0;animation:fadeIn .2s ease}
+.solo-box .room-phase{display:inline-flex;align-items:center;gap:7px}
+/* The solo screen reuses the timer's sess-ctrl-* hooks; keep the room's buttons. */
+.solo-box .room-btn.sess-ctrl-pause,.solo-box .room-btn.sess-ctrl-resume{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff}
+.solo-box .room-btn.sess-ctrl-pause:hover,.solo-box .room-btn.sess-ctrl-resume:hover{background:rgba(255,255,255,.18)}
+.solo-box .room-btn.sess-ctrl-end{background:var(--ora);border-color:var(--ora);color:#fff}
+.solo-box .room-btn.sess-ctrl-end:hover{background:var(--ora-dk)}
+.solo-lbl{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.solo-topic{font-size:16px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:640px){.sess-overlay.sess-live{padding:16px 14px calc(24px + env(safe-area-inset-bottom,0px))}}
+/* Ledger + the calculator float over the session and room screens, so leave
+   room at the bottom on phones for the last buttons to scroll clear of them. */
+@media(max-width:640px){.sess-overlay.sess-live,.room-overlay{padding-bottom:calc(210px + env(safe-area-inset-bottom,0px))}}
+.ledger-bubble.in-session,.ledger-panel.in-session{z-index:660}
+/* ── CALCULATOR (only during a session) ── */
+.calc-fab{display:none;position:fixed;right:96px;bottom:27px;z-index:660;width:52px;height:52px;border-radius:16px;border:1px solid var(--bdr);background:linear-gradient(160deg,var(--surf),var(--surf2));color:var(--txt);font-size:24px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 8px 24px -8px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s}
+.calc-fab.show{display:flex}
+.calc-fab:hover{transform:translateY(-2px)}
+.calc-fab:active{transform:scale(.93)}
+.calc-fab.active{background:var(--ind);color:#fff;border-color:var(--ind)}
+.calc-panel{display:none;position:fixed;right:22px;bottom:96px;z-index:661;width:272px;max-height:calc(100vh - 110px);overflow:auto;background:var(--surf);color:var(--txt);border:1px solid var(--bdr);border-radius:18px;box-shadow:0 18px 50px -12px rgba(0,0,0,.45);padding:0 12px 12px;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.calc-panel.open{display:block;animation:fadeIn .16s ease}
+.calc-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 2px 6px;cursor:grab;touch-action:none}
+.calc-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sub)}
+.calc-x{background:none;border:none;color:var(--mut);font-size:22px;line-height:1;cursor:pointer;padding:0 4px;border-radius:6px}
+.calc-x:hover{background:var(--surf2);color:var(--txt)}
+.calc-screen{background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:8px 12px;margin-bottom:10px;text-align:right;font-variant-numeric:tabular-nums}
+.calc-pend{font-size:12px;color:var(--mut);min-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calc-line{display:flex;align-items:baseline;gap:8px}
+.calc-mem{font-size:10px;font-weight:800;color:var(--ind);visibility:hidden}
+.calc-val{flex:1;font-size:28px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.calc-keys{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.calc-k{grid-column:span 3;height:42px;border-radius:10px;border:1px solid var(--bdr);background:var(--surf);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .1s,transform .08s}
+.calc-k:hover{background:var(--surf2)}
+.calc-k:active,.calc-k.hit{transform:scale(.95)}
+.calc-k.calc-sm{grid-column:span 2;height:30px;font-size:12px;color:var(--sub)}
+.calc-k.calc-fn{color:var(--ora)}
+.calc-k.calc-op{background:var(--ind-bg);color:var(--ind);border-color:transparent;font-size:20px}
+.calc-k.calc-eq{background:var(--ora);color:#fff;border-color:var(--ora);font-size:20px}
+.calc-k.calc-eq:hover{background:var(--ora-dk)}
+@media(max-width:640px){
+  .calc-fab{right:78px;bottom:calc(144px + env(safe-area-inset-bottom,0px));width:50px;height:50px;border-radius:15px;font-size:22px}
+  .calc-panel{right:14px;bottom:calc(204px + env(safe-area-inset-bottom,0px));width:min(280px,calc(100vw - 28px));max-height:calc(100vh - 220px - env(safe-area-inset-bottom,0px))}
+}
+body.no-app-nav .calc-fab,body.no-app-nav .calc-panel{display:none!important}
+@media(prefers-reduced-motion:reduce){.calc-panel.open{animation:none}}
 /* ── ACTIVITY CARD ENTER ── */
 .activity-card{animation:fadeIn .3s cubic-bezier(.22,.61,.36,1) both}
 /* ── ACCESSIBILITY ── */
@@ -1142,6 +1196,7 @@ html,body{overflow-x:hidden}
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="/icons.js?v=2"></script>
 <script src="/mascot.js?v=2"></script>
+<script src="/calc.js?v=1"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -8607,6 +8662,9 @@ function renderSessCard(){
   const box=document.getElementById('sess-box');
   if(!box)return;
   box.classList.toggle('sess-box-wide', TS.phase==='recap');
+  const _live=TS.phase==='active'||TS.phase==='paused';
+  box.classList.toggle('sess-box-solo', _live);
+  document.getElementById('sess-overlay')?.classList.toggle('sess-live', _live);
   const ex=TS.section&&EXAMS[TS.section]?EXAMS[TS.section]:null;
   const col=ex?.color||'var(--ora)';
 
@@ -8653,40 +8711,42 @@ function renderSessCard(){
       <button onclick="closeSessOverlay()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;color:var(--sub);cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
     </div>`;
   }
+  else if((TS.phase==='active'||TS.phase==='paused')&&typeof _room!=='undefined'&&_room){
+    box.innerHTML=''; // in a room, the room screen is the timer
+  }
   else if(TS.phase==='active'||TS.phase==='paused'){
+    // Same look as a study room: full-screen night sky, one big clock.
     const paused=TS.phase==='paused';
     const goalSecs=(TS.goalHours||0)*3600;
     const goalPct=goalSecs>0?Math.min(100,Math.round(TS.elapsed/goalSecs*100)):0;
-    box.innerHTML=`
-    <div class="sess-color-bar" style="background:linear-gradient(90deg,${paused?col+'66':col},${paused?col+'33':col+'99'})"></div>
-    <div class="sess-hdr">
-      <div class="sess-status ${paused?'sess-st-paused':'sess-st-live'}">
-        <span class="rec-dot" ${paused?'style="animation:none;opacity:.4"':''}></span>
-        ${paused?'PAUSED':'RECORDING'}
+    box.innerHTML=`<div class="room-box solo-box" role="dialog" aria-label="Study session">
+    <div class="room-hdr">
+      <div style="min-width:0;flex:1">
+        <div class="room-name">Solo session</div>
+        <div class="room-sub">${esc(TS.section||'')}${ex?' · '+esc(ex.full):''}</div>
       </div>
-      <button class="sess-close-btn" onclick="closeSessOverlay()">${paused?'×':'—'}</button>
+      <button class="room-hbtn" onclick="closeSessOverlay()" title="${paused?'Close':'Pause and minimize'}" aria-label="${paused?'Close':'Pause and minimize'}">${paused?'×':'—'}</button>
     </div>
-    <div class="sess-body">
-      <div style="text-align:center;margin-bottom:6px">
-        <span class="sess-exam-pill" style="background:${ex?.color+'18'||'rgba(212,64,0,.1)'};color:${col}">${TS.section}${ex?' · '+ex.full:''}</span>
+    <div class="room-clock-wrap">
+      <div class="room-phase ${paused?'':'focus'}"><span class="rec-dot" ${paused?'style="animation:none;opacity:.4"':''}></span> ${paused?'Paused':'Focus'}</div>
+      <div class="room-clock" id="sess-clock">${fmtElapsed(TS.elapsed)}</div>
+      ${goalSecs>0?`<div class="room-bar"><div class="room-bar-fill" id="sess-goal-fill" style="width:${goalPct}%"></div></div>
+      <div class="room-phase-sub" id="sess-goal-lbl">${goalPct}% of your ${fmtDur(goalSecs)} goal</div>`
+      :`<div class="room-phase-sub">${paused?'Your timer is stopped. Resume when you\'re ready.':'Heads down. Ledger and a calculator are in the corner if you need them.'}</div>`}
+    </div>
+    <div class="room-me">
+      <div style="flex:1;min-width:0">
+        <div class="solo-lbl">Currently studying</div>
+        <div class="solo-topic">${esc(TS.material||'General study')}</div>
       </div>
-      <div class="sess-clock${!paused?' breathing':''}" id="sess-clock" style="color:${paused?'var(--mut)':col}">${fmtElapsed(TS.elapsed)}</div>
-      <div class="sess-clock-lbl">${paused?'Paused':'Study Time'}</div>
-      <div class="sess-topic-row">
-        <div class="sess-topic-lbl">Currently studying:</div>
-        <div class="sess-topic-val">${TS.material||'General Study'}</div>
-      </div>
-      ${goalSecs>0?`<div class="sess-goal-bar" style="margin-bottom:22px">
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:5px"><span>Goal progress</span><span>${goalPct}% · ${fmtDur(goalSecs)} target</span></div>
-        <div class="prog-bar" style="height:6px"><div class="prog-fill" style="width:${goalPct}%;background:${col};transition:width 1s"></div></div>
-      </div>`:''}
-      <div class="sess-ctrl-row">
-        ${paused
-          ?`<button class="sess-ctrl sess-ctrl-resume" onclick="resumeTimer()">Resume</button>`
-          :`<button class="sess-ctrl sess-ctrl-pause" onclick="pauseTimer()">Pause</button>`}
-        <button class="sess-ctrl sess-ctrl-end" onclick="endSession()">End Session</button>
-      </div>
-    </div>`;
+      ${paused
+        ?`<button class="room-btn sess-ctrl-resume" onclick="resumeTimer()">Resume</button>`
+        :`<button class="room-btn sess-ctrl-pause" onclick="pauseTimer()">Pause</button>`}
+    </div>
+    <div class="room-foot">
+      <button class="room-btn room-btn-main sess-ctrl-end" onclick="endSession()">End &amp; log session</button>
+    </div>
+  </div>`;
   }
   else if(TS.phase==='recap'){
     const ex2=EXAMS[TS.section];
@@ -8821,6 +8881,20 @@ window.addEventListener('beforeunload',()=>{ try{ if(_presenceHeartbeat) _clearC
 
 // Called from the setup form (reads its fields) or directly with {section,material}
 // when a session starts without the form, e.g. on joining a study room.
+// Once a second while the timer runs: clock, top-bar chip and goal bar.
+function _sessTickUI(){
+  const cl=document.getElementById('sess-clock');
+  if(cl)cl.textContent=fmtElapsed(TS.elapsed);
+  const chip=document.getElementById('topbar-timer');
+  if(chip)chip.textContent=fmtElapsed(TS.elapsed);
+  const goalSecs=(TS.goalHours||0)*3600;
+  const fill=document.getElementById('sess-goal-fill');
+  if(fill&&goalSecs>0){
+    const pct=Math.min(100,Math.round(TS.elapsed/goalSecs*100));
+    fill.style.width=pct+'%';
+    const lbl=document.getElementById('sess-goal-lbl'); if(lbl) lbl.textContent=pct+'% of your '+fmtDur(goalSecs)+' goal';
+  }
+}
 function startTimer(opts){
   const direct=!!(opts&&opts.section);
   const sec=direct?opts.section:(document.getElementById('ss-sec')?.value||TS.section);
@@ -8834,10 +8908,7 @@ function startTimer(opts){
   timerInterval=setInterval(()=>{
     if(TS.phase==='active'){
       TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-      const cl=document.getElementById('sess-clock');
-      if(cl)cl.textContent=fmtElapsed(TS.elapsed);
-      const chip=document.getElementById('topbar-timer');
-      if(chip)chip.textContent=fmtElapsed(TS.elapsed);
+      _sessTickUI();
     }
   },1000);
   tsPersist();
@@ -8896,10 +8967,7 @@ function resumeTimer(){
   timerInterval=setInterval(()=>{
     if(TS.phase==='active'){
       TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-      const cl=document.getElementById('sess-clock');
-      if(cl)cl.textContent=fmtElapsed(TS.elapsed);
-      const chip=document.getElementById('topbar-timer');
-      if(chip)chip.textContent=fmtElapsed(TS.elapsed);
+      _sessTickUI();
     }
   },1000);
   tsPersist();
@@ -8934,6 +9002,7 @@ function updateNavChip(){
     if(btn){btn.textContent='Start Session';btn.onclick=()=>openSessionModal();}
   }
   if(typeof updateAskBubbleSession==='function')updateAskBubbleSession();
+  if(window.LedgerCalc) LedgerCalc.setSession(isActive&&!document.body.classList.contains('no-app-nav'));
 }
 
 function addConceptTag(){
