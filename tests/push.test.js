@@ -219,6 +219,28 @@ test('/api/notify only announces things that really happened', async (t) => {
     const c = load(s);
     assert.equal((await post(c, { type: 'session_logged' })).body.sent, 0);
   });
+  await t.test('blocking stops pushes in both directions', async () => {
+    const c = load({ ...seed(), 'users/bob/props/a1__ann': { reactor: 'ann' }, 'users/bob/blocks/ann': { blocked: 'ann' } });
+    assert.equal((await post(c, { type: 'kudos', toUid: 'bob', activityId: 'a1' })).body.sent, 0, 'bob blocked ann');
+    assert.equal((await post(c, { type: 'session_logged' })).body.sent, 0, 'bob watches ann but blocked her');
+    const c2 = load({ ...seed(), 'users/ann/blocks/bob': { blocked: 'bob' } });
+    assert.equal((await post(c2, { type: 'session_logged' })).body.sent, 0, 'ann blocked bob');
+    assert.equal(c.sent.length + c2.sent.length, 0);
+  });
+  await t.test('a report is emailed to the moderator once, and only by its reporter', async () => {
+    const mails = []; const realFetch = global.fetch;
+    global.fetch = async (url, o) => { mails.push(JSON.parse(o.body)); return { ok: true }; };
+    process.env.RESEND_API_KEY = 'k';
+    t.after(() => { global.fetch = realFetch; delete process.env.RESEND_API_KEY; });
+    const rep = { reporter: 'ann', reporterName: 'Ann Lee', target: 'zed', targetName: '<b>Zed</b>', kind: 'comment', reason: 'harassment', text: 'mean <script>', details: '', refPath: 'users/bob/comments/c1', status: 'open' };
+    const c = load({ ...seed(), 'reports/r1': rep });
+    assert.equal((await post(c, { type: 'report', reportId: 'r1' }, 'tok:bob')).code, 400, 'not your report');
+    assert.equal((await post(c, { type: 'report', reportId: 'r1' })).body.emailed, true);
+    assert.equal((await post(c, { type: 'report', reportId: 'r1' })).body.emailed, false, 'only once');
+    assert.equal(mails.length, 1);
+    assert.deepEqual(mails[0].to, ['ethan@momentumapps.net']);
+    assert.doesNotMatch(mails[0].html, /<script>|<b>Zed/);
+  });
   await t.test('a room can only be announced by its host', async () => {
     const c = load({ ...seed(), 'rooms/r1': { hostUid: 'zed', name: 'x' }, 'rooms/r2': { hostUid: 'ann', name: 'FAR grind' } });
     assert.equal((await post(c, { type: 'room_started', roomId: 'r1' })).code, 400);

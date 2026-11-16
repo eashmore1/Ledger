@@ -6,6 +6,17 @@ service cloud.firestore {
     // restricted to a harmless alphabet.
     function safeId(id) { return id.matches('^[A-Za-z0-9_-]{1,128}$'); }
 
+    // True when user `a` has blocked user `b`. A block shuts off every way `b`
+    // can reach `a`: comments, props, follows, follow requests and messages.
+    function blocks(a, b) {
+      return exists(/databases/$(database)/documents/users/$(a)/blocks/$(b));
+    }
+    // Neither person in a direct-message thread has blocked the other.
+    function dmOpen(convId) {
+      let p = get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+      return !blocks(p[0], p[1]) && !blocks(p[1], p[0]);
+    }
+
     // True unless the club is a private, member-listed club the caller isn't in.
     function canReadClub(clubId) {
       let path = /databases/$(database)/documents/clubs/$(clubId);
@@ -35,7 +46,7 @@ service cloud.firestore {
         allow read: if request.auth != null &&
           (request.auth.uid == userId || request.auth.uid == requesterId);
         allow create: if request.auth != null && request.auth.uid == requesterId
-          && request.resource.data.uid == request.auth.uid;
+          && request.resource.data.uid == request.auth.uid && !blocks(userId, requesterId);
         allow delete: if request.auth != null &&
           (request.auth.uid == userId || request.auth.uid == requesterId);
       }
@@ -46,7 +57,9 @@ service cloud.firestore {
         allow read: if request.auth != null;
         // You may write the edge for yourself (you follow someone), OR the profile owner
         // may write edges under their own profile (approving a private follow request).
-        allow write: if request.auth != null &&
+        allow create, update: if request.auth != null &&
+          ((request.auth.uid == followerId && !blocks(userId, followerId)) || request.auth.uid == userId);
+        allow delete: if request.auth != null &&
           (request.auth.uid == followerId || request.auth.uid == userId);
       }
 
@@ -54,7 +67,8 @@ service cloud.firestore {
       // create/delete a prop attributed to your own uid.
       match /props/{propId} {
         allow read: if request.auth != null;
-        allow create: if request.auth != null && request.resource.data.reactor == request.auth.uid && safeId(propId);
+        allow create: if request.auth != null && request.resource.data.reactor == request.auth.uid && safeId(propId)
+          && !blocks(userId, request.auth.uid);
         // The reactor can take their kudos back; the profile owner can clear
         // them (needed for account deletion).
         allow delete: if request.auth != null &&
@@ -65,12 +79,53 @@ service cloud.firestore {
       // create/delete a comment attributed to your own uid.
       match /comments/{commentId} {
         allow read: if request.auth != null;
-        allow create: if request.auth != null && request.resource.data.from == request.auth.uid && safeId(commentId);
+        allow create: if request.auth != null && request.resource.data.from == request.auth.uid && safeId(commentId)
+          && !blocks(userId, request.auth.uid);
         // The commenter can delete their comment; the post's author can remove
         // any comment left on their own activity.
         allow delete: if request.auth != null &&
           (resource.data.from == request.auth.uid || request.auth.uid == userId);
       }
+
+      // People this user has blocked, keyed by the blocked uid. Only the owner
+      // lists them; the blocked person may look up their own entry.
+      match /blocks/{blockedId} {
+        allow get: if request.auth != null &&
+          (request.auth.uid == userId || request.auth.uid == blockedId);
+        allow list: if request.auth != null && request.auth.uid == userId;
+        allow create, update: if request.auth != null && request.auth.uid == userId &&
+          blockedId != userId && safeId(blockedId) &&
+          request.resource.data.keys().hasOnly(['blocked', 'name', 'at']) &&
+          request.resource.data.blocked == blockedId &&
+          (!('name' in request.resource.data) ||
+           (request.resource.data.name is string && request.resource.data.name.size() <= 80));
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // "Who has blocked me" (collection-group query on blocks where blocked ==
+    // me) so the app can keep those people out of my feed and search too.
+    match /{path=**}/blocks/{blockedId} {
+      allow read: if request.auth != null && resource.data.blocked == request.auth.uid;
+    }
+
+    // ── REPORTS ────────────────────────────────────────────────────────
+    // Anyone signed in can file a report as themselves. Nobody can read,
+    // change or delete one from the app: they are reviewed in the Firebase
+    // console (or by the email /api/notify sends).
+    match /reports/{reportId} {
+      allow create: if request.auth != null && safeId(reportId) &&
+        request.resource.data.keys().hasOnly(['reporter','reporterName','target','targetName','kind','refPath','text','reason','details','at','status']) &&
+        request.resource.data.reporter == request.auth.uid &&
+        request.resource.data.target is string && safeId(request.resource.data.target) &&
+        request.resource.data.target != request.auth.uid &&
+        request.resource.data.kind in ['user', 'comment', 'message', 'post'] &&
+        request.resource.data.reason in ['harassment', 'spam', 'inappropriate', 'impersonation', 'other'] &&
+        request.resource.data.text is string && request.resource.data.text.size() <= 1000 &&
+        request.resource.data.details is string && request.resource.data.details.size() <= 1000 &&
+        request.resource.data.refPath is string && request.resource.data.refPath.size() <= 300 &&
+        request.resource.data.status == 'open';
+      allow read, update, delete: if false;
     }
 
     // ── USER STATE ─────────────────────────────────────────────────────
@@ -111,7 +166,8 @@ service cloud.firestore {
         // otherwise any signed-in user could inject messages into any thread.
         allow create: if request.auth != null &&
           request.resource.data.from == request.auth.uid && safeId(msgId) &&
-          request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+          request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants &&
+          dmOpen(convId);
         // Delete: only the original sender can delete their own message
         allow delete: if request.auth != null &&
           resource.data.from == request.auth.uid;

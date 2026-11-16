@@ -12,7 +12,9 @@
 // (GET /api/notify?unsub=<uid>.<signature>).
 //
 // Env vars: FIREBASE_SERVICE_ACCOUNT (already used by /api/ask),
-//           CRON_SECRET (signs unsubscribe links).
+//           CRON_SECRET (signs unsubscribe links),
+//           RESEND_API_KEY + REPORTS_TO (optional: email each user report;
+//           REPORTS_TO defaults to ethan@momentumapps.net).
 // ─────────────────────────────────────────────────────────────────────────────
 'use strict';
 const crypto = require('crypto');
@@ -95,7 +97,17 @@ module.exports = async (req, res) => {
     const name = clean(me.displayName || 'Someone', 40);
     const first = name.split(' ')[0] || name;
     const results = [];
-    const send = async (toUid, msg) => { if (toUid && toUid !== uid) results.push(await sendToUser(toUid, msg)); };
+    // Nobody gets a push about someone they've blocked, or who has blocked them.
+    const blockedEither = async (other) => {
+      const [a, b] = await Promise.all([
+        db.collection('users').doc(other).collection('blocks').doc(uid).get(),
+        db.collection('users').doc(uid).collection('blocks').doc(other).get(),
+      ]);
+      return a.exists || b.exists;
+    };
+    const send = async (toUid, msg) => {
+      if (toUid && toUid !== uid && !(await blockedEither(toUid))) results.push(await sendToUser(toUid, msg));
+    };
 
     if (type === 'follow') {
       const to = id('toUid');
@@ -140,6 +152,7 @@ module.exports = async (req, res) => {
       const title = `${first} just logged ${hrs(last.hours)}${last.section ? ' of ' + clean(last.section, 6) : ''}`;
       const day = new Date().toISOString().slice(0, 10);
       for (const w of watchers) {
+        if (await blockedEither(w.id)) continue;
         // At most one "X studied" push per person per day, however many sessions they log.
         results.push(await sendToUser(w.id, { type: 'crew', onceKey: 'sess-' + uid + '-' + day, tag: 'crew-' + uid, url: '/#feed',
           title, body: 'Your turn?' }, { snap: w }));
@@ -151,9 +164,38 @@ module.exports = async (req, res) => {
       if (!room || !room.exists || room.data().hostUid !== uid) return res.status(400).json({ error: 'Nothing to notify' });
       const watchers = await watchersOf(db, uid);
       for (const w of watchers) {
+        if (await blockedEither(w.id)) continue;
         results.push(await sendToUser(w.id, { type: 'crew', onceKey: 'room-' + roomId, tag: 'room-' + uid, url: '/?room=' + roomId,
           title: `${first} opened a study room`, body: `"${clean(room.data().name, 60)}" — join and study on the same clock.` }, { snap: w }));
       }
+
+    } else if (type === 'report') {
+      // A report was just filed in Firestore (rules make sure it is the
+      // caller's own). Email it to whoever moderates, once.
+      const reportId = id('reportId');
+      const ref = reportId && db.collection('reports').doc(reportId);
+      const r = ref && await ref.get();
+      if (!r || !r.exists || r.data().reporter !== uid) return res.status(400).json({ error: 'Nothing to notify' });
+      const x = r.data();
+      if (x.emailed || !process.env.RESEND_API_KEY) return res.status(200).json({ ok: true, emailed: false });
+      const e = (v, n) => clean(v || '', n).replace(/[<>&"]/g, (ch) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[ch]));
+      const html = `<h2 style="font-family:system-ui">New ${e(x.kind, 20)} report: ${e(x.reason, 30)}</h2>` +
+        `<p style="font-family:system-ui">Reported: <b>${e(x.targetName, 80)}</b> (uid ${e(x.target, 128)})<br>` +
+        `By: ${e(x.reporterName, 80)} (uid ${e(uid, 128)})<br>Where: ${e(x.refPath, 300)}<br>Report id: ${e(reportId, 128)}</p>` +
+        (x.text ? `<p style="font-family:system-ui">Content:</p><blockquote style="font-family:system-ui;border-left:3px solid #ccc;padding-left:10px">${e(x.text, 1000)}</blockquote>` : '') +
+        (x.details ? `<p style="font-family:system-ui">Reporter's note:</p><blockquote style="font-family:system-ui;border-left:3px solid #ccc;padding-left:10px">${e(x.details, 1000)}</blockquote>` : '');
+      const m = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: process.env.RECAP_FROM || 'Ledger <hello@ledgercpa.app>',
+          to: [process.env.REPORTS_TO || 'ethan@momentumapps.net'],
+          subject: `[Ledger report] ${clean(x.kind, 20)} · ${clean(x.reason, 30)} · ${clean(x.targetName, 60)}`,
+          html,
+        }),
+      });
+      if (m.ok) await ref.set({ emailed: true }, { merge: true });
+      return res.status(200).json({ ok: true, emailed: !!m.ok });
 
     } else {
       return res.status(400).json({ error: 'Unknown event' });

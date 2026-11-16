@@ -434,6 +434,63 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
   #comments-modal{padding:0;align-items:flex-end}
   #comments-modal .cm-box{max-width:none;height:min(82dvh,640px);border-radius:20px 20px 0 0;border-bottom:none}
 }
+@media(max-width:640px){
+  .vp-hero-top{flex-wrap:wrap}
+  .vp-hero-btns{width:100%}
+  .vp-hero-btns #vp-follow-btn{flex:1}
+}
+.cm-more{background:none;border:none;color:var(--mut);font-size:16px;font-weight:800;line-height:1;cursor:pointer;padding:2px 8px 6px;border-radius:6px;align-self:flex-start;flex-shrink:0;font-family:inherit}
+.cm-more:hover{color:var(--txt);background:var(--surf2)}
+/* ── BLOCK & REPORT ── */
+.as-overlay{z-index:720;align-items:center;justify-content:center}
+.as-box{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;width:100%;max-width:340px;padding:6px;box-shadow:var(--shadow-lg);animation:modalIn .18s cubic-bezier(.22,.61,.36,1)}
+.as-head{padding:12px 14px 10px;border-bottom:1px solid var(--bdr);margin-bottom:4px}
+.as-title{font-size:14px;font-weight:800;overflow-wrap:anywhere}
+.as-desc{font-size:12px;color:var(--sub);line-height:1.5;margin-top:4px}
+.as-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;border-radius:10px;padding:12px 14px;font-size:14px;font-weight:600;color:var(--txt);cursor:pointer;font-family:inherit}
+.as-item:hover{background:var(--surf2)}
+.as-ic{width:18px;display:inline-flex;justify-content:center;color:var(--sub);flex-shrink:0}
+.as-danger,.as-danger .as-ic{color:var(--red,#dc2626)}
+.as-cancel{justify-content:center;color:var(--mut);margin-top:4px;border-top:1px solid var(--bdr);border-radius:0 0 10px 10px}
+.rp-overlay{z-index:725}
+.rp-box{max-width:420px}
+.rp-quote{background:var(--surf2);border:1px solid var(--bdr);border-left:3px solid var(--mut);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.rp-quote-n{font-size:12px;font-weight:700}
+.rp-quote-t{font-size:12.5px;color:var(--sub);margin-top:2px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;max-height:90px;overflow:hidden}
+.rp-q{font-size:13px;font-weight:700;margin-bottom:8px}
+.rp-reasons{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.rp-reason{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;cursor:pointer;font-size:13px;transition:border-color var(--transition),background-color var(--transition)}
+.rp-reason:has(input:checked){border-color:var(--ind);background:var(--ind-bg)}
+.rp-reason input{accent-color:var(--ind);width:16px;height:16px;margin:0}
+.rp-details{width:100%;box-sizing:border-box;resize:vertical;min-height:64px;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf2);color:var(--txt);font-family:inherit;font-size:13px;outline:none}
+.rp-details:focus{border-color:var(--ind)}
+.rp-block{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-top:12px;cursor:pointer}
+.rp-block input{accent-color:var(--red,#dc2626);width:16px;height:16px;margin:0}
+.rp-note{font-size:11px;color:var(--mut);margin-top:10px}
+.rp-send{width:100%;justify-content:center;margin-top:14px}
+.rp-send:disabled{opacity:.45;cursor:default}
+.rp-done{text-align:center;padding:18px 6px 6px}
+.rp-done-ic{width:52px;height:52px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--surf2);color:var(--grn,#16a34a)}
+.rp-done-t{font-size:16px;font-weight:800}
+.rp-done-s{font-size:13px;color:var(--sub);margin:6px 0 18px;line-height:1.5}
+.blk-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.blk-name{flex:1;min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blk-none{font-size:12px;color:var(--mut);padding:10px 0}
+.blk-state{text-align:center;padding:80px 24px}
+.blk-ic{width:56px;height:56px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--surf2);color:var(--sub)}
+.blk-t{font-size:16px;font-weight:800}
+.blk-s{font-size:13px;color:var(--sub);margin:6px auto 18px;max-width:300px;line-height:1.5}
+.dm-blocked{padding:14px 16px;border-top:1px solid var(--bdr);font-size:13px;color:var(--sub);text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.dm-more{background:none;border:none;color:var(--mut);cursor:pointer;font-size:14px;font-weight:800;padding:0 6px;margin-left:4px;line-height:1;border-radius:6px;opacity:.7}
+.dm-more:hover{opacity:1;background:var(--surf2);color:var(--txt)}
+.dm-hdr-more{margin-left:4px;font-size:15px;font-weight:800;padding-left:10px;padding-right:10px}
+.ac-more{background:none;border:none;color:var(--mut);cursor:pointer;font-size:16px;font-weight:800;line-height:1;padding:0 6px 6px;margin-left:6px;border-radius:6px;vertical-align:middle}
+.ac-more:hover{color:var(--txt);background:var(--surf2)}
+@media(max-width:640px){
+  .as-overlay{padding:0;align-items:flex-end}
+  .as-box{max-width:none;border-radius:18px 18px 0 0;border-bottom:none;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}
+  .as-item{padding:14px}
+}
 
 /* ── EXAM SECTION PILLS ── */
 .exam-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -2460,10 +2517,188 @@ function firestoreToFriend(u){
 function refreshRealUsers(){
   return loadRealUsers().then(()=>{ if(currentTab==='today'||currentTab==='feed'||currentTab==='explore') renderTab(); });
 }
+// ═══════════════════════════════════════════════
+// BLOCK & REPORT
+// BLOCKED: people I blocked (uid → name). BLOCKED_BY: people who blocked me.
+// Either way we keep each other out of feeds, search, comments, chats and
+// notifications here; firestore.rules refuses new comments, props, follows,
+// follow requests and direct messages from a blocked person, and /api/notify
+// sends no pushes between them.
+// ═══════════════════════════════════════════════
+let BLOCKED=new Map(), BLOCKED_BY=new Set();
+const _knownNames={};
+function isBlocked(uid){ return !!uid&&(BLOCKED.has(uid)||BLOCKED_BY.has(uid)); }
+function _nameOf(uid){ return BLOCKED.get(uid)||_knownNames[uid]||(_cachedUserInfo(uid)||{}).name||'this person'; }
+async function loadBlocks(){
+  if(!firebaseDb||!AUTH?.uid) return;
+  const me=AUTH.uid;
+  try{
+    const snap=await firebaseDb.collection('users').doc(me).collection('blocks').get();
+    BLOCKED=new Map(snap.docs.map(d=>[d.id,String(d.data().name||'')]));
+  }catch(e){}
+  try{
+    const snap=await firebaseDb.collectionGroup('blocks').where('blocked','==',me).get();
+    BLOCKED_BY=new Set(snap.docs.map(d=>d.ref.parent.parent&&d.ref.parent.parent.id).filter(Boolean));
+  }catch(e){}
+}
+async function blockUser(uid,name){
+  if(!AUTH||!firebaseDb||!uid||uid===AUTH.uid) return;
+  name=String(name||_nameOf(uid)).slice(0,80);
+  const me=AUTH.uid, users=firebaseDb.collection('users');
+  try{ await users.doc(me).collection('blocks').doc(uid).set({blocked:uid,name,at:Date.now()}); }
+  catch(e){ showToast('Couldn\'t block — please try again.','err'); return; }
+  BLOCKED.set(uid,name);
+  // Cut every tie, both ways: follows and pending follow requests.
+  [users.doc(uid).collection('followers').doc(me), users.doc(me).collection('followers').doc(uid),
+   users.doc(uid).collection('followRequests').doc(me), users.doc(me).collection('followRequests').doc(uid)]
+    .forEach(r=>r.delete().catch(()=>{}));
+  const drop=a=>(a||[]).filter(x=>x!==uid);
+  S.following=drop(S.following); S.followers=drop(S.followers); S._seenFollowers=drop(S._seenFollowers);
+  S.pendingRequests=drop(S.pendingRequests); S._sentRequests=drop(S._sentRequests);
+  S.followRequests=(S.followRequests||[]).filter(r=>r.uid!==uid);
+  S.notifications=(S.notifications||[]).filter(n=>n.from!==uid);
+  if(S.accountabilityPartner===uid) S.accountabilityPartner=null;
+  REAL_USERS=(REAL_USERS||[]).filter(u=>u.id!==uid);
+  saveState(); saveFollowToFirestore(); refreshNotifBadge();
+  showToast('Blocked '+name+'.','ok');
+  _afterBlockChange(uid);
+}
+async function unblockUser(uid){
+  if(!AUTH||!firebaseDb) return;
+  try{ await firebaseDb.collection('users').doc(AUTH.uid).collection('blocks').doc(uid).delete(); }
+  catch(e){ showToast('Couldn\'t unblock — please try again.','err'); return; }
+  const name=BLOCKED.get(uid)||'them';
+  BLOCKED.delete(uid);
+  showToast('Unblocked '+name+'.','ok');
+  _afterBlockChange(uid);
+  loadRealUsers().then(()=>{ if(currentTab==='feed'||currentTab==='explore') renderTab(); });
+}
+// Redraw whatever is on screen so the change shows straight away.
+function _afterBlockChange(uid){
+  closeActionSheet();
+  if(_cmOpen&&document.getElementById('comments-modal')?.classList.contains('open')) openComments(_cmOpen.actId,_cmOpen.userId);
+  if(document.getElementById('blocked-list')) _renderBlockedList();
+  if(history.state&&history.state.view==='userProfile'&&history.state.userId===uid&&document.getElementById('uprofile-content')){ _loadAndRenderProfilePage(uid); return; }
+  if(_activeConvOpts&&document.getElementById('dm-conv-panel')){ _renderConvPanel(_activeConvOpts); return; }
+  if(document.querySelector('.nav-tab')){ try{renderTab();}catch(e){} }
+}
+function confirmBlock(uid,name){
+  name=name||_nameOf(uid);
+  openActionSheet('Block '+name+'?',[
+    {label:'Block', icon:'lock', danger:true, run:()=>blockUser(uid,name)},
+  ],'They won\'t be able to follow you, message you, or comment on or give props to your sessions, and you won\'t see each other in feeds, search or chats. Ledger doesn\'t tell them. You can unblock any time in Settings → Privacy.');
+}
+
+// A small menu of actions (bottom sheet on phones).
+let _sheetActs=[];
+function openActionSheet(title,items,desc){
+  closeActionSheet();
+  _sheetActs=items.map(i=>i.run);
+  const el=document.createElement('div');
+  el.id='action-sheet'; el.className='modal-overlay open as-overlay';
+  el.addEventListener('click',e=>{ if(e.target===el) closeActionSheet(); });
+  el.innerHTML=`<div class="as-box" role="menu" aria-label="${esc(title||'Options')}">
+    ${title||desc?`<div class="as-head">${title?`<div class="as-title">${esc(title)}</div>`:''}${desc?`<div class="as-desc">${esc(desc)}</div>`:''}</div>`:''}
+    ${items.map((it,i)=>`<button type="button" class="as-item${it.danger?' as-danger':''}" role="menuitem" onclick="_runSheet(${i})">${it.icon?`<span class="as-ic">${ico(it.icon)}</span>`:''}<span>${esc(it.label)}</span></button>`).join('')}
+    <button type="button" class="as-item as-cancel" onclick="closeActionSheet()">Cancel</button>
+  </div>`;
+  document.body.appendChild(el);
+}
+function _runSheet(i){ const f=_sheetActs[i]; closeActionSheet(); if(f) f(); }
+function closeActionSheet(){ document.getElementById('action-sheet')?.remove(); }
+
+// Things that can be reported are registered here and referred to by key, so
+// no user text ever has to be placed inside an onclick attribute.
+const _reportables={}; let _repSeq=0;
+function _regReport(o){ const k='r'+(++_repSeq); _reportables[k]=o; return k; }
+function openUserActions(uid){
+  if(!uid||uid===AUTH?.uid) return;
+  const name=_nameOf(uid);
+  const k=_regReport({kind:'user',target:uid,targetName:name,text:'',refPath:'users/'+uid});
+  openActionSheet(name,[
+    {label:'Report '+name, icon:'warning', run:()=>openReportModal(k)},
+    BLOCKED.has(uid)?{label:'Unblock '+name, icon:'unlock', run:()=>unblockUser(uid)}
+                    :{label:'Block '+name, icon:'lock', danger:true, run:()=>confirmBlock(uid,name)},
+  ]);
+}
+function openContentActions(k,extra){
+  const o=_reportables[k]; if(!o) return;
+  const what={comment:'comment',message:'message',post:'post'}[o.kind]||'this';
+  openActionSheet('',[...(extra||[]),
+    {label:'Report '+what, icon:'warning', run:()=>openReportModal(k)},
+    {label:'Block '+o.targetName, icon:'lock', danger:true, run:()=>confirmBlock(o.target,o.targetName)},
+  ]);
+}
+const REPORT_REASONS=[['harassment','Harassment or bullying'],['spam','Spam or scam'],['inappropriate','Inappropriate or offensive'],['impersonation','Pretending to be someone else'],['other','Something else']];
+function openReportModal(k){
+  const o=_reportables[k]; if(!o) return;
+  if(!AUTH){ showToast('Sign in to report','err'); return; }
+  closeActionSheet();
+  document.getElementById('report-modal')?.remove();
+  const what={user:'account',comment:'comment',message:'message',post:'post'}[o.kind];
+  const el=document.createElement('div');
+  el.id='report-modal'; el.className='modal-overlay open rp-overlay';
+  el.addEventListener('click',e=>{ if(e.target===el) el.remove(); });
+  el.innerHTML=`<div class="modal-box rp-box" role="dialog" aria-label="Report ${what}" onclick="event.stopPropagation()">
+  <div class="modal-hdr"><div class="modal-title">Report ${what}</div><button class="modal-close" aria-label="Close" onclick="document.getElementById('report-modal').remove()">×</button></div>
+  <div class="modal-body">
+    ${o.text?`<div class="rp-quote"><div class="rp-quote-n">${esc(o.targetName)}</div><div class="rp-quote-t">${esc(o.text.slice(0,300))}</div></div>`:''}
+    <div class="rp-q">${o.kind==='user'?'What’s wrong with '+esc(o.targetName)+'’s account?':'Why are you reporting this '+what+'?'}</div>
+    <div class="rp-reasons">${REPORT_REASONS.map(([v,l])=>`<label class="rp-reason"><input type="radio" name="rp-reason" value="${v}" onchange="document.getElementById('rp-send').disabled=false"><span>${l}</span></label>`).join('')}</div>
+    <textarea id="rp-details" class="rp-details" maxlength="1000" rows="3" placeholder="Anything else we should know? (optional)"></textarea>
+    ${BLOCKED.has(o.target)?'':`<label class="rp-block"><input type="checkbox" id="rp-block"><span>Also block ${esc(o.targetName)}</span></label>`}
+    <div class="rp-note">${esc(o.targetName)} won’t be told who reported them.</div>
+    <button class="btn btn-primary rp-send" id="rp-send" disabled onclick="submitReport('${k}')">Send report</button>
+  </div>
+</div>`;
+  document.body.appendChild(el);
+}
+async function submitReport(k){
+  const o=_reportables[k]; const btn=document.getElementById('rp-send');
+  const reason=document.querySelector('#report-modal input[name="rp-reason"]:checked')?.value;
+  if(!o||!reason||!firebaseDb||!AUTH||!btn) return;
+  const details=(document.getElementById('rp-details')?.value||'').trim().slice(0,1000);
+  const alsoBlock=!!document.getElementById('rp-block')?.checked;
+  btn.disabled=true; btn.textContent='Sending…';
+  try{
+    const ref=await firebaseDb.collection('reports').add({
+      reporter:AUTH.uid, reporterName:String(S.name||'').slice(0,80),
+      target:o.target, targetName:String(o.targetName||'').slice(0,80),
+      kind:o.kind, refPath:String(o.refPath||'').slice(0,300), text:String(o.text||'').slice(0,1000),
+      reason, details, at:Date.now(), status:'open'});
+    notifyEvent('report',{reportId:ref.id});
+  }catch(e){ btn.disabled=false; btn.textContent='Send report'; showToast('Couldn\'t send the report — please try again.','err'); return; }
+  const body=document.querySelector('#report-modal .modal-body');
+  if(body) body.innerHTML=`<div class="rp-done"><div class="rp-done-ic">${ico('checkCircle')}</div>
+    <div class="rp-done-t">Thanks for letting us know</div>
+    <div class="rp-done-s">Our team will review it.${alsoBlock?' You’ve also blocked '+esc(o.targetName)+'.':''}</div>
+    <button class="btn btn-ghost" onclick="document.getElementById('report-modal').remove()">Done</button></div>`;
+  if(alsoBlock) blockUser(o.target,o.targetName);
+}
+// Settings → Privacy → Blocked accounts
+function _renderBlockedList(){
+  const host=document.getElementById('blocked-list'); if(!host) return;
+  host.innerHTML=BLOCKED.size?[...BLOCKED].map(([uid,name])=>`<div class="blk-row">
+      <div class="cm-av" style="background:${hashColor(uid)};cursor:default">${esc(_cmInitials(name||'?'))}</div>
+      <div class="blk-name">${esc(name||'Member')}</div>
+      <button class="btn btn-ghost btn-sm" onclick="unblockUser('${uid}')">Unblock</button>
+    </div>`).join('')
+    :`<div class="blk-none">You haven’t blocked anyone.</div>`;
+}
+function _renderBlockedProfile(uid){
+  const el=document.getElementById('uprofile-content'); if(!el) return;
+  const mine=BLOCKED.has(uid);
+  el.innerHTML=`<div class="blk-state"><div class="blk-ic">${ico('lock')}</div>
+    <div class="blk-t">${mine?'You blocked '+esc(BLOCKED.get(uid)||'this person'):'This profile isn’t available'}</div>
+    <div class="blk-s">${mine?'You won’t see each other’s sessions, comments or messages.':'You can’t view or contact this account.'}</div>
+    ${mine?`<button class="btn btn-ghost" onclick="unblockUser('${uid}')">Unblock</button>`:''}</div>`;
+}
+
 async function loadRealUsers(){
   if(!firebaseDb||!AUTH?.uid||!S){ window._realUsersLoaded=true; return; }
+  await loadBlocks();
   try{
-    const followedIds=(S.following||[]).filter(id=>id&&typeof id==='string'&&id.length>4);
+    const followedIds=(S.following||[]).filter(id=>id&&typeof id==='string'&&id.length>4&&!isBlocked(id));
     const realMap={};
     // Fetch followed users in batches of 10
     for(let i=0;i<followedIds.length;i+=10){
@@ -2478,7 +2713,7 @@ async function loadRealUsers(){
       // People who switched off "Discoverable" only ever appear to those already following them.
       if(u.uid&&u.uid!==AUTH.uid&&!realMap[u.uid]&&u.discoverable!==false)realMap[u.uid]=firestoreToFriend(u);
     });
-    REAL_USERS=Object.values(realMap);
+    REAL_USERS=Object.values(realMap).filter(u=>!isBlocked(u.id));
   }catch(e){console.warn('loadRealUsers:',e);}
   window._realUsersLoaded=true; // feed can stop showing skeletons now (success or fail)
   try{ await loadFeedReactions(); }catch(e){}
@@ -2498,8 +2733,8 @@ async function loadFeedReactions(){
         firebaseDb.collection('users').doc(aid).collection('comments').get()
       ]);
       const propsByAct={}, commentsByAct={};
-      propsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(propsByAct[x.activityId]=propsByAct[x.activityId]||[]).push(x.reactor);});
-      commentsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(commentsByAct[x.activityId]=commentsByAct[x.activityId]||[]).push({id:d.id,user:x.name||'Member',text:x.text||'',from:x.from,at:x.at&&x.at.toMillis?x.at.toMillis():0});});
+      propsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId||isBlocked(x.reactor))return;(propsByAct[x.activityId]=propsByAct[x.activityId]||[]).push(x.reactor);});
+      commentsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId||isBlocked(x.from))return;(commentsByAct[x.activityId]=commentsByAct[x.activityId]||[]).push({id:d.id,user:x.name||'Member',text:x.text||'',from:x.from,at:x.at&&x.at.toMillis?x.at.toMillis():0});});
       Object.values(commentsByAct).forEach(l=>l.sort((p,q)=>(p.at||0)-(q.at||0)));
       const apply=acts=>(acts||[]).forEach(a=>{ if(propsByAct[a.id])a.kudos=propsByAct[a.id]; if(commentsByAct[a.id])a.comments=commentsByAct[a.id]; });
       if(aid===me) apply(S&&S.activities);
@@ -5439,6 +5674,7 @@ function buildSatCard(a,ex){
       <div class="ac-meta">${timeAgo(a.date)} · ${ex.full}</div>
     </div>
     <span class="badge badge-${a.section}">${a.section}</span>
+    ${a.isMine?'':`<button class="ac-more" aria-label="More options" title="Report or block" onclick="event.stopPropagation();_postMore('${a.id}','${a.userId}')">⋯</button>`}
   </div>
   <div style="margin:0 16px 12px;padding:16px;border-radius:12px;background:${ex.color}12;border:1px solid ${ex.color}33;text-align:center">
     <div style="font-size:17px;font-weight:900;letter-spacing:-.01em">Sat for ${a.section}</div>
@@ -5736,7 +5972,7 @@ function _renderRoomClock(){
 function _renderRoomMembers(){
   const host=document.getElementById('room-members'); if(!host||!_room) return;
   const now=Date.now();
-  const list=_roomFreshMembers().sort((a,b)=>(b.uid===AUTH.uid)-(a.uid===AUTH.uid)||(a.joinedAt||0)-(b.joinedAt||0));
+  const list=_roomFreshMembers().filter(m=>!isBlocked(m.uid)).sort((a,b)=>(b.uid===AUTH.uid)-(a.uid===AUTH.uid)||(a.joinedAt||0)-(b.joinedAt||0));
   const cnt=document.getElementById('room-count'); if(cnt) cnt.textContent=list.length+(list.length===1?' person here':' people here');
   host.innerHTML=list.map(m=>{
     const me=m.uid===AUTH.uid;
@@ -6459,6 +6695,7 @@ function buildPassCard(a,ex){
       <div class="ac-meta">${timeAgo(a.date)} · ${LedgerIcon(ex.icon)} ${ex.full}</div>
     </div>
     <span class="badge badge-passed">Passed ${ico('checkCircle')}</span>
+    ${a.isMine?'':`<button class="ac-more" aria-label="More options" title="Report or block" onclick="event.stopPropagation();_postMore('${a.id}','${a.userId}')">⋯</button>`}
   </div>
   <div style="background:linear-gradient(135deg,${ex.color},${ex.color}cc);padding:22px 18px;text-align:center;color:#fff">
     <div style="font-size:40px;line-height:1;margin-bottom:8px">${ico('party')}</div>
@@ -6519,7 +6756,7 @@ function buildActivityCard(a){
           <span class="ac-user-name" style="cursor:pointer" onclick="openUserProfile('${a.userId}')">${a.userName}${a.isMine?' <span style="font-size:10px;color:var(--mut);font-weight:400">(you)</span>':''}${tierBadgeAct}</span>
           ${passedBadge}
         </div>
-        <span style="font-size:11px;color:var(--mut);flex-shrink:0;white-space:nowrap;padding-top:1px">${timeAgo(a.date)}</span>
+        <span style="font-size:11px;color:var(--mut);flex-shrink:0;white-space:nowrap;padding-top:1px">${timeAgo(a.date)}${a.isMine?'':`<button class="ac-more" aria-label="More options" title="Report or block" onclick="event.stopPropagation();_postMore('${a.id}','${a.userId}')">⋯</button>`}</span>
       </div>
       <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
         <span class="badge badge-${a.section}" style="font-size:9px">${a.section}</span>
@@ -8155,14 +8392,18 @@ function _cmFind(actId,userId){
   const f=REAL_USERS.find(u=>u.id===userId);
   return {act:f&&f.activities.find(a=>a.id===actId),owner:f?{name:f.name,pic:f.profilePic||'',color:f.color||hashColor(f.id)}:null,ownerUid:userId,mine:false};
 }
+let _cmOpen=null;
 function openComments(actId,userId,flashLast){
   const {act,owner,ownerUid,mine}=_cmFind(actId,userId);
   if(!act)return;
+  _cmOpen={actId,userId};
   const me=AUTH?.uid;
   const comments=act.comments||[];
+  const shown=comments.filter(c=>!isBlocked(c.from));
   const ex=EXAMS[act.section]||{};
   const what=act.type==='sat'?`Sat for ${esc(act.section)}`:`${esc(act.section||'Study')} · ${esc(act.hours)}h`;
   const rows=comments.map((c,i)=>{
+    if(isBlocked(c.from)) return '';
     const p=_cmPerson(c);
     const go=c.from&&!p.mine?`closeCommentsModal();openUserProfile('${esc(c.from)}')`:'';
     const canDel=me&&(c.from===me||mine);
@@ -8176,7 +8417,9 @@ function openComments(actId,userId,flashLast){
         </div>
         <div class="cm-text">${esc(c.text)}</div>
       </div>
-      ${canDel?`<button class="cm-del" onclick="deleteComment('${actId}','${userId}',${i})">Delete</button>`:''}
+      ${c.from&&c.from===me?`<button class="cm-del" onclick="deleteComment('${actId}','${userId}',${i})">Delete</button>`
+        :c.from?`<button class="cm-more" aria-label="More options" onclick="_cmMore('${actId}','${userId}',${i})">⋯</button>`
+        :canDel?`<button class="cm-del" onclick="deleteComment('${actId}','${userId}',${i})">Delete</button>`:''}
     </div>`;
   }).join('');
   const empty=`<div class="cm-empty">
@@ -8185,7 +8428,7 @@ function openComments(actId,userId,flashLast){
     <div class="cm-empty-s">${mine?'When someone cheers you on, it shows up here.':'Be the first to cheer them on.'}</div>
   </div>`;
   const myP=_cmPerson({from:me,user:S.name});
-  const ttl=document.querySelector('#comments-modal .modal-title'); if(ttl) ttl.innerHTML='Comments'+(comments.length?`<span class="cm-count">${comments.length}</span>`:'');
+  const ttl=document.querySelector('#comments-modal .modal-title'); if(ttl) ttl.innerHTML='Comments'+(shown.length?`<span class="cm-count">${shown.length}</span>`:'');
   document.getElementById('comments-modal-body').innerHTML=`
 <div class="cm-post" style="--cm-c:${ex.color||'var(--ind)'}">
   ${_cmAvatar(owner||{name:'?',color:'var(--ind)'})}
@@ -8195,7 +8438,7 @@ function openComments(actId,userId,flashLast){
     ${act.caption?`<div class="cm-post-cap">${esc(act.caption)}</div>`:''}
   </div>
 </div>
-<div class="cm-list" id="cm-list">${comments.length?rows:empty}</div>
+<div class="cm-list" id="cm-list">${shown.length?rows:empty}</div>
 <div class="cm-compose">
   ${_cmAvatar(myP)}
   <div class="cm-field">
@@ -8222,6 +8465,7 @@ function addComment(actId,userId){
   if(!AUTH){showToast('Sign in to comment','err');return;}
   const me=AUTH.uid; const myName=S.name||AUTH.displayName||'You';
   const authorUid=(userId==='you'||userId===me)?me:userId;
+  if(isBlocked(authorUid)){showToast('You can’t comment on this post.','err');return;}
   let act=null;
   if(authorUid===me){act=S.activities.find(a=>a.id===actId);}
   else{const f=REAL_USERS.find(f=>f.id===authorUid);if(f)act=f.activities.find(a=>a.id===actId);}
@@ -8236,6 +8480,22 @@ function addComment(actId,userId){
   openComments(actId,userId,true);
   renderTab();
 }
+// ⋯ on someone else's post in the feed.
+function _postMore(actId,uid){
+  const f=(REAL_USERS||[]).find(u=>u.id===uid); const a=f&&(f.activities||[]).find(x=>x.id===actId);
+  const name=(f&&f.name)||_nameOf(uid);
+  const text=a?[a.type==='sat'?'Sat for '+a.section:a.type==='pass'?'Passed '+a.section:(a.section||'')+' · '+(a.hours||0)+'h',a.material,a.caption].filter(Boolean).join(' — '):'';
+  openContentActions(_regReport({kind:'post',target:uid,targetName:name,text:String(text),refPath:'users/'+uid+' activity '+actId}));
+}
+// ⋯ on someone else's comment: report or block them (and delete, on my own post).
+function _cmMore(actId,userId,idx){
+  const {act,ownerUid,mine}=_cmFind(actId,userId);
+  const c=act&&act.comments&&act.comments[idx]; if(!c||!c.from) return;
+  const p=_cmPerson(c);
+  const k=_regReport({kind:'comment',target:c.from,targetName:p.name,text:String(c.text||''),
+    refPath:'users/'+ownerUid+'/comments/'+(c.id||'')+' (post '+actId+')'});
+  openContentActions(k,mine?[{label:'Delete comment',icon:'x',run:()=>deleteComment(actId,userId,idx)}]:[]);
+}
 // The commenter can remove their own comment; the post's author can remove any.
 function deleteComment(actId,userId,idx){
   const {act,ownerUid,mine}=_cmFind(actId,userId);
@@ -8243,6 +8503,7 @@ function deleteComment(actId,userId,idx){
   if(!c||!AUTH||!(c.from===AUTH.uid||mine))return;
   if(!confirm('Delete this comment?'))return;
   act.comments.splice(idx,1);
+  _cmOpen=null;
   if(firebaseDb&&c.id) firebaseDb.collection('users').doc(ownerUid).collection('comments').doc(c.id).delete().catch(()=>showToast('Couldn\'t delete that comment — please try again.','err'));
   if(mine)saveState();
   openComments(actId,userId);
@@ -8397,6 +8658,7 @@ function _sendFollowRequest(uid, btn){
 }
 
 function toggleFollow(fId,btn){
+  if(isBlocked(fId)){ showToast('You can’t follow this account.','err'); return; }
   const following=S.following||[];
   const idx=following.indexOf(fId);
   if(idx>=0){
@@ -9592,6 +9854,7 @@ async function openUserProfile(userId){
 
 async function _loadAndRenderProfilePage(userId){
   _mountPageShell('uprofile-content');
+  if(isBlocked(userId)){ _renderBlockedProfile(userId); return; }
   document.getElementById('uprofile-content').innerHTML=`<div style="padding:80px;text-align:center;color:var(--mut);font-size:13px">Loading…</div>`;
   const mock=REAL_USERS.find(x=>x.id===userId);
   if(mock){_renderFullUserProfile(_normProfileMock(mock));return;}
@@ -9756,6 +10019,7 @@ function _normProfileFirestore(u){
 }
 
 function _renderFullUserProfile(u){
+  _knownNames[u.uid]=u.name;
   const isFollowing=(S.following||[]).includes(u.uid);
   const isPendingRequest=!isFollowing&&(S.pendingRequests||[]).includes(u.uid);
   const isLocked=!!(u.isPrivate)&&!isFollowing;
@@ -9848,8 +10112,8 @@ function _renderFullUserProfile(u){
   <!-- HERO (full width) -->
   <div class="profile-hero" style="border-radius:16px;margin-bottom:20px">
     <div class="profile-hero-inner">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:14px">
+      <div class="vp-hero-top" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:14px;min-width:0">
           <div style="width:80px;height:80px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;color:#fff">${avatarInner}</div>
           <div>
             <div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1.15">${u.name}${u.isPrivate?' <span style="font-size:13px;opacity:.65">'+ico('lock')+'</span>':''} ${tierBadge}</div>
@@ -9857,9 +10121,10 @@ function _renderFullUserProfile(u){
             ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.72);margin-top:5px;line-height:1.5;max-width:420px">${u.bio}</div>`:''}
           </div>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0;padding-top:2px">
+        <div class="vp-hero-btns" style="display:flex;gap:8px;flex-shrink:0;padding-top:2px">
           <button id="vp-follow-btn" onclick="toggleFollowViewProfile('${u.uid}')" style="${followBtnStyle}">${followBtnLabel}</button>
           <button onclick="openDirectMessage('${u.uid}','${u.name}','${u.initials}')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer">${ico('chat')}</button>
+          <button class="vp-more" aria-label="More options" title="Report or block" onclick="openUserActions('${u.uid}')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:8px;padding:8px 12px;font-size:15px;font-weight:800;cursor:pointer;line-height:1">⋯</button>
         </div>
       </div>
       <!-- Stats row -->
@@ -10188,7 +10453,8 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
   const isGroup=!!opts.isGroup; // club group chat: always show sender names for others
   // If the user scrolled up to read history, don't yank them down when new messages arrive
   const nearBottom=area.scrollHeight-area.scrollTop-area.clientHeight<120;
-  if(!msgs||!msgs.length){
+  msgs=(msgs||[]).filter(m=>!isBlocked(m.from||m.author));
+  if(!msgs.length){
     area.innerHTML=`<div class="dm-empty-conv"><div style="font-size:46px">${isGroup?ico('users'):ico('wave')}</div><div style="font-size:14px;font-weight:700;color:var(--txt)">${isGroup?'No messages yet':'Start the conversation'}</div><div style="font-size:12px;color:var(--mut)">Say hello below</div></div>`;
     area.scrollTop=area.scrollHeight;
     return;
@@ -10216,7 +10482,10 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
     } else {
       const av=`<div class="dm-group-av" style="background:${g.color}">${g.initials}</div>`;
       const showName=isGroup||g.msgs.length>1;
-      output.push(`<div class="dm-group them">${av}${showName?`<div class="dm-sender-name">${esc(g.name)}</div>`:''}${bubbles}<div class="dm-group-meta">${timeStr}</div></div>`);
+      const real=g.from&&g.from!=='system'&&g.from.length>4;
+      const rk=real?_regReport({kind:'message',target:g.from,targetName:g.name,text:g.msgs.map(m=>String(m.text||'')).join('\n').slice(-1000),
+        refPath:collection+'/'+channelId+'/messages/'+(g.msgs[g.msgs.length-1].id||'')}):'';
+      output.push(`<div class="dm-group them">${av}${showName?`<div class="dm-sender-name">${esc(g.name)}</div>`:''}${bubbles}<div class="dm-group-meta">${timeStr}${real?`<button class="dm-more" aria-label="Report or block" title="Report or block" onclick="openContentActions('${rk}')">⋯</button>`:''}</div></div>`);
     }
     currentGroup=null;
   };
@@ -10274,9 +10543,11 @@ async function _renderConvPanel(opts){
   const avatar=kind==='club'
     ?`<div style="width:38px;height:38px;border-radius:12px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ico(icon||'users')}</div>`
     :`<div style="width:38px;height:38px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0">${initials}</div>`;
+  if(kind==='dm'&&otherUserId) _knownNames[otherUserId]=name;
+  const dmBlocked=kind==='dm'&&isBlocked(otherUserId);
   const rightBtn=kind==='club'
     ?`<button class="btn btn-ghost btn-xs" onclick="openClubPage('${channelId}')" title="Open full club">Open Club</button>`
-    :(otherUserId?`<button class="btn btn-ghost btn-xs" onclick="openUserProfile('${otherUserId}')">Profile</button>`:'');
+    :(otherUserId?`<button class="btn btn-ghost btn-xs" onclick="openUserProfile('${otherUserId}')">Profile</button><button class="btn btn-ghost btn-xs dm-hdr-more" aria-label="More options" title="Report or block" onclick="openUserActions('${otherUserId}')">⋯</button>`:'');
 
   convPanel.innerHTML=`
 <div class="dm-conv-hdr">
@@ -10289,12 +10560,12 @@ async function _renderConvPanel(opts){
   ${rightBtn}
 </div>
 <div id="dm-msgs-area" class="dm-conv-msgs"><div class="dm-system" style="margin-top:auto;margin-bottom:auto">Loading…</div></div>
-<div class="dm-comp">
+${dmBlocked?`<div class="dm-blocked">${BLOCKED.has(otherUserId)?`You blocked ${esc(name)}. <button class="btn btn-ghost btn-xs" onclick="unblockUser('${otherUserId}')">Unblock</button>`:'You can’t reply to this conversation.'}</div>`:`<div class="dm-comp">
   <textarea id="dm-inp-${channelId}" class="dm-comp-inp" rows="1" placeholder="Message ${kind==='club'?esc(name):esc(name)}…"
     onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();_sendConvMessage('${kind}','${channelId}')}"
     oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';document.getElementById('dm-send-${channelId}').disabled=!this.value.trim()"></textarea>
   <button class="dm-comp-send" id="dm-send-${channelId}" onclick="_sendConvMessage('${kind}','${channelId}')" title="Send" disabled>↑</button>
-</div>`;
+</div>`}`;
 
   if(window.innerWidth<720){
     const btn=document.getElementById('dm-back-btn');
@@ -10383,6 +10654,7 @@ function _showDMInbox(){
 }
 
 async function _sendConvMessage(kind, channelId){
+  if(kind==='dm'&&channelId.split('__dm__').some(isBlocked)){ showToast('You can’t message this account.','err'); return; }
   const inp=document.getElementById('dm-inp-'+channelId);
   const text=inp?.value?.trim();
   if(!text){ return; }
@@ -10417,6 +10689,7 @@ function _sendDM(convId){ return _sendConvMessage('dm',convId); }
 
 async function openDirectMessage(userId, displayName, displayInitials){
   if(!AUTH){ showToast('Sign in to message users','err'); return; }
+  if(isBlocked(userId)){ showToast(BLOCKED.has(userId)?'You blocked this person. Unblock them to message.':'You can’t message this account.','err'); return; }
   // Respect the other person's "Allow Direct Messages" setting — unless a
   // thread already exists, in which case let the conversation continue.
   const _hasThread=(S.clubs||[]).some(c=>c.isDM&&(c.members||[]).includes(userId));
@@ -10863,6 +11136,7 @@ function clearAllNotifs(){
 function addNotification(type, icon, text, fromId, targetType, targetId){
   const _pref=NOTIF_TYPE_TO_PREF[type];
   if(_pref && !notifPref(_pref)) return;
+  if(fromId && isBlocked(fromId)) return;
   if(!S.notifications) S.notifications=_defaultNotifications();
   S.notifications.unshift({
     id:'n'+Date.now(),type,icon,text,from:fromId||null,
@@ -10912,7 +11186,7 @@ async function syncSocial(){
     try{
       const snap=await meRef.collection('followRequests').get();
       const prev=new Set((S.followRequests||[]).map(r=>r.uid));
-      const next=snap.docs.map(d=>{const x=d.data();const nm=esc(String(x.name||'CPA Candidate').slice(0,60));
+      const next=snap.docs.filter(d=>!isBlocked(d.id)).map(d=>{const x=d.data();const nm=esc(String(x.name||'CPA Candidate').slice(0,60));
         return {uid:d.id,name:nm,initials:esc((nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'?'),color:hashColor(d.id),at:Date.now()};});
       next.filter(r=>!prev.has(r.uid)).forEach(r=>addNotification('request','user',r.name+' requested to follow you.',r.uid,'user',r.uid));
       if(next.length!==prev.size || next.some(r=>!prev.has(r.uid))){ S.followRequests=next; dirty=true; }
@@ -11052,7 +11326,7 @@ function renderSearchResults(){
       !q||f.name.toLowerCase().includes(q.toLowerCase())||f.state.toLowerCase().includes(q.toLowerCase())
     ));
     if(!container.isConnected) return;
-    const allUsers=[...realUsers.map(u=>({...u,_real:true})),...cachedExtra.map(f=>({...f,uid:f.id,displayName:f.name,_real:true}))];
+    const allUsers=[...realUsers.map(u=>({...u,_real:true})),...cachedExtra.map(f=>({...f,uid:f.id,displayName:f.name,_real:true}))].filter(u=>!isBlocked(u.uid||u.id));
     const suggested=allUsers.filter(u=>!following.includes(u._real?u.uid:u.id));
     const followingList=allUsers.filter(u=>following.includes(u._real?u.uid:u.id));
     let html='';
@@ -11314,6 +11588,7 @@ async function _renderMessagesPage(openConv){
     for(const dm of localDMs){
       if(!knownIds.has(dm.id)){
         const otherUid=dm.members.find(m=>m!=='you'&&m!==AUTH?.uid);
+        if(isBlocked(otherUid)) continue;
         merged.push({id:dm.id,participants:[AUTH?.uid||'you',otherUid||''],lastMessage:'',lastAt:null});
       }
     }
@@ -11368,7 +11643,7 @@ async function _renderMessagesPage(openConv){
   if(firebaseDb&&AUTH){
     const q=firebaseDb.collection('conversations').where('participants','array-contains',AUTH.uid).orderBy('lastAt','desc').limit(50);
     _dmInboxUnsub=q.onSnapshot(
-      snap=>renderInbox(snap.docs.map(d=>({id:d.id,...d.data()}))),
+      snap=>renderInbox(snap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>!(c.participants||[]).some(p=>p!==AUTH?.uid&&isBlocked(p)))),
       err=>{ console.warn('DM inbox listener:',err.code,err.message); renderInbox([],err); }
     );
     // Pull real club previews (lastMessage/lastAt live on the club doc)
@@ -12650,7 +12925,7 @@ function renderAppSettingsSection(){
   else if(_settingsSection==='billing') body.innerHTML=buildSettingsBilling();
   else if(_settingsSection==='security') body.innerHTML=buildSettingsSecurity();
   else if(_settingsSection==='notifications') body.innerHTML=buildSettingsNotifications();
-  else if(_settingsSection==='privacy') body.innerHTML=buildSettingsPrivacy();
+  else if(_settingsSection==='privacy'){ body.innerHTML=buildSettingsPrivacy(); _renderBlockedList(); loadBlocks().then(_renderBlockedList); }
   else if(_settingsSection==='data') body.innerHTML=buildSettingsData();
 }
 
@@ -12996,7 +13271,11 @@ ${[
     <input type="checkbox" id="priv-${r.id}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
   </label>
 </div>`).join('')}
-<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="savePrivacyPrefs()">Save Privacy Settings</button>`;
+<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="savePrivacyPrefs()">Save Privacy Settings</button>
+
+<div class="section-title" style="margin-top:24px">Blocked accounts</div>
+<div style="font-size:11px;color:var(--mut);margin:-4px 0 6px">Blocked people can’t follow you, message you, or comment on or give props to your sessions.</div>
+<div id="blocked-list"></div>`;
 }
 
 function savePrivacyPrefs(){
@@ -13130,6 +13409,7 @@ async function confirmDeleteAccount(){
         await delAll(me.collection('followers'));
         await delAll(me.collection('followRequests'));
         await delAll(me.collection('comments'));
+        await delAll(me.collection('blocks'));
         await delAll(me.collection('props'));
         await del(db.collection('userState').doc(uid));
         await del(db.collection('notify').doc(uid)); // push tokens + reminder profile
