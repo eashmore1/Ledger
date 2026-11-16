@@ -433,7 +433,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 /* ── MODAL ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:500;align-items:center;justify-content:center;padding:var(--sp-4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
-.modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
+.modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) var(--sp-6) 0}
@@ -685,6 +685,9 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-fgrp select,.sess-fgrp input{width:100%;padding:12px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:14px;outline:none;transition:border .15s}
 .sess-fgrp select:focus,.sess-fgrp input:focus{border-color:var(--ora)}
 .sess-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* Date pickers have a wide built-in minimum; without this the date pushed the
+   section picker down to a sliver and spilled past the card on phones. */
+.sess-2col>*{min-width:0}.sess-2col input,.sess-2col select{min-width:0;max-width:100%;box-sizing:border-box}
 .sess-start-btn{width:100%;padding:15px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .sess-start-btn:hover{background:#b03500;transform:translateY(-1px)}
 .sess-exam-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px}
@@ -988,6 +991,23 @@ body.no-app-nav .ledger-bubble,body.no-app-nav .ledger-panel{display:none!import
 .ledger-bubble.in-session{z-index:620}
 .ledger-panel.in-session{z-index:620}
 #upgrade-modal{z-index:700}
+/* Pop-ups built in script (marked --ov:1): centred when they fit, scrollable
+   when they are taller than the screen instead of cut off at the top. */
+[style*="--ov"]>*{margin-top:auto;margin-bottom:auto;flex-shrink:0}
+/* The session pop-up (setup, timer, recap) scrolls when it is taller than the
+   screen instead of being cut off at the top and bottom. */
+.sess-overlay{overflow-y:auto;overscroll-behavior:contain;align-items:flex-start}
+.sess-box{margin:auto 0;flex-shrink:0}
+@media(max-width:640px){
+  /* iPhones zoom into any text box under 16px and stay zoomed, which leaves
+     the page stuck half off the screen. 16px stops that. */
+  input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px!important}
+  .sess-overlay{padding:10px 10px calc(16px + env(safe-area-inset-bottom,0px))}
+  .sess-hdr{padding:18px 18px 0}
+  .sess-body{padding:16px 18px 24px}
+  /* Bottom banners: full width between 12px gutters, above the tab bar. */
+  #study-nudge-banner,#pwa-prompt-banner,#streak-urgency-banner{left:12px!important;right:12px!important;width:auto!important;max-width:none!important;transform:none!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;animation:fadeIn .3s ease both!important}
+}
 /* Phones: a full-screen blur behind every sheet and modal is one of the most
    expensive things a mobile GPU can be asked to do, and it made opening them
    stutter. The dim backdrop alone reads the same on a small screen. */
@@ -8183,7 +8203,7 @@ function _showShareDialog(url){
   if(overlay)overlay.remove();
   overlay=document.createElement('div');
   overlay.id='_share-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px';
   overlay.innerHTML=
     '<div style="background:var(--surf);border-radius:18px;padding:24px;max-width:380px;width:100%;box-shadow:var(--shadow-lg)">' +
       '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Share Session</div>' +
@@ -8392,7 +8412,7 @@ function openActivityDetail(actId){
   document.getElementById('activity-detail-modal')?.remove();
   const el=document.createElement('div');
   el.id='activity-detail-modal';
-  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .15s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:22px;width:100%;max-width:520px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3);max-height:90vh;display:flex;flex-direction:column">
   <div style="height:5px;background:${ex.color};flex-shrink:0"></div>
@@ -8485,7 +8505,7 @@ function openEditActivityModal(actId){
   document.getElementById('activity-detail-modal')?.remove();
   const el=document.createElement('div');
   el.id='activity-detail-modal';
-  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .15s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:22px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3);max-height:90vh;display:flex;flex-direction:column">
   <div style="height:5px;background:${ex.color};flex-shrink:0"></div>
@@ -9895,7 +9915,7 @@ function openProfileActivity(cardEl){
 async function openUserFollowList(uid, type, name){
   // Show followers or following list for a given user
   const el=document.createElement('div');
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2200;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2200;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .2s ease';
   el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:400px;max-height:70vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--bdr);flex-shrink:0">
       <div style="font-size:15px;font-weight:800">${name}'s ${type==='followers'?'Followers':'Following'}</div>
@@ -13951,7 +13971,7 @@ function openQBSection(code) {
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'qb-section-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:650;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:650;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) closeQBSection(); });
     document.body.appendChild(overlay);
   }
@@ -17035,7 +17055,7 @@ function openPlanDayDetail(dateStr){
   document.getElementById('plan-day-modal')?.remove();
   const el=document.createElement('div');
   el.id='plan-day-modal';
-  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease';
+  el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .15s ease';
   el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3)">
     <div style="height:5px;background:${ex.color}"></div>
     <div style="padding:20px">
@@ -17503,7 +17523,7 @@ function showShareModal(milestoneId){
 
   const overlay=document.createElement('div');
   overlay.id='share-card-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:2000;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .2s ease';
   overlay.innerHTML=`
 <div style="background:var(--surf);border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--shadow-lg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -17604,7 +17624,7 @@ function openInAppReviewModal(){
   document.getElementById('review-modal')?.remove();
   const el=document.createElement('div');
   el.id='review-modal';
-  el.style.cssText='position:fixed;inset:0;z-index:2100;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .18s ease';
+  el.style.cssText='position:fixed;inset:0;z-index:2100;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .18s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:20px;width:100%;max-width:480px;padding:28px 28px 24px;box-shadow:0 24px 80px rgba(0,0,0,.25);position:relative">
   <button onclick="closeReviewModal()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:18px;color:var(--sub);display:flex;align-items:center;justify-content:center;line-height:1">×</button>
@@ -17692,7 +17712,7 @@ function checkTrialUrgency(){
 
   const overlay=document.createElement('div');
   overlay.id='trial-urgency-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2000;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .2s ease';
   overlay.innerHTML=`
 <div style="background:var(--surf);border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:var(--shadow-lg)">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -17747,7 +17767,7 @@ function openLogResultModal(prefSection){
   if(el)el.remove();
   el=document.createElement('div');
   el.id='log-result-modal';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .2s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:var(--shadow-lg)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
@@ -17870,7 +17890,7 @@ function showPassCelebration(section,score,hours){
   if(el)el.remove();
   el=document.createElement('div');
   el.id='pass-celebration-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   // Determine which SHARE_MILESTONES key applies
   const passedCount=(S.sectionPassed||[]).length;
   const milestoneId=passedCount>=4?'all_pass':passedCount===3?'three_sections':passedCount===2?'two_sections':'section_pass';
@@ -17951,7 +17971,7 @@ function showMilestoneShareCard(milestoneId){
   if(typeof confetti==='function'){confetti({particleCount:90,spread:80,origin:{y:0.5},colors:[cfg.accent,'#ffffff',cfg.accent+'99']});}
   let el=document.getElementById('milestone-card-overlay'); if(el)el.remove();
   el=document.createElement('div'); el.id='milestone-card-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);animation:modalIn .4s cubic-bezier(.22,.61,.36,1);max-height:90vh;overflow-y:auto">'+
     '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:'+cfg.accent+';margin-bottom:4px">'+cfg.label+'</div><div style="font-size:25px;font-weight:900;letter-spacing:-.03em">'+cfg.headline+'</div><div style="font-size:13px;color:var(--mut);margin-top:4px">'+cfg.sub+'</div></div>'+
     '<div style="margin-bottom:16px"><canvas id="milestone-card-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
@@ -17987,7 +18007,7 @@ async function showCohortDigestCard(){
   const liUrl='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://ledgercpa.app')+'&summary='+encodeURIComponent(shareText);
   let el=document.getElementById('cohort-digest-overlay'); if(el)el.remove();
   el=document.createElement('div'); el.id='cohort-digest-overlay';
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);max-height:90vh;overflow-y:auto">'+
     '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;margin-bottom:4px">Cohort Weekly</div><div style="font-size:22px;font-weight:900;letter-spacing:-.03em">'+esc(stats.firmName)+'</div></div>'+
     '<div style="margin-bottom:16px"><canvas id="cohort-digest-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
@@ -18054,7 +18074,7 @@ function showStreakMilestone(days){
   };
   const cfg=configs[days]||{label:`${days}-day streak.`,sub:'Keep going.'};
   const el=document.createElement('div');
-  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML=`
 <div style="background:var(--surf);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.3);animation:modalIn .4s cubic-bezier(.22,.61,.36,1)">
   <div style="font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:16px">Study Streak</div>
