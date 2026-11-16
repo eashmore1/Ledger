@@ -240,6 +240,30 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
   .hero-btns a{width:100%;max-width:280px;text-align:center}
   .features-grid .feat-card{padding:var(--sp-3)}
 }
+
+/* ── MEET LEDGER (the character) ── */
+.hero-buddy{line-height:0;margin-bottom:var(--sp-2);min-height:138px}
+.meet{padding:var(--sp-12) var(--sp-4);background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.meet::before{content:'';position:absolute;left:-120px;bottom:-160px;width:420px;height:420px;border-radius:50%;background:var(--ora);opacity:.12;pointer-events:none}
+.meet-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:var(--sp-8);align-items:center;position:relative}
+.meet-figure{text-align:center;line-height:0}
+.meet-figure svg{width:100%;max-width:260px;height:auto}
+.meet-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ora-lt);margin-bottom:var(--sp-2)}
+.meet-h2{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:600;line-height:1.08;letter-spacing:-.01em;margin-bottom:var(--sp-2);text-wrap:balance}
+.meet-sub{font-size:17px;line-height:1.65;color:rgba(255,255,255,.72);max-width:520px;margin-bottom:var(--sp-4)}
+.meet-list{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2)}
+.meet-item{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:14px 16px}
+.meet-item-fig{flex:none;line-height:0}
+.meet-item-t{font-size:14px;font-weight:700;margin-bottom:2px}
+.meet-item-d{font-size:13px;line-height:1.5;color:rgba(255,255,255,.66)}
+.cta-buddy{line-height:0;margin-bottom:var(--sp-2)}
+@media(max-width:820px){
+  .meet{padding:var(--sp-8) var(--sp-3)}
+  .meet-inner{grid-template-columns:1fr;gap:var(--sp-4);text-align:center}
+  .meet-figure svg{max-width:170px}
+  .meet-sub{margin-left:auto;margin-right:auto}
+  .meet-list{grid-template-columns:1fr;text-align:left}
+}
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
@@ -288,6 +312,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
     <line x1="240" y1="0" x2="240" y2="800" stroke="white" stroke-width="1"/>
   </svg>
   <div class="hero-inner">
+    <div class="hero-buddy" data-buddy="wave" data-size="132" data-label="Ledger, the study coach, waving"></div>
     <div class="hero-chip">
       <svg width="12" height="12" viewBox="0 0 180 180"><rect width="180" height="180" rx="40" fill="#d44000"/><rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/><rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/></svg>
       Study Tracking Built for CPA Candidates
@@ -420,6 +445,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
   </div>
 </section>
 
+<!-- MEET LEDGER -->
+<section class="meet" id="meet-ledger">
+  <div class="meet-inner">
+    <div class="meet-figure" data-buddy="point" data-size="260" data-label="Ledger, a small orange ledger book with a face, arms and legs"></div>
+    <div>
+      <p class="meet-label">Meet Ledger</p>
+      <h2 class="meet-h2">The study buddy who keeps the books on your prep.</h2>
+      <p class="meet-sub">Ledger is the little ledger book who lives in the app. He knows your hours, your exam dates and your streak, and he shows up when it counts.</p>
+      <div class="meet-list">
+        <div class="meet-item"><div class="meet-item-fig" data-buddy="wave" data-size="56"></div><div><div class="meet-item-t">Tells you what today needs</div><div class="meet-item-d">One clear target every morning, based on your exam date.</div></div></div>
+        <div class="meet-item"><div class="meet-item-fig" data-buddy="think" data-size="56"></div><div><div class="meet-item-t">Answers your CPA questions</div><div class="meet-item-d">Ask him anything, with your study history in mind. Pro.</div></div></div>
+        <div class="meet-item"><div class="meet-item-fig" data-buddy="worry" data-size="56"></div><div><div class="meet-item-t">Watches your streak</div><div class="meet-item-d">A nudge in the evening if today is still empty.</div></div></div>
+        <div class="meet-item"><div class="meet-item-fig" data-buddy="cheer" data-size="56"></div><div><div class="meet-item-t">Celebrates the wins</div><div class="meet-item-d">Every session logged, every section passed.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="how">
   <div class="how-inner">
@@ -477,6 +520,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 <!-- CTA -->
 <section class="cta-section">
   <div class="cta-inner">
+    <div class="cta-buddy" data-buddy="cheer" data-size="112"></div>
     <h2 class="cta-h2">Your CPA isn't<br><em>going to pass itself.</em></h2>
     <p class="cta-sub">Free to start. No credit card. Takes two minutes to set up and every session you log is a step closer to your license.</p>
     <a href="/" class="btn-cta">Start Tracking Free →</a>
@@ -583,6 +627,14 @@ if(window.matchMedia('(prefers-reduced-motion: no-preference)').matches){
     banner.style.display = 'none';
   };
 })();
+</script>
+<script src="/mascot.js?v=1"></script>
+<script>
+// Draw Ledger wherever the page asks for him.
+document.querySelectorAll('[data-buddy]').forEach(function(el){
+  if(!window.LedgerBuddy) return;
+  el.innerHTML = LedgerBuddy(el.getAttribute('data-buddy'), +el.getAttribute('data-size') || 96, { label: el.getAttribute('data-label') || '' });
+});
 </script>
 </body>
 </html>

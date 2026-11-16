@@ -49,7 +49,7 @@ test('guided first-run tour', async (t) => {
     await a.waitForSelector('#onb-card');
 
     // Walk the Today section (the screen a new account lands on).
-    for (const title of ["Hi, I'm Ask Ledger", 'Start here every day', 'Your crew today', 'Study rooms', 'Your exam journey']) {
+    for (const title of ["Hi, I'm Ledger", 'Start here every day', 'Your crew today', 'Study rooms', 'Your exam journey']) {
       assert.equal((await state(a)).title, title);
       await a.click('.onb-next');
     }

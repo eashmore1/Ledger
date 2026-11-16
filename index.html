@@ -186,7 +186,9 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .today-hero{display:flex;align-items:center;gap:24px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#2a1d5c 100%);color:#fff;border-radius:var(--r-lg);padding:28px 30px;margin-bottom:16px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
 .today-hero::after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:var(--sec,#d44000);opacity:.16;pointer-events:none}
 .today-hero-txt{flex:1;min-width:0;position:relative;z-index:1}
-.today-hero-ring{flex-shrink:0;text-align:center;position:relative;z-index:1}
+.today-hero-ring{flex-shrink:0;text-align:center;position:relative;z-index:1;display:flex;align-items:flex-end;gap:10px}
+.today-ring-col{text-align:center}
+.today-buddy{line-height:0;margin-bottom:22px}
 .today-ring circle{transition:stroke-dashoffset .8s cubic-bezier(.22,.61,.36,1)}
 .today-ring-lbl{margin-top:6px}
 .today-eyebrow{font-size:12px;font-weight:600;color:rgba(255,255,255,.62);letter-spacing:.01em}
@@ -230,7 +232,10 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 @media(max-width:960px){.today-wrap{grid-template-columns:1fr;max-width:640px}}
 @media(max-width:640px){
   .today-hero{flex-direction:column-reverse;align-items:flex-start;padding:22px 20px;gap:14px}
-  .today-hero-ring{display:flex;align-items:center;gap:12px}
+  .today-hero-ring{display:flex;align-items:center;gap:12px;width:100%}
+  .today-ring-col{display:flex;align-items:center;gap:12px}
+  .today-buddy{order:2;margin:0 0 0 auto}
+  .today-buddy svg{width:70px;height:auto}
   .today-ring{width:92px;height:92px}
   .today-ring-lbl{margin-top:0}
   .today-head{font-size:25px}
@@ -944,7 +949,6 @@ body.no-app-nav .session-fab{display:none!important}
 /* ── ASK LEDGER FLOATING ASSISTANT ── */
 .ledger-bubble{position:fixed;right:22px;bottom:22px;z-index:210;width:62px;height:62px;border-radius:20px;border:1px solid var(--bdr);cursor:pointer;background:linear-gradient(160deg,var(--surf),var(--surf2));box-shadow:0 10px 30px -8px rgba(91,95,207,.4),0 2px 8px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;padding:0;opacity:.94;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,opacity .2s;-webkit-tap-highlight-color:transparent}
 .ledger-bubble:hover{transform:translateY(-3px) scale(1.05);opacity:1;box-shadow:0 16px 40px -8px rgba(124,58,237,.5),0 3px 10px rgba(0,0,0,.18)}
-.ledger-bubble:hover .lb-smile{d:path('M25 39 Q32 45.5 39 39')}
 .ledger-bubble:active{transform:scale(.93)}
 .ledger-bubble .lb-live{display:none}
 .ledger-bubble.in-session .lb-live{display:block;position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:2px solid var(--surf);z-index:2}
@@ -962,7 +966,7 @@ body.no-app-nav .session-fab{display:none!important}
 .ledger-panel{position:fixed;right:22px;bottom:96px;z-index:210;width:368px;max-width:calc(100vw - 32px);height:530px;max-height:calc(100vh - 150px);background:var(--surf);border:1px solid var(--bdr);border-radius:18px;box-shadow:0 24px 64px -12px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.16);display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right}
 .ledger-panel.open{display:flex;animation:lb-pop .26s cubic-bezier(.34,1.4,.5,1)}
 @keyframes lb-pop{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
-.lb-hd{display:flex;align-items:center;gap:10px;padding:13px 14px;background:linear-gradient(135deg,var(--ind),var(--pur));color:#fff;flex-shrink:0}
+.lb-hd{display:flex;align-items:center;gap:10px;padding:13px 14px;background:linear-gradient(135deg,var(--navy),#2a1d5c);color:#fff;flex-shrink:0}
 .lb-hd-ava{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .lb-hd-x{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .15s}
 .lb-hd-x:hover{background:rgba(255,255,255,.32)}
@@ -1135,6 +1139,7 @@ html,body{overflow-x:hidden}
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="/icons.js?v=2"></script>
+<script src="/mascot.js?v=1"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -1554,7 +1559,7 @@ function cancel2FALogin(){
 // Fires the first time a new user opens each tab. Replayable from Settings.
 // ═══════════════════════════════════════════════
 const ONB_INTRO = {
-  t: "Hi, I'm Ask Ledger",
+  t: "Hi, I'm Ledger",
   b: "I'm your study guide. I'll walk you through each part of Ledger one section at a time, highlighting what to look at and where to click next. You can hit <strong>Skip tour</strong> anytime, and replay it later from <strong>Settings → Data → Restart Tutorial</strong>.",
   intro: true,
 };
@@ -1647,12 +1652,12 @@ const ONBOARD_GUIDE = {
     { t:'It adapts as you go', b:"As you log sessions, your plan adjusts automatically. If you fall behind, Ledger shows you exactly how many hours per day you need to catch back up before exam day." },
   ]},
   studylab: { label:'Study Lab', steps:[
-    { t:'The Study Lab', b:"This is your practice hub, with three areas: a Question Bank of practice multiple-choice questions, AI Study Tools, and Ask Ledger — that's me." },
+    { t:'The Study Lab', b:"This is your practice hub, with three areas: a Question Bank of practice multiple-choice questions, AI Study Tools, and a chat with me." },
     { t:'Question Bank', b:"Work through practice multiple-choice questions with a full explanation for every answer choice. These are original practice questions written to mirror exam style — not actual AICPA exam content.",
       target:"[onclick=\"openStudyLabTab('qbank')\"]" },
     { t:'AI Study Tools', b:"Generate custom flashcards and quizzes on any CPA topic in seconds. It's the fastest way to drill a weak spot without hunting for materials.",
       target:"[onclick=\"openStudyLabTab('tools')\"]" },
-    { t:'Ask Ledger — that’s me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes.",
+    { t:'Chat with me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes.",
       target:"[onclick=\"openStudyLabTab('coach')\"]" },
   ]},
   explore: { label:'Explore', steps:[
@@ -1787,7 +1792,7 @@ function _renderOnbCard(){
     '<div class="onb-head">'+
       '<div class="onb-avatar">'+_ledgerMascotSVG(34)+'</div>'+
       '<div style="flex:1;min-width:0">'+
-        '<div class="onb-name">Ask Ledger</div>'+
+        '<div class="onb-name">Ledger</div>'+
         '<div class="onb-sub">'+step.sub+'</div>'+
       '</div>'+
       '<button class="onb-x" onclick="onbSkipAll()" title="Skip tutorial" aria-label="Skip tutorial">✕</button>'+
@@ -2962,7 +2967,7 @@ const PRO_FEATURES={
   exportData:       {label:'Export Your Data',icon:'upload',desc:'Download all your sessions, scores, and progress as a JSON file at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'target',desc:'Set custom per-section weekly hour goals with smart reminders.'},
   // Formerly the Elite tier — all included in Pro as of 2026-11-02
-  aiStudyCoach:     {label:'Ask Ledger',icon:'bot',desc:'AI coach that adapts to your pace, flags weak spots, and builds your daily study focus. 100 answers per month.'},
+  aiStudyCoach:     {label:'Ledger AI coach',icon:'chat',desc:'AI coach that adapts to your pace, flags weak spots, and builds your daily study focus. 100 answers per month.'},
   advancedAnalytics:{label:'Advanced Analytics',icon:'barChart',desc:'Deep-dive heatmaps, topic-level breakdowns, time-of-day analysis, and year-view activity.'},
   studySchedule:    {label:'AI Study Plan',icon:'calendar',desc:'Day-by-day personalized calendar built around your exam date, study hours, and style.'},
   partnerSync:      {label:'Study Partner Pairing',icon:'handshake',desc:'Link with a study partner and see each other\'s weekly hours side-by-side.'},
@@ -3015,7 +3020,7 @@ function openLegalModal(type){
     <ul>
       <li><strong>Google Firebase</strong> (Google LLC) — authentication, database, and hosting. Data stored on US-based servers (us-central1 region). Google's privacy policy applies: policies.google.com/privacy.</li>
       <li><strong>Stripe, Inc.</strong> — payment processing for Ledger Pro subscriptions. Ledger does not store your credit card details. Stripe's privacy policy applies: stripe.com/privacy.</li>
-      <li><strong>Anthropic, PBC</strong> — powers the "Ask Ledger" AI coach feature. Study questions you submit may be processed by Anthropic's API. Anthropic's privacy policy applies: anthropic.com/privacy.</li>
+      <li><strong>Anthropic, PBC</strong> — powers Ledger, the AI coach. Study questions you submit may be processed by Anthropic's API. Anthropic's privacy policy applies: anthropic.com/privacy.</li>
     </ul>
     <h4>Cookies & Analytics</h4>
     <p>We use the following types of cookies and tracking technologies:</p>
@@ -3103,12 +3108,12 @@ function renderUpgradeModal(featureHint){
     {on:false,text:'Streak Shield'},
     {on:false,text:'Exam Day Protocol'},
     {on:false,text:'AI Study Plan'},
-    {on:false,text:'Ask Ledger'},
+    {on:false,text:'Ledger AI coach'},
   ];
   const pro=[
     {on:true,text:'Everything in Free'},
     {on:true,text:'Unlimited AI Question Bank — every section, no daily cap'},
-    {on:true,text:'Ask Ledger (AI Coach) — 100 answers/month'},
+    {on:true,text:'Ledger, your AI coach — 100 answers/month'},
     {on:true,text:'AI Study Plan — day-by-day calendar'},
     {on:true,text:'Advanced Analytics + Year-View Heatmap'},
     {on:true,text:'Custom Topic Generator — drill any topic on demand'},
@@ -3146,7 +3151,7 @@ function renderUpgradeModal(featureHint){
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
     '<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fff">'+ico('flame')+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">Daily streaks</div></div>' +
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
-    '<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fff">'+ico('bot')+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">AI study coach</div></div>' +
+    '<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fff;line-height:1">'+LedgerBuddy.face(26,{still:true})+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">AI study coach</div></div>' +
     '<div style="width:1px;background:rgba(255,255,255,.12)"></div>' +
     '<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fff">'+ico('users')+'</div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em">Study clubs</div></div>' +
   '</div>'+
@@ -3333,7 +3338,7 @@ function showPostOnboardingOffer(){
   '<div style="font-size:10px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Pro</div>'+
   '<div style="font-size:26px;font-weight:900;color:var(--ora);line-height:1;margin-bottom:2px">$14</div>'+
   '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month · or $132/yr</div>'+
-  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Unlimited AI question bank<br>Ask Ledger AI coach (100/mo)<br>AI Study Plan + analytics<br>Exam Day Protocol<br>Study partner pairing</div>'+
+  '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Unlimited AI question bank<br>Ledger AI coach (100/mo)<br>AI Study Plan + analytics<br>Exam Day Protocol<br>Study partner pairing</div>'+
   '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Start 7-Day Free Trial →</button>'+
   '</div>'+
   '</div>'+
@@ -4928,6 +4933,8 @@ function _todayHero(sec,tgt,done){
     sub=esc(tgt.why)+(stage.k==='scheduled'&&stage.days===1?' · Exam tomorrow: light review, then sleep.':'');
     cta=startBtn(logged?'Start another session':'Start Session')+pastBtn;
   }
+  const hr=new Date().getHours();
+  const buddyPose=stage.k==='examday'?'cheer':active?'idle':(tgt.rest&&!logged)?'sleep':(tgt.hours>0&&done>=tgt.hours)?'cheer':!(S.activities||[]).some(_isStudyAct)?'wave':(streak>0&&!logged&&hr>=18)?'worry':logged?'idle':'point';
   const streakChip=streak>0
     ?`<span class="today-chip${logged?' ok':' warn'}">${ico('flame')} ${streak}-day streak · ${logged?'safe for today':'log today to keep it'}</span>`
     :`<span class="today-chip">${logged?'Streak started today':'Study today to start a streak'}</span>`;
@@ -4939,7 +4946,7 @@ function _todayHero(sec,tgt,done){
       <div class="today-cta-row">${cta}</div>
       <div style="margin-top:14px">${streakChip}</div>
     </div>
-    <div class="today-hero-ring">${ring}<div class="today-ring-lbl"><span class="badge badge-${tgt.section}" style="background:rgba(255,255,255,.14);color:#fff">${tgt.section}</span></div></div>
+    <div class="today-hero-ring"><div class="today-buddy" id="today-buddy" data-pose="${buddyPose}">${LedgerBuddy(buddyPose,92)}</div><div class="today-ring-col">${ring}<div class="today-ring-lbl"><span class="badge badge-${tgt.section}" style="background:rgba(255,255,255,.14);color:#fff">${tgt.section}</span></div></div></div>
   </div>`;
 }
 
@@ -6149,7 +6156,7 @@ function buildFeed(){
   const feedCenter = _friendsPending ?
     _crewCard+_feedSkeleton :
     (allActivities.length===0 ?
-      `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">${ico('book')}</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">Start First Session</button></div></div>` :
+      `${_crewCard}<div class="empty-state card card-pad"><div class="empty-icon">${LedgerBuddy('wave',104)}</div><div class="empty-msg">No sessions yet — log your first study session to get started!<br><br><button class="btn btn-primary" onclick="openSessionModal()">Start First Session</button></div></div>` :
       _crewCard+actCards.join(''));
 
   return`<div class="feed-layout">${leftSidebar}<div class="feed-center">${feedCenter}</div>${rightSidebar}</div>`;
@@ -6224,7 +6231,7 @@ async function _loadCohortCardStats(){
   if(n<=1){
     // Founding-member seeding state — the captain's most important moment.
     slot.innerHTML='<div style="background:linear-gradient(135deg,#1a1430,#241a3d);border:1px solid var(--ind-bdr);border-radius:12px;padding:14px 15px;margin-bottom:8px">'+
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px">'+ico('sprout')+'</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px;color:#6ee7b7">'+ico('sprout')+'</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
       '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.55">Ledger comes alive when your crew is in it. Share your invite link below to bring '+esc(S.firmName||'your cohort')+' to life — you\'ll see each other study live, keep a group streak, and stay accountable through the exam grind.</div>'+
       '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="shareInvite()">Text my invite</button>'+
     '</div>';
@@ -7021,7 +7028,7 @@ function openStrugglingModal(){
         <span style="font-size:18px">${ico('users')}</span> See who else is grinding right now
       </button>
       <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)">
-        <span style="font-size:18px">${ico('bot')}</span> Ask Ledger for a personalized game plan
+        <span style="font-size:18px;line-height:1">${LedgerBuddy.face(22,{still:true})}</span> Ask Ledger for a personalized game plan
       </button>
       <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();openSupportModal()">
         <span style="font-size:18px">${ico('chat')}</span> Talk to support — we actually read these
@@ -7944,7 +7951,7 @@ function openSessionLoggedModal(act, priorReadiness){
 
   document.getElementById('slm-body').innerHTML=`
 <div style="text-align:center;margin-bottom:20px">
-  <div style="font-size:40px;margin-bottom:8px">${ico('checkCircle')}</div>
+  <div style="margin-bottom:6px">${LedgerBuddy('cheer',96)}</div>
   <div style="font-size:18px;font-weight:800;color:var(--txt)">Session logged!</div>
   <div style="font-size:13px;color:var(--mut);margin-top:4px">${act.hours}h of ${LedgerIcon(ex.icon)} ${ex.full} · ${streak} day streak</div>
 </div>
@@ -12532,7 +12539,7 @@ ${isFreePlan?`
 <div class="section-title">All Plans</div>
 ${[
   {name:'Free',price:'$0',desc:'Timer, feed, 1 club, basic achievements, limited MCQ',active:isFreePlan,color:'var(--mut)',action:isFreePlan?null:'downgrade'},
-  {name:'Pro',price:'$14/mo',desc:'Everything: unlimited AI question bank, Ask Ledger (100 answers/mo), AI Study Plan, advanced analytics, exam protocol, study partner, unlimited clubs and shields, data export. $132/yr billed annually.',active:SUB.tier==='pro'||SUB.tier==='elite'||isOnTrial(),color:'var(--ora)',action:(SUB.tier==='pro'||SUB.tier==='elite')?null:'upgrade_pro'},
+  {name:'Pro',price:'$14/mo',desc:'Everything: unlimited AI question bank, Ledger AI coach (100 answers/mo), AI Study Plan, advanced analytics, exam protocol, study partner, unlimited clubs and shields, data export. $132/yr billed annually.',active:SUB.tier==='pro'||SUB.tier==='elite'||isOnTrial(),color:'var(--ora)',action:(SUB.tier==='pro'||SUB.tier==='elite')?null:'upgrade_pro'},
   {name:'6-Month Exam Window Pass','price':'$75 once',desc:'Six months of everything in Pro, paid once — no subscription, no auto-renew',active:SUB.tier==='cram',color:'var(--ind)',action:SUB.tier==='cram'?null:'upgrade_cram'},
 ].map(p=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+(p.active?p.color+'14':'var(--surf2)')+';border:1.5px solid '+(p.active?p.color:'var(--bdr)')+';border-radius:10px;margin-bottom:8px">'+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(p.active?p.color:'var(--txt)')+'">'+p.name+'<span style="font-size:11px;color:var(--mut);font-weight:500;margin-left:8px">'+p.price+'</span></div><div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div></div>'+(p.active?'<span style="font-size:10px;font-weight:800;color:'+p.color+'">✓ CURRENT</span>':'<button class="btn btn-ghost btn-xs" onclick="closeAppSettings();openUpgradeModal(null)">View</button>')+'</div>').join('')}
 
@@ -12836,7 +12843,7 @@ function buildSettingsData(){
   <span style="display:flex;flex-shrink:0">${_ledgerMascotSVG(22)}</span>
   <div style="text-align:left">
     <div style="font-size:13px;font-weight:700;color:var(--txt)">Restart Tutorial</div>
-    <div style="font-size:11px;color:var(--mut)">Have Ask Ledger walk you through each section again</div>
+    <div style="font-size:11px;color:var(--mut)">Have Ledger walk you through each section again</div>
   </div>
 </button>
 <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px">
@@ -13591,7 +13598,7 @@ function _showAIQbLoading(section, topic){
   overlay.style.display = 'block';
   const safeTopic = (topic||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   overlay.innerHTML = '<div style="max-width:520px;margin:90px auto;text-align:center;padding:0 20px">'
-    + '<div style="font-size:60px;margin-bottom:22px;display:inline-block;animation:spin 1.4s linear infinite">✦</div>'
+    + '<div style="margin-bottom:18px">'+LedgerBuddy('think',120)+'</div>'
     + '<div style="font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Writing fresh ' + section + ' questions…</div>'
     + '<div style="font-size:13px;color:var(--sub);line-height:1.6">' + (safeTopic ? ('Topic: ' + safeTopic) : 'Building a brand-new practice set just for you') + '</div>'
     + '</div>';
@@ -13626,7 +13633,7 @@ function _showQuizLoading(section){
   let overlay=document.getElementById('quiz-overlay');
   if(!overlay){ overlay=document.createElement('div'); overlay.id='quiz-overlay'; overlay.style.cssText='position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;animation:fadeIn .2s ease'; document.body.appendChild(overlay); }
   overlay.style.display='block';
-  overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="font-size:56px;margin-bottom:20px;display:inline-block;animation:spin 1.4s linear infinite">'+ico('book')+'</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
+  overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="margin-bottom:16px">'+LedgerBuddy('think',120)+'</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
 }
 
 async function openQuizModal(section, type) {
@@ -13949,7 +13956,7 @@ function openQBSection(code) {
     // Modes (scrolls within the modal so it never spans the full screen)
     '<div style="padding:18px 22px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch">' +
       '<div style="display:flex;align-items:flex-start;gap:8px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.2);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--sub);line-height:1.5;margin-bottom:16px">' +
-        '<span style="flex-shrink:0">'+ico('bot')+'</span>' +
+        '<span style="flex-shrink:0">'+LedgerBuddy.face(20,{still:true})+'</span>' +
         '<span><strong style="color:var(--ind)">AI-generated questions.</strong> A study aid that may contain errors — always verify against your review course (Becker, Gleim, Roger, Wiley) before your exam.</span>' +
       '</div>' +
       '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:12px">Choose a practice mode</div>' +
@@ -14196,7 +14203,7 @@ function renderProgressReport() {
       '<div class="card card-pad" id="pr-ai-advice-card">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
           '<div style="display:flex;align-items:center;gap:8px">' +
-            '<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:14px">'+ico('bot')+'</div>' +
+            '<div style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center">'+LedgerBuddy.face(28,{still:true})+'</div>' +
             '<div class="section-title" style="margin:0">AI Study Advice</div>' +
           '</div>' +
           '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>Powered by Claude</div>' +
@@ -14437,14 +14444,14 @@ ${ctx}`;
 function buildAIStudyCoach() {
   if (!isElite()) {
     return '<div class="card card-pad pro-lock-wrap" style="margin-bottom:16px">' +
-      '<div class="section-title">Ask Ledger</div>' +
+      '<div class="section-title">Ledger</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.3;pointer-events:none;user-select:none">' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Today\'s Focus</div><div style="font-size:11px;color:var(--mut)">FAR — Gov. Accounting<br>Rec: 2.5 hrs today</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Weak Spot Alert</div><div style="font-size:11px;color:var(--mut)">Behind on REG by 12h<br>Need 2.5h/day to catch up</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Pass Probability</div><div style="font-size:22px;font-weight:900;color:var(--grn)">67%</div></div>' +
         '<div style="background:var(--surf2);border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Next Milestone</div><div style="font-size:11px;color:var(--mut)">50h → Dedicated badge<br>Almost there!</div></div>' +
       '</div>' +
-      eliteLockHTML('Ask Ledger', 'Unlock Pro') +
+      eliteLockHTML('Ledger AI coach', 'Unlock Pro') +
     '</div>';
   }
 
@@ -14518,7 +14525,7 @@ function buildAIStudyCoach() {
   return '<div class="card card-pad" style="margin-bottom:16px">' +
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
       '<div style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center">' + _ledgerMascotSVG(44) + '</div>' +
-      '<div><div style="font-size:15px;font-weight:800">Ask Ledger</div>' +
+      '<div><div style="font-size:15px;font-weight:800">Ledger</div>' +
       '<div style="font-size:11px;color:var(--mut)">Personalized insights based on your data</div></div>' +
     '</div>' +
     '<div style="background:var(--amb-bg);border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:11px;color:var(--sub);margin-bottom:14px">' +
@@ -14562,7 +14569,7 @@ function buildAIStudyCoach() {
 
     '<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
-        '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Ask Ledger</div>' +
+        '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Ledger</div>' +
         '<div style="display:flex;align-items:center;gap:10px">' +
           '<span id="ask-ledger-usage-count" style="font-size:10px;color:var(--mut)">— prompts left this month</span>' +
           '<div style="font-size:10px;font-weight:700;color:var(--grn);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);display:inline-block"></span>AI powered</div>' +
@@ -14734,30 +14741,9 @@ function sendCoachMessage() {
 // ═══════════════════════════════════════════════
 // ASK LEDGER — FLOATING ASSISTANT (animated mascot + popup chat)
 // ═══════════════════════════════════════════════
-// "Ledger" the mascot: a friendly, non-human helper — smart (idea spark) + kind (soft eyes, smile).
+// "Ledger" the character lives in /mascot.js (LedgerBuddy). This is his head-and-shoulders avatar.
 function _ledgerMascotSVG(size){
-  size = size || 40;
-  return '<svg class="lb-face" viewBox="0 0 64 64" width="'+size+'" height="'+size+'" aria-hidden="true">'+
-    '<defs>'+
-      '<linearGradient id="lbBody" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#8b8ff2"/><stop offset="1" stop-color="#8b34e0"/></linearGradient>'+
-      '<radialGradient id="lbSpark" cx="0.5" cy="0.4" r="0.6"><stop offset="0" stop-color="#fff"/><stop offset="0.45" stop-color="#ffe9a8"/><stop offset="1" stop-color="#f5b73a"/></radialGradient>'+
-    '</defs>'+
-    '<line class="lb-stalk" x1="32" y1="16" x2="32" y2="9" stroke="#b9bdf7" stroke-width="3" stroke-linecap="round"/>'+
-    '<circle class="lb-spark" cx="32" cy="7" r="3.2" fill="url(#lbSpark)"/>'+
-    '<rect x="11" y="16" width="42" height="37" rx="18" fill="url(#lbBody)"/>'+
-    '<ellipse cx="32" cy="24" rx="16" ry="8" fill="#fff" opacity="0.13"/>'+
-    '<g class="lb-eyes">'+
-      '<circle cx="25" cy="33" r="5.3" fill="#fff"/>'+
-      '<circle class="lb-pupil" cx="25.5" cy="33.6" r="2.6" fill="#3a3470"/>'+
-      '<circle cx="23.4" cy="31.4" r="1.6" fill="#fff"/>'+
-      '<circle cx="39" cy="33" r="5.3" fill="#fff"/>'+
-      '<circle class="lb-pupil" cx="39.5" cy="33.6" r="2.6" fill="#3a3470"/>'+
-      '<circle cx="37.4" cy="31.4" r="1.6" fill="#fff"/>'+
-    '</g>'+
-    '<path class="lb-smile" d="M25.5 41.5 Q32 46.5 38.5 41.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity="0.95"/>'+
-    '<circle cx="18.5" cy="40" r="2.3" fill="#ff9bb0" opacity="0.4"/>'+
-    '<circle cx="45.5" cy="40" r="2.3" fill="#ff9bb0" opacity="0.4"/>'+
-  '</svg>';
+  return LedgerBuddy.face(size||40);
 }
 
 function injectAskBubble(){
@@ -14765,8 +14751,8 @@ function injectAskBubble(){
   const btn=document.createElement('button');
   btn.id='ask-bubble';
   btn.className='ledger-bubble';
-  btn.title='Ask Ledger';
-  btn.setAttribute('aria-label','Ask Ledger — your CPA study coach');
+  btn.title='Ledger';
+  btn.setAttribute('aria-label','Ledger — your CPA study coach');
   btn.innerHTML='<span class="lb-live"></span>'+_ledgerMascotSVG(40);
   btn.addEventListener('click',toggleAskBubble);
   document.body.appendChild(btn);
@@ -14777,7 +14763,7 @@ function injectAskBubble(){
   panel.innerHTML=
     '<div class="lb-hd">'+
       '<div class="lb-hd-ava">'+_ledgerMascotSVG(30)+'</div>'+
-      '<div style="min-width:0"><div style="font-size:14px;font-weight:800;line-height:1.2">Ask Ledger</div>'+
+      '<div style="min-width:0"><div style="font-size:14px;font-weight:800;line-height:1.2">Ledger</div>'+
         '<div id="lb-subtitle" style="font-size:11px;opacity:.85;line-height:1.3">Your CPA study coach</div></div>'+
       '<button class="lb-hd-x" onclick="toggleAskBubble()" aria-label="Close">×</button>'+
     '</div>'+
@@ -14798,7 +14784,7 @@ function toggleAskBubble(){
   if(!panel)return;
   if(panel.classList.contains('open')){ panel.classList.remove('open'); return; }
   // Free users: Ask Ledger is a Pro feature — show the upgrade prompt instead of opening.
-  if(!isElite()){ openUpgradeModal('Ask Ledger'); return; }
+  if(!isElite()){ openUpgradeModal('Ledger AI coach'); return; }
   panel.classList.add('open');
   updateAskBubbleSession();
   renderBubbleChat();
@@ -14836,7 +14822,7 @@ function renderBubbleChat(){
   if(!el)return;
   if(!window._coachChat)window._coachChat=[];
   if(!window._coachChat.length){
-    el.innerHTML='<div style="text-align:center;color:var(--mut);padding:24px 12px">'+_ledgerMascotSVG(56)+
+    el.innerHTML='<div style="text-align:center;color:var(--mut);padding:24px 12px">'+LedgerBuddy('wave',104)+
       '<div style="font-size:13px;font-weight:700;margin-top:8px;color:var(--txt)">Hi, I’m Ledger</div>'+
       '<div style="font-size:12px;margin-top:4px;line-height:1.5">Ask me about any CPA concept, tax rule, audit standard, or your study strategy.</div></div>';
     return;
@@ -14948,7 +14934,7 @@ function buildStudyLab() {
   const tabs = [
     { id:'qbank', label:'Question Bank', icon:'clipboard' },
     { id:'tools', label:'Study Tools', icon:'bolt' },
-    { id:'coach', label:'Ask Ledger', icon:'bot' },
+    { id:'coach', label:'Ledger', icon:'chat' },
   ];
 
   const subNav =
@@ -16517,7 +16503,7 @@ function _buildPlanGate(){
     ['calendar','Day-by-day calendar','See exactly what to study every day from now to exam day'],
     ['timer','Hours planned per day','No guessing — your daily study block is laid out for you'],
     ['target','Phase-based roadmap','Foundation → MCQ Drill → Mock Exams → Final Sprint'],
-    ['bot','Built from your data','Uses your exam date, logged hours, and weekly capacity'],
+    ['barChart','Built from your data','Uses your exam date, logged hours, and weekly capacity'],
     ['checkCircle','Track execution','Mark days done. See your completion rate build toward 100%'],
     ['refresh','Regenerate anytime','Change your exam date? Rebuild the plan in 2 seconds'],
   ];
@@ -16533,7 +16519,7 @@ function _buildPlanGate(){
       </div>`).join('')}
     </div>
     <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Pro — Get Your Plan ✦</button>
-    <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($14/mo) · Also unlocks Ask Ledger, analytics &amp; the unlimited question bank</div>
+    <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($14/mo) · Also unlocks Ledger (your AI coach), analytics &amp; the unlimited question bank</div>
   </div>`;
 }
 
@@ -16541,7 +16527,7 @@ function _buildPlanLoading(){
   const msgs=['Analyzing your exam date…','Calculating study phases…','Mapping your daily schedule…','Tuning hours to your capacity…','Finalizing your day-by-day plan…'];
   const msg=msgs[Math.floor(Math.random()*msgs.length)];
   return`<div style="max-width:500px;margin:100px auto;text-align:center;padding:0 20px">
-    <div style="font-size:64px;margin-bottom:24px;display:inline-block;animation:spin 1.4s linear infinite">${ico('gear')}</div>
+    <div style="margin-bottom:18px">${LedgerBuddy('think',120)}</div>
     <div style="font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px">Building your plan…</div>
     <div style="font-size:14px;color:var(--sub);margin-bottom:32px;line-height:1.7">${msg}</div>
     <div style="background:var(--surf2);border-radius:100px;height:6px;overflow:hidden;max-width:300px;margin:0 auto">
@@ -16838,7 +16824,7 @@ function _buildPlanCalendar(plan){
     </div>`;
   }else if(todayEntry&&!todayEntry.isStudy){
     todaySide=`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">
-      <div style="font-size:32px;margin-bottom:8px">${ico('bed')}</div>
+      <div style="margin-bottom:6px">${LedgerBuddy('sleep',84)}</div>
       <div style="font-size:13px;font-weight:800;margin-bottom:4px">Rest Day</div>
       <div style="font-size:11px;color:var(--mut);line-height:1.5">Recovery is part of the plan. Your brain consolidates memory during rest.</div>
     </div>`;
@@ -17013,7 +16999,7 @@ function openPlanDayDetail(dateStr){
         ${dateStr>todayStr&&!day.done?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">Can't study this day — life happens</button>`:''}
       `:`
         <div style="text-align:center;padding:20px 0">
-          <div style="font-size:40px;margin-bottom:10px">${ico('bed')}</div>
+          <div style="margin-bottom:8px">${LedgerBuddy('sleep',92)}</div>
           <div style="font-size:14px;font-weight:800;margin-bottom:6px">Rest Day</div>
           <div style="font-size:12px;color:var(--mut);line-height:1.5">Recovery is part of the plan. Your brain consolidates memory during rest.</div>
         </div>
@@ -17067,7 +17053,7 @@ function regeneratePlan(){
 function _buildAIPlanUI(){
   const plan=S.aiStudyPlan;
   if(!plan) return '<div class="card card-pad" style="text-align:center;padding:36px 20px">'+
-    '<div style="font-size:52px;margin-bottom:14px">'+ico('bot')+'</div>'+
+    '<div style="margin-bottom:10px">'+LedgerBuddy('point',104)+'</div>'+
     '<div style="font-size:20px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px">AI Study Plan</div>'+
     '<div style="font-size:13px;color:var(--mut);max-width:340px;margin:0 auto 10px;line-height:1.65">Ledger analyzes your exam date, hours logged per section, and weekly goal to build a personalized time-blocking plan.</div>'+
     '<div style="font-size:12px;color:var(--sub);max-width:300px;margin:0 auto 24px;line-height:1.6;background:var(--surf2);border-radius:10px;padding:10px 14px">Your Becker, Gleim, or Roger material tells you <em>what</em> to study. This plan tells you <em>when</em>, <em>how long</em>, and <em>which mode</em> to be in each day.</div>'+
@@ -18114,7 +18100,7 @@ function buildBurnoutCheckIn(){
   }
 
   return`<div style="background:linear-gradient(135deg,var(--ind-bg),var(--surf));border:1px solid rgba(90,95,207,.22);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px">
-    <div style="font-size:26px;flex-shrink:0;line-height:1">${ico(icon)}</div>
+    <div style="flex-shrink:0;line-height:1">${LedgerBuddy(icon==='leaf'?'sleep':'wave',64)}</div>
     <div style="flex:1;min-width:0">
       <div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:3px">${title}</div>
       <div style="font-size:12.5px;color:var(--sub);line-height:1.55">${body}</div>

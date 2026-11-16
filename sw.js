@@ -10,7 +10,7 @@
  */
 'use strict';
 const VERSION = 'ledger-v2';
-const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/manifest.json', '/icons/icon-192.png'];
+const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=1', '/manifest.json', '/icons/icon-192.png'];
 // Third-party scripts and fonts the app shell needs to boot offline.
 const CDN_OK = /^https:\/\/(www\.gstatic\.com\/firebasejs\/|cdn\.jsdelivr\.net\/npm\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 
