@@ -393,15 +393,47 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .follow-btn:hover{opacity:.8}
 
 /* ── COMMENTS ── */
-.comments-wrap{background:var(--surf2);padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--bdr)}
-.comment-row{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-2)}
-.comment-row:last-child{margin-bottom:0}
-.comment-body{flex:1;background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:var(--sp-2) var(--sp-3)}
-.comment-author{font-size:11px;font-weight:700;color:var(--sub)}
-.comment-text{font-size:12px;color:var(--txt);margin-top:2px;line-height:1.55}
-.add-comment{display:flex;gap:var(--sp-2);margin-top:var(--sp-3)}
-.add-comment input{flex:1;padding:7px 11px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;outline:none}
-.add-comment input:focus{border-color:var(--ora)}
+#comments-modal .cm-box{display:flex;flex-direction:column;overflow:hidden;max-width:480px;height:min(640px,calc(100dvh - 32px))}
+.cm-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 12px 20px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.cm-count{font-size:12px;font-weight:700;color:var(--mut);margin-left:6px}
+.cm-body{display:flex;flex-direction:column;flex:1;min-height:0}
+.cm-post{display:flex;gap:10px;align-items:flex-start;margin:14px 16px 0;padding:12px;background:var(--surf2);border:1px solid var(--bdr);border-left:3px solid var(--cm-c,var(--ind));border-radius:12px;flex-shrink:0}
+.cm-post-name{font-size:13px;font-weight:700;line-height:1.3}
+.cm-post-meta{font-size:11px;color:var(--mut);margin-top:1px}
+.cm-post-cap{font-size:12px;color:var(--sub);margin-top:6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.cm-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:6px 16px 10px}
+.cm-row{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--bdr)}
+.cm-row:last-child{border-bottom:none}
+.cm-row.cm-new{animation:fadeIn .25s ease}
+.cm-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.cm-av img{width:100%;height:100%;object-fit:cover}
+.cm-main{flex:1;min-width:0}
+.cm-top{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cm-name{font-size:13px;font-weight:700;cursor:pointer}
+.cm-name:hover{text-decoration:underline}
+.cm-chip{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:20px;background:var(--ind-bg);color:var(--ind);border:1px solid var(--ind-bdr);align-self:center}
+.cm-time{font-size:11px;color:var(--mut)}
+.cm-text{font-size:13.5px;color:var(--txt);line-height:1.5;margin-top:2px;white-space:pre-wrap;overflow-wrap:anywhere}
+.cm-del{background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer;padding:4px 6px;border-radius:6px;align-self:flex-start;flex-shrink:0;font-family:inherit}
+.cm-del:hover{color:var(--red,#dc2626);background:var(--surf2)}
+.cm-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;min-height:150px;padding:24px;color:var(--mut)}
+.cm-empty-ic{width:48px;height:48px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;color:var(--sub)}
+.cm-empty-t{font-size:14px;font-weight:700;color:var(--txt)}
+.cm-empty-s{font-size:12px;margin-top:3px}
+.cm-compose{display:flex;align-items:center;gap:8px;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bdr);background:var(--surf);flex-shrink:0}
+.cm-compose .cm-av{cursor:default}
+.cm-field{flex:1;min-width:0;display:flex;align-items:center;background:var(--surf2);border:1px solid var(--bdr);border-radius:22px;padding:0 4px 0 14px;transition:border-color var(--transition),box-shadow var(--transition)}
+.cm-field:focus-within{border-color:var(--ind);box-shadow:0 0 0 3px var(--ind-bg)}
+.cm-field input{flex:1;min-width:0;border:none;background:transparent;outline:none;color:var(--txt);font-size:14px;padding:10px 0;font-family:inherit}
+.cm-field input:focus,.cm-field input:focus-visible{outline:none!important;box-shadow:none!important;border:none!important}
+.cm-left{font-size:10px;color:var(--mut);padding:0 6px;font-variant-numeric:tabular-nums}
+.cm-send{border:none;background:var(--ind);color:#fff;font-weight:700;font-size:12px;padding:7px 14px;border-radius:18px;cursor:pointer;font-family:inherit;flex-shrink:0;transition:opacity var(--transition),transform var(--transition)}
+.cm-send:disabled{opacity:.35;cursor:default}
+.cm-send:not(:disabled):active{transform:scale(.95)}
+@media(max-width:640px){
+  #comments-modal{padding:0;align-items:flex-end}
+  #comments-modal .cm-box{max-width:none;height:min(82dvh,640px);border-radius:20px 20px 0 0;border-bottom:none}
+}
 
 /* ── EXAM SECTION PILLS ── */
 .exam-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -1233,12 +1265,12 @@ html,body{overflow-x:hidden}
 </div>
 
 <div class="modal-overlay" id="comments-modal" onclick="if(event.target===this)closeCommentsModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr">
+  <div class="modal-box cm-box" role="dialog" aria-label="Comments" onclick="event.stopPropagation()">
+    <div class="cm-hdr">
       <div class="modal-title">Comments</div>
-      <button class="modal-close" onclick="closeCommentsModal()">×</button>
+      <button class="modal-close" aria-label="Close comments" onclick="closeCommentsModal()">×</button>
     </div>
-    <div class="modal-body" id="comments-modal-body"></div>
+    <div class="cm-body" id="comments-modal-body"></div>
   </div>
 </div>
 
@@ -2467,7 +2499,8 @@ async function loadFeedReactions(){
       ]);
       const propsByAct={}, commentsByAct={};
       propsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(propsByAct[x.activityId]=propsByAct[x.activityId]||[]).push(x.reactor);});
-      commentsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(commentsByAct[x.activityId]=commentsByAct[x.activityId]||[]).push({user:x.name||'Member',text:x.text||'',from:x.from});});
+      commentsSnap.docs.forEach(d=>{const x=d.data();if(!x.activityId)return;(commentsByAct[x.activityId]=commentsByAct[x.activityId]||[]).push({id:d.id,user:x.name||'Member',text:x.text||'',from:x.from,at:x.at&&x.at.toMillis?x.at.toMillis():0});});
+      Object.values(commentsByAct).forEach(l=>l.sort((p,q)=>(p.at||0)-(q.at||0)));
       const apply=acts=>(acts||[]).forEach(a=>{ if(propsByAct[a.id])a.kudos=propsByAct[a.id]; if(commentsByAct[a.id])a.comments=commentsByAct[a.id]; });
       if(aid===me) apply(S&&S.activities);
       const u=(REAL_USERS||[]).find(x=>x.id===aid);
@@ -8101,40 +8134,85 @@ function giveProps(actId,userId){
   setTimeout(()=>renderTab(), hasProps?0:480);
 }
 
-function openComments(actId,userId){
-  let act=null;
-  let actOwner='';
-  if(userId==='you'){
-    act=S.activities.find(a=>a.id===actId);
-    actOwner=S.name;
-  } else {
-    const friend=REAL_USERS.find(f=>f.id===userId);
-    if(friend){act=friend.activities.find(a=>a.id===actId);actOwner=friend.name;}
+// Who wrote a comment: photo, color and initials from what we already know
+// about them (me, or someone in my network), falling back to their name.
+function _cmPerson(c){
+  const me=AUTH?.uid;
+  if(c.from&&c.from===me){
+    const n=S.name||c.user||'You';
+    return {name:n,pic:S.profilePic||'',color:S.profileColor||hashColor(me),mine:true};
   }
+  const f=(REAL_USERS||[]).find(u=>u.id===c.from);
+  return {name:(f&&f.name)||c.user||'Member',pic:(f&&f.profilePic)||'',color:(f&&f.color)||hashColor(c.from||c.user||''),mine:false};
+}
+function _cmInitials(n){return (String(n||'?').trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2)||'?').toUpperCase();}
+function _cmAvatar(p,click){
+  return `<div class="cm-av" style="background:${p.color}"${click?` onclick="${click}"`:''}>${p.pic?`<img src="${esc(p.pic)}" alt="">`:esc(_cmInitials(p.name))}</div>`;
+}
+function _cmFind(actId,userId){
+  const me=AUTH?.uid;
+  if(userId==='you'||userId===me) return {act:S.activities.find(a=>a.id===actId),owner:{name:S.name||'You',pic:S.profilePic||'',color:S.profileColor||(me?hashColor(me):'var(--ind)')},ownerUid:me,mine:true};
+  const f=REAL_USERS.find(u=>u.id===userId);
+  return {act:f&&f.activities.find(a=>a.id===actId),owner:f?{name:f.name,pic:f.profilePic||'',color:f.color||hashColor(f.id)}:null,ownerUid:userId,mine:false};
+}
+function openComments(actId,userId,flashLast){
+  const {act,owner,ownerUid,mine}=_cmFind(actId,userId);
   if(!act)return;
-  const renderCommentsBody=()=>{
-    const comments=act.comments||[];
-    const commentsHTML=comments.length?comments.map(c=>`
-    <div class="comment-row">
-      <div class="avatar" style="width:28px;height:28px;font-size:10px;border-radius:50%;background:var(--ind);color:#fff;flex-shrink:0">${esc(c.user).slice(0,2)}</div>
-      <div class="comment-body">
-        <div class="comment-author">${esc(c.user)}</div>
-        <div class="comment-text">${esc(c.text)}</div>
+  const me=AUTH?.uid;
+  const comments=act.comments||[];
+  const ex=EXAMS[act.section]||{};
+  const what=act.type==='sat'?`Sat for ${esc(act.section)}`:`${esc(act.section||'Study')} · ${esc(act.hours)}h`;
+  const rows=comments.map((c,i)=>{
+    const p=_cmPerson(c);
+    const go=c.from&&!p.mine?`closeCommentsModal();openUserProfile('${esc(c.from)}')`:'';
+    const canDel=me&&(c.from===me||mine);
+    return `<div class="cm-row${flashLast&&i===comments.length-1?' cm-new':''}">
+      ${_cmAvatar(p,go)}
+      <div class="cm-main">
+        <div class="cm-top">
+          <span class="cm-name"${go?` onclick="${go}"`:' style="cursor:default;text-decoration:none"'}>${esc(p.name)}</span>
+          ${c.from&&c.from===ownerUid?'<span class="cm-chip">Author</span>':''}
+          ${c.at?`<span class="cm-time">${timeAgo(c.at)}</span>`:''}
+        </div>
+        <div class="cm-text">${esc(c.text)}</div>
       </div>
-    </div>`).join(''):`<div style="text-align:center;padding:20px;color:var(--mut);font-size:13px">No comments yet. Be the first!</div>`;
-    document.getElementById('comments-modal-body').innerHTML=`
-<div style="margin-bottom:10px;padding:10px;background:var(--surf2);border-radius:8px;font-size:12px;color:var(--sub)">
-  <strong>${actOwner}</strong> · ${act.section} · ${act.hours}h
-  ${act.caption?`<br><span style="color:var(--mut)">"${act.caption}"</span>`:''}
+      ${canDel?`<button class="cm-del" onclick="deleteComment('${actId}','${userId}',${i})">Delete</button>`:''}
+    </div>`;
+  }).join('');
+  const empty=`<div class="cm-empty">
+    <div class="cm-empty-ic">${ico('chat')}</div>
+    <div class="cm-empty-t">No comments yet</div>
+    <div class="cm-empty-s">${mine?'When someone cheers you on, it shows up here.':'Be the first to cheer them on.'}</div>
+  </div>`;
+  const myP=_cmPerson({from:me,user:S.name});
+  const ttl=document.querySelector('#comments-modal .modal-title'); if(ttl) ttl.innerHTML='Comments'+(comments.length?`<span class="cm-count">${comments.length}</span>`:'');
+  document.getElementById('comments-modal-body').innerHTML=`
+<div class="cm-post" style="--cm-c:${ex.color||'var(--ind)'}">
+  ${_cmAvatar(owner||{name:'?',color:'var(--ind)'})}
+  <div style="flex:1;min-width:0">
+    <div class="cm-post-name">${esc(owner?owner.name:'Member')}</div>
+    <div class="cm-post-meta">${what}${act.date?' · '+timeAgo(act.date):''}</div>
+    ${act.caption?`<div class="cm-post-cap">${esc(act.caption)}</div>`:''}
+  </div>
 </div>
-<div class="comments-wrap" style="background:transparent;padding:0;border:none">${commentsHTML}</div>
-<div class="add-comment">
-  <input id="comment-input" type="text" maxlength="300" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addComment('${actId}','${userId}')">
-  <button class="btn btn-ind btn-sm" onclick="addComment('${actId}','${userId}')">Post</button>
+<div class="cm-list" id="cm-list">${comments.length?rows:empty}</div>
+<div class="cm-compose">
+  ${_cmAvatar(myP)}
+  <div class="cm-field">
+    <input id="comment-input" type="text" maxlength="300" autocomplete="off" enterkeyhint="send" aria-label="Add a comment" placeholder="${mine?'Reply…':'Say something encouraging…'}" oninput="_cmInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${actId}','${userId}')}">
+    <span class="cm-left" id="cm-left"></span>
+  </div>
+  <button class="cm-send" id="cm-send" disabled onclick="addComment('${actId}','${userId}')">Post</button>
 </div>`;
-  };
-  renderCommentsBody();
   document.getElementById('comments-modal').classList.add('open');
+  const list=document.getElementById('cm-list'); list.scrollTop=list.scrollHeight;
+  // Don't pop the phone keyboard open uninvited; on a computer, start typing right away.
+  if(flashLast||matchMedia('(hover:hover) and (pointer:fine)').matches) document.getElementById('comment-input').focus({preventScroll:true});
+}
+function _cmInput(el){
+  const n=el.value.length, left=document.getElementById('cm-left'), send=document.getElementById('cm-send');
+  if(send) send.disabled=!el.value.trim();
+  if(left) left.textContent=n>=240?String(300-n):'';
 }
 function closeCommentsModal(){document.getElementById('comments-modal').classList.remove('open');}
 function addComment(actId,userId){
@@ -8149,11 +8227,24 @@ function addComment(actId,userId){
   else{const f=REAL_USERS.find(f=>f.id===authorUid);if(f)act=f.activities.find(a=>a.id===actId);}
   if(!act)return;
   if(!act.comments)act.comments=[];
-  act.comments.push({user:myName,text,from:me});
+  const c={user:myName,text,from:me,at:Date.now()};
+  act.comments.push(c);
   // Persist to the author's comments subcollection so the comment reaches them + everyone.
-  if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{ if(authorUid!==me) notifyEvent('comment',{toUid:authorUid,activityId:actId}); }).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t post that comment — please try again.','err');});}
+  if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).then(ref=>{ c.id=ref.id; if(authorUid!==me) notifyEvent('comment',{toUid:authorUid,activityId:actId}); }).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t post that comment — please try again.','err');});}
   if(authorUid===me)saveState();
   input.value='';
+  openComments(actId,userId,true);
+  renderTab();
+}
+// The commenter can remove their own comment; the post's author can remove any.
+function deleteComment(actId,userId,idx){
+  const {act,ownerUid,mine}=_cmFind(actId,userId);
+  const c=act&&act.comments&&act.comments[idx];
+  if(!c||!AUTH||!(c.from===AUTH.uid||mine))return;
+  if(!confirm('Delete this comment?'))return;
+  act.comments.splice(idx,1);
+  if(firebaseDb&&c.id) firebaseDb.collection('users').doc(ownerUid).collection('comments').doc(c.id).delete().catch(()=>showToast('Couldn\'t delete that comment — please try again.','err'));
+  if(mine)saveState();
   openComments(actId,userId);
   renderTab();
 }
@@ -9450,7 +9541,11 @@ function _closeAllOverlays(){
   ['search-modal','log-result-modal','upgrade-modal','follow-modal','notif-modal',
    'mess-modal','follow-req-modal','sess-overlay','social-modal','comments-modal','post-modal'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.classList.contains('open')?el.classList.remove('open'):el.remove?.();
+    // Pop-ups built on demand are thrown away; the ones written into the page
+    // (session, comments, post) must stay or they can never be opened again.
+    if(!el) return;
+    if(el.classList.contains('open')) el.classList.remove('open');
+    else if(!['sess-overlay','comments-modal','post-modal'].includes(id)) el.remove();
   });
   document.body.style.overflow='';
 }
