@@ -20,6 +20,7 @@
     '.lm .lm-cheer-r{transform-box:view-box;transform-origin:90px 60px;animation:lm-cheer 1s ease-in-out infinite reverse}' +
     '.lm .lm-dot{animation:lm-dot 1.2s ease-in-out infinite}.lm .lm-dot.d2{animation-delay:.18s}.lm .lm-dot.d3{animation-delay:.36s}' +
     '.lm .lm-z{animation:lm-z 2.6s ease-in-out infinite}.lm .lm-z.z2{animation-delay:.9s}' +
+    '.lm.lm-face{overflow:hidden}' +
     '.lm.lm-still *{animation:none!important}' +
     '@keyframes lm-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}' +
     '@keyframes lm-blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}' +
@@ -122,13 +123,14 @@
   }
 
   // Head-and-shoulders crop for small sizes (avatars, the floating button).
+  // Clipped to its box (no bob) so the rest of the body never spills onto nearby text.
   buddy.face = function(size, opts){
     injectCSS();
     opts = opts || {};
     size = size || 36;
     var pose = POSE[opts.pose] ? opts.pose : 'idle';
     return '<svg class="lm lm-face lb-face' + (opts.still ? ' lm-still' : '') + '" viewBox="19 1 77 77" width="' + size + '" height="' + size + '" aria-hidden="true">' +
-      '<g class="lm-bob">' + book() + face(pose) + '</g></svg>';
+      book() + face(pose) + '</svg>';
   };
   buddy.poses = Object.keys(POSE);
   buddy.NAME = 'Ledger';
