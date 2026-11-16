@@ -73,6 +73,45 @@
     clap:         '<path d="M9 13l-3-5a1.6 1.6 0 1 1 2.8-1.5l1.9 3.3M12 11.3l-2.6-4.6a1.6 1.6 0 1 1 2.8-1.5l2.6 4.6M15 11l-1.8-3.2a1.6 1.6 0 1 1 2.8-1.5l2.6 4.6"/><path d="M7.5 12l-1-1.7a1.6 1.6 0 1 0-2.8 1.5l2.6 4.6a5 5 0 0 0 7 1.9l2-1.2a4 4 0 0 0 1.4-5.4l-1.3-2.4"/>',
     megaphone:    '<path d="M3 10v4h3l9 4V6l-9 4z"/><path d="M19 9.5a4 4 0 0 1 0 5"/><path d="M8 14v4a2 2 0 0 0 4 0v-3"/>',
     trumpet:      '<path d="M3 11l10-4v8L3 13z"/><path d="M13 7l7-1.5v9L13 13"/><circle cx="5" cy="12" r=".9" fill="currentColor" stroke="none"/><path d="M3 11v2"/>',
+
+    // ─ Added with the emoji replacement ─
+    users:        '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3 2.6-5 6-5s6 2 6 5"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6M17.5 14.3c2.1.7 3.5 2.4 3.5 4.7"/>',
+    moon:         '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+    coffee:       '<path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3v2.5M12.5 3v2.5"/>',
+    gear:         '<circle cx="12" cy="12" r="2.8"/><circle cx="12" cy="12" r="6.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+    bed:          '<path d="M3 18.5V6.5M3 14.5h18v4M21 14.5V13a3 3 0 0 0-3-3h-7v4.5"/><circle cx="7" cy="11" r="1.8"/>',
+    plane:        '<path d="M21 3L3 10.5l7 2.5 2.5 7z"/><path d="M21 3L10 13"/>',
+    wave:         '<path d="M8 12.5V6a1.5 1.5 0 0 1 3 0v5M11 10.5v-6a1.5 1.5 0 0 1 3 0v6M14 10.5V6a1.5 1.5 0 0 1 3 0v8.5a5.5 5.5 0 0 1-5.5 5.5h-.8a5.5 5.5 0 0 1-4.4-2.2L4 14.5a1.5 1.5 0 0 1 2.4-1.8L8 14.5"/>',
+    pin:          '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    timer:        '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 3h5M12 3v3"/>',
+    alarm:        '<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.5M4 6.5L7 4M20 6.5L17 4"/>',
+    hourglass:    '<path d="M7 3h10M7 21h10M8 3v3.5c0 2 4 3.5 4 5.5s-4 3.5-4 5.5V21M16 3v3.5c0 2-4 3.5-4 5.5s4 3.5 4 5.5V21"/>',
+    camera:       '<path d="M4 8h3.5L9 5.5h6L16.5 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.2" r="3.3"/>',
+    globe:        '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/>',
+    cloud:        '<path d="M7 18.5a4 4 0 0 1-.5-8 5.5 5.5 0 0 1 10.6-1.2A4.6 4.6 0 0 1 17 18.5z"/>',
+    phone:        '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M12 7v6.5M9.5 11l2.5 2.5 2.5-2.5M10.5 18h3"/>',
+    compass:      '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+    columns:      '<path d="M3 9.5L12 4l9 5.5zM4.5 20h15M6.5 10v7.5M10.2 10v7.5M13.8 10v7.5M17.5 10v7.5"/>',
+    briefcase:    '<rect x="3" y="7.5" width="18" height="12" rx="1.5"/><path d="M9 7.5v-2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+    sprout:       '<path d="M12 21v-9"/><path d="M12 14c0-3.5-2.5-5.5-7-5.5 0 3.5 2.5 5.5 7 5.5zM12 11c0-3.5 2.5-5.5 7-5.5 0 3.5-2.5 5.5-7 5.5z"/>',
+    sunrise:      '<path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 5v3M4.5 10.5l2 2M19.5 10.5l-2 2"/>',
+    leaf:         '<path d="M5 19C5 10 10 5 20 5c0 10-5 15-15 14z"/><path d="M5 19c3-5 6-8 10-10"/>',
+    trendDown:    '<path d="M3 4v16h18"/><path d="M6 8l5 5 3-3 6 6"/>',
+    upload:       '<path d="M12 15V4M8 8l4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+    inbox:        '<path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5.5a3.5 3.5 0 0 0 7 0H21"/>',
+    home:         '<path d="M3.5 11L12 4l8.5 7M6 9.5V20h12V9.5M10 20v-5h4v5"/>',
+    party:        '<path d="M4 20l4.5-12 7.5 7.5z"/><path d="M14 4v2.5M19.5 9.5H17M18.5 4.5L16 7M11.5 3.5c1 .8 1 2 .2 3M20.5 12.5c-.8-1-2-1-3-.2"/>',
+    checkCircle:  '<circle cx="12" cy="12" r="9"/><path d="M7.8 12.4l3 3 5.4-6"/>',
+    square:       '<rect x="4.5" y="4.5" width="15" height="15" rx="2.5"/>',
+    faceGreat:    '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M7.5 13.5h9a4.5 4.5 0 0 1-9 0z"/>',
+    faceGood:     '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/>',
+    faceOkay:     '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8.5 15.5h7"/>',
+    faceRough:    '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8.5 16.5c1-1.2 2.2-1.8 3.5-1.8s2.5.6 3.5 1.8"/><path d="M19.2 2.2c1 1.3 1.5 2.2 1.5 2.9a1.5 1.5 0 0 1-3 0c0-.7.5-1.6 1.5-2.9z" fill="currentColor" stroke="none"/>',
+    faceBad:      '<circle cx="12" cy="12" r="9"/><path d="M7.3 10.6l2.7-1.2M16.7 10.6L14 9.4"/><path d="M8.5 17a3.5 3.5 0 0 1 7 0z"/>',
+    faceGrit:     '<circle cx="12" cy="12" r="9"/><path d="M7 8l3.5 1.5M17 8l-3.5 1.5"/><circle cx="9" cy="11.3" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="11.3" r="1" fill="currentColor" stroke="none"/><path d="M9 16.5c1-.8 2-1.2 3-1.2s2 .4 3 1.2"/>',
+    faceSweat:    '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M7.5 13.5h9a4.5 4.5 0 0 1-9 0z"/><path d="M19.2 2.2c1 1.3 1.5 2.2 1.5 2.9a1.5 1.5 0 0 1-3 0c0-.7.5-1.6 1.5-2.9z" fill="currentColor" stroke="none"/>',
+    faceThink:    '<circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M13.5 7.3c1-.6 2-.6 3 0"/><path d="M9 16l5.5-1.2"/>',
+    faceDizzy:    '<circle cx="12" cy="12" r="9"/><path d="M7.5 8.5l3 3M10.5 8.5l-3 3M13.5 8.5l3 3M16.5 8.5l-3 3"/><circle cx="12" cy="16" r="1.6"/>',
   };
 
   function svg(name, opts){
@@ -86,5 +125,114 @@
     return `<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="${style}"${cls} aria-hidden="true">${body}</svg>`;
   }
 
+
+  // Emoji that older data and call sites still carry (club icons and session
+  // moods are stored as emoji) → the drawn icon that replaces each on screen.
+  const EMOJI = {
+    '📚':'book',
+    '📖':'book',
+    '🔥':'flame',
+    '⚡':'bolt',
+    '📅':'calendar',
+    '🗓':'calendarDays',
+    '💯':'medalRibbon',
+    '📊':'barChart',
+    '🎯':'target',
+    '🚀':'rocket',
+    '🏆':'trophy',
+    '✅':'checkCircle',
+    '🎓':'graduationCap',
+    '🧠':'brain',
+    '🏔':'mountain',
+    '💥':'burst',
+    '👑':'crown',
+    '🏢':'building',
+    '🌙':'moon',
+    '☕':'coffee',
+    '⚖':'scales',
+    '💪':'bicep',
+    '🔍':'magnifier',
+    '🧮':'calculator',
+    '📝':'pencil',
+    '🏛':'columns',
+    '🏅':'medal',
+    '🛡':'shield',
+    '📤':'upload',
+    '🤖':'bot',
+    '🤝':'handshake',
+    '🔒':'lock',
+    '🔓':'unlock',
+    '✨':'sparkles',
+    '⭐':'starFilled',
+    '🌟':'starFilled',
+    '📧':'envelope',
+    '✉':'envelope',
+    '📬':'inbox',
+    '📭':'inbox',
+    '🎉':'party',
+    '🔔':'bell',
+    '💬':'chat',
+    '⚙':'gear',
+    '🧡':'heartFilled',
+    '🤍':'heartOutline',
+    '👋':'wave',
+    '🌱':'sprout',
+    '🌅':'sunrise',
+    '😄':'faceGreat',
+    '🙂':'faceGood',
+    '😐':'faceOkay',
+    '😓':'faceRough',
+    '😩':'faceBad',
+    '😤':'faceGrit',
+    '😅':'faceSweat',
+    '🤔':'faceThink',
+    '😵':'faceDizzy',
+    '📈':'lineChart',
+    '📉':'trendDown',
+    '⏰':'alarm',
+    '⏱':'timer',
+    '⏳':'hourglass',
+    '👥':'users',
+    '👤':'user',
+    '📍':'pin',
+    '📷':'camera',
+    '🏚':'home',
+    '📋':'clipboard',
+    '🌐':'globe',
+    '💎':'gem',
+    '💼':'briefcase',
+    '👏':'clap',
+    '🟢':'chat',
+    '💳':'creditCard',
+    '🧭':'compass',
+    '🧘':'lotus',
+    '🔄':'refresh',
+    '⬜':'square',
+    '🌿':'leaf',
+    '☁':'cloud',
+    '📲':'phone',
+    '✈':'plane',
+    '🛌':'bed',
+    '⚠':'warning'
+  };
+  // A few icons read better in their natural colour than in the text colour.
+  const TINT = { checkCircle:'var(--grn)', flame:'#f97316', warning:'#f59e0b', starFilled:'#f59e0b', heartFilled:'var(--ora)', bolt:'#f59e0b' };
+  const escText = (v) => String(v).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ico('flame') or ico('🔥') → drawn icon. Anything else (a letter, an emoji
+  // with no drawing) comes back as escaped text, so it is safe in innerHTML.
+  // opts.plain keeps the surrounding text colour.
+  function ico(x, opts){
+    if(x == null || x === '') return '';
+    const key = String(x);
+    const name = Object.prototype.hasOwnProperty.call(ICONS, key) ? key : EMOJI[key.replace(/\uFE0F/g, '')];
+    if(!name) return escText(key);
+    opts = opts || {};
+    if(TINT[name] && !opts.plain) opts = Object.assign({}, opts, { style: 'color:' + TINT[name] + ';' + (opts.style || '') });
+    return svg(name, opts);
+  }
+
   window.LedgerIcon = svg;
+  window.ico = ico;
+  window.LedgerIconNames = Object.keys(ICONS);
 })();
