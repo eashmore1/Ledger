@@ -538,6 +538,11 @@ body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark 
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes asFade{from{opacity:0}to{opacity:1}}
+/* While Settings or the plans screen is open on a phone, the page behind stays put
+   instead of scrolling along under your finger. */
+@media(max-width:640px){html.modal-lock,html.modal-lock body{overflow:hidden}}
+.upgrade-modal-box.no-anim{animation:none}
 @keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) var(--sp-6) 0}
 .modal-title{font-size:16px;font-weight:800;letter-spacing:-.02em}
@@ -866,7 +871,7 @@ body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark 
 .nav-pro-chip-free{background:transparent;color:var(--ind);border:1.5px solid var(--ind);font-size:10px}
 .nav-pro-chip-free:hover{background:var(--ind-bg)}
 /* Upgrade modal */
-.upgrade-modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:26px;width:100%;max-width:940px;max-height:94vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .25s cubic-bezier(.22,.61,.36,1);position:relative}
+.upgrade-modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:26px;width:100%;max-width:940px;max-height:94vh;max-height:94dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:var(--shadow-lg);animation:modalIn .25s cubic-bezier(.22,.61,.36,1);position:relative}
 .upgrade-hero{background:linear-gradient(155deg,#0a0805,#15100b,#1c1510,#0d0a07);padding:44px 44px 36px;border-radius:26px 26px 0 0;position:relative;overflow:hidden;text-align:center}
 .upgrade-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(212,64,0,.38),transparent 52%),radial-gradient(ellipse at 85% 100%,rgba(99,102,241,.22),transparent 48%)}
 .upgrade-hero-inner{position:relative;z-index:1}
@@ -990,6 +995,8 @@ body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark 
   .toast{max-width:100%}
   .modal-overlay.open{align-items:flex-end;padding:0}
   .modal-box{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:92vh}
+  .upgrade-modal-box{border-radius:22px 22px 0 0;border-bottom:none;max-height:94dvh}
+  .upgrade-hero{border-radius:22px 22px 0 0}
   .cal-day{min-height:58px;padding:4px}
   .testimonials-grid{grid-template-columns:1fr;padding:0 var(--sp-4) var(--sp-4)}
   .plan-cards-row{padding:var(--sp-4) var(--sp-4) var(--sp-3)}
@@ -3381,8 +3388,10 @@ function openUpgradeModal(featureHint){
     el.addEventListener('click',e=>{if(e.target===el)closeUpgradeModal();});
     document.body.appendChild(el);
   }
+  el._fresh=true;
   renderUpgradeModal(featureHint||null);
   el.classList.add('open');
+  _syncModalLock();
   // Which locked feature drove someone to the paywall — the input you need to
   // decide what belongs in the paid tier.
   logLedgerEvent('upgrade_modal_viewed',{hint:featureHint||'none',tier:(typeof SUB!=='undefined'&&SUB.tier)||'free'});
@@ -3390,6 +3399,7 @@ function openUpgradeModal(featureHint){
 function closeUpgradeModal(){
   const el=document.getElementById('upgrade-modal');
   if(el)el.classList.remove('open');
+  _syncModalLock();
 }
 
 // The full Terms and Privacy Policy live on their own pages so there is only
@@ -3402,6 +3412,15 @@ function closeLegalModal(){
 
 function renderUpgradeModal(featureHint){
   const el=document.getElementById('upgrade-modal');if(!el)return;
+  // Switching Monthly/Annual redraws the plans: keep the scroll spot and skip the
+  // open animation so the screen doesn't flash and jump back to the top.
+  const _redraw=!el._fresh&&el.classList.contains('open');
+  const _oldBox=el.querySelector('.upgrade-modal-box');
+  const _keepScroll=_redraw&&_oldBox?_oldBox.scrollTop:0;
+  const _keepHint=_redraw?el._hint:featureHint;
+  el._fresh=false;
+  if(_redraw&&featureHint==null)featureHint=_keepHint;
+  el._hint=featureHint;
   const isAnnual=_upgradeBilling==='annual';
   // ONE PAID TIER: Pro — $14/mo, $132/yr ($11/mo). Window Pass = $75 one-time.
   const proMonthly=14,proAnnual=11;
@@ -3550,6 +3569,11 @@ function renderUpgradeModal(featureHint){
     'All prices in USD. 30-day money-back guarantee on your first purchase; after that, refunds within 7 days of a charge — email support@ledgercpa.app.'+
   '</div>'+
   '</div>';
+  if(_redraw){
+    const box=el.querySelector('.upgrade-modal-box');
+    if(box){box.classList.add('no-anim');box.scrollTop=_keepScroll;}
+    el.querySelector('.billing-opt.active')?.focus({preventScroll:true});
+  }
 }
 
 function activatePlan(tier){
@@ -12259,6 +12283,7 @@ document.addEventListener('keydown',e=>{
       const wasOpen=(m.oldValue||'').split(' ').includes('open');
       if(isOpen&&!wasOpen)onModalOpened(el);
       else if(!isOpen&&wasOpen)onModalClosed();
+      if(el.id==='upgrade-modal'&&typeof _syncModalLock==='function')_syncModalLock();
     });
   }).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true,attributeOldValue:true});
 })();
@@ -12864,7 +12889,7 @@ function openAppSettings(section='account'){
   if(!el){
     el=document.createElement('div');
     el.id='app-settings-modal';
-    el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)';
+    el.style.cssText='position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:none;animation:asFade .16s ease;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)';
     el.innerHTML=`
 <div id="as-panel" style="position:absolute;top:0;right:0;bottom:0;width:min(100vw,680px);background:var(--bg);display:flex;flex-direction:column;box-shadow:-12px 0 48px rgba(0,0,0,.18);animation:slideInRight .22s ease">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 14px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)">
@@ -12877,7 +12902,7 @@ function openAppSettings(section='account'){
   <div id="as-mobile-nav" style="display:none;flex-wrap:wrap;padding:10px 12px;gap:6px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0"></div>
   <div style="display:flex;flex:1;min-height:0;overflow:hidden">
     <div id="as-sidebar" style="width:170px;flex-shrink:0;border-right:1px solid var(--bdr);padding:10px 8px;overflow-y:auto;background:var(--surf)"></div>
-    <div id="as-body" style="flex:1;overflow-y:auto;padding:22px 24px 40px;min-width:0"></div>
+    <div id="as-body" style="flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:22px 24px 40px;min-width:0"></div>
   </div>
 </div>`;
     el.addEventListener('click',e=>{ if(e.target===el) closeAppSettings(); });
@@ -12886,6 +12911,14 @@ function openAppSettings(section='account'){
   el.style.display='block';
   renderAppSettingsTabs();
   renderAppSettingsSection();
+  _syncModalLock();
+}
+
+// Keep the page behind Settings / the plans screen from scrolling (phones only, see CSS).
+function _syncModalLock(){
+  const s=document.getElementById('app-settings-modal');
+  const on=(s&&s.style.display==='block')||!!document.querySelector('#upgrade-modal.open');
+  document.documentElement.classList.toggle('modal-lock',on);
 }
 
 function renderAppSettingsTabs(){
@@ -12940,11 +12973,6 @@ function renderAppSettingsTabs(){
           <span>${LedgerIcon(t.icon)}</span><span>${t.label}</span>
         </button>`;
       }).join('');
-      // Scroll active tab into view
-      setTimeout(()=>{
-        const activeBtn = mobileNav.querySelector('[style*="var(--ora-bg)"]');
-        if(activeBtn) activeBtn.scrollIntoView({block:'nearest',inline:'center'});
-      }, 50);
     }
   }
 
@@ -12961,6 +12989,7 @@ function switchSettingsSection(section){
 
 function renderAppSettingsSection(){
   const body=document.getElementById('as-body');if(!body)return;
+  body.scrollTop=0;
   if(_settingsSection==='account') body.innerHTML=buildSettingsAccount();
   else if(_settingsSection==='billing') body.innerHTML=buildSettingsBilling();
   else if(_settingsSection==='security') body.innerHTML=buildSettingsSecurity();
@@ -13488,7 +13517,7 @@ async function confirmDeleteAccount(){
   setTimeout(()=>location.reload(),800);
 }
 
-function closeAppSettings(){ const el=document.getElementById('app-settings-modal'); if(el) el.style.display='none'; }
+function closeAppSettings(){ const el=document.getElementById('app-settings-modal'); if(el) el.style.display='none'; _syncModalLock(); }
 
 
 function confirmReset(){
