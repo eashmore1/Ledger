@@ -26,6 +26,24 @@ service cloud.firestore {
       return !blocks(p[0], p[1]) && !blocks(p[1], p[0]);
     }
 
+    // A changed text field must pass the language filter; an unchanged one is
+    // left alone so an old value never blocks unrelated profile syncs.
+    function cleanField(f) {
+      return !(f in request.resource.data) ||
+        (resource != null && f in resource.data && request.resource.data[f] == resource.data[f]) ||
+        cleanText(request.resource.data[f]);
+    }
+    function cleanProfile() {
+      return cleanField('displayName') && cleanField('bio') && cleanField('school') &&
+        cleanField('city') && cleanField('firmName');
+    }
+    // Invite-only clubs (isPrivate with a member list) are private chat, like
+    // DMs, and aren't filtered. Firm cohorts and public clubs are.
+    function privateClub(clubId) {
+      let path = /databases/$(database)/documents/clubs/$(clubId);
+      return exists(path) && get(path).data.get('isPrivate', false) == true && ('members' in get(path).data);
+    }
+
     // True unless the club is a private, member-listed club the caller isn't in.
     function canReadClub(clubId) {
       let path = /databases/$(database)/documents/clubs/$(clubId);
@@ -44,9 +62,9 @@ service cloud.firestore {
       // subscription ID into their own doc and then cancel that person's plan
       // or open their billing portal through /api/*.
       allow create: if request.auth != null && request.auth.uid == userId
-        && !('sub' in request.resource.data);
+        && !('sub' in request.resource.data) && cleanProfile();
       allow update: if request.auth != null && request.auth.uid == userId
-        && request.resource.data.get('sub', null) == resource.data.get('sub', null);
+        && request.resource.data.get('sub', null) == resource.data.get('sub', null) && cleanProfile();
       allow delete: if request.auth != null && request.auth.uid == userId;
 
       // Follow REQUESTS to a private account. The requester creates/cancels the
@@ -223,7 +241,8 @@ service cloud.firestore {
         allow read: if request.auth != null && canReadClub(clubId);
         // Only the sender can create a message with their own UID
         allow create: if request.auth != null &&
-          request.resource.data.from == request.auth.uid && safeId(msgId) && canReadClub(clubId);
+          request.resource.data.from == request.auth.uid && safeId(msgId) && canReadClub(clubId) &&
+          (privateClub(clubId) || cleanText(request.resource.data.get('text', '')));
         // Only the original sender can delete their own message
         allow delete: if request.auth != null &&
           resource.data.from == request.auth.uid;
@@ -273,7 +292,7 @@ service cloud.firestore {
       return request.auth != null && safeId(roomId) &&
         request.resource.data.hostUid == request.auth.uid &&
         request.resource.data.keys().hasOnly(['name','hostUid','hostName','focusMin','breakMin','timerStart','createdAt','lastActive','count']) &&
-        request.resource.data.name is string && request.resource.data.name.size() <= 60 &&
+        request.resource.data.name is string && request.resource.data.name.size() <= 60 && cleanText(request.resource.data.name) &&
         request.resource.data.focusMin is int && request.resource.data.focusMin >= 0 && request.resource.data.focusMin <= 180 &&
         request.resource.data.breakMin is int && request.resource.data.breakMin >= 0 && request.resource.data.breakMin <= 60;
     }

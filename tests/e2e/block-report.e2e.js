@@ -55,6 +55,40 @@ test('report and block', async (t) => {
     assert.deepEqual(res, { swear: 'permission-denied', word: 'permission-denied', multi: 'permission-denied', fine: 'ok' });
   });
 
+  await t.test('profiles, session posts, rooms and public club chat are filtered; private chats are not', async () => {
+    // In the app: a profile with a cuss word is refused and nothing changes.
+    const before = await b.evaluate(() => S.bio || '');
+    await b.evaluate(() => openEditProfile());
+    await b.waitForSelector('#ep-bio');
+    await b.fill('#ep-bio', 'studying is bullsh1t');
+    await b.evaluate(() => saveEditProfile());
+    assert.equal(await b.evaluate(() => S.bio || ''), before, 'bio not saved');
+    assert.equal(await b.evaluate(() => _badWords('Great caption, leases done')), false);
+    assert.equal(await b.evaluate(() => _badWords('leases are sh*t')), true);
+    await b.evaluate(() => { const m = document.getElementById('edit-profile-modal'); if (m) m.classList.remove('open'); });
+
+    // The rules back it up.
+    const res = await b.evaluate(async () => {
+      const me = AUTH.uid, db = firebaseDb;
+      const tryIt = async (f) => { try { await f(); return 'ok'; } catch (e) { return e.code; } };
+      const pub = 'pubtest' + Date.now(), priv = 'privtest' + Date.now();
+      await db.collection('clubs').doc(pub).set({ name: 'Open FAR club', isPublic: true });
+      await db.collection('clubs').doc(priv).set({ name: 'Us', isPrivate: true, members: [me] });
+      const msg = (club, text) => () => db.collection('clubs').doc(club).collection('messages').add({ from: me, text, timestamp: Date.now() });
+      const room = (name) => () => db.collection('rooms').doc('rm' + Math.random().toString(36).slice(2, 9)).set({ name, hostUid: me, hostName: 'Bob', focusMin: 25, breakMin: 5, timerStart: Date.now(), createdAt: Date.now(), lastActive: Date.now(), count: 1 });
+      return {
+        bioBad: await tryIt(() => db.collection('users').doc(me).set({ bio: 'what the fuck' }, { merge: true })),
+        bioFine: await tryIt(() => db.collection('users').doc(me).set({ bio: 'Assets and assessments' }, { merge: true })),
+        publicBad: await tryIt(msg(pub, 'this is shit')),
+        publicFine: await tryIt(msg(pub, 'Who is doing FAR this week?')),
+        privateBad: await tryIt(msg(priv, 'this is shit')),
+        roomBad: await tryIt(room('bitch session')),
+        roomFine: await tryIt(room('Late night FAR')),
+      };
+    });
+    assert.deepEqual(res, { bioBad: 'permission-denied', bioFine: 'ok', publicBad: 'permission-denied', publicFine: 'ok', privateBad: 'ok', roomBad: 'permission-denied', roomFine: 'ok' });
+  });
+
   await t.test('a comment can be reported from its ⋯ menu', async () => {
     await a.reload(); await a.waitForSelector('.nav-tab');
     await a.waitForFunction(() => (S.activities[0].comments || []).length > 0, null, { timeout: 15000 });

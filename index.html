@@ -2483,8 +2483,30 @@ function hashColor(uid){
   return colors[Math.abs(h)%colors.length];
 }
 
+// Language filter for anything other people can see: profiles, session posts,
+// public/firm club chat, room names. DMs and private clubs are not filtered.
+// Returns true (and tells the user) when some text isn't allowed.
+function _badWords(...vals){
+  if(!window.LedgerModeration) return false;
+  for(const v of vals){
+    if(v&&LedgerModeration.check(String(v))){
+      showToast('That has language that isn’t allowed on Ledger. Please reword it.','err');
+      return true;
+    }
+  }
+  return false;
+}
+// Invite-only clubs count as private chat, like DMs. Firm cohorts and public
+// clubs are open to strangers, so they're filtered.
+function _isPrivateClub(id){
+  const c=(S&&S.clubs||[]).find(x=>x.id===id);
+  return !!(c&&(c.isDM||(c.isPrivate&&!c.isCohort&&!c.isPublic)));
+}
+// Masks anything that slipped through (older posts, other clients).
+function _clean(t){ return (t&&window.LedgerModeration)?LedgerModeration.censor(String(t)):(t||''); }
+
 function firestoreToFriend(u){
-  const name=u.displayName||'CPA Candidate';
+  const name=_clean(u.displayName)||'CPA Candidate';
   const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';
   const secs=u.sections||[];
   const passed=u.sectionPassed||[];
@@ -2499,14 +2521,14 @@ function firestoreToFriend(u){
     streak:u.currentStreak||0,
     tier:u.tier||'free',
     passedSections:passed,
-    bio:u.bio||'',
-    activities:(u.recentActivities||[]).map(a=>({...a,userId:u.uid})),
+    bio:_clean(u.bio),
+    activities:(u.recentActivities||[]).map(a=>({...a,material:_clean(a.material),caption:_clean(a.caption),userId:u.uid})),
     isPrivate:!!u.isPrivate,
     allowMessages:u.allowMessages!==false,
     discoverable:u.discoverable!==false,
     profilePic:u.profilePic||'',
     avatar:u.avatar||'',
-    firmName:u.firmName||'',
+    firmName:_clean(u.firmName),
     followers:u.followers||[],
     following:u.following||[],
     followersCount:(typeof u.followersCount==='number'?u.followersCount:(u.followers||[]).length),
@@ -3344,92 +3366,9 @@ function closeUpgradeModal(){
   if(el)el.classList.remove('open');
 }
 
-function openLegalModal(type){
-  let el=document.getElementById('legal-modal');
-  if(!el){
-    el=document.createElement('div');
-    el.id='legal-modal';
-    el.className='modal-overlay';
-    el.addEventListener('click',e=>{if(e.target===el)closeLegalModal();});
-    document.body.appendChild(el);
-  }
-  const isPrivacy=type==='privacy';
-  const title=isPrivacy?'Privacy Policy':'Terms of Service';
-  const lastUpdated='April 2025';
-  const content=isPrivacy?`
-    <p>Ledger ("we," "our," or "us") is committed to protecting your privacy. This policy explains what data we collect, how we use it, and your rights. Last updated: June 2025.</p>
-    <h4>What We Collect</h4>
-    <ul>
-      <li><strong>Account info:</strong> name, email address, and password (stored securely via Firebase Authentication by Google LLC).</li>
-      <li><strong>Study data:</strong> session logs, hours studied, exam scores, and streak history you enter in the app.</li>
-      <li><strong>Profile data:</strong> bio, school, city, and any other optional profile fields you fill in.</li>
-      <li><strong>Usage data:</strong> how you interact with features, collected anonymously to improve the product.</li>
-    </ul>
-    <h4>Third-Party Services We Use</h4>
-    <ul>
-      <li><strong>Google Firebase</strong> (Google LLC) — authentication, database, and hosting. Data stored on US-based servers (us-central1 region). Google's privacy policy applies: policies.google.com/privacy.</li>
-      <li><strong>Stripe, Inc.</strong> — payment processing for Ledger Pro subscriptions. Ledger does not store your credit card details. Stripe's privacy policy applies: stripe.com/privacy.</li>
-      <li><strong>Anthropic, PBC</strong> — powers Ledger, the AI coach. Study questions you submit may be processed by Anthropic's API. Anthropic's privacy policy applies: anthropic.com/privacy.</li>
-    </ul>
-    <h4>Cookies & Analytics</h4>
-    <p>We use the following types of cookies and tracking technologies:</p>
-    <ul>
-      <li><strong>Session cookies:</strong> Required for login and keeping you signed in. Cannot be disabled without breaking the app.</li>
-      <li><strong>Analytics:</strong> Google Firebase Analytics collects anonymous usage data (page views, feature interactions) to help us improve Ledger. No personal data is shared with Google for advertising.</li>
-      <li><strong>Local storage:</strong> Your study data and preferences are stored in your browser's local storage for offline access.</li>
-    </ul>
-    <p>We do not use advertising cookies or sell your data to data brokers.</p>
-    <h4>How We Use Your Data</h4>
-    <ul>
-      <li>To provide and improve the Ledger service.</li>
-      <li>To power study circles, social features, and study recommendations.</li>
-      <li>To send product updates and study reminders (you can opt out any time in Settings).</li>
-      <li>We <strong>never</strong> sell your personal data to third parties.</li>
-    </ul>
-    <h4>Data Storage & Retention</h4>
-    <p>Your data is stored in Google Firebase on US-based servers. Study data is tied to your account and retained until you delete your account. You can request data deletion at any time.</p>
-    <h4>Your Rights</h4>
-    <p>You have the right to access, export, correct, or delete your data at any time via Settings → Account. Users in the EU/EEA may also have rights under GDPR including data portability and objection to processing. For any privacy requests, email <strong>support@ledgercpa.app</strong>.</p>
-    <h4>Children's Privacy</h4>
-    <p>Ledger is not directed at children under 13. We do not knowingly collect personal data from children under 13. If you believe a child under 13 has provided us data, contact support@ledgercpa.app and we will delete it promptly.</p>
-  `:`
-    <p>By creating an account or using Ledger, you agree to these Terms. Please read them carefully.</p>
-    <h4>Use of the Service</h4>
-    <ul>
-      <li>Ledger is a CPA exam study tool for personal, non-commercial use.</li>
-      <li>You must be at least 13 years old to create an account.</li>
-      <li>You're responsible for keeping your login credentials secure.</li>
-      <li>Don't use Ledger for anything illegal or harmful to other users.</li>
-    </ul>
-    <h4>Content</h4>
-    <ul>
-      <li>Your study data and profile content belong to you.</li>
-      <li>By posting in clubs or feeds, you grant Ledger a license to display that content to other users.</li>
-      <li>Don't post spam, harassment, or anything that violates others' rights.</li>
-    </ul>
-    <h4>Ledger Pro — Billing & Refunds</h4>
-    <p>Ledger Pro is billed monthly or annually and <strong>auto-renews</strong> until cancelled (the Exam Window Pass is a one-time charge and never renews). Your free trial converts to a paid subscription at the end of the trial period unless you cancel before it ends. To cancel, go to Settings → Subscription at any time.</p>
-    <p><strong>Refund Policy:</strong> We offer a <strong>30-day money-back guarantee on your first purchase</strong> of any paid plan. After that, refunds are available within <strong>7 days</strong> of a charge. To request either, email <strong>support@ledgercpa.app</strong>. Trial periods are free — no charge occurs if you cancel before the trial ends.</p>
-    <h4>Disclaimers</h4>
-    <p>Ledger is a study tracking aid, not a guarantee of exam success. We make no warranty about pass rates or outcomes. The service is provided "as is" without warranties of any kind. Results vary by individual study habits and effort.</p>
-    <p>Ledger is an independent product and is <strong>not affiliated with, endorsed by, or approved by</strong> the American Institute of CPAs (AICPA), NASBA, Prometric, Becker Professional Education, Gleim, Roger, Wiley, UWorld, or any other exam review provider. "CPA," "CPA Exam," and related terms are trademarks of the AICPA and NASBA.</p>
-    <h4>Changes</h4>
-    <p>We may update these Terms occasionally. Continued use after changes means you accept the updated Terms.</p>
-  `;
-  el.innerHTML=`
-    <div style="background:var(--surf);border-radius:20px;max-width:560px;width:calc(100% - 32px);max-height:80vh;display:flex;flex-direction:column;margin:auto">
-      <div style="padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-        <div style="font-size:18px;font-weight:800">${title}</div>
-        <button onclick="closeLegalModal()" style="background:var(--surf2);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;color:var(--txt)">✕</button>
-      </div>
-      <div style="font-size:10px;color:var(--mut);padding:4px 28px 16px;flex-shrink:0">Last updated: ${lastUpdated}</div>
-      <div style="overflow-y:auto;padding:0 28px 28px;font-size:13px;color:var(--sub);line-height:1.8">
-        <style>#legal-modal h4{font-size:13px;font-weight:700;color:var(--txt);margin:16px 0 6px}#legal-modal ul{padding-left:18px;margin:0 0 8px}#legal-modal p{margin:0 0 10px}</style>
-        ${content}
-      </div>
-    </div>`;
-  el.classList.add('open');
-}
+// The full Terms and Privacy Policy live on their own pages so there is only
+// one version of each.
+function openLegalModal(type){ window.open(type==='privacy'?'/privacy':'/terms','_blank','noopener'); }
 function closeLegalModal(){
   const el=document.getElementById('legal-modal');
   if(el)el.classList.remove('open');
@@ -3576,8 +3515,8 @@ function renderUpgradeModal(featureHint){
   '</div>'+
   // Auto-renew disclosure + fine print
   '<div style="margin:0 32px 16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--txt);line-height:1.6">'+
-    '<strong>'+ico('warning')+' Subscription auto-renews.</strong> After your 7-day free trial, your plan charges automatically each month until cancelled. '+
-    'Cancel anytime in Settings → Subscription before the trial ends to avoid charges. No charge if cancelled before trial ends.'+
+    '<strong>'+ico('warning')+' Subscription auto-renews.</strong> After your 7-day free trial, Ledger Pro charges '+(isAnnual?'$132 every year':'$'+proMonthly+' every month')+' to your card automatically until you cancel. '+
+    'Cancel anytime in Settings → Subscription. Cancel before the trial ends and you are never charged.'+
   '</div>'+
   '<div style="padding:0 32px 24px;text-align:center;font-size:10px;color:var(--mut);line-height:1.8">'+
     'By subscribing you agree to our <a href="/terms" target="_blank" style="color:var(--mut)">Terms of Service</a> and <a href="/privacy" target="_blank" style="color:var(--mut)">Privacy Policy</a>. '+
@@ -4237,6 +4176,7 @@ async function handleEmailAuth(){
   const pass=document.getElementById('auth-pass')?.value?.trim();
   const name=authMode==='signup'?document.getElementById('auth-name')?.value?.trim():'';
   if(authMode==='signup'&&!name){showToast('Enter your full name','err');return;}
+  if(authMode==='signup'&&_badWords(name)) return;
   if(!email||!email.includes('@')){showToast('Enter a valid email address','err');return;}
   if(!pass||pass.length<8){showToast('Password must be at least 8 characters','err');return;}
 
@@ -4697,6 +4637,7 @@ function obNext(){
     obData.school = (document.getElementById('ob-school')?.value?.trim()||'').slice(0,80);
     obData.classYear = document.getElementById('ob-classyear')?.value||'';
     obData.bio = (document.getElementById('ob-bio')?.value?.trim()||'').slice(0,200);
+    if(_badWords(obData.name,obData.school,obData.bio)) return;
     // avatar already set by selectEmoji
     obStep=1;renderOnboarding();
   } else if(obStep===1){
@@ -4714,6 +4655,7 @@ function obFinish(){
   const examDates=obData.examDates||{};
   sections.forEach(s=>{if(!examDates[s])examDates[s]=document.getElementById('date-'+s)?.value||'';});
   const firmName=document.getElementById('ob-firm')?.value?.trim()||obData.firmName||'';
+  if(_badWords(firmName)) return;
   obData.firmName=firmName;
   const passedMap=obData.passed||{};
   const sectionPassed=sections.filter(s=>passedMap[s]);
@@ -5817,6 +5759,7 @@ async function createRoom(){
   const t=ROOM_TIMERS[parseInt(document.getElementById('rc-timer')?.value)||0]||ROOM_TIMERS[0];
   const clubId=document.getElementById('rc-who')?.value||'';
   if(!name){showToast('Give the room a name','err');return;}
+  if(_badWords(name)) return;
   if(btn){btn.disabled=true;btn.textContent='Opening…';}
   const id='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   const now=Date.now();
@@ -8251,6 +8194,7 @@ function submitPost(){
   const material=(document.getElementById('pm-material')?.value?.trim()||'').slice(0,120);
   const caption=(document.getElementById('pm-caption')?.value?.trim()||'').slice(0,500);
   if(!section){showToast('Select a section','err');return;}
+  if(_badWords(material,caption)) return;
   if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
   if(hours>16){showToast('Hours capped at 16 per session','err');return;}
   if(btn){btn.disabled=true;btn.textContent='Saving…';}
@@ -9001,6 +8945,7 @@ function saveEditedActivity(actId){
   const caption=(document.getElementById('edit-caption')?.value?.trim()||'').slice(0,500);
   const isPrivate=document.getElementById('edit-private')?.checked||false;
   if(!section){showToast('Select a section','err');return;}
+  if(_badWords(material,caption)) return;
   if(hours<=0){showToast('Enter the number of hours you studied','err');return;}
   if(hours>16){showToast('Hours capped at 16 per session','err');return;}
   const existing=S.activities[idx];
@@ -9288,6 +9233,7 @@ function startTimer(opts){
   const goal=direct?0:(parseFloat(document.getElementById('ss-goal')?.value)||0);
   const date=direct?todayStr():(document.getElementById('ss-date')?.value||todayStr());
   if(!sec){showToast('Select a section','err');return;}
+  if(_badWords(mat)) return;
   TS.section=sec;TS.material=mat;TS.goalHours=goal;TS.date=date;
   TS.elapsed=0;TS.startTime=Date.now();TS.phase='active';
   clearInterval(timerInterval);
@@ -9439,6 +9385,7 @@ function saveSession(){
   const date=document.getElementById('recap-date')?.value||TS.date||todayStr();
   const hours=parseFloat((TS.elapsed/3600).toFixed(2));
   if(!section){showToast('No section selected','err');return;}
+  if(_badWords(notes,TS.material)) return;
   if(TS.elapsed<30){showToast('Sessions must be at least 30 seconds to save','err');return;}
   if(date>todayStr()){showToast('The session date can\'t be in the future','err');return;}
   if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving…';}
@@ -10464,6 +10411,7 @@ function _renderMsgsDM(areaId, msgs, channelId, opts){
   opts=opts||{};
   const collection=opts.collection||'conversations';
   const isGroup=!!opts.isGroup; // club group chat: always show sender names for others
+  if(collection==='clubs'&&!_isPrivateClub(channelId)) msgs=msgs.map(m=>m.isSystem?m:{...m,text:_clean(m.text)});
   // If the user scrolled up to read history, don't yank them down when new messages arrive
   const nearBottom=area.scrollHeight-area.scrollTop-area.clientHeight<120;
   msgs=(msgs||[]).filter(m=>!isBlocked(m.from||m.author));
@@ -10673,6 +10621,7 @@ async function _sendConvMessage(kind, channelId){
   if(!text){ return; }
   if(!AUTH){ showToast('Sign in to send messages','err'); return; }
   if(!firebaseDb){ showToast('No connection','err'); return; }
+  if(kind==='club'&&!_isPrivateClub(channelId)&&_badWords(text)) return;
   const sendBtn=document.getElementById('dm-send-'+channelId);
   inp.value='';inp.style.height='auto';
   if(sendBtn)sendBtn.disabled=true;
@@ -12063,6 +12012,7 @@ function sendClubViewMessage(clubId){
   const text=inp?.value?.trim(); if(!text) return;
   if(!AUTH){ showToast('Sign in to send messages','err'); return; }
   if(!firebaseDb){ showToast('No connection — check your internet','err'); return; }
+  if(!_isPrivateClub(clubId)&&_badWords(text)) return;
   const sendBtn=document.getElementById('cva-send-'+clubId);
   inp.value='';inp.style.height='auto';
   if(sendBtn)sendBtn.disabled=true;
@@ -12798,6 +12748,7 @@ function removeProfilePic(){
 function saveEditProfile(){
   const name=(document.getElementById('ep-name')?.value?.trim()||'').slice(0,50);
   if(!name){showToast('Enter your name','err');return;}
+  if(_badWords(name,document.getElementById('ep-city')?.value,document.getElementById('ep-bio')?.value,document.getElementById('ep-school')?.value)) return;
   S.name=name;
   S.state=document.getElementById('ep-state')?.value||S.state;
   S.city=(document.getElementById('ep-city')?.value?.trim()||'').slice(0,60);

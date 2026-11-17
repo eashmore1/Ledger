@@ -17,12 +17,17 @@
 //   FIREBASE_SERVICE_ACCOUNT required
 //   RESEND_API_KEY           optional — turns on the Sunday recap email
 //   RECAP_FROM               optional — From address, default "Ledger <support@ledgercpa.app>"
+//   MAIL_ADDRESS             postal address for the email footer (US CAN-SPAM
+//                            law requires one in recurring emails), e.g.
+//                            "123 Main St, Searcy, AR 72143" or a PO box
 // ─────────────────────────────────────────────────────────────────────────────
 'use strict';
 const { admin, initAdmin, sendToUser, pickReminder, localParts, addDays, clean, hrs } = require('./_lib/push');
 const { unsubToken } = require('./notify');
 
 const PAGE = 300, MAX_USERS = 6000;
+const MAIL_ADDRESS = (process.env.MAIL_ADDRESS || '').trim();
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function recapEmail(profile, uid, t) {
   const weekStart = addDays(t.ymd, -6);
@@ -45,6 +50,7 @@ function recapEmail(profile, uid, t) {
   ${examLine}
   <p style="margin:22px 0"><a href="https://ledgercpa.app/" style="background:#d44000;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;display:inline-block">Open Ledger</a></p>
   <p style="font-size:12px;color:#7a7385;line-height:1.6;margin-top:28px">You get this once a week because you study with Ledger. <a href="${unsub}" style="color:#7a7385">Unsubscribe from the weekly recap</a>.</p>
+  <p style="font-size:11px;color:#9a93a3;line-height:1.6;margin-top:8px">Momentum Apps LLC${MAIL_ADDRESS ? ' · ' + esc(MAIL_ADDRESS) : ''}</p>
 </div>`;
   return { subject: done > 0 ? `Your week: ${hrs(done)} over ${days} day${days === 1 ? '' : 's'}` : 'Your week on Ledger', html, unsub };
 }
