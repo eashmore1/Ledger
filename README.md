@@ -195,6 +195,29 @@ this repo is the intended security policy, but it only takes effect once
 deployed. If messaging/clubs/follows start throwing "permission-denied"
 errors in production, this is almost always the reason.
 
+### Privacy, consent and accessibility
+
+- **No outside requests by default.** Fonts (`fonts/`) and third-party
+  libraries (`vendor/`: confetti, otpauth, qrcode-generator, each with its
+  license) are served from ledgercpa.app. QR codes (2FA setup, invite sheet)
+  are drawn in the browser so a 2FA secret is never sent to a web service.
+  The only outside host for a visitor who declines cookies is Google's
+  Firebase SDK (`tests/e2e/compliance.e2e.js` checks this).
+- **Cookies.** Google Analytics for Firebase starts only after "Accept".
+  "Cookie Settings" in every footer (and Settings → Privacy) reopens the
+  banner; declining turns analytics collection off.
+- **Age gate.** Onboarding asks for birth year. Under 13 is turned away, the
+  new login and profile are deleted and the device remembers the answer; the
+  birth year itself is never stored. 13–17 get a parental-permission note.
+- **Account deletion** cancels any Stripe subscription immediately (via
+  `/api/cancel-subscription` with `{"immediately": true}`) before deleting data.
+- **Accessibility.** `tests/e2e/a11y.e2e.js` runs axe-core (WCAG 2 A/AA) on
+  every marketing page and the main signed-in screens in light and dark mode.
+  Colored text uses deeper shades in light mode (`SECTION_COLORS`,
+  `_textTone`) and brighter ones in dark mode.
+- **`.vercelignore`** keeps notes, plans, tests and native projects out of the
+  deployed site.
+
 ### Mobile (Capacitor)
 
 ```bash

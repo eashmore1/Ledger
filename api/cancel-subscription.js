@@ -2,6 +2,8 @@
 // Ledger — Cancel Subscription  /api/cancel-subscription
 // Cancels the user's Stripe subscription at period end (they keep access
 // until the billing period is up, then auto-downgrade via webhook).
+// With {"immediately": true} (sent when the user deletes their account) it
+// cancels right away instead.
 //
 // Env vars required:
 //   STRIPE_SECRET_KEY          — sk_live_...
@@ -52,6 +54,20 @@ module.exports = async (req, res) => {
 
   if (!subscriptionId) {
     return res.status(400).json({ error: 'No active subscription found' });
+  }
+
+  // ── Deleting the account: end the subscription now ───────────────────────
+  // Otherwise a deleted account would keep being billed.
+  if (req.body && req.body.immediately === true) {
+    try {
+      await stripe.subscriptions.cancel(subscriptionId);
+      console.log(`🗑️ Subscription ${subscriptionId} cancelled now (account deletion) for user ${uid}`);
+      return res.json({ success: true, cancelled: true });
+    } catch (e) {
+      if (e && e.code === 'resource_missing') return res.json({ success: true, cancelled: true });
+      console.error('Stripe cancel-now error:', e.message);
+      return res.status(500).json({ error: e.message });
+    }
   }
 
   // ── Cancel at period end in Stripe ───────────────────────────────────────

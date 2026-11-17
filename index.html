@@ -48,10 +48,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#f2ede6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c0905" media="(prefers-color-scheme: dark)">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -59,32 +57,32 @@
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 <!-- Stripe.js intentionally NOT loaded — checkout uses hosted Payment Links (redirects),
      so the ~1MB Stripe SDK is unnecessary on every page. Re-add only if embedding Stripe Elements. -->
-<!-- canvas-confetti — used for exam pass celebration -->
-<!-- NOTE: points at dist/confetti.browser.js, NOT .min.js. canvas-confetti does not
-     publish a .min.js — jsdelivr auto-minifies that path on the fly, so its bytes
-     (and therefore its SRI hash) are not stable, which silently broke the integrity
-     check and blocked confetti entirely. This hash is the real published artifact,
-     verified byte-identical between the npm registry tarball and jsdelivr. -->
-<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.js" integrity="sha384-/Ko/tqVwPYurnBe+Mj8WWw+39WmyOZn/kU+neqXn4hRxGI575k07mB/hIekAT51+" crossorigin="anonymous"></script>
-<!-- OTPAuth — TOTP for two-factor authentication -->
-<script defer src="https://cdn.jsdelivr.net/npm/otpauth@9.3.6/dist/otpauth.umd.min.js"></script>
+<!-- Third-party libraries are served from ledgercpa.app (vendor/, with their
+     licenses) rather than a public CDN, so visitors' browsers don't contact
+     outside servers and the 2FA code can't be swapped by a compromised CDN.
+     canvas-confetti 1.9.3 (exam-pass celebration), otpauth 9.3.6 (two-step
+     verification), qrcode-generator 1.4.4 (QR codes drawn in the browser, so
+     2FA secrets and invite links are never sent to a QR web service). -->
+<script defer src="/vendor/confetti-1.9.3.js"></script>
+<script defer src="/vendor/otpauth-9.3.6.min.js"></script>
+<script defer src="/vendor/qrcode-generator-1.4.4.js"></script>
 <style>
 /* ── TOKENS ── */
 :root{
   --bg:#f2ede6;--surf:#ffffff;--surf2:#f7f2eb;--surf3:#ede7df;
   --bdr:#e2dbd2;--bdr2:#c9c0b4;
   --txt:#0d1117;--sub:#4a5568;--mut:#6b665c;
-  --ora:#d44000;--ora-dk:#b03500;--ora-bg:#fff7ed;--ora-bdr:#fdba74;
+  --ora:#c23a00;--ora-dk:#a33000;--ora-bg:#fff7ed;--ora-bdr:#fdba74;
   --navy:#18103a;--navy-dk:#0a0618;--navy-mid:#1e1540;
   --ind:#5a5fcf;--ind-bg:#eef0ff;--ind-bdr:#c4c7f0;
-  --grn:#0ea574;--grn-bg:#ecfdf5;--grn-bdr:#a7e8d0;
-  --red:#e84040;--red-bg:#fff1f1;
-  --amb:#f59e0b;--amb-bg:#fffbeb;
+  --grn:#047857;--grn-bg:#ecfdf5;--grn-bdr:#a7e8d0;
+  --red:#c81e1e;--red-bg:#fff1f1;
+  --amb:#b45309;--amb-bg:#fffbeb;
   --pur:#9333ea;--pur-bg:#faf5ff;
-  --tea:#0fb5aa;--tea-bg:#f0fdfa;
+  --tea:#0f766e;--tea-bg:#f0fdfa;
   /* ── EXAM SECTION COLORS (single source of truth — keep EXAMS[x].color in sync) ── */
-  --far:#dc2626;--far-bg:#fef2f2;--aud:#2563eb;--aud-bg:#eff6ff;--reg:#059669;--reg-bg:#ecfdf5;
-  --bar:#d97706;--bar-bg:#fffbeb;--isc:#9333ea;--isc-bg:#faf5ff;--tcp:#0d9488;--tcp-bg:#f0fdfa;
+  --far:#b91c1c;--far-bg:#fef2f2;--aud:#2563eb;--aud-bg:#eff6ff;--reg:#047857;--reg-bg:#ecfdf5;
+  --bar:#b45309;--bar-bg:#fffbeb;--isc:#9333ea;--isc-bg:#faf5ff;--tcp:#0f766e;--tcp-bg:#f0fdfa;
   --bg-rgb:242,237,230;
   --shadow:0 1px 4px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 20px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);
@@ -98,10 +96,13 @@
   --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
 }
 body.dark{
+  /* These double as button backgrounds under white text, so dark mode keeps
+     the original shades; text in these colors is lifted by the rules below. */
+  --ora:#d44000;--grn:#0ea574;--red:#e84040;--amb:#f59e0b;--tea:#0fb5aa;--far:#dc2626;--reg:#059669;--bar:#d97706;--tcp:#0d9488;
   --bg:#0c0905;--surf:#15100b;--surf2:#1e1812;--surf3:#261f17;
   --bg-rgb:12,9,5;
   --bdr:#2e2519;--bdr2:#3d3124;
-  --txt:#edf0f7;--sub:#8a96b8;--mut:#8a847a;
+  --txt:#edf0f7;--sub:#8a96b8;--mut:#99938a;
   --ora-bg:#221200;--ora-bdr:#7a3500;
   --ind-bg:#191d42;--ind-bdr:#2e3470;--grn-bg:#021c14;--grn-bdr:#0a4233;--red-bg:#1e0808;
   --amb-bg:#1a1200;--pur-bg:#160a28;--tea-bg:#031a18;
@@ -278,12 +279,12 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 
 /* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.badge-FAR{background:rgba(239,68,68,.12);color:#dc2626}
-.badge-AUD{background:rgba(79,142,247,.12);color:#2563eb}
-.badge-REG{background:rgba(16,185,129,.12);color:#059669}
-.badge-BAR{background:rgba(212,64,0,.12);color:#d97706}
+.badge-FAR{background:rgba(239,68,68,.12);color:var(--far)}
+.badge-AUD{background:rgba(79,142,247,.12);color:var(--aud)}
+.badge-REG{background:rgba(16,185,129,.12);color:var(--reg)}
+.badge-BAR{background:rgba(212,64,0,.12);color:var(--bar)}
 .badge-ISC{background:rgba(168,85,247,.12);color:#9333ea}
-.badge-TCP{background:rgba(20,184,166,.12);color:#0d9488}
+.badge-TCP{background:rgba(20,184,166,.12);color:var(--tcp)}
 .badge-passed{background:var(--grn-bg);color:var(--grn);border:1px solid #a7f3d0}
 
 .ac-header{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4) var(--sp-4) 0}
@@ -328,6 +329,15 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .feed-ch-row{display:flex;align-items:center;gap:12px;padding:11px 0}
 .feed-ch-row+.feed-ch-row{border-top:1px solid var(--bdr)}
 
+/* Dark mode: brighter text shades so colored text meets WCAG AA contrast. */
+body.dark [style^="color:var(--ora)"],body.dark [style*=";color:var(--ora)"],body.dark [style*=" color:var(--ora)"],body.dark .today-day.is-today .today-day-lbl{color:#ff8a4c!important}
+body.dark [style^="color:var(--ind)"],body.dark [style*=";color:var(--ind)"],body.dark [style*=" color:var(--ind)"],body.dark .nav-pro-chip{color:#8b90f0!important}
+body.dark .nav-tab.active{color:#ff8a4c}
+body.dark #crew-onboard-card [style*="color:var(--mut)"]{color:#b8b3c9!important}
+body.dark .badge-FAR{color:#f87171}body.dark .badge-AUD{color:#60a5fa}body.dark .badge-REG{color:#34d399}
+body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark .badge-TCP{color:#2dd4bf}
+.skip-link{position:fixed;top:-60px;left:12px;z-index:1000000;background:var(--txt);color:var(--surf);padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none}
+.skip-link:focus{top:12px}
 /* ── USER PROFILE PAGE ── */
 .uprofile-page-wrap{min-height:100vh}
 @media(max-width:768px){
@@ -363,15 +373,16 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .ach-icon{font-size:22px;margin-bottom:4px}
 .ach-name{font-size:10px;font-weight:700;color:var(--sub);line-height:1.3;text-transform:uppercase;letter-spacing:.04em}
 .ach-item.earned .ach-name{color:var(--amb)}
-.ach-item:not(.earned){opacity:.4;filter:grayscale(1)}
+.ach-item:not(.earned){filter:grayscale(1)}
+.ach-item:not(.earned) .ach-icon{opacity:.45}
 
 /* ── LEADERBOARD ── */
 .lb-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--bdr)}
 .lb-row:last-child{border-bottom:none}
 .lb-rank{font-size:15px;font-weight:700;color:var(--mut);width:34px;text-align:center;flex-shrink:0;font-family:var(--font-display);font-variant-numeric:tabular-nums}
-.lb-rank.gold{color:#f59e0b;font-size:20px}
+.lb-rank.gold{color:var(--amb);font-size:20px}
 .lb-rank.silver{color:#94a3b8;font-size:18px}
-.lb-rank.bronze{color:#d97706;font-size:17px}
+.lb-rank.bronze{color:var(--bar);font-size:17px}
 .lb-name{flex:1;font-size:13px;font-weight:600}
 .lb-hrs{font-size:13px;font-weight:700;color:var(--ora);font-variant-numeric:tabular-nums}
 .lb-you{background:var(--ora-bg);border-radius:8px;padding:var(--sp-3);margin:-2px}
@@ -583,7 +594,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .auth-form-btn:active{transform:translateY(0)}
 .auth-form-btn:disabled{opacity:.6;transform:none;cursor:not-allowed}
 .auth-terms{font-size:11px;color:var(--mut);text-align:center;margin-top:16px;line-height:1.7}
-.auth-terms a{color:var(--ind)}
+.auth-terms a{color:var(--ind);text-decoration:underline}
 
 /* Google account picker modal */
 .google-picker{background:var(--surf);border-radius:16px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:modalIn .2s ease;overflow:hidden}
@@ -765,7 +776,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-status{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
 .sess-st-setup{background:rgba(212,64,0,.1);color:var(--ora)}
 .sess-st-live{background:rgba(239,68,68,.12);color:#ef4444}
-.sess-st-paused{background:rgba(245,158,11,.12);color:#f59e0b}
+.sess-st-paused{background:rgba(245,158,11,.12);color:var(--amb)}
 .sess-st-done{background:rgba(16,185,129,.12);color:#10b981}
 .sess-close-btn{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:2px 6px;border-radius:6px;line-height:1}
 .sess-close-btn:hover{background:var(--surf2);color:var(--txt)}
@@ -790,7 +801,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .sess-topic-val{font-size:15px;font-weight:700}
 .sess-ctrl-row{display:flex;gap:10px;justify-content:center}
 .sess-ctrl{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:11px;font-size:13px;font-weight:700;border:2px solid transparent;cursor:pointer;transition:background-color .13s,border-color .13s,color .13s,box-shadow .13s,transform .13s,opacity .13s}
-.sess-ctrl-pause{background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.2)}
+.sess-ctrl-pause{background:rgba(245,158,11,.1);color:var(--amb);border-color:rgba(245,158,11,.2)}
 .sess-ctrl-pause:hover{background:rgba(245,158,11,.2)}
 .sess-ctrl-resume{background:rgba(212,64,0,.1);color:var(--ora);border-color:rgba(212,64,0,.2)}
 .sess-ctrl-resume:hover{background:rgba(212,64,0,.2)}
@@ -903,7 +914,7 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .testimonial-text{font-size:12.5px;color:var(--sub);line-height:1.7;font-style:italic;margin-bottom:12px}
 .testimonial-author{font-size:12.5px;font-weight:700;color:var(--txt);letter-spacing:-.01em}
 .testimonial-meta{font-size:10px;color:var(--mut);margin-top:2px}
-.stars{color:#f59e0b;font-size:12px;letter-spacing:1px;margin-bottom:8px}
+.stars{color:var(--amb);font-size:12px;letter-spacing:1px;margin-bottom:8px}
 /* Free tier banner */
 .free-limit-banner{background:linear-gradient(135deg,var(--ora-bg),var(--amb-bg));border:1px solid var(--ora-bdr);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer;transition:background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition),transform var(--transition),opacity var(--transition)}
 .free-limit-banner:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
@@ -1312,6 +1323,7 @@ html,body{overflow-x:hidden}
 <script src="/moderation.js?v=1"></script>
 </head>
 <body>
+<a href="#page-content" class="skip-link">Skip to main content</a>
 <div id="root"></div>
 <div class="toast-wrap" id="toast-wrap"></div>
 
@@ -1601,7 +1613,7 @@ async function open2FASetupModal(){
   const label = encodeURIComponent(AUTH?.email || AUTH?.displayName || 'user');
   const totp = new OTPAuth.TOTP({issuer:'Ledger CPA',label,algorithm:'SHA1',digits:6,period:30,secret});
   const otpUri = totp.toString();
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpUri)}`;
+  const qrUrl = _qrDataUrl(otpUri);
   window._2fa_setup_secret = secretBase32;
   let el = document.getElementById('twofa-modal');
   if(!el){
@@ -1615,7 +1627,7 @@ async function open2FASetupModal(){
     <div class="modal-hdr"><span style="font-size:14px;font-weight:800">${LedgerIcon('lock')} Set Up Two-Factor Auth</span><button class="modal-close" onclick="close2FAModal()">${LedgerIcon('x')}</button></div>
     <div style="padding:18px;text-align:center">
       <p style="font-size:12px;color:var(--mut);margin:0 0 14px">Scan this QR code with <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app</p>
-      <img src="${qrUrl}" alt="Invite QR code" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
+      <img src="${qrUrl}" alt="QR code for your authenticator app" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--bdr);margin-bottom:12px">
       <div style="font-size:10px;color:var(--mut);margin-bottom:6px">Or enter the key manually:</div>
       <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;letter-spacing:.12em;word-break:break-all;margin-bottom:16px;color:var(--txt)">${secretBase32}</div>
       <div style="font-size:12px;color:var(--mut);text-align:left;margin-bottom:8px">Enter the 6-digit code from your app to confirm setup:</div>
@@ -2246,7 +2258,7 @@ function showCancelConfirm(){
   const tierName=subTierLabel();
   section.innerHTML=`
 <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:16px 18px;margin-bottom:10px">
-  <div style="font-size:14px;font-weight:800;color:#dc2626;margin-bottom:6px">Cancel your ${tierName} plan?</div>
+  <div style="font-size:14px;font-weight:800;color:var(--far);margin-bottom:6px">Cancel your ${tierName} plan?</div>
   <div style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:14px">You'll keep access until the end of your current billing period. After that your account reverts to Free — you'll lose AI Coach, Score Tracker, advanced analytics, and all Pro features.</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button onclick="executeCancelSubscription()" style="padding:9px 18px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Yes, cancel my plan</button>
@@ -2389,6 +2401,19 @@ const EXAMS = {
   ISC:{code:'ISC',full:'Information Systems & Controls',color:'#9333ea',studyHours:110,passRate:68,difficulty:'Moderate',format:'82 MCQ + 6 TBS',isCore:false,icon:'monitor'},
   TCP:{code:'TCP',full:'Tax Compliance & Planning',color:'#0d9488',studyHours:110,passRate:78,difficulty:'Moderate',format:'68 MCQ + 7 TBS',isCore:false,icon:'calculator'},
 };
+// Section colors are used for text as well as fills, so light mode gets
+// deeper shades that meet WCAG AA contrast; dark mode keeps the bright ones.
+const SECTION_COLORS={FAR:['#b91c1c','#dc2626'],AUD:['#1d4ed8','#2563eb'],REG:['#047857','#059669'],BAR:['#a14605','#d97706'],ISC:['#7e22ce','#9333ea'],TCP:['#0f766e','#0d9488']};
+// Bright accent hexes are fine as fills but too light as text on light
+// backgrounds; this returns a deeper shade for text in light mode.
+const _DEEP={'#10b981':'#047857','#a855f7':'#7e22ce','#ef4444':'#b91c1c','#f59e0b':'#b45309','#d97706':'#b45309','#6366f1':'#4f46e5'};
+function _textTone(hex){ return (document.body&&document.body.classList.contains('dark'))?hex:(_DEEP[String(hex).toLowerCase()]||hex); }
+// Section color for text: same as _sectionColor in light mode, a lighter
+// shade in dark mode so it stays readable.
+const _SECTION_TEXT_DARK={FAR:'#f87171',AUD:'#60a5fa',REG:'#34d399',BAR:'#fbbf24',ISC:'#c084fc',TCP:'#2dd4bf'};
+function _sectionText(code){ return (document.body&&document.body.classList.contains('dark'))?(_SECTION_TEXT_DARK[code]||'#8b90f0'):_sectionColor(code); }
+function _sectionColor(code){ const c=SECTION_COLORS[code]; return c?c[document.body&&document.body.classList.contains('dark')?1:0]:'#5a5fcf'; }
+Object.keys(EXAMS).forEach(k=>Object.defineProperty(EXAMS[k],'color',{get:()=>_sectionColor(k),enumerable:true,configurable:true}));
 
 // ═══════════════════════════════════════════════
 // HOUR GOAL PRESETS
@@ -2478,7 +2503,8 @@ const ACHIEVEMENTS = [
 let REAL_USERS = [];
 
 function hashColor(uid){
-  const colors=['#6366f1','#059669','#ec4899','#d44000','#14b8a6','#f59e0b','#8b5cf6','#06b6d4','#10b981','#f97316'];
+  // Deep enough that white initials on top meet WCAG AA contrast.
+  const colors=['#4f46e5','#047857','#be185d','#c23a00','#0f766e','#b45309','#7c3aed','#0e7490','#15803d','#c2410c'];
   let h=0;for(let i=0;i<(uid||'').length;i++)h=(h*31+uid.charCodeAt(i))|0;
   return colors[Math.abs(h)%colors.length];
 }
@@ -3415,14 +3441,15 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'Priority Support'},
   ];
 
-  const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'opacity:.45')+'">'+f.text+'</span></div>';
+  const fRow=f=>'<div class="plan-feat"><span class="'+(f.on?'plan-feat-on':'plan-feat-off')+'">'+(f.on?'✓':'×')+'</span><span style="'+(f.on?'':'color:var(--mut);text-decoration:line-through')+'">'+f.text+'</span></div>';
 
   const isFree=SUB.tier==='free'&&!isOnTrial();
   const isProActive=SUB.tier==='pro'||SUB.tier==='elite'||isOnTrial();
   const isCramActive=SUB.tier==='cram';
 
   const freeCTA=isFree?'<button class="plan-cta plan-cta-active" disabled>✓ Current Plan</button>':'<button class="plan-cta plan-cta-ghost" onclick="closeUpgradeModal()">Stay Free</button>';
-  const proCTA=isProActive?'<button class="plan-cta plan-cta-active" disabled>✓ Active'+(isOnTrial()?' (Trial)':'')+'</button>':'<button class="plan-cta plan-cta-pro" onclick="activatePlan(\'pro\')">Start 7-Day Free Trial</button>';
+  const proCTA=isProActive?'<button class="plan-cta plan-cta-active" disabled>✓ Active'+(isOnTrial()?' (Trial)':'')+'</button>':'<button class="plan-cta plan-cta-pro" onclick="activatePlan(\'pro\')">Start 7-Day Free Trial</button>'+
+    '<div style="font-size:10px;color:var(--sub);line-height:1.5;margin-top:8px;text-align:center">Then '+(isAnnual?'$132/year':'$'+proMonthly+'/month')+', renews automatically until you cancel. Cancel anytime in Settings.</div>';
 
   const cramCTA=isCramActive?'<div class="plan-feat-on" style="text-align:center;font-size:16px;margin-top:10px">✓ Active</div>':'<button class="cram-cta" onclick="activatePlan(\'cram\')">Get the Window Pass — $'+cramPrice+'</button>';
 
@@ -3628,6 +3655,7 @@ function showPostOnboardingOffer(){
   '<div style="font-size:10px;color:var(--mut);margin-bottom:12px">per month · or $132/yr</div>'+
   '<div style="font-size:11px;color:var(--sub);line-height:1.6;flex:1">Everything in Free<br>Unlimited AI question bank<br>Ledger AI coach (100/mo)<br>AI Study Plan + analytics<br>Exam Day Protocol<br>Study partner pairing</div>'+
   '<button onclick="activatePlan(\'pro\');document.getElementById(\'post-ob-offer\').remove()" style="margin-top:14px;width:100%;padding:10px;background:var(--ora);border:none;border-radius:10px;font-size:12px;font-weight:800;color:#fff;cursor:pointer">Start 7-Day Free Trial →</button>'+
+  '<div style="font-size:10px;color:var(--sub);line-height:1.5;margin-top:6px;text-align:center">Then $14/month, renews automatically until you cancel. Cancel anytime in Settings.</div>'+
   '</div>'+
   '</div>'+
   '<div style="text-align:center;font-size:11px;color:var(--mut);line-height:1.6">Exam date already set? The <strong>$75 Exam Window Pass</strong> is 6 months of Pro, paid once — see Settings → Subscription.<br>The trial needs a card to start. Cancel before day 7 and you are never charged.</div>'+
@@ -4334,6 +4362,33 @@ let obData={name:'',state:'',hoursPerWeek:15,disc:'TCP',sections:['FAR','AUD','R
 function initObData(){obData.name=(AUTH?.displayName||'').split(' ')[0]||'';}
 initObData();
 
+// Age gate. The answer sticks on this device so the form can't just be retried
+// with a different year (a "neutral age screen", as the FTC's COPPA guidance asks).
+function _ageBlocked(){ try{ return localStorage.getItem('ledger-age-block')==='1'; }catch(e){ return false; } }
+async function _ageBlock(){
+  try{ localStorage.setItem('ledger-age-block','1'); }catch(e){}
+  const user=firebaseAuth&&firebaseAuth.currentUser;
+  if(user){
+    try{ if(firebaseDb) await firebaseDb.collection('users').doc(user.uid).delete(); }catch(e){}
+    try{ if(firebaseDb) await firebaseDb.collection('userState').doc(user.uid).delete(); }catch(e){}
+    try{ await user.delete(); }catch(e){}
+    try{ await firebaseAuth.signOut(); }catch(e){}
+  }
+  try{ if(AUTH&&AUTH.uid) localStorage.removeItem(getStateKey(AUTH.uid)); }catch(e){}
+  clearAuth(); AUTH=null; S=null; obStep=0; obData.birthYear=undefined;
+  _renderAgeBlocked();
+}
+function _renderAgeBlocked(){
+  document.body.classList.add('no-app-nav');
+  document.getElementById('root').innerHTML=`
+<div class="onboard-wrap"><div class="onboard-box fade-in" style="text-align:center">
+  <div class="onboard-logo">Ledger</div>
+  <h3 style="margin:18px 0 8px">Sorry, you can’t use Ledger yet</h3>
+  <p style="color:var(--sub);font-size:14px;line-height:1.6;margin:0 0 6px">Ledger is for people 13 and older. We didn’t keep any of the information you entered.</p>
+  <p style="color:var(--mut);font-size:12px;line-height:1.6;margin:0">Questions? <a href="mailto:support@ledgercpa.app" style="color:var(--ora)">support@ledgercpa.app</a></p>
+</div></div>`;
+}
+
 async function backToSignIn(){
   // Sign out any partially-created auth session so they start fresh
   if(FIREBASE_ENABLED && firebaseAuth){
@@ -4361,6 +4416,7 @@ window.addEventListener('popstate', function(e){
 });
 
 function renderOnboarding(){
+  if(_ageBlocked()){ _ageBlock(); return; }
   if(!obData.name&&AUTH?.displayName){initObData();}
   history.pushState({view:'onboarding'},'','/signup');
   document.title='Create Account — Ledger';
@@ -4397,6 +4453,13 @@ function renderObStep0(){
     <div class="form-grp">
       <label>Your Name</label>
       <input id="ob-name" type="text" maxlength="50" placeholder="e.g. Tyler" value="${esc(obData.name||'')}" autocomplete="given-name">
+    </div>
+    <div class="form-grp">
+      <label for="ob-birthyear">Year You Were Born</label>
+      <select id="ob-birthyear">
+        <option value="">Select year…</option>
+        ${(()=>{const y=new Date().getFullYear();let o='';for(let i=y;i>=y-90;i--)o+=`<option value="${i}"${obData.birthYear===i?' selected':''}>${i}</option>`;return o;})()}
+      </select>
     </div>
     <div class="form-grp">
       <label>Licensing State</label>
@@ -4467,7 +4530,7 @@ function renderObStep1(){
     </div>`).join('')}
   </div>
   <div style="margin-top:12px;padding:11px 13px;background:var(--surf2);border-radius:9px;font-size:11px;color:var(--mut);line-height:1.65">
-    <strong style="color:var(--sub)">How to choose:</strong> Tax path → <strong style="color:#0d9488">TCP</strong>. Audit/IT path → <strong style="color:#9333ea">ISC</strong>. Financial reporting/advisory → <strong style="color:#d97706">BAR</strong>. Most Big 4 tax candidates choose TCP (highest pass rate).
+    <strong style="color:var(--sub)">How to choose:</strong> Tax path → <strong style="color:var(--tcp)">TCP</strong>. Audit/IT path → <strong style="color:#9333ea">ISC</strong>. Financial reporting/advisory → <strong style="color:var(--bar)">BAR</strong>. Most Big 4 tax candidates choose TCP (highest pass rate).
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
@@ -4631,8 +4694,15 @@ function obNext(){
     const name=(document.getElementById('ob-name')?.value?.trim()||'').slice(0,50);
     const state=document.getElementById('ob-state')?.value;
     const hrs=Math.min(40,Math.max(1,parseInt(document.getElementById('ob-hrs')?.value)||15));
+    const by=parseInt(document.getElementById('ob-birthyear')?.value)||0;
     if(!name){showToast('Enter your name','err');return;}
+    if(!by){showToast('Select the year you were born','err');return;}
     if(!state){showToast('Select your state','err');return;}
+    // Ledger is 13+. Anyone who could be under 13 this year is turned away and
+    // nothing about them is kept; the birth year itself is never stored.
+    if(new Date().getFullYear()-by<=13){ _ageBlock(); return; }
+    obData.birthYear=by;
+    if(new Date().getFullYear()-by<18) showToast('You’re under 18, so please make sure a parent or guardian is okay with you using Ledger.','info');
     obData.name=name;obData.state=state;obData.hoursPerWeek=hrs;
     obData.school = (document.getElementById('ob-school')?.value?.trim()||'').slice(0,80);
     obData.classYear = document.getElementById('ob-classyear')?.value||'';
@@ -4885,11 +4955,11 @@ function renderApp(){
     .lg-footer a:hover{color:#fff}
     .lg-foot-inner{max-width:1060px;margin:0 auto}
     .lg-foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;align-items:start}
-    .lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.4);margin-bottom:16px}
+    .lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.62);margin-bottom:16px}
     .lg-foot-col a{display:block;font-size:13px;margin-bottom:11px;line-height:1.2}
     .lg-foot-col a:last-child{margin-bottom:0}
-    .lg-foot-bottom{border-top:1px solid rgba(255,255,255,.09);margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:rgba(255,255,255,.45)}
-    .lg-foot-disc{font-size:11px;color:rgba(255,255,255,.28);line-height:1.7;margin:20px auto 0;max-width:920px;text-align:center}
+    .lg-foot-bottom{border-top:1px solid rgba(255,255,255,.09);margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:rgba(255,255,255,.66)}
+    .lg-foot-disc{font-size:11px;color:rgba(255,255,255,.6);line-height:1.7;margin:20px auto 0;max-width:920px;text-align:center}
     @media(max-width:760px){.lg-foot-grid{grid-template-columns:1fr 1fr;gap:28px 24px}.lg-foot-brand{grid-column:1 / -1}.lg-foot-bottom{justify-content:center;text-align:center}}
     @media(max-width:640px){.lg-footer{padding-bottom:90px}}
     </style>
@@ -4897,12 +4967,12 @@ function renderApp(){
       <div class="lg-foot-grid">
         <div class="lg-foot-brand">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><img src="/logo.svg" alt="Ledger" style="width:26px;height:26px"><span style="font-family:var(--font-display);font-style:italic;font-size:21px;font-weight:700;color:#fff;letter-spacing:-.01em">Ledger</span></div>
-          <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.5);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
-          <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45)">A product of <a href="https://momentumapps.net" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></a> &middot; <a href="https://momentumapps.net" target="_blank" rel="noopener" style="color:inherit">momentumapps.net</a></div>
+          <p style="font-size:13px;line-height:1.65;color:rgba(255,255,255,.66);max-width:280px;margin:0">The CPA study tracker that keeps you on pace — log hours, drill MCQs, get AI coaching, and stay accountable with your study circle.</p>
+          <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.66)">A product of <a href="https://momentumapps.net" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><strong style="color:rgba(255,255,255,.8)">Momentum Apps LLC</strong></a> &middot; <a href="https://momentumapps.net" target="_blank" rel="noopener" style="color:inherit">momentumapps.net</a></div>
         </div>
         <div class="lg-foot-col"><div class="lg-foot-h">Product</div><a href="/landing">Features</a><a href="/pricing">Pricing</a><a href="/faq">FAQ</a></div>
         <div class="lg-foot-col"><div class="lg-foot-h">Company</div><a href="/about">About</a><a href="/contact">Contact</a><a href="mailto:support@ledgercpa.app">Support</a></div>
-        <div class="lg-foot-col"><div class="lg-foot-h">Legal</div><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/terms">Refund Policy</a></div>
+        <div class="lg-foot-col"><div class="lg-foot-h">Legal</div><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/terms#refunds">Refund Policy</a><a href="#" onclick="openCookieSettings();return false">Cookie Settings</a></div>
       </div>
       <div class="lg-foot-bottom"><div>&copy; 2026 Momentum Apps LLC. All rights reserved.</div><div>Ledger&trade; is a product of <a href="https://momentumapps.net" target="_blank" rel="noopener">Momentum Apps LLC</a> &middot; <a href="mailto:support@ledgercpa.app">support@ledgercpa.app</a></div></div>
       <p class="lg-foot-disc">Ledger is an independent study tracking tool and is not affiliated with, endorsed by, or approved by the AICPA, NASBA, Prometric, Becker, Gleim, Roger, Wiley, UWorld, or any other exam review provider. &ldquo;CPA&rdquo; and &ldquo;CPA Exam&rdquo; are trademarks of the AICPA and NASBA. Ledger is a study aid and does not guarantee exam passage. Results vary.</p>
@@ -5250,7 +5320,7 @@ function _todayCatchUp(sec){
   return `<div class="card card-pad today-card" id="today-catchup" style="border-color:rgba(239,68,68,.35)">
     <div style="display:flex;align-items:flex-start;gap:12px">
       <div style="flex:1;min-width:0">
-        <div class="section-title" style="color:#dc2626;margin-bottom:6px">Behind on ${sec}</div>
+        <div class="section-title" style="color:var(--far);margin-bottom:6px">Behind on ${sec}</div>
         <div style="font-size:15px;font-weight:800;line-height:1.35">At ${_hrs(p.usual)} a week you'll reach about ${Math.round(p.projected)} of ${p.goal} hours by ${_fmtDay(p.date,{month:'short',day:'numeric'})} — ${Math.round(p.short)}h short.</div>
         <div style="font-size:12.5px;color:var(--sub);line-height:1.55;margin-top:6px">${doable
           ?`The catch-up: <strong style="color:var(--txt)">${_hrs(perDay)} a day, six days a week</strong> (${_hrs(p.needPerWeek)} a week) from now until the exam.`
@@ -6295,7 +6365,7 @@ function buildFeedChallengeCard(){
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap">
             <span style="font-size:13px;font-weight:800">${c.title}</span>
-            <span style="font-size:9px;font-weight:700;color:${c.diffColor};background:${c.diffColor}18;padding:1px 7px;border-radius:20px;letter-spacing:.03em">${c.difficulty}</span>
+            <span style="font-size:9px;font-weight:700;color:${_textTone(c.diffColor)};background:${c.diffColor}18;padding:1px 7px;border-radius:20px;letter-spacing:.03em">${c.difficulty}</span>
             ${joined?'<span style="font-size:9px;font-weight:700;color:var(--grn);background:var(--grn-bg);padding:1px 7px;border-radius:20px">Joined ✓</span>':''}
           </div>
           <div style="font-size:11px;color:var(--sub);margin-bottom:6px">${c.desc}</div>
@@ -6319,7 +6389,7 @@ function buildFeed(){
   const allActivities=[];
   // Your activities
   (S.activities||[]).forEach(a=>{
-    allActivities.push({...a,userId:'you',userName:S.name,userInitials:S.name.slice(0,2).toUpperCase(),userColor:'#6366f1',isMine:true});
+    allActivities.push({...a,userId:'you',userName:S.name,userInitials:S.name.slice(0,2).toUpperCase(),userColor:'#4f46e5',isMine:true});
   });
   // Friends
   REAL_USERS.forEach(f=>{
@@ -6968,7 +7038,7 @@ function buildReadinessCard(){
       </div>
       ${!r.hasScores?`<div style="margin-top:8px;padding:8px 10px;background:var(--amb-bg,#fef3c7);border:1px solid var(--amb,#f59e0b);border-radius:8px;font-size:10px;color:var(--amb,#b45309);line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
         <span><strong>50 pts locked</strong> — log Becker/Gleim practice scores to unlock Practice + Momentum signals.</span>
-        <button onclick="_openScoreTracker()" style="background:var(--amb,#f59e0b);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Log Practice Score →</button>
+        <button onclick="_openScoreTracker()" style="background:#b45309;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Log Practice Score →</button>
       </div>`:''}
       <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Practice scores (40pts) are the strongest predictor · momentum tracks score trend · volume weighted for recency</div>
     </div>
@@ -7164,7 +7234,7 @@ function buildPacingAlert(){
         <div style="font-size:13px;font-weight:700;color:#92400e">You haven't studied in ${daysSinceStudy} days</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">Every day away from the material makes it harder to retain. Even 30 minutes today keeps the streak alive.</div>
       </div>
-      <button class="btn btn-sm" style="background:#f59e0b;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openPostModal()">Log Session →</button>
+      <button class="btn btn-sm" style="background:#b45309;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openPostModal()">Log Session →</button>
     </div>`);
   }
 
@@ -7586,7 +7656,7 @@ function buildCalendar(){
     cells+=`<div class="cal-day${isT?' is-today':''}" onclick="openDayLog('${ds}')">
       <div class="cal-day-num">${d}</div>
       ${examToday?`<div class="cal-pill" style="background:${EXAMS[examToday[0]].color}">${examToday[0]}</div>`:''}
-      ${logs.slice(0,2).map(a=>`<div class="cal-pill" style="background:${EXAMS[a.section]?.color||'#6366f1'}">✓ ${a.section} ${a.hours}h</div>`).join('')}
+      ${logs.slice(0,2).map(a=>`<div class="cal-pill" style="background:${EXAMS[a.section]?.color||'#4f46e5'}">✓ ${a.section} ${a.hours}h</div>`).join('')}
     </div>`;
   }
   const trail=(7-(startDow+last.getDate())%7)%7;
@@ -7953,7 +8023,7 @@ function buildExplore(){
     else if(done) actionBtn='<span style="font-size:11px;color:var(--grn);font-weight:700">'+ico('checkCircle')+' Complete</span>';
     else if(joined) actionBtn='<button class="btn btn-ghost btn-xs" style="color:var(--mut);font-size:10px" onclick="leaveChallenge(\''+c.id+'\')">Leave</button>';
     else actionBtn='<button class="btn btn-ghost btn-xs" onclick="joinChallenge(\''+c.id+'\')">Join</button>';
-    const lockedStyle=!canAccess?'opacity:.55;filter:grayscale(.4);':'';
+    const lockedStyle=!canAccess?'filter:grayscale(.4);':'';
     return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+ico(c.icon)+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div></div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">'+c.reward+'</div></div></div></div>';
   }).join('')+
   ''+
@@ -8045,7 +8115,7 @@ function buildExplore(){
   // Build Study Circle: everyone active this week (you + following), no ranks
   const circleEntries=[];
   const myWeekHrsVal=S.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
-  circleEntries.push({name:'You',initials:(S.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),color:'#6366f1',section:S.sections[0]||'FAR',weekHrs:myWeekHrsVal,streak:getStreak(),isYou:true,tier:SUB.tier||'free'});
+  circleEntries.push({name:'You',initials:(S.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),color:'#4f46e5',section:S.sections[0]||'FAR',weekHrs:myWeekHrsVal,streak:getStreak(),isYou:true,tier:SUB.tier||'free'});
   REAL_USERS.forEach(f=>{
     const hrs=f.activities.filter(a=>new Date(a.date)>weekAgo).reduce((a,b)=>a+(b.hours||0),0);
     circleEntries.push({name:f.name,initials:f.initials,color:f.color,section:f.currentSection||'CPA ✓',weekHrs:hrs,streak:f.streak,isYou:false,id:f.id,tier:f.tier||'free'});
@@ -9691,7 +9761,7 @@ function _renderFollowRequestsModal(){
   const requests=S.followRequests||[];
   const rows=requests.length ? requests.map(r=>`
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
-      <div class="avatar av-md" style="background:${r.color||'#6366f1'};color:#fff;flex-shrink:0">${r.initials||'?'}</div>
+      <div class="avatar av-md" style="background:${r.color||'#4f46e5'};color:#fff;flex-shrink:0">${r.initials||'?'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:700">${r.name||'CPA Candidate'}</div>
         <div style="font-size:11px;color:var(--mut)">Wants to follow you</div>
@@ -10696,7 +10766,7 @@ async function openDirectMessage(userId, displayName, displayInitials){
 }
 
 function promptInviteToClub(userId){
-  const f=REAL_USERS.find(x=>x.id===userId)||{name:'this user',initials:'?',color:'#6366f1'};
+  const f=REAL_USERS.find(x=>x.id===userId)||{name:'this user',initials:'?',color:'#4f46e5'};
   const myClubs=(S.clubs||[]).filter(c=>!c.isDM&&c.members.includes('you'));
   if(!myClubs.length){
     let m=document.getElementById('no-clubs-modal'); if(m)m.remove();
@@ -10733,7 +10803,7 @@ function promptInviteToClub(userId){
 
 function inviteToClub(clubId,userId,el){
   const club=(S.clubs||[]).find(c=>c.id===clubId);
-  const f=REAL_USERS.find(x=>x.id===userId)||{name:'User',initials:'?',color:'#6366f1'};
+  const f=REAL_USERS.find(x=>x.id===userId)||{name:'User',initials:'?',color:'#4f46e5'};
   if(!club)return;
   if(club.members.includes(userId)){showToast(`${f.name} is already in this club!`,'info');return;}
   club.members.push(userId);
@@ -10803,7 +10873,7 @@ function renderClubsModal(){
     const msgs=(S.clubMessages||{})[c.id]||[];
     const lastMsg=msgs.filter(m=>!m.isSystem).slice(-1)[0];
     return`<div class="my-club-card" onclick="openClubChat('${c.id}')">
-      <div class="avatar av-md" style="background:${f?.color||'#6366f1'};color:#fff">${f?.initials||'?'}</div>
+      <div class="avatar av-md" style="background:${f?.color||'#4f46e5'};color:#fff">${f?.initials||'?'}</div>
       <div style="flex:1;min-width:0">
         <div class="my-club-card-name">${f?.name||'Unknown'}</div>
         <div class="my-club-card-meta">${f?.currentSection||'CPA ✓'} · ${f?.streak||0}d streak</div>
@@ -11026,7 +11096,7 @@ function openNotificationCenter(){
   const unread=notifs.filter(n=>!n.read).length;
   const notifRows=notifs.length?notifs.map(n=>{
     const f=n.from?REAL_USERS.find(x=>x.id===n.from):null;
-    const avatarBg=f?f.color:'#6366f1';
+    const avatarBg=f?f.color:'#4f46e5';
     const avatarInit=f?f.initials:'bell';
     const hasNav=!!(n.targetType);
     const navLabel=n.targetType==='user'?'View profile':n.targetType==='activity'?'View post':n.targetType==='profile'?'View achievements':'';
@@ -11375,10 +11445,16 @@ function _smsHref(message){
   // sms:?&body= is the most cross-platform form (works on iOS + Android).
   return 'sms:?&body='+encodeURIComponent(message);
 }
+// QR codes are drawn locally (vendor/qrcode-generator) — never by a web
+// service, which would see the 2FA secret or the invite link.
+function _qrDataUrl(text){
+  try{ const q=qrcode(0,'M'); q.addData(String(text)); q.make(); return q.createDataURL(6,2); }
+  catch(e){ return ''; }
+}
 function openInviteShareSheet(url,message){
   url=url||buildInviteLink();
   message=message||buildInviteMessage(url);
-  const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=0&data='+encodeURIComponent(url);
+  const qrUrl=_qrDataUrl(url);
   let el=document.getElementById('invite-share-sheet'); if(el)el.remove();
   el=document.createElement('div'); el.id='invite-share-sheet'; el.className='modal-overlay open';
   el.onclick=function(e){ if(e.target===el) el.remove(); };
@@ -12913,7 +12989,7 @@ function buildSettingsBilling(){
     ${!isFreePlan?`<span class="pro-plan-badge ${subTierClass()}" style="font-size:11px;padding:4px 12px">Active</span>`:''}
   </div>
   ${isOnTrial()?`<div style="font-size:12px;color:var(--tea);font-weight:600;margin-bottom:4px">Trial ends ${trialEnd} — ${getTrialDaysLeft()} days left</div>`:''}
-  ${SUB.cancelAtPeriodEnd?`<div style="font-size:12px;color:#f59e0b;font-weight:600">${ico('warning')} Cancels ${SUB.cancelAt?new Date(SUB.cancelAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'at end of billing period'} — you keep access until then</div>`
+  ${SUB.cancelAtPeriodEnd?`<div style="font-size:12px;color:var(--amb);font-weight:600">${ico('warning')} Cancels ${SUB.cancelAt?new Date(SUB.cancelAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'at end of billing period'} — you keep access until then</div>`
     :!isFreePlan&&SUB.billingCycle!=='one_time'?`<div style="font-size:12px;color:var(--mut)">Next billing: <strong style="color:var(--sub)">${nextBilling}</strong></div>`:''}
   ${SUB.billingCycle==='one_time'?`<div style="font-size:12px;color:var(--mut)">One-time purchase · expires ${new Date((SUB.startDate||Date.now())+183*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`:''}
   ${isFreePlan?`<div style="font-size:12px;color:var(--mut)">You're on the Free plan. Upgrade to unlock Pro features.</div>`:''}
@@ -12925,7 +13001,7 @@ ${isFreePlan?`
 `:isOnTrial()?`
 <div style="background:var(--tea-bg);border:1px solid rgba(20,184,166,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px">
   <div style="font-size:13px;font-weight:700;color:var(--tea);margin-bottom:4px">Your trial ends in ${getTrialDaysLeft()} days</div>
-  <div style="font-size:12px;color:var(--sub);margin-bottom:12px">After your trial, Pro is $9/mo or $7/mo (annual). Add a payment method to continue uninterrupted.</div>
+  <div style="font-size:12px;color:var(--sub);margin-bottom:12px">After your trial, Pro is $14/month, or $132/year on the annual plan, and renews automatically until you cancel. Add a payment method to keep Pro, or do nothing and you'll move to the Free plan.</div>
   <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="redirectToStripeCheckout('pro_monthly')">Add Payment Method</button>
 </div>
 `:`
@@ -13183,7 +13259,7 @@ ${rows.map(r=>`
     <div style="font-size:11px;color:var(--mut);margin-top:1px">${r.sub}</div>
   </div>
   <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
-    <input type="checkbox" id="notif-${r.id}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
+    <input type="checkbox" id="notif-${r.id}" aria-label="${r.label}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
   </label>
 </div>`).join('')}
 <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="saveNotifPrefs()">Save Preferences</button>`;
@@ -13216,7 +13292,7 @@ ${[
     <div style="font-size:11px;color:var(--mut);margin-top:1px">${r.sub}</div>
   </div>
   <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
-    <input type="checkbox" id="priv-${r.id}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
+    <input type="checkbox" id="priv-${r.id}" aria-label="${r.label}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
   </label>
 </div>`).join('')}
 
@@ -13232,14 +13308,18 @@ ${[
     <div style="font-size:11px;color:var(--mut);margin-top:1px">${r.sub}</div>
   </div>
   <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
-    <input type="checkbox" id="priv-${r.id}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
+    <input type="checkbox" id="priv-${r.id}" aria-label="${r.label}" ${(prefs[r.id]!==undefined?prefs[r.id]:r.def)?'checked':''} style="accent-color:var(--ind);width:16px;height:16px">
   </label>
 </div>`).join('')}
 <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="savePrivacyPrefs()">Save Privacy Settings</button>
 
 <div class="section-title" style="margin-top:24px">Blocked accounts</div>
 <div style="font-size:11px;color:var(--mut);margin:-4px 0 6px">Blocked people can’t follow you, message you, or comment on or give props to your sessions.</div>
-<div id="blocked-list"></div>`;
+<div id="blocked-list"></div>
+
+<div class="section-title" style="margin-top:24px">Cookies</div>
+<div style="font-size:12px;color:var(--sub);line-height:1.6;margin:-4px 0 8px">Analytics cookies are <strong>${(()=>{try{return localStorage.getItem('ledger-cookie-consent')==='accepted'?'on':'off';}catch(e){return 'off';}})()}</strong>. <a href="/privacy#cookies" target="_blank" style="color:var(--ora);text-decoration:underline">Cookie policy</a></div>
+<button class="btn btn-ghost" onclick="openCookieSettings()">Change cookie choice</button>`;
 }
 
 function savePrivacyPrefs(){
@@ -13337,7 +13417,8 @@ function exportData(){
 }
 
 async function confirmDeleteAccount(){
-  const input=prompt('Type DELETE to permanently delete your account and all data:');
+  const paid=SUB&&SUB.tier&&SUB.tier!=='free';
+  const input=prompt((paid?'This also cancels your subscription right away, with no further charges.\n\n':'')+'Type DELETE to permanently delete your account and all data:');
   if(input===null) return;
   if(input!=='DELETE'){ showToast('Type DELETE exactly to confirm','err'); return; }
   clearTimeout(saveState._t); // a pending autosave must not re-create the docs we're about to delete
@@ -13352,6 +13433,18 @@ async function confirmDeleteAccount(){
     if(Date.now()-lastLogin > 4.5*60*1000){
       showToast('For your security, sign out and sign back in, then delete your account right away.','err');
       return;
+    }
+    // A paid subscription must end before the account does, or Stripe would
+    // keep charging a card that belongs to an account that no longer exists.
+    if(SUB&&SUB.tier&&SUB.tier!=='free'&&STRIPE_ENABLED){
+      try{
+        const tok=await user.getIdToken();
+        const r=await fetch('/api/cancel-subscription',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({immediately:true})});
+        if(!r.ok&&r.status!==400&&r.status!==404) throw new Error('cancel '+r.status);
+      }catch(e){
+        showToast('We couldn’t cancel your subscription, so your account wasn’t deleted. Try again, or email support@ledgercpa.app.','err');
+        return;
+      }
     }
     if(db){
       const del=ref=>ref.delete().catch(()=>{});
@@ -13528,6 +13621,7 @@ const QB_SECTIONS = [
   {code:'BAR',full:'Business Analysis & Reporting',color:'#d97706',mcqTotal:60},
   {code:'ISC',full:'Information Systems & Controls',color:'#9333ea',mcqTotal:60},
 ];
+QB_SECTIONS.forEach(x=>Object.defineProperty(x,'color',{get:()=>_sectionColor(x.code),enumerable:true,configurable:true}));
 
 // ── Question data per section ──
 const QB_QUESTIONS = {
@@ -15416,7 +15510,7 @@ function _buildQBankPanel() {
       '<div style="position:absolute;top:0;left:0;bottom:0;width:5px;background:' + sec.color + ';border-radius:16px 0 0 16px"></div>' +
       '<div style="padding-left:10px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
-          '<span style="font-size:12px;font-weight:900;color:' + sec.color + ';background:' + sec.color + '18;padding:4px 12px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
+          '<span style="font-size:12px;font-weight:900;color:' + _sectionText(sec.code) + ';background:' + sec.color + '18;padding:4px 12px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
           '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' answered</span>' +
         '</div>' +
         '<div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:12px;line-height:1.35">' + sec.full + '</div>' +
@@ -16592,7 +16686,7 @@ function buildAdvancedAnalytics() {
 // and WHICH section needs attention most, based on actual progress data.
 const ACTIVITY_MODES = {
   new_material:{
-    label:'New Material',icon:'book',color:'#6366f1',
+    label:'New Material',icon:'book',color:'#4f46e5',
     desc:'Follow your study material (Becker/Gleim/etc.) — pick up wherever you left off.',
     tips:[
       'Don\'t rush chapters just to feel productive. Comprehension > volume.',
@@ -16688,7 +16782,7 @@ function generateAIPlan(settings){
     else{r1=0.38;r2=0.70;r3=0.88;} // balanced
     const p1=Math.floor(planDays*r1),p2=Math.floor(planDays*r2),p3=Math.floor(planDays*r3);
     phases=[
-      {n:1,mode:'new_material',name:'Phase 1 — Foundation',icon:'book',start:1,end:p1,focus:'Work through '+primarySec+' reading material. Build the conceptual base before drilling questions.',color:'#6366f1'},
+      {n:1,mode:'new_material',name:'Phase 1 — Foundation',icon:'book',start:1,end:p1,focus:'Work through '+primarySec+' reading material. Build the conceptual base before drilling questions.',color:'#4f46e5'},
       {n:2,mode:'mcq_practice',name:'Phase 2 — MCQ Drill',icon:'bolt',start:p1+1,end:p2,focus:'High-volume practice questions. Aim for 40–60 MCQs per session. Review every wrong answer.',color:'#d44000'},
       {n:3,mode:'tbs_practice',name:'Phase 3 — Simulations',icon:'target',start:p2+1,end:p3,focus:'Task-based simulations and weak-area targeting. Use Becker/Gleim diagnostic results to guide focus.',color:'#059669'},
       {n:4,mode:'final_review',name:'Phase 4 — Final Sprint',icon:'rocket',start:p3+1,end:planDays,focus:'Mock exams under timed conditions. Only high-yield review. Protect your sleep.',color:'#9333ea'},
@@ -17249,7 +17343,7 @@ function _buildPlanCalendar(plan){
       <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${m.desc}</div>
       <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">${_getPlanTip(todayEntry.mode)}</div>
       ${todayEntry.done
-        ?`<div style="background:#10b98120;color:#10b981;border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:700">✓ Day Complete!</div>`
+        ?`<div style="background:#10b98120;color:var(--grn);border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:700">✓ Day Complete!</div>`
         :`<button onclick="markPlanDayDone('${todayStr}')" style="width:100%;padding:10px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Today Done ✓</button>`}
     </div>`;
   }else if(todayEntry&&!todayEntry.isStudy){
@@ -17423,7 +17517,7 @@ function openPlanDayDetail(dateStr){
         <div style="font-size:13px;color:var(--sub);line-height:1.6;background:var(--surf2);border-radius:10px;padding:12px 14px;margin-bottom:14px">${m.desc}</div>
         <div style="font-size:11px;color:var(--mut);font-style:italic;margin-bottom:16px">${_getPlanTip(day.mode)}</div>
         ${day.done
-          ?`<div style="background:#10b98120;color:#10b981;border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
+          ?`<div style="background:#10b98120;color:var(--grn);border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
           :dateStr<=todayStr?`<button onclick="markPlanDayDone('${dateStr}');document.getElementById('plan-day-modal')?.remove()" style="width:100%;padding:11px;background:${ex.color};color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Mark Done ✓</button>`
           :`<div style="background:var(--surf2);border-radius:10px;padding:10px;text-align:center;font-size:12px;color:var(--mut)">Upcoming — not yet</div>`}
         ${dateStr>todayStr&&!day.done?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer">Can't study this day — life happens</button>`:''}
@@ -18058,17 +18152,16 @@ function checkTrialUrgency(){
     <div style="width:10px;height:10px;border-radius:50%;background:${urgencyColor};box-shadow:0 0 0 3px ${urgencyColor}33"></div>
     <div style="font-size:12px;font-weight:800;color:${urgencyColor};text-transform:uppercase;letter-spacing:.06em">${urgencyMsg}</div>
   </div>
-  <div style="font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px">Don't lose what you've built.</div>
-  <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px">When your trial ends, you lose access to everything you've been using this week.</div>
+  <div style="font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px">Your Pro trial is ending</div>
+  <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:16px">When it ends, your account goes back to the Free plan. Your sessions, hours, streak and history all stay. Free keeps session logging, pacing, the feed and your study club.</div>
   <div style="background:var(--surf2);border-radius:12px;padding:14px 16px;margin-bottom:20px">
-    <div style="font-size:11px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">What you've used on trial</div>
-    ${weekHrs>0?`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Full heatmap + session history</span><span style="font-size:13px;font-weight:800">${weekHrs}h logged</span></div>`:''}
-    ${heatmapNote?`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Study sessions tracked</span><span style="font-size:13px;font-weight:800">${heatmapNote}</span></div>`:''}
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span style="font-size:13px;color:var(--sub)">Full Study Circle + community view</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Reverts to blurred</span></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0"><span style="font-size:13px;color:var(--sub)">Streak Shield protection</span><span style="font-size:13px;font-weight:800;color:var(--ora)">Goes away</span></div>
+    <div style="font-size:11px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pro-only features</div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.8">Ledger AI coach · Unlimited AI question bank · AI Study Plan · Advanced analytics · Score tracker · Streak shields</div>
+    ${weekHrs>0?`<div style="font-size:12px;color:var(--mut);margin-top:8px">You logged ${weekHrs}h this week.</div>`:''}
   </div>
-  <button onclick="document.getElementById('trial-urgency-overlay').remove();activatePlan('pro')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ora),var(--ora-dk));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.35);margin-bottom:10px">Keep Pro Access — $9/mo</button>
-  <button onclick="document.getElementById('trial-urgency-overlay').remove()" style="width:100%;padding:11px;background:transparent;border:none;color:var(--mut);font-size:13px;cursor:pointer">Not now — I'll lose access in ${daysLeft} day${daysLeft>1?'s':''}</button>
+  <button onclick="document.getElementById('trial-urgency-overlay').remove();activatePlan('pro')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--ora),var(--ora-dk));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(212,64,0,.35);margin-bottom:6px">Keep Pro — $14/month</button>
+  <div style="font-size:11px;color:var(--mut);text-align:center;line-height:1.5;margin-bottom:8px">Renews automatically every month until you cancel. Cancel anytime in Settings.</div>
+  <button onclick="document.getElementById('trial-urgency-overlay').remove()" style="width:100%;padding:11px;background:transparent;border:none;color:var(--sub);font-size:13px;font-weight:600;cursor:pointer">No thanks</button>
 </div>`;
   document.body.appendChild(overlay);
 }
@@ -18292,7 +18385,7 @@ function showAchievementUnlock(ach){
   el.innerHTML=`
     <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b22,#d9770622);border:1.5px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;animation:badgeBurst .5s cubic-bezier(.22,.61,.36,1)">${LedgerIcon(ach.icon)}</div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:3px">Achievement</div>
+      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--amb);margin-bottom:3px">Achievement</div>
       <div style="font-size:14px;font-weight:800;color:var(--txt)">${ach.name}</div>
       <div style="font-size:11px;color:var(--mut);margin-top:1px">${ach.desc}</div>
     </div>`;
@@ -18706,12 +18799,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 <!-- ── Cookie Consent Banner ── -->
 <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
   <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
-    We use session cookies, Firebase Analytics, and local storage to operate and improve Ledger. We do not sell your data or use advertising cookies.
-    <a href="/privacy" style="color:#d44000;text-decoration:underline">Privacy Policy</a> ·
+    Ledger would like to use analytics cookies (Google Analytics for Firebase) to see which features get used. They stay off unless you accept, and the app works the same either way. We never use advertising cookies.
+    <a href="/privacy#cookies" style="color:#ff7a3d;text-decoration:underline">Cookie policy</a> ·
     <span style="color:rgba(255,255,255,.45);font-size:11px">Ledger is not affiliated with the AICPA, NASBA, Becker, Gleim, Roger, or Wiley.</span>
   </p>
   <div style="display:flex;gap:10px;flex-shrink:0">
-    <button onclick="dismissCookieBanner(false)" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer">Decline</button>
+    <button onclick="dismissCookieBanner(false)" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.7);background:transparent;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Decline</button>
     <button onclick="dismissCookieBanner(true)" style="padding:8px 20px;border-radius:8px;border:none;background:#d44000;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Accept</button>
   </div>
 </div>
@@ -18730,7 +18823,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     banner.style.display = 'none';
     pad();
     if(accepted && typeof initAnalyticsIfConsented==='function') initAnalyticsIfConsented();
+    // Withdrawing consent stops analytics straight away.
+    if(!accepted){ try{ if(typeof firebaseAnalytics!=='undefined'&&firebaseAnalytics) firebaseAnalytics.setAnalyticsCollectionEnabled(false); }catch(e){} }
+    else { try{ if(typeof firebaseAnalytics!=='undefined'&&firebaseAnalytics) firebaseAnalytics.setAnalyticsCollectionEnabled(true); }catch(e){} }
   };
+  window.openCookieSettings = function(){ banner.style.display = 'flex'; pad(); };
 })();
 
 /* ── A11Y: keyboard access for elements with onclick handlers ──

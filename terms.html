@@ -17,9 +17,8 @@
 <meta name="twitter:image" content="https://ledgercpa.app/og-image.png">
 <link rel="canonical" href="https://ledgercpa.app/terms">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -68,7 +67,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 /* ── PAGE ── */
 .page-wrap{max-width:760px;margin:0 auto;padding:var(--sp-14) var(--sp-4) var(--sp-10)}
 
-.page-eyebrow{font-size:11px;font-weight:800;color:var(--ora);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--sp-1)}
+.page-eyebrow{font-size:11px;font-weight:800;color:var(--ora-dk);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--sp-1)}
 .page-h1{font-family:var(--display);font-size:clamp(34px,5vw,52px);font-weight:600;color:var(--txt);line-height:1.04;letter-spacing:-.01em;margin-bottom:var(--sp-1)}
 .page-meta{font-size:13px;color:var(--mut);margin-bottom:var(--sp-6)}
 
@@ -77,7 +76,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .legal-section p{font-size:14px;color:var(--sub);line-height:1.75;margin-bottom:var(--sp-1);max-width:68ch}
 .legal-section ul{padding-left:var(--sp-2);margin-bottom:var(--sp-1)}
 .legal-section ul li{font-size:14px;color:var(--sub);line-height:1.75;margin-bottom:6px}
-.legal-section a{color:var(--ora);text-decoration:none;font-weight:600;transition:color .18s var(--ease)}
+.legal-section a{color:var(--ora-dk);text-decoration:none;font-weight:600;transition:color .18s var(--ease)}
 .legal-section a:hover{color:var(--ora-dk);text-decoration:underline}
 .legal-divider{height:1px;background:var(--bdr);margin:var(--sp-4) 0}
 
@@ -94,7 +93,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .lg-footer a:hover{color:#fff}
 .lg-foot-inner{max-width:1060px;margin:0 auto}
 .lg-foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:var(--sp-4);align-items:start}
-.lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.44);margin-bottom:var(--sp-2)}
+.lg-foot-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.62);margin-bottom:var(--sp-2)}
 .lg-foot-brand-row{display:flex;align-items:center;gap:var(--sp-1);margin-bottom:var(--sp-2)}
 .lg-foot-brand-text{font-family:var(--display);font-size:21px;font-weight:600;font-style:italic;color:#fff;letter-spacing:-.01em}
 .lg-foot-brand-p{font-size:13px;line-height:1.65;color:rgba(255,255,255,.55);max-width:280px;margin:0}
@@ -103,7 +102,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .lg-foot-col a{display:block;font-size:13px;margin-bottom:11px;line-height:1.2}
 .lg-foot-col a:last-child{margin-bottom:0}
 .lg-foot-bottom{border-top:1px solid rgba(255,255,255,.1);margin-top:var(--sp-5);padding-top:var(--sp-3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-1);font-size:12px;color:rgba(255,255,255,.5)}
-.lg-foot-disc{font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:var(--sp-3) auto 0;max-width:920px;text-align:center}
+.lg-foot-disc{font-size:11px;color:rgba(255,255,255,.6);line-height:1.7;margin:var(--sp-3) auto 0;max-width:920px;text-align:center}
 @media(max-width:760px){.lg-foot-grid{grid-template-columns:1fr 1fr;gap:var(--sp-3) var(--sp-2)}.lg-foot-brand{grid-column:1 / -1}.lg-foot-bottom{justify-content:center;text-align:center}}
 
 /* ── COOKIE BANNER ── */
@@ -113,7 +112,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .cookie-actions{display:flex;gap:var(--sp-1);flex-shrink:0}
 .cookie-btn{padding:var(--sp-1) var(--sp-2);border-radius:var(--r-sm);font-size:13px;cursor:pointer;transition:background-color .18s var(--ease),border-color .18s var(--ease),transform .18s var(--ease)}
 .cookie-btn:active{transform:scale(.97)}
-.cookie-btn-decline{background:transparent;border:1px solid rgba(255,255,255,.32);color:rgba(255,255,255,.78)}
+.cookie-btn-decline{background:transparent;border:1px solid rgba(255,255,255,.7);color:#fff;font-weight:600;padding:var(--sp-1) var(--sp-3)}
 .cookie-btn-decline:hover{border-color:rgba(255,255,255,.55);color:#fff}
 .cookie-btn-accept{background:var(--ora);border:1px solid var(--ora);color:#fff;font-weight:600;padding:var(--sp-1) var(--sp-3)}
 .cookie-btn-accept:hover{background:var(--ora-dk)}
@@ -178,7 +177,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
     <p>What you type into an AI feature is sent to our AI provider to produce a response, as described in the <a href="/privacy">Privacy Policy</a>. Don't enter sensitive personal information, client information, or anything you're not allowed to share.</p>
   </div>
 
-  <div class="legal-section">
+  <div class="legal-section" id="refunds">
     <h2>5. Plans, Billing and Cancellation</h2>
     <p>Ledger has a Free plan, a paid subscription (Ledger Pro, billed monthly or annually), and a one-time 6-Month Exam Window Pass. Firm and school cohort plans are set up separately by agreement. Payments are processed by Stripe. Subscribers on older plan names (Pro, Elite, or the Cram Plan) keep the access they bought.</p>
     <ul>
@@ -307,7 +306,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
       <div class="lg-foot-h">Legal</div>
       <a href="/terms">Terms of Service</a>
       <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Refund Policy</a>
+      <a href="/terms#refunds">Refund Policy</a>
+      <a href="#" onclick="openCookieSettings();return false">Cookie Settings</a>
     </div>
   </div>
   <div class="lg-foot-bottom">
@@ -324,8 +324,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 <!-- ── Cookie / GDPR Consent Banner ── -->
 <div id="cookie-banner" class="cookie-banner">
   <p class="cookie-text">
-    We use cookies and analytics to improve your experience. By continuing to use Ledger you agree to our
-    <a href="/privacy">Privacy Policy</a>.
+    Ledger would like to use analytics cookies (Google Analytics for Firebase) to see which features get used. They stay off unless you accept, and the site works the same either way.
+    <a href="/privacy#cookies">Cookie policy</a>
   </p>
   <div class="cookie-actions">
     <button onclick="dismissCookieBanner(false)" class="cookie-btn cookie-btn-decline">Decline</button>
@@ -337,11 +337,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
   var COOKIE_KEY = 'ledger-cookie-consent';
   var banner = document.getElementById('cookie-banner');
   if(!banner) return;
-  if(!localStorage.getItem(COOKIE_KEY)) banner.style.display = 'flex';
+  try{ if(!localStorage.getItem(COOKIE_KEY)) banner.style.display = 'flex'; }catch(e){ banner.style.display = 'flex'; }
   window.dismissCookieBanner = function(accepted){
-    localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined');
+    try{ localStorage.setItem(COOKIE_KEY, accepted ? 'accepted' : 'declined'); }catch(e){}
     banner.style.display = 'none';
   };
+  // Footer "Cookie settings" link: lets people change their answer any time.
+  window.openCookieSettings = function(){ banner.style.display = 'flex'; };
 })();
 </script>
 </body>

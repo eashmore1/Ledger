@@ -1,0 +1,23 @@
+# Only the website, its assets and the api/ functions get deployed. Everything
+# else in the repo (notes, plans, tests, native projects, tooling) stays private
+# instead of being downloadable from ledgercpa.app.
+/BluePrints
+/README.md
+/TODOS.md
+/.impeccable.md
+/.claude
+/_patch_*.py
+/_og-cohort-template.html
+/tests
+/ios
+/android
+/node_modules
+/Logos/logo-options.html
+/Logos/jpeg-exports
+/firebase.json
+/firestore.rules
+/firestore.indexes.json
+/firestore-debug.log
+/capacitor.config.json
+/.firebaserc
+*.log

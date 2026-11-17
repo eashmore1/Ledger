@@ -9,8 +9,8 @@
  *     sync when the connection returns.
  */
 'use strict';
-const VERSION = 'ledger-v5';
-const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=2', '/calc.js?v=1', '/moderation.js?v=1', '/manifest.json', '/icons/icon-192.png'];
+const VERSION = 'ledger-v6';
+const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=2', '/calc.js?v=1', '/moderation.js?v=1', '/fonts/fonts.css', '/fonts/inter-latin-wght-normal.woff2', '/fonts/fraunces-latin-opsz-normal.woff2', '/fonts/fraunces-latin-opsz-italic.woff2', '/manifest.json', '/icons/icon-192.png'];
 // Third-party scripts and fonts the app shell needs to boot offline.
 const CDN_OK = /^https:\/\/(www\.gstatic\.com\/firebasejs\/|cdn\.jsdelivr\.net\/npm\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 

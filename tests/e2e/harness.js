@@ -87,6 +87,7 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 },
   // The service worker would answer requests itself and bypass the routing below.
   const context = await env.browser.newContext({ viewport, serviceWorkers: 'block', ...extra });
   const errors = [];
+  const outside = []; // hosts other than our own site and the emulators
   const isEmu = (url) => url.href.startsWith(AUTH_EMU) || url.host === FS_HOST;
   // Emulator traffic is left un-intercepted: routing it breaks CORS preflights.
   await context.route((url) => !isEmu(url), async (route) => {
@@ -109,6 +110,7 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 },
       }
       return route.continue();
     }
+    try { outside.push(new URL(url).host); } catch (e) {}
     for (const [re, file] of CDN) {
       const m = url.match(re);
       if (m) return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(file(m)) });
@@ -125,18 +127,19 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 },
     errors.push('console: ' + t.slice(0, 400));
   });
   page.on('dialog', (d) => d.accept().catch(() => {}));
-  return { context, page, errors };
+  return { context, page, errors, outside };
 }
 
 module.exports = { loadRules, launch, newUser, emulatorsUp, resetEmulators, verifyEmail, oobCodes, PROJECT, AUTH_EMU, FS_HOST };
 
 // Full new-account path through the real UI: sign up, verify, sign in, onboard.
-async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api, viewport, context } = {}) {
+async function signUpAndOnboard(env, opts = {}) {
+  const { name, email, password = 'Passw0rd!x', firm = '', url = '/' , api, viewport, context } = opts;
   const u = await newUser(env, { api, viewport, context });
   const p = u.page;
   await p.goto(env.server.url + url, { waitUntil: 'load' });
   await p.waitForSelector('.auth-tab');
-  await p.click('#cookie-banner button:has-text("Accept")');
+  await p.click(`#cookie-banner button:has-text("${opts.declineCookies ? 'Decline' : 'Accept'}")`);
   await p.click('.auth-tab:has-text("Create Account")');
   await p.fill('#auth-name', name);
   await p.fill('#auth-email', email);
@@ -150,7 +153,9 @@ async function signUpAndOnboard(env, { name, email, password = 'Passw0rd!x', fir
   await p.click('.auth-form-btn');
   await p.waitForSelector('#ob-name');
   await p.fill('#ob-name', name.split(' ')[0]);
+  await p.selectOption('#ob-birthyear', String(opts.birthYear || 1998));
   await p.selectOption('#ob-state', 'TX');
+  if (opts.stopAtProfile) return { page: p, uid: await p.evaluate(() => firebase.auth().currentUser && firebase.auth().currentUser.uid) };
   await p.click('.ob-big-btn');               // profile -> plan preview
   await p.waitForSelector('.ob-btn-back');
   await p.click('.ob-big-btn');               // -> exam dates
