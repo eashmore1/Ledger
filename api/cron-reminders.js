@@ -16,7 +16,7 @@
 //   CRON_SECRET              required — Vercel sends it as "Authorization: Bearer …"
 //   FIREBASE_SERVICE_ACCOUNT required
 //   RESEND_API_KEY           optional — turns on the Sunday recap email
-//   RECAP_FROM               optional — From address, default "Ledger <hello@ledgercpa.app>"
+//   RECAP_FROM               optional — From address, default "Ledger <support@ledgercpa.app>"
 // ─────────────────────────────────────────────────────────────────────────────
 'use strict';
 const { admin, initAdmin, sendToUser, pickReminder, localParts, addDays, clean, hrs } = require('./_lib/push');
@@ -63,7 +63,7 @@ async function sendRecapEmail(db, uid, profile, t) {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: process.env.RECAP_FROM || 'Ledger <hello@ledgercpa.app>', to: [email], subject: m.subject, html: m.html,
+      from: process.env.RECAP_FROM || 'Ledger <support@ledgercpa.app>', to: [email], subject: m.subject, html: m.html,
       headers: { 'List-Unsubscribe': `<${m.unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
     }),
   });

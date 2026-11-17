@@ -188,7 +188,7 @@ module.exports = async (req, res) => {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: process.env.RECAP_FROM || 'Ledger <hello@ledgercpa.app>',
+          from: process.env.RECAP_FROM || 'Ledger <support@ledgercpa.app>',
           to: [process.env.REPORTS_TO || 'support@ledgercpa.app'],
           subject: `[Ledger report] ${clean(x.kind, 20)} · ${clean(x.reason, 30)} · ${clean(x.targetName, 60)}`,
           html,
