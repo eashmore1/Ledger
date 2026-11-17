@@ -14,7 +14,7 @@
 // Env vars: FIREBASE_SERVICE_ACCOUNT (already used by /api/ask),
 //           CRON_SECRET (signs unsubscribe links),
 //           RESEND_API_KEY + REPORTS_TO (optional: email each user report;
-//           REPORTS_TO defaults to ethan@momentumapps.net).
+//           REPORTS_TO defaults to support@ledgercpa.app).
 // ─────────────────────────────────────────────────────────────────────────────
 'use strict';
 const crypto = require('crypto');
@@ -189,7 +189,7 @@ module.exports = async (req, res) => {
         headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: process.env.RECAP_FROM || 'Ledger <hello@ledgercpa.app>',
-          to: [process.env.REPORTS_TO || 'ethan@momentumapps.net'],
+          to: [process.env.REPORTS_TO || 'support@ledgercpa.app'],
           subject: `[Ledger report] ${clean(x.kind, 20)} · ${clean(x.reason, 30)} · ${clean(x.targetName, 60)}`,
           html,
         }),

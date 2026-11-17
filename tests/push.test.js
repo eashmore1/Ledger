@@ -238,7 +238,7 @@ test('/api/notify only announces things that really happened', async (t) => {
     assert.equal((await post(c, { type: 'report', reportId: 'r1' })).body.emailed, true);
     assert.equal((await post(c, { type: 'report', reportId: 'r1' })).body.emailed, false, 'only once');
     assert.equal(mails.length, 1);
-    assert.deepEqual(mails[0].to, ['ethan@momentumapps.net']);
+    assert.deepEqual(mails[0].to, ['support@ledgercpa.app']);
     assert.doesNotMatch(mails[0].html, /<script>|<b>Zed/);
   });
   await t.test('a room can only be announced by its host', async () => {

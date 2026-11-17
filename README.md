@@ -176,7 +176,8 @@ Not done yet: push in the native iOS/Android apps (needs Firebase set up inside 
 
 - **Block** (profile ⋯, post ⋯, comment ⋯, chat ⋯): stored in `users/{me}/blocks/{them}`. The rules then refuse new comments, props, follows, follow requests and direct messages from the blocked person, and `/api/notify` sends no pushes between the two. Both people are hidden from each other's feed, search, comments, chats and study rooms. Unblock in Settings → Privacy → Blocked accounts.
 - **Report** (same menus): written to the `reports` collection (create-only; nobody can read them from the app). Review them in the Firebase console → Firestore → `reports`. Each has who reported, who was reported, the reason, a copy of the content and where it was posted.
-- **Email alerts**: with `RESEND_API_KEY` set, each report is also emailed to `REPORTS_TO` (Vercel env var; defaults to ethan@momentumapps.net).
+- **Email alerts**: with `RESEND_API_KEY` set, each report is also emailed to `REPORTS_TO` (Vercel env var; defaults to support@ledgercpa.app).
+- **Language filter** (`moderation.js`): comments with cuss words, slurs or abusive phrases can't be posted, and older ones are masked when shown. `firestore.rules` (`cleanText`) refuses the worst words server-side too, so the filter can't be skipped by writing to the database directly.
 - Requires `npm run deploy:rules` (new rules plus a collection-group index on `blocks.blocked`).
 
 ### Deploying Firestore rules

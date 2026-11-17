@@ -38,11 +38,28 @@ test('report and block', async (t) => {
   await b.waitForTimeout(800);
   await b.evaluate(() => closeCommentsModal());
 
+  await t.test('comments with cuss words are refused, in the app and by the rules', async () => {
+    await b.evaluate(() => switchTab('feed'));
+    await b.click('[onclick*="openComments"]');
+    await b.fill('#comment-input', 'this is sh1t');
+    await b.press('#comment-input', 'Enter');
+    await b.waitForSelector('#cm-warn:not(:empty)');
+    assert.equal(await b.inputValue('#comment-input'), 'this is sh1t', 'kept so it can be edited');
+    await b.fill('#comment-input', 'Great class, keep going');
+    assert.equal(await b.textContent('#cm-warn'), '', 'warning clears while typing');
+    await b.evaluate(() => closeCommentsModal());
+    const res = await b.evaluate(async ({ aid, act }) => {
+      const tryIt = async (text) => { try { await firebaseDb.collection('users').doc(aid).collection('comments').add({ activityId: act, from: AUTH.uid, name: 'Bob', text }); return 'ok'; } catch (e) { return e.code; } };
+      return { swear: await tryIt('what the FUCK'), word: await tryIt('you ass'), multi: await tryIt('nice\nbullshit'), fine: await tryIt('Class assessment on assets went well') };
+    }, { aid: A.uid, act: actId });
+    assert.deepEqual(res, { swear: 'permission-denied', word: 'permission-denied', multi: 'permission-denied', fine: 'ok' });
+  });
+
   await t.test('a comment can be reported from its ⋯ menu', async () => {
     await a.reload(); await a.waitForSelector('.nav-tab');
     await a.waitForFunction(() => (S.activities[0].comments || []).length > 0, null, { timeout: 15000 });
     await a.evaluate(() => openComments(S.activities[0].id, 'you'));
-    await a.click('.cm-row .cm-more');
+    await a.click('.cm-row:has-text("terrible") .cm-more');
     await a.click('#action-sheet .as-item:has-text("Report comment")');
     await a.waitForSelector('#report-modal');
     assert.ok(await a.isDisabled('#rp-send'), 'needs a reason first');

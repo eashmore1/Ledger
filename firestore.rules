@@ -11,6 +11,15 @@ service cloud.firestore {
     function blocks(a, b) {
       return exists(/databases/$(database)/documents/users/$(a)/blocks/$(b));
     }
+    // Comments can't contain the worst cuss words or slurs. The app's
+    // moderation.js filter is stricter (look-alike letters, mild words); this
+    // is the backstop for anyone writing to the database directly.
+    function cleanText(t) {
+      return t is string &&
+        !t.lower().matches('(?s).*(fuck|shit|cunt|bitch|nigger|nigga|motherf|faggot|cocksuck|asshole|dickhead|bullshit|dumbass|jackass|whore|slut|bastard|pussy).*') &&
+        !t.lower().matches('(?s)(.*[^a-z0-9])?(ass|dick|cock|tits|wtf|stfu|kys|retard|retarded)([^a-z0-9].*)?');
+    }
+
     // Neither person in a direct-message thread has blocked the other.
     function dmOpen(convId) {
       let p = get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
@@ -80,7 +89,7 @@ service cloud.firestore {
       match /comments/{commentId} {
         allow read: if request.auth != null;
         allow create: if request.auth != null && request.resource.data.from == request.auth.uid && safeId(commentId)
-          && !blocks(userId, request.auth.uid);
+          && !blocks(userId, request.auth.uid) && cleanText(request.resource.data.text);
         // The commenter can delete their comment; the post's author can remove
         // any comment left on their own activity.
         allow delete: if request.auth != null &&

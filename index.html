@@ -439,6 +439,9 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
   .vp-hero-btns{width:100%}
   .vp-hero-btns #vp-follow-btn{flex:1}
 }
+.cm-warn{font-size:12px;font-weight:600;color:var(--red,#dc2626);padding:0 16px;flex-shrink:0}
+.cm-warn:not(:empty){padding:8px 16px 0}
+.cm-field.cm-bad{border-color:var(--red,#dc2626);box-shadow:0 0 0 3px var(--red-bg,#fff1f1)}
 .cm-more{background:none;border:none;color:var(--mut);font-size:16px;font-weight:800;line-height:1;cursor:pointer;padding:2px 8px 6px;border-radius:6px;align-self:flex-start;flex-shrink:0;font-family:inherit}
 .cm-more:hover{color:var(--txt);background:var(--surf2)}
 /* ── BLOCK & REPORT ── */
@@ -1306,6 +1309,7 @@ html,body{overflow-x:hidden}
 <script src="/icons.js?v=2"></script>
 <script src="/mascot.js?v=2"></script>
 <script src="/calc.js?v=1"></script>
+<script src="/moderation.js?v=1"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -8415,7 +8419,7 @@ function openComments(actId,userId,flashLast){
           ${c.from&&c.from===ownerUid?'<span class="cm-chip">Author</span>':''}
           ${c.at?`<span class="cm-time">${timeAgo(c.at)}</span>`:''}
         </div>
-        <div class="cm-text">${esc(c.text)}</div>
+        <div class="cm-text">${esc(window.LedgerModeration?LedgerModeration.censor(c.text):c.text)}</div>
       </div>
       ${c.from&&c.from===me?`<button class="cm-del" onclick="deleteComment('${actId}','${userId}',${i})">Delete</button>`
         :c.from?`<button class="cm-more" aria-label="More options" onclick="_cmMore('${actId}','${userId}',${i})">⋯</button>`
@@ -8439,6 +8443,7 @@ function openComments(actId,userId,flashLast){
   </div>
 </div>
 <div class="cm-list" id="cm-list">${shown.length?rows:empty}</div>
+<div class="cm-warn" id="cm-warn" role="alert"></div>
 <div class="cm-compose">
   ${_cmAvatar(myP)}
   <div class="cm-field">
@@ -8453,6 +8458,8 @@ function openComments(actId,userId,flashLast){
   if(flashLast||matchMedia('(hover:hover) and (pointer:fine)').matches) document.getElementById('comment-input').focus({preventScroll:true});
 }
 function _cmInput(el){
+  document.querySelector('#comments-modal .cm-field')?.classList.remove('cm-bad');
+  const w=document.getElementById('cm-warn'); if(w) w.textContent='';
   const n=el.value.length, left=document.getElementById('cm-left'), send=document.getElementById('cm-send');
   if(send) send.disabled=!el.value.trim();
   if(left) left.textContent=n>=240?String(300-n):'';
@@ -8466,6 +8473,12 @@ function addComment(actId,userId){
   const me=AUTH.uid; const myName=S.name||AUTH.displayName||'You';
   const authorUid=(userId==='you'||userId===me)?me:userId;
   if(isBlocked(authorUid)){showToast('You can’t comment on this post.','err');return;}
+  if(window.LedgerModeration&&LedgerModeration.check(text)){
+    const f=document.querySelector('#comments-modal .cm-field'), w=document.getElementById('cm-warn');
+    if(f) f.classList.add('cm-bad');
+    if(w) w.textContent='Keep it encouraging — that comment has language that isn’t allowed on Ledger.';
+    return;
+  }
   let act=null;
   if(authorUid===me){act=S.activities.find(a=>a.id===actId);}
   else{const f=REAL_USERS.find(f=>f.id===authorUid);if(f)act=f.activities.find(a=>a.id===actId);}
@@ -11241,7 +11254,7 @@ async function syncSocial(){
       for(const d of commentsSnap.docs){
         const x=d.data(); all.push(d.id);
         if(firstRun||seen.has(d.id)||!x.from||x.from===me) continue;
-        addNotification('comment','chat',esc(String(x.name||'Someone').slice(0,60))+' commented: “'+esc(String(x.text||'').slice(0,80))+'”',x.from,'activity',x.activityId);
+        addNotification('comment','chat',esc(String(x.name||'Someone').slice(0,60))+' commented: “'+esc((window.LedgerModeration?LedgerModeration.censor(String(x.text||'')):String(x.text||'')).slice(0,80))+'”',x.from,'activity',x.activityId);
       }
       if(firstRun || all.length!==seen.size || all.some(id=>!seen.has(id))){ S._seenReactions=all.slice(-400); dirty=true; }
     }catch(e){}
