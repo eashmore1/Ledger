@@ -1234,6 +1234,35 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,
 /* ── EXPLORE 2-COL ── */
 .explore-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);max-width:960px;margin:0 auto}
 @media(max-width:760px){.explore-2col{grid-template-columns:1fr}}
+/* Page heading + section tabs (Dashboard, Study Lab, Explore) */
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.page-head h1{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-.03em}
+.page-head p{color:var(--sub);font-size:13px;margin-top:6px;line-height:1.5}
+.subtabs{display:flex;gap:4px;padding:4px;margin:0 0 22px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;width:fit-content;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.subtabs::-webkit-scrollbar{display:none}
+.subtab{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 16px;border:none;border-radius:9px;background:transparent;color:var(--mut);font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none;position:relative;transition:background-color .18s,color .18s,box-shadow .18s}
+.subtab:hover{color:var(--sub)}
+.subtab[aria-selected="true"]{background:var(--surf);color:var(--txt);box-shadow:var(--shadow)}
+.subtab .subtab-ico{display:inline-flex;font-size:15px;opacity:.8}
+.subtab[aria-selected="true"] .subtab-ico{color:var(--ora);opacity:1}
+.subtab-badge{min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:var(--ora);color:#fff;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.subtab-live{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 0 3px var(--grn-bg)}
+.subpanel{animation:subIn .22s ease both}
+@keyframes subIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.subpanel{animation:none}}
+@media(max-width:600px){
+  .subtabs{width:100%}
+  .subtab{flex:1 0 auto;padding:8px 10px}
+  .page-head h1{font-size:23px}
+}
+@media(max-width:400px){.subtab .subtab-ico{display:none}}
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.goals-grid .challenge-card{margin:0}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.cal-nav>button{width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr);background:var(--surf2);color:var(--txt);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cal-nav>button:disabled{opacity:.35;cursor:default}
+.cal-sum{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--bdr);font-size:12px;color:var(--sub)}
+.cal-sum b{color:var(--txt);font-size:15px;font-family:var(--font-display);margin-right:3px}
 /* Page-shell nav (messages/profile/club pages): compact on mobile */
 @media(max-width:640px){
   .page-nav-session{display:none}
@@ -1839,10 +1868,10 @@ const ONBOARD_GUIDE = {
       target:()=>_onbCard('this week') },
     { t:'Readiness Score', b:"This score out of 100 estimates how prepared you are for your current section. It blends your practice-exam scores, study volume, pacing against your exam date, and consistency — practice scores carry the most weight.",
       target:()=>_onbFirst(()=>document.getElementById('readiness-ring')?.closest('.card')) },
-    { t:'Practice Exam Scores', b:"Log your Becker, Gleim, Wiley, or UWorld mock-exam scores here. Scoring 75 or higher consistently on practice exams is the single strongest sign that you're ready for the real thing.",
-      target:'#score-tracker-card' },
-    { t:'Pacing, calendar and analytics', b:"Open <strong>Exam Pacing</strong> for per-section hour targets and retake dates, <strong>Study Calendar</strong> for the days you've logged, and <strong>Analytics</strong> for trends and your heat map.",
-      target:()=>_onbCard('exam pacing') },
+    { t:'Practice Exam Scores', b:"Log your Becker, Gleim, Wiley, or UWorld mock-exam scores in the <strong>Scores</strong> tab. Scoring 75 or higher again and again on practice exams is the strongest sign that you're ready for the real thing.",
+      target:'[data-subtab="dashboard:scores"]' },
+    { t:'Exams and calendar', b:"<strong>Exams</strong> has each section's pacing, your exam dates, and the Exam Day checklist. <strong>Calendar</strong> shows every day you've logged.",
+      target:'.subtabs[data-page="dashboard"]' },
   ]},
   plan: { label:'Study Plan', steps:[
     { t:'Your Study Plan', b:"Tell Ledger your exam date and how many hours you can study each week, and it builds a day-by-day plan that keeps you on pace to finish each section in time." },
@@ -1851,19 +1880,19 @@ const ONBOARD_GUIDE = {
   studylab: { label:'Study Lab', steps:[
     { t:'The Study Lab', b:"This is your practice hub, with three areas: a Question Bank of practice multiple-choice questions, AI Study Tools, and a chat with me." },
     { t:'Question Bank', b:"Work through practice multiple-choice questions with a full explanation for every answer choice. These are original practice questions written to mirror exam style — not actual AICPA exam content.",
-      target:"[onclick=\"openStudyLabTab('qbank')\"]" },
+      target:'[data-subtab="studylab:qbank"]' },
     { t:'AI Study Tools', b:"Generate custom flashcards and quizzes on any CPA topic in seconds. It's the fastest way to drill a weak spot without hunting for materials.",
-      target:"[onclick=\"openStudyLabTab('tools')\"]" },
+      target:'[data-subtab="studylab:tools"]' },
     { t:'Chat with me', b:"Ask me anything about accounting, tax, audit, or exam strategy and I'll answer with your own study data in mind. Pro members get 100 answers a month, and you can copy any answer straight into your notes.",
-      target:"[onclick=\"openStudyLabTab('coach')\"]" },
+      target:'[data-subtab="studylab:coach"]' },
   ]},
   explore: { label:'Explore', steps:[
-    { t:'Explore and connect', b:"Find other CPA candidates studying the same sections as you, follow them, and join study clubs. Building a network of people on the same journey keeps you accountable.",
-      target:()=>_onbCard('find cpa candidates') },
-    { t:'Study Circle', b:"See who in your network studied this week and keep a shared group streak going. A little friendly momentum from people around you goes a long way.",
-      target:()=>_onbCard('study circle') },
-    { t:'Study rooms and clubs', b:"Open a study room to work alongside other candidates on a shared focus timer — like sitting at the same library table. Clubs give you a group chat and a shared leaderboard for the long haul.",
-      target:'#rooms-card' },
+    { t:'Explore and connect', b:"Find other CPA candidates studying the same sections as you and follow them. Building a network of people on the same journey keeps you accountable.",
+      target:()=>_onbFirst(()=>_onbCard('find cpa candidates'),'[data-subtab="explore:people"]') },
+    { t:'Study Circle', b:"See who in your network studied this week. A little momentum from the people around you goes a long way.",
+      target:()=>_onbFirst(()=>_onbCard('study circle'),'[data-subtab="explore:people"]') },
+    { t:'Rooms, clubs and goals', b:"<strong>Rooms</strong> let you study alongside other candidates on a shared focus timer. <strong>Clubs</strong> give you a group chat for the long haul. <strong>Goals</strong> has milestones to aim for.",
+      target:'.subtabs[data-page="explore"]' },
   ]},
   profile: { label:'Profile', steps:[
     { t:'Your Profile', b:"This is what other candidates see: your sections, total hours, day streak, and recent sessions. Tap <strong>Edit Profile</strong> to add a photo, a short bio, and your school.",
@@ -3711,7 +3740,7 @@ function proLockHTML(featureName,btnLabel){
 function eliteLockHTML(featureName,btnLabel){
   if(isElite())return'';
   const lbl=btnLabel||'Unlock with Pro';
-  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:var(--ora-bg);border:1.5px solid var(--ora-bdr)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Pro</div>'+'<button class="pro-lock-cta" style="background:var(--ora)">'+lbl+'</button>'+'</div>';
+  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:var(--ora-bg);border:1.5px solid var(--ora-bdr)">'+'<div class="pro-lock-icon">'+ico('lock')+'</div>'+'<div class="pro-lock-label">'+featureName+' — Pro</div>'+'<button class="pro-lock-cta" style="background:var(--ora)">'+lbl+'</button>'+'</div>';
 }
 
 // Inline upsell banner (used inside cards)
@@ -4916,23 +4945,25 @@ function isJoined(chId){ return (S.challenges||[]).includes(chId); }
 
 function getCustomChallengeProgress(ch){
   const acts=S.activities||[];
-  const start=new Date(ch.createdAt);
+  const start=String(ch.createdAt||'').slice(0,10);
+  const end=ch.endDate?String(ch.endDate).slice(0,10):'';
   const relevant=acts.filter(a=>{
-    const d=new Date(a.date||a.id);
-    return d>=start&&(!ch.section||a.section===ch.section);
+    const d=String(a.date||'').slice(0,10);
+    return d&&d>=start&&(!end||d<=end)&&(!ch.section||a.section===ch.section);
   });
   if(ch.goalType==='hours') return Math.min(ch.goalVal,parseFloat(relevant.reduce((s,a)=>s+(a.hours||0),0).toFixed(1)));
   if(ch.goalType==='sessions') return Math.min(ch.goalVal,relevant.length);
+  if(ch.goalType==='days') return Math.min(ch.goalVal,new Set(relevant.map(a=>String(a.date).slice(0,10))).size);
   if(ch.goalType==='streak') return Math.min(ch.goalVal,getStreak());
   return 0;
 }
 function deleteCustomChallenge(id){
-  if(!confirm('Delete this custom challenge?'))return;
+  if(!confirm('Delete this goal?'))return;
   S.customChallenges=(S.customChallenges||[]).filter(c=>c.id!==id);
   S.challenges=(S.challenges||[]).filter(cid=>cid!==id);
   S.challengeCompleted=(S.challengeCompleted||[]).filter(cid=>cid!==id);
   saveState();
-  showToast('Challenge deleted','info');
+  showToast('Goal deleted','info');
   renderTab();
 }
 function joinChallenge(chId){
@@ -4973,9 +5004,20 @@ function checkChallengeAchievements(){
       newlyCompleted.push(ch);
     }
   });
+  // Your own goals (a streak goal counts once reached, even after the deadline).
+  (S.customChallenges||[]).forEach(c=>{
+    if((S.challengeCompleted||[]).includes(c.id)) return;
+    if(c.endDate&&c.goalType==='streak'&&todayStr()>String(c.endDate).slice(0,10)) return;
+    if(getCustomChallengeProgress(c)>=c.goalVal){
+      if(!S.challengeCompleted)S.challengeCompleted=[];
+      S.challengeCompleted.push(c.id);
+      newlyCompleted.push({title:c.name,custom:true});
+    }
+  });
   if(newlyCompleted.length){
     saveState();
     newlyCompleted.forEach((ch,i)=>{
+      if(ch.custom){setTimeout(()=>showToast('Goal reached: '+ch.title+'!','ok'),500+i*600);return;}
       setTimeout(()=>showToast('Challenge complete: '+ch.title+'! Reward: '+ch.reward,'ok'),500+i*600);
     });
   }
@@ -5012,10 +5054,13 @@ function renderApp(){
   if(!window._cohortEnsured){window._cohortEnsured=true;setTimeout(()=>{try{ensureFirmCohort();}catch(e){}},3500);}
   // Restore the active tab from the URL hash so a reload keeps you where you were
   // (instead of always snapping back to the feed).
-  const _hashTab=(location.hash||'').replace(/^#/,'');
-  if(['today','feed','dashboard','plan','profile','explore','studylab'].includes(_hashTab)) currentTab=_hashTab;
+  const [_hashTab,_hashSub]=(location.hash||'').replace(/^#/,'').split('/');
+  if(['today','feed','dashboard','plan','profile','explore','studylab'].includes(_hashTab)){
+    currentTab=_hashTab;
+    if(_hashSub&&SUBTABS[_hashTab]&&SUBTABS[_hashTab].some(t=>t.id===_hashSub)){_subTab[_hashTab]=_hashSub;if(_hashTab==='studylab')_studyLabTab=_hashSub;}
+  }
   if(!window._actsMigrated){window._actsMigrated=true;try{_migrateActivities();}catch(e){}}
-  history.pushState({view:'app'},'','/'+(currentTab&&currentTab!=='today'?'#'+currentTab:''));
+  history.pushState({view:'app'},'','/'+_hashFor(currentTab));
   document.body.classList.remove('no-app-nav');
   document.title='Ledger — CPA Study Tracker';
   const avatarBg = S?.profilePic ? 'transparent' : 'linear-gradient(135deg,#5a5fcf,#9333ea)';
@@ -5162,7 +5207,7 @@ function switchTab(tab){
     page.classList.add(dir);
   }
   // Persist the tab in the URL hash so reload restores it (no extra history entry).
-  try{const _h=tab&&tab!=='today'?'#'+tab:'';if((location.hash||'')!==_h)history.replaceState(history.state,'',location.pathname+location.search+_h);}catch(e){}
+  try{const _h=_hashFor(tab);if((location.hash||'')!==_h)history.replaceState(history.state,'',location.pathname+location.search+_h);}catch(e){}
   _animateNextRender=true;
   renderTab();
 }
@@ -5692,11 +5737,11 @@ function saveRetake(section){
 }
 
 function openExamDayChecklist(){
-  switchTab('dashboard');
+  openSubTab('dashboard','exams');
   setTimeout(()=>{
     const b=document.getElementById('exam-protocol-body');
     if(b&&b.style.display==='none'&&typeof _toggleExamProtocol==='function') _toggleExamProtocol();
-    (b||document.getElementById('page-content'))?.scrollIntoView({behavior:'smooth',block:'center'});
+    (document.getElementById('exam-protocol-card')||document.getElementById('page-content'))?.scrollIntoView({behavior:'smooth',block:'start'});
   },250);
 }
 
@@ -7352,7 +7397,7 @@ function buildPacingAlert(){
         <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">At your current ${b.available}h/wk pace you won't make it. You need <strong>${b.hrsPerWeek}h/week</strong> — about <strong>${b.catchUpHrsToday}h/day</strong>. Either increase your hours or push your exam date.</div>
       </div>
-      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="switchTab('dashboard');setTimeout(()=>{const b=document.getElementById('fold-pacing-body');if(b){if(b.style.display==='none')_toggleFold('fold-pacing');b.scrollIntoView({behavior:'smooth',block:'center'});}},60)">Reschedule →</button>
+      <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openSubTab('dashboard','exams',{scrollTo:'dash-pacing'})">Reschedule →</button>
     </div>`);
   });
 
@@ -7498,7 +7543,7 @@ function openStrugglingModal(){
       <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();switchTab('explore')">
         <span style="font-size:18px">${ico('users')}</span> See who else is grinding right now
       </button>
-      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();switchTab('studylab');setTimeout(()=>openStudyLabTab('coach'),50)">
+      <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();openSubTab('studylab','coach')">
         <span style="font-size:18px;line-height:1">${LedgerBuddy.face(22,{still:true})}</span> Ask Ledger for a personalized game plan
       </button>
       <button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;gap:12px" onclick="this.closest('.modal-overlay').remove();openSupportModal()">
@@ -7513,25 +7558,116 @@ function openStrugglingModal(){
 // ═══════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════
-function buildDashboard(){
-  // Single-canvas dashboard (no sub-tabs): Readiness centerpiece up top, everything
-  // heavy collapsed into folds below. Replaces the old Overview/Progress split.
-  return`<div style="max-width:880px;margin:0 auto">${_buildDashMain()}</div>`;
+// ── Section tabs ─────────────────────────────────────────────────────────────
+// Dashboard, Study Lab and Explore each split into a few tabs along the top
+// (instead of stacking folds and cards on one long page). The open tab is kept
+// in the URL (#dashboard/exams) so a reload or the back button lands there.
+const SUBTABS={
+  dashboard:[
+    {id:'overview',label:'Overview',icon:'lineChart'},
+    {id:'exams',label:'Exams',icon:'calendarCheck'},
+    {id:'scores',label:'Scores',icon:'target'},
+    {id:'calendar',label:'Calendar',icon:'calendarDays'},
+  ],
+  studylab:[
+    {id:'qbank',label:'Question Bank',icon:'clipboard'},
+    {id:'tools',label:'Study Tools',icon:'bolt'},
+    {id:'coach',label:'Ledger',icon:'chat'},
+  ],
+  explore:[
+    {id:'people',label:'People',icon:'users'},
+    {id:'rooms',label:'Rooms',icon:'timer'},
+    {id:'clubs',label:'Clubs',icon:'chat'},
+    {id:'goals',label:'Goals',icon:'target'},
+  ],
+};
+const _subTab={dashboard:'overview',studylab:'qbank',explore:'people'};
+function _curSub(page){
+  const list=SUBTABS[page]; if(!list) return '';
+  if(!list.some(t=>t.id===_subTab[page])) _subTab[page]=list[0].id;
+  return _subTab[page];
+}
+function _hashFor(tab){
+  if(!tab||tab==='today') return '';
+  const list=SUBTABS[tab];
+  return '#'+tab+(list&&_subTab[tab]&&_subTab[tab]!==list[0].id?'/'+_subTab[tab]:'');
+}
+// Optional per-tab extras: a live dot or a count next to the label.
+function _subTabExtra(page,id){
+  try{
+    if(page==='explore'&&id==='rooms'){
+      const now=Date.now();
+      const live=(typeof _roomsCache!=='undefined'?_roomsCache:[]).filter(r=>r.lastActive&&now-r.lastActive<ROOM_FRESH_MS).length;
+      return (live||(typeof _room!=='undefined'&&_room))?'<span class="subtab-live" title="Rooms open now"></span>':'';
+    }
+    if(page==='explore'&&id==='people'){
+      const n=(S.followRequests||[]).length; return n?`<span class="subtab-badge" title="Follow requests">${n}</span>`:'';
+    }
+    if(page==='dashboard'&&id==='exams'){
+      const due=(S.sections||[]).filter(s=>{const k=examStage(s).k;return k==='checkin'||k==='examday'||(k==='awaiting'&&examStage(s).days!==null&&examStage(s).days<=0);}).length;
+      return due?`<span class="subtab-badge" title="Needs an update">${due}</span>`:'';
+    }
+  }catch(e){}
+  return '';
+}
+function _subTabsHTML(page){
+  const cur=_curSub(page);
+  return `<div class="subtabs" role="tablist" aria-label="${page==='dashboard'?'Dashboard':page==='studylab'?'Study Lab':'Explore'} sections" data-page="${page}" onkeydown="_subTabKey(event,'${page}')">${
+    SUBTABS[page].map(t=>{const on=t.id===cur;return `<button type="button" class="subtab" role="tab" id="subtab-${page}-${t.id}" data-subtab="${page}:${t.id}" aria-selected="${on}" aria-controls="subpanel-${page}" tabindex="${on?0:-1}" onclick="openSubTab('${page}','${t.id}')"><span class="subtab-ico" aria-hidden="true">${ico(t.icon)}</span>${t.label}${_subTabExtra(page,t.id)}</button>`;}).join('')
+  }</div>`;
+}
+function _subPanel(page,body){
+  return `<div class="subpanel" role="tabpanel" id="subpanel-${page}" aria-labelledby="subtab-${page}-${_curSub(page)}">${body}</div>`;
+}
+// Arrow keys / Home / End move between tabs, like a native tab strip.
+function _subTabKey(e,page){
+  const keys={ArrowRight:1,ArrowLeft:-1,Home:'first',End:'last'};
+  if(!(e.key in keys)) return;
+  e.preventDefault();
+  const list=SUBTABS[page], i=list.findIndex(t=>t.id===_curSub(page));
+  const k=keys[e.key];
+  const n=k==='first'?0:k==='last'?list.length-1:(i+k+list.length)%list.length;
+  openSubTab(page,list[n].id,{focus:true});
+}
+function openSubTab(page,id,opts){
+  opts=opts||{};
+  if(!SUBTABS[page]||!SUBTABS[page].some(t=>t.id===id)) return;
+  const changed=_subTab[page]!==id;
+  _subTab[page]=id;
+  if(page==='studylab') _studyLabTab=id;
+  if(currentTab!==page){ switchTab(page); }
+  else if(changed){
+    try{const h=_hashFor(page);if((location.hash||'')!==h)history.replaceState(history.state,'',location.pathname+location.search+h);}catch(e){}
+    // If the tab strip has scrolled off the top, bring it back so the new tab starts at its top.
+    const bar=document.querySelector('.subtabs[data-page="'+page+'"]');
+    const barTop=bar?bar.getBoundingClientRect().top:0;
+    renderTab();
+    if(barTop<0) document.querySelector('.subtabs[data-page="'+page+'"]')?.scrollIntoView({block:'start'});
+  }
+  if(opts.focus) document.getElementById('subtab-'+page+'-'+id)?.focus();
+  if(opts.scrollTo) setTimeout(()=>document.getElementById(opts.scrollTo)?.scrollIntoView({behavior:'smooth',block:'start'}),80);
 }
 
-// Generic collapsible "fold" row used for the heavy detail panels (pacing, calendar, analytics).
-function _dashFold(id,title,sub,body){
-  return`<div class="card" style="margin-bottom:8px">
-    <div onclick="_toggleFold('${id}')" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;gap:8px">
-      <div><div style="font-size:14px;font-weight:700">${title}</div><div style="font-size:11px;color:var(--mut);margin-top:2px">${sub}</div></div>
-      <span id="${id}-chev" style="font-size:15px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function buildDashboard(){
+  const sub=_curSub('dashboard');
+  const body=sub==='exams'?_dashExams():sub==='scores'?_dashScores():sub==='calendar'?_dashCalendar():_dashOverview();
+  return `<div style="max-width:880px;margin:0 auto">
+    <div class="page-head dash-heading">
+      <div style="min-width:0">
+        <h1>${_getGreeting()}, ${esc(S.name||'')}.</h1>
+        <p>${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+      </div>
+      <div class="dash-heading-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0">
+        <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log Result</button>
+        <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap">Stuck?</button>
+      </div>
     </div>
-    <div id="${id}-body" style="display:none;padding:0 20px 18px">${body}</div>
+    ${_subTabsHTML('dashboard')}
+    ${_subPanel('dashboard',body)}
   </div>`;
-}
-function _toggleFold(id){
-  const b=document.getElementById(id+'-body');const c=document.getElementById(id+'-chev');
-  if(!b)return;const o=b.style.display==='none';b.style.display=o?'block':'none';if(c)c.style.transform=o?'rotate(180deg)':'';
 }
 
 // Supportive (never competitive) line: how many people you follow studied this week.
@@ -7578,77 +7714,67 @@ function _buildWeekThisCard(){
   </div>`;
 }
 
-function _buildDashMain(){
+// Overview: how ready you are, and how you've been studying.
+function _dashOverview(){
   const totalHrs=getTotalHours();
   const weekHrs=getWeekHours();
   const streak=getStreak();
   const passed=(S.sectionPassed||[]).length;
   const secCount=(S.sections||[]).length||4;
-
-  const stat=(v,l,c,border)=>`<div style="flex:1;padding:14px 16px;${border?'border-right:1px solid var(--bdr);':''}"><div style="font-size:24px;font-weight:700;font-family:var(--font-display);line-height:1;letter-spacing:-.01em;color:${c}">${v}</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-top:5px">${l}</div></div>`;
-  const statStrip=`<div style="display:flex;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px">
+  const stat=(v,l,c,border)=>`<div style="flex:1;min-width:0;padding:14px 16px;${border?'border-right:1px solid var(--bdr);':''}"><div style="font-size:24px;font-weight:700;font-family:var(--font-display);line-height:1;letter-spacing:-.01em;color:${c};white-space:nowrap">${v}</div><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-top:5px">${l}</div></div>`;
+  const statStrip=`<div class="dash-stats" style="display:flex;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px">
     ${stat(Math.round(totalHrs),'Total Hours','var(--ora)',1)}
     ${stat(weekHrs.toFixed(1)+'h','This Week','var(--ind)',1)}
-    ${stat((streak>1?''+ico('flame')+' ':'')+streak,'Day Streak','#f59e0b',1)}
+    ${stat((streak>1?''+ico('flame')+' ':'')+streak,'Day Streak','#d97706',1)}
     ${stat(passed+'/'+secCount,'Passed','var(--grn)',0)}
   </div>`;
-
-  return`
-  <div class="dash-heading" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0;gap:10px">
-    <div style="min-width:0">
-      <h1 style="font-size:26px;font-weight:900;line-height:1;letter-spacing:-.03em">${_getGreeting()}, ${S.name}.</h1>
-      <p style="color:var(--sub);font-size:13px;margin-top:6px">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+  return `
+    <div>${buildCountdownAlerts()}${buildPacingAlert()}${buildBurnoutCheckIn()}${buildStreakRecovery()}</div>
+    ${buildReadinessCard()}
+    ${statStrip}
+    ${_buildWeekThisCard()}
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:2px">Study heat map</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:12px">When and how much you study, by day</div>
+      <div id="heat-map-card">${buildHeatMap()}</div>
     </div>
-    <div class="dash-heading-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0">
-      <button onclick="openLogResultModal()" style="display:flex;align-items:center;gap:6px;background:var(--ora);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log Result</button>
-      <button onclick="openStrugglingModal()" style="display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap" onmouseover="this.style.borderColor='var(--bdr2)'" onmouseout="this.style.borderColor='var(--bdr)'">Stuck?</button>
+    ${buildAdvancedAnalytics()}
+    ${_buildDashSocialLine()}`;
+}
+
+// Exams: where each section stands, the pace you need, and the exam-day checklist.
+function _dashExams(){
+  return `
+    ${buildExamJourney()||`<div class="card card-pad" style="margin-bottom:16px;text-align:center;color:var(--sub);font-size:13px">Add the sections you're taking in Settings to track your exams here.</div>`}
+    <div class="card card-pad" id="dash-pacing" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:2px">Exam pacing</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:12px">Hours logged against each section's goal, and the weekly pace your exam date needs</div>
+      ${_buildPacingCardsHTML()}
     </div>
-  </div>
-
-  ${_buildDashSocialLine()}
-
-  <div style="margin-top:18px">${buildCountdownAlerts()}${buildPacingAlert()}${buildBurnoutCheckIn()}${buildStreakRecovery()}</div>
-
-  ${buildReadinessCard()}
-
-  ${statStrip}
-
-  ${_buildWeekThisCard()}
-
-  ${buildExamJourney()}
-
-  <div style="margin-top:4px">
-    ${_dashFold('fold-pacing','Exam Pacing','Per-section progress, target dates & retakes',_buildPacingCardsHTML())}
-    ${_dashFold('fold-cal','Study Calendar','Log days, see exam targets',buildCalendar())}
-    ${_dashFold('fold-analytics','Analytics &amp; Heat Map','Trends, consistency, advanced insights','<div id="heat-map-card" style="margin-bottom:14px">'+buildHeatMap()+'</div>'+buildAdvancedAnalytics())}
-  </div>
-
-  ${buildExamDayProtocolCard()}
-
-  <div id="score-tracker-card" class="card card-pad" style="margin-top:8px">
-    <div onclick="_toggleScoreTracker()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px">
-      <div>
-        <div class="section-title" style="margin:0">Practice Exam Scores</div>
-        <div class="score-tracker-subtext" style="font-size:11px;color:var(--mut);margin-top:2px">Becker · Gleim · Wiley · UWorld · Target: 75+</div>
-      </div>
-      <span id="score-tracker-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
-    </div>
-    <div id="score-tracker-body" style="display:none;margin-top:14px">${buildScoreTracker()}</div>
-  </div>`;
+    ${buildExamDayProtocolCard(true)}`;
 }
-function _toggleScoreTracker(){
-  const b=document.getElementById('score-tracker-body');
-  const c=document.getElementById('score-tracker-chev');
-  if(!b) return;
-  const open=b.style.display==='none';
-  b.style.display=open?'block':'none';
-  if(c) c.style.transform=open?'rotate(180deg)':'';
+
+// Scores: practice exam results, the strongest single sign you're ready.
+function _dashScores(){
+  return `
+    <div id="score-tracker-card" class="card card-pad" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:2px">Practice exam scores</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:14px;line-height:1.5">Log full-length mock exams from Becker, Gleim, Wiley, UWorld or Roger. Scoring 75+ again and again is the strongest sign you're ready, so these count the most in your Readiness score.</div>
+      ${buildScoreTracker()}
+    </div>`;
 }
-function _openScoreTracker(){
-  const b=document.getElementById('score-tracker-body');
-  if(b&&b.style.display==='none') _toggleScoreTracker();
-  document.getElementById('score-tracker-card')?.scrollIntoView({behavior:'smooth',block:'center'});
+
+// Calendar: every day you've logged, month by month.
+let _calOffset=0;
+function _dashCalendar(){
+  return `<div class="card card-pad" style="margin-bottom:16px" id="dash-cal">${buildCalendar(_calOffset)}</div>`;
 }
+function _calStep(d){
+  _calOffset=Math.max(-36,Math.min(12,_calOffset+d));
+  const el=document.getElementById('dash-cal');
+  if(el) el.innerHTML=buildCalendar(_calOffset);
+}
+function _openScoreTracker(){ openSubTab('dashboard','scores',{scrollTo:'score-tracker-card'}); }
 
 // Per-section pacing rows (rings, progress, pace message, target date, status, retake info).
 // Lives inside the "Exam Pacing" fold on the single-canvas dashboard.
@@ -7733,10 +7859,12 @@ function _buildPacingCardsHTML(){
   return pacingCards||'<div style="font-size:12px;color:var(--mut);text-align:center;padding:8px 0">No sections yet — add one in onboarding.</div>';
 }
 
-function buildCalendar(){
+function buildCalendar(offset){
+  offset=offset||0;
   const now=new Date();
-  const yr=now.getFullYear();
-  const mo=now.getMonth();
+  const base=new Date(now.getFullYear(),now.getMonth()+offset,1);
+  const yr=base.getFullYear();
+  const mo=base.getMonth();
   const first=new Date(yr,mo,1);
   const last=new Date(yr,mo+1,0);
   const startDow=first.getDay();
@@ -7768,7 +7896,23 @@ function buildCalendar(){
   }
   const trail=(7-(startDow+last.getDate())%7)%7;
   for(let i=1;i<=trail;i++)cells+=`<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
-  return`<div style="font-size:14px;font-weight:700;margin-bottom:10px">${months[mo]} ${yr}</div><div class="cal-grid">${cells}</div>`;
+  const monthKey=`${yr}-${String(mo+1).padStart(2,'0')}`;
+  const monthActs=(S.activities||[]).filter(a=>String(a.date).slice(0,7)===monthKey);
+  const monthHrs=monthActs.reduce((t,a)=>t+(a.hours||0),0);
+  const monthDays=new Set(monthActs.map(a=>String(a.date).slice(0,10))).size;
+  const exams=Object.entries(S.examDates||{}).filter(([,v])=>String(v).slice(0,7)===monthKey);
+  return`<div class="cal-nav">
+      <button onclick="_calStep(-1)" aria-label="Previous month">‹</button>
+      <div style="text-align:center"><div style="font-size:15px;font-weight:800">${months[mo]} ${yr}</div><div style="font-size:11px;color:var(--mut);margin-top:2px">${offset?'<button onclick="_calStep('+(-offset)+')" style="width:auto;height:auto;border:none;background:none;color:var(--ind);font-size:11px;font-weight:700;padding:0;cursor:pointer">Back to this month</button>':'Tap a day to see or add sessions'}</div></div>
+      <button onclick="_calStep(1)" aria-label="Next month"${offset>=12?' disabled':''}>›</button>
+    </div>
+    <div class="cal-grid">${cells}</div>
+    <div class="cal-sum">
+      <span><b>${(+monthHrs.toFixed(1))}</b>hours</span>
+      <span><b>${monthDays}</b>day${monthDays!==1?'s':''} studied</span>
+      <span><b>${monthActs.length}</b>session${monthActs.length!==1?'s':''}</span>
+      ${exams.length?`<span>${exams.map(([k,v])=>`<span class="badge badge-${k}">${k}</span> ${_fmtDay(v,{month:'short',day:'numeric'})}`).join(' · ')}</span>`:''}
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -8169,38 +8313,7 @@ function buildExplore(){
     else actionBtn='<button class="btn btn-ghost btn-xs" onclick="joinChallenge(\''+c.id+'\')">Join</button>';
     const lockedStyle=!canAccess?'filter:grayscale(.4);':'';
     return'<div class="challenge-card" style="border-color:'+(done?'var(--grn)':joined?'rgba(99,102,241,.4)':'var(--bdr)')+';background:'+(done?'var(--grn-bg)':joined?'var(--ind-bg)':'var(--surf)')+';'+lockedStyle+'"><div style="display:flex;align-items:flex-start;gap:10px"><div style="font-size:24px;flex-shrink:0">'+ico(c.icon)+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div class="challenge-title" style="margin:0">'+c.title+'</div></div><div class="challenge-meta">'+c.desc+'</div>'+(joined?'<div style="margin:8px 0 4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>Progress</span><span>'+prog+' / '+c.target+'</span></div><div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(done?'var(--grn)':'var(--ind)')+';border-radius:4px;transition:width .4s"></div></div></div>':'')+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div></div>'+actionBtn+'</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--amb-bg);border-radius:20px;font-size:10px;font-weight:700;color:var(--amb)">'+c.reward+'</div></div></div></div>';
-  }).join('')+
-  ''+
-  // Custom challenges the user created
-  (()=>{
-    const customs=(S.customChallenges||[]);
-    if(!customs.length)return'';
-    return'<div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px">My Custom Challenges</div>'+
-    customs.map(c=>{
-      const prog=getCustomChallengeProgress(c);
-      const done=(S.challengeCompleted||[]).includes(c.id)||(prog>=c.goalVal);
-      const pct=Math.min(100,Math.round(prog/c.goalVal*100));
-      const endLabel=new Date(c.endDate)>new Date()?'Ends '+new Date(c.endDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Ended';
-      const goalLabel=c.goalType==='hours'?`${prog.toFixed(1)} / ${c.goalVal}h`:c.goalType==='sessions'?`${prog} / ${c.goalVal} sessions`:`${prog} / ${c.goalVal} days`;
-      return`<div class="challenge-card" style="border-color:${done?'var(--grn)':'rgba(147,51,234,.3)'};background:${done?'var(--grn-bg)':'var(--surf)'}">
-        <div style="display:flex;align-items:flex-start;gap:10px">
-          <div style="font-size:24px;flex-shrink:0">${ico(c.icon)}</div>
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
-              <div class="challenge-title" style="margin:0">${c.name}</div>
-              <button onclick="deleteCustomChallenge('${c.id}')" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:14px;padding:0 2px;line-height:1" title="Delete">✕</button>
-            </div>
-            ${c.desc?`<div class="challenge-meta">${c.desc}</div>`:''}
-            <div style="margin:8px 0 4px">
-              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${goalLabel}</span><span>${endLabel}</span></div>
-              <div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${done?'var(--grn)':'var(--pur)'};border-radius:4px;transition:width .4s"></div></div>
-            </div>
-            ${done?'<span style="font-size:11px;color:var(--grn);font-weight:700">'+ico('checkCircle')+' Complete</span>':''}
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  })();
+  }).join('');
 
   // Find friends
   const friendCards=REAL_USERS.map(f=>{
@@ -8270,7 +8383,7 @@ function buildExplore(){
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);${e.isYou?'background:var(--ind-bg);padding:8px 10px;margin:0 -10px;border-radius:8px;':''}">
       <div class="avatar" style="width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"${!e.isYou&&e.id?` onclick="openUserProfile('${e.id}')" style="cursor:pointer;width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"`:''}>${e.initials}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700">${e.name}${e.isYou?' (you)':''}${tierDot}</div>
+        <div style="font-size:12px;font-weight:700">${e.name}${tierDot}</div>
         <div style="font-size:10px;color:var(--mut);margin-top:1px">${e.section} · ${ico('flame')}${e.streak}d streak</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
@@ -8281,58 +8394,210 @@ function buildExplore(){
   }).join('');
   const inactiveCount=circleEntries.length-activeThisWeek.length;
 
-  return`
-<div class="explore-2col">
+  const sub=_curSub('explore');
+  let body='';
+  if(sub==='rooms'){
+    body=`<div style="max-width:720px">${buildRoomsCard()}
+      <div class="card card-pad" style="margin-top:16px">
+        <div class="section-title" style="margin-bottom:8px">How rooms work</div>
+        <div style="display:grid;gap:10px;font-size:13px;color:var(--sub);line-height:1.55">
+          <div style="display:flex;gap:10px"><span style="color:var(--ora);font-size:17px;flex:none">${ico('timer')}</span><span>Everyone in a room shares one focus timer, so you study and break together.</span></div>
+          <div style="display:flex;gap:10px"><span style="color:var(--ora);font-size:17px;flex:none">${ico('users')}</span><span>Anyone can join an open room. It feels like sitting at the same library table.</span></div>
+          <div style="display:flex;gap:10px"><span style="color:var(--ora);font-size:17px;flex:none">${ico('checkCircle')}</span><span>When you leave, your time is ready to log as a session.</span></div>
+        </div>
+      </div></div>`;
+  } else if(sub==='clubs'){
+    body=`<div class="card card-pad" style="max-width:720px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">
+        <div><div class="section-title" style="margin-bottom:2px">Study clubs</div><div style="font-size:12px;color:var(--mut)">Group chats for the long haul, with a shared goal</div></div>
+        <button class="btn btn-ind btn-xs" onclick="${isPro()?'createClubModal()':'openUpgradeModal(\'Unlimited Study Clubs\')'}">+ Create</button>
+      </div>
+      ${!isPro()&&myAllClubs.length>=1?'<div class="free-limit-banner" onclick="openUpgradeModal(\'Unlimited Study Clubs\')"><span style="font-size:20px">'+ico('lock')+'</span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--ora)">Free plan: 1 club limit</div><div style="font-size:11px;color:var(--sub)">Upgrade to Pro for unlimited clubs + priority channels</div></div><span style="font-size:11px;font-weight:700;color:var(--ora)">Upgrade →</span></div>':''}
+      ${clubSectionNew}
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openMessagesModal()">My clubs &amp; messages →</button>
+    </div>`;
+  } else if(sub==='goals'){
+    body=_buildGoalsPanel(challengeCards);
+  } else {
+    body=`<div class="explore-2col" style="max-width:none">
   <div>
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
         <div class="section-title" style="margin-bottom:0">Study Circle</div>
         <span style="font-size:10px;color:var(--mut)">${activeThisWeek.length} studying this week</span>
       </div>
-      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">Everyone grinding toward the same goal</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">You and the people you follow, this week</div>
       ${circleCards||'<div style="font-size:12px;color:var(--mut);text-align:center;padding:16px 0">No activity this week — log a session to show up here!</div>'}
       ${inactiveCount>0?`<div style="font-size:10px;color:var(--mut);margin-top:8px;text-align:center">${inactiveCount} member${inactiveCount!==1?'s':''} taking a rest day</div>`:''}
     </div>
-    ${buddyMatches.length?`<div class="card card-pad" style="margin-bottom:16px;border:1px solid var(--ind-bdr);background:var(--ind-bg)">
+    ${buddyMatches.length?`<div class="card card-pad" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <div style="font-size:18px">${ico('handshake')}</div>
+        <div style="font-size:18px;color:var(--ind)">${ico('handshake')}</div>
         <div>
           <div class="section-title" style="margin-bottom:0">Also Studying ${myCurrentSection}</div>
           <div style="font-size:11px;color:var(--mut)">Connect with people on the same section</div>
         </div>
       </div>
       ${buddyCards}
-      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openSearchModal()">Search all candidates →</button>
     </div>`:''}
-    ${buildRoomsCard()}
-    <div class="card card-pad" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="section-title" style="margin-bottom:0">Study Clubs</div>
-        <button class="btn btn-ind btn-xs" onclick="${isPro()?'createClubModal()':'openUpgradeModal(\'Unlimited Study Clubs\')'}">+ Create</button>
-      </div>
-      ${!isPro()&&myAllClubs.length>=1?'<div class="free-limit-banner" onclick="openUpgradeModal(\'Unlimited Study Clubs\')"><span style="font-size:20px">'+ico('lock')+'</span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:var(--ora)">Free plan: 1 club limit</div><div style="font-size:11px;color:var(--sub)">Upgrade to Pro for unlimited clubs + priority channels</div></div><span style="font-size:11px;font-weight:700;color:var(--ora)">Upgrade →</span></div>':''}
-      ${clubSectionNew}
-      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="openMessagesModal()">My Clubs & Messages →</button>
-    </div>
   </div>
   <div>
-    <div class="card card-pad" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div class="section-title" style="margin-bottom:0">Personal Goals</div>
-        <span style="font-size:10px;color:var(--mut)">${(S.challengeCompleted||[]).length} completed</span>
-      </div>
-      <div style="font-size:11px;color:var(--mut);margin-bottom:12px">Milestones to hit on your own journey</div>
-      <div style="max-height:520px;overflow-y:auto;padding-right:2px">${challengeCards}</div>
-    </div>
     <div class="card card-pad">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">
         <div class="section-title" style="margin-bottom:0">Find CPA Candidates</div>
-        <span style="font-size:10px;color:var(--mut)">${REAL_USERS.filter(f=>f.isReal).length+1} in your network</span>
+        <button class="btn btn-ghost btn-xs" onclick="openSearchModal()">${ico('magnifier')} Search</button>
       </div>
-      ${friendCards}
+      ${(S.followRequests||[]).length?`<button onclick="openFollowRequestsModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--ora-bdr);background:var(--ora-bg);color:var(--ora-dk);font-size:12px;font-weight:700;cursor:pointer">${(S.followRequests||[]).length} follow request${(S.followRequests||[]).length!==1?'s':''} waiting<span>Review →</span></button>`:''}
+      ${friendCards||'<div style="font-size:12px;color:var(--mut);text-align:center;padding:16px 0">No one here yet. Search for a friend by name.</div>'}
     </div>
   </div>
 </div>`;
+  }
+
+  return`<div style="max-width:960px;margin:0 auto">
+  <div class="page-head"><div style="min-width:0">
+    <h1>Explore</h1>
+    <p>Find people on the same path, study side by side, and set goals to aim for.</p>
+  </div></div>
+  ${_subTabsHTML('explore')}
+  ${_subPanel('explore',body)}
+</div>`;
+}
+
+// Goals tab: your own goals (Pro) first, then the built-in milestones.
+function _goalTypeLabel(t){return {hours:'hours',sessions:'sessions',days:'study days',streak:'day streak'}[t]||t;}
+function _customGoalCard(c){
+  const prog=getCustomChallengeProgress(c);
+  const done=(S.challengeCompleted||[]).includes(c.id)||(prog>=c.goalVal);
+  const pct=Math.min(100,Math.round(prog/Math.max(1,c.goalVal)*100));
+  const ended=c.endDate&&_ymd(new Date())>c.endDate;
+  const endLabel=c.endDate?(ended?'Ended '+_fmtDay(c.endDate,{month:'short',day:'numeric'}):'By '+_fmtDay(c.endDate,{month:'short',day:'numeric'})):'No deadline';
+  const val=c.goalType==='hours'?(+prog).toFixed(1).replace(/\.0$/,''):prog;
+  return`<div class="challenge-card" style="border-color:${done?'var(--grn)':'var(--ora-bdr)'};background:${done?'var(--grn-bg)':'var(--surf)'}">
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <div style="font-size:22px;flex-shrink:0;color:var(--ora)">${ico(c.icon||'target')}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px">
+          <div class="challenge-title" style="margin:0;overflow-wrap:anywhere">${esc(c.name)}</div>
+          <button onclick="deleteCustomChallenge('${c.id}')" aria-label="Delete goal" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:14px;padding:0 2px;line-height:1">✕</button>
+        </div>
+        <div class="challenge-meta">${c.goalVal} ${_goalTypeLabel(c.goalType)}${c.section?' of '+c.section:''}${c.desc?' · '+esc(c.desc):''}</div>
+        <div style="margin:8px 0 2px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-bottom:4px"><span>${val} / ${c.goalVal}</span><span>${endLabel}</span></div>
+          <div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${done?'var(--grn)':'var(--ora)'};border-radius:4px;transition:width .4s"></div></div>
+        </div>
+        ${done?'<span style="font-size:11px;color:var(--grn);font-weight:700">'+ico('checkCircle')+' Complete</span>':ended?'<span style="font-size:11px;color:var(--mut);font-weight:600">Deadline passed</span>':''}
+      </div>
+    </div>
+  </div>`;
+}
+function _buildGoalsPanel(challengeCards){
+  const customs=S.customChallenges||[];
+  const pro=isPro();
+  const createBtn=`<button class="btn btn-primary btn-sm" onclick="${pro?'openCreateGoal()':'openUpgradeModal(\'Custom Goals\')'}">${pro?'':ico('lock')+' '}Create a goal</button>`;
+  const mine=customs.length
+    ?`<div class="goals-grid">${customs.map(_customGoalCard).join('')}</div>`
+    :`<div style="display:flex;align-items:center;gap:14px;padding:16px;border:1.5px dashed var(--bdr2);border-radius:12px;background:var(--surf2)">
+        <div style="font-size:26px;color:var(--ora);flex:none">${ico('target')}</div>
+        <div style="flex:1;font-size:13px;color:var(--sub);line-height:1.5">${pro?'Set a goal that fits your plan, like "20 hours of FAR by March 1" or "a 14-day streak". Progress tracks itself from the sessions you log.':'Pro members can set their own goals, like "20 hours of FAR by March 1", and track them automatically.'}</div>
+      </div>`;
+  return`<div class="card card-pad" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <div><div class="section-title" style="margin-bottom:2px">My goals</div><div style="font-size:12px;color:var(--mut)">Goals you set yourself${pro?'':' · Pro'}</div></div>
+        ${createBtn}
+      </div>
+      ${mine}
+    </div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="section-title" style="margin-bottom:0">Milestones</div>
+        <span style="font-size:11px;color:var(--mut)">${(S.challengeCompleted||[]).filter(id=>CHALLENGES.some(c=>c.id===id)).length} of ${CHALLENGES.length} done</span>
+      </div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:12px">Join one and it tracks itself as you study</div>
+      <div class="goals-grid">${challengeCards}</div>
+    </div>`;
+}
+
+// ── Create a custom goal (Pro) ──
+const GOAL_ICONS=['target','flame','bolt','book','trophy','mountain','calendarCheck','rocket'];
+let _goalIcon='target';
+function openCreateGoal(){
+  if(!isPro()){openUpgradeModal('Custom Goals');return;}
+  if((S.customChallenges||[]).length>=12){showToast('You can have up to 12 goals. Delete one to add another.','info');return;}
+  _goalIcon='target';
+  document.getElementById('goal-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='goal-modal'; el.className='modal-overlay open';
+  el.addEventListener('click',e=>{if(e.target===el)closeCreateGoal();});
+  const secs=(S.sections||[]).map(s=>`<option value="${s}">${s}</option>`).join('');
+  el.innerHTML=`<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="goal-title" style="max-width:460px">
+    <div class="modal-hdr"><div class="modal-title" id="goal-title">Create a goal</div><button class="modal-close" onclick="closeCreateGoal()" aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <div class="form-grp"><label for="goal-name">Name</label><input id="goal-name" type="text" maxlength="60" placeholder="e.g. Finish FAR leases" oninput="_goalPreview()"></div>
+      <div class="form-row">
+        <div class="form-grp"><label for="goal-type">Goal</label>
+          <select id="goal-type" onchange="_goalTypeChanged()">
+            <option value="hours">Study hours</option><option value="sessions">Sessions</option><option value="days">Days studied</option><option value="streak">Day streak</option>
+          </select></div>
+        <div class="form-grp"><label for="goal-val">Target</label><input id="goal-val" type="number" min="1" max="2000" step="1" value="20" oninput="_goalPreview()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-grp" id="goal-sec-grp"><label for="goal-sec">Section</label><select id="goal-sec" onchange="_goalPreview()"><option value="">Any section</option>${secs}</select></div>
+        <div class="form-grp"><label for="goal-end">Deadline <span style="color:var(--mut);font-weight:400">(optional)</span></label><input id="goal-end" type="date" min="${todayStr()}" onchange="_goalPreview()"></div>
+      </div>
+      <div class="form-grp"><label>Icon</label>
+        <div id="goal-icons" style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;max-width:340px">${GOAL_ICONS.map(i=>`<button type="button" data-ic="${i}" aria-label="${i}" onclick="_goalPickIcon('${i}')" style="width:100%;height:38px;border-radius:9px;border:1.5px solid ${i===_goalIcon?'var(--ora)':'var(--bdr)'};background:${i===_goalIcon?'var(--ora-bg)':'var(--surf2)'};color:${i===_goalIcon?'var(--ora)':'var(--sub)'};font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">${ico(i)}</button>`).join('')}</div>
+      </div>
+      <div id="goal-preview" style="font-size:12px;color:var(--sub);background:var(--surf2);border-radius:9px;padding:10px 12px;margin:4px 0 14px;line-height:1.5"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="saveCustomGoal()">Create goal</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  _goalPreview();
+  setTimeout(()=>document.getElementById('goal-name')?.focus(),50);
+}
+function closeCreateGoal(){document.getElementById('goal-modal')?.remove();}
+function _goalPickIcon(i){
+  _goalIcon=i;
+  document.querySelectorAll('#goal-icons button').forEach(b=>{const on=b.dataset.ic===i;b.style.borderColor=on?'var(--ora)':'var(--bdr)';b.style.background=on?'var(--ora-bg)':'var(--surf2)';b.style.color=on?'var(--ora)':'var(--sub)';});
+}
+function _goalTypeChanged(){
+  const t=document.getElementById('goal-type').value;
+  // A streak isn't tied to one section; it's any day you study.
+  document.getElementById('goal-sec-grp').style.display=t==='streak'?'none':'';
+  const v=document.getElementById('goal-val');
+  v.value={hours:20,sessions:10,days:14,streak:7}[t]; v.step=t==='hours'?'0.5':'1';
+  _goalPreview();
+}
+function _goalRead(){
+  const t=document.getElementById('goal-type')?.value||'hours';
+  return {name:(document.getElementById('goal-name')?.value||'').trim().slice(0,60),goalType:t,goalVal:parseFloat(document.getElementById('goal-val')?.value)||0,section:t==='streak'?'':(document.getElementById('goal-sec')?.value||''),endDate:document.getElementById('goal-end')?.value||''};
+}
+function _goalPreview(){
+  const g=_goalRead(), el=document.getElementById('goal-preview'); if(!el) return;
+  if(!(g.goalVal>0)){el.textContent='Enter a target above 0.';return;}
+  const what=g.goalType==='streak'?`Reach a ${g.goalVal}-day study streak`:`Log ${g.goalVal} ${_goalTypeLabel(g.goalType)}${g.section?' of '+g.section:''}`;
+  const by=g.endDate?' by '+_fmtDay(g.endDate,{weekday:'short',month:'short',day:'numeric'}):'';
+  const days=g.endDate?Math.round((new Date(g.endDate+'T12:00:00')-new Date(todayStr()+'T12:00:00'))/86400000)+1:0;
+  const pace=g.endDate&&g.goalType==='hours'&&days>0?` That's about ${(g.goalVal/days*7).toFixed(1)} hours a week.`:'';
+  el.textContent=what+by+'. Counting starts today, from the sessions you log.'+pace;
+}
+function saveCustomGoal(){
+  if(!isPro()){openUpgradeModal('Custom Goals');return;}
+  const g=_goalRead();
+  if(!g.name){showToast('Give your goal a name','err');document.getElementById('goal-name')?.focus();return;}
+  if(_badWords(g.name)) return;
+  const max={hours:2000,sessions:1000,days:365,streak:365}[g.goalType]||1000;
+  if(!(g.goalVal>0)||g.goalVal>max){showToast('Pick a target between 1 and '+max,'err');return;}
+  if(g.goalType!=='hours') g.goalVal=Math.round(g.goalVal);
+  if(g.endDate&&g.endDate<todayStr()){showToast('The deadline is in the past','err');return;}
+  if(!S.customChallenges) S.customChallenges=[];
+  S.customChallenges.push({id:'cg'+Date.now(),name:g.name,desc:'',icon:_goalIcon,goalType:g.goalType,goalVal:g.goalVal,section:g.section,endDate:g.endDate,createdAt:todayStr()+'T00:00:00'});
+  saveState();
+  closeCreateGoal();
+  logLedgerEvent('custom_goal_created',{type:g.goalType});
+  showToast('Goal created. It tracks itself as you log sessions.','ok');
+  renderTab();
 }
 
 // ═══════════════════════════════════════════════
@@ -12484,7 +12749,7 @@ function buildHeatMap(){
     :[{id:'week',label:'Week'},{id:'month',label:'Month'}];
   const toggleHTML=`<div style="display:flex;gap:0;background:var(--surf3);border-radius:8px;padding:3px;width:fit-content">`+
     toggleRanges.map(r=>`<button onclick="setHeatMapRange('${r.id}')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s;background:${effectiveRange===r.id?'var(--surf)':'transparent'};color:${effectiveRange===r.id?'var(--txt)':'var(--mut)'};box-shadow:${effectiveRange===r.id?'var(--shadow)':'none'}">${r.label}</button>`).join('')+
-    (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--pur)">Year</button>`:'')+'</div>';
+    (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--sub)">${ico('lock')} Year</button>`:'')+'</div>';
 
   // ── WEEK VIEW ─────────────────────────────────────────────
   if(effectiveRange==='week'){
@@ -12713,23 +12978,22 @@ function _toggleExamProtocol(){
   b.style.display=open?'block':'none';
   if(c) c.style.transform=open?'rotate(180deg)':'';
 }
-function buildExamDayProtocolCard(){
-  // Collapsed by default — the full 5-phase checklist only opens on click, so the
-  // Progress tab stays clean.
+function buildExamDayProtocolCard(open){
+  // Opens expanded on the Dashboard's Exams tab; still collapsible.
   if(isPro()){
-    return `<div class="card card-pad" style="border-top:3px solid var(--amb);margin-top:20px">
+    return `<div class="card card-pad" id="exam-protocol-card" style="border-top:3px solid var(--amb);margin-bottom:16px">
       <div onclick="_toggleExamProtocol()" style="display:flex;align-items:center;gap:12px;cursor:pointer">
         <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ico('clipboard')}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:800">Exam Day Protocol</div>
-          <div style="font-size:11px;color:var(--mut)">Your checklist from 2 weeks out to the day after — tap to open</div>
+          <div style="font-size:11px;color:var(--mut)">Your checklist from 2 weeks out to the day after</div>
         </div>
-        <span id="exam-protocol-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
+        <span id="exam-protocol-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0${open?';transform:rotate(180deg)':''}">▾</span>
       </div>
-      <div id="exam-protocol-body" style="display:none;margin-top:16px">${_buildExamDayProtocol()}</div>
+      <div id="exam-protocol-body" style="display:${open?'block':'none'};margin-top:16px">${_buildExamDayProtocol()}</div>
     </div>`;
   }
-  return `<div class="card card-pad" style="text-align:center;padding:40px 24px;border:2px dashed var(--bdr2);margin-top:20px">
+  return `<div class="card card-pad" id="exam-protocol-card" style="text-align:center;padding:40px 24px;border:2px dashed var(--bdr2);margin-bottom:16px">
     <div style="font-size:44px;margin-bottom:12px">${ico('clipboard')}</div>
     <div style="font-size:18px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em">Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle">Pro</span></div>
     <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 18px;line-height:1.7">A day-by-day checklist from two weeks out through the day after, with the reason behind every step, so nothing slips before you sit.</div>
@@ -15628,49 +15892,19 @@ async function _fcCallAI(userMsg,maxTok){
 }
 function _fcParseJSON(t){const m=t&&t.match(/\[[\s\S]*\]/);if(m){try{return JSON.parse(m[0]);}catch(e){}}try{return JSON.parse(t);}catch(e){return null;}}
 
-function openStudyLabTab(tab) {
-  _studyLabTab = tab;
-  const el = document.getElementById('page-content');
-  if (el && currentTab === 'studylab') el.innerHTML = buildStudyLab();
-}
+function openStudyLabTab(tab) { openSubTab('studylab', tab); }
 
 function buildStudyLab() {
-  const tabs = [
-    { id:'qbank', label:'Question Bank', icon:'clipboard' },
-    { id:'tools', label:'Study Tools', icon:'bolt' },
-    { id:'coach', label:'Ledger', icon:'chat' },
-  ];
-
-  const subNav =
-    '<div style="display:flex;gap:6px;margin-bottom:28px;background:var(--surf2);padding:5px;border-radius:12px;border:1px solid var(--bdr);width:fit-content">' +
-    tabs.map(t =>
-      '<button onclick="openStudyLabTab(\'' + t.id + '\')" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:background-color .18s,border-color .18s,color .18s,box-shadow .18s,transform .18s,opacity .18s;' +
-      (_studyLabTab === t.id
-        ? 'background:var(--surf);color:var(--txt);box-shadow:var(--shadow);'
-        : 'background:transparent;color:var(--mut);') +
-      '">' + ico(t.icon) + ' ' + t.label + '</button>'
-    ).join('') +
-    '</div>';
-
-  let body = '';
-  if (_studyLabTab === 'qbank') {
-    body = _buildQBankPanel();
-  } else if (_studyLabTab === 'tools') {
-    body = _buildStudyToolsPanel();
-  } else if (_studyLabTab === 'coach') {
-    body = _buildCoachPanel();
-  } else {
-    _studyLabTab = 'qbank';
-    body = _buildQBankPanel();
-  }
-
+  const sub = _curSub('studylab');
+  _studyLabTab = sub;
+  const body = sub === 'tools' ? _buildStudyToolsPanel() : sub === 'coach' ? _buildCoachPanel() : _buildQBankPanel();
   return '<div style="max-width:960px;margin:0 auto">' +
-    '<div style="margin-bottom:24px">' +
-      '<h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin-bottom:4px">Study Lab</h1>' +
-      '<p style="color:var(--sub);font-size:13px">Everything you need to actively study — practice questions, AI-generated tools, and your personal coach.</p>' +
-    '</div>' +
-    subNav +
-    body +
+    '<div class="page-head"><div style="min-width:0">' +
+      '<h1>Study Lab</h1>' +
+      '<p>Everything you need to actively study: practice questions, AI study tools, and your personal coach.</p>' +
+    '</div></div>' +
+    _subTabsHTML('studylab') +
+    _subPanel('studylab', body) +
   '</div>';
 }
 
