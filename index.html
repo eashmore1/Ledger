@@ -366,15 +366,24 @@ body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark 
 .stat-lbl{font-size:11px;color:var(--mut);margin-top:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 
 /* ── ACHIEVEMENTS ── */
-.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
-.ach-item{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:10px 6px;text-align:center;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.ach-item{position:relative;min-width:0;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:14px 6px 10px;text-align:center;cursor:pointer;overflow:hidden;transition:background-color .2s,border-color .2s,box-shadow .2s,transform .2s}
 .ach-item.earned{border-color:var(--amb);background:var(--amb-bg)}
-.ach-item.earned:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.ach-icon{font-size:22px;margin-bottom:4px}
-.ach-name{font-size:10px;font-weight:700;color:var(--sub);line-height:1.3;text-transform:uppercase;letter-spacing:.04em}
+.ach-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.ach-item:focus-visible{outline:2px solid var(--ora);outline-offset:2px}
+.ach-icon{flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+.ach-icon svg{width:24px;height:24px}
+.ach-name{max-width:100%;font-size:9.5px;font-weight:700;color:var(--sub);line-height:1.25;text-transform:uppercase;letter-spacing:.02em;overflow-wrap:break-word;hyphens:auto;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ach-item.earned .ach-name{color:var(--amb)}
-.ach-item:not(.earned){filter:grayscale(1)}
-.ach-item:not(.earned) .ach-icon{opacity:.45}
+.ach-item:not(.earned) .ach-icon{opacity:.45;filter:grayscale(1)}
+.ach-info-btn{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;border:1px solid var(--bdr2,var(--bdr));background:var(--surf);color:var(--sub);font:italic 700 10px/1 Georgia,serif;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.ach-info-btn::after{content:'';position:absolute;inset:-8px}
+.ach-info-btn:hover{color:var(--ora);border-color:var(--ora)}
+.ach-cat{display:flex;align-items:baseline;justify-content:space-between;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin:18px 0 8px}
+.ach-cat:first-child{margin-top:0}
+.ach-cat span{font-weight:700;color:var(--mut);letter-spacing:0;text-transform:none}
+.ach-bar{height:6px;border-radius:6px;background:var(--surf2);overflow:hidden}
+.ach-bar>div{height:100%;background:var(--amb);border-radius:6px}
 
 /* ── LEADERBOARD ── */
 .lb-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--bdr)}
@@ -539,9 +548,9 @@ body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark 
 .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:90vh;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.22,.61,.36,1)}
 @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes asFade{from{opacity:0}to{opacity:1}}
-/* While Settings or the plans screen is open on a phone, the page behind stays put
-   instead of scrolling along under your finger. */
-@media(max-width:640px){html.modal-lock,html.modal-lock body{overflow:hidden}}
+/* While Settings, the plans screen or Achievements is open, the page behind stays
+   put; only the panel scrolls. */
+html.modal-lock,html.modal-lock body{overflow:hidden}
 .upgrade-modal-box.no-anim{animation:none}
 @keyframes slideInRight{from{transform:translateX(48px);opacity:0}to{transform:none;opacity:1}}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) var(--sp-6) 0}
@@ -2452,53 +2461,79 @@ function getHourGoal(section){
 // ═══════════════════════════════════════════════
 // ACHIEVEMENTS
 // ═══════════════════════════════════════════════
+// cat = group in the Achievements pop-up; how = what the "i" explains;
+// goal = [metric, target] for a progress bar (metrics come from _achMetrics()).
+const ACH_CATS = [
+  ['start','Getting started'],['sessions','Sessions'],['hours','Study hours'],['streaks','Streaks'],
+  ['intensity','Intensity'],['time','Time of day'],['practice','Practice'],['exam','CPA exam'],['social','Community'],
+];
 const ACHIEVEMENTS = [
-  // ── FIRST STEPS ──
-  {id:'first_session',icon:'flame',name:'First Step',desc:'Log your first study session'},
-  {id:'sessions_5',icon:'footprints',name:'Getting Started',desc:'Log 5 study sessions'},
-  {id:'sessions_10',icon:'target',name:'In the Zone',desc:'Log 10 study sessions'},
-  {id:'sessions_25',icon:'medalRibbon',name:'Quarter Century',desc:'Log 25 study sessions'},
-  {id:'sessions_50',icon:'medal',name:'Fifty Strong',desc:'Log 50 study sessions'},
-  {id:'sessions_100',icon:'bicep',name:'Centurion',desc:'Log 100 study sessions'},
+  // ── GETTING STARTED ──
+  {id:'first_session',cat:'start',icon:'flame',name:'First Step',desc:'Log your first study session',how:'Start the timer or log a past session from the Today screen. Any length counts.',goal:['sessions',1]},
+  {id:'exam_scheduled',cat:'start',icon:'calendarCheck',name:'Date Set',desc:'Add an exam date',how:'Add the date you sit for any section in your profile (Edit Profile → exam dates). Ledger paces your plan around it.'},
+  {id:'first_score',cat:'start',icon:'barChart',name:'Benchmark',desc:'Record a practice score',how:'Log a practice exam or review-course score for any section from the Dashboard.',goal:['scores',1]},
+  {id:'first_club',cat:'start',icon:'columns',name:'Joined In',desc:'Join or create a study club',how:'Join a club from Explore, accept an invite, or create your own. Direct messages don’t count.',goal:['clubs',1]},
+  // ── SESSIONS ──
+  {id:'sessions_5',cat:'sessions',icon:'footprints',name:'Getting Started',desc:'Log 5 study sessions',how:'Log 5 study sessions in total. Timed and past sessions both count.',goal:['sessions',5]},
+  {id:'sessions_10',cat:'sessions',icon:'target',name:'In the Zone',desc:'Log 10 study sessions',how:'Log 10 study sessions in total.',goal:['sessions',10]},
+  {id:'sessions_25',cat:'sessions',icon:'medalRibbon',name:'Quarter Century',desc:'Log 25 study sessions',how:'Log 25 study sessions in total.',goal:['sessions',25]},
+  {id:'sessions_50',cat:'sessions',icon:'medal',name:'Fifty Strong',desc:'Log 50 study sessions',how:'Log 50 study sessions in total.',goal:['sessions',50]},
+  {id:'sessions_100',cat:'sessions',icon:'bicep',name:'Centurion',desc:'Log 100 study sessions',how:'Log 100 study sessions in total.',goal:['sessions',100]},
+  {id:'sessions_250',cat:'sessions',icon:'stadium',name:'Regular',desc:'Log 250 study sessions',how:'Log 250 study sessions in total.',goal:['sessions',250]},
   // ── HOURS ──
-  {id:'hrs_10',icon:'bolt',name:'First 10',desc:'Log 10 total study hours'},
-  {id:'hrs_25',icon:'lineChart',name:'Gaining Ground',desc:'Log 25 total study hours'},
-  {id:'hrs_50',icon:'bulb',name:'50 Hours In',desc:'Log 50 total hours'},
-  {id:'hrs_100',icon:'percent',name:'Century Club',desc:'Log 100 total hours'},
-  {id:'hrs_150',icon:'nut',name:'Iron Candidate',desc:'Log 150 total study hours'},
-  {id:'hrs_250',icon:'mountain',name:'Summit Seeker',desc:'Log 250 total hours'},
-  {id:'hrs_500',icon:'roboticArm',name:'500 Strong',desc:'Log 500 total study hours'},
+  {id:'hrs_10',cat:'hours',icon:'bolt',name:'First 10',desc:'Log 10 total study hours',how:'Reach 10 study hours in total across all sections.',goal:['hours',10]},
+  {id:'hrs_25',cat:'hours',icon:'lineChart',name:'Gaining Ground',desc:'Log 25 total study hours',how:'Reach 25 study hours in total.',goal:['hours',25]},
+  {id:'hrs_50',cat:'hours',icon:'bulb',name:'50 Hours In',desc:'Log 50 total hours',how:'Reach 50 study hours in total.',goal:['hours',50]},
+  {id:'hrs_100',cat:'hours',icon:'percent',name:'Century Club',desc:'Log 100 total hours',how:'Reach 100 study hours in total.',goal:['hours',100]},
+  {id:'hrs_150',cat:'hours',icon:'nut',name:'Iron Candidate',desc:'Log 150 total study hours',how:'Reach 150 study hours in total.',goal:['hours',150]},
+  {id:'hrs_250',cat:'hours',icon:'mountain',name:'Summit Seeker',desc:'Log 250 total hours',how:'Reach 250 study hours in total.',goal:['hours',250]},
+  {id:'hrs_500',cat:'hours',icon:'roboticArm',name:'500 Strong',desc:'Log 500 total study hours',how:'Reach 500 study hours in total.',goal:['hours',500]},
+  {id:'hrs_1000',cat:'hours',icon:'crown',name:'Thousand Club',desc:'Log 1,000 total study hours',how:'Reach 1,000 study hours in total.',goal:['hours',1000]},
+  {id:'section_50',cat:'hours',icon:'compass',name:'Deep Dive',desc:'Log 50 hours on one section',how:'Log 50 hours on a single section (FAR, AUD, REG, or your discipline).',goal:['sectionMax',50]},
+  {id:'section_100',cat:'hours',icon:'briefcase',name:'Specialist',desc:'Log 100 hours on one section',how:'Log 100 hours on a single section.',goal:['sectionMax',100]},
   // ── STREAKS ──
-  {id:'streak_3',icon:'flame',name:'3-Day Spark',desc:'3-day study streak'},
-  {id:'streak_7',icon:'calendar',name:'Week Warrior',desc:'7-day study streak'},
-  {id:'streak_14',icon:'fist',name:'Two Weeks',desc:'14-day study streak'},
-  {id:'streak_30',icon:'calendarDays',name:'Month Machine',desc:'30-day study streak'},
-  {id:'streak_60',icon:'burst',name:'Unstoppable',desc:'60-day study streak'},
-  {id:'streak_100',icon:'crown',name:'Legend',desc:'100-day study streak'},
+  {id:'streak_3',cat:'streaks',icon:'flame',name:'3-Day Spark',desc:'3-day study streak',how:'Log at least one session on 3 days in a row.',goal:['streak',3]},
+  {id:'streak_7',cat:'streaks',icon:'calendar',name:'Week Warrior',desc:'7-day study streak',how:'Log at least one session on 7 days in a row.',goal:['streak',7]},
+  {id:'streak_14',cat:'streaks',icon:'fist',name:'Two Weeks',desc:'14-day study streak',how:'Log at least one session on 14 days in a row.',goal:['streak',14]},
+  {id:'streak_30',cat:'streaks',icon:'calendarDays',name:'Month Machine',desc:'30-day study streak',how:'Log at least one session on 30 days in a row.',goal:['streak',30]},
+  {id:'streak_60',cat:'streaks',icon:'burst',name:'Unstoppable',desc:'60-day study streak',how:'Log at least one session on 60 days in a row.',goal:['streak',60]},
+  {id:'streak_100',cat:'streaks',icon:'crown',name:'Legend',desc:'100-day study streak',how:'Log at least one session on 100 days in a row.',goal:['streak',100]},
+  {id:'streak_365',cat:'streaks',icon:'sunrise',name:'Year of Focus',desc:'365-day study streak',how:'Log at least one session every day for a full year.',goal:['streak',365]},
   // ── INTENSITY ──
-  {id:'consistent',icon:'gem',name:'Consistent',desc:'Study 5 days in a week'},
-  {id:'perfect_week',icon:'starFilled',name:'Perfect Week',desc:'Study all 7 days in a week'},
-  {id:'big_week',icon:'rocket',name:'Big Week',desc:'Log 20+ hours in a single week'},
-  {id:'daily_double',icon:'dice',name:'Daily Double',desc:'Log 2 sessions in one day'},
-  {id:'marathon',icon:'brain',name:'Marathon',desc:'Log 5+ hrs in one session'},
-  {id:'deep_work',icon:'lotus',name:'Deep Work',desc:'Log 6+ hours in one session'},
-  {id:'all_day',icon:'lion',name:'All-Day Grind',desc:'Log 8+ hours in one session'},
+  {id:'consistent',cat:'intensity',icon:'gem',name:'Consistent',desc:'Study 5 days in a week',how:'Log sessions on 5 different days in the same week (Sunday to Saturday).'},
+  {id:'perfect_week',cat:'intensity',icon:'starFilled',name:'Perfect Week',desc:'Study all 7 days in a week',how:'Log a session every day from Sunday to Saturday of the same week.'},
+  {id:'big_week',cat:'intensity',icon:'rocket',name:'Big Week',desc:'Log 20+ hours in a single week',how:'Log 20 or more hours within one week (Sunday to Saturday).'},
+  {id:'weekend_warrior',cat:'intensity',icon:'coffee',name:'Weekend Warrior',desc:'Study Saturday and Sunday',how:'Log a session on both the Saturday and the Sunday of the same weekend.'},
+  {id:'daily_double',cat:'intensity',icon:'dice',name:'Daily Double',desc:'Log 2 sessions in one day',how:'Log two separate sessions on the same day.'},
+  {id:'triple_day',cat:'intensity',icon:'timer',name:'Hat Trick',desc:'Log 3 sessions in one day',how:'Log three separate sessions on the same day.'},
+  {id:'marathon',cat:'intensity',icon:'brain',name:'Marathon',desc:'Log 5+ hrs in one session',how:'Log a single session of 5 hours or more.'},
+  {id:'deep_work',cat:'intensity',icon:'lotus',name:'Deep Work',desc:'Log 6+ hours in one session',how:'Log a single session of 6 hours or more.'},
+  {id:'all_day',cat:'intensity',icon:'lion',name:'All-Day Grind',desc:'Log 8+ hours in one session',how:'Log a single session of 8 hours or more.'},
+  {id:'month_60',cat:'intensity',icon:'hourglass',name:'Big Month',desc:'Log 60+ hours in 30 days',how:'Log 60 or more hours within any 30-day stretch.'},
   // ── TIME OF DAY ──
-  {id:'early_bird',icon:'sun',name:'Early Bird',desc:'Log a session starting before 6am'},
-  {id:'night_owl',icon:'owl',name:'Night Owl',desc:'Log a session after midnight'},
-  // ── SECTIONS ──
-  {id:'section_diverse',icon:'book',name:'Well-Rounded',desc:'Log hours on all 4 sections'},
-  {id:'section_pass',icon:'target',name:'Section Slayer',desc:'Pass your first section'},
-  {id:'two_sections',icon:'peace',name:'Double Down',desc:'Pass 2 CPA sections'},
-  {id:'three_sections',icon:'trident',name:'Almost There',desc:'Pass 3 CPA sections'},
-  {id:'all_pass',icon:'trophy',name:'CPA Achieved',desc:'Pass all 4 sections'},
-  // ── SOCIAL ──
-  {id:'first_follow',icon:'handshake',name:'First Connection',desc:'Follow your first CPA candidate'},
-  {id:'social',icon:'sparkles',name:'Study Crew',desc:'Follow 5 or more candidates'},
-  {id:'social_10',icon:'stadium',name:'Squad Goals',desc:'Follow 10 or more candidates'},
-  {id:'props_10',icon:'clap',name:'Hype Machine',desc:'Give Props 10 times'},
-  {id:'props_25',icon:'megaphone',name:'Props Machine',desc:'Give Props 25 times'},
-  {id:'props_50',icon:'trumpet',name:'Hype Legend',desc:'Give Props 50 times'},
+  {id:'early_bird',cat:'time',icon:'sun',name:'Early Bird',desc:'Log a session starting before 6am',how:'Start a study session before 6:00 am your time.'},
+  {id:'night_owl',cat:'time',icon:'owl',name:'Night Owl',desc:'Log a session after midnight',how:'Start a study session between midnight and 4:00 am your time.'},
+  // ── PRACTICE ──
+  {id:'qb_50',cat:'practice',icon:'pencil',name:'Warm-Up',desc:'Answer 50 practice questions',how:'Answer 50 multiple-choice questions in the Question Bank (Lab tab).',goal:['questions',50]},
+  {id:'qb_250',cat:'practice',icon:'clipboard',name:'Drill Sergeant',desc:'Answer 250 practice questions',how:'Answer 250 multiple-choice questions in the Question Bank.',goal:['questions',250]},
+  {id:'qb_1000',cat:'practice',icon:'graduationCap',name:'Question Master',desc:'Answer 1,000 practice questions',how:'Answer 1,000 multiple-choice questions in the Question Bank.',goal:['questions',1000]},
+  {id:'score_75',cat:'practice',icon:'checkCircle',name:'Passing Pace',desc:'Score 75+ on a practice exam',how:'Record a practice exam score of 75 or higher (the CPA passing score) for any section.'},
+  {id:'score_90',cat:'practice',icon:'starOutline',name:'High Scorer',desc:'Score 90+ on a practice exam',how:'Record a practice exam score of 90 or higher for any section.'},
+  {id:'section_diverse',cat:'practice',icon:'book',name:'Well-Rounded',desc:'Study all 4 sections',how:'Log study time on FAR, AUD, and REG, plus your discipline section (BAR, ISC, or TCP).'},
+  // ── CPA EXAM ──
+  {id:'section_pass',cat:'exam',icon:'target',name:'Section Slayer',desc:'Pass your first section',how:'Mark a section as passed in your profile once you get your score.',goal:['passed',1]},
+  {id:'two_sections',cat:'exam',icon:'peace',name:'Double Down',desc:'Pass 2 CPA sections',how:'Mark 2 sections as passed.',goal:['passed',2]},
+  {id:'three_sections',cat:'exam',icon:'trident',name:'Almost There',desc:'Pass 3 CPA sections',how:'Mark 3 sections as passed.',goal:['passed',3]},
+  {id:'all_pass',cat:'exam',icon:'trophy',name:'CPA Achieved',desc:'Pass all 4 sections',how:'Mark all 4 sections as passed. Congratulations, CPA!',goal:['passed',4]},
+  // ── COMMUNITY ──
+  {id:'first_follow',cat:'social',icon:'handshake',name:'First Connection',desc:'Follow your first CPA candidate',how:'Follow another candidate from Explore or their profile.',goal:['follows',1]},
+  {id:'social',cat:'social',icon:'sparkles',name:'Study Crew',desc:'Follow 5 or more candidates',how:'Follow 5 other candidates.',goal:['follows',5]},
+  {id:'social_10',cat:'social',icon:'users',name:'Squad Goals',desc:'Follow 10 or more candidates',how:'Follow 10 other candidates.',goal:['follows',10]},
+  {id:'first_follower',cat:'social',icon:'wave',name:'Noticed',desc:'Get your first follower',how:'Have another candidate follow you. Sharing sessions to the feed helps people find you.',goal:['followers',1]},
+  {id:'followers_10',cat:'social',icon:'party',name:'Following',desc:'Get 10 followers',how:'Have 10 candidates follow you.',goal:['followers',10]},
+  {id:'props_10',cat:'social',icon:'clap',name:'Hype Machine',desc:'Give Props 10 times',how:'Give Props on other people’s sessions in the feed 10 times.',goal:['props',10]},
+  {id:'props_25',cat:'social',icon:'megaphone',name:'Props Machine',desc:'Give Props 25 times',how:'Give Props 25 times.',goal:['props',25]},
+  {id:'props_50',cat:'social',icon:'trumpet',name:'Hype Legend',desc:'Give Props 50 times',how:'Give Props 50 times.',goal:['props',50]},
 ];
 
 // ═══════════════════════════════════════════════
@@ -3209,6 +3244,25 @@ function getSectionHours(section){
   if(!S)return 0;
   return S.activities.filter(a=>a.section===section).reduce((a,b)=>a+(b.hours||0),0);
 }
+// Numbers behind the achievement progress bars (your own account only).
+function _achMetrics(){
+  const acts=(S&&S.activities)||[];
+  const bySec={};acts.forEach(a=>{bySec[a.section]=(bySec[a.section]||0)+(a.hours||0);});
+  const scores=Object.values(S.practiceScores||{}).flat();
+  return{
+    sessions:acts.length,
+    hours:Math.floor(getTotalHours()*10)/10,
+    streak:getStreak(),
+    passed:(S.sectionPassed||[]).length,
+    follows:(S.following||[]).filter(Boolean).length,
+    followers:(S.followers||[]).filter(id=>id&&id.length>4).length,
+    props:S.propsGiven||0,
+    questions:Object.values(S.qbProgress||{}).reduce((t,p)=>t+((p&&p.mcqDone)||0),0),
+    scores:scores.length,
+    clubs:(S.clubs||[]).filter(c=>c&&c.id&&!c.isDM).length,
+    sectionMax:Math.floor(Math.max(0,...Object.values(bySec))*10)/10,
+  };
+}
 function checkAchievements(){
   if(!S)return;
   const totalHrs=getTotalHours();
@@ -3227,6 +3281,23 @@ function checkAchievements(){
   check('sessions_25',sessionCount>=25);
   check('sessions_50',sessionCount>=50);
   check('sessions_100',sessionCount>=100);
+  check('sessions_250',sessionCount>=250);
+  const M=_achMetrics();
+  check('exam_scheduled',Object.values(S.examDates||{}).some(Boolean));
+  check('first_score',M.scores>=1);
+  check('first_club',M.clubs>=1);
+  check('hrs_1000',totalHrs>=1000);
+  check('section_50',M.sectionMax>=50);
+  check('section_100',M.sectionMax>=100);
+  check('streak_365',streak>=365);
+  check('qb_50',M.questions>=50);
+  check('qb_250',M.questions>=250);
+  check('qb_1000',M.questions>=1000);
+  const _allScores=Object.values(S.practiceScores||{}).flat().map(x=>+x.score||0);
+  check('score_75',_allScores.some(v=>v>=75));
+  check('score_90',_allScores.some(v=>v>=90));
+  check('first_follower',M.followers>=1);
+  check('followers_10',M.followers>=10);
 
   // Hours
   check('hrs_10',totalHrs>=10);
@@ -3296,6 +3367,19 @@ function checkAchievements(){
   const byDay={};
   S.activities.forEach(a=>{const d=a.date.slice(0,10);byDay[d]=(byDay[d]||0)+1;});
   check('daily_double',Object.values(byDay).some(v=>v>=2));
+  check('triple_day',Object.values(byDay).some(v=>v>=3));
+  // Saturday and the Sunday right after it
+  check('weekend_warrior',Object.keys(byDay).some(d=>{
+    const t=new Date(d+'T12:00:00'); if(t.getDay()!==6) return false;
+    t.setDate(t.getDate()+1); return !!byDay[_ymd(t)];
+  }));
+  // 60+ hours inside any 30-day window
+  const _days=Object.keys(byDay).sort();
+  const _hrsOn={}; S.activities.forEach(a=>{const d=a.date.slice(0,10);_hrsOn[d]=(_hrsOn[d]||0)+(a.hours||0);});
+  check('month_60',_days.some((d,i)=>{
+    const end=new Date(d+'T12:00:00'); end.setDate(end.getDate()+29); const e=_ymd(end);
+    let t=0; for(let j=i;j<_days.length&&_days[j]<=e;j++) t+=_hrsOn[_days[j]]; return t>=60;
+  }));
 
   // All 4 sections studied
   const studiedSections=new Set(S.activities.map(a=>a.section));
@@ -7690,30 +7774,67 @@ function buildCalendar(){
 // ═══════════════════════════════════════════════
 // PROFILE
 // ═══════════════════════════════════════════════
-function _achPreviewHTML(earnedIds, sectionId, showInfoBtn){
-  const earned=new Set(earnedIds);
-  const sorted=[...ACHIEVEMENTS].sort((a,b)=>(earned.has(a.id)?0:1)-(earned.has(b.id)?0:1));
-  const makeItem=a=>{
-    const e=earned.has(a.id);
-    return`<div class="ach-item${e?' earned':''}"${showInfoBtn?' style="position:relative"':''}>
-      <div class="ach-icon">${LedgerIcon(a.icon)}</div>
-      <div class="ach-name">${a.name}</div>
-      ${showInfoBtn?`<button onclick="event.stopPropagation();showAchInfo('${a.id}')" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;color:var(--mut);font-size:10px;font-weight:800;width:14px;height:14px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;padding:0;line-height:1">i</button>`:''}
-    </div>`;
-  };
-  const preview=sorted.slice(0,8);
-  const rest=sorted.slice(8);
-  return`<div class="ach-grid" id="${sectionId}-preview">${preview.map(makeItem).join('')}</div>
-    ${rest.length?`<div class="ach-grid" id="${sectionId}-rest" style="display:none;margin-top:8px">${rest.map(makeItem).join('')}</div>
-    <button onclick="toggleAchSection('${sectionId}',${ACHIEVEMENTS.length})" id="${sectionId}-btn" style="margin-top:10px;width:100%;padding:9px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">View all ${ACHIEVEMENTS.length} achievements ↓</button>`:''}`;
+// Achievements: a short preview on profiles, "View all" opens the full list in a
+// pop-up, and the "i" on each badge explains how to earn it.
+const _achSets={};
+function _achValid(ids){ const ok=new Set(ACHIEVEMENTS.map(a=>a.id)); return [...new Set(ids||[])].filter(id=>ok.has(id)); }
+function _achTile(a,earned,setId){
+  const e=earned.has(a.id);
+  const label=esc(a.name)+(e?' (earned)':' (locked)');
+  return`<div class="ach-item${e?' earned':''}" role="button" tabindex="0" aria-label="${label}. How to earn it" title="${esc(a.desc)}"
+    onclick="showAchInfo('${a.id}','${setId}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showAchInfo('${a.id}','${setId}')}">
+    <span class="ach-info-btn" aria-hidden="true">i</span>
+    <div class="ach-icon">${LedgerIcon(a.icon)}</div>
+    <div class="ach-name">${esc(a.name)}</div>
+  </div>`;
 }
-function toggleAchSection(id,total){
-  const rest=document.getElementById(id+'-rest');
-  const btn=document.getElementById(id+'-btn');
-  if(!rest)return;
-  const open=rest.style.display!=='none';
-  rest.style.display=open?'none':'grid';
-  if(btn)btn.textContent=open?`View all ${total} achievements ↓`:'Show less ↑';
+function _achPreviewHTML(earnedIds, sectionId){
+  const ids=_achValid(earnedIds);
+  _achSets[sectionId]={ids,own:sectionId.startsWith('own')};
+  const earned=new Set(ids);
+  const sorted=[...ACHIEVEMENTS].sort((a,b)=>(earned.has(a.id)?0:1)-(earned.has(b.id)?0:1));
+  return`<div class="ach-grid" id="${sectionId}-preview">${sorted.slice(0,8).map(a=>_achTile(a,earned,sectionId)).join('')}</div>
+    <button onclick="openAchievementsModal('${sectionId}')" style="margin-top:10px;width:100%;padding:9px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer">View all ${ACHIEVEMENTS.length} achievements · ${ids.length} earned</button>`;
+}
+function openAchievementsModal(setId){
+  let set=_achSets[setId]||{ids:[],own:true};
+  // Your own list: award anything already reached before showing it.
+  if(set.own&&S){ checkAchievements(); set=_achSets[setId]={ids:_achValid(S.achievements),own:true}; }
+  const earned=new Set(set.ids);
+  let el=document.getElementById('ach-modal');
+  if(!el){
+    el=document.createElement('div');
+    el.id='ach-modal'; el.className='modal-overlay';
+    el.addEventListener('click',e=>{if(e.target===el)closeAchievementsModal();});
+    document.body.appendChild(el);
+  }
+  const pct=Math.round(set.ids.length/ACHIEVEMENTS.length*100);
+  const groups=ACH_CATS.map(([cat,label])=>{
+    const list=ACHIEVEMENTS.filter(a=>a.cat===cat); if(!list.length) return '';
+    const got=list.filter(a=>earned.has(a.id)).length;
+    return`<div class="ach-cat">${label}<span>${got} / ${list.length}</span></div>
+      <div class="ach-grid">${list.map(a=>_achTile(a,earned,setId)).join('')}</div>`;
+  }).join('');
+  el.innerHTML=`<div class="modal-box" aria-labelledby="ach-modal-title" style="max-width:720px;display:flex;flex-direction:column;overflow:hidden;padding:0">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid var(--bdr);flex:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
+        <div>
+          <div id="ach-modal-title" style="font-size:17px;font-weight:800;letter-spacing:-.01em">Achievements</div>
+          <div style="font-size:12px;color:var(--sub);margin-top:2px">${set.ids.length} of ${ACHIEVEMENTS.length} earned · tap any badge to see how to earn it</div>
+        </div>
+        <button class="modal-close" onclick="closeAchievementsModal()" aria-label="Close">×</button>
+      </div>
+      <div class="ach-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><div style="width:${pct}%"></div></div>
+    </div>
+    <div id="ach-modal-body" style="flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 20px 24px">${groups}</div>
+  </div>`;
+  el.classList.add('open');
+  _syncModalLock();
+}
+function closeAchievementsModal(){
+  document.getElementById('ach-info')?.classList.remove('open');
+  document.getElementById('ach-modal')?.classList.remove('open');
+  _syncModalLock();
 }
 
 function _buildHeatmap(activities, weekOffset, containerId){
@@ -7816,7 +7937,7 @@ function buildProfile(){
   const followingCount=(S.following||[]).filter(id=>id&&id.length>4).length;
   const pendingRequestCount=(S.followRequests||[]).length;
 
-  const achHTML=_achPreviewHTML(S.achievements||[],'own-ach',true);
+  const achHTML=_achPreviewHTML(S.achievements||[],'own-ach');
 
   const allActs=(S.activities||[]).slice().reverse();
   const recentActs=allActs.slice(0,12).map(a=>{
@@ -7997,9 +8118,9 @@ function buildProfile(){
     <div class="sb-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="sb-title" style="margin-bottom:0">Achievements</div>
-        <span style="font-size:11px;color:var(--mut)">${(S.achievements||[]).length}/${ACHIEVEMENTS.length}</span>
+        <span style="font-size:11px;color:var(--mut)">${_achValid(S.achievements).length}/${ACHIEVEMENTS.length}</span>
       </div>
-      ${_achPreviewHTML(S.achievements||[],'own-ach-sb',false)}
+      ${_achPreviewHTML(S.achievements||[],'own-ach-sb')}
     </div>
 
     <!-- Study Partner -->
@@ -9578,10 +9699,37 @@ function removeSocialLink(platform){
   renderTab();
 }
 
-// Also show achievement info tooltip
-function showAchInfo(id){
-  const a=ACHIEVEMENTS.find(x=>x.id===id);
-  if(a)showToast(`${a.name}: ${a.desc}`,'info');
+// How to earn an achievement (and, on your own profile, how close you are).
+function showAchInfo(id,setId){
+  const a=ACHIEVEMENTS.find(x=>x.id===id); if(!a) return;
+  const set=_achSets[setId]||{ids:_achValid(S&&S.achievements),own:true};
+  const has=set.ids.includes(id);
+  let prog='';
+  if(set.own&&!has&&a.goal&&S){
+    const [k,n]=a.goal, v=Math.min(_achMetrics()[k]||0,n);
+    const unit={sessions:'sessions',hours:'hours',sectionMax:'hours on your top section',streak:'days in a row',passed:'sections passed',follows:'following',followers:'followers',props:'Props given',questions:'questions answered',scores:'scores recorded',clubs:'clubs'}[k]||'';
+    prog=`<div style="margin-top:16px;text-align:left">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:6px"><span>Your progress</span><strong style="color:var(--txt)">${v.toLocaleString()} / ${n.toLocaleString()} ${unit}</strong></div>
+      <div class="ach-bar"><div style="width:${Math.round(v/n*100)}%"></div></div></div>`;
+  }
+  let el=document.getElementById('ach-info');
+  if(!el){
+    el=document.createElement('div');
+    el.id='ach-info'; el.className='modal-overlay'; el.style.zIndex='520';
+    el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<div class="modal-box" style="max-width:360px;position:relative;padding:24px 22px 20px;text-align:center" aria-labelledby="ach-info-title">
+    <button class="modal-close" onclick="document.getElementById('ach-info').classList.remove('open')" aria-label="Close" style="position:absolute;top:12px;right:12px">×</button>
+    <div style="width:64px;height:64px;margin:0 auto 12px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:34px;background:${has?'var(--amb-bg)':'var(--surf2)'};border:1.5px solid ${has?'var(--amb)':'var(--bdr)'};${has?'':'filter:grayscale(1);opacity:.7'}">${LedgerIcon(a.icon)}</div>
+    <div id="ach-info-title" style="font-size:17px;font-weight:800">${esc(a.name)}</div>
+    <div style="display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;${has?'background:var(--amb-bg);color:var(--amb)':'background:var(--surf2);color:var(--sub)'}">${has?'Earned':'Not earned yet'}</div>
+    <div style="margin-top:16px;text-align:left">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin-bottom:4px">How to earn it</div>
+      <div style="font-size:14px;line-height:1.55;color:var(--txt)">${esc(a.how||a.desc)}</div>
+    </div>${prog}
+  </div>`;
+  el.classList.add('open');
 }
 
 // ═══════════════════════════════════════════════
@@ -10157,7 +10305,7 @@ function _renderFullUserProfile(u){
   ].filter(Boolean).join('');
   const _sideAboutCard=_sideAboutRows?`<div class="sb-card"><div class="sb-title">About</div>${_sideAboutRows}</div>`:'';
   const _sideProgCard=sectionProgress?`<div class="sb-card"><div class="sb-title">Exam Progress</div>${sectionProgress}</div>`:'';
-  const _sideAchCard=u.achievements.length?`<div class="sb-card"><div class="sb-title">Achievements (${u.achievements.length})</div>${_achPreviewHTML(u.achievements,'view-ach',false)}</div>`:'';
+  const _sideAchCard=_achValid(u.achievements).length?`<div class="sb-card"><div class="sb-title">Achievements (${_achValid(u.achievements).length})</div>${_achPreviewHTML(u.achievements,'view-ach')}</div>`:'';
 
   document.title=`${u.name} — Ledger`;
   document.getElementById('uprofile-content').innerHTML=`
@@ -12282,7 +12430,7 @@ document.addEventListener('keydown',e=>{
       const wasOpen=(m.oldValue||'').split(' ').includes('open');
       if(isOpen&&!wasOpen)onModalOpened(el);
       else if(!isOpen&&wasOpen)onModalClosed();
-      if(el.id==='upgrade-modal'&&typeof _syncModalLock==='function')_syncModalLock();
+      if((el.id==='upgrade-modal'||el.id==='ach-modal')&&typeof _syncModalLock==='function')_syncModalLock();
     });
   }).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true,attributeOldValue:true});
 })();
@@ -12916,8 +13064,12 @@ function openAppSettings(section='account'){
 // Keep the page behind Settings / the plans screen from scrolling (phones only, see CSS).
 function _syncModalLock(){
   const s=document.getElementById('app-settings-modal');
-  const on=(s&&s.style.display==='block')||!!document.querySelector('#upgrade-modal.open');
-  document.documentElement.classList.toggle('modal-lock',on);
+  const on=(s&&s.style.display==='block')||!!document.querySelector('#upgrade-modal.open,#ach-modal.open');
+  const h=document.documentElement;
+  if(on===h.classList.contains('modal-lock')) return;
+  // Keep the page from shifting sideways when its scrollbar disappears.
+  document.body.style.paddingRight=on?Math.max(0,innerWidth-h.clientWidth)+'px':'';
+  h.classList.toggle('modal-lock',on);
 }
 
 function renderAppSettingsTabs(){
