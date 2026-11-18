@@ -48,7 +48,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#f2ede6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c0905" media="(prefers-color-scheme: dark)">
-<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/libre-franklin-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <!-- Firebase Auth (deferred — loads in parallel with HTML parsing) -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -92,7 +92,7 @@
   --transition:.18s cubic-bezier(.4,0,.2,1);
   /* ── SPACING SCALE (4pt) ── */
   --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;
-  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font:'Libre Franklin',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
 }
 body.dark{
@@ -869,13 +869,13 @@ html.modal-lock,html.modal-lock body{overflow:hidden}
 .pro-lock-cta:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(212,64,0,.6)}
 .pro-plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;vertical-align:middle;line-height:1}
 .badge-pro{background:linear-gradient(135deg,#d44000,#d97706);color:#fff}
-.badge-elite{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff}
+.badge-elite{background:var(--ora);color:#fff}
 .badge-trial{background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff}
 .badge-cram{background:linear-gradient(135deg,#6366f1,#4338ca);color:#fff}
 /* Nav pro badge */
 .nav-pro-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:none;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s}
 .nav-pro-chip-pro{background:var(--ora);color:#fff;box-shadow:0 1px 4px rgba(212,64,0,.22)}
-.nav-pro-chip-elite{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;box-shadow:0 2px 8px rgba(168,85,247,.4)}
+.nav-pro-chip-elite{background:var(--ora);color:#fff;box-shadow:0 2px 8px rgba(194,58,0,.3)}
 .nav-pro-chip-trial{background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;box-shadow:0 2px 8px rgba(20,184,166,.3)}
 .nav-pro-chip-free{background:transparent;color:var(--ind);border:1.5px solid var(--ind);font-size:10px}
 .nav-pro-chip-free:hover{background:var(--ind-bg)}
@@ -2194,7 +2194,7 @@ function showStudentVerifyBanner(){ return; // disabled until student discount l
   if(!wrap) return;
   const bar = document.createElement('div');
   bar.id = 'student-verify-banner';
-  bar.style.cssText = 'background:#92400e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;font-family:Inter,system-ui,sans-serif;z-index:900';
+  bar.style.cssText = 'background:#92400e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;font-family:"Libre Franklin",system-ui,sans-serif;z-index:900';
   bar.innerHTML = `
     <span><strong>Verify your student discount</strong> — confirm your .edu email to keep your $5/month rate.
     <a onclick="openStudentVerifyModal()" style="color:#fcd34d;cursor:pointer;text-decoration:underline;margin-left:6px">Verify now →</a></span>
@@ -3711,13 +3711,13 @@ function proLockHTML(featureName,btnLabel){
 function eliteLockHTML(featureName,btnLabel){
   if(isElite())return'';
   const lbl=btnLabel||'Unlock with Pro';
-  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:linear-gradient(135deg,rgba(147,51,234,.08),rgba(147,51,234,.04));border:1.5px solid rgba(147,51,234,.25)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Pro</div>'+'<button class="pro-lock-cta" style="background:linear-gradient(135deg,var(--pur),#7c22c8)">'+lbl+'</button>'+'</div>';
+  return'<div class="pro-lock-overlay" onclick="openUpgradeModal(\''+featureName+'\')" style="background:var(--ora-bg);border:1.5px solid var(--ora-bdr)">'+'<div class="pro-lock-icon">✦</div>'+'<div class="pro-lock-label" style="color:var(--pur)">'+featureName+' — Pro</div>'+'<button class="pro-lock-cta" style="background:var(--ora)">'+lbl+'</button>'+'</div>';
 }
 
 // Inline upsell banner (used inside cards)
 function upsellBannerHTML(text,cta,featureName,tier){
   const _t=tier||'Pro';
-  return'<div class="upsell-inline" onclick="openUpgradeModal(\''+featureName+'\')">'+'<span style="font-size:24px">'+(_t==='Elite'?'✦':ico('sparkles'))+'</span>'+'<div style="flex:1"><div style="font-size:12px;font-weight:800;color:'+(_t==='Elite'?'var(--pur)':'var(--ind)')+'">'+text+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Available with Ledger '+_t+'</div></div>'+'<button class="challenge-pro-badge" style="'+(_t==='Elite'?'background:var(--pur);color:#fff':'')+'">'+cta+'</button>'+'</div>';
+  return'<div class="upsell-inline" onclick="openUpgradeModal(\''+featureName+'\')">'+'<span style="font-size:24px">'+ico('sparkles')+'</span>'+'<div style="flex:1"><div style="font-size:12px;font-weight:800;color:'+(_t==='Elite'?'var(--pur)':'var(--ind)')+'">'+text+'</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Available with Ledger '+_t+'</div></div>'+'<button class="challenge-pro-badge" style="'+(_t==='Elite'?'background:var(--pur);color:#fff':'')+'">'+cta+'</button>'+'</div>';
 }
 
 // Post-onboarding offer — shown once after completing onboarding
@@ -4680,7 +4680,7 @@ function renderObStep2(){
   <div style="font-size:12px;color:var(--sub);margin-bottom:10px;line-height:1.6">Set realistic target dates for each section. We'll calculate your pacing — how many hours/week you need to be ready on time.</div>
   <div style="display:flex;align-items:flex-start;gap:8px;background:var(--grn-bg);border:1px solid #a7f3d0;border-radius:9px;padding:9px 12px;margin-bottom:16px;font-size:11.5px;color:var(--sub);line-height:1.5"><span style="flex-shrink:0">${ico('party')}</span><span><strong style="color:var(--grn)">Already passed a section?</strong> Tap <strong>Passed?</strong> next to it — we'll skip it and build your plan around what's left.</span></div>
   ${remaining.length?`<div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:11px;padding:14px;margin-bottom:16px;text-align:left">
-    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ind);margin-bottom:8px">✦ ${remaining.length<rec.order.length?"Recommended order for what's left":'Recommended order for you'}</div>
+    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ind);margin-bottom:8px">${remaining.length<rec.order.length?"Recommended order for what's left":'Recommended order for you'}</div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px">
       ${remaining.map((s,i,arr)=>`<span class="badge badge-${s}" style="font-size:11px">${s}</span>${i<arr.length-1?'<span style="color:var(--mut);font-size:13px;font-weight:700">→</span>':''}`).join('')}
     </div>
@@ -5034,7 +5034,7 @@ function renderApp(){
           // the paid surface (MCQs, flashcards, AI coach) and was last; Profile
           // is a weekly visit at best and now lives behind the avatar, which is
           // where people look for it anyway.
-          {id:'today',icon:'✦',label:'Today'},
+          {id:'today',icon:'sunrise',label:'Today'},
           {id:'feed',icon:'◈',label:'Feed'},
           {id:'dashboard',icon:'▦',label:'Dashboard'},
           {id:'studylab',icon:'⬡',label:'Study Lab'},
@@ -5057,7 +5057,7 @@ function renderApp(){
   <div class="page fade-in" id="page-content"></div>
   <footer class="lg-footer">
     <style>
-    .lg-footer{background:#0c0a14;color:rgba(255,255,255,.72);padding:48px 24px 26px;font-family:var(--font),'Inter',system-ui,sans-serif;margin-top:40px}
+    .lg-footer{background:#0c0a14;color:rgba(255,255,255,.72);padding:48px 24px 26px;font-family:var(--font),'Libre Franklin',system-ui,sans-serif;margin-top:40px}
     .lg-footer a{color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s}
     .lg-footer a:hover{color:#fff}
     .lg-foot-inner{max-width:1060px;margin:0 auto}
@@ -6514,7 +6514,7 @@ function buildFeed(){
 <div class="sidebar-left">
   <div class="card card-pad" style="margin-bottom:var(--sp-4)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <div class="avatar av-md" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;overflow:hidden;padding:0;cursor:pointer" onclick="switchTab('profile')" title="View profile">
+      <div class="avatar av-md" style="background:var(--ora);color:#fff;overflow:hidden;padding:0;cursor:pointer" onclick="switchTab('profile')" title="View profile">
         ${S.profilePic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:`<span>${S.name.slice(0,2).toUpperCase()}</span>`}
       </div>
       <div style="flex:1;min-width:0">
@@ -6778,7 +6778,7 @@ function buildPartnerTeaserCard(){
   return`<div class="activity-card" style="margin-bottom:16px;border:1.5px solid rgba(90,95,207,.25);background:linear-gradient(135deg,var(--surf),var(--ind-bg))">
   <div style="padding:16px 18px 14px">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ind),var(--pur));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${ico('handshake')}</div>
+      <div style="width:38px;height:38px;border-radius:10px;background:var(--ind);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${ico('handshake')}</div>
       <div>
         <div style="font-size:13px;font-weight:800;color:var(--txt)">${matchCount} candidates studying ${userSection} want a study partner</div>
         <div style="font-size:11px;color:var(--mut);margin-top:1px">Pro members get matched — see who's in your section</div>
@@ -6795,7 +6795,7 @@ function buildPartnerTeaserCard(){
     </div>
     <div style="display:flex;gap:8px">
       <button onclick="switchTab('explore')" style="flex:1;padding:10px;background:var(--surf2);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">See Who's Studying ${userSection}</button>
-      <button onclick="openUpgradeModal('Study Partner')" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--ind),#4338ca);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(90,95,207,.35)">Unlock Pro →</button>
+      <button onclick="openUpgradeModal('Study Partner')" style="flex:1;padding:10px;background:var(--ind);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(90,95,207,.35)">Unlock Pro →</button>
     </div>
   </div>
 </div>`;
@@ -6850,7 +6850,7 @@ function buildActivityCard(a){
   const diffStars=[1,2,3,4,5].map(i=>`<span class="diff-star${i<=(a.difficulty||3)?' on':''}">★</span>`).join('');
   const _actFriend=a.userId!=='you'?REAL_USERS.find(f=>f.id===a.userId):null;
   const passedBadge=_actFriend?.passedSections?.length>0?`<span class="badge badge-passed" style="margin-left:6px">${ico('checkCircle')} ${_actFriend.passedSections.length} Passed</span>`:'';
-  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
+  const tierBadgeAct=_actFriend?.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:var(--ora);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':_actFriend?.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:5px;text-transform:uppercase">Pro</span>':'';
 
   // Private session: show minimal card for own sessions, hide from others' view
   const _avatarHtmlMine=a.userPic?`<img src="${a.userPic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(S?.profilePic?`<img src="${S.profilePic}" alt="${esc(a.userName||'Your')}'s profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${a.userInitials}`);
@@ -8035,7 +8035,7 @@ function buildProfile(){
           <div class="profile-av-edit-overlay">Edit</div>
         </div>
         <div>
-          <div class="profile-name" style="margin-top:0;font-size:24px">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
+          <div class="profile-name" style="margin-top:0;font-size:24px">${S.name}${isElite()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:var(--ora);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':isPro()?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:5px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:8px;text-transform:uppercase;vertical-align:middle">Pro</span>':''}</div>
           <div class="profile-state">${[S.state,S.classYear,S.school?'@ '+S.school:''].filter(Boolean).join(' · ')}</div>
           ${S.bio?`<div style="font-size:12px;color:rgba(255,255,255,.72);margin-top:5px;max-width:500px;line-height:1.55">${S.bio}</div>`:`<div style="font-size:12px;color:rgba(255,255,255,.38);margin-top:5px;cursor:pointer" onclick="openEditProfile()">+ Add a bio…</div>`}
         </div>
@@ -8210,7 +8210,7 @@ function buildExplore(){
     return`<div class="friend-card">
       <div class="avatar av-md" style="background:${f.color};color:#fff;cursor:pointer" onclick="openUserProfile('${f.id}')">${f.initials}</div>
       <div class="friend-info" style="cursor:pointer" onclick="openUserProfile('${f.id}')">
-        <div class="friend-name">${f.name} ${f.passedSections.length===4?ico('trophy'):''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">'+ico('lock')+'</span>':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
+        <div class="friend-name">${f.name} ${f.passedSections.length===4?ico('trophy'):''}${f.isPrivate?'<span style="font-size:10px;color:var(--mut)">'+ico('lock')+'</span>':''}${f.tier==='elite'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:var(--ora);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':f.tier==='pro'?'<span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 5px;border-radius:4px;background:linear-gradient(135deg,#d44000,#d97706);color:#fff;margin-left:4px;text-transform:uppercase">Pro</span>':''}</div>
         <div class="friend-meta">${f.state} · ${f.currentSection||'CPA Achieved!'} · ${f.streak}d streak · ${weekHrs.toFixed(1)}h this week</div>
         ${f.bio?`<div style="font-size:10px;color:var(--mut);margin-top:2px;font-style:italic">"${f.bio}"</div>`:''}
         ${f.passedSections.length?`<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${f.passedSections.map(s=>`<span class="badge badge-${s}" style="font-size:10px">${s} ✓</span>`).join('')}</div>`:''}
@@ -8266,7 +8266,7 @@ function buildExplore(){
   });
   const activeThisWeek=circleEntries.filter(e=>e.weekHrs>0);
   const circleCards=activeThisWeek.map(e=>{
-    const tierDot=e.tier==='elite'?'<span style="width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);display:inline-block;margin-left:4px;vertical-align:middle"></span>':e.tier==='pro'?'<span style="width:7px;height:7px;border-radius:50%;background:var(--ora);display:inline-block;margin-left:4px;vertical-align:middle"></span>':'';
+    const tierDot=e.tier==='elite'?'<span style="width:7px;height:7px;border-radius:50%;background:var(--ora);display:inline-block;margin-left:4px;vertical-align:middle"></span>':e.tier==='pro'?'<span style="width:7px;height:7px;border-radius:50%;background:var(--ora);display:inline-block;margin-left:4px;vertical-align:middle"></span>':'';
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);${e.isYou?'background:var(--ind-bg);padding:8px 10px;margin:0 -10px;border-radius:8px;':''}">
       <div class="avatar" style="width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"${!e.isYou&&e.id?` onclick="openUserProfile('${e.id}')" style="cursor:pointer;width:34px;height:34px;font-size:11px;border-radius:50%;background:${e.color};color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700"`:''}>${e.initials}</div>
       <div style="flex:1;min-width:0">
@@ -10225,7 +10225,7 @@ function _renderFullUserProfile(u){
   const isPendingRequest=!isFollowing&&(S.pendingRequests||[]).includes(u.uid);
   const isLocked=!!(u.isPrivate)&&!isFollowing;
   const avatarInner=u.profilePic?`<img src="${u.profilePic}" alt="Member profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.avatar&&u.avatar.length<=2?`<span style="font-size:28px">${ico(u.avatar)}</span>`:`<span style="font-size:26px;font-weight:900;letter-spacing:-.03em">${u.initials}</span>`;
-  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
+  const tierBadge=u.tier==='elite'?`<span class="badge" style="background:var(--ora);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:u.tier==='pro'?`<span class="badge" style="background:linear-gradient(135deg,#d44000,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Pro</span>`:'';
 
   // Follow / Message buttons (compact, hero top-right)
   const followBtnStyle=`background:${isFollowing?'rgba(255,255,255,.15)':isPendingRequest?'rgba(255,255,255,.1)':'var(--ora)'};border:1px solid ${(isFollowing||isPendingRequest)?'rgba(255,255,255,.28)':'transparent'};color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap`;
@@ -12484,7 +12484,7 @@ function buildHeatMap(){
     :[{id:'week',label:'Week'},{id:'month',label:'Month'}];
   const toggleHTML=`<div style="display:flex;gap:0;background:var(--surf3);border-radius:8px;padding:3px;width:fit-content">`+
     toggleRanges.map(r=>`<button onclick="setHeatMapRange('${r.id}')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s;background:${effectiveRange===r.id?'var(--surf)':'transparent'};color:${effectiveRange===r.id?'var(--txt)':'var(--mut)'};box-shadow:${effectiveRange===r.id?'var(--shadow)':'none'}">${r.label}</button>`).join('')+
-    (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--pur)">Year ✦</button>`:'')+'</div>';
+    (!elite?`<button onclick="openUpgradeModal('Full Activity History')" style="padding:5px 14px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--pur)">Year</button>`:'')+'</div>';
 
   // ── WEEK VIEW ─────────────────────────────────────────────
   if(effectiveRange==='week'){
@@ -12722,7 +12722,7 @@ function buildExamDayProtocolCard(){
         <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--amb),#d97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ico('clipboard')}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:800">Exam Day Protocol</div>
-          <div style="font-size:11px;color:var(--mut)">Your 5-phase pre-exam playbook — tap to open</div>
+          <div style="font-size:11px;color:var(--mut)">Your checklist from 2 weeks out to the day after — tap to open</div>
         </div>
         <span id="exam-protocol-chev" style="font-size:16px;color:var(--mut);transition:transform .2s;flex-shrink:0">▾</span>
       </div>
@@ -12732,7 +12732,7 @@ function buildExamDayProtocolCard(){
   return `<div class="card card-pad" style="text-align:center;padding:40px 24px;border:2px dashed var(--bdr2);margin-top:20px">
     <div style="font-size:44px;margin-bottom:12px">${ico('clipboard')}</div>
     <div style="font-size:18px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em">Exam Day Protocol <span style="font-size:11px;font-weight:700;background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-bdr);border-radius:20px;padding:2px 8px;vertical-align:middle">Pro</span></div>
-    <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 18px;line-height:1.7">A structured 5-phase checklist — 14 days out through exam morning — so nothing falls through the cracks before you sit.</div>
+    <div style="font-size:13px;color:var(--sub);max-width:420px;margin:0 auto 18px;line-height:1.7">A day-by-day checklist from two weeks out through the day after, with the reason behind every step, so nothing slips before you sit.</div>
     <button class="btn btn-primary" style="font-size:13px;padding:10px 26px" onclick="openUpgradeModal('Exam Day Protocol')">Unlock with Pro — 7 days free</button>
   </div>`;
 }
@@ -12771,7 +12771,7 @@ function openEditProfile(){
 <!-- Profile Photo -->
 <div style="text-align:center;margin-bottom:22px">
   <div style="position:relative;display:inline-block">
-    <div id="ep-avatar-preview" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:3px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;overflow:hidden;cursor:pointer;margin:0 auto;letter-spacing:-.03em" onclick="document.getElementById('ep-file-input').click()">
+    <div id="ep-avatar-preview" style="width:96px;height:96px;border-radius:50%;background:var(--ora);border:3px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;overflow:hidden;cursor:pointer;margin:0 auto;letter-spacing:-.03em" onclick="document.getElementById('ep-file-input').click()">
       ${hasPic?`<img src="${S.profilePic}" alt="Your profile photo" style="width:100%;height:100%;object-fit:cover">`:`<span>${initials}</span>`}
     </div>
     <div onclick="document.getElementById('ep-file-input').click()" style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;border-radius:50%;background:var(--ora);border:2.5px solid var(--surf);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px">${ico('camera')}</div>
@@ -13687,7 +13687,7 @@ function confirmReset(){
 function injectMobileNav(){
   if(document.getElementById('mobile-nav'))return;
   const tabs=[
-    {id:'today',icon:'✦',label:'Today'},
+    {id:'today',icon:'sunrise',label:'Today'},
     {id:'feed',icon:'◈',label:'Feed'},
     {id:'studylab',icon:'⬡',label:'Lab'},
     {id:'dashboard',icon:'▦',label:'Dash'},
@@ -14423,7 +14423,7 @@ function _renderQuiz() {
   const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
   const color = sec ? sec.color : '#6366f1';
   const choiceLetters = ['A','B','C','D'];
-  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz', ai:'✦ AI Practice'};
+  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz', ai:'AI Practice'};
   const pct = total > 0 ? Math.round(current / total * 100) : 0;
 
   const timerHTML = type === 'timed'
@@ -14617,7 +14617,7 @@ function openQBSection(code) {
   if (!pro) {
     aiBlock =
       '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">AI-Generated Questions</div>' +
         '<div onclick="openUpgradeModal(\'AI Question Generator\')" style="background:var(--surf2);border:1px dashed var(--bdr2);border-radius:13px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px">' +
           '<div style="font-size:24px">'+ico('lock')+'</div>' +
           '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--txt)">Unlimited fresh questions with AI</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Pro: unlimited new questions, every section, plus topic focus</div></div>' +
@@ -14626,15 +14626,15 @@ function openQBSection(code) {
       '</div>';
   } else {
     const disabled = !elite && quota.remaining <= 0;
-    const quotaLabel = elite ? '✦ Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today');
+    const quotaLabel = elite ? 'Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today');
     aiBlock =
       '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">✦ AI-Generated Questions</div>' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">AI-Generated Questions</div>' +
         '<div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:13px;padding:16px">' +
           '<div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--txt)">Fresh questions, infinite practice</div>' +
           '<div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.5">Generate brand-new ' + code + ' questions on demand. Leave the topic blank for a mixed set, or name a topic for a focused drill.</div>' +
           '<input id="ai-qb-topic" type="text" placeholder="Optional topic — e.g. ASC 842 lease modifications" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;outline:none;margin-bottom:10px" onkeydown="if(event.key===\'Enter\'){generateAIQuestions(\'' + code + '\',this.value)}">' +
-          '<button onclick="generateAIQuestions(\'' + code + '\',(document.getElementById(\'ai-qb-topic\')||{}).value||\'\')" ' + (disabled?'disabled':'') + ' style="width:100%;padding:11px;background:' + (disabled?'var(--surf3)':'linear-gradient(135deg,var(--ind),var(--pur))') + ';color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:' + (disabled?'not-allowed':'pointer') + '">✦ Generate ' + AI_QB_SET_SIZE + ' Questions</button>' +
+          '<button onclick="generateAIQuestions(\'' + code + '\',(document.getElementById(\'ai-qb-topic\')||{}).value||\'\')" ' + (disabled?'disabled':'') + ' style="width:100%;padding:11px;background:' + (disabled?'var(--surf3)':'var(--ind)') + ';color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:' + (disabled?'not-allowed':'pointer') + '">✦ Generate ' + AI_QB_SET_SIZE + ' Questions</button>' +
           '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">' + quotaLabel + '</div>' +
         '</div>' +
       '</div>';
@@ -15894,131 +15894,151 @@ function _fcRender(){const el=document.getElementById('page-content');if(el&&cur
 
 
 // ── Exam Day Protocol ──────────────────────────────────────────────────────
-function _edpNearestSec() {
-  const sections = S.sections || [];
-  let ns = null, nd = Infinity;
-  sections.forEach(function(s) {
-    if (S.examDates && S.examDates[s]) {
-      const d = Math.round((new Date(S.examDates[s] + ' 00:00:00') - new Date()) / 86400000);
-      if (d > 0 && d < nd) { nd = d; ns = s; }
-    }
-  });
-  return { sec: ns, days: nd };
+// Whole calendar days from today to a YYYY-MM-DD date, in the user's own time
+// zone. (Parsing "YYYY-MM-DD 00:00:00" fails on Safari, and rounding hours
+// was off by one late in the evening.)
+function _edpDaysUntil(ymd) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd || ''); if (!m) return null;
+  const t = new Date(); const today = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate());
+  return Math.round((Date.UTC(+m[1], +m[2] - 1, +m[3]) - today) / 86400000);
 }
+// The exam the protocol is for: the next one coming up (today counts), or
+// one you sat in the last 10 days so the "after the exam" steps still show.
+function _edpNearestSec() {
+  let ns = null, nd = Infinity, ps = null, pd = -Infinity;
+  Object.entries(S.examDates || {}).forEach(function([s, ymd]) {
+    if ((S.sectionPassed || []).includes(s)) return;
+    const d = _edpDaysUntil(ymd); if (d === null) return;
+    if (d >= 0 && d < nd) { nd = d; ns = s; }
+    if (d < 0 && d >= -10 && d > pd) { pd = d; ps = s; }
+  });
+  if (ns) return { sec: ns, days: nd, date: S.examDates[ns] };
+  if (ps) return { sec: ps, days: pd, date: S.examDates[ps] };
+  return { sec: null, days: Infinity, date: null };
+}
+// Checks are stored per section AND date, so a retake starts fresh.
+function _edpKey(n) { return n.sec ? n.sec + '@' + n.date : 'default'; }
+
+const EXAM_PROTOCOL = [
+  { day: 14, label: 'Two weeks out', icon: 'calendar', items: [
+    ['Confirm your appointment in your Prometric account', 'Catch a wrong date, time or test center while there is still time to fix it.'],
+    ['Check that the name on your ID matches your NTS exactly', 'A mismatch can get you turned away at check-in, and you would usually lose the exam fee.'],
+    ['Take a full-length practice exam, timed', 'It shows where your four hours really go and which topics still cost you points.'],
+    ['Pick your 3 weakest topics and give them most of this week', 'Fixing weak areas usually gains more points than polishing strong ones.'],
+  ]},
+  { day: 7, label: 'One week out', icon: 'target', items: [
+    ['Redo every practice question you got wrong', 'Your misses are the quickest map to points you can still win.'],
+    ['Practice simulations (TBS), not just multiple choice', 'Sims are a big share of your score. Get comfortable with exhibits and the tools.'],
+    ['Write one page of the rules and formulas you keep forgetting', 'Read it once a day this week. You can’t bring it in, so it has to stick.'],
+    ['Plan your route, travel time and parking', 'Arriving late can cost you your seat. Know exactly when you need to leave.'],
+  ]},
+  { day: 3, label: 'Three days out', icon: 'lotus', items: [
+    ['Switch to light review: your one-pager, flashcards and misses', 'Cramming new material now tends to push out what you already know.'],
+    ['Shift your sleep so you wake 3 hours before your start time', 'You want to be fully awake when the clock starts, not by the last testlet.'],
+    ['Read Prometric’s test-day rules', 'Very little is allowed in the room, and lockers hold the rest. No surprises at check-in.'],
+  ]},
+  { day: 1, label: 'The day before', icon: 'moon', items: [
+    ['Do a short review (under 2 hours), then stop', 'Rest now protects your recall tomorrow.'],
+    ['Pack your ID, a snack and water for the break, and a layer', 'Testing rooms run cold, and you’ll want fuel at the break.'],
+    ['Set two alarms and confirm the time you leave', 'One less thing to worry about tonight.'],
+    ['Go to bed at your new bedtime', 'Aim for 7 to 9 hours. Sleep does more for recall than one more hour of review.'],
+  ]},
+  { day: 0, label: 'Exam day', icon: 'trophy', items: [
+    ['Eat a breakfast you’re used to', 'Nothing new today. Steady energy beats a sugar spike.'],
+    ['Arrive 30 minutes before your appointment', 'Check-in (ID, photo, security check) takes time. Prometric asks for 30 minutes.'],
+    ['Check the clock at the start of each testlet', 'Running out of time on the sims is the most common avoidable mistake.'],
+    ['Answer every question; flag the hard ones and move on', 'There’s no penalty for guessing, and a blank is always wrong.'],
+    ['Take the standard break after testlet 3', 'It doesn’t count against your exam time. Stretch, eat, reset.'],
+  ]},
+  { day: -1, label: 'After the exam', icon: 'party', items: [
+    ['Log the exam in Ledger', 'Keeps your 30-month window and study plan accurate.'],
+    ['Note your score release date on the AICPA site', 'Scores come out on set dates, so you don’t have to keep checking.'],
+    ['Take a day or two off, then plan your next section', 'A short rest, then keep the momentum going.'],
+  ]},
+];
 
 function _buildExamDayProtocol() {
-  const { sec: nearestSec, days: nearestDays } = _edpNearestSec();
-  const protocol = [
-    { day: '14', label: 'Two Weeks Out', emoji: 'calendar', unlockLabel: '2 weeks before your exam', items: ['Lock in your exam date and NTS if not done', 'Complete your final full mock exam', 'Identify your 3 weakest topic areas', 'Switch to review mode — no new material'] },
-    { day: '7',  label: 'One Week Out',  emoji: 'target', unlockLabel: '1 week before your exam',  items: ['Review wrong answers from mock exam only', 'Cap study sessions at 90 minutes', 'Confirm test center details and directions', 'Prepare your approved ID and materials list'] },
-    { day: '3',  label: 'Three Days Out',emoji: 'lotus', unlockLabel: '3 days before your exam',  items: ['Flashcards only — no heavy reading', 'Do a test-run drive to the Prometric center', 'Lock in your sleep schedule (in bed by 10 pm)', 'Lay out your outfit and pack your bag tonight'] },
-    { day: '1',  label: 'Day Before',    emoji: 'moon', unlockLabel: 'the day before your exam',  items: ['Zero new material — trust your prep', 'Light walk or workout to reduce cortisol', 'Review your personal formula sheet once', 'Sleep 8 hours — non-negotiable'] },
-    { day: '0',  label: 'Exam Day',      emoji: 'trophy', unlockLabel: 'on exam day',               items: ['Eat a real breakfast — protein and complex carbs', 'Arrive 30 minutes early, no exceptions', 'If testlet 2 gets harder, smile — you\'re doing well', 'Flag hard MCQs and move on — never leave blank'] },
-  ];
+  const near = _edpNearestSec();
+  const nearestSec = near.sec, nearestDays = near.days;
+  const checked = (S.examProtocol || {})[_edpKey(near)] || {};
 
-  const statusKey = 'examDayProtocol_' + (nearestSec || 'default');
-  const checked = S[statusKey] || {};
-
-  // Phase is active when the user is within its time window
-  // e.g. "Two Weeks Out" (day=14) active when nearestDays <= 14
-  // "Exam Day" (day=0) active when nearestDays <= 0
-  function isPhaseActive(phase) {
-    if (!nearestSec) return false;
-    return nearestDays <= parseInt(phase.day);
-  }
-
-  // Compute unlock date string for a phase (e.g. "Jun 1")
+  // A phase opens on its day and stays open; "after" opens the day after the exam.
+  function isPhaseActive(phase) { return !!nearestSec && (phase.day < 0 ? nearestDays < 0 : nearestDays <= phase.day); }
   function unlockDateStr(phase) {
-    if (!nearestSec || !S.examDates || !S.examDates[nearestSec]) return '';
-    const examMs = new Date(S.examDates[nearestSec] + ' 00:00:00').getTime();
-    const unlockMs = examMs - parseInt(phase.day) * 86400000;
-    const d = new Date(unlockMs);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (!near.date) return '';
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(near.date);
+    const d = new Date(+m[1], +m[2] - 1, +m[3] - phase.day);
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   }
+  // The phase you're in now (the latest one that has opened).
+  const current = EXAM_PROTOCOL.filter(isPhaseActive).pop();
 
-  // Count total and done (only active phase items count toward progress)
-  const total = protocol.reduce((a, p) => isPhaseActive(p) ? a + p.items.length : a, 0);
-  const done  = protocol.reduce((a, p) => isPhaseActive(p) ? a + p.items.filter((_, i) => checked[p.day + '_' + i]).length : a, 0);
+  const total = EXAM_PROTOCOL.reduce((a, p) => isPhaseActive(p) ? a + p.items.length : a, 0);
+  const done  = EXAM_PROTOCOL.reduce((a, p) => isPhaseActive(p) ? a + p.items.filter((_, i) => checked[p.day + '_' + i]).length : a, 0);
   const pct   = total ? Math.round(done / total * 100) : 0;
 
   let html = '';
-
-  // Countdown banner or prompt
   if (nearestSec) {
-    html += '<div style="background:linear-gradient(135deg,var(--amb-bg),#fffbeb);border:1.5px solid rgba(245,158,11,.3);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px">' +
-      '<div style="display:flex;align-items:center;gap:12px">' +
-      '<div style="width:44px;height:44px;border-radius:12px;background:rgba(245,158,11,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+ico('hourglass')+'</div>' +
-      '<div><div style="font-size:14px;font-weight:800;color:var(--amb)">' + nearestDays + ' day' + (nearestDays !== 1 ? 's' : '') + ' until ' + nearestSec + '</div>' +
-      '<div style="font-size:12px;color:var(--sub);margin-top:1px">Work through each phase as it unlocks</div></div>' +
+    const when = nearestDays > 1 ? nearestDays + ' days until ' + nearestSec
+      : nearestDays === 1 ? nearestSec + ' is tomorrow'
+      : nearestDays === 0 ? nearestSec + ' is today. You’ve got this.'
+      : 'You sat ' + nearestSec + ' ' + (-nearestDays) + ' day' + (nearestDays === -1 ? '' : 's') + ' ago';
+    html += '<div style="background:var(--amb-bg);border:1.5px solid rgba(180,83,9,.25);border-radius:14px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px">' +
+      '<div style="display:flex;align-items:center;gap:12px;min-width:0">' +
+      '<div style="width:44px;height:44px;border-radius:12px;background:rgba(180,83,9,.12);color:var(--amb);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">' + ico('hourglass') + '</div>' +
+      '<div style="min-width:0"><div style="font-size:14px;font-weight:800;color:var(--amb)">' + when + '</div>' +
+      '<div style="font-size:12px;color:var(--sub);margin-top:1px">' + (current ? 'Now: ' + current.label.toLowerCase() + '. Steps open as the date gets closer.' : 'Your first steps open 2 weeks before.') + '</div></div>' +
       '</div>' +
-      '<div style="text-align:right;flex-shrink:0">' +
-      '<div style="font-size:18px;font-weight:900;color:var(--amb)">' + pct + '%</div>' +
-      '<div style="font-size:10px;color:var(--mut)">complete</div>' +
-      '</div>' +
+      (total ? '<div style="text-align:right;flex-shrink:0"><div style="font-size:18px;font-weight:900;color:var(--amb)">' + pct + '%</div><div style="font-size:10px;color:var(--mut)">done</div></div>' : '') +
     '</div>' +
-    '<div style="height:4px;background:var(--surf2);border-radius:2px;margin-bottom:20px;overflow:hidden">' +
-    '<div style="height:100%;width:' + pct + '%;background:var(--amb);border-radius:2px;transition:width .4s ease"></div>' +
-    '</div>';
+    '<div style="height:4px;background:var(--surf2);border-radius:2px;margin-bottom:18px;overflow:hidden"><div id="edp-bar" style="height:100%;width:' + pct + '%;background:var(--amb);border-radius:2px;transition:width .4s ease"></div></div>';
   } else {
-    html += '<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--mut)">Set your exam date in your profile to activate your personalized protocol.</div>';
+    html += '<div style="background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--sub)">Add your exam date (Edit Profile → exam dates) and this turns into a day-by-day checklist for the two weeks before it.</div>';
   }
 
-  // Phase cards
-  protocol.forEach(function(phase) {
+  EXAM_PROTOCOL.forEach(function(phase) {
     const active = isPhaseActive(phase);
+    const isNow = phase === current;
     const phaseDone = active ? phase.items.filter((_, i) => checked[phase.day + '_' + i]).length : 0;
     const phaseComplete = active && phaseDone === phase.items.length;
     const uds = unlockDateStr(phase);
+    const opens = phase.day < 0 ? (uds ? 'Opens ' + uds : 'Opens after your exam') : (uds ? 'Opens ' + uds : 'Opens ' + (phase.day ? phase.day + ' day' + (phase.day > 1 ? 's' : '') + ' before' : 'on exam day'));
 
-    html += '<div class="edp-card" style="background:var(--surf);border:1.5px solid ' + (phaseComplete ? 'rgba(14,165,116,.3)' : 'var(--bdr)') + ';border-radius:14px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s;' + (!active ? 'opacity:.65' : '') + '">' +
-      // Phase header
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:' + (active ? '12px' : '0') + '">' +
-      '<div class="edp-icon" data-emoji="' + phase.emoji + '" style="width:36px;height:36px;border-radius:10px;background:' + (phaseComplete ? 'var(--grn-bg)' : (!active ? 'var(--surf2)' : 'var(--surf2)')) + ';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .2s">' + ico(phaseComplete ? 'checkCircle' : phase.emoji) + '</div>' +
-      '<div style="flex:1">' +
-      '<div style="display:flex;align-items:center;gap:6px">' +
+    html += '<div class="edp-card" style="background:var(--surf);border:1.5px solid ' + (phaseComplete ? 'rgba(4,120,87,.35)' : isNow ? 'var(--amb)' : 'var(--bdr)') + ';border-radius:14px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s;' + (!active ? 'opacity:.7' : '') + '">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">' +
+      '<div class="edp-icon" data-emoji="' + phase.icon + '" style="width:36px;height:36px;border-radius:10px;background:' + (phaseComplete ? 'var(--grn-bg)' : 'var(--surf2)') + ';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + ico(phaseComplete ? 'checkCircle' : phase.icon) + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+      '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
       '<div style="font-size:13px;font-weight:800;color:var(--txt)">' + phase.label + '</div>' +
-      (!active ? '<span style="font-size:10px;font-weight:700;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:1px 7px">'+ico('lock')+' Locked</span>' : '') +
+      (isNow ? '<span style="font-size:10px;font-weight:800;color:var(--amb);background:var(--amb-bg);border-radius:20px;padding:1px 8px">Now</span>' : '') +
       '</div>' +
       (active
         ? '<div class="edp-count" style="font-size:11px;color:var(--mut);margin-top:1px">' + phaseDone + ' of ' + phase.items.length + ' done</div>'
-        : '<div style="font-size:11px;color:var(--mut);margin-top:2px">Opens ' + (uds ? 'on ' + uds : phase.unlockLabel) + '</div>'
-      ) +
-      '</div>' +
-      '</div>' +
-      // Items — always shown, interactive only when active
-      (active
-        ? phase.items.map(function(item, idx) {
-            const ck = checked[phase.day + '_' + idx] || false;
-            const eid = 'pck-' + phase.day + '-' + idx;
-            return '<div id="' + eid + '" onclick="toggleProtocolCheck(\'' + phase.day + '\',\'' + idx + '\',this)" style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--surf2);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:opacity .15s" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">' +
-              '<div class="pck-box" style="width:20px;height:20px;border-radius:6px;border:2px solid ' + (ck ? 'var(--grn)' : 'var(--bdr)') + ';background:' + (ck ? 'var(--grn)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s">' +
-                (ck ? '<span style="color:#fff;font-size:12px;line-height:1;font-weight:900">✓</span>' : '') +
-              '</div>' +
-              '<span class="pck-label" style="font-size:13px;color:' + (ck ? 'var(--mut)' : 'var(--txt)') + ';text-decoration:' + (ck ? 'line-through' : 'none') + ';line-height:1.5;flex:1;transition:background-color .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s,opacity .12s">' + item + '</span>' +
-            '</div>';
-          }).join('')
-        : '<div style="margin-top:10px;border-top:1px solid var(--surf2);padding-top:10px">' +
-          phase.items.map(function(item) {
-            return '<div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid var(--surf2)">' +
-              '<div style="width:20px;height:20px;border-radius:6px;border:2px solid var(--bdr);background:transparent;flex-shrink:0;margin-top:1px"></div>' +
-              '<span style="font-size:13px;color:var(--mut);line-height:1.5;flex:1">' + item + '</span>' +
-            '</div>';
-          }).join('') +
-          '</div>'
-      ) +
+        : '<div style="font-size:11px;color:var(--mut);margin-top:2px">' + opens + '</div>') +
+      '</div></div>' +
+      phase.items.map(function(item, idx) {
+        const ck = active && !!checked[phase.day + '_' + idx];
+        const body = '<span style="flex:1;min-width:0"><span class="pck-label" style="display:block;font-size:13px;font-weight:600;color:' + (ck ? 'var(--mut)' : active ? 'var(--txt)' : 'var(--sub)') + ';text-decoration:' + (ck ? 'line-through' : 'none') + ';line-height:1.45">' + item[0] + '</span>' +
+          '<span style="display:block;font-size:12px;color:var(--mut);line-height:1.45;margin-top:2px">' + item[1] + '</span></span>';
+        const box = '<span class="pck-box" style="width:20px;height:20px;border-radius:6px;border:2px solid ' + (ck ? 'var(--grn)' : 'var(--bdr)') + ';background:' + (ck ? 'var(--grn)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (ck ? '<span style="color:#fff;font-size:12px;line-height:1;font-weight:900">✓</span>' : '') + '</span>';
+        return active
+          ? '<div id="pck-' + phase.day + '-' + idx + '" role="checkbox" tabindex="0" aria-checked="' + ck + '" onclick="toggleProtocolCheck(\'' + phase.day + '\',\'' + idx + '\',this)" onkeydown="if(event.key===\' \'||event.key===\'Enter\'){event.preventDefault();this.click()}" style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--surf2);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent">' + box + body + '</div>'
+          : '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--surf2)">' + box + body + '</div>';
+      }).join('') +
     '</div>';
   });
-
+  html += '<div style="font-size:11px;color:var(--mut);line-height:1.5;margin-top:6px">General guidance, not official rules. Always check your NTS, Prometric and your state board for the latest requirements.</div>';
   return html;
 }
 
 function toggleProtocolCheck(phase, idx, rowEl) {
-  const { sec: nearestSec } = _edpNearestSec();
-  const statusKey = 'examDayProtocol_' + (nearestSec || 'default');
-  if (!S[statusKey]) S[statusKey] = {};
-  const newVal = !S[statusKey][phase + '_' + idx];
-  S[statusKey][phase + '_' + idx] = newVal;
+  const key = _edpKey(_edpNearestSec());
+  if (!S.examProtocol) S.examProtocol = {};
+  if (!S.examProtocol[key]) S.examProtocol[key] = {};
+  const newVal = !S.examProtocol[key][phase + '_' + idx];
+  S.examProtocol[key][phase + '_' + idx] = newVal;
   saveState();
+  if (rowEl) rowEl.setAttribute('aria-checked', String(newVal));
 
   // Instant DOM update — no full re-render
   if (rowEl) {
@@ -16055,7 +16075,15 @@ function toggleProtocolCheck(phase, idx, rowEl) {
         iconEl.innerHTML = ico(complete ? 'checkCircle' : originalEmoji);
         iconEl.style.background = complete ? 'var(--grn-bg)' : 'var(--surf2)';
       }
+      card.style.borderColor = complete ? 'rgba(4,120,87,.35)' : (card.innerHTML.includes('>Now<') ? 'var(--amb)' : 'var(--bdr)');
     }
+    // Overall percentage
+    const rows = document.querySelectorAll('[id^="pck-"][role="checkbox"]');
+    const on = Array.from(rows).filter(r => r.getAttribute('aria-checked') === 'true').length;
+    const pct = rows.length ? Math.round(on / rows.length * 100) : 0;
+    const bar = document.getElementById('edp-bar'); if (bar) bar.style.width = pct + '%';
+    const pctEl = bar && bar.parentElement.previousElementSibling && bar.parentElement.previousElementSibling.querySelector('div[style*="font-size:18px"]');
+    if (pctEl) pctEl.textContent = pct + '%';
   }
 }
 
@@ -17155,7 +17183,7 @@ function openTimeOffModal(){
           <input id="timeoff-end" type="date" min="${today}" value="${today}" style="width:100%;box-sizing:border-box;padding:9px 10px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none">
         </div>
       </div>
-      <button onclick="saveTimeOff()" style="width:100%;margin-top:16px;padding:13px;background:linear-gradient(135deg,var(--ind),var(--pur));color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">Add to my plan</button>
+      <button onclick="saveTimeOff()" style="width:100%;margin-top:16px;padding:13px;background:var(--ind);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">Add to my plan</button>
       ${existing}
     </div>
   </div>`;
@@ -17222,7 +17250,7 @@ function _buildPlanGate(){
         <div style="font-size:11px;color:var(--mut);line-height:1.5">${desc}</div>
       </div>`).join('')}
     </div>
-    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Pro — Get Your Plan ✦</button>
+    <button onclick="openUpgradeModal('AI Study Plan')" style="padding:14px 40px;background:var(--ora);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(147,51,234,.35)">Unlock Pro — Get Your Plan</button>
     <div style="font-size:11px;color:var(--mut);margin-top:12px">Included with Pro ($14/mo) · Also unlocks Ledger (your AI coach), analytics &amp; the unlimited question bank</div>
   </div>`;
 }
@@ -17566,7 +17594,7 @@ function _buildPlanCalendar(plan){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
           <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin:0">Study Plan</h1>
           <span class="badge badge-${plan.primarySec}" style="font-size:12px">${plan.primarySec}</span>
-          <span style="background:linear-gradient(135deg,var(--pur),#7c22c8);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>
+          <span style="background:var(--ora);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase">Pro</span>
         </div>
         <p style="color:var(--sub);font-size:13px;margin:0">${daysLeft} days to exam · ${Math.round(totalHrsPlanned)}h planned · ${pct}% complete${(()=>{const n=[..._planBlockedSet(plan)].filter(bd=>bd>=todayStr).length;return n?` · ${ico('plane')} ${n} day${n>1?'s':''} off`:'';})()}</p>
       </div>
@@ -17983,7 +18011,7 @@ function buildStudySchedule(){
         ?'<button onclick="toggleScheduleEdit()" style="padding:6px 14px;background:'+(editMode?'var(--ind)':'var(--surf2)')+';border:1.5px solid '+(editMode?'var(--ind)':'var(--bdr)')+';border-radius:8px;font-size:11px;font-weight:700;color:'+(editMode?'#fff':'var(--sub)')+';cursor:pointer">Customize</button>'
         :'<button onclick="openUpgradeModal(null)" style="padding:6px 14px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer">AI Plan (Pro)</button>')+
     '</div>'+editControls+dayRows+
-    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Pro members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Pro ✦</button></div>':'') +
+    (!pro?'<div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--ora-bg),rgba(212,64,0,.04));border:1px solid var(--ora-bdr);border-radius:10px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--ora);margin-bottom:4px">Want an AI-generated plan?</div><div style="font-size:11px;color:var(--sub);margin-bottom:8px">Pro members get a day-by-day personalized roadmap based on their exam date and progress.</div><button onclick="openUpgradeModal(null)" style="padding:7px 18px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Upgrade to Pro</button></div>':'') +
   '</div></div>';
 }
 
@@ -18052,7 +18080,7 @@ function drawShareCard(canvas, milestoneId, statLine){
   const numStr=cfg.num||'';
   const numSize=numStr.length>3?52:numStr.length===3?62:76;
   ctx.fillStyle='#ffffff';
-  ctx.font=`800 ${numSize}px Inter,system-ui,sans-serif`;
+  ctx.font=`800 ${numSize}px 'Libre Franklin',system-ui,sans-serif`;
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(numStr,cx,cy);
   ctx.textAlign='left';ctx.textBaseline='alphabetic';
@@ -18061,7 +18089,7 @@ function drawShareCard(canvas, milestoneId, statLine){
   const lx=60, contentY=H*0.5;
 
   // Label chip
-  ctx.font='700 11px Inter,system-ui,sans-serif';
+  ctx.font='700 11px "Libre Franklin",system-ui,sans-serif';
   const labelW=ctx.measureText(cfg.label).width+32;
   ctx.fillStyle=acc+'22';
   const chipH=28, chipY=contentY-130;
@@ -18070,7 +18098,7 @@ function drawShareCard(canvas, milestoneId, statLine){
   else {ctx.moveTo(lx+6,chipY);ctx.lineTo(lx+labelW-6,chipY);ctx.arcTo(lx+labelW,chipY,lx+labelW,chipY+chipH,6);ctx.lineTo(lx+labelW,chipY+chipH-6);ctx.arcTo(lx+labelW,chipY+chipH,lx+labelW-6,chipY+chipH,6);ctx.lineTo(lx+6,chipY+chipH);ctx.arcTo(lx,chipY+chipH,lx,chipY+chipH-6,6);ctx.lineTo(lx,chipY+6);ctx.arcTo(lx,chipY,lx+6,chipY,6);}
   ctx.fill();
   ctx.fillStyle=acc;
-  ctx.font='700 11px Inter,system-ui,sans-serif';
+  ctx.font='700 11px "Libre Franklin",system-ui,sans-serif';
   ctx.letterSpacing='0.1em';
   ctx.fillText(cfg.label,lx+16,chipY+19);
   ctx.letterSpacing='0';
@@ -18081,13 +18109,13 @@ function drawShareCard(canvas, milestoneId, statLine){
   const line1=words.slice(0,Math.ceil(words.length/2)).join(' ');
   const line2=words.slice(Math.ceil(words.length/2)).join(' ');
   const headSize=cfg.headline.length>18?52:cfg.headline.length>12?60:68;
-  ctx.font=`800 ${headSize}px Inter,system-ui,sans-serif`;
+  ctx.font=`800 ${headSize}px 'Libre Franklin',system-ui,sans-serif`;
   ctx.fillText(line1,lx,contentY-50);
   if(line2){ctx.fillText(line2,lx,contentY-50+headSize*1.12);}
 
   // Sub-text
   ctx.fillStyle='rgba(255,255,255,.55)';
-  ctx.font='400 20px Inter,system-ui,sans-serif';
+  ctx.font='400 20px "Libre Franklin",system-ui,sans-serif';
   const subY=line2?contentY-50+headSize*1.12+44:contentY-50+44;
   ctx.fillText(cfg.sub,lx,subY);
 
@@ -18098,19 +18126,19 @@ function drawShareCard(canvas, milestoneId, statLine){
 
   // Name + stat
   ctx.fillStyle='rgba(255,255,255,.38)';
-  ctx.font='600 14px Inter,system-ui,sans-serif';
+  ctx.font='600 14px "Libre Franklin",system-ui,sans-serif';
   ctx.fillText(statLine,lx,H-32);
 
   // Ledger branding right-aligned
   ctx.fillStyle=acc;
-  ctx.font='700 14px Inter,system-ui,sans-serif';
+  ctx.font='700 14px "Libre Franklin",system-ui,sans-serif';
   ctx.textAlign='right';
   ctx.fillText('ledgercpa.app',W-lx,H-32);
   ctx.textAlign='left';
 
   // ── Top-right Ledger mark ────────────────────────────────────────────────────
   ctx.fillStyle='rgba(255,255,255,.2)';
-  ctx.font='700 13px Inter,system-ui,sans-serif';
+  ctx.font='700 13px "Libre Franklin",system-ui,sans-serif';
   ctx.letterSpacing='0.12em';
   ctx.textAlign='right';
   ctx.fillText('LEDGER',W-lx,36);
@@ -18649,12 +18677,12 @@ function drawCohortDigestCard(canvas, stats){
   stripe.addColorStop(0,acc);stripe.addColorStop(1,acc+'11');
   ctx.fillStyle=stripe;ctx.fillRect(0,0,W,6);
   ctx.textAlign='center';
-  ctx.fillStyle=acc;ctx.font='800 22px Inter,system-ui,sans-serif';
+  ctx.fillStyle=acc;ctx.font='800 22px "Libre Franklin",system-ui,sans-serif';
   ctx.fillText('COHORT · THIS WEEK',W/2,92);
   ctx.fillStyle='#ffffff';
   let fn=String(stats.firmName||'Our Cohort');
-  ctx.font='900 64px Inter,system-ui,sans-serif';
-  if(ctx.measureText(fn).width>W-140) ctx.font='900 46px Inter,system-ui,sans-serif';
+  ctx.font='900 64px "Libre Franklin",system-ui,sans-serif';
+  if(ctx.measureText(fn).width>W-140) ctx.font='900 46px "Libre Franklin",system-ui,sans-serif';
   ctx.fillText(fn,W/2,172);
   const cols=[
     {v:stats.weekHrs.toFixed(stats.weekHrs<100?1:0)+'h',l:'STUDIED TOGETHER',c:'#f59e0b'},
@@ -18664,12 +18692,12 @@ function drawCohortDigestCard(canvas, stats){
   const cw=W/3;
   cols.forEach((co,i)=>{
     const cx=cw*i+cw/2;
-    ctx.fillStyle=co.c;ctx.font='900 96px Inter,system-ui,sans-serif';
+    ctx.fillStyle=co.c;ctx.font='900 96px "Libre Franklin",system-ui,sans-serif';
     ctx.fillText(co.v,cx,408);
-    ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='700 20px Inter,system-ui,sans-serif';
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='700 20px "Libre Franklin",system-ui,sans-serif';
     ctx.fillText(co.l,cx,452);
   });
-  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='600 24px Inter,system-ui,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='600 24px "Libre Franklin",system-ui,sans-serif';
   ctx.fillText('Tracked on Ledger · ledgercpa.app',W/2,564);
   ctx.textAlign='left';
 }
@@ -18977,7 +19005,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 <!-- ── Cookie Consent Banner ── -->
-<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif">
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#18103a;border-top:1px solid rgba(255,255,255,.1);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:'Libre Franklin',system-ui,sans-serif">
   <p style="margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;max-width:680px">
     Ledger would like to use analytics cookies (Google Analytics for Firebase) to see which features get used. They stay off unless you accept, and the app works the same either way. We never use advertising cookies.
     <a href="/privacy#cookies" style="color:#ff7a3d;text-decoration:underline">Cookie policy</a> ·
