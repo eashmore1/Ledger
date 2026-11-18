@@ -45,3 +45,24 @@ test('the build drops bad and duplicate questions and keeps the right answer aft
   assert.ok(fs.existsSync(path.join(tmp, 'FAR.json')));
   fs.rmSync(tmp, { recursive: true, force: true });
 });
+
+test('question counts shown in the app and on the landing page match the shipped bank', () => {
+  const sections = ['FAR', 'AUD', 'REG', 'TCP', 'BAR', 'ISC'];
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  let total = 0;
+  for (const s of sections) {
+    const file = path.join(ROOT, s + '.json');
+    if (!fs.existsSync(file)) return;
+    const n = JSON.parse(fs.readFileSync(file, 'utf8')).topics.reduce((a, t) => a + t.questions.length, 0);
+    total += n;
+    const m = html.match(new RegExp("\\{code:'" + s + "',[^}]*mcqTotal:(\\d+)\\}"));
+    assert.ok(m, s + ' has an mcqTotal');
+    assert.equal(Number(m[1]), n, s + ' mcqTotal in index.html matches qbank/' + s + '.json');
+  }
+  const landing = fs.readFileSync(path.join(__dirname, '..', 'landing.html'), 'utf8');
+  const claim = landing.match(/([\d,]+)\+ questions/);
+  assert.ok(claim, 'landing page states a question count');
+  const claimed = Number(claim[1].replace(/,/g, ''));
+  assert.ok(claimed <= total, `landing claims ${claimed}+ but only ${total} ship`);
+  assert.ok(claimed >= total - 1000, `landing claims ${claimed}+ but ${total} ship — raise the number`);
+});
