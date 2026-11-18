@@ -14581,21 +14581,40 @@ function _launchAIQuiz(section, questions, topic){
   _renderQuiz();
 }
 
-// ── CACHED QUESTION BANK (Step 6) — pre-generated bank read from Firestore ────
-// "Generate once, cache forever": the bank is built one time by /api/generate-bank
-// and stored in Firestore. Serving is just a database read, cached per session.
+// ── QUESTION BANK — two sources, merged ─────────────────────────────────────
+// 1. /qbank/{SECTION}.json: questions that ship with the app (built from
+//    qbank/src by scripts/build-qbank.js).
+// 2. Firestore questionBank/{SECTION}/topics: questions added by /api/generate-bank.
+// Both are plain reads with no AI cost, cached for the session.
 let _qbBankCache = {}; // section -> {questions:[...], loadedAt}
-async function loadQuestionBank(section){
-  const cached=_qbBankCache[section];
-  if(cached && cached.questions) return cached.questions;
+function _qbKey(q){ return String(q||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+async function _qbStatic(section){
+  try{
+    const r=await fetch('/qbank/'+section+'.json');
+    if(!r.ok) return [];
+    const d=await r.json();
+    let out=[];
+    (d.topics||[]).forEach(t=>{ (t.questions||[]).forEach(x=>out.push(Object.assign({topic:t.topic},x))); });
+    return out;
+  }catch(e){ return []; }
+}
+async function _qbFirestore(section){
   if(!firebaseDb) return [];
   try{
     const snap=await firebaseDb.collection('questionBank').doc(section).collection('topics').get();
-    let questions=[];
-    snap.forEach(d=>{ const dd=d.data()||{}; if(Array.isArray(dd.questions)) questions=questions.concat(dd.questions); });
-    _qbBankCache[section]={questions,loadedAt:Date.now()};
-    return questions;
-  }catch(e){ console.warn('[Ledger] question bank load failed:',e.message); _qbBankCache[section]={questions:[],loadedAt:Date.now()}; return []; }
+    let out=[];
+    snap.forEach(d=>{ const dd=d.data()||{}; if(Array.isArray(dd.questions)) out=out.concat(dd.questions); });
+    return out;
+  }catch(e){ console.warn('[Ledger] question bank load failed:',e.message); return []; }
+}
+async function loadQuestionBank(section){
+  const cached=_qbBankCache[section];
+  if(cached && cached.questions) return cached.questions;
+  const [db, shipped]=await Promise.all([_qbFirestore(section), _qbStatic(section)]);
+  const seen=new Set(), questions=[];
+  db.concat(shipped).forEach(x=>{ const k=_qbKey(x.q); if(k && !seen.has(k)){ seen.add(k); questions.push(x); } });
+  _qbBankCache[section]={questions,loadedAt:Date.now()};
+  return questions;
 }
 function _showQuizLoading(section){
   let overlay=document.getElementById('quiz-overlay');
@@ -14619,7 +14638,7 @@ async function openQuizModal(section, type) {
   // Primary source = the pre-generated bank (random, curated, free to serve).
   // Falls back to the built-in static set until the bank is populated.
   let bank = (_qbBankCache[section] || {}).questions;
-  if (bank === undefined && firebaseDb) { _showQuizLoading(section); bank = await loadQuestionBank(section); }
+  if (bank === undefined) { _showQuizLoading(section); bank = await loadQuestionBank(section); }
   const pool = (bank && bank.length) ? bank : (QB_QUESTIONS[section] || []);
   if (!pool.length) { closeQuizOverlay(); showToast('Questions coming soon for ' + section, 'info'); return; }
 
@@ -14838,7 +14857,7 @@ function _finishQuiz() {
 function openQBSection(code) {
   const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
   if (!sec) return;
-  if (firebaseDb) loadQuestionBank(code); // warm the cache so practice starts instantly
+  loadQuestionBank(code); // warm the cache so practice starts instantly
   const pro = isPro();
   const elite = isElite();
   const quota = _aiQbQuota(code);

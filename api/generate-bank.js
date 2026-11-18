@@ -481,4 +481,4 @@ module.exports = async (req, res) => {
   }
 };
 
-module.exports._test = { dedupe, similarity, stemWords, shuffleChoices, validQ, writePrompt, reviewPrompt, resultJSON, growStep, bankStatus, setClient: (c) => { _client = c; } };
+module.exports._test = { TOPICS, slugify, dedupe, similarity, stemWords, shuffleChoices, validQ, writePrompt, reviewPrompt, resultJSON, growStep, bankStatus, setClient: (c) => { _client = c; } };
