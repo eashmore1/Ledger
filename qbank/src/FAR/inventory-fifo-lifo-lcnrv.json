@@ -1,0 +1,332 @@
+[
+ {
+  "q": "A company using a periodic system had beginning inventory of 100 units at $10, then purchased 200 units at $12 and later 100 units at $15. It sold 250 units during the year. What is ending inventory under FIFO?",
+  "choices": [
+   "$1,600",
+   "$2,100",
+   "$1,837.50",
+   "$2,250"
+  ],
+  "correct": 1,
+  "exp": "Under FIFO, the 150 units on hand are the most recent: 100 x $15 + 50 x $12 = $2,100. Periodic LIFO gives $1,600 (100 x $10 + 50 x $12), and weighted average gives $1,837.50."
+ },
+ {
+  "q": "A company uses perpetual LIFO. It began the year with 200 units at $20, purchased 300 units at $22 on March 1, sold 400 units on April 1, and purchased 200 units at $25 on July 1. What is ending inventory?",
+  "choices": [
+   "$6,200",
+   "$7,200",
+   "$7,000",
+   "$7,500"
+  ],
+  "correct": 2,
+  "exp": "The April sale takes 300 units at $22 and 100 at $20, leaving 100 at $20; adding the July purchase gives 100 x $20 + 200 x $25 = $7,000. Periodic LIFO, which assigns the year's latest costs to all sales, gives $6,200."
+ },
+ {
+  "q": "A company uses the moving-average method in a perpetual system. It began with 100 units costing $1,000, purchased 100 units at $14, sold 150 units, then purchased 150 units at $16. What is ending inventory?",
+  "choices": [
+   "$2,743",
+   "$3,100",
+   "$3,200",
+   "$3,000"
+  ],
+  "correct": 3,
+  "exp": "After the first purchase, 200 units cost $2,400 ($12 each); the sale leaves 50 units at $600; adding $2,400 gives 200 units costing $3,000. Periodic weighted average ($4,800 / 350 x 200 = $2,743) ignores the timing of the sale."
+ },
+ {
+  "q": "A company uses FIFO and applies the lower of cost and net realizable value item by item. Item X has cost $20,000, NRV $18,000 and replacement cost $17,000. Item Y has cost $30,000, NRV $35,000 and replacement cost $28,000. At what amount should inventory be reported?",
+  "choices": [
+   "$48,000",
+   "$50,000",
+   "$45,000",
+   "$47,000"
+  ],
+  "correct": 0,
+  "exp": "Under ASC 330-10-35-1B, FIFO inventory is measured at the lower of cost and NRV: X at $18,000 and Y at $30,000, for $48,000. Replacement cost is irrelevant for FIFO, so $45,000 (using replacement cost) is a trap, and $50,000 applies the test to total inventory."
+ },
+ {
+  "q": "A company uses LIFO. An inventory item has a cost of $100, replacement cost of $70, selling price of $120, costs to sell of $20 and a normal profit margin of $36. At what amount should the item be reported?",
+  "choices": [
+   "$64",
+   "$70",
+   "$100",
+   "$84"
+  ],
+  "correct": 1,
+  "exp": "LIFO inventory uses lower of cost or market; market is replacement cost limited by a ceiling of NRV ($120 - $20 = $100) and a floor of NRV less normal profit ($100 - $36 = $64). Replacement cost of $70 falls between them, and it is lower than the $100 cost."
+ },
+ {
+  "q": "A company adopted dollar-value LIFO when its inventory was $100,000 at base-year prices. At the end of Year 1, inventory at year-end prices was $132,000 and the price index was 1.10. What is the dollar-value LIFO ending inventory for Year 1?",
+  "choices": [
+   "$132,000",
+   "$120,000",
+   "$122,000",
+   "$130,000"
+  ],
+  "correct": 2,
+  "exp": "Base-year equivalent = $132,000 / 1.10 = $120,000, a $20,000 real increase; the new layer is costed at $20,000 x 1.10 = $22,000, so inventory = $100,000 + $22,000 = $122,000. Stopping at the $120,000 base-year amount omits pricing the new layer."
+ },
+ {
+  "q": "A dollar-value LIFO company's layers are: base layer $100,000 (index 1.00) and a Year 1 layer of $20,000 at base prices (index 1.10). At the end of Year 2, inventory at current prices is $126,500 and the index is 1.15. What is Year 2 dollar-value LIFO inventory?",
+  "choices": [
+   "$111,500",
+   "$110,000",
+   "$126,500",
+   "$111,000"
+  ],
+  "correct": 3,
+  "exp": "Year 2 base-year equivalent = $126,500 / 1.15 = $110,000, a $10,000 decrease that liquidates part of the Year 1 layer: $100,000 + $10,000 x 1.10 = $111,000. Pricing the remaining layer at the current 1.15 index gives the $111,500 trap."
+ },
+ {
+  "q": "Using the conventional retail inventory method, a store had beginning inventory at cost $40,000 and retail $60,000; purchases at cost $160,000 and retail $240,000; freight-in $4,000; net markups $20,000; net markdowns $10,000; and sales $250,000. What is estimated ending inventory at cost?",
+  "choices": [
+   "$38,250",
+   "$39,484",
+   "$37,500",
+   "$45,000"
+  ],
+  "correct": 0,
+  "exp": "The conventional method excludes markdowns from the ratio: $204,000 / $320,000 = 63.75%; ending retail = $320,000 - $10,000 - $250,000 = $60,000; cost = $38,250. Including markdowns in the denominator gives $39,484, the average-cost retail result."
+ },
+ {
+  "q": "A fire destroyed a company's entire inventory. Beginning inventory was $80,000, purchases to the date of the fire were $300,000 and sales were $400,000. The company's gross profit is 30% of sales. What is the estimated cost of inventory destroyed?",
+  "choices": [
+   "$72,308",
+   "$100,000",
+   "$120,000",
+   "$380,000"
+  ],
+  "correct": 1,
+  "exp": "Estimated COGS = $400,000 x 70% = $280,000; ending inventory = $80,000 + $300,000 - $280,000 = $100,000. Treating 30% as a markup on cost gives $72,308."
+ },
+ {
+  "q": "A company overstated its ending inventory for Year 1 by $10,000. The error was not corrected. What is the effect on Year 2 net income and on retained earnings at the end of Year 2?",
+  "choices": [
+   "Year 2 net income overstated; retained earnings overstated",
+   "Year 2 net income correct; retained earnings overstated",
+   "Year 2 net income understated; retained earnings correct",
+   "Year 2 net income understated; retained earnings understated"
+  ],
+  "correct": 2,
+  "exp": "Overstated Year 1 ending inventory overstates Year 2 beginning inventory and COGS, understating Year 2 income by $10,000 and offsetting the Year 1 overstatement, so retained earnings at the end of Year 2 is correct. The error self-corrects over two years."
+ },
+ {
+  "q": "A company's year-end physical count, taken in its warehouse, totaled $200,000. Not included were $15,000 of goods purchased FOB shipping point that were in transit and $8,000 (at cost) of goods sold FOB destination that were in transit to a customer. Included in the count were $12,000 of goods held on consignment for another company. What is the correct inventory?",
+  "choices": [
+   "$203,000",
+   "$223,000",
+   "$196,000",
+   "$211,000"
+  ],
+  "correct": 3,
+  "exp": "Inventory = $200,000 + $15,000 (title passed at shipment) + $8,000 (title passes at destination, so seller still owns it) - $12,000 (consigned goods belong to the consignor) = $211,000. Forgetting the goods sold FOB destination gives $203,000."
+ },
+ {
+  "q": "A company has a noncancelable, unhedged commitment to purchase 10,000 units at $20 per unit next year. At year-end, the market price has fallen to $17 per unit and the decline is expected to be permanent. What should the company report?",
+  "choices": [
+   "A $30,000 loss and liability at year-end",
+   "Disclosure only, because no goods have been received",
+   "A $30,000 loss when the goods are received next year",
+   "A $200,000 liability for the full commitment"
+  ],
+  "correct": 0,
+  "exp": "ASC 330-10-35-17 requires recognizing net losses on firm, noncancelable purchase commitments: 10,000 x ($20 - $17) = $30,000. Waiting until delivery or disclosing only fails to recognize a loss that already exists."
+ },
+ {
+  "q": "A company purchased merchandise for $100,000 and paid freight-in of $5,000 and insurance in transit of $1,000. It took purchase discounts of $2,000, incurred $3,000 to store finished goods awaiting sale, and incurred $4,000 of abnormal spoilage. What is the cost of inventory?",
+  "choices": [
+   "$107,000",
+   "$104,000",
+   "$111,000",
+   "$106,000"
+  ],
+  "correct": 1,
+  "exp": "Inventory cost = $100,000 + $5,000 + $1,000 - $2,000 = $104,000. Storage of finished goods and abnormal spoilage are period costs under ASC 330-10-30-7, so including storage gives $107,000."
+ },
+ {
+  "q": "A manufacturer's fixed production overhead is $600,000. Normal capacity is 100,000 units, but actual production was only 80,000 units because of an extended plant shutdown. How much fixed overhead should be allocated to each unit produced?",
+  "choices": [
+   "$7.50",
+   "$4.80",
+   "$6.00",
+   "$8.00"
+  ],
+  "correct": 2,
+  "exp": "ASC 330-10-30-3 allocates fixed overhead based on normal capacity: $600,000 / 100,000 = $6.00 per unit, and the unallocated $120,000 is expensed. Dividing by actual production ($7.50) improperly inflates inventory during low production."
+ },
+ {
+  "q": "Under the LIFO conformity rule of IRC Section 472, a company that uses LIFO for federal income tax purposes must generally also do which of the following?",
+  "choices": [
+   "Use LIFO for all inventories, including those held by foreign subsidiaries",
+   "Report on the FIFO basis in its financial statements",
+   "Restate prior-year tax returns to LIFO",
+   "Use LIFO in its primary financial statements issued to shareholders and creditors"
+  ],
+  "correct": 3,
+  "exp": "IRC Section 472 requires a taxpayer using LIFO for tax purposes to use LIFO in reports to shareholders, partners, other owners or creditors, although supplemental non-LIFO disclosures are allowed. Reporting on a FIFO basis in the primary statements would violate the rule."
+ },
+ {
+  "q": "During a period of rising prices, a LIFO company sells more units than it purchases, liquidating old LIFO layers. What is the effect of the liquidation?",
+  "choices": [
+   "Cost of goods sold decreases and net income increases",
+   "Cost of goods sold increases and net income decreases",
+   "There is no effect on income, only on the balance sheet",
+   "Taxable income decreases"
+  ],
+  "correct": 0,
+  "exp": "Liquidating old, lower-cost layers matches older costs with current revenue, decreasing COGS and increasing income and taxes. The opposite effect would occur only if older layers were more expensive."
+ },
+ {
+  "q": "A LIFO company reported cost of goods sold of $900,000. Its LIFO reserve was $50,000 at the beginning of the year and $70,000 at the end. What would cost of goods sold have been under FIFO?",
+  "choices": [
+   "$920,000",
+   "$880,000",
+   "$830,000",
+   "$970,000"
+  ],
+  "correct": 1,
+  "exp": "FIFO COGS = LIFO COGS - increase in the LIFO reserve = $900,000 - $20,000 = $880,000. Adding the increase gives $920,000; an increasing reserve means FIFO inventory rose more, so FIFO COGS is lower."
+ },
+ {
+  "q": "A company changes its inventory method from LIFO to FIFO. How should the change be reported under ASC 250?",
+  "choices": [
+   "Prospectively, from the beginning of the current year",
+   "As a cumulative-effect adjustment in current net income",
+   "Retrospectively, by applying FIFO to all prior periods presented",
+   "As a change in accounting estimate"
+  ],
+  "correct": 2,
+  "exp": "A change in accounting principle such as LIFO to FIFO is applied retrospectively unless impracticable. Prospective treatment is typical for a change to LIFO, because LIFO layers for prior years usually cannot be reconstructed."
+ },
+ {
+  "q": "During a period of steadily rising prices and stable inventory quantities, how does FIFO compare with LIFO?",
+  "choices": [
+   "FIFO reports lower ending inventory and lower net income",
+   "FIFO reports higher cost of goods sold and lower income taxes",
+   "FIFO and LIFO report the same net income",
+   "FIFO reports higher ending inventory and higher net income"
+  ],
+  "correct": 3,
+  "exp": "With rising prices, FIFO assigns older, lower costs to COGS and newer, higher costs to ending inventory, producing higher inventory and income. LIFO produces lower income and lower taxes."
+ },
+ {
+  "q": "In Year 1, a FIFO company wrote inventory down from a cost of $50,000 to its NRV of $42,000. In Year 2, the NRV of the same unsold inventory recovered to $48,000. How should the recovery be accounted for under U.S. GAAP in the annual financial statements?",
+  "choices": [
+   "The inventory remains at $42,000; the written-down amount is the new cost basis",
+   "Recognize a $6,000 gain and increase inventory to $48,000",
+   "Recognize an $8,000 gain and restore inventory to $50,000",
+   "Credit other comprehensive income for $6,000"
+  ],
+  "correct": 0,
+  "exp": "Under ASC 330-10-35-14, a write-down establishes a new cost basis that is not marked up for later recoveries in annual statements. Reversing the write-down is permitted under IFRS, which is the trap."
+ },
+ {
+  "q": "A company uses the net method to record purchases. It bought merchandise for $10,000 with terms 2/10, n/30 and paid after the discount period. At what amount is the merchandise recorded in inventory?",
+  "choices": [
+   "$10,000",
+   "$9,800",
+   "$10,200",
+   "$9,600"
+  ],
+  "correct": 1,
+  "exp": "Under the net method, purchases are recorded net of the available discount, $9,800, and the $200 paid because the discount was missed is recorded as purchase discounts lost, a financing-type expense. Recording $10,000 applies the gross method."
+ },
+ {
+  "q": "A consignor shipped goods costing $30,000 to a consignee and paid $1,500 of freight to the consignee. By year-end, the consignee had sold one-third of the goods. What amount should the consignor include in its year-end inventory?",
+  "choices": [
+   "$31,500",
+   "$20,000",
+   "$21,000",
+   "$30,000"
+  ],
+  "correct": 2,
+  "exp": "Goods on consignment remain the consignor's inventory, including freight to the consignee as a cost of the goods: two-thirds x $31,500 = $21,000. Excluding the freight gives $20,000."
+ },
+ {
+  "q": "For which inventory cost flow method will ending inventory always be the same under a periodic system and a perpetual system?",
+  "choices": [
+   "LIFO",
+   "Weighted average",
+   "Dollar-value LIFO",
+   "FIFO"
+  ],
+  "correct": 3,
+  "exp": "FIFO always leaves the most recent purchases in ending inventory regardless of when sales occur, so periodic and perpetual results match. LIFO and average methods depend on the timing of sales, so periodic and perpetual results can differ."
+ },
+ {
+  "q": "A periodic-system company began the year with 400 units at $5, purchased 600 units at $6 and then 1,000 units at $6.40. It sold 1,500 units. What is cost of goods sold under the weighted-average method?",
+  "choices": [
+   "$9,000",
+   "$8,800",
+   "$9,400",
+   "$8,700"
+  ],
+  "correct": 0,
+  "exp": "Weighted-average cost = $12,000 / 2,000 units = $6.00; COGS = 1,500 x $6.00 = $9,000. FIFO gives $8,800, LIFO gives $9,400, and $8,700 uses a simple (unweighted) average of the unit prices."
+ },
+ {
+  "q": "A company had cost of goods sold of $600,000, beginning inventory of $100,000 and ending inventory of $140,000. Using a 365-day year, what is the average number of days' sales in inventory?",
+  "choices": [
+   "85 days",
+   "73 days",
+   "61 days",
+   "5 days"
+  ],
+  "correct": 1,
+  "exp": "Inventory turnover = $600,000 / [($100,000 + $140,000) / 2] = 5 times; days in inventory = 365 / 5 = 73 days. Using ending inventory alone gives about 85 days."
+ },
+ {
+  "q": "At year-end, a company received goods purchased on credit for $25,000 but neither recorded the purchase nor included the goods in its physical count. What is the effect on the current year's financial statements?",
+  "choices": [
+   "Net income overstated by $25,000",
+   "Net income understated by $25,000",
+   "No effect on net income; inventory and accounts payable both understated by $25,000",
+   "No effect on any amounts"
+  ],
+  "correct": 2,
+  "exp": "Purchases and ending inventory are both understated by $25,000, so COGS and net income are unaffected, but inventory and accounts payable are each understated. Looking only at the missing inventory leads to the income-understated trap."
+ },
+ {
+  "q": "Under ASC 330, for which inventory methods is inventory measured at the lower of cost or market (using replacement cost with a ceiling and a floor) rather than the lower of cost and net realizable value?",
+  "choices": [
+   "FIFO and weighted average",
+   "All inventory methods",
+   "Specific identification only",
+   "LIFO and the retail inventory method"
+  ],
+  "correct": 3,
+  "exp": "ASU 2015-11 simplified measurement to lower of cost and NRV for all methods except LIFO and the retail inventory method, which still use lower of cost or market. Assuming the old model still applies to all methods is the trap."
+ },
+ {
+  "q": "Which inventory cost flow assumption is prohibited under IFRS but permitted under U.S. GAAP?",
+  "choices": [
+   "LIFO",
+   "FIFO",
+   "Weighted average",
+   "Specific identification"
+  ],
+  "correct": 0,
+  "exp": "IAS 2 prohibits LIFO, while U.S. GAAP permits it. FIFO, weighted average and, for items not ordinarily interchangeable, specific identification are permitted under both frameworks."
+ },
+ {
+  "q": "A LIFO company applies lower of cost or market to an item with a cost of $60, replacement cost of $58, selling price of $65, costs to sell of $10 and a normal profit margin of $8. At what amount should the item be reported?",
+  "choices": [
+   "$58",
+   "$55",
+   "$47",
+   "$60"
+  ],
+  "correct": 1,
+  "exp": "The ceiling is NRV of $65 - $10 = $55 and the floor is $55 - $8 = $47; replacement cost of $58 exceeds the ceiling, so market is $55, which is below the $60 cost. Using unadjusted replacement cost of $58 ignores the ceiling."
+ },
+ {
+  "q": "In its second-quarter interim financial statements, a LIFO company liquidated part of a base-period layer, but it expects to replace the liquidated units before the end of the fiscal year. How should cost of goods sold for the quarter be determined?",
+  "choices": [
+   "Using the historical cost of the liquidated LIFO layer",
+   "Using FIFO cost for the liquidated units",
+   "Using the expected replacement cost of the liquidated units",
+   "Using the average cost of all purchases during the quarter"
+  ],
+  "correct": 2,
+  "exp": "ASC 270-10-45-6 requires that a temporary interim liquidation of a LIFO base-period layer expected to be replaced by year-end be charged to COGS at expected replacement cost, not the old layer cost. Using the historical layer cost would overstate interim income for a liquidation that will reverse."
+ }
+]

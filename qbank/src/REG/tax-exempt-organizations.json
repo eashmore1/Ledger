@@ -1,0 +1,332 @@
+[
+ {
+  "q": "A tax-exempt private university engages in several income-producing activities. Which activity most likely generates unrelated business taxable income?",
+  "choices": [
+   "Operating a commercial dry-cleaning business open to the general public year-round",
+   "Receiving dividends on its endowment's publicly traded stock (not debt-financed)",
+   "Receiving royalties for licensing the university's name on apparel",
+   "Selling donated clothing at a thrift shop"
+  ],
+  "correct": 0,
+  "exp": "UBTI arises from a trade or business regularly carried on that is not substantially related to the exempt purpose (§§511-513); a commercial dry cleaner serving the public qualifies. Dividends and royalties are excluded passive income, and sales of donated goods fall within a statutory exception."
+ },
+ {
+  "q": "A charitable hospital operates a gift shop that sells purchased (not donated) merchandise to the general public. The shop is open daily and is staffed entirely by unpaid volunteers. How is the gift shop's net income treated?",
+  "choices": [
+   "It is unrelated business taxable income because the merchandise was purchased",
+   "It is excluded from unrelated business taxable income because substantially all the work is performed by volunteers",
+   "It is taxable because the shop is regularly carried on",
+   "It causes the hospital to lose its exemption"
+  ],
+  "correct": 1,
+  "exp": "Section 513 excludes any trade or business in which substantially all the work is performed without compensation. The source of the merchandise matters only for the donated-goods exception, which is a separate exclusion."
+ },
+ {
+  "q": "A tax-exempt organization borrowed money to purchase publicly traded stock as an investment. The acquisition indebtedness is outstanding throughout the year. How are the dividends on the stock treated?",
+  "choices": [
+   "Entirely excluded from UBTI, because dividends are passive investment income",
+   "Entirely included in UBTI",
+   "Included in UBTI in proportion to the average acquisition indebtedness relative to the property's average adjusted basis",
+   "Included in UBTI only if the stock is sold during the year"
+  ],
+  "correct": 2,
+  "exp": "Under §514, income from debt-financed property is included in UBTI in the ratio of average acquisition indebtedness to average adjusted basis, overriding the normal dividend exclusion. The passive-income exclusion does not protect debt-financed property."
+ },
+ {
+  "q": "A calendar-year exempt organization had $1,500 of gross income from an unrelated trade or business and $700 of directly connected expenses. Which statement is correct?",
+  "choices": [
+   "It owes no return because its net unrelated income is less than $1,000",
+   "It must file Form 990-T only if it is a private foundation",
+   "It must report the income on Form 990 but not Form 990-T",
+   "It must file Form 990-T because its gross unrelated business income is $1,000 or more"
+  ],
+  "correct": 3,
+  "exp": "Form 990-T is required when gross UBI is $1,000 or more (Reg. §1.6012-2), even though the $1,000 specific deduction under §512 will eliminate the tax here. Testing the filing threshold against net income is the trap."
+ },
+ {
+  "q": "Which of the following tax-exempt organizations is NOT required to file an annual information return (Form 990 series)?",
+  "choices": [
+   "A church",
+   "A private foundation",
+   "A charitable hospital with $2 million of annual gross receipts",
+   "A trade association with $2 million of annual gross receipts"
+  ],
+  "correct": 0,
+  "exp": "Churches, their integrated auxiliaries and conventions of churches are excepted from filing under §6033. Private foundations must always file Form 990-PF regardless of size."
+ },
+ {
+  "q": "Which organization most likely is a private foundation rather than a public charity?",
+  "choices": [
+   "A church that receives contributions from hundreds of members",
+   "A charitable organization funded by a single family's contributions and supported mainly by its investment income",
+   "A college with a regular faculty and enrolled student body",
+   "A hospital providing medical care to the public"
+  ],
+  "correct": 1,
+  "exp": "Under §509, a §501 charitable organization is a private foundation unless it is a listed public institution (church, school, hospital) or meets a public support test. A single-family-funded investment-supported entity fails the public support tests."
+ },
+ {
+  "q": "A private nonoperating foundation's noncharitable-use assets had an average fair market value of $10,000,000 for the year. Ignoring the excise tax on net investment income, what is the foundation's approximate minimum required distribution?",
+  "choices": [
+   "$1,000,000",
+   "$333,333",
+   "$500,000",
+   "$0, because private foundations have no distribution requirement"
+  ],
+  "correct": 2,
+  "exp": "Section 4942 requires a private nonoperating foundation to distribute a minimum investment return of 5% of its noncharitable-use assets: 5% × $10,000,000 = $500,000. Failure triggers an excise tax on the undistributed amount."
+ },
+ {
+  "q": "A substantial contributor to a private foundation sold land to the foundation at its appraised fair market value. Which statement is correct?",
+  "choices": [
+   "The sale is permitted because it was at fair market value",
+   "The sale is permitted if the board approves it",
+   "The sale is self-dealing only if the price exceeded fair market value",
+   "The sale is an act of self-dealing subject to excise tax, even at fair market value"
+  ],
+  "correct": 3,
+  "exp": "Section 4941 treats any sale or exchange of property between a private foundation and a disqualified person as self-dealing, regardless of fairness. The arm's-length defense that applies elsewhere does not apply here."
+ },
+ {
+  "q": "A newly formed charitable organization (not a church) expects annual gross receipts well over $5,000. To be recognized as a §501 charitable organization from its date of formation, what must it generally do?",
+  "choices": [
+   "File an application for recognition of exemption within 27 months after the end of the month in which it was organized",
+   "File an application within 15 months after formation; no extension is available",
+   "Do nothing, because charitable organizations are automatically exempt",
+   "File its first Form 990 within 12 months of formation"
+  ],
+  "correct": 0,
+  "exp": "Under §508 and the regulations, a charitable organization must notify the IRS (Form 1023) to be treated as exempt, and recognition is retroactive to formation if filed within 27 months (15 months plus the automatic 12-month extension). Churches and small organizations are excepted."
+ },
+ {
+  "q": "Which activity would jeopardize the tax-exempt status of a §501 charitable public charity?",
+  "choices": [
+   "Conducting nonpartisan voter registration drives",
+   "Publicly endorsing a candidate for elective public office",
+   "Spending an insubstantial amount of its budget on lobbying for legislation",
+   "Holding a forum at which all qualified candidates are invited to speak"
+  ],
+  "correct": 1,
+  "exp": "Charitable organizations are absolutely prohibited from participating in political campaigns for or against any candidate. Insubstantial lobbying and nonpartisan voter education are permitted."
+ },
+ {
+  "q": "A corporation's only activity is operating a for-profit chain of retail stores, and it pays all of its profits to a charitable hospital. Is the corporation exempt from income tax?",
+  "choices": [
+   "Yes, because all of its profits go to an exempt organization",
+   "Yes, if the hospital owns all of its stock",
+   "No, because an organization operated primarily to carry on a trade or business for profit is not exempt merely because its profits go to an exempt organization",
+   "No, unless the profits exceed $1 million"
+  ],
+  "correct": 2,
+  "exp": "Under the feeder organization rule of §502, an entity whose primary purpose is a business for profit is not exempt on the ground that all its profits are payable to an exempt organization. The destination of profits does not make an activity exempt."
+ },
+ {
+  "q": "A charitable organization received payments from local businesses in connection with its annual fundraising run. Which payment is most likely unrelated business income?",
+  "choices": [
+   "A payment acknowledged by displaying the business's name and logo on the event banner",
+   "A payment acknowledged by listing the business's name in the program as a sponsor",
+   "A payment acknowledged by mentioning the business's location and phone number",
+   "A payment for an advertisement in the program that includes the business's prices and an endorsement"
+  ],
+  "correct": 3,
+  "exp": "Under §513, qualified sponsorship payments that receive only an acknowledgment (name, logo, location) are excluded, but advertising containing qualitative or comparative language, price information or endorsements is a substantial return benefit and can generate UBI."
+ },
+ {
+  "q": "Contributions to which of the following organizations are deductible as charitable contributions by an individual donor?",
+  "choices": [
+   "A public charity organized and operated exclusively for educational purposes",
+   "A social welfare organization that engages in substantial lobbying",
+   "A local chamber of commerce (business league)",
+   "A members-only country club (social club)"
+  ],
+  "correct": 0,
+  "exp": "Section 170 charitable deductions are generally limited to organizations organized and operated exclusively for charitable, educational, religious and similar purposes. Social welfare organizations, business leagues and social clubs may be exempt but do not qualify to receive deductible contributions."
+ },
+ {
+  "q": "An exempt social club (country club) earned dividends and interest from investing its members' dues. How is this investment income treated?",
+  "choices": [
+   "It is excluded from UBTI, as it would be for a charitable organization",
+   "It is generally included in UBTI, because social clubs are taxed on income other than exempt function income",
+   "It is taxed only if the investments are debt-financed",
+   "It causes the club to lose its exemption"
+  ],
+  "correct": 1,
+  "exp": "Section 512 provides a special rule for social clubs: UBTI includes all gross income other than exempt function income (member dues and fees), so investment income is taxable. The passive-income exclusion that protects charities does not apply."
+ },
+ {
+  "q": "An exempt organization leases a building together with furniture and equipment to an unrelated tenant. Thirty percent of the total rent is attributable to the personal property. Rent is a fixed amount not based on the tenant's income, and there is no debt on the property. How is the rent treated?",
+  "choices": [
+   "All of the rent is excluded from UBTI",
+   "All of the rent is included in UBTI",
+   "Only the rent attributable to the personal property is included in UBTI",
+   "Only the rent attributable to the real property is included in UBTI"
+  ],
+  "correct": 2,
+  "exp": "Under §512, rents from real property are excluded, and incidental personal property rent (10% or less) is also excluded; if personal property rent is more than 10% but not more than 50%, only the personal property portion is UBTI. All rent becomes UBTI only above 50%."
+ },
+ {
+  "q": "An exempt organization had $50,000 of gross income from an unrelated trade or business and $20,000 of directly connected expenses. Assuming no other unrelated activities, what is its unrelated business taxable income?",
+  "choices": [
+   "$30,000",
+   "$50,000",
+   "$49,000",
+   "$29,000"
+  ],
+  "correct": 3,
+  "exp": "UBTI equals gross UBI less directly connected deductions less the $1,000 specific deduction of §512: $50,000 − $20,000 − $1,000 = $29,000. Forgetting the specific deduction gives $30,000."
+ },
+ {
+  "q": "Which of the following sources of income of a charitable organization is excluded from unrelated business taxable income by a specific statutory exception?",
+  "choices": [
+   "Income from bingo games that are legal under state and local law",
+   "Income from regularly selling advertising in its monthly journal",
+   "Income from a commercial parking lot open to the public",
+   "Income from a restaurant open to the public in a downtown office building"
+  ],
+  "correct": 0,
+  "exp": "Section 513 specifically excludes qualified bingo game income where the games are legal under state and local law. Advertising, public parking lots and restaurants are regularly carried on commercial activities that generally produce UBTI."
+ },
+ {
+  "q": "Which provision in an organization's articles of incorporation is required to satisfy the organizational test for a §501 charitable organization?",
+  "choices": [
+   "A provision permitting the organization to engage in political campaigns",
+   "A provision limiting its purposes to exempt purposes and dedicating its assets to exempt purposes upon dissolution",
+   "A provision requiring that a majority of its board be public officials",
+   "A provision allowing distribution of net earnings to members upon dissolution"
+  ],
+  "correct": 1,
+  "exp": "Under Reg. §1.501-1, the articles must limit purposes to exempt purposes, not empower substantial non-exempt activities, and dedicate assets to exempt purposes on dissolution. Distributing assets to members would violate the prohibition on private inurement."
+ },
+ {
+  "q": "A public charity paid its executive director, a disqualified person, compensation substantially in excess of reasonable compensation for the services provided. What is the most likely federal tax consequence?",
+  "choices": [
+   "Automatic revocation of the charity's exemption",
+   "No consequence, because public charities may set compensation freely",
+   "An excise tax imposed on the executive director on the excess benefit, with a possible tax on managers who knowingly approved it",
+   "An excise tax imposed on the charity equal to the entire compensation"
+  ],
+  "correct": 2,
+  "exp": "The intermediate sanctions of §4958 impose an excise tax on the disqualified person who receives an excess benefit (and on knowing managers), as an alternative to revocation. The tax is measured by the excess, not the entire payment."
+ },
+ {
+  "q": "Which of the following is a taxable expenditure of a private foundation?",
+  "choices": [
+   "A grant to a public charity for its general operations",
+   "Scholarships awarded on an objective, nondiscriminatory basis under procedures approved in advance by the IRS",
+   "Reasonable compensation paid to a foundation manager for necessary services",
+   "A travel grant to an individual awarded without IRS-approved procedures"
+  ],
+  "correct": 3,
+  "exp": "Under §4945, grants to individuals for travel, study or similar purposes are taxable expenditures unless made under procedures approved in advance by the IRS. Grants to public charities and reasonable compensation are not taxable expenditures."
+ },
+ {
+  "q": "Which statement about public disclosure by a tax-exempt charitable public charity is correct?",
+  "choices": [
+   "It must make its exemption application and its annual information returns for the three most recent years available for public inspection, but generally need not disclose the names of its contributors",
+   "It must disclose the names and addresses of all contributors on request",
+   "It need not make any returns available to the public",
+   "It must disclose only its exemption application, not its annual returns"
+  ],
+  "correct": 0,
+  "exp": "Section 6104 requires exempt organizations to make their exemption application and their three most recent annual returns available, but public charities may withhold contributor names and addresses. Private foundations, by contrast, must disclose their contributors."
+ },
+ {
+  "q": "When is the annual information return (Form 990) of a calendar-year exempt organization organized as a corporation due, before extensions?",
+  "choices": [
+   "March 15",
+   "May 15",
+   "April 15",
+   "June 15"
+  ],
+  "correct": 1,
+  "exp": "Form 990 is due on the 15th day of the fifth month after the end of the organization's tax year (§6072), which is May 15 for a calendar-year organization. April 15 is the due date for individual and C corporation income tax returns."
+ },
+ {
+  "q": "A charity held a fundraising dinner. Each donor paid $100 and received a meal worth $40. What must the charity do?",
+  "choices": [
+   "Nothing, because the payment is under $250",
+   "Report the full $100 as unrelated business income",
+   "Provide a written statement informing donors that only $60 is deductible and stating the value of the meal",
+   "Withhold income tax on the $40 meal value"
+  ],
+  "correct": 2,
+  "exp": "Under §6115, a charity receiving a quid pro quo contribution exceeding $75 must provide a written statement that the deduction is limited to the excess of the payment over the value of goods or services ($60) and a good-faith estimate of their value. The $250 threshold applies to the donor's substantiation rule, not quid pro quo disclosure."
+ },
+ {
+  "q": "An exempt organization that is required to file an annual information return failed to file for three consecutive years. What is the consequence?",
+  "choices": [
+   "A late filing penalty only; its exemption is unaffected",
+   "Its exemption is revoked only after an IRS audit",
+   "It is reclassified as a private foundation",
+   "Its tax-exempt status is automatically revoked"
+  ],
+  "correct": 3,
+  "exp": "Section 6033 provides for automatic revocation of exemption when an organization fails to file a required return or notice for three consecutive years. The organization must reapply to regain exemption."
+ },
+ {
+  "q": "Which type of tax-exempt organization may engage in unlimited lobbying related to its exempt purpose without jeopardizing its exemption?",
+  "choices": [
+   "A social welfare organization",
+   "A charitable public charity",
+   "A private foundation",
+   "A church"
+  ],
+  "correct": 0,
+  "exp": "Social welfare organizations may lobby without limit if the lobbying furthers their social welfare purpose, although contributions to them are not deductible. Charitable organizations, including churches, may conduct only insubstantial lobbying, and private foundation lobbying is a taxable expenditure."
+ },
+ {
+  "q": "An individual with adjusted gross income of $100,000 contributed $40,000 of cash to a private nonoperating foundation. He made no other contributions. How much may he deduct this year?",
+  "choices": [
+   "$40,000",
+   "$30,000",
+   "$20,000",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "Cash contributions to private nonoperating foundations are limited to 30% of AGI under §170, or $30,000, with the $10,000 excess carried forward five years. The higher limit applies to public charities, and the 20% limit applies to capital gain property given to private foundations."
+ },
+ {
+  "q": "Which of the following is included in the unrelated business taxable income of a charitable hospital?",
+  "choices": [
+   "Royalties from licensing a patent",
+   "Gain on the sale of investment securities that are not debt-financed",
+   "Net income from regularly selling pharmaceuticals to the general public who are not hospital patients",
+   "Interest on corporate bonds that are not debt-financed"
+  ],
+  "correct": 2,
+  "exp": "Regular sales of pharmaceuticals to the general public are not substantially related to the hospital's exempt function of caring for patients, so they produce UBTI. Royalties, interest and capital gains are excluded by the §512 modifications."
+ },
+ {
+  "q": "An exempt organization owns 80% of a taxable subsidiary and receives rent from it. The subsidiary deducts the rent in computing its taxable income. How is the rent treated by the exempt parent?",
+  "choices": [
+   "Excluded from UBTI, because rents from real property are always excluded",
+   "Excluded from UBTI if the rent is at fair market value",
+   "Included in UBTI only if the property is personal property",
+   "Included in UBTI to the extent the payment reduces the subsidiary's net income"
+  ],
+  "correct": 3,
+  "exp": "Under §512, interest, annuities, royalties and rents received from a controlled entity (more than 50%) are included in UBTI to the extent they reduce the controlled entity's net income. This prevents shifting taxable income to the exempt parent."
+ },
+ {
+  "q": "At what rates is the unrelated business taxable income of an exempt organization organized as a corporation taxed?",
+  "choices": [
+   "At the regular corporate income tax rate",
+   "At the compressed rates applicable to trusts",
+   "At a flat excise tax rate on investment income",
+   "It is not taxed if the income is used for exempt purposes"
+  ],
+  "correct": 0,
+  "exp": "Under §511, UBTI of an exempt corporation is taxed at corporate rates, while an exempt trust's UBTI is taxed at trust rates. Use of the income for exempt purposes does not eliminate the tax."
+ },
+ {
+  "q": "An exempt organization operates two separate unrelated trades or businesses: a parking garage with $30,000 of net income and a catering business with a $12,000 net loss. What is the organization's UBTI before the specific deduction?",
+  "choices": [
+   "$18,000",
+   "$30,000",
+   "$0",
+   "$42,000"
+  ],
+  "correct": 1,
+  "exp": "Under §512, UBTI is computed separately for each unrelated trade or business, and a loss from one cannot offset income from another; the catering loss is carried forward against that activity's future income. Netting the two gives $18,000, which the 'silo' rule prohibits."
+ }
+]

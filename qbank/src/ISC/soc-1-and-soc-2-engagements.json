@@ -1,0 +1,420 @@
+[
+ {
+  "q": "A user auditor plans to reduce assessed control risk for revenue transactions processed by a third-party billing service. The service organization provides only a SOC 1 Type 1 report. What is the main limitation of relying on this report?",
+  "choices": [
+   "It does not address whether the service organization's description is fairly presented",
+   "It is restricted to management of the service organization and cannot be given to user auditors",
+   "It provides no evidence that controls operated effectively over a period",
+   "It covers only the security category of the trust services criteria"
+  ],
+  "correct": 2,
+  "exp": "A Type 1 report addresses the fair presentation of the description and the suitability of design as of a date, so it gives no evidence about operating effectiveness needed to support a lower control risk assessment (AU-C 402). It does address fair presentation of the description, and user auditors are intended users of SOC 1 reports."
+ },
+ {
+  "q": "A payroll service organization uses a separate data center company to host its servers. The service organization's description excludes the data center's controls but includes the service organization's own controls for monitoring the data center. Which method is being used?",
+  "choices": [
+   "Inclusive method",
+   "Carve-out method",
+   "Bridge method",
+   "Integrated method"
+  ],
+  "correct": 1,
+  "exp": "Under the carve-out method the subservice organization's controls are excluded from the description and scope, though the service organization's monitoring controls over the subservice organization are included. The inclusive method would bring the data center's relevant controls into the description and testing."
+ },
+ {
+  "q": "A service organization's SOC 1 report states that user entities are expected to review exception reports and restrict access to their own terminals for the stated control objectives to be achieved. How should a user auditor respond to these statements?",
+  "choices": [
+   "Ignore them, because the service auditor's opinion already covers them",
+   "Request that the service auditor test them at each user entity",
+   "Treat them as complementary subservice organization controls",
+   "Evaluate whether the user entity has designed and implemented these complementary user entity controls"
+  ],
+  "correct": 3,
+  "exp": "Complementary user entity controls are assumed in the design of the service organization's controls, so the user auditor must determine whether the user entity has them in place (AU-C 402). The service auditor's opinion is explicitly conditioned on these controls; it does not test them."
+ },
+ {
+  "q": "Under SSAE 18, when a service organization uses the carve-out method, its description must also identify:",
+  "choices": [
+   "Controls the service organization assumes are implemented by the subservice organization that are necessary to achieve the control objectives",
+   "The subservice organization's financial statements",
+   "The fees charged by the subservice organization",
+   "The results of the subservice auditor's tests of controls"
+  ],
+  "correct": 0,
+  "exp": "SSAE 18 requires disclosure of complementary subservice organization controls (CSOCs) when the carve-out method is used. Test results of the subservice organization's auditor are not included under carve-out; that is a feature of how the inclusive method brings controls into scope."
+ },
+ {
+  "q": "Management of a service organization refuses to provide a written assertion for a SOC 1 Type 2 engagement. Under AT-C 320, the service auditor should:",
+  "choices": [
+   "Issue an unmodified opinion with an emphasis-of-matter paragraph",
+   "Prepare the assertion on management's behalf",
+   "Withdraw from the engagement when withdrawal is possible under applicable law or regulation",
+   "Issue a qualified opinion on operating effectiveness only"
+  ],
+  "correct": 2,
+  "exp": "A written assertion from management is a precondition for a SOC 1 engagement, and if management refuses to provide it, AT-C 320 requires withdrawal when possible (or a disclaimer if withdrawal is not permitted). The service auditor cannot write management's assertion, because doing so would impair independence."
+ },
+ {
+  "q": "A calendar-year user entity receives a SOC 1 Type 2 report covering October 1 through September 30. To address the October-December gap, the user entity obtains a letter stating there have been no significant changes in controls. Who issues this bridge letter?",
+  "choices": [
+   "The service auditor",
+   "The user auditor",
+   "Management of the user entity",
+   "Management of the service organization"
+  ],
+  "correct": 3,
+  "exp": "A bridge (gap) letter is a representation by service organization management and is not an attestation by the service auditor. The user auditor considers it with other evidence, but it carries less assurance than a service auditor's report."
+ },
+ {
+  "q": "A cloud-hosting customer wants assurance about a provider's controls relevant to security and availability, not financial reporting, and the report will be shared only with customers under NDA. Which report best meets this need?",
+  "choices": [
+   "SOC 1 Type 2",
+   "SOC 2 Type 2",
+   "SOC 3",
+   "SOC for Cybersecurity"
+  ],
+  "correct": 1,
+  "exp": "A SOC 2 Type 2 report addresses controls relevant to the trust services categories (e.g., security and availability) with detailed tests and results, and is intended for knowledgeable users. A SOC 3 covers the same criteria but is a general-use report without the detailed description and test results."
+ },
+ {
+  "q": "A service organization wants to post its assurance report publicly on its website for marketing purposes. Which report is designed for general use?",
+  "choices": [
+   "SOC 1 Type 1",
+   "SOC 2 Type 2",
+   "SOC 3",
+   "SOC 1 Type 2"
+  ],
+  "correct": 2,
+  "exp": "SOC 3 reports are general-use reports based on the trust services criteria. SOC 1 and SOC 2 reports are restricted to specified users who understand the system and the related user entity controls."
+ },
+ {
+  "q": "In a SOC 1 Type 2 report, which section contains information that the service auditor reads for material inconsistencies but does not express an opinion on?",
+  "choices": [
+   "Management's written assertion",
+   "The description of the system",
+   "The description of tests of controls and results",
+   "Other information provided by the service organization, such as management's responses to deviations"
+  ],
+  "correct": 3,
+  "exp": "Other information provided by the service organization is not covered by the service auditor's opinion; the service auditor reads it only to identify material inconsistencies. The system description is directly covered by the opinion on fair presentation."
+ },
+ {
+  "q": "A service auditor uses the work of the service organization's internal audit function to perform some tests of controls in a SOC 1 Type 2 engagement. Which statement is correct?",
+  "choices": [
+   "The description of tests of controls should describe the internal auditors' work and the service auditor's procedures with respect to that work",
+   "The opinion should state that responsibility is divided with internal audit",
+   "Internal audit's work cannot be used in a SOC 1 engagement",
+   "Internal audit must issue its own separate report attached to the SOC 1 report"
+  ],
+  "correct": 0,
+  "exp": "AT-C 320 permits use of internal audit's work, and when it is used in tests of controls the description of tests in a Type 2 report must describe that work and the service auditor's related procedures. The service auditor retains sole responsibility and does not divide it in the opinion."
+ },
+ {
+  "q": "In a SOC 1 Type 2 engagement, the service auditor finds that the control objective related to authorized changes to application programs was not achieved during the period because key controls were not operating effectively. The service auditor would most likely issue:",
+  "choices": [
+   "An unmodified opinion with deviations listed in the tests section",
+   "A qualified opinion on operating effectiveness",
+   "A disclaimer of opinion on the entire report",
+   "An adverse opinion on the fairness of the description"
+  ],
+  "correct": 1,
+  "exp": "When deviations cause a control objective not to be achieved, the service auditor modifies the opinion on operating effectiveness, usually as a qualification. The description can still be fairly presented, so an adverse opinion on the description is not indicated."
+ },
+ {
+  "q": "A service auditor discovers that the system description lists a daily reconciliation control that the service organization never actually implemented. Which part of the opinion is most directly affected?",
+  "choices": [
+   "The opinion on the fair presentation of the description",
+   "Only the section of other information",
+   "The restricted-use paragraph",
+   "None, because the service auditor simply omits the control from testing"
+  ],
+  "correct": 0,
+  "exp": "A description that includes controls that were not implemented is not fairly presented, so the opinion on the description must be modified. Simply dropping the control from testing would leave a misleading description, and other information is not covered by the opinion."
+ },
+ {
+  "q": "Under the inclusive method, which of the following is required?",
+  "choices": [
+   "The subservice organization's controls are excluded, but CSOCs are listed",
+   "Only the service organization's monitoring controls over the subservice organization are tested",
+   "A written assertion from management of the subservice organization covering the subservice organization's controls included in the description",
+   "A separate SOC 3 report from the subservice organization"
+  ],
+  "correct": 2,
+  "exp": "Under the inclusive method, the subservice organization's relevant controls are included in the description and tested, so the subservice organization's management must also provide a written assertion. Excluding the controls and listing CSOCs describes the carve-out method."
+ },
+ {
+  "q": "Which of the following is the responsibility of service organization management, not the service auditor, in a SOC 1 engagement?",
+  "choices": [
+   "Expressing an opinion on operating effectiveness",
+   "Determining the nature, timing and extent of tests of controls",
+   "Evaluating whether deviations are significant to the opinion",
+   "Specifying the control objectives and preparing the description of the system"
+  ],
+  "correct": 3,
+  "exp": "In SOC 1 engagements, service organization management specifies the control objectives, prepares the description and provides the assertion. Designing tests and forming the opinion are the service auditor's responsibilities."
+ },
+ {
+  "q": "A user auditor relying on a SOC 1 Type 2 report notes that the service auditor reported deviations in testing of user access removal. What should the user auditor do?",
+  "choices": [
+   "Disregard the deviations because the opinion was unmodified",
+   "Consider the nature and cause of the deviations and their effect on the user auditor's risk assessment and further procedures",
+   "Require the service organization to issue a new report",
+   "Report the deviations to the PCAOB"
+  ],
+  "correct": 1,
+  "exp": "AU-C 402 requires the user auditor to evaluate deviations, even when the service auditor's opinion is unmodified, and determine their effect on the planned audit approach. An unmodified opinion does not mean the deviations are irrelevant to a particular user entity's assertions."
+ },
+ {
+  "q": "A user auditor issues an unmodified opinion on a client's financial statements after relying on a SOC 1 Type 2 report. How should the user auditor refer to the service auditor in the audit report?",
+  "choices": [
+   "Refer to the service auditor to indicate shared responsibility",
+   "Name the service auditor in an other-matter paragraph",
+   "Not refer to the service auditor's work",
+   "Attach the service auditor's report to the financial statements"
+  ],
+  "correct": 2,
+  "exp": "AU-C 402 prohibits referring to the service auditor's work in an unmodified opinion on the user entity's financial statements. Unlike a group audit with a component auditor, there is no division of responsibility."
+ },
+ {
+  "q": "With respect to independence, a service auditor performing a SOC 2 examination must be independent of:",
+  "choices": [
+   "The service organization",
+   "Every user entity that will receive the report",
+   "Every subservice organization carved out of the description",
+   "The user auditors who will read the report"
+  ],
+  "correct": 0,
+  "exp": "Under AT-C 105/205, the practitioner must be independent of the responsible party, which is the service organization. Independence from each of potentially hundreds of user entities is not required."
+ },
+ {
+  "q": "Which criteria are used to evaluate the description of a service organization's system in a SOC 2 examination?",
+  "choices": [
+   "Control objectives specified by service organization management",
+   "COSO 2013 principles",
+   "Description criteria in DC 200",
+   "NIST SP 800-53 baselines"
+  ],
+  "correct": 2,
+  "exp": "The SOC 2 description is evaluated against the AICPA description criteria (DC section 200), and controls are evaluated against the trust services criteria. Management-specified control objectives are the hallmark of SOC 1, not SOC 2."
+ },
+ {
+  "q": "A hospital system requires a vendor to report on controls relevant to security and also on its compliance with HIPAA security requirements in one examination. Which report best fits?",
+  "choices": [
+   "A SOC 1 Type 2 report",
+   "A SOC 2+ report that addresses additional subject matter and criteria",
+   "A SOC 3 report",
+   "An agreed-upon procedures report on the financial statements"
+  ],
+  "correct": 1,
+  "exp": "SOC 2 examinations can be expanded (often called SOC 2+) to cover additional subject matter such as HIPAA requirements alongside the trust services criteria. SOC 1 addresses controls relevant to user entities' financial reporting, not security or HIPAA compliance."
+ },
+ {
+  "q": "A SOC 1 Type 2 report covers January 1 through June 30. A service organization implemented a new automated control on April 1 that replaced a manual control. How should this be handled?",
+  "choices": [
+   "Test only the new control and describe it as operating for the entire period",
+   "Omit both controls from the report",
+   "Test only the manual control, because it existed at the start of the period",
+   "Disclose the change in the description and test each control for the portion of the period it operated"
+  ],
+  "correct": 3,
+  "exp": "Significant changes to controls during the period must be included in the description, and a Type 2 report should cover each relevant control for the part of the period it was in operation. Presenting the new control as operating all period would misstate the description."
+ },
+ {
+  "q": "Which statement correctly contrasts SOC 1 and SOC 2 reports?",
+  "choices": [
+   "SOC 1 addresses controls relevant to user entities' internal control over financial reporting; SOC 2 addresses controls relevant to security, availability, processing integrity, confidentiality, or privacy",
+   "SOC 1 is for general use; SOC 2 is restricted",
+   "SOC 1 is performed under AT-C 205 only; SOC 2 under AU-C 402",
+   "SOC 1 is always a Type 2; SOC 2 is always a Type 1"
+  ],
+  "correct": 0,
+  "exp": "SOC 1 (AT-C 320) focuses on ICFR-relevant controls, and SOC 2 (AT-C 205) uses the trust services criteria. Both have Type 1 and Type 2 versions and both are restricted-use; AU-C 402 governs the user auditor, not the service auditor."
+ },
+ {
+  "q": "During a SOC 2 examination, the service auditor learns that a service organization employee intentionally altered system logs to hide a security incident affecting several user entities. What should the service auditor do?",
+  "choices": [
+   "Ignore the matter because it relates to an individual employee",
+   "Evaluate the effect on the description, the controls and the opinion, and consider communicating with appropriate parties",
+   "Immediately notify all user entities directly without informing management",
+   "Report the matter only in a separate management letter that is not part of the engagement"
+  ],
+  "correct": 1,
+  "exp": "The practitioner must consider known or suspected fraud, noncompliance and incidents and evaluate their effect on the subject matter and the report, including whether the description must disclose the incident. Bypassing management to notify users directly is not the required first response."
+ },
+ {
+  "q": "A user auditor obtained a SOC 1 Type 2 report covering January 1 through June 30 for a client with a December 31 year end. Which additional procedure is most appropriate?",
+  "choices": [
+   "Rely fully on the report for the entire year without additional procedures",
+   "Ask the service auditor to extend its opinion verbally to December 31",
+   "Obtain information about changes in controls during the remaining period, such as a bridge letter, and consider additional testing",
+   "Conclude that the report is irrelevant and test everything at the service organization"
+  ],
+  "correct": 2,
+  "exp": "AU-C 402 requires the user auditor to consider the period not covered and obtain additional evidence, for example through bridge letters, inquiry, or additional tests. A report covering half the year cannot by itself support reliance on controls for the full period."
+ },
+ {
+  "q": "Which element is included in a SOC 1 Type 2 report but NOT in a SOC 1 Type 1 report?",
+  "choices": [
+   "Management's written assertion",
+   "Description of the service organization's system",
+   "Opinion on suitability of design",
+   "Description of the service auditor's tests of controls and results"
+  ],
+  "correct": 3,
+  "exp": "Only a Type 2 report includes the service auditor's description of tests of controls and their results, because it opines on operating effectiveness over a period. The assertion, description and opinion on design appear in both types."
+ },
+ {
+  "q": "A SOC 2 Type 2 report on a software company lists 'logical access to the production database is restricted to authorized personnel' and indicates that 3 of 40 sampled terminated users retained access for over 30 days. A prospective customer reading the report should primarily:",
+  "choices": [
+   "Assess whether the exception is significant to its own use of the service and whether compensating controls exist",
+   "Assume the service auditor's opinion must be adverse",
+   "Disregard it, because SOC 2 tests are not relevant to customers",
+   "Require the service auditor to retest using a larger sample"
+  ],
+  "correct": 0,
+  "exp": "Report users evaluate reported exceptions in the context of their own risks and any compensating controls at their organization or the provider. Exceptions do not automatically make an opinion adverse; the service auditor judges whether criteria were still met."
+ },
+ {
+  "q": "SSAE 18 requires the service auditor in a SOC 1 engagement to obtain an understanding of the service organization's controls and to evaluate the reliability of information produced by the entity (IPE) used in testing. Which procedure best addresses the reliability of a system-generated list of terminated employees used to select a sample?",
+  "choices": [
+   "Ask management whether the list is complete",
+   "Test the accuracy and completeness of the list, for example by testing its source and the report logic",
+   "Accept the list because it is system generated",
+   "Reperform the termination process for every name on the list"
+  ],
+  "correct": 1,
+  "exp": "Service auditors must evaluate whether information produced by the entity is sufficiently reliable, including its accuracy and completeness, before using it. Inquiry alone or assuming system output is reliable does not meet this requirement."
+ },
+ {
+  "q": "When a SOC 1 Type 2 report is distributed, which parties are the intended users?",
+  "choices": [
+   "Any member of the public, including potential investors",
+   "Only the service auditor and the PCAOB",
+   "Management of the service organization, user entities during the period, and their auditors",
+   "Only the board of directors of the service organization"
+  ],
+  "correct": 2,
+  "exp": "SOC 1 reports are restricted to service organization management, user entities of the system during the report period, and user auditors. They are not intended for the general public, unlike SOC 3 reports."
+ },
+ {
+  "q": "In a SOC 2 examination, which party selects the trust services categories (e.g., security, availability, confidentiality) to include?",
+  "choices": [
+   "The service auditor alone",
+   "The AICPA, which mandates all five categories",
+   "Each user entity independently",
+   "Service organization management, typically considering user needs and commitments"
+  ],
+  "correct": 3,
+  "exp": "Service organization management selects the categories, though security (the common criteria) is always included. The AICPA does not mandate all five categories, and the service auditor does not choose the subject matter."
+ },
+ {
+  "q": "A user auditor is evaluating a service auditor's SOC 1 report. Under AU-C 402, which of the following should the user auditor be satisfied about?",
+  "choices": [
+   "The service auditor's professional competence and independence from the service organization",
+   "That the service auditor audited the user entity's financial statements",
+   "That the service auditor is also the subservice organization's auditor",
+   "That the service auditor's fees are reasonable"
+  ],
+  "correct": 0,
+  "exp": "AU-C 402 requires the user auditor to be satisfied as to the service auditor's professional competence and independence and the adequacy of the standards used. There is no requirement that the service auditor also audit the user entity or the subservice organization."
+ },
+ {
+  "q": "Which situation would generally make a SOC 1 report the least relevant choice?",
+  "choices": [
+   "A user entity outsources payroll and needs assurance for its year-end audit",
+   "A user entity outsources claims processing that feeds its revenue and expense records",
+   "A company wants assurance about a vendor's data center security controls protecting customer personal data unrelated to financial reporting",
+   "A bank outsources loan servicing that updates its general ledger"
+  ],
+  "correct": 2,
+  "exp": "SOC 1 reports address controls relevant to user entities' ICFR, so a security and privacy concern unrelated to financial reporting is better served by SOC 2. Payroll, claims processing and loan servicing all flow into financial statements."
+ },
+ {
+  "q": "A service auditor's SOC 2 Type 2 report is dated September 15 for a period ending June 30. Between July 1 and September 15, a significant breach affecting the system occurred. What should the service auditor consider?",
+  "choices": [
+   "Nothing, because events after the period end are always outside the scope",
+   "Whether the event is a subsequent event that should be disclosed in the description, and whether the report should be modified if it is not disclosed",
+   "Withdrawing the report from all users already in possession of it",
+   "Extending the examination period automatically to September 15"
+  ],
+  "correct": 1,
+  "exp": "The practitioner inquires about events up to the report date that could affect the subject matter or assertion, and an undisclosed significant subsequent event may require disclosure or report modification. Subsequent events are not simply ignored because they occurred after period end."
+ },
+ {
+  "q": "A service organization's description states that it uses a subservice organization for check printing, but the SOC 1 report uses the carve-out method. A user auditor needs assurance about the check printing controls. What should the user auditor do?",
+  "choices": [
+   "Rely on the service organization's report because carve-out includes subservice controls",
+   "Ignore check printing because it is immaterial by definition",
+   "Ask the service auditor to issue a separate opinion on the subservice organization's controls",
+   "Obtain a SOC 1 report from the subservice organization or perform other procedures over its relevant controls"
+  ],
+  "correct": 3,
+  "exp": "Under carve-out, the subservice organization's controls are excluded from the report, so the user auditor needs separate evidence, such as the subservice organization's own SOC 1 report. Carve-out explicitly does not cover subservice organization controls."
+ },
+ {
+  "q": "Which statement about the opinion in a SOC 1 Type 2 report is correct?",
+  "choices": [
+   "It covers fair presentation of the description, suitability of design, and operating effectiveness throughout the specified period",
+   "It covers only operating effectiveness as of the report date",
+   "It covers fair presentation of the user entity's financial statements",
+   "It covers whether the service organization complied with laws and regulations"
+  ],
+  "correct": 0,
+  "exp": "A Type 2 opinion addresses the description, design and operating effectiveness throughout the period. Operating effectiveness 'as of a date' is not meaningful; that point-in-time concept applies only to a Type 1's design and implementation."
+ },
+ {
+  "q": "A service organization undergoing its first SOC examination has had its controls in operation for only two weeks. A customer wants a SOC report quickly. Which option is most practical?",
+  "choices": [
+   "A Type 2 report covering two weeks, which provides the same assurance as a 12-month report",
+   "A SOC 3 report, which requires no testing",
+   "A Type 1 report on design and implementation as of a specified date, followed later by a Type 2 report",
+   "A bridge letter issued by the service auditor"
+  ],
+  "correct": 2,
+  "exp": "A Type 1 report is often used as a first step when controls have not operated long enough for meaningful operating-effectiveness testing. A very short Type 2 period gives limited evidence, and bridge letters come from management, not the service auditor."
+ },
+ {
+  "q": "In a SOC 1 engagement, management's description identifies control objectives that do not address a significant risk relevant to user entities' financial reporting, such as the completeness of transaction processing. What is the most likely consequence?",
+  "choices": [
+   "The service auditor adds the missing control objective without telling management",
+   "The service auditor may conclude the description is not fairly presented or the control objectives are not reasonable, and modify the report",
+   "There is no consequence because management may specify any objectives it wants",
+   "The user auditor must issue an adverse opinion on the user entity's financial statements"
+  ],
+  "correct": 1,
+  "exp": "Control objectives must be reasonable in the circumstances; omitting objectives relevant to user entities' ICFR can make the description misleading and lead to a modified opinion. The service auditor cannot unilaterally add objectives, because the description is management's responsibility."
+ },
+ {
+  "q": "A service auditor performing a SOC 2 Type 2 examination identifies that management's description omits a significant system incident that occurred during the period and caused the entity's service commitments to not be met. Under the description criteria, this incident should be:",
+  "choices": [
+   "Omitted, because SOC 2 descriptions address only controls, not incidents",
+   "Disclosed only in the service auditor's management letter",
+   "Reported only to the AICPA",
+   "Disclosed in the description, and its omission would affect the opinion on fair presentation"
+  ],
+  "correct": 3,
+  "exp": "DC 200 requires disclosure of system incidents that resulted in a significant failure to achieve service commitments and system requirements, including the nature, timing and extent. Omitting a required disclosure means the description is not fairly presented."
+ },
+ {
+  "q": "Before accepting a SOC 2 engagement, a practitioner should determine whether the criteria are suitable and available to intended users. Which statement best reflects how the trust services criteria satisfy this?",
+  "choices": [
+   "They are suitable because they were developed by an AICPA body following due process, and are publicly available",
+   "They are suitable only if the service organization modifies them for each customer",
+   "They are available only to the service auditor",
+   "They must be approved by each user entity before use"
+  ],
+  "correct": 0,
+  "exp": "The 2017 trust services criteria were issued by the AICPA Assurance Services Executive Committee following due process and are publicly available, so they are suitable criteria under AT-C 105. They are not customized per customer or approved by each user."
+ },
+ {
+  "q": "A publicly traded manufacturer (not a service organization) wants a CPA's examination report on its entity-wide cybersecurity risk management program that can be shared with investors and other general users. Which engagement best fits?",
+  "choices": [
+   "SOC 2 Type 2 examination",
+   "SOC 1 Type 2 examination",
+   "SOC 3 examination",
+   "SOC for Cybersecurity examination"
+  ],
+  "correct": 3,
+  "exp": "A SOC for Cybersecurity examination reports on an entity's cybersecurity risk management program and controls and is intended for general use. SOC 2 and SOC 3 address a service organization's system used to provide services to user entities, not an entity-wide program."
+ }
+]

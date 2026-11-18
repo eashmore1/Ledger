@@ -1,0 +1,332 @@
+[
+ {
+  "q": "During the current year Carl, who is married, gave $50,000 cash to his son. Carl's wife made no gifts. Carl and his wife elected gift splitting. Assume the gift tax annual exclusion is $19,000 per donee. What is the amount of Carl's taxable gift?",
+  "choices": [
+   "$6,000",
+   "$31,000",
+   "$12,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "With gift splitting (§2513), each spouse is treated as giving $25,000; after a $19,000 exclusion each has a $6,000 taxable gift. Ignoring the election gives Carl alone a $31,000 taxable gift."
+ },
+ {
+  "q": "Dana transferred $100,000 to an irrevocable trust. The trustee may accumulate income or distribute it to Dana's niece at the trustee's discretion until the niece reaches age 30, when the trust terminates and the niece receives all the property. The niece has no withdrawal rights. Assume the annual exclusion is $19,000. What is Dana's taxable gift?",
+  "choices": [
+   "$81,000",
+   "$100,000",
+   "$0",
+   "$62,000"
+  ],
+  "correct": 1,
+  "exp": "The annual exclusion applies only to gifts of present interests (§2503); the niece's rights are future interests because distributions are discretionary and deferred, so the full $100,000 is a taxable gift. Subtracting the exclusion is the common mistake."
+ },
+ {
+  "q": "This year Gwen paid $60,000 of tuition directly to a university on behalf of her grandson and gave him $25,000 cash for books and living expenses. She made no other gifts to him. Assume the annual exclusion is $19,000. What is Gwen's taxable gift to her grandson?",
+  "choices": [
+   "$66,000",
+   "$85,000",
+   "$6,000",
+   "$41,000"
+  ],
+  "correct": 2,
+  "exp": "Tuition paid directly to an educational organization is an unlimited exclusion under §2503 (separate from the annual exclusion), so only $25,000 − $19,000 = $6,000 is taxable. Books and living expenses do not qualify for the tuition exclusion."
+ },
+ {
+  "q": "During the year Henry gave stock worth $500,000 to his wife, a U.S. citizen, and gave $500,000 cash to a qualified public charity. Assume the annual exclusion is $19,000. What is the total of Henry's taxable gifts for the year?",
+  "choices": [
+   "$962,000",
+   "$481,000",
+   "$500,000",
+   "$0"
+  ],
+  "correct": 3,
+  "exp": "Gifts to a U.S.-citizen spouse qualify for the unlimited marital deduction (§2523) and gifts to charity for the unlimited charitable deduction (§2522), so taxable gifts are $0. Allowing only the annual exclusions is the trap."
+ },
+ {
+  "q": "Which of the following is included in a decedent's gross estate?",
+  "choices": [
+   "Proceeds of a policy on the decedent's life payable to her son, where the decedent retained the right to change the beneficiary",
+   "Proceeds of a policy on the decedent's life purchased and always owned by her son",
+   "Cash the decedent gave to her daughter five years before death, on which no gift tax was paid",
+   "A remainder interest in a trust created by the decedent's father that terminated at the decedent's death"
+  ],
+  "correct": 0,
+  "exp": "Life insurance is included under §2042 if the decedent held any incident of ownership, such as the right to change beneficiaries, regardless of who is the beneficiary. Lifetime gifts are added back only as adjusted taxable gifts, not as gross estate items."
+ },
+ {
+  "q": "At death, Ian and his wife owned real estate as joint tenants with right of survivorship. The property was worth $800,000 at Ian's death, and Ian had furnished all of the purchase price. How much is included in Ian's gross estate?",
+  "choices": [
+   "$800,000",
+   "$400,000",
+   "$0",
+   "$200,000"
+  ],
+  "correct": 1,
+  "exp": "For joint interests held only by spouses, one-half is included regardless of who furnished consideration (§2040). The consideration-furnished test applies only to joint tenancies with non-spouses."
+ },
+ {
+  "q": "Jill and her brother owned land as joint tenants with right of survivorship. Jill furnished 75% of the purchase price and her brother furnished 25%. The land was worth $600,000 at Jill's death. How much is included in Jill's gross estate?",
+  "choices": [
+   "$300,000",
+   "$600,000",
+   "$450,000",
+   "$150,000"
+  ],
+  "correct": 2,
+  "exp": "For joint tenancies with non-spouses, the decedent's gross estate includes the property's value except the portion attributable to the survivor's contribution (§2040): 75% × $600,000 = $450,000. The automatic one-half rule applies only to spouses."
+ },
+ {
+  "q": "Two years before her death, Kim made a taxable gift of stock to her nephew and paid $40,000 of gift tax. The stock appreciated significantly before her death. Which amount relating to this gift is included in Kim's gross estate?",
+  "choices": [
+   "The fair market value of the stock at Kim's death",
+   "The fair market value of the stock on the date of the gift",
+   "The stock's value at the gift date plus the $40,000 gift tax",
+   "Only the $40,000 of gift tax paid"
+  ],
+  "correct": 3,
+  "exp": "Under §2035, gift tax paid on gifts within three years of death is grossed up into the gross estate; the gifted stock itself is not included but is added to the tax base as an adjusted taxable gift. Including the stock at death value confuses this with retained-interest transfers."
+ },
+ {
+  "q": "At Lou's death his estate held stock worth $1,000,000. The executor sold the stock four months after death for $950,000. Six months after death, the same stock would have been worth $900,000. If the executor validly elects the alternate valuation date, at what value is the stock included in the gross estate?",
+  "choices": [
+   "$950,000",
+   "$900,000",
+   "$1,000,000",
+   "$925,000"
+  ],
+  "correct": 0,
+  "exp": "Under §2032, property sold or distributed within six months after death is valued on the date of disposition, here $950,000. The six-month value applies only to property still held at that date."
+ },
+ {
+  "q": "Which statement about the estate tax alternate valuation election is correct?",
+  "choices": [
+   "It may be elected on a property-by-property basis",
+   "It may be elected only if it decreases both the gross estate and the sum of the estate tax and generation-skipping transfer tax",
+   "It values property one year after the date of death",
+   "It may be elected by any estate required to file, even if no estate tax is due"
+  ],
+  "correct": 1,
+  "exp": "Section 2032 requires that the election reduce both the gross estate value and the estate (and GST) tax, and it applies to all estate property. Because it must reduce tax, it cannot be used merely to step up basis in a nontaxable estate."
+ },
+ {
+  "q": "Which of the following is NOT deductible in computing a decedent's taxable estate?",
+  "choices": [
+   "Reasonable funeral expenses",
+   "A mortgage on residential property included in the gross estate at its full value",
+   "Federal income tax on income earned by the estate after the date of death",
+   "Unpaid federal income tax on income the decedent earned before death"
+  ],
+  "correct": 2,
+  "exp": "Debts of the decedent, including income tax on pre-death income, are deductible under §2053, but income tax on the estate's post-death income is an obligation of the estate, not of the decedent. Funeral expenses and mortgages on included property are deductible."
+ },
+ {
+  "q": "Mae's gross estate is $16,000,000. Funeral and administration expenses total $200,000, she bequeathed $4,000,000 to her husband (a U.S. citizen) outright, and $800,000 to a qualified charity. What is Mae's taxable estate?",
+  "choices": [
+   "$11,800,000",
+   "$15,000,000",
+   "$11,200,000",
+   "$11,000,000"
+  ],
+  "correct": 3,
+  "exp": "$16,000,000 − $200,000 expenses − $4,000,000 marital deduction − $800,000 charitable deduction = $11,000,000 (§§2053, 2055, 2056). Omitting the unlimited charitable deduction gives $11,800,000."
+ },
+ {
+  "q": "Ned's taxable estate is $9,000,000. Ten years before death, Ned made gifts that, after annual exclusions, resulted in $2,000,000 of taxable gifts. He also made gifts totaling $200,000 that were fully covered by annual exclusions. What amount is used as the base for computing Ned's tentative estate tax?",
+  "choices": [
+   "$11,000,000",
+   "$11,200,000",
+   "$9,000,000",
+   "$9,200,000"
+  ],
+  "correct": 0,
+  "exp": "The tentative tax base is the taxable estate plus post-1976 adjusted taxable gifts (§2001): $9,000,000 + $2,000,000 = $11,000,000. Gifts sheltered by the annual exclusion are never taxable gifts and are not added back."
+ },
+ {
+  "q": "Omar died this year, having used $4,000,000 of his basic exclusion amount. His wife, Pam, survives him. Assume the basic exclusion amount is $15,000,000 for both. What exclusion amount will be available to Pam for her later lifetime gifts or estate, assuming she does not remarry?",
+  "choices": [
+   "$26,000,000 automatically, with no election required",
+   "$26,000,000, provided Omar's executor elected portability on a timely filed estate tax return",
+   "$15,000,000, because unused exclusion cannot be transferred between spouses",
+   "$30,000,000"
+  ],
+  "correct": 1,
+  "exp": "The deceased spousal unused exclusion (DSUE) of $11,000,000 is added to Pam's own $15,000,000 only if Omar's executor makes the portability election on a timely filed Form 706 (§2010). Portability is not automatic."
+ },
+ {
+  "q": "Quinn inherited stock from her father, who had purchased it for $20,000. The stock was worth $90,000 at the father's death, and the alternate valuation date was not elected. Two months after the death, Quinn sold the stock for $95,000. What gain does Quinn recognize?",
+  "choices": [
+   "$75,000 long-term capital gain",
+   "$5,000 short-term capital gain",
+   "$5,000 long-term capital gain",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Inherited property takes a basis equal to FMV at death under §1014 ($90,000), and its holding period is automatically long-term under §1223, so the gain is $5,000 long-term. The donor's $20,000 carryover basis applies to gifts, not bequests."
+ },
+ {
+  "q": "Ruth received stock as a gift. The donor's basis was $40,000 and the fair market value at the date of the gift was $30,000. No gift tax was paid. Ruth later sold the stock for $35,000. What gain or loss does Ruth recognize?",
+  "choices": [
+   "$5,000 loss",
+   "$5,000 gain",
+   "$10,000 loss",
+   "No gain or loss"
+  ],
+  "correct": 3,
+  "exp": "Under §1015 dual-basis rules, the gain basis is $40,000 (no gain) and the loss basis is the $30,000 FMV (no loss), so a sale between the two produces no gain or loss. Using the donor's basis for a loss is the common error."
+ },
+ {
+  "q": "Which statement about the federal gift tax return (Form 709) is correct?",
+  "choices": [
+   "The donor is primarily liable for the tax; the return is generally due April 15 of the year following the gift, and an extension of the donor's income tax return also extends it",
+   "The donee is primarily liable for the tax and files the return",
+   "A return is required only if gift tax is actually due after applying the unified credit",
+   "The return is due nine months after the date of the gift"
+  ],
+  "correct": 0,
+  "exp": "Under §§6019 and 6075 the donor files and pays, generally by April 15 of the following year, and an income tax extension extends the gift return. A return is required for taxable gifts even if the unified credit eliminates the tax."
+ },
+ {
+  "q": "Sam transferred securities to a revocable trust, retaining the right to revoke it. The trust income is payable to his daughter. When does Sam make a completed gift?",
+  "choices": [
+   "When the securities are transferred to the trust",
+   "When income is paid to the daughter or when Sam relinquishes the power to revoke",
+   "Never, because transfers to any trust are disregarded for gift tax purposes",
+   "Only at Sam's death"
+  ],
+  "correct": 1,
+  "exp": "A transfer is a completed gift only when the donor has given up dominion and control; with a revocable trust, gifts occur as distributions are made to beneficiaries or when the power to revoke is released (Reg. §25.2511-2). Funding a revocable trust alone is incomplete."
+ },
+ {
+  "q": "Tia deposited $100,000 of her own funds into a bank account held jointly with her son, who may withdraw any amount. The next year the son withdrew $30,000 for his own use. What gift has Tia made?",
+  "choices": [
+   "$100,000 at the time of deposit",
+   "$50,000 at the time of deposit",
+   "$30,000 when the son withdrew the funds",
+   "No gift, because the account is held jointly"
+  ],
+  "correct": 2,
+  "exp": "Because Tia can withdraw the entire deposit, there is no completed gift until the son withdraws funds for his own benefit (Reg. §25.2511-1). Treating a revocable joint bank account like a joint tenancy in real property is the trap."
+ },
+ {
+  "q": "Which of the following is a requirement for a qualified disclaimer of an inheritance so that the disclaimant is not treated as making a gift?",
+  "choices": [
+   "The disclaimer must be made within 15 months of the decedent's death",
+   "The disclaimant may direct to whom the disclaimed property passes",
+   "The disclaimant may first accept income from the property if it is repaid",
+   "The disclaimer must be an irrevocable written refusal made within nine months and before accepting any benefits, with the property passing without direction by the disclaimant"
+  ],
+  "correct": 3,
+  "exp": "Section 2518 requires a written, irrevocable refusal delivered within nine months (or by age 21), no acceptance of benefits, and passage of the property without direction by the disclaimant. Directing the property makes it a taxable gift."
+ },
+ {
+  "q": "Which bequest qualifies for the estate tax marital deduction?",
+  "choices": [
+   "A trust paying all income to the surviving spouse at least annually for life, with remainder to the decedent's children, for which the executor makes a QTIP election",
+   "A life estate for the surviving spouse that terminates if the spouse remarries",
+   "An outright bequest to a surviving spouse who is a nonresident non-citizen, not through a qualified domestic trust",
+   "A trust under which the trustee may distribute income to the decedent's children during the surviving spouse's life"
+  ],
+  "correct": 0,
+  "exp": "A QTIP trust satisfies §2056 because the spouse receives all income at least annually and no one else can receive property during her life. Interests terminating on remarriage or allowing distributions to others are nondeductible terminable interests."
+ },
+ {
+  "q": "Uma's gross estate is $10,000,000. Her will leaves $3,000,000 to a qualified public charity. What estate tax charitable deduction is allowed?",
+  "choices": [
+   "Limited to 60% of the adjusted gross estate",
+   "$3,000,000",
+   "$1,000,000, limited to 10% of the gross estate",
+   "$0, because charitable deductions are allowed only for income tax"
+  ],
+  "correct": 1,
+  "exp": "The estate tax charitable deduction under §2055 is unlimited for bequests to qualified charities. Percentage-of-income limits apply only to the income tax charitable deduction."
+ },
+ {
+  "q": "Vic died on March 10 of the current year. His gross estate plus adjusted taxable gifts exceeds the filing threshold. When is the federal estate tax return due, and what extension is available?",
+  "choices": [
+   "April 15 of the following year, with a six-month extension",
+   "December 31 of the year of death, with no extension",
+   "December 10 of the year of death, with an automatic six-month extension available upon request",
+   "Fifteen months after death, with no extension"
+  ],
+  "correct": 2,
+  "exp": "Form 706 is due nine months after the date of death (§6075), here December 10, and a six-month extension of time to file may be obtained. April 15 is the income tax and gift tax deadline."
+ },
+ {
+  "q": "Twelve years before his death, Will deeded his residence to his son but retained the right to live in it rent-free for the rest of his life, and he did so. What amount relating to the residence is included in Will's gross estate?",
+  "choices": [
+   "Nothing, because the transfer occurred more than three years before death",
+   "The value at the date of transfer, added only as an adjusted taxable gift",
+   "Only the value of Will's life estate",
+   "The full fair market value of the residence at Will's death"
+  ],
+  "correct": 3,
+  "exp": "Under §2036, property transferred with a retained life estate (possession or enjoyment) is included at its full date-of-death value, regardless of when the transfer occurred. The three-year rule is irrelevant to retained interests."
+ },
+ {
+  "q": "Xena gave 1,000 shares of a publicly traded stock to her nephew. On the date of the gift, the stock's high price was $52, its low price was $48, and its closing price was $49. What is the value of the gift for gift tax purposes, before any exclusion?",
+  "choices": [
+   "$50,000",
+   "$49,000",
+   "$52,000",
+   "$48,000"
+  ],
+  "correct": 0,
+  "exp": "Listed securities are valued at the mean of the high and low selling prices on the valuation date (Reg. §25.2512-2): ($52 + $48) / 2 = $50 × 1,000 shares = $50,000. The closing price is not the valuation standard."
+ },
+ {
+  "q": "Which of the following transfers is a direct skip for generation-skipping transfer tax purposes?",
+  "choices": [
+   "A gift to a grandchild whose parent, the donor's child, died before the gift",
+   "A gift to a grandchild whose parent, the donor's child, is living",
+   "A gift to the donor's niece",
+   "A gift to an unrelated individual who is 30 years younger than the donor"
+  ],
+  "correct": 1,
+  "exp": "A direct skip is a transfer to a skip person two or more generations below the transferor (§2612); a grandchild with a living parent qualifies. The predeceased-parent rule moves the grandchild up a generation, and a niece or unrelated person 30 years younger is only one generation below."
+ },
+ {
+  "q": "Which statement about gift splitting between spouses is correct?",
+  "choices": [
+   "Spouses may split gifts made to each other",
+   "Spouses may choose to split some gifts to third parties and not others in the same year",
+   "Both spouses must consent, and the election applies to all gifts made by either spouse to third parties during the calendar year",
+   "Only the donor spouse must consent"
+  ],
+  "correct": 2,
+  "exp": "Under §2513, both spouses must consent, and the election covers all gifts to third parties by either spouse during that year. Gifts between spouses are covered by the marital deduction, not splitting."
+ },
+ {
+  "q": "Two years before her death, Ava transferred ownership of a $1,000,000 policy on her own life to her daughter. The daughter paid all premiums after the transfer and was the beneficiary. What amount is included in Ava's gross estate?",
+  "choices": [
+   "$0, because the daughter owned the policy at Ava's death",
+   "The policy's cash surrender value at the date of transfer",
+   "The premiums paid by the daughter",
+   "$1,000,000"
+  ],
+  "correct": 3,
+  "exp": "Section 2035 includes life insurance proceeds if the insured transferred incidents of ownership within three years of death. The three-year rule is one of the few remaining situations where gifted property itself is pulled back in."
+ },
+ {
+  "q": "At his death, Ben was owed $30,000 of earned but unpaid salary, which his estate later collected. Which statement about this item is correct?",
+  "choices": [
+   "It is included in the gross estate, does not receive a stepped-up basis, and is taxable income to the estate when collected, with an income tax deduction for estate tax attributable to it",
+   "It is included in the gross estate and receives a stepped-up basis, so it is not taxable income when collected",
+   "It is excluded from the gross estate because it is taxed as income",
+   "It is reported only on Ben's final individual income tax return"
+  ],
+  "correct": 0,
+  "exp": "Income in respect of a decedent is included in the gross estate, is denied a §1014 basis step-up, and is income to the recipient under §691, which allows a deduction for the related estate tax. A cash-basis decedent never reported the salary, so it is not on the final return."
+ },
+ {
+  "q": "Assume the gift tax annual exclusion is $19,000 per donee. Which of the following transfers made by Cy during the year results in a taxable gift?",
+  "choices": [
+   "A $40,000 contribution to a political organization",
+   "A $50,000 cash transfer to his adult daughter to buy a car",
+   "A $70,000 payment made directly to a hospital for a friend's surgery",
+   "$30,000 of food and housing provided for his minor child, as required by state law"
+  ],
+  "correct": 1,
+  "exp": "The cash to the daughter exceeds the annual exclusion by $31,000, a taxable gift. Political contributions (§2501), direct medical payments (§2503) and legally required support are not taxable gifts."
+ }
+]

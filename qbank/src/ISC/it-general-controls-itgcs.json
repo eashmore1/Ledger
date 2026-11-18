@@ -1,0 +1,420 @@
+[
+ {
+  "q": "An auditor plans to rely on an automated three-way match in the purchasing application. Testing reveals that developers have unrestricted access to move code into production without approval. What is the most significant implication?",
+  "choices": [
+   "The three-way match should be tested with a larger manual sample of invoices only",
+   "The deficiency affects only the IT department and not the financial statement audit",
+   "The auditor can still rely on the match because it was working on the date tested",
+   "The auditor may be unable to rely on the automated control operating consistently throughout the period without additional evidence"
+  ],
+  "correct": 3,
+  "exp": "Ineffective program change ITGCs mean the application logic could have been altered during the period, so a point-in-time test of the automated control cannot be extended to the whole period. ITGCs are pervasive and directly support the continued functioning of automated controls."
+ },
+ {
+  "q": "Which grouping best represents the typical domains of IT general controls relevant to financial reporting?",
+  "choices": [
+   "Input, processing and output controls",
+   "Access to programs and data, program changes, program development, and computer operations",
+   "Preventive, detective and corrective controls",
+   "Edit checks, batch totals and reasonableness tests"
+  ],
+  "correct": 1,
+  "exp": "ITGCs are commonly grouped into access to programs and data, program changes, program development (including acquisition), and computer operations. Input, processing and output controls are application controls that depend on these ITGCs."
+ },
+ {
+  "q": "Under AU-C 315 as amended by SAS 145, after identifying IT applications subject to risks arising from the use of IT, the auditor should:",
+  "choices": [
+   "Identify the related risks arising from IT and the general IT controls that address them",
+   "Test every ITGC in the entity regardless of relevance",
+   "Rely on the entity's IT strategy document without further procedures",
+   "Perform a penetration test of the entity's network"
+  ],
+  "correct": 0,
+  "exp": "SAS 145 requires the auditor to identify the IT applications and other aspects of the IT environment subject to risks arising from IT, those risks, and the general IT controls that address them. It does not require testing every ITGC or performing penetration tests."
+ },
+ {
+  "q": "An auditor tested an automated interest calculation in a prior year and found it effective. In the current year, ITGCs over program changes were tested and found effective, and no changes were made to the calculation. Which approach is most appropriate?",
+  "choices": [
+   "Retest the calculation using a sample of 60 loans",
+   "Abandon reliance because automated controls must be tested every quarter",
+   "Use a benchmarking strategy, verifying that the program has not changed and relying on the prior-year test",
+   "Rely on management's inquiry that the program is unchanged with no further evidence"
+  ],
+  "correct": 2,
+  "exp": "Benchmarking (baselining) allows reliance on a prior test of an automated control when change and access ITGCs are effective and evidence shows the program was not changed. Inquiry alone is not sufficient evidence that the program is unchanged."
+ },
+ {
+  "q": "The database administrator at a mid-sized company can directly update records in the general ledger tables outside the application, and these changes are not logged or reviewed. Which risk is most significant?",
+  "choices": [
+   "Slow system performance",
+   "Unauthorized changes to financial data that bypass application controls",
+   "Loss of data during backup",
+   "Excessive software licensing costs"
+  ],
+  "correct": 1,
+  "exp": "Direct database access bypasses application-level edits, approvals and audit trails, creating risk of unauthorized data changes. Logging and independent review of privileged data changes is a key ITGC over access to data."
+ },
+ {
+  "q": "A company's quarterly user access review sends managers a list of usernames only, without the roles or permissions assigned, and managers approve the list without changes. What is the primary weakness?",
+  "choices": [
+   "The review is performed too frequently",
+   "Managers should not be involved in access reviews",
+   "The review should be performed by external auditors",
+   "The review lacks sufficient precision, because reviewers cannot evaluate whether access rights are appropriate"
+  ],
+  "correct": 3,
+  "exp": "For a user access review to be effective, reviewers need information such as roles and permissions to judge appropriateness. Approving a bare username list cannot detect inappropriate privileges, so the control lacks precision."
+ },
+ {
+  "q": "An auditor wants to test whether program changes were authorized and tested before being moved to production. Which source provides the most reliable population from which to select a sample?",
+  "choices": [
+   "The list of changes in the change ticketing system",
+   "A system-generated log of changes actually made to production code or objects",
+   "A list provided by the IT manager of significant changes",
+   "Emails between developers"
+  ],
+  "correct": 1,
+  "exp": "Selecting from system-generated evidence of changes actually deployed tests completeness, including changes made outside the ticketing process. Sampling only from the ticketing system would miss unauthorized changes that bypassed it."
+ },
+ {
+  "q": "Which situation represents a segregation of duties conflict within IT that is most relevant to financial reporting risk?",
+  "choices": [
+   "A developer who also has the ability to migrate code to the production environment",
+   "A help desk technician who resets passwords after identity verification",
+   "A network engineer who configures firewalls",
+   "A business analyst who documents user requirements"
+  ],
+  "correct": 0,
+  "exp": "A developer with production migration rights can introduce unauthorized or untested code without independent review. Password resets with identity verification and requirements documentation are normal duties without such a conflict."
+ },
+ {
+  "q": "A company terminates an accounts payable clerk on March 1, but HR notifies IT on March 20, and the clerk's network and ERP access remain active in the interim. Which ITGC domain is deficient?",
+  "choices": [
+   "Program development",
+   "Program changes",
+   "Access to programs and data",
+   "Computer operations"
+  ],
+  "correct": 2,
+  "exp": "Timely removal of terminated users' access is a core control over access to programs and data. Computer operations covers batch processing, backups and incident handling, not user provisioning and deprovisioning."
+ },
+ {
+  "q": "The nightly batch job that posts subledger totals to the general ledger occasionally fails, but no one monitors job completion, and failures are discovered only at month-end close. Which ITGC is deficient?",
+  "choices": [
+   "Logical access security",
+   "Program change management",
+   "System development methodology",
+   "Job scheduling and monitoring within computer operations"
+  ],
+  "correct": 3,
+  "exp": "Monitoring of scheduled jobs and timely resolution of failures is a computer operations ITGC. The issue is not unauthorized access or code changes, but undetected processing failures."
+ },
+ {
+  "q": "Several system administrators share a single generic 'admin' account on the ERP server. What is the main control concern?",
+  "choices": [
+   "Activities cannot be attributed to individual users, undermining accountability and monitoring",
+   "Shared accounts reduce licensing costs",
+   "The account password will be longer",
+   "Generic accounts cannot be logged at all"
+  ],
+  "correct": 0,
+  "exp": "Shared privileged accounts prevent individual accountability, because logs show only the generic account. Logging still occurs, but it cannot identify who performed an action, which defeats the purpose of reviewing privileged activity."
+ },
+ {
+  "q": "An organization grants 'firefighter' emergency access to production for urgent fixes. Which control best mitigates the associated risk?",
+  "choices": [
+   "Disabling all logging during emergency access to speed resolution",
+   "Time-limited access granted on approved request, with activity logged and reviewed independently afterward",
+   "Allowing all developers permanent emergency access",
+   "Requiring emergency fixes to be documented in the next annual review"
+  ],
+  "correct": 1,
+  "exp": "Emergency access should be approved, temporary and subject to logging and after-the-fact independent review. Permanent access or delayed documentation defeats the purpose of controlling privileged emergency changes."
+ },
+ {
+  "q": "A company uses a SaaS general ledger. The provider supplies a SOC 1 Type 2 report with an unmodified opinion. Which statement is correct regarding the company's ITGCs?",
+  "choices": [
+   "The company has no ITGC responsibilities because the provider handles everything",
+   "The SOC 1 report replaces the need for the company to evaluate any controls",
+   "The company remains responsible for complementary user entity controls, such as provisioning and reviewing its own users' access",
+   "The company must test the provider's data center physically"
+  ],
+  "correct": 2,
+  "exp": "Under a shared responsibility model, user entities retain controls such as user access management and must implement CUECs listed in the SOC report. A physical inspection of the provider is not required when an appropriate SOC report is available."
+ },
+ {
+  "q": "During an ICFR audit, an auditor finds that ITGCs over access to the revenue application were ineffective for the first half of the year but remediated in July. Which consideration is most relevant for automated controls in that application?",
+  "choices": [
+   "Remediation in July eliminates all concerns for the year",
+   "Only manual controls are affected by ITGC deficiencies",
+   "The deficiency is automatically a material weakness",
+   "Whether there is evidence that automated controls and data were not inappropriately altered during the deficient period, such as through review of logs"
+  ],
+  "correct": 3,
+  "exp": "When ITGCs were ineffective for part of the period, the auditor considers whether alternative evidence (e.g., logs or comparison of program versions) shows that automated controls and data were not compromised. ITGC deficiencies are not automatically material weaknesses; their effect depends on the controls and risks they support."
+ },
+ {
+  "q": "A company's patch management process deploys critical operating system patches to production servers without first testing them in a non-production environment. Which risk is most directly increased?",
+  "choices": [
+   "Patches could disrupt processing or alter system behavior in production",
+   "Users will forget their passwords",
+   "Backups will be retained too long",
+   "The company will violate segregation of duties between AP and AR"
+  ],
+  "correct": 0,
+  "exp": "Patches are changes to infrastructure, and untested changes can cause outages or unintended effects on applications. Proper change management requires testing before production deployment, including for patches."
+ },
+ {
+  "q": "Which procedure provides the most persuasive evidence that password configuration settings comply with policy for an application relevant to ICFR?",
+  "choices": [
+   "Inquiry of the IT security manager",
+   "Reading the password policy document",
+   "Inspecting the system configuration settings directly in the application or directory service",
+   "Reviewing employee training records"
+  ],
+  "correct": 2,
+  "exp": "Inspecting the actual configured parameters provides direct evidence of how the system enforces passwords. Policies and inquiry describe intent but do not show that the settings were actually implemented."
+ },
+ {
+  "q": "A company backs up its financial systems nightly, but has never tested restoring data from the backups. Which conclusion is most appropriate?",
+  "choices": [
+   "The backup control is effective because backups are scheduled",
+   "Restoration testing is unnecessary for cloud-based backups",
+   "There is no assurance that backups can actually be used to recover data when needed",
+   "Backups are an application control rather than an ITGC"
+  ],
+  "correct": 2,
+  "exp": "Without periodic restoration testing, the company cannot know whether backups are complete and usable. Backup and recovery is a computer operations ITGC, not an application control."
+ },
+ {
+  "q": "An auditor identifies that the IT function has an effective process for granting access, but there is no periodic review of privileged access to the operating system and database hosting the ERP. Which type of risk is most likely to be unaddressed?",
+  "choices": [
+   "The risk that privileged users bypass application controls or change data without detection",
+   "The risk that end users enter incorrect invoice amounts",
+   "The risk that financial statements contain classification errors from GAAP misapplication",
+   "The risk that the company overpays for hardware"
+  ],
+  "correct": 0,
+  "exp": "Privileged access at the database and operating system layers can bypass application controls, so periodic review and monitoring are key. Data entry errors are addressed by application input controls, not privileged access reviews."
+ },
+ {
+  "q": "A company is acquiring a new ERP system to replace its legacy system. Which ITGC area is most directly relevant to ensuring that financial data are completely and accurately converted?",
+  "choices": [
+   "Logical access to the network",
+   "Job scheduling",
+   "Physical security of the data center",
+   "Program development and acquisition, including data conversion controls"
+  ],
+  "correct": 3,
+  "exp": "System implementation and data migration are covered by program development and acquisition ITGCs, including controls over completeness and accuracy of converted data. Job scheduling and physical security do not address conversion accuracy."
+ },
+ {
+  "q": "A financial reporting spreadsheet calculates the allowance for credit losses and is stored on a shared drive accessible to the entire finance department. Which control is most important for this end-user computing tool?",
+  "choices": [
+   "Converting the spreadsheet to PDF monthly",
+   "Restricting access, protecting formulas, and reviewing changes to the spreadsheet logic",
+   "Printing the spreadsheet for physical storage",
+   "Requiring larger font sizes for readability"
+  ],
+  "correct": 1,
+  "exp": "EUC tools that support significant accounts need ITGC-like controls, including access restriction, change control over formulas, and review of logic and inputs. Converting to PDF only preserves output and does not prevent errors in calculations."
+ },
+ {
+  "q": "Under PCAOB AS 2201, how do ITGC deficiencies generally affect the evaluation of ICFR?",
+  "choices": [
+   "They are always evaluated as material weaknesses because ITGCs are pervasive",
+   "They are irrelevant unless they relate to the general ledger",
+   "They are evaluated in relation to their effect on application controls and the risk of material misstatement in related accounts",
+   "They are reported only to the IT department"
+  ],
+  "correct": 2,
+  "exp": "ITGC deficiencies are evaluated based on their effect on the application controls and data they support and the related risk of material misstatement. They are not automatically material weaknesses merely because ITGCs are pervasive."
+ },
+ {
+  "q": "A company uses an identity and access management tool to automatically disable network accounts when HR marks an employee as terminated. What type of control is this?",
+  "choices": [
+   "Detective ITGC over computer operations",
+   "Manual application control over input",
+   "Corrective control over data backup",
+   "Automated preventive ITGC over access"
+  ],
+  "correct": 3,
+  "exp": "Automatically disabling accounts at termination prevents former employees from gaining access and is an access ITGC. It is preventive because it stops unauthorized access before it can occur."
+ },
+ {
+  "q": "Which control most directly addresses the risk that configuration settings for an automated control (such as a three-way match tolerance) are changed without authorization?",
+  "choices": [
+   "Restricting access to change configuration settings and logging and reviewing configuration changes",
+   "Annual security awareness training",
+   "Monthly bank reconciliations",
+   "Increasing the tolerance to reduce exceptions"
+  ],
+  "correct": 0,
+  "exp": "Configurable controls depend on access and change controls over their settings, so restricting and monitoring configuration changes protects them. Bank reconciliations are a business process control, not a control over application configuration."
+ },
+ {
+  "q": "An organization's change management policy requires that changes be tested by users. In practice, developers perform and sign off on all testing for their own changes. Which control principle is most directly violated?",
+  "choices": [
+   "Least privilege",
+   "Defense in depth",
+   "Independent user acceptance testing as part of segregation of duties",
+   "Data minimization"
+  ],
+  "correct": 2,
+  "exp": "User acceptance testing by business owners provides independent assurance that changes meet requirements. A developer approving his or her own work lacks independence, which is a segregation of duties failure rather than a least-privilege issue."
+ },
+ {
+  "q": "Which statement best describes the relationship between ITGCs and application controls?",
+  "choices": [
+   "Application controls support the effectiveness of ITGCs",
+   "ITGCs and application controls are independent and do not affect each other",
+   "ITGCs support the continued effective operation of application controls",
+   "ITGCs replace the need for application controls"
+  ],
+  "correct": 2,
+  "exp": "ITGCs, such as change and access controls, provide the environment in which automated application controls continue to function as designed. The relationship runs from ITGCs to application controls, not the reverse."
+ },
+ {
+  "q": "A company's incident management process logs IT incidents but does not track them to resolution or analyze recurring problems. Which ITGC area is weakest?",
+  "choices": [
+   "Program development",
+   "Computer operations, including incident and problem management",
+   "Logical access",
+   "Data conversion"
+  ],
+  "correct": 1,
+  "exp": "Tracking incidents to resolution and performing root cause analysis of recurring problems are computer operations activities. Program development relates to new systems, not operational incident handling."
+ },
+ {
+  "q": "An auditor identifies a report from the ERP showing all journal entries over $50,000, which management uses in a review control. Before relying on the review control, the auditor should:",
+  "choices": [
+   "Accept the report because it is system-generated",
+   "Evaluate whether the report is complete and accurate, including the ITGCs and report logic that produce it",
+   "Ask management to sign the report",
+   "Recalculate the general ledger totals only"
+  ],
+  "correct": 1,
+  "exp": "Information produced by the entity used in a control must be complete and accurate for the control to be effective; this depends on report logic, parameters and supporting ITGCs. System generation alone does not guarantee reliability."
+ },
+ {
+  "q": "Which situation would most likely allow an auditor to reduce testing of ITGCs over an application?",
+  "choices": [
+   "The application is newly custom developed in-house",
+   "Developers have access to the source code and production",
+   "The application is heavily customized",
+   "The application is a commercial off-the-shelf package whose source code cannot be modified by the entity"
+  ],
+  "correct": 3,
+  "exp": "When the entity cannot modify source code, the risk of unauthorized program changes is lower, which can reduce the extent of program change testing (configuration changes still matter). Custom or heavily modified applications increase program change risk."
+ },
+ {
+  "q": "A company uses infrastructure-as-a-service (IaaS) cloud hosting for its ERP. Under the shared responsibility model, which ITGC is most likely the company's responsibility rather than the provider's?",
+  "choices": [
+   "Physical security of the provider's data center",
+   "Hypervisor patching",
+   "Managing operating system patches and user access on the virtual machines it runs",
+   "Environmental controls such as power and cooling"
+  ],
+  "correct": 2,
+  "exp": "In IaaS, the customer manages the guest operating system, applications, data and access, while the provider handles physical facilities and virtualization layers. Physical and environmental controls are the provider's responsibility."
+ },
+ {
+  "q": "An organization's network password policy requires 14-character passwords, but the ERP application uses its own authentication with no complexity requirements. What should the auditor conclude?",
+  "choices": [
+   "Application-level authentication is a separate access layer that needs its own controls or must be integrated with the stronger directory authentication",
+   "The network policy automatically applies to the ERP",
+   "The ERP is protected because users must first log on to the network",
+   "Password requirements are irrelevant for ERP systems"
+  ],
+  "correct": 0,
+  "exp": "Each layer that independently authenticates users needs adequate controls, unless single sign-on ties it to the stronger directory. Relying on network login ignores the risk of access from within the network using weak application credentials."
+ },
+ {
+  "q": "An auditor tests a key automated control in the payroll system. Which ITGCs are most directly necessary to support reliance on that control throughout the year?",
+  "choices": [
+   "Physical access and environmental controls only",
+   "Program change and access controls over the payroll application",
+   "Help desk procedures for password resets only",
+   "Network bandwidth monitoring"
+  ],
+  "correct": 1,
+  "exp": "Program change and logical access controls provide assurance the automated control was not altered and that unauthorized users could not circumvent it. Environmental controls address availability, not the integrity of control logic."
+ },
+ {
+  "q": "Which procedure is most effective for testing whether terminated employees' access was removed timely?",
+  "choices": [
+   "Ask the IT manager whether terminated users are disabled",
+   "Read the termination policy",
+   "Review the list of current employees for unusual names",
+   "Compare a list of terminations from the HR system to account deactivation dates in the application"
+  ],
+  "correct": 3,
+  "exp": "Matching HR termination dates with system deactivation dates provides direct evidence of timeliness. Inquiry and reading policy provide evidence of design only."
+ },
+ {
+  "q": "A company's IT steering committee approves all major projects but no one monitors whether developers follow the documented SDLC methodology. This is primarily a weakness in:",
+  "choices": [
+   "Monitoring of program development ITGCs",
+   "Physical access controls",
+   "Input edit checks",
+   "Output distribution controls"
+  ],
+  "correct": 0,
+  "exp": "Without monitoring adherence to the SDLC methodology, development controls may not operate as designed. Edit checks and output controls are application controls unrelated to SDLC oversight."
+ },
+ {
+  "q": "An auditor learns that changes to the general ledger application are deployed by an automated pipeline that requires a peer-approved pull request before code can be merged and released. Which evidence best supports the operating effectiveness of this control?",
+  "choices": [
+   "A walkthrough of one change with the lead developer",
+   "Inquiry of developers that they always use the pipeline",
+   "Inspection of pipeline configuration enforcing approval, plus testing that it could not be bypassed and that its settings were not changed during the period",
+   "The organization chart of the development team"
+  ],
+  "correct": 2,
+  "exp": "For an automated change control, the auditor tests the configuration that enforces approval and the access controls that prevent bypassing or altering it. A single walkthrough or inquiry does not establish that the control could not be circumvented."
+ },
+ {
+  "q": "Which of the following is generally considered an application control rather than an ITGC?",
+  "choices": [
+   "A limit check that rejects payments over a set amount without secondary approval",
+   "Restricting access to the production environment",
+   "Monitoring backup job completion",
+   "Testing changes before production deployment"
+  ],
+  "correct": 0,
+  "exp": "A limit check operates within a specific application at the transaction level and is an application control. Restricting production access, backup monitoring and change testing are ITGCs that apply across applications."
+ },
+ {
+  "q": "A company outsources IT operations to a managed service provider that administers its servers. Which approach best gives the company assurance over ITGCs performed by the provider?",
+  "choices": [
+   "Assume the provider's controls are effective because it is a large firm",
+   "Ask the provider for its marketing brochure",
+   "Rely on the contract's indemnification clause",
+   "Obtain and evaluate a SOC 1 Type 2 report covering the relevant ITGCs, and implement any complementary user entity controls"
+  ],
+  "correct": 3,
+  "exp": "A SOC 1 Type 2 report gives evidence about the operating effectiveness of the provider's controls relevant to ICFR, and CUECs must be in place at the company. Indemnification shifts financial loss but provides no evidence about controls."
+ },
+ {
+  "q": "An auditor discovers that the company has no process to monitor changes made by IT administrators to the security settings of the ERP, such as user role definitions. What is the most likely effect?",
+  "choices": [
+   "The auditor can rely on segregation of duties built into the roles without further testing",
+   "Segregation of duties enforced by application roles may not be reliable, because role definitions could change without detection",
+   "Only the IT budget is affected",
+   "The financial statements are automatically misstated"
+  ],
+  "correct": 1,
+  "exp": "Application-enforced segregation of duties depends on the integrity of role definitions, which unmonitored security changes could compromise. This does not automatically misstate the financial statements but reduces the auditor's ability to rely on role-based controls."
+ },
+ {
+  "q": "Which deficiency would most likely undermine the reliability of automated controls across several financial applications at once?",
+  "choices": [
+   "A missing reasonableness check on hours in the payroll application",
+   "An incorrect approval limit assigned to one purchasing user",
+   "An undocumented manual review of revenue cut-off",
+   "Weak administrative access controls over the shared database server that hosts all of the financial applications"
+  ],
+  "correct": 3,
+  "exp": "A weakness in a shared infrastructure ITGC affects every application relying on that server, which is why ITGC deficiencies can be pervasive. The other deficiencies are confined to a single application or process."
+ }
+]

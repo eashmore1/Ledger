@@ -1,0 +1,420 @@
+[
+{
+"q": "Labco uses the regular research credit. Its current-year qualified research expenses (QREs) are $2,000,000. Its fixed-base percentage times average annual gross receipts for the prior four years produces a base amount of $1,200,000. What is Labco's regular research credit?",
+"choices": [
+"$160,000",
+"$200,000",
+"$400,000",
+"$240,000"
+],
+"correct": 0,
+"exp": "The base amount is the greater of $1,200,000 or the 50% minimum base ($1,000,000), so the credit is 20% x ($2,000,000 - $1,200,000) = $160,000. The $200,000 trap uses the 50% minimum base even though the computed base is higher."
+},
+{
+"q": "Biotek elects the alternative simplified credit (ASC). Its current-year QREs are $1,000,000, and its QREs for the three prior years were $600,000, $700,000 and $800,000. What is the ASC?",
+"choices": [
+"$42,000",
+"$91,000",
+"$140,000",
+"$60,000"
+],
+"correct": 1,
+"exp": "The ASC is 14% of QREs above 50% of the prior three-year average: 50% x $700,000 = $350,000, and 14% x ($1,000,000 - $350,000) = $91,000. The $42,000 trap subtracts the full $700,000 average instead of 50% of it."
+},
+{
+"q": "Newgen began research in the current year and had no QREs in any of the three preceding tax years. Its current-year QREs are $500,000, and it elects the alternative simplified credit. What is its credit?",
+"choices": [
+"$70,000",
+"$35,000",
+"$30,000",
+"$100,000"
+],
+"correct": 2,
+"exp": "When a taxpayer has no QREs in any of the three preceding years, the ASC is 6% of current QREs: 6% x $500,000 = $30,000. The $70,000 trap applies the normal 14% rate with a zero base."
+},
+{
+"q": "Tecno's U.S. research activities this year incurred: $800,000 of taxable wages to employees doing qualified research, $100,000 of supplies used in experimentation, $200,000 paid to an unrelated contractor for qualified research, $50,000 of depreciation on lab equipment, and $40,000 of lab utilities and rent. What are Tecno's total QREs?",
+"choices": [
+"$1,100,000",
+"$1,190,000",
+"$1,080,000",
+"$1,030,000"
+],
+"correct": 3,
+"exp": "QREs are wages ($800,000) + supplies ($100,000) + 65% of contract research ($130,000) = $1,030,000; depreciation, rent and utilities are not QREs under §41. The $1,100,000 trap counts 100% of the contract research."
+},
+{
+"q": "Which of the following activities is most likely qualified research for the §41 credit?",
+"choices": [
+"Developing a new manufacturing process through a process of experimentation to resolve technical uncertainty about its design",
+"Customer surveys to see which product features buyers prefer",
+"Modifying an existing product to meet one customer's specifications using known techniques after commercial production began",
+"Research performed at the company's lab in Germany"
+],
+"correct": 0,
+"exp": "Qualified research must be technological in nature, aim to develop a new or improved business component, and involve a process of experimentation to eliminate uncertainty. Surveys, adaptation after commercial production and foreign research are excluded by statute."
+},
+{
+"q": "Startco, a qualified small business, has a $700,000 research credit this year and no income tax liability. It makes the maximum payroll tax election, which for this year is $500,000. How much of the credit remains available as an income tax credit carryforward?",
+"choices": [
+"$700,000",
+"$200,000",
+"$0",
+"$500,000"
+],
+"correct": 1,
+"exp": "Up to $500,000 of the credit can be elected against employer payroll taxes, and the remaining $700,000 - $500,000 = $200,000 stays a general business credit that can be carried forward. Nothing is forfeited, so $0 is wrong."
+},
+{
+"q": "Which company is most likely eligible to elect to apply its research credit against employer payroll taxes for its 2025 tax year?",
+"choices": [
+"A company with $8 million of 2025 gross receipts that was formed in 2023",
+"A company formed in 2015 with $3 million of 2025 gross receipts",
+"A company formed in 2022 with $3.2 million of 2025 gross receipts and no gross receipts before 2022",
+"A company with no gross receipts that has been profitable from investment income since 2018"
+],
+"correct": 2,
+"exp": "A qualified small business must have gross receipts under $5 million for the year and no gross receipts in any year before the five-year period ending with the current year. The 2015 company fails the five-year test, and the $8 million company fails the receipts test."
+},
+{
+"q": "For its 2025 tax year, Corp X has a $100,000 research credit and elects the reduced credit so its §174A research deduction is not reduced. With a 21% corporate rate, what is the amount of the reduced credit?",
+"choices": [
+"$100,000",
+"$21,000",
+"$65,000",
+"$79,000"
+],
+"correct": 3,
+"exp": "Under the §280C election, the credit is reduced by the credit times the maximum corporate rate: $100,000 x (1 - 21%) = $79,000. The $65,000 trap confuses this with the 65% contract research rule."
+},
+{
+"q": "Assume that for tax years beginning after 2024, domestic research and experimental expenditures are deductible in full under §174A, while foreign research expenditures are amortized over 15 years beginning at the midpoint of the year paid. In 2025, a calendar-year corporation incurs $900,000 of domestic and $300,000 of foreign research expenditures. What is its 2025 deduction for these costs?",
+"choices": [
+"$910,000",
+"$920,000",
+"$1,200,000",
+"$930,000"
+],
+"correct": 0,
+"exp": "Domestic costs are deducted in full ($900,000), and foreign costs give half a year of 15-year amortization: $300,000 / 15 x 1/2 = $10,000, for a total of $910,000. The $920,000 trap takes a full year of foreign amortization."
+},
+{
+"q": "A large calendar-year corporation has $600,000 of unamortized domestic research expenditures capitalized under §174 in 2022 through 2024. Assume that for its first tax year beginning after 2024 it may elect to deduct the remaining amount either entirely in 2025 or ratably over 2025 and 2026. If it chooses the ratable option, how much does it deduct in 2025?",
+"choices": [
+"$600,000",
+"$300,000",
+"$120,000",
+"$40,000"
+],
+"correct": 1,
+"exp": "Ratably over the two-year period means $600,000 / 2 = $300,000 in 2025 and $300,000 in 2026. The $40,000 trap continues the old five-year amortization pattern instead of the accelerated recovery."
+},
+{
+"q": "In 2025, Sunco places in service energy property costing $1,000,000 and claims a 30% investment tax credit. Under §50, by how much must Sunco reduce the property's depreciable basis?",
+"choices": [
+"$300,000",
+"$0",
+"$150,000",
+"$450,000"
+],
+"correct": 2,
+"exp": "Depreciable basis is reduced by 50% of the energy investment credit: 50% x $300,000 = $150,000, leaving $850,000. Reducing basis by the full $300,000 credit is the trap."
+},
+{
+"q": "Delta claimed a $300,000 energy investment credit on property placed in service on January 1, Year 1. Delta sells the property on July 1, Year 3, which is after two full years but before three full years of service. How much of the credit is recaptured?",
+"choices": [
+"$300,000",
+"$60,000",
+"$120,000",
+"$180,000"
+],
+"correct": 3,
+"exp": "The recapture percentage falls by 20 points for each full year of service: disposition in the third year gives 60%, and 60% x $300,000 = $180,000. The $120,000 trap uses 40%, which applies only after three full years."
+},
+{
+"q": "A clean electricity investment credit facility costing $2,000,000 meets the prevailing wage and apprenticeship requirements (raising the base rate from 6% to 30%) and also qualifies for the 10-percentage-point energy community bonus. No other bonus applies. What is the credit?",
+"choices": [
+"$800,000",
+"$600,000",
+"$640,000",
+"$320,000"
+],
+"correct": 0,
+"exp": "With PWA met, the rate is 30% + 10 points = 40%, and 40% x $2,000,000 = $800,000. The $640,000 trap treats the bonus as 10% of the 30% rate (32%) rather than an additional 10 percentage points."
+},
+{
+"q": "Buyco, a calendar-year C corporation, pays $920,000 in cash to buy $1,000,000 of transferable clean energy credits under §6418 from an unrelated developer and uses them against its 2025 tax. What are Buyco's tax consequences?",
+"choices": [
+"It deducts the $920,000 and claims a $1,000,000 credit",
+"It claims the $1,000,000 credit; the $920,000 is not deductible, and the $80,000 discount is not income",
+"It claims a $920,000 credit, limited to the cash paid",
+"It claims the $1,000,000 credit and reports $80,000 of ordinary income"
+],
+"correct": 1,
+"exp": "Under §6418, the buyer claims the full credit, cannot deduct the cash paid, and does not recognize income on the discount, while the seller excludes the cash from income. The credit is not limited to the amount paid."
+},
+{
+"q": "A tax-exempt hospital installs solar energy property eligible for a clean energy investment credit. It has no federal income tax liability. How can it benefit from the credit?",
+"choices": [
+"It cannot benefit, because exempt organizations owe no income tax",
+"It can sell the credit only through a §6418 transfer",
+"It can make an elective payment election under §6417 and receive the credit amount as a refund",
+"It can claim the credit against its payroll tax withholding"
+],
+"correct": 2,
+"exp": "§6417 lets applicable entities such as tax-exempt organizations and governments treat certain clean energy credits as tax payments refundable in cash. Transfer under §6418 is for entities that are not applicable entities, so it is not the exempt hospital's route."
+},
+{
+"q": "A C corporation that is not subject to the corporate AMT has regular tax liability of $210,000 and $200,000 of general business credits for the year. The §38 limitation allows credits up to net income tax minus 25% of net regular tax liability above $25,000. How much of the credit can it use this year?",
+"choices": [
+"$200,000",
+"$210,000",
+"$185,000",
+"$163,750"
+],
+"correct": 3,
+"exp": "The limit is $210,000 - 25% x ($210,000 - $25,000) = $210,000 - $46,250 = $163,750, so $36,250 carries over. The $200,000 trap ignores the limitation."
+},
+{
+"q": "A corporation has $36,250 of general business credits it cannot use this year because of the §38 limitation. What are the carryover rules?",
+"choices": [
+"Carry back 1 year, then forward 20 years",
+"Carry back 2 years, then forward 5 years",
+"Carry forward indefinitely, with no carryback",
+"Carry back 3 years, then forward 15 years"
+],
+"correct": 0,
+"exp": "Under §39, unused general business credits are carried back 1 year and forward 20 years. Indefinite carryforward applies to post-2017 NOLs, not business credits."
+},
+{
+"q": "Maria is a partner in a partnership with average annual gross receipts of $40 million over the prior three years, which passes a research credit through to her. She is subject to the individual AMT. Which statement is correct?",
+"choices": [
+"The credit cannot offset AMT because research credits never offset AMT",
+"As an eligible small business, the partnership's research credit can offset Maria's AMT",
+"The credit must be applied against payroll tax",
+"The credit is converted into a deduction for AMT purposes"
+],
+"correct": 1,
+"exp": "Under §38, research credits of an eligible small business (average gross receipts of $50 million or less) can offset AMT, and the test is applied at the partnership and partner levels. The payroll offset is for qualified small businesses with under $5 million of receipts and is elective."
+},
+{
+"q": "Engco performs development work for a customer under a fixed-price contract. Engco is paid whether or not the research succeeds, and the customer gets all rights to the results. How do the research costs affect Engco's research credit?",
+"choices": [
+"They are QREs for Engco because Engco performs the work",
+"65% of the costs are QREs for Engco",
+"They are not QREs for Engco because the research is funded",
+"They are QREs for Engco only if it also pays the employee wages"
+],
+"correct": 2,
+"exp": "Research is funded, and excluded for the performer, when payment does not depend on success or when the performer keeps no substantial rights. Here both conditions apply, so Engco has no QREs, and the 65% rule applies to the customer instead."
+},
+{
+"q": "Retailco develops software solely for internal general and administrative use (an internal accounting system). Beyond the usual four-part test, what additional standard must the software development meet to qualify for the research credit?",
+"choices": [
+"It must be developed outside the United States",
+"It must be sold to third parties within one year",
+"It must be funded by a government grant",
+"The high threshold of innovation test: it must be innovative, involve significant economic risk, and not be commercially available"
+],
+"correct": 3,
+"exp": "Internal-use software must also satisfy the high threshold of innovation test under the regulations. Software developed for sale or license does not face this extra test."
+},
+{
+"q": "A developer is deciding between a production tax credit (per kWh over 10 years) and an investment tax credit (percentage of basis) for a new renewable facility. Which factor most favors electing the PTC?",
+"choices": [
+"High expected electricity production relative to the facility's capital cost",
+"A very high construction cost with low expected output",
+"A plan to sell the facility in Year 2",
+"A need for the largest possible credit in the year placed in service"
+],
+"correct": 0,
+"exp": "The PTC rewards output, so efficient, high-production facilities generally do better with it, while the ITC favors costly projects with modest output and gives an upfront benefit. Selling early also creates ITC recapture risk, which does not support the PTC choice."
+},
+{
+"q": "Assume a production tax credit rate of 3.0 cents per kWh for a facility that meets the prevailing wage and apprenticeship requirements. In 2025 the facility produced 50,000,000 kWh, sold 45,000,000 kWh to unrelated utilities, and used 5,000,000 kWh on site. What is the PTC?",
+"choices": [
+"$1,500,000",
+"$1,350,000",
+"$270,000",
+"$150,000"
+],
+"correct": 1,
+"exp": "The PTC applies only to electricity produced and sold to an unrelated person: 45,000,000 x $0.03 = $1,350,000. The $1,500,000 trap includes the electricity used on site."
+},
+{
+"q": "In 2025, when the §25D residential clean energy credit was 30% of qualified costs, the Lees installed solar panels for $24,000 and battery storage for $6,000 at their home. Their 2025 tax liability before credits is $5,000, and they have no other credits. What is their 2025 credit and the amount carried forward?",
+"choices": [
+"$9,000 used; $0 carried forward",
+"$7,200 used; $0 carried forward",
+"$5,000 used; $4,000 carried forward",
+"$5,000 used; $0 carried forward"
+],
+"correct": 2,
+"exp": "The credit is 30% x ($24,000 + $6,000) = $9,000. It is nonrefundable, so $5,000 offsets the 2025 tax and the unused $4,000 carries forward under §25D. Batteries of at least 3 kWh capacity qualify."
+},
+{
+"q": "For 2025, assume the §25C energy efficient home improvement credit is 30% of costs, with a $2,000 annual limit for heat pumps, a separate $1,200 aggregate annual limit for other items, and a $600 limit for windows. The Parks spent $10,000 on a qualifying heat pump, $2,000 on qualifying windows and $1,000 on insulation. What is their credit?",
+"choices": [
+"$3,900",
+"$3,200",
+"$3,000",
+"$2,900"
+],
+"correct": 3,
+"exp": "Heat pump: 30% x $10,000 = $3,000, limited to $2,000. Windows: $600 (30% x $2,000 = $600). Insulation: $300. The non-heat-pump items total $900, under $1,200, so the credit is $2,000 + $900 = $2,900. The $3,900 trap ignores the heat pump cap."
+},
+{
+"q": "In 2025, Grill Co. hired three Work Opportunity Tax Credit-certified employees. Assume the credit is 40% of first-year wages up to $6,000 for employees who work at least 400 hours, and 25% for those who work 120 to 399 hours. Ann worked 500 hours and earned $9,000; Bo worked 300 hours and earned $5,000; Cy worked 100 hours and earned $1,500. What is the WOTC?",
+"choices": [
+"$3,650",
+"$4,400",
+"$4,025",
+"$3,000"
+],
+"correct": 0,
+"exp": "Ann: 40% x $6,000 = $2,400; Bo: 25% x $5,000 = $1,250; Cy: nothing (under 120 hours). The total is $3,650. The $4,400 trap gives Bo the 40% rate."
+},
+{
+"q": "Grill Co. paid $120,000 of wages to WOTC-certified employees and claims a $3,650 Work Opportunity Tax Credit. What is the effect on its wage deduction?",
+"choices": [
+"No effect, because credits and deductions are independent",
+"The wage deduction is reduced by $3,650 to $116,350",
+"The wage deduction is reduced by 21% of the credit",
+"The wages must be capitalized"
+],
+"correct": 1,
+"exp": "§280C requires the wage deduction to be reduced by the amount of the WOTC, to prevent a double benefit. The 21% reduction is how the reduced research credit election works, not this rule."
+},
+{
+"q": "A startup in its third tax year (so its fixed-base percentage is 3%) has $800,000 of QREs and average annual gross receipts of $10,000,000 for the computation period. What is its regular research credit?",
+"choices": [
+"$100,000",
+"$60,000",
+"$80,000",
+"$160,000"
+],
+"correct": 2,
+"exp": "The computed base is 3% x $10,000,000 = $300,000, but the base cannot be less than 50% of current QREs ($400,000), so the credit is 20% x ($800,000 - $400,000) = $80,000. The $100,000 trap uses the $300,000 computed base."
+},
+{
+"q": "Which of the following costs incurred in a qualified U.S. research project is a qualified research expense?",
+"choices": [
+"The cost of land purchased for a new research campus",
+"Depreciation on lab equipment",
+"Wages paid to researchers working in the company's Canadian lab",
+"Supplies consumed in building and testing prototypes"
+],
+"correct": 3,
+"exp": "Supply QREs include tangible property used and consumed in qualified research, other than land and depreciable property. Foreign research is excluded, so Canadian wages are not QREs."
+},
+{
+"q": "For its 2025 tax year, assume §280C requires the §174A deduction for domestic research expenditures to be reduced by the research credit unless the taxpayer elects a reduced credit. A corporation has $1,000,000 of domestic research expenditures and a $100,000 research credit and does not make the election. What is its §174A deduction?",
+"choices": [
+"$900,000",
+"$1,000,000",
+"$979,000",
+"$921,000"
+],
+"correct": 0,
+"exp": "Without the election, the deduction is reduced by the full credit: $1,000,000 - $100,000 = $900,000. Electing the reduced credit instead gives a $79,000 credit with the full $1,000,000 deduction."
+},
+{
+"q": "A corporation's QREs have grown quickly, but it lacks reliable gross receipts records for the 1984 through 1988 base period, and its gross receipts have grown sharply since then. Which planning recommendation is most appropriate?",
+"choices": [
+"Use the regular credit, because it always gives the larger credit",
+"Elect the alternative simplified credit, which depends only on the prior three years' QREs and not on gross receipts",
+"Claim no credit, because base-period records are required for every method",
+"Use the payroll tax election to avoid computing a base"
+],
+"correct": 1,
+"exp": "The ASC avoids the fixed-base percentage and gross receipts history altogether, and often beats the regular credit for companies with growing receipts. The payroll election is limited to qualified small businesses and does not remove the need to compute a credit."
+},
+{
+"q": "Parent and its two wholly owned subsidiaries form a controlled group. Only Sub 2 conducts research. How is the group's research credit determined?",
+"choices": [
+"Each member computes its own credit separately, with no aggregation",
+"Only Sub 2 computes a credit, using its own gross receipts",
+"The group is treated as a single taxpayer for computing the credit, and the credit is allocated among the members",
+"Parent claims the entire credit as the common parent"
+],
+"correct": 2,
+"exp": "Under §41 and its regulations, all members of a controlled group are treated as a single taxpayer to compute the credit, which is then allocated among them based on their stand-alone QREs. This stops companies from manipulating the base by moving research among entities."
+},
+{
+"q": "A taxpayer is preparing an amended return to claim a research credit refund. Under current IRS requirements, which information must the claim include?",
+"choices": [
+"Only the total QRE amount and the computed credit",
+"A signed statement from an engineer certifying the research",
+"Copies of all payroll records for the year",
+"The business components, the research activities for each, the individuals who performed them, and the information each sought to discover"
+],
+"correct": 3,
+"exp": "The IRS requires refund claims for the research credit to identify each business component, the research activities, the individuals involved and the information sought, along with the QRE totals. Totals alone make the claim deficient."
+},
+{
+"q": "A corporation has research credits in three categories: a carryforward from 2020, a carryforward from 2022, and a current 2025 credit. Its §38 limitation allows only part of them to be used this year. In what order are they used?",
+"choices": [
+"2020 carryforward, then 2022 carryforward, then the 2025 credit",
+"The 2025 credit first, then carryforwards from newest to oldest",
+"Pro rata among all three",
+"The taxpayer may choose any order"
+],
+"correct": 0,
+"exp": "General business credits are applied first-in, first-out under §38: carryforwards (oldest first), then current-year credits, then carrybacks. This ordering reduces the risk that old credits expire."
+},
+{
+"q": "Jill, single, has AGI of $150,000 and owns an interest in a low-income housing project that generates a passive low-income housing credit. Her taxable income stays in the 24% bracket even after a $25,000 reduction, and she has no passive income. Under §469, credits are allowed up to the tax on a $25,000 deduction equivalent, phasing out for AGI above $200,000. What is the most credit she can use this year?",
+"choices": [
+"$0, because she has no passive income",
+"$6,000",
+"$25,000",
+"$5,250"
+],
+"correct": 1,
+"exp": "The deduction equivalent of $25,000 at her 24% marginal rate supports $6,000 of credits, and her AGI is below the phase-out. The low-income housing credit does not require active participation, and $25,000 is a deduction equivalent, not a credit amount."
+},
+{
+"q": "Solarco sells clean energy investment credits to Buyco under §6418. Two years later, Solarco's facility has a recapture event. Who is generally liable for the recapture tax?",
+"choices": [
+"Solarco, the original owner",
+"Solarco and Buyco equally",
+"Buyco, the transferee, though Solarco must notify Buyco of the event",
+"Neither, because transferred credits cannot be recaptured"
+],
+"correct": 2,
+"exp": "Under §6418 and its regulations, ITC recapture falls on the transferee taxpayer, and the transferor must notify it of the recapture event. Buyers manage this risk through indemnities and insurance in the purchase agreement."
+},
+{
+"q": "A domestic manufacturing company has a $250,000 research credit and $90,000 of regular tax after other credits. Its tentative minimum tax is zero, and it is not a qualified small business. With a 21% rate, which planning action best recovers value from the research credit this year?",
+"choices": [
+"Making a payroll tax election",
+"Switching from the ASC to the regular credit",
+"Making an elective payment election under §6417",
+"Accelerating taxable income (for example, by forgoing bonus depreciation or other elections) so the credit offsets more tax, if the time value of the credit justifies it"
+],
+"correct": 3,
+"exp": "Because the §38 limitation and low tax liability keep the credit from being used, raising taxable income lets more of the credit be used now. The payroll election requires qualified small business status, and the research credit is not an elective payment credit for a for-profit company."
+},
+{
+"q": "Assume a research credit employee is treated as performing qualified services for 100% of their wages if at least 80% of their time is spent on qualified services (the 'substantially all' rule), and otherwise in proportion to their time. Engineer Kai earned $150,000 and spent 85% of his time on qualified research; technician Lu earned $100,000 and spent 50% of her time on qualified research. What are the wage QREs?",
+"choices": [
+"$177,500",
+"$250,000",
+"$127,500",
+"$200,000"
+],
+"correct": 3,
+"exp": "Kai meets the 80% substantially all threshold, so all $150,000 counts; Lu counts 50% x $100,000 = $50,000; the total is $200,000. The $177,500 trap prorates Kai's wages at 85%."
+},
+{
+"q": "Startco, a qualified small business, elects to apply $400,000 of its research credit against payroll taxes. Assume the election offsets employer Social Security tax up to $250,000 first, then employer Medicare tax up to $250,000, and that Startco's employer Social Security tax for the relevant periods is $300,000 with enough Medicare tax to absorb any remainder. How much of the credit offsets employer Medicare tax?",
+"choices": [
+"$150,000",
+"$100,000",
+"$0",
+"$200,000"
+],
+"correct": 0,
+"exp": "The Social Security portion is capped at $250,000 even though $300,000 of tax is available, so the remaining $400,000 - $250,000 = $150,000 offsets Medicare tax. The $0 trap ignores the $250,000 Social Security cap."
+}
+]

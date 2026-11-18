@@ -1,0 +1,420 @@
+[
+ {
+  "q": "Ann, single, age 40, is an active participant in her employer's 401(k) plan and has modified AGI of $86,000. Assume the IRA contribution limit is $7,500, and the deduction phase-out range for an active participant filing single is $81,000 to $91,000. What is the maximum deductible traditional IRA contribution she can make?",
+  "choices": [
+   "$3,750",
+   "$7,500",
+   "$0",
+   "$5,250"
+  ],
+  "correct": 0,
+  "exp": "She is halfway through the $10,000 phase-out range ($5,000 ÷ $10,000), so the deductible limit is reduced by 50%: $7,500 × 50% = $3,750 under §219(g). Answering $0 treats active participation as an absolute bar, but it only triggers the phase-out."
+ },
+ {
+  "q": "Ben, age 45, is an active participant in his employer's retirement plan, and his wife Cara, age 44, has no earned income and no plan coverage. Their joint modified AGI is $200,000, and Ben's wages easily exceed both contributions. Assume the IRA limit is $7,500 per spouse; the joint phase-out range for an active participant is $129,000 to $149,000; and the phase-out range for a spouse who is not an active participant but is married to one is $242,000 to $252,000. What is the total deductible traditional IRA contribution for the couple?",
+  "choices": [
+   "$7,500",
+   "$0",
+   "$15,000",
+   "$3,750"
+  ],
+  "correct": 0,
+  "exp": "Ben's MAGI exceeds the top of his range, so his deduction is zero; Cara's deduction uses the higher $242,000–$252,000 range under §219(g), so her full $7,500 spousal IRA contribution is deductible. Answering $0 wrongly applies Ben's active-participant range to Cara."
+ },
+ {
+  "q": "Dev, single, has modified AGI of $156,000. Assume the Roth IRA contribution limit is $7,500 and the Roth phase-out range for single filers is $150,000 to $165,000. What is the maximum Roth IRA contribution Dev can make?",
+  "choices": [
+   "$4,500",
+   "$3,000",
+   "$7,500",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Dev is 6/15 (40%) of the way through the phase-out, so his limit is reduced by 40%: $7,500 × 60% = $4,500 under §408A. Answering $3,000 confuses the 40% reduction with the remaining allowable amount."
+ },
+ {
+  "q": "Eva makes a $7,000 nondeductible contribution to a traditional IRA and converts $7,000 to a Roth IRA a week later. On December 31, after the conversion, her only other IRA, a rollover IRA holding pre-tax money, has a balance of $93,000. She has no other IRA basis. How much of the conversion is taxable?",
+  "choices": [
+   "$0",
+   "$6,510",
+   "$7,000",
+   "$490"
+  ],
+  "correct": 1,
+  "exp": "Under the §408 pro rata rule, all traditional IRAs are combined: basis of $7,000 ÷ ($93,000 + $7,000) = 7% of the conversion is nontaxable ($490), so $6,510 is taxable. The 'backdoor Roth' result of $0 holds only if she has no pre-tax IRA balances at year end."
+ },
+ {
+  "q": "Fred, age 52, withdraws $30,000 from his traditional IRA (no basis): $10,000 for his first home purchase (he has never used this exception), $8,000 for his son's qualified college tuition, and $12,000 to pay credit card debt. What additional tax under §72(t) does Fred owe?",
+  "choices": [
+   "$3,000",
+   "$2,000",
+   "$1,200",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "IRA distributions for qualified higher education expenses and up to $10,000 of first-time homebuyer costs are exempt from the 10% additional tax, leaving $12,000 × 10% = $1,200. All $30,000 is still subject to regular income tax. Answering $3,000 ignores the IRA-specific exceptions."
+ },
+ {
+  "q": "Gia separated from service at age 56 and wants to draw $40,000 from her former employer's 401(k) plan this year without the 10% additional tax. Which approach accomplishes this?",
+  "choices": [
+   "Leave the money in the 401(k) plan and take the $40,000 distribution directly from the plan",
+   "Roll the entire balance to an IRA, then withdraw $40,000 from the IRA",
+   "Take the $40,000 from her IRA under the age-55 separation exception",
+   "Roll the balance to an IRA and take the withdrawal after a 60-day holding period"
+  ],
+  "correct": 0,
+  "exp": "The §72(t) exception for separation from service in or after the year the employee turns 55 applies only to distributions from the employer's qualified plan, not to IRAs. Rolling the money to an IRA first forfeits the exception."
+ },
+ {
+  "q": "Hank, age 45, opened a Roth IRA eight years ago. The account holds $30,000 of contributions (no conversions) and $20,000 of earnings. He withdraws $35,000 for a nonqualified purpose. How much of the withdrawal is included in his gross income?",
+  "choices": [
+   "$35,000",
+   "$14,000",
+   "$0",
+   "$5,000"
+  ],
+  "correct": 3,
+  "exp": "Roth distributions come out of regular contributions first, tax-free, under §408A ordering rules: $30,000 is a return of contributions and the remaining $5,000 is earnings, which are taxable (and subject to the 10% additional tax) because Hank is under 59½. Answering $14,000 prorates earnings as though the pro rata rule for traditional IRAs applied."
+ },
+ {
+  "q": "Iris, age 75, had a traditional IRA balance of $500,000 on December 31 of last year. Her life expectancy factor under the Uniform Lifetime Table for this year is 24.6. What is her required minimum distribution for this year?",
+  "choices": [
+   "$20,325",
+   "$20,000",
+   "$12,500",
+   "$21,277"
+  ],
+  "correct": 0,
+  "exp": "The RMD is the prior year-end balance divided by the distribution period: $500,000 ÷ 24.6 = $20,325. Dividing by 25 or using the current year's balance are common errors."
+ },
+ {
+  "q": "Jake failed to take $20,000 of his required minimum distribution this year. He takes the shortfall and files the required return within the correction window allowed under SECURE 2.0. What excise tax applies to the shortfall?",
+  "choices": [
+   "$10,000",
+   "$5,000",
+   "$2,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Section 4974 now imposes a 25% excise tax on an RMD shortfall, reduced to 10% when the failure is corrected timely within the correction window: $20,000 × 10% = $2,000. The $10,000 result uses the former 50% rate."
+ },
+ {
+  "q": "Kim died this year at age 68 with a traditional IRA. Under the SECURE Act, which beneficiary may stretch distributions over his or her own life expectancy instead of emptying the account by the end of the tenth year after death?",
+  "choices": [
+   "Kim's 40-year-old son, who is in good health",
+   "Kim's 30-year-old niece",
+   "A see-through trust for Kim's adult grandchildren",
+   "Kim's 64-year-old brother, who is not disabled or chronically ill"
+  ],
+  "correct": 3,
+  "exp": "An eligible designated beneficiary under §401 includes an individual not more than 10 years younger than the decedent, so the 64-year-old brother qualifies. Adult children, a niece, and trusts for adult grandchildren are non-eligible designated beneficiaries subject to the 10-year rule."
+ },
+ {
+  "q": "Lena, age 61, earns $300,000 and participates in her employer's 401(k) plan. Assume the elective deferral limit is $24,500, the standard catch-up for those age 50 and over is $8,000, and the enhanced catch-up for those ages 60 through 63 is $11,250. What is the maximum elective deferral Lena can make this year?",
+  "choices": [
+   "$24,500",
+   "$32,500",
+   "$35,750",
+   "$43,750"
+  ],
+  "correct": 2,
+  "exp": "SECURE 2.0 replaces the standard catch-up with the higher catch-up for participants ages 60–63: $24,500 + $11,250 = $35,750. Adding both catch-ups ($43,750) is not allowed. Because her prior-year wages are high, the catch-up must be made as Roth contributions, but the dollar limit is unchanged."
+ },
+ {
+  "q": "Mo is a self-employed consultant with $100,000 of Schedule C net profit and no employees. His deduction for one-half of self-employment tax is $7,065. What is the maximum deductible contribution to his SEP IRA, assuming the 25% contribution rate is the plan maximum?",
+  "choices": [
+   "$25,000",
+   "$23,234",
+   "$20,000",
+   "$18,587"
+  ],
+  "correct": 3,
+  "exp": "For a self-employed person, the 25% rate is applied to compensation net of the contribution itself, which works out to 20% of net earnings after the half-SE-tax deduction: ($100,000 − $7,065) × 20% = $18,587. Applying 25% directly to $92,935 ($23,234) ignores the circular reduction."
+ },
+ {
+  "q": "Nora owns a business with 12 employees and wants to set up a SEP IRA that makes a 15% contribution for herself. Which statement about the plan is correct?",
+  "choices": [
+   "She may limit contributions to herself and key employees",
+   "Employees may make their own salary-deferral contributions to the SEP",
+   "She must contribute the same percentage of compensation for every eligible employee",
+   "Contributions vest over a six-year graded schedule"
+  ],
+  "correct": 2,
+  "exp": "SEP contributions must be made at a uniform percentage of compensation for all eligible employees and are immediately 100% vested under §408(k). New SEPs do not allow elective salary deferrals, which are a feature of 401(k) and SIMPLE plans."
+ },
+ {
+  "q": "In Year 1, Omar made a $3,000 excess contribution to his traditional IRA and did not withdraw it, or its earnings, by the due date of his Year 1 return. What excise tax does Omar owe for Year 1 on the excess?",
+  "choices": [
+   "$180",
+   "$300",
+   "$600",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Section 4973 imposes a 6% excise tax on an excess contribution for each year it remains in the account at year end: $3,000 × 6% = $180, and the tax recurs each year until corrected. The $300 figure uses the 10% early-distribution rate, which is a different penalty."
+ },
+ {
+  "q": "Pia received a check for her entire IRA balance in March and redeposited it into another IRA within 60 days. In November, she wants to move a second IRA to a new custodian. Which method avoids a problem with the rollover rules?",
+  "choices": [
+   "Have the funds moved directly from one IRA trustee to the other",
+   "Receive a distribution check and redeposit it within 60 days",
+   "Receive the funds and redeposit them within 30 days",
+   "Any method, because the one-rollover rule applies per account"
+  ],
+  "correct": 0,
+  "exp": "An individual may make only one IRA-to-IRA indirect (60-day) rollover in any 12-month period, counted across all of the individual's IRAs. Direct trustee-to-trustee transfers are not rollovers and are unlimited. The limit is per taxpayer, not per account."
+ },
+ {
+  "q": "Raj, age 45, left his job and requested a $100,000 lump-sum distribution of his 401(k) (all pre-tax). The plan withheld 20% and paid him $80,000, which he deposited in a rollover IRA within 60 days. He did not replace the withheld amount. How much is included in his gross income?",
+  "choices": [
+   "$0",
+   "$80,000",
+   "$100,000",
+   "$20,000"
+  ],
+  "correct": 3,
+  "exp": "Only the $80,000 actually rolled over is excluded; the $20,000 withheld is a taxable distribution and is also subject to the 10% additional tax because Raj is under 55 at separation. Answering $0 assumes withholding is just a credit. To roll over the full amount, he would have had to deposit $20,000 of other funds."
+ },
+ {
+  "q": "Sue receives a lump-sum distribution from her employer's 401(k) that includes employer stock with a plan cost basis of $50,000 and an FMV of $300,000. She moves the stock to a taxable brokerage account and does not sell it this year. How much ordinary income does she recognize this year on the stock?",
+  "choices": [
+   "$300,000",
+   "$250,000",
+   "$50,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Under §402(e)(4), on a lump-sum distribution of employer securities, only the plan's cost basis ($50,000) is taxed currently as ordinary income; the $250,000 net unrealized appreciation is taxed as long-term capital gain when the stock is sold. Taxing the full FMV ignores the NUA rule."
+ },
+ {
+  "q": "Tom's full retirement age is 67, and his monthly Social Security benefit at that age would be $2,000. Delayed retirement credits accrue at 8% per year. If he waits until age 70 to claim, what will his monthly benefit be, ignoring cost-of-living adjustments?",
+  "choices": [
+   "$2,480",
+   "$2,519",
+   "$2,160",
+   "$2,240"
+  ],
+  "correct": 0,
+  "exp": "Delayed retirement credits are simple, not compounded: 8% × 3 years = 24%, so $2,000 × 1.24 = $2,480. Compounding the credits gives $2,519, which overstates the benefit."
+ },
+ {
+  "q": "Una paid $20,000 to buy an existing $200,000 life insurance policy on the life of an unrelated business acquaintance and then paid $10,000 of premiums. The insured died and Una collected $200,000. No exception applies. How much of the proceeds is taxable to Una?",
+  "choices": [
+   "$0",
+   "$180,000",
+   "$200,000",
+   "$170,000"
+  ],
+  "correct": 3,
+  "exp": "Under the §101 transfer-for-value rule, the exclusion is limited to the consideration paid plus later premiums: $200,000 − ($20,000 + $10,000) = $170,000 taxable. Excluding all the proceeds ignores the rule, and subtracting only the purchase price ($180,000) ignores the premiums."
+ },
+ {
+  "q": "Vince paid $60,000 for a single-life annuity that pays $10,000 a year. The expected return under the annuity is $100,000. How much of each $10,000 annual payment is included in his gross income?",
+  "choices": [
+   "$6,000",
+   "$10,000",
+   "$0",
+   "$4,000"
+  ],
+  "correct": 3,
+  "exp": "Under §72, the exclusion ratio is investment ÷ expected return = $60,000 ÷ $100,000 = 60%, so $6,000 of each payment is excluded and $4,000 is taxable. The $6,000 answer reverses the excluded and taxable portions."
+ },
+ {
+  "q": "Wen withdraws $20,000 from her daughter's §529 plan and uses it for a family vacation. Contributions make up 70% of the account and earnings 30%. What are the federal tax consequences of the withdrawal?",
+  "choices": [
+   "$20,000 included in income and a $2,000 additional tax",
+   "$6,000 included in income and a $600 additional tax",
+   "$6,000 included in income and no additional tax",
+   "$0 included in income because contributions are withdrawn first"
+  ],
+  "correct": 1,
+  "exp": "A nonqualified §529 distribution is prorated between contributions and earnings: the $6,000 earnings portion is taxable under §72, plus the §529 10% additional tax ($600). The 'contributions first' rule applies to Roth IRAs, not to §529 plans."
+ },
+ {
+  "q": "Xavier's §529 account for his daughter has been open for 16 years. She finished college with $30,000 left over. Assume the lifetime limit on §529-to-Roth IRA rollovers is $35,000, and the Roth IRA annual contribution limit is $7,500. Which statement about rolling the leftover funds to a Roth IRA for the daughter is correct?",
+  "choices": [
+   "The full $30,000 can be rolled over this year, regardless of her compensation",
+   "The rollover is subject to the Roth income phase-out based on the daughter's MAGI",
+   "The rollover is permitted only to a Roth IRA owned by Xavier",
+   "Contributions made to the §529 account in the last five years (and their earnings) are not eligible, and the yearly rollover is limited to the Roth annual limit reduced by her other IRA contributions"
+  ],
+  "correct": 3,
+  "exp": "SECURE 2.0 permits §529-to-Roth rollovers for the beneficiary if the account has been open at least 15 years, excludes contributions from the past five years, and limits each year's rollover to the Roth annual limit less her other IRA contributions, up to the lifetime cap. The Roth income phase-out is waived for these rollovers, but she still needs compensation at least equal to the rollover amount."
+ },
+ {
+  "q": "Yara, age 67, withdraws $10,000 from her HSA to pay for a cruise. She has no medical expenses this year. What is the tax effect of the withdrawal?",
+  "choices": [
+   "$10,000 included in income and a $2,000 additional tax",
+   "$0 included in income because she is over 65",
+   "$10,000 included in income with no additional tax",
+   "$10,000 included in income and a $1,000 additional tax"
+  ],
+  "correct": 2,
+  "exp": "Under §223, a nonqualified HSA distribution is included in income, but the 20% additional tax does not apply after age 65, death, or disability; after 65 an HSA works like a traditional IRA for non-medical withdrawals. The 20% additional tax applies only to those under 65."
+ },
+ {
+  "q": "Zeke, age 76, has $400,000 in a designated Roth account in his former employer's 401(k) plan. Under current law, what are his required minimum distribution obligations for this account?",
+  "choices": [
+   "He must take RMDs because Roth 401(k) accounts follow the same rules as pre-tax 401(k) accounts",
+   "He must roll the account to a Roth IRA by age 73 to avoid RMDs",
+   "He must take RMDs, but they are tax-free",
+   "He has no lifetime RMDs from the designated Roth account"
+  ],
+  "correct": 3,
+  "exp": "SECURE 2.0 eliminated pre-death RMDs from designated Roth accounts in employer plans starting in 2024, matching the Roth IRA rules. A rollover to a Roth IRA is no longer needed to avoid lifetime RMDs."
+ },
+ {
+  "q": "Ava, a 58-year-old physician with very high, stable earnings and two young employees, wants to shelter the largest possible deductible amount for herself over the next seven years before she retires. Which type of plan is generally best suited to this goal?",
+  "choices": [
+   "A SIMPLE IRA",
+   "A defined benefit or cash balance plan",
+   "A SEP IRA",
+   "A profit-sharing plan without a 401(k) feature"
+  ],
+  "correct": 1,
+  "exp": "A defined benefit or cash balance plan funds a target benefit, so contributions for an older owner with a short time horizon can far exceed the §415 defined contribution limit that caps SEP and profit-sharing plans. A SIMPLE IRA has the lowest limits of the four."
+ },
+ {
+  "q": "Ben receives $30,000 of long-term disability benefits this year under a group policy. His employer paid all of the premiums, and they were not included in Ben's income. How much of the benefits is taxable?",
+  "choices": [
+   "$0",
+   "$15,000",
+   "$30,000",
+   "$30,000 less his cumulative premiums"
+  ],
+  "correct": 2,
+  "exp": "Under §105, benefits from employer-paid disability coverage whose premiums were excluded from the employee's income are fully taxable. Had Ben paid the premiums with after-tax dollars, the benefits would be excluded under §104, which is the planning point."
+ },
+ {
+  "q": "Cleo, age 50, converted $40,000 from a traditional IRA (no basis) to a Roth IRA three years ago and paid tax on the conversion then. She has made no other Roth contributions or conversions. This year she withdraws the $40,000. What are the tax consequences?",
+  "choices": [
+   "No income tax, but a $4,000 additional tax",
+   "$40,000 of income and a $4,000 additional tax",
+   "No income tax and no additional tax",
+   "$40,000 of income and no additional tax"
+  ],
+  "correct": 0,
+  "exp": "Converted amounts come out after regular contributions and are not taxed again, but under §408A a conversion withdrawn within five years by someone under 59½ is subject to the 10% additional tax: $40,000 × 10% = $4,000. The five-year clock for conversions is separate from the clock for qualified distributions."
+ },
+ {
+  "q": "Dan, age 16, earned $4,000 working at a grocery store this year and has no other income. Assume the IRA contribution limit is $7,500. What is the maximum Roth IRA contribution that can be made for Dan this year?",
+  "choices": [
+   "$7,500",
+   "$4,000",
+   "$3,500",
+   "$0, because he is a minor"
+  ],
+  "correct": 1,
+  "exp": "IRA contributions are limited to the lesser of the annual limit or the individual's taxable compensation, here $4,000. There is no minimum age, and a parent may fund the contribution as long as Dan has earned income."
+ },
+ {
+  "q": "Ella, age 50, is the sole beneficiary of her late husband's traditional IRA. She needs to withdraw $50,000 over the next three years for living expenses. Which approach avoids the 10% early-withdrawal penalty on those withdrawals?",
+  "choices": [
+   "Roll the IRA into her own IRA and take withdrawals from it",
+   "Keep the account as an inherited IRA and take the withdrawals from it",
+   "Take a lump-sum distribution and roll the unneeded portion into her own IRA after 90 days",
+   "Treat the IRA as her own and take the withdrawals as a hardship distribution"
+  ],
+  "correct": 1,
+  "exp": "Distributions to a beneficiary because of the owner's death are exempt from the 10% additional tax under §72(t), but once a spouse rolls or elects to treat the IRA as her own, she is the owner and must be 59½ for penalty-free withdrawals. She can still treat the account as her own later, after turning 59½."
+ },
+ {
+  "q": "Fay has a vested 401(k) balance of $80,000 and has never borrowed from the plan. The plan permits loans to the maximum extent allowed under §72(p). What is the maximum loan she can take without it being treated as a distribution?",
+  "choices": [
+   "$50,000",
+   "$80,000",
+   "$10,000",
+   "$40,000"
+  ],
+  "correct": 3,
+  "exp": "Under §72(p), a plan loan is limited to the lesser of $50,000 or the greater of 50% of the vested balance or $10,000: 50% × $80,000 = $40,000. The $50,000 statutory cap applies only when half the vested balance exceeds it."
+ },
+ {
+  "q": "Gus, age 75, still works for an unrelated employer, owns no stock in it, and participates in its 401(k) plan, which allows the still-working exception. He also has a traditional IRA from a former job. Assume RMDs generally begin at age 73. Which RMDs must Gus take this year?",
+  "choices": [
+   "RMDs from both the current employer's 401(k) and the IRA",
+   "An RMD from the IRA only",
+   "An RMD from the current employer's 401(k) only",
+   "No RMDs until he retires"
+  ],
+  "correct": 1,
+  "exp": "The still-working exception in §401 delays RMDs from the current employer's plan for a participant who is not a 5% owner, but it never applies to IRAs. Assuming no RMDs at all extends the exception to accounts it does not cover."
+ },
+ {
+  "q": "Hal, a high-income earner, wants to make a nondeductible traditional IRA contribution and convert it to a Roth IRA. He also has $200,000 of pre-tax money in a rollover IRA, and his current employer's 401(k) plan accepts roll-ins. What should he do to make the conversion essentially tax-free?",
+  "choices": [
+   "Convert in a different calendar year from the contribution",
+   "Wait 60 days between the contribution and the conversion",
+   "Open a new IRA at a different custodian for the nondeductible contribution",
+   "Roll the $200,000 pre-tax IRA into the 401(k) before December 31 of the conversion year"
+  ],
+  "correct": 3,
+  "exp": "The §408 pro rata rule aggregates all of a person's traditional, SEP, and SIMPLE IRA balances at year end, but not employer plan balances. Moving the pre-tax IRA into the 401(k) by December 31 leaves only basis in the IRA. Using a different custodian does not help because all IRAs are aggregated."
+ },
+ {
+  "q": "Ivy holds high-yield corporate bonds, a broad stock index fund, and an aggressive small-cap growth fund she expects to grow fastest. She has a taxable account, a traditional IRA, and a Roth IRA. Which asset placement is generally the most tax-efficient?",
+  "choices": [
+   "Bonds in the traditional IRA, small-cap growth fund in the Roth IRA, and index fund in the taxable account",
+   "Bonds in the taxable account, small-cap growth fund in the traditional IRA, and index fund in the Roth IRA",
+   "Bonds in the Roth IRA, small-cap growth fund in the taxable account, and index fund in the traditional IRA",
+   "Equal portions of each holding in every account"
+  ],
+  "correct": 0,
+  "exp": "Interest taxed at ordinary rates belongs in tax-deferred accounts, the highest-growth assets belong in the Roth, where growth is never taxed, and tax-efficient index funds, with qualified dividends, low turnover, and a basis step-up at death, suit taxable accounts. Placing bonds in the taxable account exposes their ordinary interest to annual tax."
+ },
+ {
+  "q": "Jill, age 52, began taking substantially equal periodic payments from her IRA under §72(t) two years ago to avoid the 10% additional tax. This year she wants to take an extra $25,000 withdrawal. What is the consequence?",
+  "choices": [
+   "Only the extra $25,000 is subject to the 10% additional tax",
+   "The extra withdrawal is penalty-free because the payment series already qualifies",
+   "The modification triggers the 10% additional tax, plus interest, on all prior payments in the series as well",
+   "There is no consequence if she resumes the original payments next year"
+  ],
+  "correct": 2,
+  "exp": "Changing a SEPP series before the later of five years or age 59½ triggers a recapture tax equal to the 10% additional tax that would have applied to all prior distributions, plus interest. Penalizing only the extra withdrawal understates the cost."
+ },
+ {
+  "q": "Kai, in the 22% bracket today, expects to be in the 32% bracket in retirement. He is choosing between deferring $10,000 of pre-tax salary to a traditional 401(k) or paying tax now and contributing the after-tax amount ($7,800) to a Roth 401(k). Either account will quadruple before withdrawal. How much more after-tax money does the Roth produce?",
+  "choices": [
+   "$0",
+   "$4,000",
+   "$8,800",
+   "$12,800"
+  ],
+  "correct": 1,
+  "exp": "Traditional: $40,000 × (1 − 32%) = $27,200 after tax. Roth: $7,800 × 4 = $31,200 tax-free. The Roth wins by $4,000 because it locks in the lower current rate. Answering $0 assumes equal tax rates, which would make the two choices equivalent."
+ },
+ {
+  "q": "Lou, age 50, has a whole life policy that became a modified endowment contract. The policy has $100,000 of cash value, and his premiums paid total $70,000. He takes a $40,000 policy loan. What are the tax consequences?",
+  "choices": [
+   "$0 income, because policy loans are not distributions",
+   "$30,000 of income and a $3,000 additional tax",
+   "$40,000 of income and a $4,000 additional tax",
+   "$0 income, because the loan is less than his basis"
+  ],
+  "correct": 1,
+  "exp": "Loans from a MEC are treated as distributions taxed income-first under §72(e): the first $30,000 (cash value over premiums) is taxable, and §72(v) imposes a 10% additional tax before age 59½ ($3,000). The remaining $10,000 is a tax-free recovery of basis. Non-MEC policy loans would not be taxable."
+ },
+ {
+  "q": "Mae's employer provides her with $250,000 of group-term life insurance and pays the full premium. The IRS uniform premium table cost for her age is $0.15 per $1,000 of coverage per month. How much must be included in Mae's gross income for the year?",
+  "choices": [
+   "$450",
+   "$360",
+   "$90",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "Section 79 excludes the cost of the first $50,000 of coverage; the remaining $200,000 is taxed at table rates: 200 × $0.15 × 12 = $360. Using the full $250,000 of coverage ($450) ignores the $50,000 exclusion."
+ },
+ {
+  "q": "Ned, age 66 and retired, receives $60,000 of pension income, $15,000 of dividends, and Social Security. His wife, age 64, works part time and earns $20,000. They file jointly. Which statement about IRA contributions this year is correct?",
+  "choices": [
+   "Neither spouse may contribute because Ned has no compensation",
+   "Only the wife may contribute, limited to her own $20,000 of compensation",
+   "Both spouses may contribute because the wife's compensation is enough to support contributions for both",
+   "Ned may contribute because pension income is treated as compensation"
+  ],
+  "correct": 2,
+  "exp": "Under the §219 spousal IRA rule, on a joint return each spouse may contribute up to the annual limit as long as their combined contributions do not exceed the couple's combined compensation, and the wife's $20,000 covers both. Pensions, dividends, and Social Security are not compensation."
+ }
+]

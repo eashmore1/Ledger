@@ -1,0 +1,420 @@
+[
+ {
+  "q": "Al and Bo, a married couple, give $50,000 of cash to each of their three adult children this year and elect gift splitting. The annual exclusion is $19,000 per donee. Neither spouse made other gifts. What is each spouse's total taxable gifts for the year?",
+  "choices": [
+   "$18,000",
+   "$93,000",
+   "$36,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "With gift splitting under §2513, each spouse is treated as giving $25,000 to each child; $25,000 − $19,000 = $6,000 × 3 children = $18,000 each. Taking only one $19,000 exclusion per child ($93,000) ignores the second spouse's exclusions."
+ },
+ {
+  "q": "Cy transfers $100,000 to an irrevocable trust that will pay all income to his daughter for 10 years, then distribute the principal to his grandson. The trustee has no discretion, and no beneficiary has withdrawal rights. The annual exclusion is $19,000. Which statement about the annual exclusion is correct?",
+  "choices": [
+   "Two $19,000 exclusions are available, one for each beneficiary",
+   "No exclusion is available because both interests are future interests",
+   "An exclusion is available for the daughter's income interest (up to $19,000) but not for the grandson's remainder",
+   "A single $19,000 exclusion is available for the trust as a whole"
+  ],
+  "correct": 2,
+  "exp": "A mandatory income interest beginning immediately is a present interest whose actuarially valued portion qualifies for the exclusion (up to $19,000), while the remainder is a future interest under §2503 that qualifies for none. The trust itself is not the donee, and the remainder beneficiary cannot use an exclusion."
+ },
+ {
+  "q": "Grandma Dee pays $60,000 of tuition directly to her grandson's university, gives him $5,000 to buy textbooks, and gives him a $20,000 check. The annual exclusion is $19,000. What is the amount of her taxable gifts to the grandson?",
+  "choices": [
+   "$66,000",
+   "$1,000",
+   "$25,000",
+   "$6,000"
+  ],
+  "correct": 3,
+  "exp": "Tuition paid directly to an educational institution is excluded without limit under §2503, but books are not tuition. The $25,000 of cash ($5,000 + $20,000) less the $19,000 annual exclusion leaves a $6,000 taxable gift. Excluding the book money treats it like direct tuition, which it is not."
+ },
+ {
+  "q": "Eve gives her son stock with a basis of $50,000 and a fair market value of $40,000 on the date of the gift. No gift tax is paid. The son later sells the stock for $45,000. What gain or loss does the son recognize?",
+  "choices": [
+   "$5,000 loss",
+   "$5,000 gain",
+   "$0",
+   "$10,000 loss"
+  ],
+  "correct": 2,
+  "exp": "Under §1015 dual basis, the basis for gain is the donor's $50,000 basis and the basis for loss is the $40,000 FMV. A $45,000 sale shows neither a gain under the gain basis nor a loss under the loss basis, so no gain or loss is recognized. A $5,000 loss uses the donor's basis for loss, which the rule does not allow."
+ },
+ {
+  "q": "Fred, age 88 and in poor health, owns publicly traded stock worth $2,000,000 with a basis of $100,000, along with $2,000,000 of cash. His estate will be below the estate tax exemption. He wants to make a large gift to his children now. From an income tax standpoint, which approach is best?",
+  "choices": [
+   "Give the cash now and keep the low-basis stock until death",
+   "Give the low-basis stock now so the children can sell it at their lower rates",
+   "Sell the stock, pay the tax, and give the after-tax proceeds",
+   "Give the stock now and have the children make a §1014 election"
+  ],
+  "correct": 0,
+  "exp": "Property held until death gets a stepped-up basis under §1014, eliminating the $1,900,000 built-in gain. A gift carries over Fred's $100,000 basis under §1015, so the gain would eventually be taxed. There is no election that gives gifted property a step-up."
+ },
+ {
+  "q": "Gail contributes $100,000 to a §529 plan for her granddaughter and elects to treat the gift as made ratably over five years. The annual exclusion is $19,000. She makes no other gifts to the granddaughter during the five years. What is Gail's taxable gift in the year of the contribution?",
+  "choices": [
+   "$5,000",
+   "$0",
+   "$81,000",
+   "$1,000"
+  ],
+  "correct": 0,
+  "exp": "The §529 five-year election can spread up to five times the annual exclusion ($95,000), using $19,000 of exclusion each year; the $5,000 excess is a taxable gift in the year of contribution. Spreading the full $100,000 ($20,000 a year, leaving $1,000 taxable each year) misapplies the cap on the election."
+ },
+ {
+  "q": "Hugo, a U.S. citizen, gives his wife, who is not a U.S. citizen, $250,000 of cash. Assume the annual exclusion for gifts to a noncitizen spouse is $194,000. What is Hugo's taxable gift?",
+  "choices": [
+   "$0",
+   "$231,000",
+   "$56,000",
+   "$250,000"
+  ],
+  "correct": 2,
+  "exp": "The unlimited marital deduction under §2523 is not available for gifts to a noncitizen spouse; instead a higher, inflation-adjusted annual exclusion applies: $250,000 − $194,000 = $56,000. Answering $0 assumes the unlimited marital deduction applies."
+ },
+ {
+  "q": "Ian transfers stock worth $5,000,000 to a two-year grantor retained annuity trust, designed so the present value of his retained annuity equals the value transferred, with the remainder passing to his children. Which statement best describes the result?",
+  "choices": [
+   "Ian makes a $5,000,000 taxable gift that uses his lifetime exclusion",
+   "Any appreciation above the §7520 rate passes to the children free of gift tax, but if Ian dies during the term, the trust assets are generally included in his gross estate",
+   "The children take a stepped-up basis in the remainder",
+   "The annuity payments are deductible by the trust and taxable to Ian"
+  ],
+  "correct": 1,
+  "exp": "In a zeroed-out GRAT the gift of the remainder is valued near zero under §2702, so growth above the hurdle rate passes gift-tax-free; dying during the term brings the assets back into the estate under §2036. The GRAT is a grantor trust, so annuity payments have no income tax effect, and the remaindermen take carryover basis."
+ },
+ {
+  "q": "Jan transfers her residence to a 12-year qualified personal residence trust, with the remainder passing to her children. Which statement about the transfer is correct?",
+  "choices": [
+   "The taxable gift is the full fair market value of the residence",
+   "If Jan survives the 12-year term, the residence is excluded from her gross estate, and if she continues to live there she must pay fair rent",
+   "Jan may continue living in the home rent-free for life without estate inclusion",
+   "The children take a basis equal to the fair market value at Jan's death"
+  ],
+  "correct": 1,
+  "exp": "A QPRT gift is only the discounted remainder value, and surviving the term removes the home, including its growth, from the estate. Continuing to live there rent-free after the term would be a retained interest causing inclusion under §2036. The children take carryover basis because they received the home by gift."
+ },
+ {
+  "q": "Kip owns all interests in a family limited partnership holding $10,000,000 of marketable securities. He gives his son a 30% limited partnership interest. A qualified appraiser applies a combined 35% discount for lack of control and lack of marketability. The annual exclusion is $19,000. What is the taxable gift?",
+  "choices": [
+   "$1,931,000",
+   "$1,950,000",
+   "$2,981,000",
+   "$3,000,000"
+  ],
+  "correct": 0,
+  "exp": "The pro rata value of $3,000,000 (30% × $10,000,000) is reduced by the 35% discount to $1,950,000, less the $19,000 annual exclusion: $1,931,000. Answering $2,981,000 ignores the valuation discounts that are the main benefit of the FLP technique."
+ },
+ {
+  "q": "Lu died this year with a taxable estate of $13,000,000. She had made $4,000,000 of post-1976 taxable gifts during her life and paid no gift tax. Assume the basic exclusion amount is $15,000,000 and a flat 40% rate applies to amounts above it. What is her federal estate tax?",
+  "choices": [
+   "$0",
+   "$5,200,000",
+   "$6,800,000",
+   "$800,000"
+  ],
+  "correct": 3,
+  "exp": "Under §2001, adjusted taxable gifts are added to the taxable estate: $13,000,000 + $4,000,000 = $17,000,000, which exceeds the $15,000,000 exclusion by $2,000,000; × 40% = $800,000. Answering $0 compares only the taxable estate with the exclusion and ignores lifetime gifts that already used part of it."
+ },
+ {
+  "q": "Max died this year, using $6,000,000 of his $15,000,000 basic exclusion amount. His executor timely filed Form 706 electing portability. Assume his widow's own basic exclusion amount is $15,000,000 and she has made no taxable gifts. What is her applicable exclusion amount?",
+  "choices": [
+   "$15,000,000",
+   "$21,000,000",
+   "$24,000,000",
+   "$30,000,000"
+  ],
+  "correct": 2,
+  "exp": "The deceased spousal unused exclusion is $15,000,000 − $6,000,000 = $9,000,000, which is added to the widow's own basic exclusion under §2010: $24,000,000. Doubling the exclusion to $30,000,000 ignores the amount Max's estate used."
+ },
+ {
+  "q": "Nan gives $500,000 to her granddaughter. The granddaughter's father, Nan's son, died two years before the gift. Which statement about the generation-skipping transfer tax is correct?",
+  "choices": [
+   "The gift is a direct skip subject to GST tax unless Nan allocates GST exemption",
+   "GST tax applies only to transfers in trust",
+   "The gift is a taxable termination taxed when the granddaughter dies",
+   "Under the predeceased parent rule the granddaughter is treated as Nan's child, so the gift is not a skip"
+  ],
+  "correct": 3,
+  "exp": "Under §2651, when a lineal descendant's parent who is the transferor's descendant is dead at the time of the transfer, the descendant moves up a generation, so the granddaughter is not a skip person. Without that rule it would be a direct skip, but the parent's death changes the result."
+ },
+ {
+  "q": "Each of the following gifts was made this year, and the annual exclusion is $19,000. Which one requires the donor to file a federal gift tax return (Form 709)?",
+  "choices": [
+   "A husband gives his wife, a U.S. citizen, $500,000 of stock",
+   "A grandmother pays $45,000 directly to a hospital for her grandson's surgery",
+   "A father gives his daughter $18,000 cash and makes no other gifts to her",
+   "A married couple elects gift splitting for a $30,000 gift to their son made from the husband's account"
+  ],
+  "correct": 3,
+  "exp": "The gift-splitting election under §2513 must be made on a gift tax return, even if each spouse's half falls under the annual exclusion. Gifts to a citizen spouse that qualify for the marital deduction, direct medical payments, and gifts within the annual exclusion generally require no return."
+ },
+ {
+  "q": "Ola transfers $2,000,000 to a revocable living trust for her children, keeping the power to amend or revoke it. Which statement is correct?",
+  "choices": [
+   "Ola makes a completed gift of $2,000,000 less annual exclusions",
+   "Ola makes a completed gift only of the trust income",
+   "The transfer is an incomplete gift, and the trust assets will be included in Ola's gross estate",
+   "The trust assets avoid estate tax but not probate"
+  ],
+  "correct": 2,
+  "exp": "Keeping the power to revoke means Ola has not parted with dominion and control, so there is no completed gift under Reg. 25.2511-2, and §2038 includes the assets in her gross estate. A revocable trust mainly avoids probate, not estate tax, which is the reverse of the last statement."
+ },
+ {
+  "q": "Pam, age 66, owns undeveloped land worth $1,000,000 with a $100,000 basis. She wants lifetime income, a current income tax deduction, and to avoid paying immediate tax on the gain while diversifying. Which technique best meets these goals?",
+  "choices": [
+   "A charitable remainder unitrust that sells the land and pays her a percentage of the trust's value each year",
+   "An outright gift of the land to a public charity",
+   "A sale of the land to her children for an installment note",
+   "A gift of the land to a grantor retained annuity trust"
+  ],
+  "correct": 0,
+  "exp": "A CRT under §664 is tax-exempt, so it can sell the land without immediate tax on the gain, pay Pam a lifetime stream, and give her a deduction for the present value of the charity's remainder interest. An outright gift provides no income stream, and a GRAT gives no charitable deduction and no shelter from tax on the gain."
+ },
+ {
+  "q": "Ray owns a $100,000 corporate bond. In December he gives his adult daughter the right to the next year's interest coupons, worth $5,000, while keeping the bond. Who is taxed on the $5,000 of interest when it is paid next year?",
+  "choices": [
+   "Ray, because the right to income was assigned without the underlying property",
+   "The daughter, because she owns the coupons when they are paid",
+   "Half to each, under the attribution rules",
+   "Neither, because the transfer is a gift excluded from income"
+  ],
+  "correct": 0,
+  "exp": "Under the assignment-of-income doctrine (Helvering v. Horst), income from property is taxed to the owner of the property; giving away only the income right does not shift the tax. To shift the income, Ray must transfer the bond itself."
+ },
+ {
+  "q": "Sid lends his son $90,000 interest-free to buy a home. The loan is payable on demand, has no tax-avoidance purpose, and is the only loan between them. The son's net investment income for the year is $800. For income tax purposes, how much interest is imputed to Sid under §7872?",
+  "choices": [
+   "Interest at the applicable federal rate on $90,000",
+   "Interest at the applicable federal rate on $80,000",
+   "$800",
+   "$0"
+  ],
+  "correct": 3,
+  "exp": "For gift loans totaling $100,000 or less, imputed interest for income tax purposes is limited to the borrower's net investment income, and it is treated as zero if that income is $1,000 or less. With $800 of net investment income, no interest is imputed. Using the full AFR ignores the $100,000 exception."
+ },
+ {
+  "q": "Two years before her death, Tia gave her nephew stock worth $3,000,000 and paid $400,000 of gift tax. At her death the stock was worth $5,000,000. Considering only these items, how much is included in Tia's gross estate?",
+  "choices": [
+   "$5,400,000",
+   "$400,000",
+   "$3,400,000",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "Under §2035, gift tax paid on gifts made within three years of death is included in the gross estate, but the gifted stock itself is not (the $3,000,000 enters the tax computation as an adjusted taxable gift, not as gross estate). Including the stock confuses the three-year rule for gift tax with the rule for retained interests and life insurance."
+ },
+ {
+  "q": "Uri, age 70, owns a $3,000,000 life insurance policy on his life and wants to keep the proceeds out of his gross estate. Which plan is most effective?",
+  "choices": [
+   "Name his children as beneficiaries while keeping ownership of the policy",
+   "Transfer the policy to an irrevocable life insurance trust and hope to live another year",
+   "Have an irrevocable life insurance trust apply for and buy a new policy, funded with Crummey gifts, and surrender the old policy",
+   "Name his estate as beneficiary and leave the proceeds to charity by will"
+  ],
+  "correct": 2,
+  "exp": "Transferring an existing policy brings the proceeds back into the estate under §2035 if Uri dies within three years, but a policy bought from the start by an ILIT that Uri never owned avoids both §2042 and §2035. Keeping ownership while naming the children as beneficiaries still causes inclusion under §2042 because Uri holds incidents of ownership."
+ },
+ {
+  "q": "Val transfers $60,000 to an irrevocable trust for her three grandchildren. Each grandchild has a Crummey power to withdraw up to one-third of the contribution ($20,000) within 30 days, with proper notice, and the powers lapse unexercised. The annual exclusion is $19,000. What is Val's taxable gift?",
+  "choices": [
+   "$3,000",
+   "$0",
+   "$41,000",
+   "$60,000"
+  ],
+  "correct": 0,
+  "exp": "Each Crummey power makes $20,000 a present interest, so each grandchild's share qualifies for a $19,000 exclusion: 3 × ($20,000 − $19,000) = $3,000. Answering $60,000 treats the whole contribution as a future interest because it is held in trust."
+ },
+ {
+  "q": "Walt deeds his home to his daughter but continues to live there rent-free under an understanding with her until his death 10 years later. What is the estate tax consequence?",
+  "choices": [
+   "The home is excluded because a completed gift was made 10 years earlier",
+   "Only the value of the home at the gift date is included as an adjusted taxable gift",
+   "The home is included only if Walt dies within three years of the deed",
+   "The date-of-death value of the home is included in Walt's gross estate under §2036 because he kept possession and enjoyment"
+  ],
+  "correct": 3,
+  "exp": "Section 2036 includes property transferred during life when the decedent kept possession or enjoyment under an express or implied agreement, and the inclusion is at date-of-death value. The three-year rule of §2035 is a different provision and does not limit §2036."
+ },
+ {
+  "q": "Xan inherits $800,000 from her mother. She wants the funds to pass instead to her own children, the contingent beneficiaries, without making a taxable gift. Which action achieves this?",
+  "choices": [
+   "Accept the inheritance and give it to her children over several years using annual exclusions",
+   "Make a qualified disclaimer in writing within nine months of the death, before accepting any benefits, so the property passes to the contingent beneficiaries without her direction",
+   "Assign her inheritance to her children by written agreement within 12 months",
+   "Disclaim after receiving the first income distribution"
+  ],
+  "correct": 1,
+  "exp": "A qualified disclaimer under §2518 must be written, made within nine months, made before any benefits are accepted, and the property must pass without the disclaimant's direction; the property is then treated as never having passed to her. Accepting benefits, or directing who gets the property, makes the transfer a gift by Xan."
+ },
+ {
+  "q": "Yoko made $14,500,000 of taxable gifts in earlier years and makes a $1,000,000 taxable gift (after the annual exclusion) this year. Assume her basic exclusion amount is $15,000,000, she has never been married to a decedent with portability, and a flat 40% rate applies above the exclusion. What gift tax does she owe this year?",
+  "choices": [
+   "$400,000",
+   "$0",
+   "$200,000",
+   "$6,200,000"
+  ],
+  "correct": 2,
+  "exp": "Gift tax is cumulative: total taxable gifts of $15,500,000 exceed the $15,000,000 exclusion by $500,000, and 40% × $500,000 = $200,000. Taxing the whole $1,000,000 ignores the $500,000 of exclusion still unused."
+ },
+ {
+  "q": "A married couple living in a community property state owned stock as community property with a basis of $200,000. When the husband died, the stock was worth $1,000,000, and it all passed to his wife. What is the wife's basis in the stock after his death?",
+  "choices": [
+   "$600,000",
+   "$1,000,000",
+   "$500,000",
+   "$200,000"
+  ],
+  "correct": 1,
+  "exp": "Under §1014, both halves of community property get a basis equal to FMV at the first spouse's death if at least half is included in the decedent's estate, so the wife's basis is $1,000,000. The $600,000 answer (half stepped up plus half of the original basis) is the rule for spousal joint tenancy in common-law states."
+ },
+ {
+  "q": "Zack's estate consists of a $2,000,000 traditional IRA and $2,000,000 of appreciated stock. He wants to leave $2,000,000 to charity and $2,000,000 to his children. From an income tax standpoint, which plan is best?",
+  "choices": [
+   "Leave the stock to charity and the IRA to the children",
+   "Leave half of each asset to charity and half to the children",
+   "Leave the IRA to charity and the stock to the children",
+   "Have the IRA distributed to the estate before allocating assets"
+  ],
+  "correct": 2,
+  "exp": "An IRA is income in respect of a decedent under §691 and gets no basis step-up, so the children would pay income tax on distributions, while a tax-exempt charity pays none. The stock gets a §1014 step-up, so the children can sell it with little or no gain."
+ },
+ {
+  "q": "Ann gives $50,000 to a custodial account for her 8-year-old son under her state's Uniform Transfers to Minors Act and names herself as custodian. She dies when her son is 15. Which statement is correct?",
+  "choices": [
+   "The gift did not qualify for the annual exclusion because the son cannot reach the funds until majority",
+   "Account income has always been taxed to Ann under the grantor trust rules",
+   "The account is excluded from Ann's estate because the gift was completed",
+   "The account is included in Ann's gross estate because she was custodian with power over distributions when she died"
+  ],
+  "correct": 3,
+  "exp": "UTMA gifts are completed present-interest gifts that qualify for the annual exclusion, but a donor who serves as custodian keeps powers that cause inclusion under §2038 if she dies before the child reaches the age of termination. Naming someone else as custodian avoids this."
+ },
+ {
+  "q": "Bud died this year leaving a gross estate of $20,000,000. Debts and administration expenses are $500,000, and his will leaves $3,000,000 to a qualified public charity and the rest to his adult children. Assume the basic exclusion amount is $15,000,000 and he made no lifetime taxable gifts. What is his taxable estate?",
+  "choices": [
+   "$16,500,000",
+   "$17,000,000",
+   "$19,500,000",
+   "$1,500,000"
+  ],
+  "correct": 0,
+  "exp": "Taxable estate = gross estate less §2053 expenses and §2055 charitable deduction: $20,000,000 − $500,000 − $3,000,000 = $16,500,000. The exclusion is applied through the unified credit against the tax, not subtracted in arriving at the taxable estate, so $1,500,000 is a computation-stage error."
+ },
+ {
+  "q": "Grandpa Cal wants to help with his granddaughter's $40,000 medical bills without using any annual exclusion or lifetime exemption. Which approach achieves this?",
+  "choices": [
+   "Give the granddaughter $40,000 to pay the bills",
+   "Reimburse the granddaughter after she pays the bills",
+   "Give $20,000 to each of the granddaughter's parents",
+   "Pay the $40,000 directly to the hospital and physicians"
+  ],
+  "correct": 3,
+  "exp": "Section 2503 excludes amounts paid directly to a medical care provider for the donee's medical care, without limit. Reimbursing the donee or giving her cash is an ordinary gift that uses the annual exclusion and possibly the lifetime exemption."
+ },
+ {
+  "q": "Dot owns stock with a basis of $200,000 and an FMV of $120,000. She wants to transfer $120,000 of value to her son. Which approach preserves the most total income tax benefit for the family?",
+  "choices": [
+   "Sell the stock, deduct the $80,000 capital loss, and give the son the $120,000 of cash",
+   "Give the stock to the son so he can sell it and deduct the $80,000 loss",
+   "Give the stock to the son, whose basis becomes $200,000 for all purposes",
+   "Give the stock to the son and have him hold it until it recovers to $200,000 so he keeps a loss basis"
+  ],
+  "correct": 0,
+  "exp": "Under §1015, a donee's basis for loss is limited to FMV at the gift date when FMV is below the donor's basis, so the $80,000 built-in loss disappears on a gift. Dot should realize the loss herself and give cash. The son cannot deduct her loss."
+ },
+ {
+  "q": "Eli transfers a building worth $500,000, with an adjusted basis of $150,000 and subject to a $200,000 mortgage, to his son, who takes the property subject to the mortgage. What gain does Eli recognize?",
+  "choices": [
+   "$0",
+   "$140,000",
+   "$350,000",
+   "$50,000"
+  ],
+  "correct": 3,
+  "exp": "A part-gift, part-sale to an individual is a sale to the extent of consideration, and under Reg. 1.1001-1 the transferor's entire basis offsets the amount realized: $200,000 − $150,000 = $50,000. The gift is $300,000. Apportioning basis ($140,000 gain) is the rule only for bargain sales to charity under §1011."
+ },
+ {
+  "q": "Fran sells publicly traded stock held for five years to a public charity for $40,000. The stock is worth $100,000, and her basis is $40,000. What gain does Fran recognize on this bargain sale?",
+  "choices": [
+   "$0",
+   "$24,000",
+   "$60,000",
+   "$40,000"
+  ],
+  "correct": 1,
+  "exp": "Under §1011 the basis is apportioned between the sale and gift portions: $40,000 × ($40,000 ÷ $100,000) = $16,000, so the gain is $40,000 − $16,000 = $24,000, and the $60,000 gift portion is a charitable contribution. Recognizing no gain applies the part-gift rule for individuals, under which the full basis offsets the amount realized."
+ },
+ {
+  "q": "Gus, a married donor, wants to use his large remaining lifetime exemption before a possible future law change, but worries he and his wife may need the funds later. He transfers assets to an irrevocable trust for his wife and descendants, with his wife as a discretionary beneficiary. How should this spousal lifetime access trust be structured to use his exemption?",
+  "choices": [
+   "Make the transfer qualify for the gift tax marital deduction by electing QTIP treatment",
+   "Make the transfer a completed gift that does not qualify for the marital deduction and allocate Gus's exemption to it, with his wife getting only indirect access",
+   "Have Gus keep the power to revoke the trust if the couple divorces",
+   "Have the wife contribute half of the assets so the gift is split"
+  ],
+  "correct": 1,
+  "exp": "A SLAT works by making a completed, non-marital gift that uses the donor's exemption while giving the family indirect access through the beneficiary spouse. A QTIP election would bring in the marital deduction and leave the exemption unused, and a retained revocation power makes the gift incomplete."
+ },
+ {
+  "q": "Hal sells closely held stock worth $4,000,000, with a basis of $500,000, to an intentionally defective grantor trust for his children in exchange for a $4,000,000 interest-bearing installment note. What are the income tax consequences to Hal?",
+  "choices": [
+   "Hal recognizes $3,500,000 of gain, reported on the installment method",
+   "Hal recognizes no gain on the sale, and he is taxed on trust income while the trust remains a grantor trust",
+   "The trust takes a $4,000,000 cost basis in the stock",
+   "Interest paid by the trust to Hal is taxable to Hal and deductible by the trust"
+  ],
+  "correct": 1,
+  "exp": "Under Rev. Rul. 85-13, a grantor and a wholly owned grantor trust are the same taxpayer for income tax purposes, so the sale and note interest are ignored and the trust keeps Hal's $500,000 carryover basis. Hal's payment of the trust's income tax is a further tax-free transfer to his children."
+ },
+ {
+  "q": "Ida gives $3,000,000 directly to her grandson, whose parents are living. She allocates her remaining $1,000,000 of GST exemption to the transfer. Ignore the annual exclusion, and assume a flat 40% GST tax rate. What GST tax is due?",
+  "choices": [
+   "$1,200,000",
+   "$400,000",
+   "$800,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "The applicable fraction is $1,000,000 ÷ $3,000,000 = 1/3, so the inclusion ratio is 2/3; GST tax = $3,000,000 × 2/3 × 40% = $800,000. Applying 40% to the full $3,000,000 ignores the exemption allocated."
+ },
+ {
+  "q": "Jon gives his daughter 1,000 shares of a listed stock. On the date of the gift, the stock traded at a high of $52 and a low of $48 and closed at $49. The annual exclusion is $19,000. What is the value of the gift before the annual exclusion?",
+  "choices": [
+   "$49,000",
+   "$52,000",
+   "$50,000",
+   "$31,000"
+  ],
+  "correct": 2,
+  "exp": "Under Reg. 25.2512-2, listed stock is valued at the mean of the high and low selling prices on the valuation date: ($52 + $48) ÷ 2 × 1,000 = $50,000. The closing price ($49,000) is not the standard, and $31,000 is the taxable gift after the exclusion, not the value of the gift."
+ },
+ {
+  "q": "Kay's executor elects the alternate valuation date. At Kay's death, Asset 1 was worth $2,000,000 and was still held six months later, when it was worth $1,700,000. Asset 2 was worth $1,000,000 at death and was sold three months after death for $900,000; it would have been worth $800,000 six months after death. What is the gross estate?",
+  "choices": [
+   "$2,500,000",
+   "$3,000,000",
+   "$2,700,000",
+   "$2,600,000"
+  ],
+  "correct": 3,
+  "exp": "Under §2032, property held six months is valued at the six-month date ($1,700,000), and property disposed of within six months is valued on the disposition date ($900,000): $2,600,000 total. Using $800,000 for Asset 2 ignores the rule for property sold before the alternate valuation date."
+ },
+ {
+  "q": "Lars gives his daughter an interest in a growth company worth $1,000,000 and uses a $19,000 annual exclusion, making a $981,000 taxable gift. He dies years later, when the interest is worth $3,000,000. Compared with keeping the interest until death, by how much does the gift reduce the amount subject to the unified transfer tax (taxable estate plus adjusted taxable gifts)? Ignore any gift tax paid.",
+  "choices": [
+   "$2,019,000",
+   "$2,000,000",
+   "$3,000,000",
+   "$981,000"
+  ],
+  "correct": 0,
+  "exp": "Holding the interest puts $3,000,000 in the estate; making the gift adds only the $981,000 adjusted taxable gift, valued at the date of the gift, to the estate tax base, a $2,019,000 reduction (the $2,000,000 of post-gift appreciation plus the $19,000 exclusion). Answering $2,000,000 forgets that the annual exclusion portion also escapes the base."
+ }
+]

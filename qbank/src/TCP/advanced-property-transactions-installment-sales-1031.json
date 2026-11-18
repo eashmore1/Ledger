@@ -1,0 +1,420 @@
+[
+ {
+  "q": "Ada sells investment land with a $200,000 basis for $500,000 and pays $20,000 of selling expenses. The buyer pays $100,000 down and gives a note for the $400,000 balance, payable over four years with adequate interest. How much gain does Ada recognize in the year of sale under the installment method?",
+  "choices": [
+   "$60,000",
+   "$56,000",
+   "$280,000",
+   "$100,000"
+  ],
+  "correct": 1,
+  "exp": "Gross profit is $500,000 − $200,000 − $20,000 = $280,000; the contract price is $500,000, so the gross profit percentage is 56%, and $100,000 × 56% = $56,000. Ignoring the selling expenses gives a 60% ratio and $60,000."
+ },
+ {
+  "q": "Bert sells a building for $800,000. The buyer assumes Bert's $300,000 mortgage, pays $50,000 cash at closing, and signs a $450,000 note. Bert's adjusted basis is $200,000, and there is no depreciation recapture. How much gain does Bert recognize in the year of sale?",
+  "choices": [
+   "$50,000",
+   "$37,500",
+   "$150,000",
+   "$600,000"
+  ],
+  "correct": 2,
+  "exp": "Mortgage assumed in excess of basis ($100,000) is treated as a payment in the year of sale and is added to the contract price: $800,000 − $300,000 + $100,000 = $600,000, which equals the $600,000 gross profit (100%). Year-of-sale gain = ($50,000 + $100,000) × 100% = $150,000. Answering $50,000 ignores the deemed payment."
+ },
+ {
+  "q": "Cora sells land for $1,000,000. The buyer assumes a $200,000 mortgage, pays $100,000 down, and gives a $700,000 note. Cora's basis is $400,000. How much gain does she recognize in the year of sale?",
+  "choices": [
+   "$75,000",
+   "$60,000",
+   "$100,000",
+   "$225,000"
+  ],
+  "correct": 0,
+  "exp": "Gross profit is $600,000; the contract price excludes the assumed mortgage (it is less than basis): $1,000,000 − $200,000 = $800,000, so the gross profit percentage is 75% and $100,000 × 75% = $75,000. Dividing by the full $1,000,000 selling price gives 60% and understates the gain."
+ },
+ {
+  "q": "Dirk sells business equipment held for four years for $100,000: $20,000 down and an $80,000 note. The equipment cost $90,000, and its adjusted basis is $30,000. How much gain does Dirk recognize in the year of sale?",
+  "choices": [
+   "$14,000",
+   "$60,000",
+   "$70,000",
+   "$62,000"
+  ],
+  "correct": 3,
+  "exp": "Under §453(i), all $60,000 of §1245 recapture is recognized in the year of sale and added to basis; the remaining $10,000 gain is reported on the installment method at a 10% gross profit percentage ($10,000 ÷ $100,000): $60,000 + $20,000 × 10% = $62,000. Applying a 70% ratio to the down payment ($14,000) ignores the rule that recapture is recognized up front."
+ },
+ {
+  "q": "Eli sells land to his son on the installment method and reports the gain as payments arrive. Eighteen months later, before Eli has collected the note, the son sells the land to an unrelated buyer for cash. What is the effect on Eli?",
+  "choices": [
+   "None; Eli continues to report gain as he collects the note",
+   "The son's resale is treated as a payment to Eli, accelerating Eli's gain",
+   "The original sale is disregarded, and the son reports all of the gain",
+   "Eli must recognize gain only if the son's resale price exceeds the original price"
+  ],
+  "correct": 1,
+  "exp": "Under the §453 related-party second-disposition rule, if a related buyer resells within two years of the first sale, the amount realized on the resale (up to the contract price, less payments already received) is treated as received by the original seller. Continuing on the installment method ignores this anti-abuse rule."
+ },
+ {
+  "q": "Fran sold securities this year and has a $400,000 net capital loss from those sales. She also sells investment land at a $350,000 long-term gain, receiving 10% down and a 10-year note. Which approach is most tax-efficient?",
+  "choices": [
+   "Report on the installment method to defer the gain",
+   "Elect out of the installment method and recognize the entire gain this year to absorb the capital loss",
+   "Report the gain on the installment method but treat it as ordinary income",
+   "Treat the note as a cash equivalent without electing out"
+  ],
+  "correct": 1,
+  "exp": "Electing out under §453 by the return's due date accelerates the $350,000 gain into the year she has a $400,000 capital loss to offset it; otherwise most of the loss would be limited to $3,000 a year against ordinary income. Deferral is usually good, but not when current losses can absorb the gain."
+ },
+ {
+  "q": "Which of the following sales may be reported using the installment method?",
+  "choices": [
+   "A sale of publicly traded stock for a five-year note",
+   "A dealer's sale of residential lots from inventory on a 10-year contract",
+   "A retailer's sale of inventory on revolving credit",
+   "An individual's sale of a rental duplex for 20% down and a note"
+  ],
+  "correct": 3,
+  "exp": "The installment method under §453 is available for casual sales of real property and non-inventory personal property, such as the duplex. It is barred for sales of publicly traded stock or securities, dealer dispositions, and inventory."
+ },
+ {
+  "q": "Gail holds an installment note with an unpaid balance of $300,000 from a land sale on which her gross profit percentage is 40%. This year she gives the note to her daughter when it is worth $300,000. How much gain does Gail recognize?",
+  "choices": [
+   "$120,000",
+   "$0",
+   "$180,000",
+   "$300,000"
+  ],
+  "correct": 0,
+  "exp": "Under §453B, a gift of an installment obligation is a disposition that triggers gain equal to the note's FMV less its basis. Her basis is $300,000 × 60% = $180,000, so the gain is $120,000. Recognizing nothing treats the gift like a transfer at death, which is excepted."
+ },
+ {
+  "q": "Hank exchanges investment land with a $200,000 basis and a $500,000 FMV for an office building worth $450,000 plus $50,000 of cash. What are his recognized gain and basis in the building?",
+  "choices": [
+   "$0 gain; $150,000 basis",
+   "$50,000 gain; $250,000 basis",
+   "$300,000 gain; $450,000 basis",
+   "$50,000 gain; $200,000 basis"
+  ],
+  "correct": 3,
+  "exp": "Realized gain is $300,000, but under §1031 gain is recognized only to the extent of $50,000 of boot. Basis = $200,000 old basis + $50,000 gain recognized − $50,000 boot received = $200,000 (equal to the $450,000 FMV less the $250,000 deferred gain). Adding the gain without subtracting the cash gives $250,000."
+ },
+ {
+  "q": "Ira exchanges a rental building (FMV $1,000,000; adjusted basis $300,000; mortgage $400,000, assumed by the other party) for a warehouse (FMV $900,000) subject to a $300,000 mortgage that Ira assumes. No cash changes hands. What gain does Ira recognize?",
+  "choices": [
+   "$100,000",
+   "$0",
+   "$400,000",
+   "$700,000"
+  ],
+  "correct": 0,
+  "exp": "Liabilities are netted: Ira was relieved of $400,000 and assumed $300,000, so net liability relief of $100,000 is boot under §1031. His realized gain is $700,000, so $100,000 is recognized. Treating the full $400,000 of relief as boot ignores the netting allowed for liabilities assumed."
+ },
+ {
+  "q": "Jo exchanges a rental property (FMV $600,000; basis $250,000; mortgage $100,000, assumed by the other party) for a property worth $800,000 that is subject to a $330,000 mortgage she assumes, plus $30,000 of cash. What gain does Jo recognize?",
+  "choices": [
+   "$0",
+   "$130,000",
+   "$30,000",
+   "$350,000"
+  ],
+  "correct": 2,
+  "exp": "Liabilities Jo assumes can offset liabilities she is relieved of, but not cash she receives. Her net liability relief is negative (she assumed more), so only the $30,000 of cash is boot, against $350,000 of realized gain. Answering $0 wrongly nets the extra mortgage she assumed against the cash received."
+ },
+ {
+  "q": "Under current law, which exchange can qualify for nonrecognition under §1031?",
+  "choices": [
+   "An apartment building in Ohio for unimproved land in Texas held for investment",
+   "Construction equipment for other construction equipment",
+   "A 30% interest in an LLC taxed as a partnership for a 30% interest in another such LLC",
+   "A U.S. office building for a commercial building in Canada"
+  ],
+  "correct": 0,
+  "exp": "Since 2018, §1031 applies only to real property held for business or investment, and improved and unimproved real property are like-kind to each other. Personal property such as equipment and partnership interests do not qualify, and U.S. and foreign real property are not like-kind."
+ },
+ {
+  "q": "Kai, a calendar-year individual, transfers his relinquished property to a qualified intermediary on October 1, 2026, in a deferred like-kind exchange. He will not extend his return, which is due April 15, 2027. What are the last days to identify the replacement property and to receive it?",
+  "choices": [
+   "November 15, 2026, and April 15, 2027",
+   "November 15, 2026, and March 30, 2027",
+   "October 31, 2026, and March 30, 2027",
+   "November 16, 2026, and March 31, 2027"
+  ],
+  "correct": 1,
+  "exp": "Under §1031, replacement property must be identified within 45 days (November 15, 2026) and received by the earlier of 180 days (March 30, 2027) or the due date, with extensions, of the return for the year of transfer. Because the 180-day deadline comes first, the April 15 due date does not apply."
+ },
+ {
+  "q": "Lena sells her rental property in a planned like-kind exchange, but the closing agent wires the $700,000 of proceeds into Lena's personal account. Thirty days later she uses the funds to buy a replacement rental. What is the result?",
+  "choices": [
+   "The exchange qualifies because the replacement was bought within 45 days",
+   "The exchange qualifies if she identified the property in writing",
+   "The exchange qualifies only for the portion of gain above the cash",
+   "The exchange fails, and the gain is recognized, because Lena actually received the proceeds"
+  ],
+  "correct": 3,
+  "exp": "Actual or constructive receipt of the sale proceeds turns the transaction into a sale and a reinvestment, not an exchange. A qualified intermediary must hold the funds under Reg. 1.1031(k)-1 safe harbors. Timely identification cannot cure receipt of the cash."
+ },
+ {
+  "q": "Max exchanges a rental property with his sister, each receiving the other's property in a valid like-kind exchange. Eighteen months later, his sister sells the property she received to an unrelated buyer. What is the consequence?",
+  "choices": [
+   "Max recognizes his deferred gain in the year of his sister's sale",
+   "Max recognizes his deferred gain in the original exchange year by amending his return",
+   "Neither party is affected because each held the property for investment",
+   "Only the sister recognizes gain, on her own sale"
+  ],
+  "correct": 0,
+  "exp": "Under §1031, if either related party disposes of the property received within two years, the deferred gain of both parties is recognized as of the date of that disposition, not retroactively. Max's gain is triggered even though he did not sell."
+ },
+ {
+  "q": "Nina exchanges investment land (basis $150,000; FMV $400,000) for a building worth $380,000 and a pickup truck worth $20,000. What is her basis in the building?",
+  "choices": [
+   "$130,000",
+   "$170,000",
+   "$150,000",
+   "$380,000"
+  ],
+  "correct": 2,
+  "exp": "She recognizes $20,000 of gain, equal to the truck boot. Total basis is $150,000 + $20,000 gain = $170,000, of which $20,000 (FMV) goes to the truck and $150,000 to the building. Answering $170,000 assigns the entire basis to the building and none to the truck."
+ },
+ {
+  "q": "Ole exchanges rental property with a $500,000 basis and a $400,000 FMV for another rental property worth $350,000 plus $50,000 cash. What loss does Ole recognize, and what is his basis in the new property?",
+  "choices": [
+   "$100,000 loss; $350,000 basis",
+   "$0 loss; $450,000 basis",
+   "$50,000 loss; $400,000 basis",
+   "$0 loss; $500,000 basis"
+  ],
+  "correct": 1,
+  "exp": "Section 1031 prevents loss recognition even when boot is received. Basis = $500,000 − $50,000 cash = $450,000, which preserves the $100,000 deferred loss ($350,000 FMV + $100,000). To deduct the loss, Ole should sell the property outright instead of exchanging it."
+ },
+ {
+  "q": "A fire destroys Pam's warehouse (adjusted basis $400,000). She receives $900,000 of insurance proceeds and, within the replacement period, buys a replacement warehouse for $800,000. She elects §1033 deferral. What are her recognized gain and her basis in the new warehouse?",
+  "choices": [
+   "$100,000 gain; $400,000 basis",
+   "$0 gain; $300,000 basis",
+   "$500,000 gain; $800,000 basis",
+   "$100,000 gain; $800,000 basis"
+  ],
+  "correct": 0,
+  "exp": "Under §1033, gain is recognized only to the extent the proceeds are not reinvested: $900,000 − $800,000 = $100,000. Basis = $800,000 cost − $400,000 deferred gain = $400,000. Using an $800,000 cost basis ignores the deferred gain."
+ },
+ {
+  "q": "Quinn sells a depreciable building on the installment method to a corporation in which he owns 85% of the stock. Which statement is correct?",
+  "choices": [
+   "The gain is §1231 gain reported as payments are received",
+   "The gain is ordinary income under §1239, and the installment method is generally unavailable, so all payments are treated as received in the year of sale",
+   "The sale is disregarded because the corporation is controlled",
+   "The gain is capital gain, but any loss is disallowed"
+  ],
+  "correct": 1,
+  "exp": "Section 1239 treats gain on a sale of depreciable property to a more-than-50%-controlled entity as ordinary income, and §453 generally denies installment reporting for such sales unless tax avoidance was not a principal purpose. Reporting §1231 gain on the installment method ignores both rules."
+ },
+ {
+  "q": "Rita sells land for $1,000,000 and receives a 10-year note that states no interest. Which statement about the note is correct?",
+  "choices": [
+   "Rita reports $1,000,000 of selling price and no interest income",
+   "The buyer's basis in the land includes the full $1,000,000 and Rita has no interest income",
+   "Part of each payment is recharacterized as interest under the imputed interest rules, which reduces Rita's selling price and gain",
+   "The installment method is unavailable for notes without stated interest"
+  ],
+  "correct": 2,
+  "exp": "Under §483 or §1274, a deferred-payment sale without adequate stated interest has interest imputed at the applicable federal rate, which converts part of the principal into ordinary interest income and lowers the selling price used to compute gain. The installment method itself remains available."
+ },
+ {
+  "q": "Sam sold land with an $80,000 basis for $200,000, receiving $50,000 down and a note for the rest (gross profit percentage 60%). After the down payment, the buyer defaulted, and Sam repossessed the land, paying $5,000 of repossession costs. How much gain does Sam recognize on the repossession?",
+  "choices": [
+   "$50,000",
+   "$85,000",
+   "$20,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Under §1038, gain on repossession of real property equals cash received before repossession ($50,000) less gain already reported ($50,000 × 60% = $30,000), or $20,000. This is limited to the original gross profit ($120,000) less gain reported ($30,000) and repossession costs ($5,000), or $85,000. The lower amount, $20,000, controls."
+ },
+ {
+  "q": "Tia sells a commercial building held for 10 years on the installment method. Her gain includes $150,000 of unrecaptured §1250 gain and $250,000 of other §1231 gain, and she treats the total as long-term capital gain after netting. How is the gain in each installment payment characterized?",
+  "choices": [
+   "Pro rata between unrecaptured §1250 gain and other gain in each payment",
+   "Other §1231 gain first, then unrecaptured §1250 gain",
+   "Entirely as ordinary income until the §1250 portion is recovered",
+   "Unrecaptured §1250 gain (taxed at up to 25%) first, until it is used up, then the rest"
+  ],
+  "correct": 3,
+  "exp": "Under Reg. 1.453-12, unrecaptured §1250 gain is taken into account before the lower-taxed long-term gain in installment payments. Prorating each payment is a common assumption but understates the early-year tax. Straight-line real property has no ordinary §1250 recapture."
+ },
+ {
+  "q": "Uma, a real estate developer, subdivides land and sells the lots to home builders. She wants to exchange 10 unsold lots for an apartment building she would hold as a rental. Does the exchange qualify under §1031?",
+  "choices": [
+   "Yes, because both are real property",
+   "Yes, if the apartment building is held for at least two years",
+   "No, because the lots are held primarily for sale",
+   "No, because improved real property is not like-kind to unimproved land"
+  ],
+  "correct": 2,
+  "exp": "Section 1031 excludes real property held primarily for sale, such as a dealer's inventory lots. Improved and unimproved real property are like-kind, so that is not the obstacle."
+ },
+ {
+  "q": "Victor owns a beach condominium that his family uses occasionally and wants to exchange it under §1031. Under the Rev. Proc. 2008-16 safe harbor, which pattern of use in each of the two years before the exchange best supports investment use?",
+  "choices": [
+   "Rented at fair rent for 90 days and personal use for 20 days",
+   "Rented to his brother at half the market rate for 200 days",
+   "Personal use for 60 days and no rentals",
+   "Rented at fair rent for 10 days and personal use for 10 days"
+  ],
+  "correct": 0,
+  "exp": "The safe harbor requires rental at fair rent for 14 or more days and personal use no greater than the greater of 14 days or 10% of fair-rental days in each of the two 12-month periods. With 90 rental days, the personal-use limit is 14 days, so 20 days fails. Below-market rentals to family count as personal use."
+ },
+ {
+  "q": "Will sold land last year on the installment method at a 40% gross profit percentage. This year he receives $50,000 of principal and $12,000 of stated interest on the note. What does Will report this year?",
+  "choices": [
+   "$50,000 of gain and $12,000 of interest income",
+   "$24,800 of gain and no interest income",
+   "$62,000 of gain",
+   "$20,000 of gain and $12,000 of interest income"
+  ],
+  "correct": 3,
+  "exp": "Only principal payments carry gross profit: $50,000 × 40% = $20,000 of gain. Interest is separately taxed as ordinary income. Applying the gross profit percentage to the interest ($24,800) treats interest as part of the selling price."
+ },
+ {
+  "q": "Xena's relinquished property sells for $900,000 through a qualified intermediary. The QI pays her $40,000 of cash at closing (not reinvested), and $10,000 of exchange expenses (broker commissions and closing costs) are paid from the proceeds. Her realized gain is $300,000. How much gain does she recognize?",
+  "choices": [
+   "$40,000",
+   "$50,000",
+   "$0",
+   "$30,000"
+  ],
+  "correct": 3,
+  "exp": "Exchange expenses reduce the amount realized and may offset cash boot received: $40,000 − $10,000 = $30,000 recognized under §1031. Ignoring the offset overstates the recognized gain."
+ },
+ {
+  "q": "Yuri sold land for $2,000,000 on the installment method (gross profit percentage 50%), receiving no down payment and a note due in five years. This year he borrows $1,000,000 from a bank and pledges the note as security. The §453A pledge rule applies. How much gain does Yuri recognize this year?",
+  "choices": [
+   "$0",
+   "$1,000,000",
+   "$500,000",
+   "$250,000"
+  ],
+  "correct": 2,
+  "exp": "Under §453A, pledging an installment obligation as security for a loan treats the loan proceeds as a payment on the obligation: $1,000,000 × 50% = $500,000. Recognizing $1,000,000 applies the loan proceeds without the gross profit percentage."
+ },
+ {
+  "q": "Zane exchanges land (basis $300,000; FMV $550,000) and $50,000 of cash for a commercial building worth $600,000. What is Zane's basis in the building?",
+  "choices": [
+   "$300,000",
+   "$600,000",
+   "$350,000",
+   "$400,000"
+  ],
+  "correct": 2,
+  "exp": "Giving boot does not cause the giver to recognize gain (paying cash is not a sale). Basis = $300,000 old basis + $50,000 cash paid = $350,000, which equals the $600,000 FMV less the $250,000 deferred gain. A $600,000 cost basis ignores the deferral."
+ },
+ {
+  "q": "Mia sold land with a $200,000 basis to her son for $500,000: $50,000 down and a note for the rest, with adequate interest. She reported $30,000 of gain in Year 1. In Year 2, before making any further payments, the son sells the land to an unrelated buyer for $520,000 cash. How much gain must Mia recognize in Year 2?",
+  "choices": [
+   "$270,000",
+   "$282,000",
+   "$300,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Under §453, the amount treated as received is the son's amount realized, capped at the $500,000 contract price, less payments already received ($50,000): $450,000 × 60% gross profit percentage = $270,000. Using the $520,000 resale price ignores the contract-price cap."
+ },
+ {
+  "q": "Nell sold her relinquished property for $1,000,000 in a deferred exchange. Which identification of replacement property is valid?",
+  "choices": [
+   "Four properties with a total FMV of $2,400,000, of which she acquires two worth $1,100,000",
+   "An oral identification of three properties to her qualified intermediary on day 40",
+   "Five properties with a total FMV of $1,800,000, identified in writing on day 44",
+   "A written identification of three properties delivered on day 50"
+  ],
+  "correct": 2,
+  "exp": "Under Reg. 1.1031(k)-1, any number of properties may be identified if their total FMV does not exceed 200% of the relinquished property's value ($2,000,000), in writing within 45 days. Exceeding 200% requires acquiring 95% of the identified value. Oral and late identifications are invalid."
+ },
+ {
+  "q": "Omar exchanges an apartment building (adjusted basis $300,000) for land worth $200,000 and a building worth $600,000, both acquired in the same exchange with no boot. How much of his $300,000 substituted basis is allocated to the building?",
+  "choices": [
+   "$300,000",
+   "$225,000",
+   "$150,000",
+   "$600,000"
+  ],
+  "correct": 1,
+  "exp": "When several like-kind properties are received, the substituted basis is allocated by relative FMV: $300,000 × $600,000 ÷ $800,000 = $225,000. Assigning all the basis to the building would overstate depreciation, because land is not depreciable."
+ },
+ {
+  "q": "Pia's warehouse, used in her business, is condemned by the city. She receives the condemnation award on August 1, 2026, and realizes a gain. She is a calendar-year taxpayer. What is the last day she can buy qualifying replacement real property and still defer the gain under §1033?",
+  "choices": [
+   "August 1, 2028",
+   "December 31, 2028",
+   "August 1, 2029",
+   "December 31, 2029"
+  ],
+  "correct": 3,
+  "exp": "For condemned real property held for business or investment, the replacement period ends three years after the close of the first tax year in which any gain is realized: December 31, 2029. The two-year period (December 31, 2028) applies to other involuntary conversions, such as casualties."
+ },
+ {
+  "q": "Raj owns a rental building that the state condemns. He wants to buy unimproved land to hold for investment as the replacement. Which statement is correct under §1033?",
+  "choices": [
+   "The land qualifies because, for condemned real property held for business or investment, like-kind replacement property suffices",
+   "The land does not qualify because replacement property must be similar or related in service or use",
+   "The land qualifies only if bought within two years",
+   "The land qualifies only if Raj builds a rental building on it within the replacement period"
+  ],
+  "correct": 0,
+  "exp": "Section 1033 allows like-kind property as a replacement for condemned real property held for business or investment, and improved and unimproved real property are like-kind. The stricter 'similar or related in service or use' test applies to other involuntary conversions."
+ },
+ {
+  "q": "A partnership owns an apartment building. Partner A wants to cash out, while Partners B and C want to defer gain through a §1031 exchange. Which approach is most consistent with the exchange rules?",
+  "choices": [
+   "Partner A exchanges his partnership interest for an interest in another partnership owning real property",
+   "The partnership exchanges the building, and Partner A's share of the replacement is treated as his sale",
+   "The partnership distributes undivided tenancy-in-common interests in the building to the partners well before the sale, after which A sells his interest and B and C exchange theirs",
+   "The partnership completes the exchange and then redeems Partner A with cash from a refinancing on the same day"
+  ],
+  "correct": 2,
+  "exp": "Partnership interests are not like-kind property, so a 'drop and swap' converts the ownership into direct tenancy-in-common interests that each owner can sell or exchange separately. Doing it well in advance supports the required 'held for investment' intent. Swapping partnership interests fails because they are excluded from §1031."
+ },
+ {
+  "q": "Sue exchanges rental land with a $90,000 basis for other rental land worth $110,000 plus $50,000 of cash. What gain does she recognize?",
+  "choices": [
+   "$70,000",
+   "$50,000",
+   "$0",
+   "$160,000"
+  ],
+  "correct": 1,
+  "exp": "Her realized gain is $160,000 − $90,000 = $70,000, but under §1031 recognized gain is limited to the lesser of realized gain or boot received, here the $50,000 of cash. Answering $70,000 recognizes the full realized gain and ignores the boot limit."
+ },
+ {
+  "q": "Tom trades in a business pickup truck (adjusted basis $10,000; FMV $25,000) and pays $35,000 cash for a new truck priced at $60,000. What are Tom's recognized gain and basis in the new truck?",
+  "choices": [
+   "$0 gain; $45,000 basis",
+   "$15,000 gain; $45,000 basis",
+   "$0 gain; $60,000 basis",
+   "$15,000 gain; $60,000 basis"
+  ],
+  "correct": 3,
+  "exp": "Since 2018, §1031 applies only to real property, so the trade-in is a taxable sale: $25,000 − $10,000 = $15,000 of gain (§1245 ordinary income), and the new truck takes a $60,000 cost basis. The $45,000 substituted basis reflects pre-2018 law."
+ },
+ {
+  "q": "Ula sold land on the installment method last year and reported it that way on her timely filed return. This year, her tax adviser recommends recognizing the entire remaining gain because her other income dropped sharply. Which statement is correct?",
+  "choices": [
+   "She can elect out of the installment method on this year's return",
+   "She may revoke the installment method only with IRS consent, which is generally granted only in limited circumstances, so planning should be done by the due date of the year-of-sale return",
+   "She can amend last year's return at any time within three years to elect out",
+   "She can accelerate the gain only by disposing of the note"
+  ],
+  "correct": 1,
+  "exp": "Under §453, the election out must be made by the due date (including extensions) of the return for the year of sale, and a late election or revocation requires IRS consent, which is rarely granted for hindsight tax planning. Disposing of the note is a way to trigger the gain, but it is not the only constraint the question tests."
+ },
+ {
+  "q": "Vera exchanges investment real property with a $100,000 basis, worth $400,000, for replacement real property. She receives replacement property worth $350,000 and a $50,000 note from the buyer, payable next year with adequate interest, through her qualified intermediary. Which statement is correct?",
+  "choices": [
+   "The $50,000 note is boot, but the gain it represents may be reported on the installment method when the note is collected",
+   "The $50,000 note is not boot because it is not cash",
+   "All $300,000 of realized gain is recognized because a note was received",
+   "The note causes the exchange to fail"
+  ],
+  "correct": 0,
+  "exp": "A note received in an exchange is boot, but under §453 and Reg. 1.1031(k)-1 the gain it represents can be reported as payments are received. Treating the note as not boot ignores that it is non-like-kind property, while treating the exchange as failed goes too far."
+ }
+]

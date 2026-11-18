@@ -1,0 +1,332 @@
+[
+ {
+  "q": "A simple trust earned $30,000 of dividends and $10,000 of taxable interest during the year, and realized an $8,000 long-term capital gain that the trust instrument allocates to corpus. The trust had no expenses and distributed all of its accounting income to the beneficiary. What is the trust's taxable income?",
+  "choices": [
+   "$7,700",
+   "$8,000",
+   "$47,700",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "The $40,000 distribution deduction removes all ordinary income; the corpus capital gain is taxed to the trust, less the $300 exemption for a trust required to distribute all income (§642): $8,000 − $300 = $7,700. Forgetting the exemption gives $8,000."
+ },
+ {
+  "q": "A trust's governing instrument permits the trustee to accumulate income. This year, the trustee nevertheless distributed all of the trust's accounting income and none of its corpus. What personal exemption may the trust deduct?",
+  "choices": [
+   "$300",
+   "$100",
+   "$600",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "Under §642, the $300 exemption is available only to a trust required by its instrument to distribute all income currently; other trusts get $100, even if they happen to distribute all income. The $600 exemption is for estates."
+ },
+ {
+  "q": "A complex trust had $20,000 of taxable interest, $10,000 of tax-exempt interest, a $3,000 trustee fee charged to income, and a $15,000 capital gain allocated to corpus. It distributed $27,000 to its sole beneficiary. The fee is not directly attributable to either type of interest. What is the trust's distribution deduction?",
+  "choices": [
+   "$27,000",
+   "$17,000",
+   "$18,000",
+   "$20,000"
+  ],
+  "correct": 2,
+  "exp": "DNI is $27,000 ($30,000 − $3,000 fee, excluding the corpus gain); one-third of the fee ($1,000) is allocated to exempt income, leaving $9,000 of tax-exempt DNI, which is excluded from the deduction under §661, so the deduction is $18,000. Allocating the entire fee to taxable income gives $17,000."
+ },
+ {
+  "q": "Under what circumstances are capital gains of a trust included in distributable net income (DNI)?",
+  "choices": [
+   "Always, because DNI is based on taxable income",
+   "Never, because capital gains are always taxed to the trust",
+   "Only for simple trusts",
+   "When they are allocated to income under the governing instrument or local law, or are paid, credited or required to be distributed, as in a trust's final year"
+  ],
+  "correct": 3,
+  "exp": "Under §643 and Reg. §1.643-3, capital gains allocated to corpus and not distributed are excluded from DNI, but gains allocated to income or actually distributed (including in the termination year) are included. The general rule excluding them is not absolute."
+ },
+ {
+  "q": "A complex trust has DNI and accounting income of $40,000, all taxable interest. The instrument requires $30,000 to be distributed annually to Ann. The trustee also made a discretionary distribution of $30,000 to Bob. How much income must Bob report from the trust?",
+  "choices": [
+   "$10,000",
+   "$20,000",
+   "$30,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Under the tier system of §662, first-tier (required) distributions absorb DNI first: Ann reports $30,000, leaving $10,000 of DNI for Bob's second-tier distribution. Allocating DNI pro rata to both beneficiaries gives $20,000, which ignores the tiers."
+ },
+ {
+  "q": "A complex trust uses the calendar year. On February 20 of the following year, the trustee made a discretionary distribution to a beneficiary. Which statement is correct?",
+  "choices": [
+   "The distribution must be reported in the year paid; no election is available",
+   "The trustee may elect to treat the distribution as made on the last day of the prior year because it was made within 65 days after year-end",
+   "The distribution automatically relates back to the prior year",
+   "Only estates may elect to treat late distributions as made in the prior year"
+  ],
+  "correct": 1,
+  "exp": "The 65-day rule of §663 lets the fiduciary of a complex trust (or estate) elect to treat distributions within the first 65 days of the year as made in the prior year. It is elective, not automatic."
+ },
+ {
+  "q": "Lynn created a trust and retained the power to revoke it at any time. During the year the trust earned $50,000 of taxable interest, all of which the trustee distributed to Lynn's adult daughter. Who is taxed on the $50,000?",
+  "choices": [
+   "The daughter, because she received the distribution",
+   "The trust, because it is a separate taxable entity",
+   "Lynn, because the trust is a grantor trust",
+   "The daughter and the trust equally"
+  ],
+  "correct": 2,
+  "exp": "A grantor who retains the power to revoke is treated as owner of the trust under §676 and is taxed on all its income, regardless of who receives distributions. The normal DNI conduit rules do not apply to grantor trusts."
+ },
+ {
+  "q": "Which of the following causes the grantor to be treated as the owner of a trust for income tax purposes?",
+  "choices": [
+   "An independent bank trustee may distribute income among the grantor's adult children",
+   "The grantor retains a reversionary interest worth 3% of the trust's value at inception",
+   "An independent trustee may accumulate income for the grantor's grandchildren",
+   "The grantor retains a reversionary interest worth more than 5% of the trust's value at inception"
+  ],
+  "correct": 3,
+  "exp": "Under §673, a reversionary interest exceeding 5% of the trust's value at inception makes the grantor the owner. Powers held by independent trustees to sprinkle income are excepted under §674."
+ },
+ {
+  "q": "Which statement about the taxable year of estates and trusts is correct?",
+  "choices": [
+   "An estate may adopt a fiscal year, but a trust (other than certain tax-exempt and charitable trusts) must use a calendar year",
+   "Both estates and trusts must use a calendar year",
+   "Both estates and trusts may adopt any fiscal year",
+   "A trust may adopt a fiscal year, but an estate must use a calendar year"
+  ],
+  "correct": 0,
+  "exp": "Section 644 requires trusts to use the calendar year, while an estate may choose a fiscal year ending at the end of any month within its first 12 months. The fiscal-year option for estates is a planning tool for deferral."
+ },
+ {
+  "q": "Which statement about estimated tax payments by estates and trusts is correct?",
+  "choices": [
+   "Estates and trusts are never required to make estimated payments",
+   "An estate is not required to make estimated payments for tax years ending within two years after the decedent's death",
+   "A trust is exempt from estimated payments for its first two tax years",
+   "Estates must make estimated payments beginning with their first tax year"
+  ],
+  "correct": 1,
+  "exp": "Under §6654, estates (and grantor trusts receiving the residue under a will) are exempt from estimated tax for years ending within two years after death; other trusts must pay estimated tax. Extending the two-year relief to all trusts is the trap."
+ },
+ {
+  "q": "Which of the following must file a federal fiduciary income tax return (Form 1041) for the year?",
+  "choices": [
+   "An estate with $500 of gross income and no taxable income",
+   "A complex trust with $400 of gross income and no taxable income",
+   "An estate with $650 of gross income",
+   "A simple trust whose only income is $550 of tax-exempt municipal bond interest"
+  ],
+  "correct": 2,
+  "exp": "Under §6012, an estate must file if it has gross income of $600 or more; a trust must file if it has any taxable income or gross income of $600 or more. Tax-exempt interest is not gross income, so the municipal bond trust has no filing requirement."
+ },
+ {
+  "q": "Under its governing instrument, a complex trust paid $25,000 of its current-year gross income to a qualified charity. The trust's gross income was $100,000. What charitable deduction may the trust claim?",
+  "choices": [
+   "$10,000, limited to 10% of taxable income",
+   "$0, because trusts cannot deduct charitable contributions",
+   "$25,000, but only as an itemized deduction passed through to the beneficiaries",
+   "$25,000"
+  ],
+  "correct": 3,
+  "exp": "Section 642 allows an estate or complex trust an unlimited deduction for amounts of gross income paid to charity under the governing instrument. The percentage limits for individuals and corporations do not apply."
+ },
+ {
+  "q": "In its final year, an estate had deductions exceeding its gross income and had an unused capital loss carryover. What happens to these items when the estate terminates?",
+  "choices": [
+   "They pass through to the beneficiaries succeeding to the estate's property",
+   "They are lost, because they belong to the estate",
+   "They are deducted on the decedent's final individual return",
+   "They may be carried back three years by the estate"
+  ],
+  "correct": 0,
+  "exp": "Under §642, unused loss carryovers and excess deductions in the termination year are allowed to the beneficiaries who succeed to the property. Without this rule they would expire with the entity."
+ },
+ {
+  "q": "An estate has DNI of $50,000. During the year, the executor distributed a painting worth $80,000 to the decedent's niece under a specific bequest in the will, and $20,000 of cash to the residuary beneficiary. How much DNI is carried out to the niece?",
+  "choices": [
+   "$80,000",
+   "$0",
+   "$40,000",
+   "$50,000"
+  ],
+  "correct": 1,
+  "exp": "A specific bequest of property or a sum of money paid in three or fewer installments is excluded from the distribution rules under §663, so it carries out no DNI. The residuary beneficiary is taxed on $20,000."
+ },
+ {
+  "q": "A complex trust with DNI of $40,000 distributed stock to a beneficiary in satisfaction of a discretionary distribution. The stock had a basis of $10,000 and a fair market value of $25,000. The trustee did not make a §643 election to recognize gain. What is the amount of the distribution and the beneficiary's basis in the stock?",
+  "choices": [
+   "Distribution of $25,000; basis of $25,000",
+   "Distribution of $25,000; basis of $10,000",
+   "Distribution of $10,000; basis of $10,000",
+   "Distribution of $25,000; the trust recognizes $15,000 of gain and the beneficiary's basis is $25,000"
+  ],
+  "correct": 2,
+  "exp": "Without the election, an in-kind distribution counts at the lesser of basis or FMV ($10,000), and the beneficiary takes the trust's $10,000 basis. Gain recognition and an FMV basis occur only if the trustee elects."
+ },
+ {
+  "q": "An executor paid $40,000 of estate administration expenses. Which statement about deducting these expenses is correct?",
+  "choices": [
+   "They may be deducted on both the estate tax return and the estate's income tax return",
+   "They are deductible only on the estate tax return",
+   "They are deductible only on the decedent's final individual return",
+   "They may be deducted on either the estate tax return or the estate's income tax return, or split between them, but the same amount cannot be deducted on both"
+  ],
+  "correct": 3,
+  "exp": "Section 642 prohibits a double deduction: amounts claimed on Form 1041 require a waiver of the estate tax deduction. The executor chooses whichever return produces the greater benefit."
+ },
+ {
+  "q": "Within one year after the decedent's death, the estate paid $15,000 of medical expenses the decedent incurred during his final illness. Where may these expenses be deducted?",
+  "choices": [
+   "On the decedent's final individual return (subject to the AGI floor), if a waiver is filed, or on the estate tax return",
+   "Only on the estate's fiduciary income tax return",
+   "Only on the estate tax return",
+   "On both the decedent's final individual return and the estate tax return"
+  ],
+  "correct": 0,
+  "exp": "Under §213, medical expenses paid by the estate within one year of death may be treated as paid by the decedent when incurred, if the estate tax deduction is waived; otherwise they are deductible as a debt on Form 706. They are never deductible on Form 1041, and not on both returns."
+ },
+ {
+  "q": "A simple trust earned $12,000 of qualified dividends and $8,000 of taxable interest and distributed all $20,000 of its accounting income to its sole beneficiary. How does the beneficiary report the income?",
+  "choices": [
+   "$20,000 of ordinary income, because trust distributions lose their character",
+   "$12,000 of qualified dividends and $8,000 of interest income",
+   "$20,000 of qualified dividends",
+   "$20,000 of other income not subject to tax because the trust paid tax"
+  ],
+  "correct": 1,
+  "exp": "Under the conduit principle of §§652 and 662, amounts distributed retain the character they had in the trust's hands. Treating distributions as a single ordinary income item ignores this rule."
+ },
+ {
+  "q": "A trust's instrument requires it to distribute all income currently. This year, in addition to all income, the trustee distributed part of the corpus. How is the trust treated for the year?",
+  "choices": [
+   "As a simple trust with a $300 exemption",
+   "As a grantor trust",
+   "As a complex trust with a $100 exemption",
+   "As an estate with a $600 exemption"
+  ],
+  "correct": 2,
+  "exp": "A trust that distributes corpus during the year is a complex trust for that year (Reg. §1.651-1), even if it must distribute all income. The $100 exemption then applies because the trust does not qualify as a simple trust that year."
+ },
+ {
+  "q": "A complex trust has DNI of $15,000, all from taxable interest. It distributed $25,000, including $10,000 of corpus, to its sole beneficiary. How much must the beneficiary include in gross income?",
+  "choices": [
+   "$25,000",
+   "$10,000",
+   "$0",
+   "$15,000"
+  ],
+  "correct": 3,
+  "exp": "DNI caps both the trust's distribution deduction and the beneficiary's inclusion (§662), so the beneficiary includes $15,000; the excess is a tax-free distribution of corpus. Including the full distribution overstates income."
+ },
+ {
+  "q": "A complex trust had $30,000 of taxable interest and a $10,000 capital gain allocated to corpus. It paid a $2,000 trustee fee charged to corpus and made a $15,000 discretionary distribution to its beneficiary. What is the trust's taxable income?",
+  "choices": [
+   "$22,900",
+   "$12,900",
+   "$23,000",
+   "$22,700"
+  ],
+  "correct": 0,
+  "exp": "DNI is $28,000 ($30,000 − $2,000), so the distribution deduction is $15,000; taxable income = $30,000 + $10,000 − $2,000 − $15,000 − $100 exemption = $22,900. Omitting the corpus capital gain, which is taxed to the trust, gives $12,900."
+ },
+ {
+  "q": "Which of the following is excluded from the distributable net income of a complex trust?",
+  "choices": [
+   "Tax-exempt interest, net of allocable expenses",
+   "Capital gains allocated to corpus and not distributed",
+   "Trustee fees charged to corpus (as a reduction)",
+   "Taxable dividends"
+  ],
+  "correct": 1,
+  "exp": "Under §643, capital gains allocated to corpus and not paid or set aside for beneficiaries are excluded from DNI. Tax-exempt interest is included in DNI (although excluded from the distribution deduction), and corpus-charged fees still reduce DNI."
+ },
+ {
+  "q": "Which of the following may be deducted on an estate's fiduciary income tax return (Form 1041)?",
+  "choices": [
+   "The decedent's funeral expenses",
+   "The federal estate tax paid by the estate",
+   "Executor's fees that are not claimed as a deduction on the estate tax return",
+   "The decedent's personal living expenses before death"
+  ],
+  "correct": 2,
+  "exp": "Administration expenses such as executor's fees are deductible on Form 1041 if the estate tax deduction is waived (§642). Funeral expenses are deductible only on Form 706, and the estate tax itself is not deductible on Form 1041 (other than through the §691 deduction for income in respect of a decedent)."
+ },
+ {
+  "q": "A complex trust earned $30,000 of taxable interest and $10,000 of tax-exempt interest. It paid a $4,000 trustee fee that is not directly attributable to either type of income. How much of the fee is deductible by the trust?",
+  "choices": [
+   "$4,000",
+   "$0",
+   "$1,000",
+   "$3,000"
+  ],
+  "correct": 3,
+  "exp": "Expenses allocable to tax-exempt income are nondeductible under §265; the fee is allocated proportionately, so 30/40 × $4,000 = $3,000 is deductible. Deducting the whole fee ignores the allocation to exempt income."
+ },
+ {
+  "q": "A complex trust that is not in its final year has a net capital loss of $8,000 and no capital gains. How is the loss treated?",
+  "choices": [
+   "The trust deducts $3,000 and carries the remaining $5,000 forward",
+   "The loss passes through to the beneficiaries in proportion to distributions",
+   "The trust deducts the full $8,000 against ordinary income",
+   "The loss reduces DNI by $8,000"
+  ],
+  "correct": 0,
+  "exp": "A trust is subject to the same $3,000 net capital loss limit and carryover rules as individuals (§1211), and losses pass to beneficiaries only in the termination year. Capital losses generally do not enter DNI."
+ },
+ {
+  "q": "An estate uses a fiscal year ending January 31, Year 2. During that fiscal year, the estate made income distributions to a calendar-year beneficiary in March through December of Year 1 and in January of Year 2. In which year does the beneficiary report the distributions?",
+  "choices": [
+   "Year 1 for the Year 1 distributions and Year 2 for the January distribution",
+   "Year 2, for all of the distributions",
+   "Year 1, for all of the distributions",
+   "The year in which the estate files its return"
+  ],
+  "correct": 1,
+  "exp": "Under §662, a beneficiary includes amounts for the estate's tax year ending with or within the beneficiary's tax year; the fiscal year ending January 31, Year 2 falls within calendar Year 2. This is the deferral benefit of an estate fiscal year."
+ },
+ {
+  "q": "Which statement about the federal income tax rates applicable to trusts and estates is correct?",
+  "choices": [
+   "They are taxed at a flat corporate rate",
+   "They use the same brackets as single individuals",
+   "Their compressed brackets reach the highest marginal rate at a much lower level of taxable income than for individuals",
+   "They are taxed at the beneficiaries' marginal rates on all income"
+  ],
+  "correct": 2,
+  "exp": "Under §1(e), fiduciary rate brackets are highly compressed, which is a key reason trustees often distribute income to beneficiaries in lower brackets. Beneficiaries are taxed at their own rates only on distributed DNI."
+ },
+ {
+  "q": "A single trust holds assets for two siblings, with each sibling's share administered independently and distributions from one share never affecting the other. In one year, all distributions were made from the first sibling's share. How is DNI allocated?",
+  "choices": [
+   "Equally between the two siblings, regardless of distributions",
+   "Entirely to the sibling who received distributions, up to total trust DNI",
+   "To the trust, because no beneficiary received a required distribution",
+   "Separately for each share, as if each share were a separate trust"
+  ],
+  "correct": 3,
+  "exp": "Under the separate share rule of §663, substantially separate and independent shares are treated as separate trusts for DNI purposes. This prevents one beneficiary from being taxed on income that belongs to the other's share."
+ },
+ {
+  "q": "During its first year an estate earned $20,000 of interest and $10,000 of net rental income, paid $3,000 of executor fees that it elected to deduct on Form 1041, and distributed $12,000 to the residuary heir. What is the estate's taxable income?",
+  "choices": [
+   "$14,400",
+   "$14,900",
+   "$15,000",
+   "$14,700"
+  ],
+  "correct": 0,
+  "exp": "DNI is $27,000, the distribution deduction is $12,000, and an estate's exemption is $600: $30,000 − $3,000 − $12,000 − $600 = $14,400 (§642). Using the $100 complex-trust exemption gives $14,900."
+ },
+ {
+  "q": "A simple trust earned $20,000 of taxable interest in Year 1, all of which was required to be distributed currently. Because of an administrative delay, the trustee did not distribute the income until March of Year 2. When is the beneficiary taxed on this income?",
+  "choices": [
+   "In Year 2, when the income is distributed",
+   "In Year 1, because income required to be distributed is taxed to the beneficiary whether or not distributed",
+   "Never, because the trust pays the tax",
+   "In Year 1 only if the trustee elects the 65-day rule"
+  ],
+  "correct": 1,
+  "exp": "Under §652, a beneficiary of a simple trust includes income required to be distributed currently, whether or not it is actually distributed. The 65-day election applies only to complex trusts and estates."
+ }
+]

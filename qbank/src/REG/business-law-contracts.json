@@ -1,0 +1,332 @@
+[
+ {
+  "q": "On March 1, Opal offered to sell her land to Ted for $200,000. Ted paid Opal $500 in exchange for her written promise to keep the offer open until March 31. On March 10, Opal notified Ted that she was revoking the offer. On March 15, Ted accepted. Is there a contract?",
+  "choices": [
+   "Yes, because the offer was irrevocable under an option contract supported by consideration",
+   "No, because Opal revoked the offer before Ted accepted",
+   "No, because an offer for the sale of land cannot be made irrevocable",
+   "Yes, but only if Opal is a merchant"
+  ],
+  "correct": 0,
+  "exp": "An option contract supported by consideration makes the offer irrevocable for the stated period, so Ted's acceptance within that period forms a contract. The merchant firm-offer rule applies to sales of goods, not land, and is not needed when consideration is paid."
+ },
+ {
+  "q": "Lynn offered to sell her painting to Mark for $5,000, stating that the offer would remain open for ten days. Mark gave no consideration. On day four, a reliable mutual friend told Mark that Lynn had sold the painting to someone else, which was true. On day six, Mark tried to accept. Is there a contract?",
+  "choices": [
+   "Yes, because the offer stated it would remain open for ten days",
+   "No, because the offer was effectively revoked when Mark learned from a reliable source that Lynn had sold the painting",
+   "Yes, because a revocation must come directly from the offeror",
+   "No, because an offer to sell personal property must be accepted in writing"
+  ],
+  "correct": 1,
+  "exp": "Without consideration the offer was revocable, and an offer is revoked indirectly when the offeree learns from a reliable source that the offeror has taken definite action inconsistent with the offer, such as selling the item. A promise to hold an offer open without consideration is not binding at common law."
+ },
+ {
+  "q": "On May 1, Glen mailed Ruth an offer to perform consulting services, inviting acceptance by mail. On May 3, Glen mailed a revocation, which Ruth received on May 6. On May 5, Ruth mailed her acceptance, which Glen received on May 7. What is the result?",
+  "choices": [
+   "No contract, because Glen's revocation was mailed before Ruth's acceptance",
+   "No contract, because Glen received the acceptance after Ruth received the revocation",
+   "A contract was formed on May 5",
+   "A contract was formed on May 7"
+  ],
+  "correct": 2,
+  "exp": "Under the mailbox rule, an acceptance by an authorized means is effective when dispatched (May 5), whereas a revocation is effective only on receipt (May 6). Applying the dispatch rule to revocations is the common error."
+ },
+ {
+  "q": "Fay received a mailed offer from Gus. On Monday she mailed Gus a letter rejecting the offer. On Tuesday she changed her mind and telephoned Gus to accept, which Gus received before her letter arrived on Wednesday. The offer did not limit the method of acceptance. Is there a contract?",
+  "choices": [
+   "No, because the rejection was dispatched before the acceptance",
+   "No, because an offer made by mail must be accepted by mail",
+   "Only if Gus had already relied on the rejection",
+   "Yes, because the acceptance was received before the rejection"
+  ],
+  "correct": 3,
+  "exp": "When an offeree sends a rejection and then an acceptance, the mailbox rule does not apply; the acceptance is effective only if it reaches the offeror before the rejection. A rejection is effective on receipt, so the earlier-arriving acceptance controls."
+ },
+ {
+  "q": "Hal offered to paint Ida's house for $8,000, with work to begin June 1. Ida replied, 'I accept, provided you begin May 15.' Hal did not respond. Under common law, what is the legal effect of Ida's reply?",
+  "choices": [
+   "It is a counteroffer that rejects Hal's offer",
+   "It is an acceptance, and the start date becomes May 15",
+   "It is an acceptance, and the start date remains June 1",
+   "It is an acceptance unless Hal objects within a reasonable time"
+  ],
+  "correct": 0,
+  "exp": "Under the common law mirror image rule, which governs service contracts, an acceptance that changes or adds terms is a counteroffer and a rejection. The UCC's more lenient additional-terms rule applies only to sales of goods."
+ },
+ {
+  "q": "Kerr agreed to remodel Lane's office for $100,000. Halfway through, with no unforeseen difficulties, Kerr refused to continue unless Lane agreed to pay $10,000 more. Lane agreed in writing, but after completion paid only $100,000. Can Kerr collect the additional $10,000?",
+  "choices": [
+   "Yes, because Lane's promise was in writing",
+   "No, because Kerr was already obligated to perform, so there was no consideration for Lane's promise",
+   "Yes, because a modification of a contract needs no consideration",
+   "No, because the original contract was not in writing"
+  ],
+  "correct": 1,
+  "exp": "Under the common law preexisting duty rule, a promise to pay more for performance the promisor is already bound to give lacks consideration, absent unforeseen difficulties. The UCC rule that modifications need no consideration applies only to sales of goods."
+ },
+ {
+  "q": "After Ned retired, his former employer wrote to him: 'In recognition of your 30 years of loyal service, we promise to pay you $1,000 a month for life.' Ned did nothing in reliance on the promise. After six months the employer stopped paying. Is the promise enforceable?",
+  "choices": [
+   "Yes, because 30 years of service is sufficient consideration",
+   "Yes, because the promise was in writing",
+   "No, because the services were performed before the promise was made and therefore are not consideration",
+   "No, because promises to pay money for life must be notarized"
+  ],
+  "correct": 2,
+  "exp": "Past consideration is not consideration because it was not bargained for in exchange for the promise. Without detrimental reliance there is no promissory estoppel, and a writing does not substitute for consideration."
+ },
+ {
+  "q": "Owen's uncle promised to give Owen $50,000 toward the purchase of a home. Relying on the promise, as the uncle expected, Owen signed a contract to buy a house and paid a nonrefundable deposit. The uncle then refused to pay. Which doctrine gives Owen the best chance of enforcing the promise?",
+  "choices": [
+   "Past consideration",
+   "The parol evidence rule",
+   "Accord and satisfaction",
+   "Promissory estoppel"
+  ],
+  "correct": 3,
+  "exp": "Promissory estoppel enforces a promise without consideration when the promisor should reasonably expect it to induce substantial reliance, the promisee does rely, and injustice can be avoided only by enforcement. A gratuitous promise otherwise lacks consideration."
+ },
+ {
+  "q": "Pat billed Ray $5,000 for repairs. Ray disputed the bill in good faith, claiming the work was defective, and sent Pat a check for $3,500 marked 'payment in full.' Pat cashed the check, writing 'under protest' on it. Can Pat recover the remaining $1,500?",
+  "choices": [
+   "No, because an accord and satisfaction occurred when Pat cashed the check",
+   "Yes, because Pat reserved her rights by writing 'under protest'",
+   "Yes, because partial payment of a debt never discharges the balance",
+   "No, unless Ray's dispute is later proven correct"
+  ],
+  "correct": 0,
+  "exp": "When a debt is unliquidated (subject to a good-faith dispute), cashing a check tendered as full payment creates an accord and satisfaction (also UCC §3-311). Reservation language does not change this, and the rule that partial payment is not consideration applies only to liquidated debts."
+ },
+ {
+  "q": "Sue owed Tom an undisputed $10,000 that was due on June 1. On June 1, Tom agreed to accept $7,000 in full satisfaction, and Sue paid $7,000. Can Tom later collect the remaining $3,000?",
+  "choices": [
+   "No, because Tom agreed to accept $7,000 in full satisfaction",
+   "Yes, because Sue gave no consideration for Tom's promise to accept less on a liquidated debt",
+   "No, because an accord and satisfaction occurred",
+   "Yes, but only if Tom's agreement was oral"
+  ],
+  "correct": 1,
+  "exp": "Payment of a lesser sum on the due date of a liquidated, undisputed debt is not consideration for a promise to discharge the balance, because the debtor already owed it. Accord and satisfaction requires a genuine dispute or new consideration such as early payment."
+ },
+ {
+  "q": "Val, age 17, bought a used car for $9,000. A month later, the car was badly damaged in an accident caused by Val's negligence. Val, still 17, wants to disaffirm the contract. Under the majority rule, what is Val's right?",
+  "choices": [
+   "Val cannot disaffirm because he cannot return the car in its original condition",
+   "Val can disaffirm only if the seller knew Val was a minor",
+   "Val can disaffirm by returning the damaged car and recover the purchase price",
+   "Val can disaffirm but must pay the seller the full purchase price as damages"
+  ],
+  "correct": 2,
+  "exp": "Under the majority rule a minor may disaffirm a contract for non-necessaries during minority or a reasonable time after reaching majority, returning whatever consideration remains even if damaged. The seller's knowledge of the minority is irrelevant."
+ },
+ {
+  "q": "Wes, age 16 and living on his own, rented an apartment for $900 a month, the fair rental value. After three months, he moved out and refused to pay further rent, asserting his minority. What is Wes's liability?",
+  "choices": [
+   "None, because a minor may disaffirm any contract",
+   "The full rent for the remaining lease term",
+   "Only for rent if he ratified after reaching majority",
+   "The reasonable value of the necessaries he actually received"
+  ],
+  "correct": 3,
+  "exp": "A minor is liable in quasi-contract for the reasonable value of necessaries actually furnished, such as shelter, but not necessarily for the full contract price or future rent. Minors otherwise may disaffirm contracts."
+ },
+ {
+  "q": "Ace Builders bid $150,000 on a project; the other bids ranged from $290,000 to $310,000. The low bid resulted from an arithmetic error, and the owner, realizing the bid was obviously mistaken, quickly accepted it. Can Ace avoid the contract?",
+  "choices": [
+   "Yes, because the owner knew or should have known of the unilateral mistake",
+   "No, because unilateral mistakes never allow avoidance",
+   "No, because Ace was negligent in preparing the bid",
+   "Yes, because any mistake of fact makes a contract void"
+  ],
+  "correct": 0,
+  "exp": "A unilateral mistake generally does not permit avoidance, but an exception applies when the other party knew or should have known of the error, such as an obviously out-of-line bid. Ordinary negligence in preparing a bid does not bar relief in that situation."
+ },
+ {
+  "q": "Cora sold Dan a cow that both believed was barren, for $80. Before delivery, both learned the cow was pregnant and worth $750. Cora refused to deliver. Which statement is correct?",
+  "choices": [
+   "Dan can enforce the contract because Cora bore the risk of mistake",
+   "The contract is voidable because of a mutual mistake as to a basic assumption on which the contract was made",
+   "The contract is enforceable because a mistake as to value is never a defense",
+   "The contract is void because of fraud"
+  ],
+  "correct": 1,
+  "exp": "A mutual mistake of material fact concerning a basic assumption (here, the cow's very nature) permits the adversely affected party to rescind. A mere mistake as to value would not, but this was a mistake about the subject matter's essential character; neither party intended to deceive, so there is no fraud."
+ },
+ {
+  "q": "Which of the following statements, if relied on by the buyer, would most likely support a claim of fraud in the inducement?",
+  "choices": [
+   "A seller's statement that the house is 'the best value in the neighborhood'",
+   "A seller's prediction that the property will double in value within five years",
+   "A seller's knowingly false statement that the house has no termite damage, intended to induce the purchase",
+   "A seller's honest but mistaken statement about the size of the lot"
+  ],
+  "correct": 2,
+  "exp": "Fraud requires a misrepresentation of a material fact, made with knowledge of falsity (scienter) and intent to induce reliance, justifiable reliance and injury. Puffery and predictions are opinions, and an innocent misstatement is at most innocent misrepresentation."
+ },
+ {
+  "q": "Elle, an elderly widow, relied entirely on her long-time financial adviser, who persuaded her to sell him her house at well below market value. Elle had no independent advice. What is Elle's best ground for avoiding the contract?",
+  "choices": [
+   "Duress",
+   "Unilateral mistake",
+   "Lack of consideration",
+   "Undue influence"
+  ],
+  "correct": 3,
+  "exp": "Undue influence arises when a dominant party in a confidential or fiduciary relationship uses that position to unfairly persuade the other, making the contract voidable. Duress requires a wrongful threat, and inadequate consideration alone is not a defense."
+ },
+ {
+  "q": "Which of the following oral agreements is unenforceable under the statute of frauds?",
+  "choices": [
+   "An agreement to employ a manager for a fixed term of two years",
+   "An agreement to employ a worker for an indefinite period",
+   "A promise by a debtor to pay her own debt",
+   "A lease of an apartment for six months"
+  ],
+  "correct": 0,
+  "exp": "Contracts that by their terms cannot be performed within one year of formation must be evidenced by a writing; a fixed two-year term cannot be performed within a year. Indefinite employment could end within a year, and leases of one year or less generally need no writing."
+ },
+ {
+  "q": "Fox, the sole shareholder of Fox Corp., orally promised a supplier that he would personally pay Fox Corp.'s debts if the supplier continued to ship goods, primarily so that Fox could protect his own investment in the corporation. Fox Corp. defaulted. Is Fox's oral promise enforceable?",
+  "choices": [
+   "No, because a promise to answer for the debt of another must be in writing",
+   "Yes, because the main purpose of Fox's promise was to benefit himself",
+   "No, because Fox is protected by limited liability",
+   "Yes, because all promises by shareholders are enforceable"
+  ],
+  "correct": 1,
+  "exp": "Under the main purpose (leading object) exception, a promise to pay another's debt is enforceable without a writing if the promisor's primary purpose is his own economic benefit. Otherwise suretyship promises fall within the statute of frauds."
+ },
+ {
+  "q": "Gail orally agreed to buy land from Hank. With Hank's consent, Gail paid part of the price, moved onto the land, and built a garage. Hank now refuses to convey, citing the statute of frauds. What is the most likely result?",
+  "choices": [
+   "Hank prevails, because contracts for interests in land must always be in writing",
+   "Gail can recover only the money she paid",
+   "Gail can obtain specific performance under the part performance exception",
+   "Hank prevails unless Gail paid the full price"
+  ],
+  "correct": 2,
+  "exp": "Under the part performance doctrine, an oral land contract may be enforced where the buyer has taken possession and made payments or substantial improvements in reliance. Restitution is available but is not the best remedy given unique land."
+ },
+ {
+  "q": "Ivy and Jack signed a written contract that states it is the complete and final agreement of the parties. In a later dispute, which evidence is admissible despite the parol evidence rule?",
+  "choices": [
+   "An oral agreement made the day before signing that changes the price",
+   "A prior written draft containing a different delivery date",
+   "An oral agreement made at signing that adds a warranty contradicting the writing",
+   "Evidence that Ivy was induced to sign by Jack's fraudulent misrepresentation"
+  ],
+  "correct": 3,
+  "exp": "The parol evidence rule bars prior or contemporaneous agreements offered to vary an integrated writing, but it does not bar evidence of fraud, duress, mistake or subsequent modifications. Evidence of fraud attacks the validity of the contract itself."
+ },
+ {
+  "q": "Kate owed Leo $2,000 under a contract. Leo assigned his right to payment to Max, but neither Leo nor Max notified Kate. When payment came due, Kate paid Leo in good faith. What are Max's rights?",
+  "choices": [
+   "Max cannot recover from Kate, but can recover from Leo",
+   "Max can recover from Kate, who must pay again",
+   "Max has no rights, because the assignment was invalid without Kate's consent",
+   "Max can recover from both Kate and Leo"
+  ],
+  "correct": 0,
+  "exp": "An obligor who pays the assignor before receiving notice of the assignment is discharged; the assignee's remedy is against the assignor, who received payment belonging to the assignee. An assignment of a right to payment does not require the obligor's consent."
+ },
+ {
+  "q": "Nora contracted to paint Oscar's warehouse. With Oscar's knowledge but without a novation, Nora delegated the work to Pete, an equally qualified painter. Pete did poor work. What is Oscar's recourse?",
+  "choices": [
+   "Oscar can recover only from Pete, because the delegation released Nora",
+   "Oscar can recover from Nora, who remains liable, and from Pete if Pete assumed the duty",
+   "Oscar has no recourse, because he knew of the delegation",
+   "Oscar can recover only from Nora, because Pete is not a party"
+  ],
+  "correct": 1,
+  "exp": "Delegation does not release the delegating party; only a novation substitutes a new obligor. If the delegatee assumed the duty, the obligee may also sue the delegatee as an intended beneficiary of that promise."
+ },
+ {
+  "q": "Quill owed $20,000 to Rex. Quill sold equipment to Sam, who promised Quill to pay the $20,000 to Rex as the purchase price. Sam failed to pay. Which statement is correct?",
+  "choices": [
+   "Rex cannot sue Sam, because Rex was not a party to the contract",
+   "Rex is an incidental beneficiary and has no rights",
+   "Rex can sue Sam as an intended creditor beneficiary, and can also sue Quill",
+   "Rex can sue only Sam, because Quill was released by Sam's promise"
+  ],
+  "correct": 2,
+  "exp": "A creditor beneficiary for whom the promisee intends the benefit is an intended beneficiary who can sue the promisor, and the original debtor remains liable. Incidental beneficiaries, who only benefit indirectly, have no enforceable rights."
+ },
+ {
+  "q": "Tate contracted to build a house for Uma for $300,000. Tate completed the house in good faith but used a different, equally good brand of pipe than specified. Replacing it would cost $40,000; the difference in value is negligible. Uma refuses to pay anything. What can Tate recover?",
+  "choices": [
+   "Nothing, because Tate did not perform exactly as promised",
+   "The reasonable value of the materials only",
+   "$260,000",
+   "The contract price less any damages caused by the deviation"
+  ],
+  "correct": 3,
+  "exp": "Under the substantial performance doctrine, a party who performs in good faith with only minor deviations may recover the contract price less damages, measured here by the negligible diminution in value rather than an economically wasteful replacement cost. Perfect tender is not required for service contracts."
+ },
+ {
+  "q": "Vera agreed to deliver custom software to Walt on December 1. On August 1, Vera unequivocally told Walt she would not perform. What may Walt do on August 1?",
+  "choices": [
+   "Treat the statement as an anticipatory repudiation and sue for breach immediately",
+   "Nothing until December 1, because performance is not yet due",
+   "Sue only for specific performance",
+   "Sue only after demanding adequate assurance and waiting 30 days"
+  ],
+  "correct": 0,
+  "exp": "An anticipatory repudiation, a clear and unequivocal refusal to perform before performance is due, allows the nonbreaching party to treat it as a present breach and sue immediately (or await performance for a commercially reasonable time). The demand-for-assurance procedure applies when there are reasonable grounds for insecurity, not to an express repudiation."
+ },
+ {
+  "q": "A carrier contracted to deliver a mill's broken crankshaft to a repairer, but delayed delivery for a week. The mill was shut down during the delay, but the carrier did not know and had no reason to know that the mill had no spare. Can the mill recover its lost profits from the carrier?",
+  "choices": [
+   "Yes, because lost profits are always recoverable as compensatory damages",
+   "No, because consequential damages are recoverable only if they were reasonably foreseeable at the time of contracting",
+   "Yes, as punitive damages for the delay",
+   "No, because damages for breach are limited to nominal damages"
+  ],
+  "correct": 1,
+  "exp": "Under Hadley v. Baxendale, consequential damages such as lost profits are recoverable only if they were foreseeable to the breaching party when the contract was made. Punitive damages are generally not available for breach of contract."
+ },
+ {
+  "q": "A construction contract provides that the contractor will pay the owner $1,000 per day for each day of delay in completing a new hotel. Delay damages were difficult to estimate when the contract was made, and $1,000 was a reasonable forecast. Is the clause enforceable?",
+  "choices": [
+   "No, because contract damages must always be proven",
+   "No, because it is a penalty",
+   "Yes, because it is a valid liquidated damages provision",
+   "Yes, but only up to the owner's proven actual damages"
+  ],
+  "correct": 2,
+  "exp": "A liquidated damages clause is enforceable if actual damages were difficult to estimate at formation and the amount is a reasonable forecast of probable loss. It is an unenforceable penalty only if it is disproportionate and intended to punish."
+ },
+ {
+  "q": "Yuri had a contract to work for Zed Co. at $5,000 per month. With six months remaining, Zed wrongfully fired him. Yuri immediately accepted a comparable job paying $4,000 per month for those six months. What damages can Yuri recover from Zed?",
+  "choices": [
+   "$30,000",
+   "$24,000",
+   "$0",
+   "$6,000"
+  ],
+  "correct": 3,
+  "exp": "Damages are the remaining contract salary ($30,000) less amounts earned through mitigation ($24,000), or $6,000. Ignoring the duty to mitigate overstates the recovery at $30,000."
+ },
+ {
+  "q": "Abel signed a valid written contract to buy a specific parcel of land from Baker. Baker refused to convey because land prices rose. Which remedy is most appropriate for Abel?",
+  "choices": [
+   "Specific performance",
+   "Rescission and punitive damages",
+   "Liquidated damages",
+   "Reformation"
+  ],
+  "correct": 0,
+  "exp": "Because each parcel of land is unique, money damages are considered inadequate and a buyer may obtain specific performance. Punitive damages are not available for ordinary breaches of contract."
+ },
+ {
+  "q": "A state statute requires electricians to be licensed in order to protect the public from unsafe work. Cole, who is not licensed, performed electrical work for Dee under a contract, and Dee refuses to pay. Can Cole recover?",
+  "choices": [
+   "Yes, because Cole fully performed",
+   "No, because the contract is unenforceable for violating a regulatory licensing statute",
+   "Yes, because licensing statutes only raise revenue",
+   "Yes, but only for the cost of materials"
+  ],
+  "correct": 1,
+  "exp": "A contract made by a party lacking a license required by a regulatory statute designed to protect the public is illegal and unenforceable. Contracts violating purely revenue-raising licensing statutes, by contrast, generally remain enforceable."
+ }
+]

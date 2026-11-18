@@ -1,0 +1,420 @@
+[
+ {
+  "q": "A SaaS provider engages a CPA for a SOC 2 examination and wants to limit scope to the availability category only. How should the practitioner respond?",
+  "choices": [
+   "Accept, because management may select any single category",
+   "Explain that the security category (common criteria) is always included in a SOC 2 examination",
+   "Accept, but issue a SOC 3 report instead",
+   "Decline, because availability can only be reported with processing integrity"
+  ],
+  "correct": 1,
+  "exp": "The common criteria (CC1-CC9) form the security category and apply to every SOC 2 examination; additional categories such as availability add their own criteria. Management selects additional categories, but cannot drop security."
+ },
+ {
+  "q": "A data analytics firm holds clients' unreleased merger plans and pricing strategies, none of which involves information about individuals. Which trust services category most directly addresses protecting this information as committed?",
+  "choices": [
+   "Privacy",
+   "Processing integrity",
+   "Confidentiality",
+   "Availability"
+  ],
+  "correct": 2,
+  "exp": "Confidentiality addresses protecting information designated as confidential, such as business plans and intellectual property, consistent with commitments. Privacy applies only to personal information about individuals, which is not involved here."
+ },
+ {
+  "q": "A payment processor commits to customers that transactions will be processed completely, accurately, timely and only when authorized. Which trust services category most directly addresses this commitment?",
+  "choices": [
+   "Processing integrity",
+   "Security",
+   "Availability",
+   "Confidentiality"
+  ],
+  "correct": 0,
+  "exp": "Processing integrity addresses whether system processing is complete, valid, accurate, timely and authorized to meet objectives. Security protects against unauthorized access and damage but does not by itself address the accuracy of processing."
+ },
+ {
+  "q": "Under the 2017 trust services criteria, which statement about points of focus is correct?",
+  "choices": [
+   "Every point of focus must be met or the related criterion is not met",
+   "Points of focus replace the criteria for service organizations under 100 employees",
+   "Points of focus are required only for the privacy category",
+   "Points of focus describe important characteristics of a criterion but are not requirements; an entity may meet a criterion without addressing every point of focus"
+  ],
+  "correct": 3,
+  "exp": "Points of focus (revised in 2022) help management and practitioners design, implement and evaluate controls, but they are not individually required. The criteria are what must be met, which is why treating every point of focus as mandatory is a trap."
+ },
+ {
+  "q": "The common criteria CC1 through CC5 of the 2017 trust services criteria are organized around:",
+  "choices": [
+   "The five functions of the NIST Cybersecurity Framework",
+   "The 17 principles of the COSO 2013 Internal Control framework",
+   "The 40 COBIT 2019 governance and management objectives",
+   "The ISO/IEC 27001 Annex A control themes"
+  ],
+  "correct": 1,
+  "exp": "CC1-CC5 align to the COSO 2013 components and 17 principles (control environment, communication and information, risk assessment, monitoring and control activities). CC6-CC9 add criteria specific to logical and physical access, operations, change management and risk mitigation."
+ },
+ {
+  "q": "A service organization ensures that disk drives are degaussed before decommissioned servers are sent to a recycler. Which common criterion does this control most directly address?",
+  "choices": [
+   "CC6.5, discontinuing protections over physical assets only after the ability to read or recover data has been diminished",
+   "CC8.1, managing changes to infrastructure",
+   "CC7.2, monitoring system components for anomalies",
+   "CC2.3, communicating with external parties"
+  ],
+  "correct": 0,
+  "exp": "CC6.5 addresses secure disposal so data cannot be recovered from physical assets once protections are removed. CC8.1 concerns authorizing and testing changes, not decommissioning media."
+ },
+ {
+  "q": "A cloud provider maintains geographically separate backup sites and periodically performs full failover tests of its recovery plan. Which trust services category's additional criteria most directly cover these controls?",
+  "choices": [
+   "Confidentiality",
+   "Processing integrity",
+   "Availability",
+   "Privacy"
+  ],
+  "correct": 2,
+  "exp": "Availability criteria A1.2 and A1.3 address backup, recovery infrastructure and testing of recovery plan procedures. Processing integrity is concerned with complete, accurate processing, not the ability to recover service."
+ },
+ {
+  "q": "A company monitors CPU, storage and network utilization and forecasts demand so it can add capacity before customers experience degradation. Which criterion does this most directly support?",
+  "choices": [
+   "CC6.1, logical access security software",
+   "PI1.3, system processing",
+   "C1.1, identifying confidential information",
+   "A1.1, managing processing capacity to meet demand"
+  ],
+  "correct": 3,
+  "exp": "A1.1 requires the entity to maintain, monitor and evaluate current processing capacity and use to manage capacity demand. PI1.3 concerns whether processing is complete and accurate, not whether capacity is sufficient."
+ },
+ {
+  "q": "A company's intrusion detection system flags an anomalous login pattern. A security analyst then evaluates whether the event is a security incident that could result in failure to meet objectives. Which common criterion does the analyst's evaluation most directly address?",
+  "choices": [
+   "CC7.1",
+   "CC7.3",
+   "CC7.5",
+   "CC9.2"
+  ],
+  "correct": 1,
+  "exp": "CC7.3 addresses evaluating security events to determine whether they could or have resulted in a failure to meet objectives (i.e., incidents). CC7.5 concerns recovering from identified incidents, which comes later."
+ },
+ {
+  "q": "After a ransomware incident is contained, the company restores affected systems from clean backups, communicates with affected customers, and implements changes to prevent recurrence. Which common criterion most directly covers these activities?",
+  "choices": [
+   "CC7.5, recovering from identified security incidents",
+   "CC7.2, monitoring system components",
+   "CC6.2, registering new users",
+   "CC3.1, specifying objectives"
+  ],
+  "correct": 0,
+  "exp": "CC7.5 addresses identifying, developing and implementing activities to recover from security incidents, including restoration and remediation. CC7.2 concerns detecting anomalies before an incident is identified."
+ },
+ {
+  "q": "Which control best addresses CC7.1, which requires the entity to identify configuration changes that introduce new vulnerabilities and susceptibilities to newly discovered vulnerabilities?",
+  "choices": [
+   "Annual security awareness training for all employees",
+   "Physical badge readers on data center doors",
+   "Periodic vulnerability scanning and configuration monitoring against approved baselines",
+   "Encrypting data in transit with TLS"
+  ],
+  "correct": 2,
+  "exp": "CC7.1 points of focus include configuration standards, monitoring infrastructure for changes, and conducting vulnerability scans. Training and encryption address other criteria (CC2.2 and CC6.7 respectively)."
+ },
+ {
+  "q": "A company requires all customer data sent to external partners to travel over encrypted channels and blocks unauthorized USB storage devices. Which criterion does this most directly support?",
+  "choices": [
+   "CC6.3, role-based access",
+   "CC6.8, malicious software prevention",
+   "CC5.3, policies and procedures",
+   "CC6.7, restricting the transmission, movement and removal of information"
+  ],
+  "correct": 3,
+  "exp": "CC6.7 addresses restricting the transmission, movement and removal of information to authorized users and protecting it during transmission. CC6.8 addresses unauthorized or malicious software rather than data movement."
+ },
+ {
+  "q": "A company deploys endpoint detection and response software and allows only approved applications to execute on servers. Which criterion is most directly addressed?",
+  "choices": [
+   "CC8.1, change management",
+   "CC6.6, protecting against threats from outside system boundaries",
+   "CC6.8, preventing or detecting and acting on unauthorized or malicious software",
+   "A1.2, environmental protections"
+  ],
+  "correct": 2,
+  "exp": "CC6.8 addresses controls to prevent or detect and act upon the introduction of unauthorized or malicious software, such as EDR and application allowlisting. CC6.6 focuses on boundary protection such as firewalls and secure remote access."
+ },
+ {
+  "q": "A service organization's firewall rules restrict inbound traffic, and remote administrative access requires a VPN with multi-factor authentication. Which criterion does this most directly support?",
+  "choices": [
+   "PI1.2, system inputs",
+   "CC6.4, restricting physical access",
+   "CC1.4, attracting and retaining competent individuals",
+   "CC6.6, implementing logical access security measures against threats from sources outside system boundaries"
+  ],
+  "correct": 3,
+  "exp": "CC6.6 covers boundary protection, such as firewalls and secured remote access, against external threats. CC6.4 is limited to physical access to facilities and protected assets."
+ },
+ {
+  "q": "Which control best addresses CC6.2, which concerns registering and authorizing new internal and external users before issuing system credentials?",
+  "choices": [
+   "Quarterly review of firewall logs",
+   "Requiring an approved access request from the user's manager before an account is created",
+   "Automatic screen lock after 10 minutes of inactivity",
+   "Encrypting backup tapes"
+  ],
+  "correct": 1,
+  "exp": "CC6.2 is about authorizing users before granting credentials, which a manager-approved access request directly addresses. Screen locks are a session control and do not address the registration and authorization of users."
+ },
+ {
+  "q": "A company performs quarterly reviews in which managers confirm that each subordinate's access remains appropriate for the job, and access is removed for role changes. Which criterion is most directly supported?",
+  "choices": [
+   "C1.2, disposing of confidential information",
+   "CC7.4, responding to security incidents",
+   "CC6.3, authorizing, modifying or removing access based on roles, least privilege and segregation of duties",
+   "CC2.1, generating quality information"
+  ],
+  "correct": 2,
+  "exp": "CC6.3 covers role-based access, modifying and removing access, and least privilege and segregation of duties. Incident response under CC7.4 does not address periodic recertification of access rights."
+ },
+ {
+  "q": "A company requires that all production code changes be authorized, tested, approved and documented before implementation, including emergency changes. Which criterion is addressed?",
+  "choices": [
+   "CC7.3",
+   "CC5.1",
+   "CC8.1",
+   "CC9.1"
+  ],
+  "correct": 2,
+  "exp": "CC8.1 addresses authorizing, designing, developing, configuring, documenting, testing, approving and implementing changes to infrastructure, data, software and procedures. CC5.1 is the COSO-based criterion on selecting control activities generally."
+ },
+ {
+  "q": "A service organization purchases cyber insurance and has business continuity plans to mitigate the impact of potential business disruptions. Which criterion most directly addresses these activities?",
+  "choices": [
+   "CC9.2, managing vendor and business partner risk",
+   "CC9.1, identifying, selecting and developing risk mitigation activities for risks from potential business disruptions",
+   "CC3.4, assessing changes that could affect internal control",
+   "A1.1, managing capacity"
+  ],
+  "correct": 1,
+  "exp": "CC9.1 covers risk mitigation for business disruptions, and its points of focus include considering insurance to offset the financial impact of loss events. CC9.2 addresses risks associated with vendors and business partners specifically."
+ },
+ {
+  "q": "A service organization obtains SOC 2 reports from its critical subprocessors, reviews them annually, and includes security requirements in vendor contracts. Which criterion is most directly addressed?",
+  "choices": [
+   "CC9.1",
+   "CC2.3",
+   "CC4.2",
+   "CC9.2"
+  ],
+  "correct": 3,
+  "exp": "CC9.2 requires the entity to assess and manage risks associated with vendors and business partners. CC2.3 addresses communication with external parties, which is part of vendor management but not its core risk assessment and monitoring."
+ },
+ {
+  "q": "Under the privacy category, a company provides individuals with a notice describing what personal information it collects, how it is used, and how long it is retained. Which privacy criterion does this support?",
+  "choices": [
+   "P1.1, notice",
+   "P5.1, access",
+   "P7.1, quality",
+   "P8.1, monitoring and enforcement"
+  ],
+  "correct": 0,
+  "exp": "P1.1 requires the entity to provide notice to data subjects about its privacy practices. P5.1 addresses giving individuals access to their personal information, which is a separate commitment."
+ },
+ {
+  "q": "A customer asks an online retailer to correct an inaccurate shipping address and to show what personal information the retailer holds about her. Which privacy criteria are most directly involved?",
+  "choices": [
+   "P2.1 and P3.1",
+   "P5.1 and P5.2",
+   "P6.1 and P6.2",
+   "P4.2 and P4.3"
+  ],
+  "correct": 1,
+  "exp": "P5.1 addresses granting data subjects access to their personal information and P5.2 addresses correcting, amending or appending it. P4.2 and P4.3 concern retention and disposal, not individual access."
+ },
+ {
+  "q": "A company collects health information from customers only after obtaining their explicit consent, because the information is considered sensitive. Which privacy criterion does this most directly address?",
+  "choices": [
+   "P1.1",
+   "P6.6",
+   "P3.2",
+   "P7.1"
+  ],
+  "correct": 2,
+  "exp": "P3.2 requires explicit consent for the collection of personal information when explicit consent is required, such as for sensitive information. P1.1 concerns notice, which differs from obtaining explicit consent."
+ },
+ {
+  "q": "After a breach of customer personal information, a company notifies affected individuals and regulators as required by its commitments and applicable laws. Which privacy criterion does this most directly support?",
+  "choices": [
+   "P8.1, handling inquiries and complaints",
+   "P2.1, choice and consent",
+   "P4.1, use of personal information",
+   "P6.6, notifying affected data subjects, regulators and others of breaches and incidents"
+  ],
+  "correct": 3,
+  "exp": "P6.6 addresses providing notification of breaches and incidents to affected data subjects, regulators and others. P8.1 concerns handling privacy inquiries, complaints and disputes, not breach notification."
+ },
+ {
+  "q": "A company's policy states that personal information will be deleted 24 months after an account is closed, and an automated job purges such records. Which privacy criteria are most directly addressed?",
+  "choices": [
+   "P5.1 and P5.2",
+   "P1.1 and P2.1",
+   "P6.1 and P6.4",
+   "P4.2 and P4.3"
+  ],
+  "correct": 3,
+  "exp": "P4.2 addresses retention of personal information and P4.3 addresses its secure disposal. Access and correction (P5) concern individuals' rights to view and fix data, not retention schedules."
+ },
+ {
+  "q": "Which statement correctly distinguishes availability from processing integrity under the trust services criteria?",
+  "choices": [
+   "Availability addresses whether systems are accessible for operation and use as committed; processing integrity addresses whether processing is complete, valid, accurate, timely and authorized",
+   "Availability addresses data accuracy; processing integrity addresses uptime",
+   "Both categories address only physical security",
+   "Availability sets minimum acceptable performance levels that all entities must meet"
+  ],
+  "correct": 0,
+  "exp": "Availability concerns accessibility for operation and use as committed or agreed, while processing integrity concerns the quality of processing. The TSC explicitly state that availability does not itself set a minimum acceptable performance level."
+ },
+ {
+  "q": "In SOC 2 reporting, the trust services criteria are applied in relation to the service organization's:",
+  "choices": [
+   "Financial statement assertions",
+   "Service commitments and system requirements",
+   "Industry benchmarks set by the AICPA",
+   "Control objectives selected by the user auditor"
+  ],
+  "correct": 1,
+  "exp": "The SOC 2 opinion addresses whether controls provide reasonable assurance that the service organization's service commitments and system requirements were achieved based on the applicable TSC. Financial statement assertions relate to SOC 1 and financial audits."
+ },
+ {
+  "q": "A company identifies all confidential client information it holds, labels it by classification, and restricts its storage to approved repositories. Which criterion is most directly addressed?",
+  "choices": [
+   "C1.2",
+   "PI1.5",
+   "C1.1",
+   "P3.1"
+  ],
+  "correct": 2,
+  "exp": "C1.1 requires the entity to identify and maintain confidential information to meet confidentiality objectives. C1.2 addresses disposing of confidential information, which is a later stage in its lifecycle."
+ },
+ {
+  "q": "A payroll processor compares control totals of input batches to totals of processed output and investigates differences before releasing pay files. Which criteria are most directly addressed?",
+  "choices": [
+   "CC6.1 and CC6.2",
+   "A1.1 and A1.2",
+   "C1.1 and C1.2",
+   "PI1.3 and PI1.4"
+  ],
+  "correct": 3,
+  "exp": "PI1.3 addresses complete and accurate system processing and PI1.4 addresses complete, accurate and timely outputs; control total reconciliations support both. Availability criteria (A1) do not address the accuracy of processing."
+ },
+ {
+  "q": "A company documents definitions of the data it processes and the specifications of its services, and communicates them to users. Which processing integrity criterion is most directly supported?",
+  "choices": [
+   "PI1.1",
+   "PI1.2",
+   "PI1.5",
+   "CC8.1"
+  ],
+  "correct": 0,
+  "exp": "PI1.1 requires the entity to obtain or generate, use and communicate relevant, quality information about processing objectives, including data definitions and product and service specifications. PI1.2 addresses controls over system inputs."
+ },
+ {
+  "q": "A board of directors oversees the development and performance of internal control and includes members independent of management. Which common criterion is most directly addressed?",
+  "choices": [
+   "CC4.1",
+   "CC1.2",
+   "CC3.2",
+   "CC6.1"
+  ],
+  "correct": 1,
+  "exp": "CC1.2 (COSO Principle 2) states that the board demonstrates independence from management and exercises oversight of internal control. CC4.1 concerns performing ongoing and separate evaluations, which is a monitoring activity."
+ },
+ {
+  "q": "A service organization identifies risks to achieving its service commitments, including threats from vendors and new technologies, and analyzes their likelihood and impact. Which criterion is most directly addressed?",
+  "choices": [
+   "CC3.2, identifying and analyzing risk to the achievement of objectives",
+   "CC5.2, selecting general controls over technology",
+   "CC7.4, responding to incidents",
+   "CC2.2, internal communication"
+  ],
+  "correct": 0,
+  "exp": "CC3.2 (COSO Principle 7) addresses identifying and analyzing risks, and its points of focus include threats from vendors and technology. CC5.2 concerns selecting technology general controls once risks are known."
+ },
+ {
+  "q": "Management considers the potential for fraud, including unauthorized access to systems by employees attempting to manipulate customer data, when assessing risks. Which criterion is most directly addressed?",
+  "choices": [
+   "CC1.1",
+   "CC2.1",
+   "CC3.3",
+   "CC4.2"
+  ],
+  "correct": 2,
+  "exp": "CC3.3 (COSO Principle 8) requires the entity to consider the potential for fraud in assessing risks. CC1.1 addresses commitment to integrity and ethical values, which is part of the control environment, not risk assessment."
+ },
+ {
+  "q": "Internal audit periodically tests the operating effectiveness of security controls and reports deficiencies to management and the board, which track remediation. Which criteria are most directly addressed?",
+  "choices": [
+   "CC1.3 and CC1.4",
+   "CC6.4 and CC6.5",
+   "CC8.1 and CC9.1",
+   "CC4.1 and CC4.2"
+  ],
+  "correct": 3,
+  "exp": "CC4.1 addresses ongoing and separate evaluations, and CC4.2 addresses evaluating and communicating internal control deficiencies timely. These are the monitoring activities criteria derived from COSO Principles 16 and 17."
+ },
+ {
+  "q": "A company publishes a customer-facing portal that describes its security commitments and provides a way for customers to report suspected security incidents. Which criterion is most directly addressed?",
+  "choices": [
+   "CC2.3, communicating with external parties",
+   "CC2.2, communicating internally",
+   "CC5.3, deploying policies and procedures",
+   "CC7.1, detecting vulnerabilities"
+  ],
+  "correct": 0,
+  "exp": "CC2.3 addresses communication with external parties regarding matters affecting the functioning of internal control, including commitments and channels to report incidents. CC2.2 is limited to internal communication with personnel."
+ },
+ {
+  "q": "Which situation best illustrates a SOC 2 privacy category commitment rather than a confidentiality commitment?",
+  "choices": [
+   "Protecting a client's proprietary source code from disclosure",
+   "Limiting use of customers' names and email addresses to the purposes disclosed in the privacy notice",
+   "Encrypting a client's unreleased financial forecasts",
+   "Destroying a client's trade secrets at contract termination"
+  ],
+  "correct": 1,
+  "exp": "Privacy criteria address the collection, use, retention, disclosure and disposal of personal information in line with the entity's notice and commitments. Source code, forecasts and trade secrets are confidential business information covered by the confidentiality category."
+ },
+ {
+  "q": "A service organization maintains UPS units, fire suppression and climate controls in its data center to keep systems running. These controls are most directly relevant to which criterion?",
+  "choices": [
+   "C1.1",
+   "CC6.2",
+   "A1.2",
+   "PI1.4"
+  ],
+  "correct": 2,
+  "exp": "A1.2 addresses environmental protections, software, data backup and recovery infrastructure needed to meet availability commitments. CC6.2 addresses registering and authorizing users, not environmental safeguards."
+ },
+ {
+  "q": "A company shares customer personal information with a marketing partner only after obtaining consent and requires the partner contractually to protect the information consistent with the company's privacy commitments. Which privacy criteria are most directly addressed?",
+  "choices": [
+   "P5.1 and P5.2",
+   "P7.1 and P8.1",
+   "P3.1 and P3.2",
+   "P6.1 and P6.4"
+  ],
+  "correct": 3,
+  "exp": "P6.1 addresses disclosing personal information to third parties with consent, and P6.4 addresses obtaining privacy commitments from vendors and other third parties. P3 criteria concern collection, not onward disclosure."
+ },
+ {
+  "q": "A company's code of conduct requires employees to annually acknowledge standards of integrity and ethical behavior, and violations are addressed through a disciplinary process. Which criterion is most directly addressed?",
+  "choices": [
+   "CC1.1, demonstrating commitment to integrity and ethical values",
+   "CC1.5, holding individuals accountable",
+   "CC3.1, specifying objectives",
+   "CC5.1, selecting control activities"
+  ],
+  "correct": 0,
+  "exp": "CC1.1 (COSO Principle 1) is about commitment to integrity and ethical values, including standards of conduct and addressing deviations. CC1.5 concerns accountability for internal control responsibilities more broadly, such as performance measures and incentives."
+ }
+]

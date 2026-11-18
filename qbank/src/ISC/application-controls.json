@@ -1,0 +1,420 @@
+[
+ {
+  "q": "A payroll clerk accidentally enters 400 instead of 40 in the hours-worked field for an hourly employee. Which input control would most likely prevent this error from being processed?",
+  "choices": [
+   "Field check",
+   "Limit check",
+   "Validity check",
+   "Sequence check"
+  ],
+  "correct": 1,
+  "exp": "A limit check rejects values exceeding a predetermined maximum, such as 60 hours per week. A field check only verifies the data type (e.g., numeric), and 400 is still numeric."
+ },
+ {
+  "q": "When a sales clerk enters a customer number, the system displays the customer's name and address so the clerk can confirm the correct account before proceeding. This control is best described as:",
+  "choices": [
+   "Closed-loop verification",
+   "Check digit verification",
+   "Hash total",
+   "Completeness check"
+  ],
+  "correct": 0,
+  "exp": "Closed-loop verification displays related data retrieved from the master file so the user can confirm the input is correct. A check digit would detect transposed digits arithmetically but would not show the user the matching record."
+ },
+ {
+  "q": "A distributor's order entry system rejects any order whose product code does not exist in the inventory master file. This is an example of a:",
+  "choices": [
+   "Reasonableness check",
+   "Range check",
+   "Validity check",
+   "Sign check"
+  ],
+  "correct": 2,
+  "exp": "A validity check compares input with a master file or table of valid values. A range check tests whether a value falls between limits, which is not meaningful for product codes."
+ },
+ {
+  "q": "A data entry clerk transposes two digits of a vendor account number, keying 4325 instead of 4235. Which control is specifically designed to detect this type of error in identification numbers?",
+  "choices": [
+   "Record count",
+   "Limit check",
+   "Run-to-run total",
+   "Check digit"
+  ],
+  "correct": 3,
+  "exp": "A check digit is calculated from the other digits of an identifier, so transpositions and transcription errors produce a mismatch. A record count would still show the same number of records and would not detect the error."
+ },
+ {
+  "q": "A batch of 50 vendor invoices is submitted for processing. The clerk computes the sum of the vendor account numbers on the invoices and the system compares it to the sum of processed account numbers. This total is a:",
+  "choices": [
+   "Hash total",
+   "Financial total",
+   "Record count",
+   "Cross-footing balance"
+  ],
+  "correct": 0,
+  "exp": "A hash total sums a field that has no inherent meaning, such as account numbers, to detect lost, added or altered records. A financial total sums a meaningful amount, such as invoice dollars."
+ },
+ {
+  "q": "An insurer's claims system rejects a claim for a pregnancy-related procedure if the policyholder is recorded as male. Which control is this?",
+  "choices": [
+   "Field check",
+   "Reasonableness (logic) check",
+   "Sequence check",
+   "Limit check"
+  ],
+  "correct": 1,
+  "exp": "A reasonableness or logic check tests whether data are consistent with related fields. A limit check compares a single field to a maximum and cannot detect an inconsistency between two fields."
+ },
+ {
+  "q": "A company's system compares the total of records processed at each stage of a multi-step nightly batch with the total from the previous stage. This processing control is a:",
+  "choices": [
+   "Closed-loop verification",
+   "Validity check",
+   "Run-to-run control total",
+   "Key verification"
+  ],
+  "correct": 2,
+  "exp": "Run-to-run totals verify that data remain complete and unaltered as they move between processing steps. Closed-loop verification is an input control performed by the user at entry."
+ },
+ {
+  "q": "An auditor wants to verify that the client's payroll program correctly calculates overtime. The auditor prepares fictitious transactions, including invalid ones, processes them through the client's program under the auditor's control, and compares results to expected outcomes. This technique is:",
+  "choices": [
+   "Parallel simulation",
+   "Integrated test facility",
+   "Embedded audit module",
+   "Test data"
+  ],
+  "correct": 3,
+  "exp": "Test data involves processing auditor-prepared transactions through the client's program, usually separate from live processing. Parallel simulation instead runs actual client data through an auditor-controlled program."
+ },
+ {
+  "q": "An auditor processes the client's actual payroll data through an auditor-developed program that replicates the client's overtime logic, then compares the output to the client's results. This technique is:",
+  "choices": [
+   "Parallel simulation",
+   "Test data",
+   "Integrated test facility",
+   "Tagging and tracing"
+  ],
+  "correct": 0,
+  "exp": "Parallel simulation reprocesses real client data with an auditor-controlled program and compares results. Test data runs fictitious data through the client's program, the reverse arrangement."
+ },
+ {
+  "q": "An auditor creates a fictitious division in the client's live accounts receivable system and processes test transactions against it alongside regular transactions. Which technique is this, and what is its main risk?",
+  "choices": [
+   "Parallel simulation; the auditor's program may differ from the client's",
+   "Integrated test facility; fictitious transactions may contaminate live data if not removed",
+   "Test data; the program used may not be the production version",
+   "Embedded audit module; excessive alerts"
+  ],
+  "correct": 1,
+  "exp": "An integrated test facility uses dummy entities within the live system, so the test transactions must be carefully reversed or excluded to avoid misstating real records. Test data, by contrast, is typically run separately from live processing."
+ },
+ {
+  "q": "A company wants continuous monitoring of transactions exceeding $100,000, with qualifying transactions written to an audit file as they are processed. Which technique is most appropriate?",
+  "choices": [
+   "Test data",
+   "Parallel simulation",
+   "Embedded audit module",
+   "Generalized audit software applied annually"
+  ],
+  "correct": 2,
+  "exp": "Embedded audit modules are programmed into the application to capture transactions meeting criteria during live processing, enabling continuous monitoring. Annual use of generalized audit software is periodic, not continuous."
+ },
+ {
+  "q": "A purchasing system automatically matches the purchase order, receiving report and vendor invoice and holds invoices for review when quantities or prices differ beyond a tolerance. The most significant risk this control mitigates is:",
+  "choices": [
+   "Paying for goods not ordered or not received, or at unauthorized prices",
+   "Recording sales in the wrong period",
+   "Unauthorized changes to payroll rates",
+   "Errors in depreciation calculations"
+  ],
+  "correct": 0,
+  "exp": "The automated three-way match ensures payment only for goods ordered and received at agreed prices. It does not address revenue cut-off or payroll, which are different transaction cycles."
+ },
+ {
+  "q": "A cash disbursements system rejects any check request where the vendor and invoice number combination has already been paid. This control primarily addresses which assertion for accounts payable and cash?",
+  "choices": [
+   "Presentation",
+   "Valuation of inventory",
+   "Completeness of liabilities",
+   "Occurrence, by preventing duplicate payments"
+  ],
+  "correct": 3,
+  "exp": "Duplicate payment checks prevent recording and paying the same invoice twice, which addresses occurrence of disbursements. Completeness concerns omitted transactions, the opposite risk."
+ },
+ {
+  "q": "A company's billing interface sends daily shipment data from the warehouse system to the billing system. Which control best ensures all shipments are billed?",
+  "choices": [
+   "Reconciling the record count and total quantity sent by the warehouse system to those received and billed in the billing system",
+   "Requiring passwords for the billing system",
+   "Encrypting the interface file",
+   "Monthly review of the revenue budget"
+  ],
+  "correct": 0,
+  "exp": "Interface reconciliations of counts and totals between sending and receiving systems ensure completeness of transferred data. Encryption protects confidentiality and integrity in transit but does not detect records that were never sent or loaded."
+ },
+ {
+  "q": "Customer orders are prenumbered by the system, and a daily report lists gaps and duplicates in the numbering sequence. This control most directly addresses:",
+  "choices": [
+   "Accuracy of prices",
+   "Completeness of processing and detection of duplicates",
+   "Authorization of credit limits",
+   "Valuation of receivables"
+  ],
+  "correct": 1,
+  "exp": "Sequence checks identify missing or duplicate document numbers, supporting completeness and preventing double processing. Price accuracy would be addressed by validity checks against the price master file."
+ },
+ {
+  "q": "Which control is most effective for preventing unauthorized changes to the vendor master file, such as a fraudulent change of a vendor's bank account number?",
+  "choices": [
+   "A limit check on invoice amounts",
+   "Run-to-run totals in the payment batch",
+   "Restricting master file update access and independently reviewing a report of all master file changes",
+   "Sequence checks on purchase orders"
+  ],
+  "correct": 2,
+  "exp": "Master data are used by every transaction, so restricting who can change them and reviewing change reports is key to preventing payment redirection fraud. Limit checks on invoice amounts would not detect a changed bank account."
+ },
+ {
+  "q": "A data entry system requires a second operator to rekey the same source documents, and the system flags any differences between the two entries. This control is:",
+  "choices": [
+   "Closed-loop verification",
+   "Check digit",
+   "Hash total",
+   "Key verification"
+  ],
+  "correct": 3,
+  "exp": "Key verification (double keying) detects data entry errors by comparing two independent entries. Closed-loop verification shows related master data to the person entering, without a second keying."
+ },
+ {
+  "q": "A web form for new customer accounts will not submit until the tax ID, address and credit limit fields are populated. This is a:",
+  "choices": [
+   "Completeness check",
+   "Validity check",
+   "Reasonableness check",
+   "Sign check"
+  ],
+  "correct": 0,
+  "exp": "A completeness check ensures all required fields contain data before processing. A validity check would compare entered values against acceptable values, which is a different test."
+ },
+ {
+  "q": "Which of the following is an example of an IT-dependent manual control?",
+  "choices": [
+   "An automated calculation of sales tax",
+   "A system configuration that prevents users from approving their own journal entries",
+   "A controller's review of a system-generated aged receivables report to identify accounts needing an allowance",
+   "An input edit that rejects alphabetic characters in a numeric field"
+  ],
+  "correct": 2,
+  "exp": "An IT-dependent manual control is performed by a person but relies on system-generated information, so its effectiveness depends on the report's completeness and accuracy. The other choices are fully automated controls."
+ },
+ {
+  "q": "Errors detected by edit checks in a batch are written to a suspense file. Which control is most important for this suspense file?",
+  "choices": [
+   "Deleting the file at month end",
+   "Restricting the file to read-only for all users",
+   "Excluding the file from backups",
+   "Monitoring the file so errors are corrected and resubmitted timely and the file is aged and reviewed"
+  ],
+  "correct": 3,
+  "exp": "Error correction and resubmission controls ensure rejected transactions are not lost, preserving completeness. Deleting the suspense file would permanently lose valid transactions that need correction."
+ },
+ {
+  "q": "A loan system automatically calculates interest on each loan using the rate stored in the loan master record. Which test is most appropriate for an auditor to evaluate this automated control?",
+  "choices": [
+   "Recalculate interest for one or a few loans of each relevant type and confirm the related ITGCs are effective",
+   "Recalculate interest for a statistical sample of 300 loans",
+   "Inquire of loan officers",
+   "Review the board minutes for rate approvals"
+  ],
+  "correct": 0,
+  "exp": "Automated controls process consistently, so testing one or a few instances per relevant variation is generally sufficient when ITGCs are effective. Large samples are typical of manual controls, which can fail inconsistently."
+ },
+ {
+  "q": "An order entry screen offers a drop-down menu of valid shipping methods rather than a free-text field. This preformatting control primarily:",
+  "choices": [
+   "Detects errors after processing",
+   "Prevents invalid data from being entered",
+   "Corrects errors automatically",
+   "Encrypts input data"
+  ],
+  "correct": 1,
+  "exp": "Drop-down menus and other preformatted fields limit entries to valid options, preventing errors at input. Detective controls identify errors after they occur, which is not how this control works."
+ },
+ {
+  "q": "A general ledger application prevents a journal entry from posting unless total debits equal total credits. This control is best described as a:",
+  "choices": [
+   "Validity check",
+   "Range check",
+   "Zero-balance (balancing) check",
+   "Check digit"
+  ],
+  "correct": 2,
+  "exp": "A balancing check ensures debits equal credits so that the entry nets to zero before posting. A range check compares a value with an upper and lower bound and does not compare two totals."
+ },
+ {
+  "q": "The ERP system is configured so that the same user cannot both create a vendor and approve payments to that vendor. Which kind of control is this?",
+  "choices": [
+   "A detective manual control",
+   "A corrective ITGC",
+   "A physical control",
+   "An automated preventive application control enforcing segregation of duties"
+  ],
+  "correct": 3,
+  "exp": "Role configuration that blocks incompatible functions is an automated, preventive application control. It does not depend on someone reviewing a report after the fact, so it is not detective."
+ },
+ {
+  "q": "A payment file is generated by the ERP and uploaded to the bank's portal. Which control best mitigates the risk that the file is altered between generation and upload?",
+  "choices": [
+   "Using automated secure transmission (e.g., host-to-host with hashing) and reconciling totals confirmed by the bank to the ERP totals",
+   "Printing the payment file for review",
+   "Allowing AP clerks to edit the file to fix errors",
+   "Saving the file to a shared drive before upload"
+  ],
+  "correct": 0,
+  "exp": "Secure automated transmission with integrity checks and reconciliation of bank-confirmed totals to ERP totals reduces the risk of tampering. Saving to a shared drive or allowing clerks to edit the file creates an opportunity to alter payee or amount data."
+ },
+ {
+  "q": "In processing payroll, the system verifies that net pay is not negative before writing checks. This is an example of a:",
+  "choices": [
+   "Validity check",
+   "Sign check",
+   "Sequence check",
+   "Hash total"
+  ],
+  "correct": 1,
+  "exp": "A sign check verifies whether a value has the appropriate sign, such as positive net pay. A validity check compares input to a list of acceptable values rather than evaluating sign."
+ },
+ {
+  "q": "Before distributing monthly management reports, the reporting team reconciles report totals to the general ledger and restricts report distribution to authorized recipients. These are examples of:",
+  "choices": [
+   "Input controls",
+   "Processing controls",
+   "Output controls",
+   "Change management controls"
+  ],
+  "correct": 2,
+  "exp": "Output controls ensure that output is accurate and complete (e.g., reconciliation to source) and distributed only to authorized users. Processing controls operate during the transformation of data, not on finished reports."
+ },
+ {
+  "q": "A retailer's point-of-sale system compares the total sales recorded by each register to the cash and card settlements at day end. Which objective does this control primarily achieve?",
+  "choices": [
+   "Authorization of price changes",
+   "Prevention of unauthorized logons",
+   "Validation of item codes at entry",
+   "Detection of discrepancies between recorded sales and amounts collected"
+  ],
+  "correct": 3,
+  "exp": "Reconciling recorded sales with settlements detects missing cash, unrecorded sales or processing errors. It does not control price changes or system access."
+ },
+ {
+  "q": "Two users attempt to update the same inventory record simultaneously. Which control prevents one user's update from overwriting the other's?",
+  "choices": [
+   "Concurrent update control, such as record locking",
+   "Check digit",
+   "Hash total",
+   "Closed-loop verification"
+  ],
+  "correct": 0,
+  "exp": "Concurrent update controls lock a record while it is being updated so that simultaneous changes do not overwrite each other. Hash totals detect batch integrity issues after processing, not concurrency conflicts."
+ },
+ {
+  "q": "A company's revenue system allows sales representatives to override system-calculated prices. Which control best addresses the risk of unauthorized discounts?",
+  "choices": [
+   "Removing the price field from invoices",
+   "Requiring override approval by an authorized manager and reviewing an exception report of all overrides",
+   "Increasing sales commissions",
+   "Using a check digit on product codes"
+  ],
+  "correct": 1,
+  "exp": "Requiring approval and independently reviewing overrides addresses the risk that overrides are used to grant unauthorized discounts. A check digit only ensures the product code is entered correctly."
+ },
+ {
+  "q": "A company implements an automated control that blocks journal entries posted to closed periods. During testing, the auditor finds the period-close setting can be reopened by any accountant. What is the main concern?",
+  "choices": [
+   "The control is not automated",
+   "Journal entries cannot be posted at all",
+   "Any accountant could reopen the period and post entries, undermining the control",
+   "The control should be a manual review only"
+  ],
+  "correct": 2,
+  "exp": "A configurable control is only effective if the configuration is protected; broad ability to reopen periods allows the control to be bypassed. Automation is not the problem, and a manual review would be less reliable."
+ },
+ {
+  "q": "When testing an application's edit checks, an auditor submits transactions with invalid customer numbers, negative quantities and alphabetic characters in numeric fields. The auditor is testing whether:",
+  "choices": [
+   "Output reports are distributed correctly",
+   "Data are backed up nightly",
+   "The network is secure",
+   "Input controls reject invalid data as designed"
+  ],
+  "correct": 3,
+  "exp": "Submitting invalid transactions tests whether input edits reject them as designed. Backup and network security are ITGCs or infrastructure controls unrelated to input edit testing."
+ },
+ {
+  "q": "An auditor uses generalized audit software to extract all purchase orders and identify those without a matching receiving report. Which audit procedure does this represent?",
+  "choices": [
+   "An integrated test facility",
+   "A computer-assisted audit technique used for data analysis and substantive testing",
+   "Parallel simulation of the client's matching program",
+   "An embedded audit module"
+  ],
+  "correct": 1,
+  "exp": "Generalized audit software (a CAAT) is used to extract and analyze client data, such as identifying exceptions across an entire population. Parallel simulation would reproduce a client program's processing logic rather than search data for exceptions."
+ },
+ {
+  "q": "A bank requires customers to enter the amount twice when submitting wire transfers online, and the system rejects the request if the two entries differ. Which risk does this primarily mitigate?",
+  "choices": [
+   "Unauthorized access to accounts",
+   "Accidental data entry errors in the amount",
+   "Loss of data in transmission",
+   "Duplicate payments to the same beneficiary"
+  ],
+  "correct": 1,
+  "exp": "Double entry of the same field detects keying errors, similar to key verification. It does not authenticate the user, so it does not address unauthorized access."
+ },
+ {
+  "q": "An application uses a range check on the discount percentage field that accepts values from 0% to 15%. A clerk enters 12% when the authorized discount was 2%. Which statement is correct?",
+  "choices": [
+   "The range check will reject the entry",
+   "A sign check would have rejected the entry",
+   "The range check will accept the entry because it falls within the allowed range, so another control such as approval is needed",
+   "A field check would detect the error"
+  ],
+  "correct": 2,
+  "exp": "Range checks only reject values outside the defined bounds, so a valid-looking but incorrect value passes. Field checks verify data type only, so 12 would also pass."
+ },
+ {
+  "q": "Which application control is most effective in ensuring that only authorized employees are paid in a payroll run?",
+  "choices": [
+   "Calculating gross pay using a limit check",
+   "Printing paychecks on secured stock",
+   "Comparing net pay to the prior period",
+   "Validating each employee ID in the time file against the active employee master file maintained by HR"
+  ],
+  "correct": 3,
+  "exp": "Matching time records against an independently maintained active employee master file prevents payments to nonexistent or terminated employees. A limit check addresses the amount of pay, not whether the payee is authorized."
+ },
+ {
+  "q": "Which characteristic most distinguishes automated application controls from manual controls for audit testing purposes?",
+  "choices": [
+   "Automated controls perform consistently when ITGCs are effective, so they can be tested with a small number of instances",
+   "Automated controls never need testing",
+   "Manual controls are always more reliable than automated controls",
+   "Automated controls can only be tested by inquiry"
+  ],
+  "correct": 0,
+  "exp": "Because automated controls execute the same logic every time, auditors can test a few instances and rely on ITGCs for consistency. They still require testing, and inquiry alone is never sufficient evidence of operating effectiveness."
+ },
+ {
+  "q": "A company's sales application automatically calculates each invoice amount by multiplying quantity shipped by the price in the price master file. An auditor finds that sales staff can edit the price master file without approval. What is the most significant effect on the invoicing control?",
+  "choices": [
+   "The invoice calculation will produce arithmetic errors",
+   "The calculation may be accurate arithmetically but produce invoices at unauthorized prices",
+   "Quantities shipped will be overstated",
+   "Customer credit limits will be bypassed"
+  ],
+  "correct": 1,
+  "exp": "An automated calculation is only as reliable as the master data it uses, so uncontrolled price changes lead to correctly computed but unauthorized amounts. The arithmetic itself is unaffected, which is why the arithmetic-error choice is a trap."
+ }
+]

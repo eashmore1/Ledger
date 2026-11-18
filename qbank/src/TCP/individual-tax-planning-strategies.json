@@ -1,0 +1,420 @@
+[
+ {
+  "q": "Ed and Flo file jointly and expect the same deductions each year: state and local taxes of $10,000 (all deductible), home mortgage interest of $14,000, and cash charitable gifts of $10,000. The standard deduction is $32,200 in each of the next two years. If they instead give $20,000 to charity in Year 1 and nothing in Year 2, by how much do their combined Year 1 and Year 2 deductions increase? Ignore any AGI-based floors or limits on charitable deductions.",
+  "choices": [
+   "$8,200",
+   "$10,000",
+   "$1,800",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Without bunching they itemize $34,000 each year ($68,000). With bunching, Year 1 itemized is $44,000 and Year 2 itemized ($24,000) is below the standard deduction, so they take $32,200: $76,200 total, an $8,200 increase. Assuming the full $10,000 shifted gift is a gain ignores that Year 2 still benefits from the standard deduction only to the extent it exceeds $24,000."
+ },
+ {
+  "q": "Gina, in the 24% ordinary bracket and the 15% long-term capital gain bracket, wants to give $50,000 to a public charity. She owns publicly traded stock held for three years with a fair market value of $50,000 and a basis of $10,000. Compared with selling the stock and donating the cash proceeds, how much federal income tax does she save by donating the stock directly? Assume her deduction is not limited by AGI.",
+  "choices": [
+   "$12,000",
+   "$9,600",
+   "$6,000",
+   "$18,000"
+  ],
+  "correct": 2,
+  "exp": "Either way the deduction is $50,000 (long-term capital gain property to a public charity is deducted at FMV under §170(e)). Donating the stock avoids the $40,000 gain, saving $40,000 × 15% = $6,000. The $12,000 figure is the value of the deduction itself, which she gets under both approaches."
+ },
+ {
+  "q": "Hal, age 74, must take a $30,000 required minimum distribution from his traditional IRA this year. He directs his IRA trustee to transfer $20,000 directly to a public charity and has the remaining $10,000 paid to himself. The transfer is within the annual qualified charitable distribution limit, and Hal claims the standard deduction. How much of the IRA distributions does Hal include in gross income?",
+  "choices": [
+   "$30,000, with a $20,000 charitable deduction",
+   "$30,000",
+   "$0",
+   "$10,000"
+  ],
+  "correct": 3,
+  "exp": "A qualified charitable distribution under §408 is excluded from gross income and counts toward the RMD, so only the $10,000 paid to Hal is taxable. Including $30,000 and claiming a deduction is wrong: no deduction is allowed for a QCD, and a standard-deduction taxpayer would get no benefit from one anyway."
+ },
+ {
+  "q": "Ivy, age 12, is a dependent with $6,000 of interest and dividend income and no earned income. For the year, the kiddie tax applies to net unearned income above $2,700 (twice the $1,350 dependent standard deduction for unearned income). How much of Ivy's income is taxed at her parents' marginal rate?",
+  "choices": [
+   "$3,300",
+   "$4,650",
+   "$6,000",
+   "$1,350"
+  ],
+  "correct": 0,
+  "exp": "Under §1(g), net unearned income is unearned income less $2,700 (the first $1,350 is offset by the standard deduction and the next $1,350 is taxed at the child's rate): $6,000 − $2,700 = $3,300. Subtracting only $1,350 ($4,650) overlooks the second tier taxed at the child's own rate."
+ },
+ {
+  "q": "Jack's prior-year AGI was $200,000 and his prior-year tax liability was $40,000. He expects current-year tax of $60,000. What is the minimum combined withholding and timely estimated tax payments that will avoid an underpayment penalty under the safe harbors?",
+  "choices": [
+   "$40,000",
+   "$54,000",
+   "$44,000",
+   "$60,000"
+  ],
+  "correct": 2,
+  "exp": "Under §6654, the required annual payment is the lesser of 90% of current-year tax ($54,000) or 100% of prior-year tax, raised to 110% when prior-year AGI exceeds $150,000 ($44,000). Using 100% of prior-year tax ($40,000) ignores the 110% rule for higher-income taxpayers."
+ },
+ {
+  "q": "Kara, a single filer, has modified AGI of $260,000, which includes $80,000 of net investment income. The net investment income tax threshold for single filers is $200,000. What is her net investment income tax?",
+  "choices": [
+   "$3,040",
+   "$2,280",
+   "$9,880",
+   "$7,600"
+  ],
+  "correct": 1,
+  "exp": "Under §1411 the 3.8% tax applies to the lesser of NII ($80,000) or MAGI over the threshold ($60,000): $60,000 × 3.8% = $2,280. Applying 3.8% to all $80,000 of NII ignores the lesser-of rule."
+ },
+ {
+  "q": "On December 15, Leo sold 100 shares of Zeta stock for $10,000; his basis was $14,000. On January 5, he bought 100 shares of Zeta stock for $11,000. What is Leo's basis in the shares bought on January 5?",
+  "choices": [
+   "$11,000",
+   "$14,000",
+   "$10,000",
+   "$15,000"
+  ],
+  "correct": 3,
+  "exp": "The repurchase within 30 days makes the $4,000 loss a disallowed wash sale under §1091; the disallowed loss is added to the basis of the replacement shares: $11,000 + $4,000 = $15,000. Using the $11,000 cost ignores the basis adjustment that preserves the deferred loss."
+ },
+ {
+  "q": "Mia has realized $25,000 of short-term capital gain this year and no other capital transactions. In December she sells stock held for four years, realizing a $40,000 long-term capital loss. What is her capital loss carryover to next year?",
+  "choices": [
+   "$12,000 long-term",
+   "$15,000 long-term",
+   "$12,000 short-term",
+   "$37,000 long-term"
+  ],
+  "correct": 0,
+  "exp": "Netting the $25,000 STCG against the $40,000 LTCL yields a $15,000 net long-term capital loss; $3,000 offsets ordinary income under §1211 and $12,000 carries over, retaining its long-term character under §1212. The short-term label is wrong because the excess loss came from the long-term side."
+ },
+ {
+  "q": "Nate, single, bought his home 12 months ago and sold it this year at a $300,000 gain because his employer transferred him to a job 400 miles away. He has never excluded gain on another home sale. How much of the gain is taxable?",
+  "choices": [
+   "$50,000",
+   "$175,000",
+   "$300,000",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "A change in place of employment allows a reduced §121 exclusion: $250,000 × 12/24 months = $125,000, so $300,000 − $125,000 = $175,000 is taxable. Applying the full $250,000 exclusion ($50,000 taxable) ignores the two-year ownership and use requirement."
+ },
+ {
+  "q": "Which taxpayer is the strongest candidate for converting a traditional IRA to a Roth IRA this year?",
+  "choices": [
+   "A 45-year-old in the top bracket who expects a much lower bracket in retirement",
+   "A 50-year-old who will pay the conversion tax by withholding it from the converted IRA funds",
+   "A 63-year-old recent retiree in a temporarily low bracket before Social Security and RMDs begin, who will pay the tax from taxable savings",
+   "A 58-year-old who expects to withdraw the converted funds next year to buy a vacation home"
+  ],
+  "correct": 2,
+  "exp": "A conversion is taxed at current rates, so it pays off when the current bracket is low relative to future rates and the tax is paid from outside funds, leaving the whole balance to grow tax-free. Converting in a high bracket while expecting a lower one later gives up the arbitrage, and withholding the tax from the IRA before age 59½ shrinks the Roth and can trigger the 10% penalty."
+ },
+ {
+  "q": "Olga is in the 35% federal bracket and pays no state income tax. A municipal bond yields 3.5% tax-exempt. What is the minimum yield a fully taxable corporate bond of equal risk must offer to give her an equal after-tax return?",
+  "choices": [
+   "4.73%",
+   "2.28%",
+   "5.38%",
+   "3.50%"
+  ],
+  "correct": 2,
+  "exp": "Tax-equivalent yield = tax-exempt yield ÷ (1 − marginal rate) = 3.5% ÷ 0.65 = 5.38%. Multiplying by 1.35 (4.73%) is a common shortcut error that understates the required taxable yield."
+ },
+ {
+  "q": "Pat exercises incentive stock options to buy 1,000 shares at a $20 strike price when the stock is worth $50 per share. Pat holds the shares at year end. What are the regular tax and AMT consequences of the exercise?",
+  "choices": [
+   "$30,000 ordinary income for both regular tax and AMT",
+   "No regular tax income and a $30,000 AMT adjustment",
+   "No regular tax income and no AMT adjustment",
+   "$30,000 long-term capital gain for regular tax and none for AMT"
+  ],
+  "correct": 1,
+  "exp": "Under §421 no regular income arises when an ISO is exercised, but §56 treats the $30 × 1,000 = $30,000 spread as an AMT adjustment. Recognizing $30,000 of ordinary income describes a nonqualified option."
+ },
+ {
+  "q": "Quinn exercised incentive stock options for 1,000 shares at $20 per share when the FMV was $50, then sold all the shares six months later for $60 per share. What is the character of Quinn's $40,000 total gain?",
+  "choices": [
+   "$40,000 long-term capital gain",
+   "$40,000 ordinary income",
+   "$30,000 ordinary income and $10,000 short-term capital gain",
+   "$30,000 ordinary income and $10,000 long-term capital gain"
+  ],
+  "correct": 2,
+  "exp": "Selling within one year of exercise is a disqualifying disposition: the $30,000 spread at exercise is compensation income, and the $10,000 post-exercise appreciation is short-term capital gain because the shares were held only six months. Long-term treatment requires holding the shares more than two years from grant and more than one year from exercise."
+ },
+ {
+  "q": "A startup grants Rae 10,000 restricted shares worth $1 each, paying nothing, subject to a three-year vesting requirement. At vesting the shares will likely be worth $10 each. If Rae makes a timely §83 election, how much ordinary income does she recognize at grant and at vesting?",
+  "choices": [
+   "$0 at grant and $100,000 at vesting",
+   "$10,000 at grant and $90,000 at vesting",
+   "$0 at grant and $0 at vesting",
+   "$10,000 at grant and $0 at vesting"
+  ],
+  "correct": 3,
+  "exp": "A §83 election taxes the $10,000 value at grant as compensation, and nothing further is recognized at vesting; later appreciation is capital gain on sale. Without the election, the $100,000 value at vesting would be ordinary income."
+ },
+ {
+  "q": "Sam actively participates in managing a rental property that produced a $30,000 loss this year. He has no other passive income, and his modified AGI is $130,000. How much of the rental loss can Sam deduct this year?",
+  "choices": [
+   "$25,000",
+   "$15,000",
+   "$10,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "The $25,000 active-participation allowance under §469(i) is reduced by 50% of MAGI over $100,000: $25,000 − ($30,000 × 50%) = $10,000; the remaining $20,000 is suspended. Using the full $25,000 ignores the phase-out."
+ },
+ {
+  "q": "Tina, a single filer, paid $35,000 of state income and property taxes. Assume that for the year the SALT deduction cap is $40,400, reduced (but not below $10,000) by 30% of modified AGI over $505,000. Tina's modified AGI is $560,000. What is her itemized deduction for state and local taxes?",
+  "choices": [
+   "$23,900",
+   "$35,000",
+   "$40,400",
+   "$10,000"
+  ],
+  "correct": 0,
+  "exp": "The cap is reduced by 30% × ($560,000 − $505,000) = $16,500, to $23,900, which is less than the $35,000 paid. Deducting the full $35,000 ignores the income-based phase-down of the cap."
+ },
+ {
+  "q": "Uma owns 100% of an S corporation operating in a state that offers an elective pass-through entity tax (PTET). Uma already pays more state tax than the federal SALT cap allows. What is the main federal benefit of having the S corporation elect to pay the PTET?",
+  "choices": [
+   "The PTET is deducted by the S corporation, reducing the flow-through income Uma reports, and is not subject to the individual SALT cap",
+   "Uma can claim the PTET as an itemized deduction in addition to her capped SALT deduction",
+   "The PTET reduces the corporation's built-in gains tax",
+   "The PTET converts Uma's flow-through income into qualified dividends"
+  ],
+  "correct": 0,
+  "exp": "Under IRS Notice 2020-75, a state tax imposed on and paid by the entity is deductible in computing non-separately stated income, so it reduces Uma's share of income without touching the §164 cap. It is not an additional itemized deduction for Uma, because the entity pays it."
+ },
+ {
+  "q": "Vic, a single filer below the §199A threshold, has $80,000 of qualified business income from a sole proprietorship. His taxable income before the QBI deduction is $90,000, which includes $15,000 of net capital gain. What is his QBI deduction?",
+  "choices": [
+   "$16,000",
+   "$18,000",
+   "$15,000",
+   "$3,000"
+  ],
+  "correct": 2,
+  "exp": "The deduction is the lesser of 20% of QBI ($16,000) or 20% of taxable income less net capital gain: 20% × ($90,000 − $15,000) = $15,000. Stopping at 20% of QBI ignores the taxable income limit."
+ },
+ {
+  "q": "Wes, age 56, has family coverage under a high-deductible health plan for the whole year. The HSA contribution limit for family coverage is $8,750, and the catch-up contribution for those 55 or older is $1,000. His employer contributes $3,000 to his HSA. What is the maximum additional amount Wes can contribute and deduct?",
+  "choices": [
+   "$5,750",
+   "$8,750",
+   "$9,750",
+   "$6,750"
+  ],
+  "correct": 3,
+  "exp": "Wes's total limit is $8,750 + $1,000 = $9,750, and employer contributions count toward it under §223, leaving $9,750 − $3,000 = $6,750. Leaving out the catch-up gives $5,750."
+ },
+ {
+  "q": "Xena paid $3,500 of qualified tuition for her dependent son's first year of college from her own funds. Her modified AGI is below the phase-out range. What is the maximum American opportunity tax credit she may claim?",
+  "choices": [
+   "$2,500",
+   "$2,375",
+   "$3,500",
+   "$700"
+  ],
+  "correct": 1,
+  "exp": "The AOTC under §25A(i) is 100% of the first $2,000 of qualified expenses plus 25% of the next $2,000: $2,000 + ($1,500 × 25%) = $2,375. The $2,500 maximum requires $4,000 of expenses, and $700 is 20% of expenses, the lifetime learning credit rate."
+ },
+ {
+  "q": "Yuri is unmarried and has no children. He pays the entire cost of keeping his widowed mother in an assisted-living facility, and she qualifies as his dependent. Yuri lives alone in his own apartment. What is Yuri's most favorable filing status?",
+  "choices": [
+   "Head of household",
+   "Single",
+   "Qualifying surviving spouse",
+   "Married filing separately"
+  ],
+  "correct": 0,
+  "exp": "Under §2, an unmarried taxpayer can file as head of household by paying more than half the cost of maintaining a household that is the principal home of a dependent parent; the parent need not live with the taxpayer. Defaulting to single misses this exception for parents."
+ },
+ {
+  "q": "Zoe, a cash-method sole proprietor, is in the 22% bracket this year and expects to be in the 35% bracket next year because of a large contract. Ignoring the time value of money, which year-end strategy minimizes her combined two-year tax?",
+  "choices": [
+   "Defer billing into next year and prepay deductible expenses this year",
+   "Defer both income and deductions to next year",
+   "Accelerate both income and deductions into this year",
+   "Accelerate income into this year and defer deductible expenses to next year"
+  ],
+  "correct": 3,
+  "exp": "When rates are rising, income should be recognized while rates are low and deductions taken when they are worth more, at the 35% rate. The usual year-end advice to defer income and accelerate deductions backfires when next year's rate is higher."
+ },
+ {
+  "q": "A couple in the 32% bracket plans to give appreciated stock to their 17-year-old daughter, who has no earned income, so she can sell it and pay tax at her lower rates. What is the main flaw in this plan?",
+  "choices": [
+   "A gift to a minor is not a completed gift for income tax purposes",
+   "The daughter is subject to the kiddie tax, so her unearned income above the threshold is taxed at her parents' rates",
+   "The daughter takes a basis equal to FMV, so the built-in gain disappears",
+   "Capital gains of a minor are always taxed at 28%"
+  ],
+  "correct": 1,
+  "exp": "The kiddie tax under §1(g) applies to children under 18 (and to full-time students under 24 whose earned income does not cover half their support), so most of the gain would be taxed at the parents' rates. A gift recipient takes the donor's carryover basis under §1015, so the built-in gain does not disappear."
+ },
+ {
+  "q": "Under a divorce decree finalized in 2022, Alan pays his former spouse $60,000 of alimony a year. Alan is in the 37% bracket and his former spouse is in the 12% bracket. What is the federal income tax treatment of the payments?",
+  "choices": [
+   "Alan deducts $60,000 and the former spouse includes $60,000",
+   "Alan deducts $60,000 and the former spouse excludes it",
+   "Alan gets no deduction and the former spouse includes $60,000",
+   "Alan gets no deduction and the former spouse excludes it"
+  ],
+  "correct": 3,
+  "exp": "For divorce instruments executed after 2018, the TCJA repealed the §215 deduction and the §71 inclusion, so alimony is neither deductible nor taxable. Deduct-and-include treatment applies only to pre-2019 instruments not modified to adopt the new rules."
+ },
+ {
+  "q": "Bea has $12,000 of investment interest expense. Her investment income consists of $5,000 of taxable interest and $20,000 of long-term capital gain. She has no investment expenses. What is the minimum amount of long-term capital gain Bea must elect to treat as investment income (giving up the preferential rate on it) to deduct all of her investment interest this year?",
+  "choices": [
+   "$7,000",
+   "$12,000",
+   "$20,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Under §163, investment interest is deductible only up to net investment income, which includes net capital gain only if the taxpayer elects to tax it at ordinary rates. Bea needs $12,000 − $5,000 = $7,000 more. Electing the full $20,000 needlessly gives up the preferential rate on $13,000."
+ },
+ {
+  "q": "Cal, whose AGI is $100,000, gives a public charity publicly traded stock held for five years, worth $60,000 with a basis of $45,000. He makes no other gifts. If Cal elects to reduce his deduction to basis, what is his current-year charitable deduction? Ignore the 0.5%-of-AGI floor on itemized charitable deductions.",
+  "choices": [
+   "$30,000",
+   "$45,000",
+   "$50,000",
+   "$60,000"
+  ],
+  "correct": 1,
+  "exp": "Without the election, the FMV deduction is capped at 30% of AGI ($30,000), with $30,000 carried forward. The §170 election to deduct basis raises the limit to 50% of AGI ($50,000), so the entire $45,000 basis is deductible now, with no carryforward. Choosing $50,000 confuses the limit with the deduction itself."
+ },
+ {
+  "q": "Dana expects to owe alternative minimum tax for the next several years. She is choosing between two municipal bonds with identical yields and risk: a general obligation bond and a specified private activity bond issued after 2008 (not a refunding bond). Which is correct?",
+  "choices": [
+   "Both are equally attractive because muni interest is exempt from both regular tax and AMT",
+   "The private activity bond is preferable because its interest is an AMT adjustment that reverses later",
+   "The private activity bond is preferable because its interest is exempt from the net investment income tax while general obligation interest is not",
+   "The general obligation bond is preferable because interest on specified private activity bonds is an AMT preference item"
+  ],
+  "correct": 3,
+  "exp": "Interest on specified private activity bonds is a tax preference under §57 and adds to AMTI, so for an AMT taxpayer it is effectively taxable. General obligation bond interest is exempt for AMT. Both types are exempt from the NIIT, so that is not a difference."
+ },
+ {
+  "q": "Eli buys 1,000 shares of a domestic corporation 20 days before the ex-dividend date and sells them 10 days after the ex-dividend date, receiving a $1,500 dividend in between. Eli is in the 32% bracket. How is the dividend taxed?",
+  "choices": [
+   "As ordinary income, because Eli did not hold the shares more than 60 days during the 121-day period beginning 60 days before the ex-dividend date",
+   "As a qualified dividend at 15%, because the corporation is domestic",
+   "As a qualified dividend at 0%, because the shares were held less than one year",
+   "As a return of capital that reduces basis"
+  ],
+  "correct": 0,
+  "exp": "Under §1, qualified dividend treatment requires holding the stock more than 60 days during the 121-day window around the ex-dividend date. Eli held it 30 days, so the dividend is taxed at his 32% ordinary rate. Being paid by a domestic corporation is necessary but not enough."
+ },
+ {
+  "q": "Fay, a single filer, has a $400,000 net loss from her sole proprietorship and $500,000 of wages. Assume the excess business loss threshold for single filers is $320,000. How much of the business loss is disallowed this year, and how is it treated?",
+  "choices": [
+   "$80,000, carried forward as part of a net operating loss",
+   "$80,000, permanently disallowed",
+   "$400,000, suspended until she has business income",
+   "$0, because her wages exceed the loss"
+  ],
+  "correct": 0,
+  "exp": "Under §461(l), business losses can offset nonbusiness income only up to the threshold: $400,000 − $320,000 = $80,000 is an excess business loss, which carries forward as an NOL. The loss is not permanently lost, and wages do not count as business income for this test."
+ },
+ {
+  "q": "Gil, a cash-method taxpayer, made the following charitable transfers to qualified public charities near year end. Which one is deductible in the current year?",
+  "choices": [
+   "A check mailed on January 2 that was dated December 31",
+   "A $5,000 promissory note given to a charity on December 28 and paid in March",
+   "A written pledge signed December 15 to give $10,000 next year",
+   "A gift charged to his credit card on December 30 that he paid off in January"
+  ],
+  "correct": 3,
+  "exp": "A contribution charged to a credit card is deductible in the year of the charge, because Gil incurred a debt to a third party (Rev. Rul. 78-38). A taxpayer's own promissory note or pledge is not a payment until paid, and a check counts only when delivered or mailed, not by the date written on it."
+ },
+ {
+  "q": "Hana itemizes every year and has an AGI of $100,000 each year. She has $4,000 of unreimbursed medical expenses so far this year and expects $2,000 next year. She can schedule a $6,000 elective procedure (not reimbursed) in either December or January. Medical expenses are deductible above 7.5% of AGI. How much more in total medical deductions over the two years does December scheduling produce than January scheduling?",
+  "choices": [
+   "$6,000",
+   "$2,500",
+   "$2,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "In December: this year $10,000 − $7,500 = $2,500 and next year $0, for $2,500 total. In January: this year $0 and next year $8,000 − $7,500 = $500. The difference is $2,000. Saying $2,500 ignores that January scheduling also gives a small deduction next year."
+ },
+ {
+  "q": "Ian, a single filer, received $20,000 of Social Security benefits, $30,000 of taxable pension and interest income, and $5,000 of tax-exempt interest. Under §86, the base amount for single filers is $25,000 and the adjusted base amount is $34,000. How much of his Social Security is taxable?",
+  "choices": [
+   "$17,000",
+   "$13,850",
+   "$10,000",
+   "$9,350"
+  ],
+  "correct": 1,
+  "exp": "Provisional income = $30,000 + $5,000 + 50% × $20,000 = $45,000. Taxable benefits are the lesser of 85% of benefits ($17,000) or 85% × ($45,000 − $34,000) + the lesser of $4,500 or 50% of benefits = $9,350 + $4,500 = $13,850. Defaulting to the 85% cap ignores the formula."
+ },
+ {
+  "q": "Jo, a sole proprietor, hires her 15-year-old son to do legitimate office work and pays him $10,000, a reasonable wage. Which statement about the federal tax effects is correct?",
+  "choices": [
+   "The wages are deductible by Jo and exempt from Social Security and Medicare taxes",
+   "The wages are deductible but subject to full FICA because the son is a bona fide employee",
+   "The wages are not deductible because payments to a minor child are gifts",
+   "The wages are subject to the kiddie tax at Jo's rate"
+  ],
+  "correct": 0,
+  "exp": "Reasonable wages for real services are deductible under §162, and §3121 exempts wages paid by a parent's sole proprietorship to a child under 18 from FICA. The kiddie tax applies only to unearned income, and the son's standard deduction can shelter much of the wage."
+ },
+ {
+  "q": "Kim and Lou are married and decide to file separate returns. Kim itemizes deductions. Which consequence of filing separately is correct?",
+  "choices": [
+   "Lou may still claim the full standard deduction for a single filer",
+   "Lou must also itemize, so his standard deduction is zero",
+   "Each spouse may claim the American opportunity credit for different children",
+   "The SALT cap is doubled for each separate filer"
+  ],
+  "correct": 1,
+  "exp": "Under §63, if one spouse filing separately itemizes, the other spouse's standard deduction is zero. Married-filing-separately filers generally cannot claim education credits, and the SALT cap for a separate filer is half the joint amount, not double."
+ },
+ {
+  "q": "Last year Mo itemized deductions of $30,000, including $6,000 of state income tax, all of which was deductible under the SALT cap. His standard deduction last year would have been $29,200. This year he received a $2,000 state income tax refund. How much of the refund must Mo include in this year's gross income?",
+  "choices": [
+   "$2,000",
+   "$0",
+   "$1,200",
+   "$800"
+  ],
+  "correct": 3,
+  "exp": "Under the §111 tax benefit rule, a recovery is taxable only to the extent the prior deduction reduced tax. Itemizing gave him only $800 more than the standard deduction, so $800 is taxable. Including the full $2,000 ignores that he would have received $29,200 regardless."
+ },
+ {
+  "q": "Nia is self-employed, and most of her income is earned in November and December. She has been paying four equal quarterly estimated tax payments based on her expected annual tax. Which approach can legitimately reduce her required April and June payments without a penalty?",
+  "choices": [
+   "Skipping the first two installments and paying the full amount with the return",
+   "Paying the full year's estimate on January 15 of the following year",
+   "Using the annualized income installment method under §6654",
+   "Asking her clients to withhold income tax from her payments"
+  ],
+  "correct": 2,
+  "exp": "The annualized income installment method bases each required installment on income actually earned through that period, so low early-year income produces low early installments. Skipping installments and catching up later still triggers penalties for the early quarters."
+ },
+ {
+  "q": "Ora, a senior executive in the 37% bracket, expects to be in the 24% bracket after retirement. Her employer offers an unfunded nonqualified deferred compensation plan. Which statement about the plan is correct?",
+  "choices": [
+   "Deferred amounts are taxable when credited to her account because she has a vested right to them",
+   "Her election to defer salary generally must be made before the start of the year in which the services are performed, and she is an unsecured creditor of the employer for the deferred amounts",
+   "The employer deducts the deferred amounts when they are credited to her account",
+   "Deferred amounts can be rolled over tax-free into an IRA at retirement"
+  ],
+  "correct": 1,
+  "exp": "Section 409A generally requires deferral elections before the year the services are performed, and an unfunded plan leaves the executive as a general creditor, which is the price of avoiding constructive receipt. Under §404 the employer deducts the compensation only when the employee includes it in income, and NQDC cannot be rolled into an IRA."
+ },
+ {
+  "q": "Pia and Rob file jointly. Assume the 0% long-term capital gain rate applies to taxable income up to $98,900. Their taxable income excluding capital gains will be $60,000. How much long-term capital gain can they realize this year and have it taxed at 0%?",
+  "choices": [
+   "$98,900",
+   "$158,900",
+   "$38,900",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Capital gains are stacked on top of ordinary income, so only the room left in the 0% band ($98,900 − $60,000 = $38,900) is taxed at 0%. Treating the whole $98,900 band as available ignores the stacking order."
+ }
+]
