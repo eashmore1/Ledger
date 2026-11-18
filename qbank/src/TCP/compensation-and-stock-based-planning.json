@@ -1,0 +1,420 @@
+[
+{
+"q": "Kai was granted nonqualified stock options (no readily ascertainable FMV) to buy 1,000 shares at $10 per share. He exercised them when the stock was worth $30 per share and sold the shares 18 months later for $40 per share. How much ordinary income does Kai recognize at exercise?",
+"choices": [
+"$20,000",
+"$30,000",
+"$0",
+"$10,000"
+],
+"correct": 0,
+"exp": "At exercise of an NQSO, the spread is compensation: ($30 - $10) x 1,000 = $20,000. His basis becomes $30,000, so the later sale produces $10,000 of long-term capital gain."
+},
+{
+"q": "Lia exercised incentive stock options for 1,000 shares at $10 per share when the FMV was $30 per share. She sold the shares for $50 per share more than two years after the grant and more than one year after exercise. What is the regular tax result of the sale?",
+"choices": [
+"$20,000 ordinary income and $20,000 long-term capital gain",
+"$40,000 long-term capital gain",
+"$50,000 long-term capital gain",
+"$40,000 ordinary income"
+],
+"correct": 1,
+"exp": "In a qualifying ISO disposition, the entire gain over the exercise price is long-term capital gain: ($50 - $10) x 1,000 = $40,000, with no ordinary income. Splitting off the $20,000 spread applies only to a disqualifying disposition."
+},
+{
+"q": "In 2025, Lia exercised ISOs for 1,000 shares at $10 per share when the FMV was $30 per share, and she still held the shares at year-end. What is the effect for alternative minimum tax?",
+"choices": [
+"No effect, because ISOs are tax-free",
+"A $30,000 AMT adjustment",
+"A $20,000 positive AMT adjustment, giving an AMT basis of $30,000 per share",
+"A $20,000 negative AMT adjustment"
+],
+"correct": 2,
+"exp": "The ISO bargain element ($20 x 1,000 = $20,000) is an AMT adjustment in the year of exercise if the shares are held past year-end, and AMT basis becomes $30 per share. Regular tax has no income at exercise."
+},
+{
+"q": "Max exercised ISOs for 1,000 shares at $10 per share when the FMV was $30 per share, and sold the shares six months later for $45 per share. How much ordinary income does he recognize?",
+"choices": [
+"$0",
+"$35,000",
+"$15,000",
+"$20,000"
+],
+"correct": 3,
+"exp": "Selling within a year of exercise is a disqualifying disposition, so the bargain element at exercise, ($30 - $10) x 1,000 = $20,000, is ordinary income, and the remaining $15,000 is short-term capital gain. The $35,000 trap treats the whole gain as ordinary income."
+},
+{
+"q": "Nia acquired 500 shares under an incentive stock option, paying the $12 strike price when the market value was $40. The stock then dropped, and three months later she sold all 500 shares for $32 each. What amount must she report as compensation (ordinary) income?",
+"choices": [
+"$10,000",
+"$14,000",
+"$0",
+"$4,000"
+],
+"correct": 0,
+"exp": "This is a disqualifying disposition, and when the sale price is below the exercise-date value, ordinary income is limited to the actual gain: ($32 - $12) x 500 = $10,000. Reporting the full $14,000 exercise spread is the trap."
+},
+{
+"q": "On one date, Omni Corp. grants Lee ISOs on 15,000 shares with a grant-date FMV of $10 per share, all first exercisable in the same calendar year. Lee has no other ISOs. How many of the options are treated as nonqualified options?",
+"choices": [
+"0",
+"5,000",
+"10,000",
+"15,000"
+],
+"correct": 1,
+"exp": "ISO treatment is limited to $100,000 of grant-date value first exercisable in any year: $100,000 / $10 = 10,000 shares qualify, and the other 5,000 are NQSOs. The rule does not disqualify the whole grant."
+},
+{
+"q": "Ann received 10,000 shares of restricted stock subject to a three-year vesting requirement. At grant the FMV was $2 per share, and she paid nothing. She made a timely §83(b) election. The stock was worth $15 per share at vesting. How much ordinary income does Ann recognize because of the election?",
+"choices": [
+"$150,000 at vesting",
+"$0",
+"$20,000 in the year of grant",
+"$130,000 at vesting"
+],
+"correct": 2,
+"exp": "With an election under §83 to be taxed at grant, the FMV at grant less the amount paid ($2 x 10,000 = $20,000) is ordinary income in the grant year, and nothing more is taxed at vesting. Her capital gain holding period starts at grant."
+},
+{
+"q": "Bo received 10,000 shares of restricted stock worth $2 per share at grant, subject to a three-year vesting requirement. He paid nothing and did not make a §83(b) election. At vesting, the stock was worth $15 per share. What does Bo recognize at vesting?",
+"choices": [
+"$20,000 ordinary income",
+"$130,000 capital gain",
+"$0",
+"$150,000 ordinary income"
+],
+"correct": 3,
+"exp": "Without an election under §83 to be taxed at grant, property subject to a substantial risk of forfeiture is taxed at vesting at its then FMV: $15 x 10,000 = $150,000 of ordinary income. Capital gain treatment begins only after vesting."
+},
+{
+"q": "Cy made a timely §83(b) election on restricted stock, reporting $20,000 of ordinary income (he paid nothing). He left the company before vesting and forfeited the shares. What is the tax result of the forfeiture?",
+"choices": [
+"No deduction or loss, because he paid nothing for the shares",
+"A $20,000 ordinary deduction",
+"A $20,000 capital loss",
+"An amended return removing the $20,000"
+],
+"correct": 0,
+"exp": "On forfeiture after an election under §83 to be taxed at grant, the loss is limited to the amount paid for the stock, less any amount realized, which here is zero. The income reported is not recovered, which is the main risk of the election."
+},
+{
+"q": "Dee was granted 2,000 restricted stock units that settle in shares when they vest in three years. She wants to start her capital gain holding period now. What is correct?",
+"choices": [
+"She can make an election under §83 to be taxed at grant within 30 days of grant",
+"RSUs are not property transferred at grant, so the §83 election to be taxed at grant is unavailable; she is taxed on the share value at delivery",
+"RSUs are taxed at grant at FMV",
+"RSUs are taxed only when the shares are sold"
+],
+"correct": 1,
+"exp": "An RSU is an unfunded promise to deliver stock, so no property is transferred at grant and the §83 election to be taxed at grant does not apply. The FMV of the shares delivered is ordinary income at settlement."
+},
+{
+"q": "Under a §423 employee stock purchase plan, Eve bought 100 shares at 85% of the lower of the offering-date FMV ($20) or the purchase-date FMV ($24). She sold them for $30 per share more than two years after the offering date and one year after purchase. How much ordinary income does she recognize?",
+"choices": [
+"$700",
+"$1,300",
+"$300",
+"$0"
+],
+"correct": 2,
+"exp": "The purchase price was 85% x $20 = $17. In a qualifying disposition, ordinary income is the lesser of the actual gain ($13) or the offering-date discount ($20 - $17 = $3): $3 x 100 = $300, with the remaining $1,000 as long-term capital gain."
+},
+{
+"q": "Using the same ESPP facts (purchase price $17 per share, FMV $24 on the purchase date), Eve instead sells the 100 shares for $30 per share four months after purchase. How much ordinary income does she recognize?",
+"choices": [
+"$300",
+"$1,300",
+"$600",
+"$700"
+],
+"correct": 3,
+"exp": "In a disqualifying disposition, ordinary income is the purchase-date spread, ($24 - $17) x 100 = $700, whatever the sale price, and the remaining $600 is short-term capital gain. The $300 trap uses the qualifying-disposition formula."
+},
+{
+"q": "A nonqualified deferred compensation plan fails the §409A requirements. Fred's vested deferred amount under the plan is $100,000 for the year. Ignoring the premium interest, what is the federal income tax consequence?",
+"choices": [
+"$100,000 included in gross income plus a 20% additional tax of $20,000",
+"$100,000 included in income when eventually paid",
+"A $20,000 penalty only, with income still deferred",
+"$100,000 included in income plus a 10% additional tax"
+],
+"correct": 0,
+"exp": "A §409A failure accelerates inclusion of vested deferred amounts and adds a 20% additional tax plus premium interest. The 10% rate is the early distribution penalty for qualified plans."
+},
+{
+"q": "Apex Corp., a publicly held corporation, pays its CEO, a covered employee, a $1,500,000 salary and a $500,000 bonus tied to performance goals. How much of this compensation is nondeductible under §162(m)?",
+"choices": [
+"$500,000",
+"$1,000,000",
+"$0, because the bonus is performance-based",
+"$2,000,000"
+],
+"correct": 1,
+"exp": "Since 2018, §162(m) has had no performance-based exception: deductible compensation is capped at $1,000,000, so $2,000,000 - $1,000,000 = $1,000,000 is nondeductible. The $500,000 trap treats the bonus as exempt."
+},
+{
+"q": "On a change in control, executive Gil receives payments contingent on the change of $1,500,000. His base amount (average annual compensation for the prior five years) is $400,000. What excise tax does Gil owe under §4999?",
+"choices": [
+"$300,000",
+"$60,000",
+"$220,000",
+"$0"
+],
+"correct": 2,
+"exp": "Payments of $1,500,000 equal or exceed 3 x $400,000 = $1,200,000, so the excess parachute payment is everything above one times base: $1,100,000, and 20% x $1,100,000 = $220,000. The $60,000 trap uses only the excess over three times base."
+},
+{
+"q": "Gil's base amount is $400,000. The acquirer offers a 'best-net' cutback so that no payment is a parachute payment. What is the most that can be paid as change-in-control payments without triggering §280G?",
+"choices": [
+"$1,600,000",
+"$400,000",
+"$1,200,000",
+"$1,199,999"
+],
+"correct": 3,
+"exp": "Payments are parachute payments only if they equal or exceed three times the base amount, so the maximum is $1 less than $1,200,000. At exactly $1,200,000, the excess parachute payment would be $800,000."
+},
+{
+"q": "Oak Corp., a calendar-year accrual taxpayer, maintains an unfunded nonqualified deferred compensation plan. In 2025, an executive earns $200,000 of deferred compensation that will be paid to him in 2030. When may Oak deduct it?",
+"choices": [
+"2030, when the executive includes it in income",
+"2025, when earned",
+"2025, if paid within 2.5 months",
+"Ratably from 2025 through 2030"
+],
+"correct": 0,
+"exp": "Under §404, employers deduct nonqualified deferred compensation in the year the employee includes it in income, regardless of the employer's accounting method. The 2.5-month rule only distinguishes deferred from current compensation."
+},
+{
+"q": "Hart Corp. sets up a rabbi trust to hold assets for its executives' nonqualified deferred compensation. Which statement is correct?",
+"choices": [
+"Executives are taxed currently because the assets are set aside",
+"Executives are not taxed currently because the trust assets remain subject to Hart's general creditors",
+"Hart deducts contributions to the trust when made",
+"Trust earnings are tax-exempt"
+],
+"correct": 1,
+"exp": "A rabbi trust avoids constructive receipt and economic benefit because the assets are available to the employer's creditors in insolvency, so deferral is kept. Hart deducts only when executives include the amounts, and Hart is taxed on trust earnings as a grantor trust."
+},
+{
+"q": "A tax-exempt hospital provides its CEO an ineligible deferred compensation plan under §457(f). The benefit vests (no longer subject to a substantial risk of forfeiture) in 2025 but is payable in 2028. When is the CEO taxed?",
+"choices": [
+"2028, when paid",
+"Never, because the employer is exempt",
+"2025, when the substantial risk of forfeiture lapses",
+"When the CEO retires"
+],
+"correct": 2,
+"exp": "Under §457(f), ineligible plan amounts are included in income when there is no longer a substantial risk of forfeiture, even if paid later. Deferral until payment is the rule for eligible §457 plans."
+},
+{
+"q": "Assume for 2025 an elective deferral limit of $23,500 for §401(k) plans and a special catch-up limit of $11,250 for participants who attain age 60 through 63 during the year. Rosa turns 61 in 2025. What is the maximum she may defer into her 401(k)?",
+"choices": [
+"$23,500",
+"$31,000",
+"$46,000",
+"$34,750"
+],
+"correct": 3,
+"exp": "Participants aged 60 through 63 use the higher catch-up: $23,500 + $11,250 = $34,750. The $31,000 trap uses the regular $7,500 catch-up for those 50 and older."
+},
+{
+"q": "Assume for 2025 a §415 annual additions limit of $70,000 and an elective deferral limit of $23,500. Sam, age 45, defers $23,500 to his employer's 401(k). Ignoring the compensation limit, what is the most the employer can contribute for Sam this year?",
+"choices": [
+"$46,500",
+"$70,000",
+"$23,500",
+"$93,500"
+],
+"correct": 0,
+"exp": "Employee deferrals count toward the §415 annual additions limit, so employer contributions are limited to $70,000 - $23,500 = $46,500. Catch-up contributions, not relevant at age 45, are outside the limit."
+},
+{
+"q": "Tina, age 52, receives $150,000 of employer-paid group-term life insurance. Assume the Table I cost is $0.23 per $1,000 of coverage per month for her age bracket, and she pays nothing toward it. How much is included in her gross income for the year?",
+"choices": [
+"$414",
+"$276",
+"$0",
+"$345"
+],
+"correct": 1,
+"exp": "Only coverage above $50,000 is taxable: $100,000 / $1,000 x $0.23 x 12 = $276. Applying the rate to all $150,000 gives the $414 trap."
+},
+{
+"q": "Jade works for a privately held corporation and exercises options for stock that she cannot easily sell. The corporation has a qualifying broad-based plan. Which provision may let her defer the income from exercise for up to five years?",
+"choices": [
+"§83 election to be taxed at grant",
+"§423",
+"§83(i)",
+"§409A"
+],
+"correct": 2,
+"exp": "§83(i) lets eligible employees of private companies elect to defer income on qualified equity grants for up to five years, with specific triggering events. The §83 election to be taxed at grant accelerates income, and §423 applies to ESPPs."
+},
+{
+"q": "Lou exercises 1,000 stock-settled stock appreciation rights with a base price of $10 when the stock is worth $25 per share. What is the tax result?",
+"choices": [
+"No income until the shares are sold",
+"$25,000 of ordinary income",
+"$15,000 of long-term capital gain",
+"$15,000 of ordinary income to Lou and a $15,000 deduction for the employer"
+],
+"correct": 3,
+"exp": "SARs are taxed at exercise on the value received, ($25 - $10) x 1,000 = $15,000 of ordinary compensation income, and the employer deducts the same amount. No capital gain arises at exercise."
+},
+{
+"q": "An employee exercises nonqualified stock options and recognizes $20,000 of compensation income. What is the employer's deduction?",
+"choices": [
+"$20,000, in the employer's tax year in which the employee's year of inclusion ends",
+"$0, because options are equity",
+"The grant-date fair value, when granted",
+"The book expense under ASC 718"
+],
+"correct": 0,
+"exp": "Under §83, the employer deducts the amount the employee includes, in the tax year in which or with which the employee's tax year of inclusion ends. ASC 718 book expense creates a book-tax difference but does not set the deduction."
+},
+{
+"q": "An employee makes a qualifying disposition of ISO stock, recognizing a $40,000 long-term capital gain. What deduction does the employer get?",
+"choices": [
+"$40,000",
+"$0",
+"The bargain element at exercise",
+"The grant-date value"
+],
+"correct": 1,
+"exp": "No employer deduction is allowed for ISOs unless the employee makes a disqualifying disposition and recognizes ordinary income. This lack of an employer deduction is the ISO trade-off."
+},
+{
+"q": "Rex is the sole shareholder and full-time CEO of an S corporation that earns $300,000 a year. He pays himself no salary and takes $300,000 of distributions to avoid employment taxes. What is the most likely IRS position?",
+"choices": [
+"Distributions are always respected for S corporations",
+"The distributions are reclassified as dividends taxed at 20%",
+"Part of the distributions is recharacterized as reasonable compensation subject to FICA and withholding",
+"The S election is terminated"
+],
+"correct": 2,
+"exp": "The IRS and the courts recharacterize distributions as wages when a shareholder-employee performs substantial services without reasonable compensation. S corporation distributions are not dividends, and the S election is not terminated for this."
+},
+{
+"q": "Una, single, earns $300,000 of wages from one employer in 2025. What is her Additional Medicare Tax on wages?",
+"choices": [
+"$2,700",
+"$1,800",
+"$4,350",
+"$900"
+],
+"correct": 3,
+"exp": "The 0.9% Additional Medicare Tax applies to wages above $200,000 for a single filer: 0.9% x $100,000 = $900. The $2,700 trap applies it to all wages."
+},
+{
+"q": "Assume a 2025 Social Security wage base of $176,100. Val earns $250,000 of wages in 2025. What is her employee Social Security (OASDI) tax?",
+"choices": [
+"$10,918",
+"$15,500",
+"$13,469",
+"$3,625"
+],
+"correct": 0,
+"exp": "OASDI is 6.2% of wages up to the wage base: 6.2% x $176,100 = $10,918. The $13,469 trap combines 7.65% with the wage base, adding Medicare, which has no cap."
+},
+{
+"q": "An employer reimburses employees' business travel. Under which arrangement are the reimbursements excluded from employees' wages?",
+"choices": [
+"Flat monthly allowances paid without receipts",
+"An accountable plan requiring a business connection, substantiation and return of excess amounts",
+"Any reimbursement if the employee itemizes deductions",
+"A nonaccountable plan with a written policy"
+],
+"correct": 1,
+"exp": "Accountable plan reimbursements are excluded from wages. Nonaccountable payments are taxable wages, and unreimbursed employee expenses are not deductible as itemized deductions."
+},
+{
+"q": "Wynn was granted ISOs on March 1, Year 1, exercised them on February 1, Year 2, and sold the shares on February 15, Year 3, at a gain. How is the sale classified?",
+"choices": [
+"A qualifying disposition, because she held the shares more than one year after exercise",
+"A qualifying disposition, because she held the options more than one year before exercising",
+"A disqualifying disposition, because the sale was not more than two years after the grant date",
+"A disqualifying disposition, because the shares were held less than 18 months after exercise"
+],
+"correct": 2,
+"exp": "An ISO disposition qualifies only if the sale is more than two years after grant and more than one year after exercise. The one-year test is met (about 12.5 months), but the sale came only about 23.5 months after grant, so the disposition is disqualifying. Meeting only the one-year test is the trap."
+},
+{
+"q": "Xia receives nonqualified options that are actively traded on an established market. When is she taxed?",
+"choices": [
+"At exercise, on the spread",
+"At sale of the shares",
+"Never, if she holds them for one year",
+"At grant, on the option's FMV, because it has a readily ascertainable value"
+],
+"correct": 3,
+"exp": "Under §83 and Reg. §1.83-7, an option with a readily ascertainable FMV (such as an actively traded one) is taxed when granted, and later exercise is not a taxable event. Most employee options lack such a value and are taxed at exercise."
+},
+{
+"q": "A 55-year-old executive in the 37% bracket expects to be in a much lower bracket after retiring at 60, and her employer is financially strong. What is the key planning trade-off in electing to defer bonus into an unfunded nonqualified plan?",
+"choices": [
+"Deferral may lower her tax rate on the bonus, but she becomes an unsecured general creditor of the employer for the deferred amount",
+"Deferral lets the employer deduct the bonus now",
+"Deferral avoids FICA permanently",
+"Deferral lets her roll the amount into an IRA"
+],
+"correct": 0,
+"exp": "Nonqualified deferral can lower the rate on the income, but the amount is at risk in the employer's insolvency, and the employer's deduction is deferred too. FICA generally applies when amounts vest under the special timing rule, and NQDC cannot be rolled into an IRA."
+},
+{
+"q": "A startup founder receives restricted founder shares with a current FMV of $0.01 per share, subject to vesting, and the company is expected to grow rapidly. Why is a §83(b) election typically advisable?",
+"choices": [
+"It defers all income until vesting",
+"It triggers minimal ordinary income now, and all later appreciation becomes capital gain with a holding period starting at grant",
+"It lets the company take a large deduction later",
+"It avoids the need to pay for the shares"
+],
+"correct": 1,
+"exp": "When value is low and growth is expected, the election makes the small current value ordinary income and turns future appreciation into capital gain, which may also start a §1202 holding period. The risk is low when the income at grant is small."
+},
+{
+"q": "A retail store with a 40% gross profit percentage sells a television to an employee for $500. Its normal price to customers is $1,000. How much of the discount is taxable to the employee?",
+"choices": [
+"$0",
+"$500",
+"$100",
+"$300"
+],
+"correct": 2,
+"exp": "A §132 qualified employee discount on merchandise is excludable up to the gross profit percentage of the price: 40% x $1,000 = $400. The $500 discount exceeds that by $100, which is taxable."
+},
+{
+"q": "Zeta Corp. pays an executive a $1,500,000 change-in-control bonus. His base amount is $400,000, and the bonus is a parachute payment. Disregarding §162(m), how much may Zeta deduct?",
+"choices": [
+"$1,500,000",
+"$1,200,000",
+"$0",
+"$400,000"
+],
+"correct": 3,
+"exp": "§280G denies the deduction for the excess parachute payment, $1,500,000 - $400,000 = $1,100,000, so Zeta deducts $400,000. The excise tax and the disallowance both apply to amounts above one times base, not three times."
+},
+{
+"q": "Under a plan, a bonus vests on December 31, 2025, and is paid on March 1, 2026. How is it treated under §409A?",
+"choices": [
+"It is exempt from §409A as a short-term deferral, because it is paid by March 15 of the year after the year it vests",
+"It is deferred compensation that must comply with §409A",
+"It violates §409A because it is paid after vesting",
+"It is a §457(f) payment"
+],
+"correct": 0,
+"exp": "The short-term deferral exception covers amounts paid by the 15th day of the third month after the end of the year in which the right vests. Payment after March 15, 2026 would make the plan subject to §409A."
+},
+{
+"q": "Hope receives a lump-sum distribution from her 401(k) that includes employer stock. The plan's basis in the stock is $50,000, and its FMV at distribution is $300,000. She does not roll it over. How much ordinary income does she recognize at distribution, ignoring any early withdrawal penalty?",
+"choices": [
+"$300,000",
+"$50,000",
+"$250,000",
+"$0"
+],
+"correct": 1,
+"exp": "Under the net unrealized appreciation rules, only the plan's cost basis ($50,000) is taxed at distribution, and the $250,000 of NUA is taxed as long-term capital gain when the stock is sold. Rolling it into an IRA would forfeit NUA treatment."
+}
+]

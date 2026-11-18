@@ -1,0 +1,420 @@
+[
+ {
+  "q": "Ana and Ben form Newco. Ana transfers land with a $40,000 basis and a $100,000 FMV and receives Newco stock worth $90,000 plus $10,000 of cash. Ben transfers $90,000 of cash for stock worth $90,000. After the transfers, Ana and Ben own all of Newco's stock. What are Ana's recognized gain and her basis in the Newco stock?",
+  "choices": [
+   "$0 gain; $30,000 basis",
+   "$10,000 gain; $40,000 basis",
+   "$60,000 gain; $90,000 basis",
+   "$10,000 gain; $50,000 basis"
+  ],
+  "correct": 1,
+  "exp": "The transferors have 100% control, so §351 applies, and Ana recognizes gain up to the $10,000 of boot (realized gain is $60,000). Her stock basis is $40,000 + $10,000 gain − $10,000 cash = $40,000. Answering $50,000 adds the gain but forgets to subtract the boot received."
+ },
+ {
+  "q": "In the same formation, where Ana transferred land with a $40,000 basis (FMV $100,000) to Newco for stock and $10,000 of cash and recognized $10,000 of gain, what is Newco's basis in the land?",
+  "choices": [
+   "$40,000",
+   "$100,000",
+   "$50,000",
+   "$30,000"
+  ],
+  "correct": 2,
+  "exp": "Under §362, a corporation's basis in property received in a §351 exchange is the transferor's basis plus gain recognized by the transferor: $40,000 + $10,000 = $50,000. A $100,000 FMV basis would apply only if the exchange were fully taxable."
+ },
+ {
+  "q": "Cara and Dov each transfer property worth $150,000 to a new corporation for 375 shares each. Eli receives 250 shares, worth $100,000, solely for services. Which statement is correct?",
+  "choices": [
+   "Section 351 fails because the property transferors own only 75% of the stock, so Cara and Dov recognize gain on their property",
+   "Section 351 applies to all three because together they own 100% of the stock",
+   "Section 351 applies to Cara and Dov, and only Eli has income",
+   "Eli is treated as a transferor of property because services create goodwill"
+  ],
+  "correct": 0,
+  "exp": "Stock issued for services is not issued for property, so Eli is not counted. Cara and Dov hold 750 of 1,000 shares (75%), below the 80% control requirement of §368, so §351 fails and they recognize realized gain. Eli has $100,000 of ordinary income either way."
+ },
+ {
+  "q": "Fay transfers a building (adjusted basis $100,000; FMV $500,000), subject to a $150,000 mortgage, to her wholly owned corporation for additional stock. There is a valid business purpose for the mortgage. What are Fay's recognized gain and her basis in the stock received?",
+  "choices": [
+   "$0 gain; $0 basis",
+   "$150,000 gain; $100,000 basis",
+   "$50,000 gain; $0 basis",
+   "$0 gain; negative $50,000 basis"
+  ],
+  "correct": 2,
+  "exp": "Under §357, liabilities assumed in excess of the basis of the property transferred produce gain of $150,000 − $100,000 = $50,000. Stock basis = $100,000 − $150,000 liability + $50,000 gain = $0. Basis can never be negative, which is why the gain is required."
+ },
+ {
+  "q": "Gus transfers equipment with a $200,000 basis and a $120,000 FMV to his newly formed corporation for all of its stock in a §351 exchange. He transfers no other property, and no election is made. What are the corporation's basis in the equipment and Gus's basis in his stock?",
+  "choices": [
+   "Equipment $200,000; stock $200,000",
+   "Equipment $120,000; stock $120,000",
+   "Equipment $200,000; stock $120,000",
+   "Equipment $120,000; stock $200,000"
+  ],
+  "correct": 3,
+  "exp": "Under §362, when the total basis of property transferred exceeds its total FMV, the corporation's basis is limited to FMV ($120,000), while the shareholder keeps a $200,000 substituted basis in the stock. A joint election could instead reduce the stock basis to $120,000 and let the corporation keep $200,000, but not both."
+ },
+ {
+  "q": "Hal contributes land (basis $30,000; FMV $100,000), subject to a $40,000 mortgage that the partnership assumes, for a 50% interest in a new partnership. Ivy contributes $60,000 of cash for the other 50%. Partners share liabilities equally. What is Hal's basis in his partnership interest?",
+  "choices": [
+   "$10,000",
+   "$30,000",
+   "$0, with $10,000 of gain",
+   "$50,000"
+  ],
+  "correct": 0,
+  "exp": "Hal's basis is $30,000 less the $40,000 liability assumed by the partnership, plus his $20,000 share of it: $10,000. His net liability relief of $20,000 does not exceed his basis, so §731 gain does not arise. Ignoring his share of the liability produces negative basis and a false gain."
+ },
+ {
+  "q": "Jay contributes a building (basis $10,000; FMV $120,000), subject to a $50,000 nonrecourse mortgage the partnership assumes, for a 50% interest in a partnership. The other partner contributes $70,000 of cash. Partners share the liability equally. How much gain does Jay recognize?",
+  "choices": [
+   "$0",
+   "$40,000",
+   "$25,000",
+   "$15,000"
+  ],
+  "correct": 3,
+  "exp": "Jay's net decrease in liabilities is $50,000 − $25,000 (his 50% share) = $25,000, treated as a cash distribution under §752. It exceeds his $10,000 basis by $15,000, which is gain under §731, and his basis becomes $0. Answering $40,000 ignores Jay's retained share of the debt."
+ },
+ {
+  "q": "Kim receives a 20% interest in an existing LLC taxed as a partnership in exchange for her future services. If the LLC were liquidated immediately, she would receive $50,000. Which statement is correct?",
+  "choices": [
+   "Kim recognizes $50,000 of ordinary income because she received a capital interest for services",
+   "Kim recognizes no income because services are not property",
+   "Kim recognizes $50,000 of capital gain",
+   "Kim recognizes income only when she sells the interest"
+  ],
+  "correct": 0,
+  "exp": "An interest that would share in liquidation proceeds is a capital interest, and receiving one for services is compensation income at FMV under §83 and §721 (which does not cover services). A pure profits interest, worth $0 on liquidation, generally produces no income under Rev. Proc. 93-27."
+ },
+ {
+  "q": "A corporation with 60 shareholders is considering an S election. Which fact would make it ineligible?",
+  "choices": [
+   "A grantor trust owned by a U.S. citizen holds shares",
+   "Some shares carry voting rights and others do not",
+   "One shareholder is a nonresident alien",
+   "An estate holds shares"
+  ],
+  "correct": 2,
+  "exp": "Under §1361, nonresident aliens, partnerships, and most corporations are ineligible shareholders. Grantor trusts and estates are permitted, and differences only in voting rights do not create a second class of stock."
+ },
+ {
+  "q": "Lark Inc., a calendar-year C corporation in existence for several years, wants to be an S corporation. It files a valid Form 2553, with all shareholders' consents, on April 1, 2026, and no relief for late elections is requested. When is the election effective?",
+  "choices": [
+   "January 1, 2026",
+   "April 1, 2026",
+   "July 1, 2026",
+   "January 1, 2027"
+  ],
+  "correct": 3,
+  "exp": "An election made within the first 2 months and 15 days of the tax year (by March 15 for a calendar year) can be effective for that year; one made later takes effect the following year under §1362. April 1 is too late for 2026 without late-election relief."
+ },
+ {
+  "q": "Mae forms a single-member LLC to run a consulting business and files no entity classification election. Later, she wants S corporation treatment. Which statement is correct?",
+  "choices": [
+   "The LLC is disregarded by default, and it may elect to be taxed as an association and then elect S status (or file Form 2553, which serves as both)",
+   "The LLC is a partnership by default and cannot elect S status",
+   "The LLC is a C corporation by default because it has limited liability",
+   "The LLC must convert to a state-law corporation to be an S corporation"
+  ],
+  "correct": 0,
+  "exp": "Under the check-the-box regulations, a single-member domestic LLC is disregarded by default and may elect to be taxed as a corporation; a timely Form 2553 is deemed to include that election. State-law conversion is unnecessary, and a single-member LLC cannot be a partnership."
+ },
+ {
+  "q": "A business earns $200,000 of pretax income and distributes all after-tax earnings as qualified dividends to an individual owner taxed at 20% on dividends. Assume a 21% corporate rate and ignore the net investment income tax. What is the combined effective federal tax rate on the income if the business is a C corporation?",
+  "choices": [
+   "21.0%",
+   "36.8%",
+   "41.0%",
+   "37.0%"
+  ],
+  "correct": 1,
+  "exp": "The corporation pays 21%, leaving 79%, and the dividend tax takes 20% of that: 21% + (79% × 20%) = 36.8%. Adding the rates (41%) overstates the burden because the dividend tax applies only to after-tax corporate earnings."
+ },
+ {
+  "q": "Nora's business is profitable, and she plans to reinvest nearly all of its earnings for the next 10 years to fund growth, then sell the company. She is in the 37% bracket. Ignoring §1202, which characteristic of a C corporation is most relevant to her?",
+  "choices": [
+   "C corporation losses flow through to shareholders",
+   "C corporations are exempt from the accumulated earnings tax",
+   "C corporation earnings that are kept in the business are taxed only at the 21% corporate rate until distributed",
+   "C corporations may allocate income disproportionately among shareholders"
+  ],
+  "correct": 2,
+  "exp": "When earnings are retained rather than distributed, the second layer of tax is deferred, so reinvested profits bear only the 21% corporate rate instead of the 37% individual rate. Retention beyond reasonable business needs can trigger the accumulated earnings tax, and C corporation losses do not flow through."
+ },
+ {
+  "q": "Otto's single-member LLC earns $200,000 a year from an active business. He is considering an S election and paying himself a reasonable salary of $120,000. What is the main employment tax planning point?",
+  "choices": [
+   "Distributions from the S corporation beyond reasonable salary are not subject to FICA or self-employment tax",
+   "All S corporation income is subject to self-employment tax",
+   "Otto can avoid employment taxes by taking no salary",
+   "The S election makes him ineligible for the QBI deduction"
+  ],
+  "correct": 0,
+  "exp": "An S corporation shareholder-employee pays FICA only on wages; the remaining $80,000 of flow-through income and distributions is not subject to employment tax, whereas all of the LLC's net earnings are subject to SE tax. The IRS can recharacterize distributions as wages if salary is unreasonably low."
+ },
+ {
+  "q": "Pax Corp., a calendar-year C corporation, starts business on July 1 and incurs $53,000 of organizational expenditures. It elects to deduct and amortize them under §248. What is its total deduction for organizational expenditures in its first year?",
+  "choices": [
+   "$5,000",
+   "$6,700",
+   "$3,700",
+   "$2,000"
+  ],
+  "correct": 2,
+  "exp": "The immediate deduction is $5,000 reduced by the excess over $50,000: $5,000 − $3,000 = $2,000. The remaining $51,000 is amortized over 180 months starting in the month business begins: $51,000 ÷ 180 × 6 = $1,700. Total = $3,700. Forgetting the phase-down of the $5,000 gives $6,700."
+ },
+ {
+  "q": "Quill LLC incurs $20,000 of start-up expenditures before opening for business on January 2. It elects under §195 to deduct and amortize them. What is its start-up cost deduction for its first full year of business?",
+  "choices": [
+   "$20,000",
+   "$6,000",
+   "$5,000",
+   "$1,333"
+  ],
+  "correct": 1,
+  "exp": "Section 195 allows an immediate deduction of up to $5,000 (reduced only when costs exceed $50,000), with the remaining $15,000 amortized over 180 months: $15,000 ÷ 180 × 12 = $1,000, for a total of $6,000. Answering $1,333 amortizes all $20,000 and omits the $5,000 immediate deduction."
+ },
+ {
+  "q": "Ray and Sue will acquire rental real estate financed largely with nonrecourse debt and expect large tax losses in the early years. They want to deduct those losses. Which entity choice best supports this goal?",
+  "choices": [
+   "An LLC taxed as a partnership, because members include their share of entity liabilities, including qualified nonrecourse financing, in basis and at-risk amounts",
+   "An S corporation, because shareholders get basis for entity-level debt",
+   "A C corporation, because losses flow through to shareholders",
+   "An S corporation, because losses are not subject to basis limits"
+  ],
+  "correct": 0,
+  "exp": "Under §752 and §465, partners include their share of partnership debt (including qualified nonrecourse real estate financing) in basis and at-risk amounts, allowing larger loss deductions. S corporation shareholders get basis only for debt the corporation owes directly to them, and C corporation losses do not flow through."
+ },
+ {
+  "q": "Tern Inc. converted from a C corporation to an S corporation two years ago, when it had a net unrealized built-in gain of $300,000. This year it sells land that had a $120,000 built-in gain at conversion, for a recognized gain of $150,000. Taxable income is not a limiting factor. What is Tern's built-in gains tax, assuming a 21% rate?",
+  "choices": [
+   "$25,200",
+   "$31,500",
+   "$63,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Under §1374, the recognized built-in gain is limited to the gain that existed at conversion ($120,000), and the tax is $120,000 × 21% = $25,200, well within the NUBIG limit. The $30,000 of post-conversion appreciation is not subject to the tax, so taxing the full $150,000 ($31,500) is wrong."
+ },
+ {
+  "q": "Una is founding a technology startup that she expects to sell in six to eight years for a large gain. She wants to maximize her after-tax proceeds from the sale. Which entity choice gives her access to the §1202 exclusion?",
+  "choices": [
+   "An LLC taxed as a partnership",
+   "An S corporation",
+   "A C corporation, with stock issued to her at formation",
+   "A sole proprietorship that later incorporates by selling its assets to a corporation"
+  ],
+  "correct": 2,
+  "exp": "Section 1202 applies only to qualified small business stock issued by a C corporation at original issuance, so the gain on a sale after the required holding period can be largely or fully excluded. S corporation stock and partnership interests never qualify."
+ },
+ {
+  "q": "Vale P.C. is a personal service corporation (a qualified PSC) owned by physicians, with average annual gross receipts well above the threshold that normally requires a C corporation to use the accrual method. Which statement is correct?",
+  "choices": [
+   "Vale must use the accrual method because its receipts exceed the threshold",
+   "Vale is taxed at a flat 35% rate because it is a personal service corporation",
+   "Vale must use a fiscal year ending September 30",
+   "Vale may use the cash method because qualified personal service corporations are exempt from the accrual requirement"
+  ],
+  "correct": 3,
+  "exp": "Section 448 bars C corporations above the gross receipts test from using the cash method but exempts qualified PSCs. Since 2018, PSCs are taxed at the same flat 21% as other C corporations, and they generally use a calendar year unless a business purpose or §444 election applies."
+ },
+ {
+  "q": "Wes contributes land (basis $40,000; FMV $100,000) and Xia contributes $100,000 of cash to form an equal partnership. Two years later, the partnership sells the land for $120,000. How much of the partnership's $80,000 tax gain is allocated to Wes?",
+  "choices": [
+   "$40,000",
+   "$80,000",
+   "$60,000",
+   "$70,000"
+  ],
+  "correct": 3,
+  "exp": "Under §704, the $60,000 built-in gain at contribution is allocated entirely to Wes, the contributing partner, and the $20,000 of post-contribution appreciation is shared equally: $60,000 + $10,000 = $70,000. Splitting the whole $80,000 equally ($40,000) ignores the built-in gain rule."
+ },
+ {
+  "q": "Yan contributes a concentrated position in one publicly traded stock to a newly formed partnership, and other investors contribute different publicly traded stocks, producing diversification for each of them. The partnership would be an investment company if incorporated. What is the result?",
+  "choices": [
+   "No gain is recognized under §721",
+   "Yan recognizes gain on the appreciated stock because the transfer to an investment partnership results in diversification",
+   "Yan recognizes gain only if he receives cash",
+   "The partnership recognizes the gain"
+  ],
+  "correct": 1,
+  "exp": "Section 721 (and §351 for corporations) does not apply to transfers to an investment company that result in diversification of the transferors' interests, so the built-in gain is recognized. This rule blocks exchange funds from diversifying appreciated positions tax-free."
+ },
+ {
+  "q": "Zed owns 60% of Acorn Corp., whose stock is worth $1,000,000 in total. A new investor will contribute cash for a 30% interest. To bring Zed within the control group under §351 as an accommodation transferor under Rev. Proc. 77-37, what is the minimum value of property Zed should contribute in exchange for additional stock?",
+  "choices": [
+   "$10,000",
+   "$60,000",
+   "$100,000",
+   "$300,000"
+  ],
+  "correct": 1,
+  "exp": "Under Rev. Proc. 77-37, property transferred by an existing shareholder is not 'of relatively small value' if it is at least 10% of the FMV of the stock he already owns: 10% × $600,000 = $60,000. Using 10% of the corporation's total value ($100,000) misapplies the guideline."
+ },
+ {
+  "q": "Bo transfers equipment held for three years (a §1231 asset) and Cy transfers inventory to a new corporation in a valid §351 exchange. Both receive only stock. Which statement about the holding periods of their stock is correct?",
+  "choices": [
+   "Both begin new holding periods on the transfer date",
+   "Both tack the holding periods of the property transferred",
+   "Bo begins a new holding period, while Cy tacks",
+   "Bo tacks the equipment's holding period, while Cy's holding period begins on the transfer date"
+  ],
+  "correct": 3,
+  "exp": "Under §1223, stock received for capital assets or §1231 property takes a tacked holding period, but stock received for ordinary-income property such as inventory does not. The corporation's holding period in the property tacks in both cases."
+ },
+ {
+  "q": "Dee contributes appreciated land to a partnership. Eighteen months later, the partnership distributes cash to her that is not a normal operating distribution. What is the main risk?",
+  "choices": [
+   "The contribution and distribution may be treated as a disguised sale of the land, with gain recognized at the time of the contribution",
+   "The distribution is always tax-free as long as it does not exceed her basis",
+   "The distribution reduces the partnership's basis in the land",
+   "The distribution is treated as a guaranteed payment"
+  ],
+  "correct": 0,
+  "exp": "Under §707 and its regulations, a contribution and a related distribution within two years are presumed to be a sale of the property, which requires gain recognition as of the contribution date unless the facts clearly show otherwise. Relying only on §731 basis recovery ignores the disguised-sale rules."
+ },
+ {
+  "q": "An S corporation's shareholders want the founder to receive a larger share of distributions than her ownership percentage while sharing taxable income pro rata. Which is the likely result?",
+  "choices": [
+   "The arrangement is permitted if documented in a shareholder agreement",
+   "Disproportionate distributions under the governing provisions may create a second class of stock and terminate the S election",
+   "The excess distributions are treated as wages",
+   "The corporation must file as a partnership"
+  ],
+  "correct": 1,
+  "exp": "Under Reg. 1.1361-1, S corporation shares must confer identical rights to distribution and liquidation proceeds; governing provisions that provide disproportionate distributions create a second class of stock and can terminate the election. Flexible allocations like this require a partnership."
+ },
+ {
+  "q": "Fin is launching a business expected to lose $150,000 in each of its first two years. Fin has $400,000 of salary from another job and will materially participate in the new business. Which entity choice lets Fin use the early losses soonest?",
+  "choices": [
+   "A C corporation, because its NOLs can be carried back two years",
+   "A C corporation, because it can pay Fin a deductible salary",
+   "An S corporation or LLC, because losses flow through and can offset Fin's other income, subject to basis, at-risk, passive, and excess business loss limits",
+   "Any entity, because all business losses flow through to owners"
+  ],
+  "correct": 2,
+  "exp": "A pass-through entity passes losses to the owner, and with material participation (and within basis and other limits) they offset other income now. A C corporation keeps losses as NOLs usable only against its own future income, and post-2020 NOLs generally cannot be carried back."
+ },
+ {
+  "q": "Gil owns 100% of a profitable C corporation and takes $1,000,000 of salary, far above what comparable executives earn, leaving the corporation with almost no taxable income. On audit, what is the likely result?",
+  "choices": [
+   "The excess salary is reclassified as a dividend: not deductible by the corporation but still taxable to Gil",
+   "The full salary remains deductible because Gil worked full time",
+   "The corporation is converted to an S corporation",
+   "Gil's excess salary is excluded from his income"
+  ],
+  "correct": 0,
+  "exp": "Only reasonable compensation is deductible under §162; unreasonable compensation to a shareholder-employee is treated as a constructive dividend, which is nondeductible to the corporation and taxable to the shareholder. This is the mirror image of the S corporation issue, where the IRS pushes for more salary."
+ },
+ {
+  "q": "Hu, a physician in a specified service trade or business, has taxable income well above the top of the §199A phase-in range. He is choosing between operating as an S corporation and as a partnership. Which statement about the QBI deduction is correct?",
+  "choices": [
+   "The S corporation allows a QBI deduction on distributions but not wages",
+   "Neither entity yields a QBI deduction for Hu because his SSTB income is excluded above the phase-in range",
+   "The partnership allows a full 20% QBI deduction because guaranteed payments qualify",
+   "Organizing as a C corporation allows a 20% QBI deduction at the corporate level"
+  ],
+  "correct": 1,
+  "exp": "Above the phase-in range, SSTB income is not qualified business income under §199A, whatever the pass-through form. Guaranteed payments and S corporation wages are never QBI, and C corporations are not eligible for the deduction."
+ },
+ {
+  "q": "Ike transfers fully depreciated equipment (original cost $80,000, basis $0, FMV $50,000) to his new corporation solely for stock in a valid §351 exchange. Which statement is correct?",
+  "choices": [
+   "Ike recognizes $50,000 of §1245 ordinary income",
+   "The corporation recognizes $50,000 of income",
+   "No gain or recapture is recognized now, but the recapture potential carries over to the corporation",
+   "Ike recognizes $50,000 of capital gain"
+  ],
+  "correct": 2,
+  "exp": "Section 1245 recapture is overridden by §351 nonrecognition except to the extent gain is recognized because of boot. The corporation takes a $0 carryover basis, and the $50,000 recapture potential follows the equipment into the corporation."
+ },
+ {
+  "q": "Jo owns 100% of Pine Corp., worth $900,000. Kai, an unrelated investor, will transfer appreciated land worth $300,000 to Pine for 25% of the stock after the transfer. Jo transfers nothing. What is the result to Kai?",
+  "choices": [
+   "Kai recognizes gain because he does not have 80% control after the exchange",
+   "Kai recognizes no gain because Jo's ownership counts toward control",
+   "Kai recognizes no gain because he receives only stock",
+   "Kai recognizes gain only if Pine pays boot"
+  ],
+  "correct": 0,
+  "exp": "Section 351 control is measured by the stock owned by the transferors of property immediately after the exchange; Jo is not a transferor, so Kai alone holds 25%, well short of 80%. Kai's realized gain is fully recognized. Jo could join the control group as an accommodation transferor by contributing enough property."
+ },
+ {
+  "q": "Lyn transfers two assets to a corporation in a §351 exchange: Asset X (basis $20,000; FMV $60,000) and Asset Y (basis $50,000; FMV $40,000). She receives $80,000 of stock and $20,000 of cash. What is her total recognized gain or loss?",
+  "choices": [
+   "$20,000 gain",
+   "$30,000 gain",
+   "$12,000 gain",
+   "$12,000 gain and $10,000 loss"
+  ],
+  "correct": 2,
+  "exp": "Boot is allocated among the assets by relative FMV: 60% ($12,000) to X and 40% ($8,000) to Y. X's realized gain of $40,000 is recognized to the extent of its $12,000 of boot, and Y's $10,000 loss is not recognized under §351. Netting the gain and loss across assets ($30,000 net realized) is not allowed."
+ },
+ {
+  "q": "A newly formed partnership has three partners: an individual with a calendar year, an individual with a calendar year, and a corporation with a June 30 fiscal year. Each owns one-third of profits and capital. Which tax year must the partnership generally use?",
+  "choices": [
+   "June 30, because a corporate partner controls the choice",
+   "Any year it chooses on its first return",
+   "A calendar year, because partners owning a majority interest use a calendar year",
+   "A fiscal year ending September 30 under a §444 election only"
+  ],
+  "correct": 2,
+  "exp": "Under §706, a partnership must use the tax year of partners owning more than 50% of profits and capital; the two individuals together own two-thirds and use a calendar year. A §444 election or business-purpose year is an exception, not the default."
+ },
+ {
+  "q": "Mo contributes property with an FMV of $100,000 and a basis of $30,000 to a new partnership for a 40% interest. Under the §704 regulations, what are Mo's opening book capital account and his tax basis in his partnership interest, assuming no liabilities?",
+  "choices": [
+   "Book capital $30,000; tax basis $30,000",
+   "Book capital $100,000; tax basis $100,000",
+   "Book capital $40,000; tax basis $30,000",
+   "Book capital $100,000; tax basis $30,000"
+  ],
+  "correct": 3,
+  "exp": "Book capital accounts record contributed property at FMV ($100,000), while outside tax basis is the contributor's basis under §722 ($30,000). The $70,000 difference is the built-in gain tracked under the contributed-property rules. Using the tax basis for the book account misstates the partners' economic deal."
+ },
+ {
+  "q": "Ned and three other investors form a corporation in a valid §351 exchange. Ned transfers property with a $50,000 basis and an $80,000 FMV and also agrees to perform services worth $20,000, receiving stock worth $100,000. What does Ned recognize, and what is his basis in the stock?",
+  "choices": [
+   "$0 income; $50,000 basis",
+   "$20,000 ordinary income; $70,000 basis",
+   "$50,000 gain; $100,000 basis",
+   "$20,000 ordinary income; $100,000 basis"
+  ],
+  "correct": 1,
+  "exp": "Stock received for services is compensation income ($20,000) even within §351, but the property portion is tax-free. Basis = $50,000 property basis + $20,000 included in income = $70,000. Treating all the stock as received for property ignores the services."
+ },
+ {
+  "q": "Pam wants to bring in investors with different economic deals: one gets a preferred return, another gets 50% of profits but only 20% of losses. She also wants pass-through taxation. Which entity best fits?",
+  "choices": [
+   "An S corporation",
+   "An S corporation with voting and nonvoting stock",
+   "A C corporation with two classes of stock",
+   "An LLC taxed as a partnership"
+  ],
+  "correct": 3,
+  "exp": "Partnerships may make special allocations that have substantial economic effect under §704, allowing preferred returns and different sharing of profits and losses. S corporations must allocate per share, per day, and may have only one class of stock; voting differences do not change economic rights."
+ },
+ {
+  "q": "Quinn contributes land with a basis of $30,000 and an FMV of $90,000, held as an investment for six years, to a partnership in exchange for a partnership interest. What are the partnership's basis and holding period in the land?",
+  "choices": [
+   "$90,000 basis; holding period starts on the contribution date",
+   "$30,000 basis; holding period includes Quinn's six years",
+   "$30,000 basis; holding period starts on the contribution date",
+   "$90,000 basis; holding period includes Quinn's six years"
+  ],
+  "correct": 1,
+  "exp": "Under §723 the partnership takes Quinn's $30,000 carryover basis, and under §1223 its holding period includes Quinn's holding period. A FMV basis would arise only in a taxable transfer."
+ },
+ {
+  "q": "Rex and Sol own an appreciated operating business and expect to split up in 10 years, with each taking some of the business's real estate. They are choosing between a C corporation and an LLC taxed as a partnership. Which statement about a future in-kind distribution of the appreciated real estate is correct?",
+  "choices": [
+   "Both entities may distribute appreciated property without any entity-level or owner-level gain",
+   "A C corporation's liquidating distribution of appreciated property is tax-free to the corporation under §336",
+   "A partnership's distribution of appreciated property always triggers gain to the partnership",
+   "A C corporation recognizes gain as if it sold the property, while a partnership distribution of property generally triggers no gain to the partnership or partners"
+  ],
+  "correct": 3,
+  "exp": "Under §311 and §336, a corporation recognizes gain on distributing appreciated property, and the shareholders are also taxed, while under §731 a partnership distribution of property generally produces no gain, with the partners taking a carryover basis. That flexibility on exit is a key reason to choose a partnership for appreciating assets."
+ }
+]

@@ -1,0 +1,420 @@
+[
+ {
+  "q": "During a critical outage, a developer applies an emergency fix directly to production at 2 a.m. without prior approval. Which control is most appropriate for emergency changes like this?",
+  "choices": [
+   "Prohibit all emergency changes, even if the outage continues",
+   "Require documentation, testing evidence and retroactive approval by the change authority within a defined period, followed by review of the change",
+   "Treat emergency changes as standard changes that never require approval",
+   "Allow the developer to approve the change personally after the fact"
+  ],
+  "correct": 1,
+  "exp": "Emergency change procedures allow expedited implementation but require after-the-fact documentation, review and approval by an appropriate authority. Self-approval by the developer lacks independence and defeats the purpose of the control."
+ },
+ {
+  "q": "Under ITIL, routine, low-risk changes such as adding a standard user workstation that follow a documented procedure are typically classified as:",
+  "choices": [
+   "Emergency changes",
+   "Normal changes requiring full CAB review",
+   "Standard (pre-authorized) changes",
+   "Unauthorized changes"
+  ],
+  "correct": 2,
+  "exp": "Standard changes are pre-authorized, low-risk, well-understood changes performed following an established procedure. Normal changes need assessment and authorization each time, and emergency changes are those needed urgently."
+ },
+ {
+  "q": "Which environment setup best supports change management controls?",
+  "choices": [
+   "Developers code and test directly in production to save time",
+   "A single shared environment for development, testing and production",
+   "Separate test and production but with developers holding production update rights",
+   "Separate development, test and production environments, with production access restricted to authorized release personnel"
+  ],
+  "correct": 3,
+  "exp": "Separating environments and restricting production access prevents untested or unauthorized code from reaching live systems. Giving developers production rights undermines the separation even if environments exist."
+ },
+ {
+  "q": "A change advisory board (CAB) reviews proposed changes. Which is its primary function?",
+  "choices": [
+   "Assessing risk and impact of proposed changes and advising on authorization and scheduling",
+   "Writing the code for approved changes",
+   "Performing user acceptance testing",
+   "Migrating code to production"
+  ],
+  "correct": 0,
+  "exp": "The CAB evaluates proposed changes, considering risk, impact, resources and scheduling, and advises the change authority. Writing code and migrating it are performed by developers and release personnel, respectively."
+ },
+ {
+  "q": "An auditor wants assurance that the program currently running in production for payroll calculations is the authorized version. Which procedure is most effective?",
+  "choices": [
+   "Interview the payroll manager",
+   "Compare the production executable or code to the authorized version in the controlled source library",
+   "Review the change management policy",
+   "Inspect the CAB meeting minutes"
+  ],
+  "correct": 1,
+  "exp": "Comparing production code to the authorized version (code comparison) directly detects unauthorized modifications. Policies and minutes show intended processes but not what is actually running."
+ },
+ {
+  "q": "A company's change ticket shows approval by the business owner, but the approval date is two days after the change was moved to production. Which conclusion is most appropriate?",
+  "choices": [
+   "The change was properly authorized because approval was obtained",
+   "No issue exists if the change worked",
+   "The change was not authorized before implementation, which is a control exception unless it qualified as an emergency change",
+   "The issue relates only to documentation, not to control effectiveness"
+  ],
+  "correct": 2,
+  "exp": "Normal changes require approval before implementation; after-the-fact approval is an exception unless the emergency change process applied. A change functioning properly does not cure the authorization failure."
+ },
+ {
+  "q": "Before implementing a major upgrade to the order management system, the release plan includes steps to restore the previous version if critical issues arise. This element is a:",
+  "choices": [
+   "Regression test",
+   "Configuration baseline",
+   "Change freeze",
+   "Back-out (rollback) plan"
+  ],
+  "correct": 3,
+  "exp": "A back-out plan describes how to reverse a change and restore the prior state if implementation fails. Regression testing is done before release to verify existing functions still work."
+ },
+ {
+  "q": "After modifying the sales tax calculation module, the QA team reruns tests on unchanged functions such as invoicing and credit memos to ensure they still work correctly. This is:",
+  "choices": [
+   "Regression testing",
+   "Unit testing of the new code only",
+   "Penetration testing",
+   "Stress testing"
+  ],
+  "correct": 0,
+  "exp": "Regression testing verifies that changes did not break existing functionality. Unit testing focuses on the individual changed component, not on other functions that may be affected."
+ },
+ {
+  "q": "Under NIST SP 800-53, the control family that includes baseline configurations, configuration change control and security impact analysis is:",
+  "choices": [
+   "Access Control (AC)",
+   "Configuration Management (CM)",
+   "System and Services Acquisition (SA)",
+   "Contingency Planning (CP)"
+  ],
+  "correct": 1,
+  "exp": "The CM family includes CM-2 Baseline Configuration, CM-3 Configuration Change Control and CM-4 Impact Analyses. SA addresses acquisition and development, including developer configuration management, but not operational change control generally."
+ },
+ {
+  "q": "A company's file integrity monitoring tool alerts the security team whenever critical system files or configurations on production servers change. Which type of change management control is this?",
+  "choices": [
+   "Preventive",
+   "Corrective",
+   "Detective",
+   "Directive"
+  ],
+  "correct": 2,
+  "exp": "File integrity monitoring detects changes after they occur so they can be investigated against authorized change records. It does not by itself prevent changes."
+ },
+ {
+  "q": "A SaaS ERP vendor pushes quarterly releases automatically to all customers. Which control is most appropriate for the customer?",
+  "choices": [
+   "Assume vendor releases never affect controls",
+   "Block all vendor updates permanently",
+   "Rely on the vendor's marketing announcements",
+   "Review release notes, assess the impact on configured controls and reports, and perform regression testing in a sandbox before the release reaches production"
+  ],
+  "correct": 3,
+  "exp": "Even when the vendor controls code changes, customers should assess and test releases' effects on their configurations, automated controls and reports. Blocking all updates is usually impossible in SaaS and would forgo security fixes."
+ },
+ {
+  "q": "In a DevOps environment with continuous deployment, which control best replaces a manual CAB approval for each change while preserving segregation of duties?",
+  "choices": [
+   "Branch protection rules requiring an independent peer review and passing automated tests before code can merge and deploy",
+   "Allowing any developer to deploy directly to production",
+   "Reviewing a sample of changes once a year",
+   "Disabling automated testing to speed deployment"
+  ],
+  "correct": 0,
+  "exp": "Pipeline-enforced peer review and automated tests provide preventive, independent approval for every change. Annual sampling is too infrequent to prevent unauthorized changes."
+ },
+ {
+  "q": "Which statement about a configuration management database (CMDB) is most accurate?",
+  "choices": [
+   "It stores customer transaction data",
+   "It records configuration items and their relationships, supporting impact analysis of proposed changes",
+   "It replaces the need for change approvals",
+   "It is used only for financial asset depreciation"
+  ],
+  "correct": 1,
+  "exp": "A CMDB tracks configuration items and their relationships, helping assess which systems a change might affect. It supports, rather than replaces, change authorization."
+ },
+ {
+  "q": "An analyst uses a database tool to directly correct erroneous customer balances in the production database, bypassing the application. Which control is most important?",
+  "choices": [
+   "Allowing such corrections without documentation because they fix errors",
+   "Restricting such access to developers only",
+   "Requiring data changes to be requested, approved by the data owner, performed by authorized personnel, logged and reviewed",
+   "Performing corrections only at night"
+  ],
+  "correct": 2,
+  "exp": "Direct data fixes bypass application controls, so they need the same discipline as program changes: authorization, restricted execution, logging and review. Restricting the access to developers would worsen segregation of duties."
+ },
+ {
+  "q": "A company implements a change freeze during the last two weeks of its fiscal year. What is the primary purpose?",
+  "choices": [
+   "To reduce IT staffing costs",
+   "To allow developers to take vacation",
+   "To force all changes to be emergency changes",
+   "To reduce the risk that changes disrupt critical year-end processing and reporting"
+  ],
+  "correct": 3,
+  "exp": "Change freezes limit the risk of disruption during critical business periods, such as financial close. They do not convert all changes into emergency changes; only genuinely urgent changes should be processed through the emergency process."
+ },
+ {
+  "q": "An auditor selects a sample of changes from the change ticketing system and finds all were approved and tested. Why might this test be insufficient?",
+  "choices": [
+   "Changes made outside the ticketing system would not be in the population, so completeness of the population was not tested",
+   "Approval is not a relevant attribute",
+   "The sample size is irrelevant for change testing",
+   "Testing evidence is never required"
+  ],
+  "correct": 0,
+  "exp": "If changes can bypass the ticketing system, sampling from it cannot detect unauthorized changes; the auditor should test completeness, for example from system change logs. Approval and testing remain relevant attributes."
+ },
+ {
+  "q": "Developers check out source code from a version control system, and every modification is recorded with the developer's identity and a description. Which risk is primarily mitigated?",
+  "choices": [
+   "Network denial-of-service attacks",
+   "Untracked or conflicting code modifications and loss of the ability to identify who changed what",
+   "Excessive storage costs",
+   "Weak passwords"
+  ],
+  "correct": 1,
+  "exp": "Version control maintains history, accountability and integrity of source code changes. It does not address network attacks or authentication strength."
+ },
+ {
+  "q": "A security impact analysis is performed before approving a change to the firewall ruleset. What is the main goal?",
+  "choices": [
+   "Ensuring the change is completed within the budget",
+   "Training users on the new rules",
+   "Determining whether the change could introduce vulnerabilities or weaken existing security controls",
+   "Measuring network throughput"
+  ],
+  "correct": 2,
+  "exp": "Security impact analysis (SP 800-53 CM-4) evaluates how a change could affect security before it is implemented. Budget and throughput are operational concerns, not security impact."
+ },
+ {
+  "q": "Which situation represents the most serious change management deficiency?",
+  "choices": [
+   "Change tickets use inconsistent formatting",
+   "The CAB meets weekly instead of daily",
+   "Some low-risk changes are classified as standard changes",
+   "The same developer can write, test, approve and deploy changes to the financial application"
+  ],
+  "correct": 3,
+  "exp": "A single individual controlling the whole change lifecycle can introduce unauthorized changes undetected, a fundamental segregation of duties failure. Formatting and meeting frequency are minor process issues."
+ },
+ {
+  "q": "A company uses infrastructure as code (IaC) templates to provision cloud servers. Which control most effectively governs changes to infrastructure?",
+  "choices": [
+   "Storing IaC templates in version control with peer review and automated policy checks before deployment",
+   "Allowing engineers to change cloud consoles manually",
+   "Reviewing cloud invoices monthly",
+   "Disabling cloud audit logs"
+  ],
+  "correct": 0,
+  "exp": "Treating infrastructure definitions as code allows standard change controls such as version control, peer review and automated checks. Manual console changes bypass those controls and cause configuration drift."
+ },
+ {
+  "q": "After a change is implemented, the business owner confirms that the change achieved its intended results and that no unexpected issues occurred. This is called:",
+  "choices": [
+   "Unit testing",
+   "Post-implementation review",
+   "Impact analysis",
+   "Change freeze"
+  ],
+  "correct": 1,
+  "exp": "A post-implementation review evaluates whether the change met objectives and identifies lessons learned. Impact analysis happens before approval, not after implementation."
+ },
+ {
+  "q": "Which control most directly ensures that changes are tested by someone other than the developer who made them?",
+  "choices": [
+   "Version control check-in",
+   "File integrity monitoring",
+   "Independent quality assurance or user acceptance testing with documented sign-off",
+   "Automated backups"
+  ],
+  "correct": 2,
+  "exp": "Independent QA or UAT sign-off provides objective evidence that changes work as intended and meet requirements. Version control tracks changes but does not test them."
+ },
+ {
+  "q": "A company's ERP allows finance users to change configuration settings, such as approval thresholds, directly in production. Which statement is correct?",
+  "choices": [
+   "Configuration changes are exempt from change management because no code is changed",
+   "Only IT can create risks through configuration",
+   "Configuration changes are always low risk",
+   "Configuration changes that affect controls should be subject to authorization, testing where appropriate, and logging and review"
+  ],
+  "correct": 3,
+  "exp": "Configuration settings can alter how automated controls function, so changes should follow change management principles even though no code is modified. Treating them as exempt is a common trap."
+ },
+ {
+  "q": "Operating system patches for production servers are deployed monthly. Which practice best balances security and stability?",
+  "choices": [
+   "Risk-based prioritization, testing in a non-production environment, approval and scheduled deployment, with an expedited path for critical vulnerabilities",
+   "Deploying all patches immediately to production without testing",
+   "Delaying all patches until the annual maintenance window",
+   "Applying patches only when users complain"
+  ],
+  "correct": 0,
+  "exp": "A risk-based patch process tests patches before production while allowing expedited handling of critical, actively exploited vulnerabilities. Waiting until an annual window leaves known vulnerabilities exposed for too long."
+ },
+ {
+  "q": "COBIT 2019 addresses change management primarily through which management objective?",
+  "choices": [
+   "APO12 Managed risk",
+   "BAI06 Managed I&T changes",
+   "DSS02 Managed service requests and incidents",
+   "MEA01 Managed performance and conformance monitoring"
+  ],
+  "correct": 1,
+  "exp": "BAI06 Managed I&T changes covers managing all changes in a controlled manner, including standard and emergency changes. DSS02 handles incidents and service requests, which may trigger changes but do not govern them."
+ },
+ {
+  "q": "An organization maintains approved baseline configurations for servers and periodically scans servers to identify deviations. What is the primary benefit?",
+  "choices": [
+   "Faster user logons",
+   "Reduced software licensing costs",
+   "Detection of unauthorized or undocumented changes (configuration drift)",
+   "Elimination of the need for patching"
+  ],
+  "correct": 2,
+  "exp": "Comparing systems against approved baselines (SP 800-53 CM-2) detects drift caused by unauthorized or undocumented changes. Baselines do not replace patching, which updates the baseline itself."
+ },
+ {
+  "q": "Which evidence best demonstrates that a program change was tested before implementation?",
+  "choices": [
+   "A developer's verbal statement that testing occurred",
+   "The change request form showing the requester's name",
+   "The production deployment log",
+   "Documented test cases and results with sign-off by the tester dated before the production deployment date"
+  ],
+  "correct": 3,
+  "exp": "Dated test documentation and sign-off before deployment provide objective evidence of testing. Verbal statements and deployment logs do not show that testing occurred or was successful."
+ },
+ {
+  "q": "A company outsources development of a custom module to a vendor. Which change control is most important when the vendor delivers code updates?",
+  "choices": [
+   "The company's own testing and approval of vendor-delivered code before migration to production by the company's authorized personnel",
+   "Allowing the vendor to deploy directly to production",
+   "Accepting the vendor's assurance that the code was tested",
+   "Disabling logging during vendor deployments"
+  ],
+  "correct": 0,
+  "exp": "Vendor-delivered changes should go through the company's own testing, approval and controlled migration. Relying solely on the vendor's assurance or giving it direct production access removes the company's control over its environment."
+ },
+ {
+  "q": "A financial institution requires that changes to critical systems be scheduled outside business hours and communicated to affected users in advance. Which risk is primarily mitigated?",
+  "choices": [
+   "Unauthorized code changes",
+   "Business disruption and unexpected impacts on users during implementation",
+   "Weak encryption",
+   "Insider fraud"
+  ],
+  "correct": 1,
+  "exp": "Scheduling and communication reduce operational disruption from change implementation. They do not address whether the change itself was authorized."
+ },
+ {
+  "q": "Under COBIT 2019, which management objective covers formally accepting and transitioning new or changed solutions into operation, including acceptance testing and post-implementation review?",
+  "choices": [
+   "BAI03 Managed solutions identification and build",
+   "DSS01 Managed operations",
+   "BAI07 Managed I&T change acceptance and transitioning",
+   "APO11 Managed quality"
+  ],
+  "correct": 2,
+  "exp": "BAI07 covers acceptance testing, promotion to production and post-implementation review. BAI03 addresses designing and building solutions, which comes before acceptance and transition."
+ },
+ {
+  "q": "A help desk technician can modify user roles in production when users call with urgent requests, without a ticket. What is the primary risk?",
+  "choices": [
+   "Help desk performance metrics will decline",
+   "Users will receive training late",
+   "System performance will degrade",
+   "Unauthorized access changes could be made without approval or an audit trail"
+  ],
+  "correct": 3,
+  "exp": "Access changes without tickets lack authorization and traceability, creating risk of inappropriate access. The issue is control over changes to security settings, not performance or training."
+ },
+ {
+  "q": "Which control best detects unauthorized changes to programs in production after they occur?",
+  "choices": [
+   "Periodic comparison of production program versions to authorized versions and review of change logs against approved tickets",
+   "Requiring CAB approval for all changes",
+   "Restricting developer access to production",
+   "Approved change requests"
+  ],
+  "correct": 0,
+  "exp": "Comparisons and reconciliations of actual changes to approved changes detect changes that bypassed the process. CAB approval and access restrictions are preventive controls."
+ },
+ {
+  "q": "In a well-designed change process, who should normally migrate approved and tested code into production?",
+  "choices": [
+   "The developer who wrote the code",
+   "A release manager or operations function independent of development, or an automated pipeline that enforces approvals",
+   "The end user who requested the change",
+   "Any member of the IT department"
+  ],
+  "correct": 1,
+  "exp": "Independent migration, by a separate function or an automated, controlled pipeline, ensures only approved code reaches production. Developer migration reintroduces the segregation of duties risk."
+ },
+ {
+  "q": "A company's change policy requires risk categorization of each change. Which change is most appropriately categorized as high risk?",
+  "choices": [
+   "Updating the company logo on the intranet",
+   "Adding a printer to a department",
+   "Modifying the revenue recognition logic in the ERP",
+   "Changing the color scheme of an internal dashboard"
+  ],
+  "correct": 2,
+  "exp": "Changes to logic that affects financial reporting have significant potential impact and warrant rigorous testing and approval. Cosmetic and peripheral changes are low risk."
+ },
+ {
+  "q": "An organization requires documentation of each change to be updated (e.g., system manuals, run books, configuration records) as part of closing the change ticket. What is the main benefit?",
+  "choices": [
+   "Reducing the number of changes",
+   "Eliminating the need for testing",
+   "Shortening approval cycles",
+   "Keeping documentation accurate for operations, support, troubleshooting and future changes"
+  ],
+  "correct": 3,
+  "exp": "Current documentation supports reliable operations and accurate impact analysis for future changes. It does not replace testing or reduce the number of changes."
+ },
+ {
+  "q": "A change to the payroll system was approved and tested, but the version actually deployed differed from the tested version due to a packaging error. Which control would most likely have prevented this?",
+  "choices": [
+   "Building deployment packages from the controlled repository with integrity checks (e.g., hashes) verifying that the tested build is the one deployed",
+   "Increasing the number of CAB members",
+   "Requiring users to approve changes twice",
+   "Testing changes in production only"
+  ],
+  "correct": 0,
+  "exp": "Promoting the same build artifact, verified by hash, from test to production ensures what was tested is what is deployed. More approvals do not prevent a mismatch between tested and deployed code."
+ },
+ {
+  "q": "Which statement best describes the relationship between incident management and change management?",
+  "choices": [
+   "Incidents never require changes",
+   "Resolving an incident may require a change, which should be handled through the change management process, emergency or normal",
+   "Change management replaces incident management",
+   "Incident tickets automatically authorize any change"
+  ],
+  "correct": 1,
+  "exp": "Incident resolution often needs a change, and that change must still be controlled through the appropriate change process. An incident ticket does not by itself authorize arbitrary changes."
+ },
+ {
+  "q": "While testing program changes for an ICFR audit, an auditor finds one production change to the billing application with no change ticket, approval or test evidence. What is the most appropriate next step?",
+  "choices": [
+   "Ignore the change because it is a single exception",
+   "Ask the developer to create a ticket now so the file is complete",
+   "Conclude immediately that the financial statements are materially misstated",
+   "Determine the nature and effect of the change, whether it affected relevant controls or data, and whether other unauthorized changes may exist, and evaluate the deficiency"
+  ],
+  "correct": 3,
+  "exp": "An unauthorized change is a control exception that requires understanding its cause and effect and evaluating whether the change process can be relied on. Creating a ticket after the fact hides the deficiency rather than addressing it."
+ }
+]

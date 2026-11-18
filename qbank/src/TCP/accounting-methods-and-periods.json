@@ -1,0 +1,420 @@
+[
+{
+"q": "Assume the §448 gross receipts threshold for 2025 is $31 million. Bolt Corp., a C corporation that is not a tax shelter, had gross receipts of $28 million in 2022, $32 million in 2023 and $34 million in 2024. May Bolt use the cash method for 2025?",
+"choices": [
+"No, because its average annual gross receipts for 2022 through 2024 exceed $31 million",
+"Yes, because its 2022 gross receipts were under $31 million",
+"Yes, because only the immediately preceding year is tested",
+"No, because C corporations may never use the cash method"
+],
+"correct": 0,
+"exp": "The §448 test uses average annual gross receipts for the three prior years: ($28M + $32M + $34M) / 3 = $31.33 million, which exceeds $31 million, so Bolt must use accrual. C corporations under the threshold may use the cash method, so the 'never' choice is wrong."
+},
+{
+"q": "MedGroup, a qualified personal service corporation providing health services, has average annual gross receipts of $50 million. It is not a tax shelter. Which accounting method rule applies?",
+"choices": [
+"It must use accrual because its receipts exceed the §448 threshold",
+"It may use the cash method regardless of its gross receipts",
+"It may use the cash method only if it has no inventory",
+"It must use the hybrid method"
+],
+"correct": 1,
+"exp": "Qualified personal service corporations are excepted from the §448 accrual requirement whatever their size. Tax shelters, by contrast, may never use the cash method."
+},
+{
+"q": "Hauler Co., a calendar-year accrual taxpayer, received freight services in December 2025 and paid the $40,000 invoice on February 20, 2026. The expense recurs every year, Hauler consistently treats such items under the recurring item exception, and the amount is not material. When is the expense deductible?",
+"choices": [
+"2026, when paid, because economic performance is payment",
+"2026, because the invoice was received in 2026",
+"2025, under the recurring item exception, because the services were performed and the item was paid within 8.5 months after year-end",
+"2025 only if paid by January 15, 2026"
+],
+"correct": 2,
+"exp": "For services provided to the taxpayer, economic performance occurs as the services are performed (December 2025), and the recurring item exception also allows deduction when payment is made within 8.5 months after year-end. Treating payment as the economic performance event applies to items such as tort liabilities, not purchased services."
+},
+{
+"q": "Crane Inc., a calendar-year accrual taxpayer, accrued $400,000 of year-end bonuses to unrelated employees on December 31, 2025. It paid $300,000 on March 10, 2026 and $100,000 on April 20, 2026. How much may Crane deduct for 2025?",
+"choices": [
+"$400,000",
+"$100,000",
+"$0",
+"$300,000"
+],
+"correct": 3,
+"exp": "Compensation paid within 2.5 months after year-end (by March 15, 2026) is not deferred compensation and is deductible when accrued, so $300,000 is deductible in 2025. The $100,000 paid later is deferred compensation, deductible in 2026."
+},
+{
+"q": "Lynx Corp., a calendar-year accrual taxpayer, accrued a $50,000 bonus on December 31, 2025 for its president, a cash-method individual who owns 60% of its stock. The bonus was paid January 10, 2026. When may Lynx deduct it?",
+"choices": [
+"2026, when the president includes it in income",
+"2025, because it was paid within 2.5 months",
+"2025, under the recurring item exception",
+"Never, because it is a constructive dividend"
+],
+"correct": 0,
+"exp": "Under §267, an accrual payor cannot deduct an amount owed to a related cash-method payee (here, a more-than-50% shareholder) until the payee includes it in income. The 2.5-month rule does not override §267."
+},
+{
+"q": "On November 1, 2025, Fixit Corp., a calendar-year accrual taxpayer with an applicable financial statement, received $24,000 for a 24-month service contract and recognized $2,000 of revenue in its 2025 financial statements. Fixit uses the deferral method under §451. How much does it include in 2025 gross income?",
+"choices": [
+"$24,000",
+"$2,000",
+"$12,000",
+"$0"
+],
+"correct": 1,
+"exp": "Under the one-year deferral method, Fixit includes the amount recognized in its AFS for 2025 ($2,000) and the remaining $22,000 in 2026, even though the contract runs into 2027. The full-inclusion trap ignores the available deferral."
+},
+{
+"q": "On December 1, 2025, Landco, a calendar-year accrual taxpayer, received $36,000 of advance rent covering the next three years from a commercial tenant. How much rent must Landco include in 2025 gross income?",
+"choices": [
+"$1,000",
+"$12,000",
+"$36,000",
+"$13,000"
+],
+"correct": 2,
+"exp": "Rent is excluded from the advance payment deferral rules, so prepaid rent is income when received under the claim-of-right doctrine. The $13,000 trap applies the one-year deferral method, which is not available for rent."
+},
+{
+"q": "On July 1, 2025, a cash-method calendar-year business pays $24,000 for a 24-month insurance policy running July 1, 2025 through June 30, 2027. How much may it deduct in 2025?",
+"choices": [
+"$24,000",
+"$12,000",
+"$0",
+"$6,000"
+],
+"correct": 3,
+"exp": "The 12-month rule does not apply because the benefit extends beyond 12 months, so the prepayment is capitalized and deducted ratably: $24,000 x 6 / 24 = $6,000. A 12-month policy would have been fully deductible."
+},
+{
+"q": "Trim Co. changes from the cash to the accrual method with IRS consent, effective for 2025. At the start of 2025 it had $300,000 of accounts receivable and $120,000 of accounts payable not previously reported. Under the general §481 spread rules, how much of the adjustment is included in 2025 income?",
+"choices": [
+"$45,000",
+"$180,000",
+"$75,000",
+"$60,000"
+],
+"correct": 0,
+"exp": "The net §481 adjustment is $300,000 - $120,000 = +$180,000, and a positive adjustment from a voluntary change is generally spread over four years, $45,000 per year. Including the full $180,000 is the trap; that treatment applies to negative adjustments."
+},
+{
+"q": "A taxpayer voluntarily changes an accounting method with IRS consent, producing a negative §481 adjustment of $120,000. How is the adjustment taken into account?",
+"choices": [
+"$30,000 per year over four years",
+"Entirely in the year of change",
+"Over 15 years",
+"Through amended returns for the prior years"
+],
+"correct": 1,
+"exp": "Negative §481 adjustments are generally taken entirely in the year of change, while positive adjustments are spread over four years. A method change never requires amending prior returns."
+},
+{
+"q": "Zed Corp., a calendar-year taxpayer, is making an automatic change in accounting method for its 2025 tax year. What is the filing requirement for Form 3115?",
+"choices": [
+"File the original with the IRS national office before the end of 2025",
+"File it any time before the statute of limitations expires for 2025",
+"Attach the original to the timely filed (including extensions) 2025 return and file a copy with the IRS",
+"No form is required for automatic changes"
+],
+"correct": 2,
+"exp": "For automatic changes, the original Form 3115 goes with the timely filed return for the year of change, including extensions, and a signed copy is filed separately with the IRS. Filing before the end of the year of change is the rule for non-automatic changes."
+},
+{
+"q": "Which of the following is a change in accounting method that requires IRS consent?",
+"choices": [
+"Correcting a math error in last year's depreciation computation",
+"Correcting a posting error that put a sale in the wrong year",
+"Reporting income differently because the terms of the company's sales contracts changed",
+"Switching inventory valuation from FIFO to LIFO"
+],
+"correct": 3,
+"exp": "A change in the overall method or in the treatment of a material item, such as inventory identification, is a method change. Correcting math or posting errors and responding to changed facts are not method changes."
+},
+{
+"q": "Assume the 2025 gross receipts threshold for small business taxpayers is $31 million. Shopco, a retailer with average gross receipts of $12 million, does not want to keep a full inventory accounting system. What does §471 allow?",
+"choices": [
+"It may treat inventory as non-incidental materials and supplies, or follow the method used in its books and records",
+"It must keep inventories under the full absorption method",
+"It may deduct all inventory purchases when paid, with no tracking",
+"It must use LIFO"
+],
+"correct": 0,
+"exp": "Small business taxpayers below the threshold may account for inventory as non-incidental materials and supplies (deducted when sold or used) or conform to their AFS or books and records. Deducting purchases when paid, with no tracking at all, is not permitted."
+},
+{
+"q": "Maker Co. is subject to §263A uniform capitalization. Production-year costs include direct materials $500,000, direct labor $300,000, factory overhead $200,000, warehousing of raw materials $50,000, marketing $80,000 and selling commissions $40,000. All units produced remain in ending inventory. What amount must be capitalized to inventory?",
+"choices": [
+"$1,000,000",
+"$1,050,000",
+"$1,130,000",
+"$1,170,000"
+],
+"correct": 1,
+"exp": "UNICAP capitalizes direct costs and allocable indirect costs, including storage: $500,000 + $300,000 + $200,000 + $50,000 = $1,050,000. Marketing and selling costs are never capitalized, and the $1,000,000 trap leaves out storage."
+},
+{
+"q": "Vale Corp. uses LIFO for its inventory. At year-end, its inventory cost is $400,000 and market value is $360,000. At what amount is ending inventory reported for tax purposes?",
+"choices": [
+"$360,000",
+"$380,000",
+"$400,000",
+"$40,000"
+],
+"correct": 2,
+"exp": "Taxpayers using LIFO must value inventory at cost and may not use lower of cost or market. A FIFO taxpayer could have written it down to $360,000."
+},
+{
+"q": "Gator Co. elects LIFO for federal income tax purposes. Which requirement applies?",
+"choices": [
+"It must use LIFO for state tax returns only",
+"It may use FIFO for its financial statements to shareholders",
+"It must obtain a ruling before each year's use",
+"It generally must also use LIFO for financial reports to shareholders, partners and creditors"
+],
+"correct": 3,
+"exp": "The LIFO conformity rule of §472 requires LIFO in financial reports to owners and creditors, with limited exceptions such as supplemental disclosures. Using FIFO in primary statements would end the LIFO election."
+},
+{
+"q": "Ann, not a dealer, sells investment land with a basis of $200,000 for $500,000. She receives $100,000 in 2025 and a note for the balance, payable with adequate interest over the next four years. Using the installment method, how much gain does she recognize in 2025?",
+"choices": [
+"$60,000",
+"$300,000",
+"$100,000",
+"$40,000"
+],
+"correct": 0,
+"exp": "The gross profit percentage is $300,000 / $500,000 = 60%, and 60% x $100,000 = $60,000. The $40,000 trap treats the payment as first a recovery of basis (40%)."
+},
+{
+"q": "Builder Co., a large contractor, must use the percentage-of-completion method. A contract's price is $10,000,000 and estimated total cost is $8,000,000. Costs incurred in 2025, the first year, are $3,200,000. How much gross profit does it report in 2025?",
+"choices": [
+"$2,000,000",
+"$800,000",
+"$4,000,000",
+"$0"
+],
+"correct": 1,
+"exp": "Completion is $3,200,000 / $8,000,000 = 40%; revenue is 40% x $10,000,000 = $4,000,000, less $3,200,000 of cost, for $800,000 of gross profit. The $4,000,000 trap reports revenue rather than gross profit."
+},
+{
+"q": "Assume the 2025 small business gross receipts threshold is $31 million. Which contractor may use the completed-contract method for a new construction contract instead of percentage of completion?",
+"choices": [
+"A contractor with $90 million of average receipts building an office tower expected to take 18 months",
+"Any contractor, for a contract expected to take more than two years",
+"A contractor with $20 million of average gross receipts building a warehouse expected to be finished within two years",
+"A contractor with $40 million of average receipts building a bridge expected to take 12 months"
+],
+"correct": 2,
+"exp": "The small contractor exception in §460 requires both average gross receipts under the threshold and expected completion within two years. Home construction contracts are exempt separately, but none of the other choices qualify."
+},
+{
+"q": "Cobb Corp., an accrual taxpayer, increased its allowance for doubtful accounts by $50,000 for book purposes this year. During the year, it wrote off $30,000 of specific accounts that became wholly worthless. What is Cobb's tax bad debt deduction?",
+"choices": [
+"$50,000",
+"$80,000",
+"$20,000",
+"$30,000"
+],
+"correct": 3,
+"exp": "§166 requires the specific charge-off method for non-bank taxpayers, so only the $30,000 actually written off is deductible. The $50,000 book provision is a reserve and is not deductible."
+},
+{
+"q": "Dr. Ray, a cash-method calendar-year taxpayer, received a $12,000 patient check on December 31, 2025, after the bank closed, and deposited it on January 2, 2026. When must he report the income?",
+"choices": [
+"2025, because a check is income when received, even if deposited later",
+"2026, when deposited",
+"2026, because the bank was closed",
+"In the year the check clears"
+],
+"correct": 0,
+"exp": "Cash-method taxpayers include payments when actually or constructively received, and receiving a good check is receipt. Deposit timing does not defer the income."
+},
+{
+"q": "A partnership's partners are Corp A (fiscal year ending June 30) with a 55% interest in profits and capital, and three individuals (calendar year) holding the other 45%. What is the partnership's required tax year?",
+"choices": [
+"Calendar year",
+"June 30 fiscal year",
+"Any year the partnership elects",
+"The year that results in the least aggregate deferral"
+],
+"correct": 1,
+"exp": "Under §706, a partnership must use the majority interest tax year, meaning the year of partners owning more than 50% of profits and capital; Corp A's 55% means June 30. Least aggregate deferral applies only when neither the majority interest test nor the principal partners test settles the year."
+},
+{
+"q": "A partnership's profits interests are held by A, 45% (year ending June 30), B, 45% (calendar year), and C, 10% (year ending March 31). No majority interest year or principal partner year exists. Which year gives the least aggregate deferral?",
+"choices": [
+"June 30",
+"March 31",
+"December 31",
+"September 30"
+],
+"correct": 2,
+"exp": "Deferral scores: June 30 = 45% x 6 + 10% x 9 = 3.6; December 31 = 45% x 6 + 10% x 3 = 3.0; March 31 = 45% x 3 + 45% x 9 = 5.4. December 31 is the smallest. The June 30 trap ignores how far C's year is from it."
+},
+{
+"q": "An S corporation wants to adopt a natural business year ending April 30 under the 25% gross receipts test. Its gross receipts for March and April as a percentage of the 12-month total were 26%, 27% and 24% for the three most recent years. What is the result?",
+"choices": [
+"It qualifies, because the average exceeds 25%",
+"It qualifies, because two of the three years exceed 25%",
+"It qualifies, because the most recent year exceeds 25%",
+"It does not qualify, because the 25% test must be met in each of the three years"
+],
+"correct": 3,
+"exp": "The natural business year test requires that at least 25% of gross receipts fall in the last two months of the proposed year in each of the three preceding 12-month periods, and 24% fails. The average does not count, so the 'average exceeds 25%' choice is the trap."
+},
+{
+"q": "A new partnership whose required tax year is the calendar year wants a fiscal year ending September 30 without showing a business purpose. What can it do?",
+"choices": [
+"Make a §444 election for the September 30 year, which requires required payments that offset the deferral benefit",
+"Use September 30 automatically for its first year",
+"Use September 30 if the partners agree in writing",
+"Nothing; a partnership must always use the calendar year"
+],
+"correct": 0,
+"exp": "§444 allows a year with up to three months of deferral (a September 30 year defers three months relative to December 31), conditioned on the §7519 required payments. A partnership has no free choice of its first year."
+},
+{
+"q": "A personal service corporation with a calendar required year makes a §444 election for a fiscal year ending September 30. What additional requirement applies to the PSC?",
+"choices": [
+"It must make §7519 required payments",
+"It must meet minimum distribution requirements for compensation paid to employee-owners during the deferral period, or its deductions are limited",
+"It must switch to the accrual method",
+"It must elect S corporation status"
+],
+"correct": 1,
+"exp": "A PSC electing §444 must comply with §280H by paying enough compensation to employee-owners during the deferral period, or its deduction for those payments is limited. Required payments under §7519 apply to partnerships and S corporations."
+},
+{
+"q": "With IRS approval, a C corporation (21% flat rate) changes its tax year, creating a four-month short period with $100,000 of taxable income. What is the tax for the short period?",
+"choices": [
+"$63,000",
+"$7,000",
+"$21,000",
+"$0"
+],
+"correct": 2,
+"exp": "Annualized income is $100,000 x 12 / 4 = $300,000, the tax on that is $63,000, and the short-period tax is $63,000 x 4 / 12 = $21,000. With a flat rate, annualization gives the same result as 21% x $100,000; $63,000 is the trap of not prorating back."
+},
+{
+"q": "A retailer wants its tax year always to end on the last Saturday of January. Which is correct?",
+"choices": [
+"This is not allowed; a tax year must end on the last day of a month",
+"It is allowed only for S corporations",
+"It requires a §444 election",
+"A 52-53 week tax year ending on the same day of the week each year, closest to or last in a month, is allowed if used in the books"
+],
+"correct": 3,
+"exp": "§441 allows a 52-53 week year ending on the same weekday that last occurs in a calendar month or falls nearest the month's end, if it matches the taxpayer's books. It is available to all types of taxpayers, so no §444 election is needed."
+},
+{
+"q": "A newly formed C corporation (not a personal service corporation) files its first return using a fiscal year ending March 31. Is IRS approval required?",
+"choices": [
+"No, because a new corporation may adopt any permissible tax year on its first timely filed return",
+"Yes, because all fiscal years require consent",
+"Yes, unless it shows a business purpose",
+"No, but it must make a §444 election"
+],
+"correct": 0,
+"exp": "A new C corporation adopts its tax year by filing its first return and does not need consent; only later changes do. The required-year and §444 rules apply to partnerships, S corporations and PSCs."
+},
+{
+"q": "Shopco, a calendar-year accrual taxpayer, settled a customer's tort claim in December 2025 for $500,000. It paid $200,000 in December 2025 and $300,000 in February 2026. How much may it deduct in 2025?",
+"choices": [
+"$500,000",
+"$200,000",
+"$300,000",
+"$0"
+],
+"correct": 1,
+"exp": "For tort liabilities, economic performance occurs only when payment is made, and the recurring item exception is not available for them. Only the $200,000 paid in 2025 is deductible then."
+},
+{
+"q": "Phoneco, an accrual taxpayer, records $120,000 of estimated warranty expense in its books for products sold this year. It paid $70,000 of warranty claims during the year. What is its tax deduction for warranty costs?",
+"choices": [
+"$120,000",
+"$50,000",
+"$70,000",
+"$190,000"
+],
+"correct": 2,
+"exp": "Warranty obligations to customers are payment liabilities, and economic performance occurs when they are paid, so only the $70,000 paid is deductible. The $120,000 book estimate is a reserve."
+},
+{
+"q": "Pip Corp., an accrual taxpayer, contests a $90,000 state tax assessment but transfers the full amount to the state in December 2025 while the contest continues into 2026. When may Pip deduct the payment?",
+"choices": [
+"Only when the contest is resolved",
+"Never, because contested liabilities are not deductible",
+"Half in 2025 and half in 2026",
+"2025, under §461 rules for contested liabilities paid or transferred while the contest continues"
+],
+"correct": 3,
+"exp": "When a taxpayer contests a liability but transfers money to satisfy it, the deduction is allowed in the year of transfer if all other requirements are met. Waiting for resolution is the rule only when no payment has been made."
+},
+{
+"q": "Signco, an accrual taxpayer with an applicable financial statement, completed a project in December 2025 and recognized the revenue in its 2025 audited financial statements. Under the contract, it cannot bill the customer until March 2026. When must Signco include the revenue in income?",
+"choices": [
+"2025, because §451 requires inclusion no later than when it is taken into revenue in the AFS",
+"2026, when it can bill",
+"2026, when payment is received",
+"2025 only if collected within 2.5 months"
+],
+"correct": 0,
+"exp": "The AFS income inclusion rule in §451 requires accrual taxpayers with an AFS to include income no later than when it is included in AFS revenue. A billing restriction does not defer it."
+},
+{
+"q": "A calendar-year corporation discovers it has claimed $50,000 of depreciation in prior open and closed years on an asset, when the allowable amount was $80,000. It is still using the asset. What is the most appropriate remedy?",
+"choices": [
+"Amend only the open years",
+"File Form 3115 for an automatic change and take a $30,000 negative §481 adjustment in the current year",
+"Claim the $30,000 when the asset is sold",
+"Nothing can be done for closed years"
+],
+"correct": 1,
+"exp": "Using an impermissible depreciation method for two or more years is a method of accounting, so the taxpayer may change it automatically and catch up the unclaimed allowable depreciation through a negative §481 adjustment. Because basis is reduced by the allowable amount anyway, waiting until a sale would lose the benefit."
+},
+{
+"q": "On December 1, 2025, Rex, a calendar-year landlord, received from a new tenant $3,000 of rent for December, $3,000 of rent for the last month of the lease, and a $3,000 refundable security deposit. How much must Rex include in 2025 income?",
+"choices": [
+"$3,000",
+"$9,000",
+"$6,000",
+"$0"
+],
+"correct": 2,
+"exp": "Advance rent, including last month's rent, is income when received, but a security deposit that must be refunded is not income while the landlord may have to return it. So Rex includes $3,000 + $3,000 = $6,000."
+},
+{
+"q": "Kay, a cash-method sole proprietor, bought $5,000 of business supplies on December 28, 2025 using a bank credit card and paid the card bill in January 2026. She also gave a vendor a promissory note for another $4,000 of supplies in December 2025, which she paid in 2026. What may Kay deduct in 2025?",
+"choices": [
+"$9,000",
+"$0",
+"$4,000",
+"$5,000"
+],
+"correct": 3,
+"exp": "A charge on a third-party credit card is treated as payment when charged, but giving the creditor your own note is not payment. Only the $5,000 credit card purchase is deductible in 2025."
+},
+{
+"q": "Which entity generally must use a calendar tax year, absent a §444 election, a business purpose, or a natural business year?",
+"choices": [
+"An S corporation",
+"A C corporation that is not a personal service corporation",
+"An estate",
+"A partnership whose majority partners use a June 30 year"
+],
+"correct": 0,
+"exp": "S corporations (and PSCs) are generally required to use a calendar year under §1378. C corporations and estates may choose a fiscal year, and that partnership's required year is June 30."
+},
+{
+"q": "Taxco, a calendar-year accrual corporation, owes $12,000 of real property tax for the local fiscal year July 1, 2025 through June 30, 2026, and it has validly elected under §461 to accrue real property taxes ratably over the period they relate to. How much may Taxco deduct for 2025?",
+"choices": [
+"$12,000",
+"$6,000",
+"$0",
+"$3,000"
+],
+"correct": 1,
+"exp": "Under the ratable accrual election, real property taxes accrue over the period to which they relate: $12,000 x 6 / 12 = $6,000 for July through December 2025. Deducting all $12,000 ignores the election's ratable rule."
+}
+]

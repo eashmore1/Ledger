@@ -1,0 +1,332 @@
+[
+{
+"q": "Alton Co.'s defined benefit pension plan had the following for the year: service cost $200,000; PBO at January 1 $2,000,000; discount rate 5%; fair value of plan assets at January 1 $1,800,000; expected return on plan assets 7%; actual return $90,000; amortization of prior service cost $20,000. There was no net gain or loss in AOCI at January 1. What is net periodic pension cost?",
+"choices": [
+"$194,000",
+"$230,000",
+"$174,000",
+"$320,000"
+],
+"correct": 0,
+"exp": "Service cost $200,000 + interest $100,000 ($2,000,000 x 5%) - expected return $126,000 ($1,800,000 x 7%) + prior service cost amortization $20,000 = $194,000 (ASC 715-30). $230,000 wrongly uses the $90,000 actual return; the difference from expected return is deferred in OCI."
+},
+{
+"q": "Under ASC 715 as amended by ASU 2017-07, how should an employer present the components of net periodic pension cost in its income statement?",
+"choices": [
+"All components together within operating expenses",
+"All components outside income from operations",
+"Service cost with other employee compensation costs; the other components separately, outside income from operations",
+"Service cost in other comprehensive income; the other components in operating expenses"
+],
+"correct": 2,
+"exp": "ASU 2017-07 requires service cost to be reported with other compensation costs for the employees' services, and the other components (interest, expected return, amortization) to be presented separately outside any subtotal of income from operations. Reporting all components together in operating expense was the old practice."
+},
+{
+"q": "At December 31, Birk Co.'s pension plan had a projected benefit obligation of $5,000,000, an accumulated benefit obligation of $4,500,000, and plan assets with a fair value of $4,200,000. What net pension liability should Birk report?",
+"choices": [
+"$300,000",
+"$500,000",
+"$0",
+"$800,000"
+],
+"correct": 3,
+"exp": "The funded status reported on the balance sheet is PBO less the fair value of plan assets: $5,000,000 - $4,200,000 = $800,000 (ASC 715-30). $300,000 incorrectly uses the ABO, which is not the measure for the balance sheet."
+},
+{
+"q": "At January 1, Cass Co. had an unrecognized net loss of $600,000 in AOCI, a PBO of $4,000,000, and a market-related value of plan assets of $3,500,000. The average remaining service period of active employees is 10 years. What is the minimum amortization of the net loss for the year?",
+"choices": [
+"$20,000",
+"$60,000",
+"$25,000",
+"$0"
+],
+"correct": 0,
+"exp": "The corridor is 10% of the greater of beginning PBO or market-related value: $400,000. The excess $200,000 / 10 years = $20,000. $25,000 bases the corridor on plan assets, the smaller amount, and $60,000 ignores the corridor."
+},
+{
+"q": "Dane Co.'s PBO was $3,000,000 at January 1. During the year, service cost was $250,000, interest cost was $150,000, benefits paid were $200,000, and an actuarial loss from a change in assumptions was $80,000. What is the PBO at December 31?",
+"choices": [
+"$3,120,000",
+"$3,280,000",
+"$3,480,000",
+"$3,200,000"
+],
+"correct": 1,
+"exp": "$3,000,000 + $250,000 + $150,000 + $80,000 - $200,000 = $3,280,000. $3,120,000 treats the actuarial loss as a gain; a loss increases the obligation."
+},
+{
+"q": "Eton Co.'s plan assets had a fair value of $2,500,000 at January 1. During the year, the expected return was $175,000, the actual return was $200,000, employer contributions were $300,000, and benefits paid were $180,000. What is the fair value of plan assets at December 31?",
+"choices": [
+"$2,795,000",
+"$3,000,000",
+"$2,820,000",
+"$2,620,000"
+],
+"correct": 2,
+"exp": "Plan assets increase by the actual return and contributions and decrease by benefits paid: $2,500,000 + $200,000 + $300,000 - $180,000 = $2,820,000. $2,795,000 uses the expected return, which applies only in computing pension cost."
+},
+{
+"q": "On January 1, Fore Co. amended its defined benefit plan to grant credit for prior employee service, increasing the PBO by $600,000. How should Fore initially account for the prior service cost?",
+"choices": [
+"Expense the full $600,000 in the year of the amendment",
+"Charge $600,000 directly to retained earnings",
+"Defer it as an intangible asset amortized over 15 years",
+"Recognize it in other comprehensive income and amortize it into pension cost over the future service of affected employees"
+],
+"correct": 3,
+"exp": "Prior service cost is recognized in OCI when the amendment occurs (increasing the pension liability) and amortized into net periodic cost over the remaining service period of employees expected to benefit (ASC 715-30). Immediate expensing is not permitted."
+},
+{
+"q": "For the year, Gale Co.'s pension plan assets had an expected return of $126,000 and an actual return of $90,000. There were no other gains or losses. How should Gale account for the difference?",
+"choices": [
+"Recognize a $36,000 net loss in other comprehensive income",
+"Increase pension expense by $36,000",
+"Recognize a $36,000 net gain in other comprehensive income",
+"Ignore the difference until plan assets are sold"
+],
+"correct": 0,
+"exp": "Pension cost includes the expected return; an actual return below expected ($36,000 shortfall) is an asset loss recognized in OCI and subject to later corridor amortization. Adding it to pension expense immediately defeats the smoothing in ASC 715."
+},
+{
+"q": "Hyde Co. sponsors a defined contribution plan that requires it to contribute 5% of covered salaries. Covered salaries for the year were $2,000,000, and Hyde paid $80,000 to the plan during the year. What pension expense and liability should Hyde report?",
+"choices": [
+"Expense $80,000; liability $0",
+"Expense $100,000; liability $20,000",
+"Expense $80,000; liability $20,000",
+"Expense $100,000; liability $0"
+],
+"correct": 1,
+"exp": "For a defined contribution plan, expense equals the required contribution for the period, $2,000,000 x 5% = $100,000; the $20,000 unpaid is a liability (ASC 715-70). Expensing only the cash paid uses the cash basis."
+},
+{
+"q": "What distinguishes the projected benefit obligation (PBO) from the accumulated benefit obligation (ABO)?",
+"choices": [
+"The PBO includes only vested benefits",
+"The PBO is undiscounted, while the ABO is discounted",
+"The PBO is measured using future compensation levels, while the ABO uses current compensation levels",
+"The PBO excludes service rendered to date"
+],
+"correct": 2,
+"exp": "Both are discounted measures of benefits earned for service to date, but the PBO reflects projected future salary increases while the ABO uses current salaries. The vested benefit obligation, not the PBO, is limited to vested benefits."
+},
+{
+"q": "Under ASC 715, what discount rate should be used to measure the projected benefit obligation?",
+"choices": [
+"The expected long-term rate of return on plan assets",
+"The employer's incremental borrowing rate",
+"The risk-free rate on 30-year Treasury securities",
+"Rates at which the pension benefits could be effectively settled, such as yields on high-quality fixed-income investments"
+],
+"correct": 3,
+"exp": "The discount rate reflects rates at which benefits could be effectively settled, commonly the yields on high-quality corporate bonds matching the benefit payments (ASC 715-30). The expected return on assets is used only for the expected return component."
+},
+{
+"q": "Under a postretirement health care plan, an employee becomes fully eligible for benefits at age 60. The employee was hired at age 30, is now 40, and the expected postretirement benefit obligation (EPBO) for the employee is $120,000. Benefits are attributed evenly over the attribution period. What is the accumulated postretirement benefit obligation (APBO) for this employee?",
+"choices": [
+"$40,000",
+"$120,000",
+"$4,000",
+"$80,000"
+],
+"correct": 0,
+"exp": "The attribution period runs from the date of hire to the full eligibility date (30 years); with 10 years served, APBO = $120,000 x 10/30 = $40,000 (ASC 715-60). The EPBO of $120,000 includes service not yet rendered."
+},
+{
+"q": "Ives Co. participates in a multiemployer defined benefit plan for its union employees. How should Ives generally account for its participation?",
+"choices": [
+"Recognize its share of the plan's underfunded status on the balance sheet",
+"Recognize the required contribution for the period as pension cost and any unpaid contributions as a liability",
+"Apply single-employer accounting for its proportionate share of plan assets and obligations",
+"Disclose the plan without recognizing any expense"
+],
+"correct": 1,
+"exp": "Under ASC 715-80, a participant in a multiemployer plan recognizes its required contribution for the period as net pension cost and a liability for any contributions due and unpaid. It does not record a share of the plan's funded status unless withdrawal is probable."
+},
+{
+"q": "During the year, the discount rate used to measure Jory Co.'s pension obligation increased from 4.5% to 5.5%. All else equal, what is the effect?",
+"choices": [
+"The PBO increases, and an actuarial loss is recognized in OCI",
+"The PBO increases, and service cost is adjusted",
+"The PBO decreases, and an actuarial gain is recognized in OCI",
+"The PBO decreases, and a gain is recognized immediately in net income"
+],
+"correct": 2,
+"exp": "A higher discount rate lowers the present value of future benefits, decreasing the PBO; the decrease is an actuarial gain recognized in OCI and amortized later if it exceeds the corridor. Immediate recognition in income is not required."
+},
+{
+"q": "Kirk Co. recognizes amortization of an accumulated net actuarial loss as a component of net periodic pension cost. What is the effect of this amortization on the funded status and on accumulated other comprehensive income?",
+"choices": [
+"Funded status worsens; AOCI is unchanged",
+"Both the funded status and AOCI are unchanged",
+"Funded status improves; AOCI loss increases",
+"Funded status is unchanged; the AOCI loss balance decreases"
+],
+"correct": 3,
+"exp": "The loss was already included in the pension liability when it arose. Amortization reclassifies part of it out of AOCI into pension cost (credit OCI, debit pension cost), so the funded status is unchanged and the AOCI loss falls. Treating it as a new increase in the liability double counts it."
+},
+{
+"q": "Lowe Co. purchased nonparticipating annuity contracts to settle a large part of its pension obligation; the settlement cost exceeds the sum of service cost and interest cost for the year. How should Lowe treat the related net loss in AOCI?",
+"choices": [
+"Recognize a pro rata portion of the net loss in earnings immediately",
+"Continue to amortize it using the corridor approach",
+"Charge it to retained earnings",
+"Reclassify it to an intangible asset"
+],
+"correct": 0,
+"exp": "A settlement that exceeds service cost plus interest cost requires immediate recognition in earnings of the pro rata portion of the unrecognized net gain or loss (ASC 715-30). Corridor amortization applies only when there is no settlement."
+},
+{
+"q": "Mayo Co.'s pension data for the year: service cost $300,000; interest cost $180,000; expected return on plan assets $220,000; amortization of net gain $10,000; amortization of prior service cost $30,000. What is net periodic pension cost?",
+"choices": [
+"$300,000",
+"$280,000",
+"$250,000",
+"$260,000"
+],
+"correct": 1,
+"exp": "$300,000 + $180,000 - $220,000 - $10,000 + $30,000 = $280,000. Amortization of a net gain reduces pension cost; adding it gives the $300,000 trap."
+},
+{
+"q": "Nash Co.'s PBO was $6,000,000 at January 1. On that date, a plan amendment granting credit for prior service increased the PBO by $400,000. The discount rate is 6%, and no benefits were paid during the year. What is interest cost for the year?",
+"choices": [
+"$360,000",
+"$24,000",
+"$384,000",
+"$408,000"
+],
+"correct": 2,
+"exp": "Interest cost is the discount rate times the PBO outstanding during the period, including the amendment effective January 1: ($6,000,000 + $400,000) x 6% = $384,000. $360,000 omits the obligation added by the amendment."
+},
+{
+"q": "Oak Co.'s defined benefit plan is overfunded: the fair value of plan assets exceeds the PBO. How should Oak present the funded status?",
+"choices": [
+"As a current asset",
+"Split between current and noncurrent assets based on expected benefit payments",
+"Only in the notes, because pension assets belong to the trust",
+"As a noncurrent asset"
+],
+"correct": 3,
+"exp": "An overfunded plan is recognized as a noncurrent asset (ASC 715-20). Only underfunded plans may have a current liability portion, for benefits payable in the next 12 months that exceed plan assets."
+},
+{
+"q": "Pell Co.'s net periodic pension cost for the year was $400,000, consisting only of service cost, interest cost, and expected return. Actual return equaled expected return, and there were no actuarial gains or losses or plan amendments. Pell contributed $500,000 to the plan. By how much did Pell's net pension liability change?",
+"choices": [
+"Decreased by $100,000",
+"Increased by $400,000",
+"Decreased by $500,000",
+"Increased by $100,000"
+],
+"correct": 0,
+"exp": "Pension cost of $400,000 increases the net liability, and contributions of $500,000 reduce it, so the net liability decreases by $100,000. Counting only the contribution ignores the cost accrued for the year."
+},
+{
+"q": "Under ASC 715, the expected return on plan assets is computed by applying the expected long-term rate of return to which measure?",
+"choices": [
+"The fair value of plan assets at the end of the year",
+"The market-related value of plan assets, which may be fair value or a calculated value that recognizes changes over no more than five years",
+"The projected benefit obligation",
+"The cost basis of plan assets"
+],
+"correct": 1,
+"exp": "ASC 715-30 bases the expected return on the market-related value of plan assets, either fair value or a smoothed value recognizing changes in fair value over up to five years. End-of-year fair value already includes the actual return, so it would be circular."
+},
+{
+"q": "On January 1, Year 1, Quay Co. amended its pension plan, creating $600,000 of prior service cost. The average remaining service period of the active employees expected to benefit is 12 years, and Quay uses straight-line amortization. What amount of prior service cost should be amortized into pension cost in Year 1?",
+"choices": [
+"$600,000",
+"$40,000",
+"$50,000",
+"$0"
+],
+"correct": 2,
+"exp": "$600,000 / 12 years = $50,000 per year, reclassified from AOCI into net periodic cost. Zero would apply only if amortization started in a later year, and expensing $600,000 at once is not permitted."
+},
+{
+"q": "Rand Co.'s unfunded postretirement health care plan had an expected postretirement benefit obligation of $1,500,000, an accumulated postretirement benefit obligation of $900,000, and plan assets of $100,000 at year-end. What liability should Rand recognize for the plan?",
+"choices": [
+"$1,400,000",
+"$900,000",
+"$1,500,000",
+"$800,000"
+],
+"correct": 3,
+"exp": "For OPEB plans, the funded status is the APBO less plan assets: $900,000 - $100,000 = $800,000 (ASC 715-60). The EPBO includes benefits for service not yet rendered and is not the balance sheet measure."
+},
+{
+"q": "Sung Co., which reports on a calendar year, sponsors a defined benefit plan. As of what date should Sung generally measure plan assets and benefit obligations?",
+"choices": [
+"Its fiscal year-end (with a practical expedient permitting the month-end closest to it)",
+"Any date within three months before year-end",
+"The plan's own fiscal year-end",
+"The date of the most recent actuarial valuation"
+],
+"correct": 0,
+"exp": "ASC 715-30 requires measurement as of the employer's fiscal year-end, and ASU 2015-04 allows a practical expedient to measure as of the month-end closest to it. The old three-month-earlier option was eliminated."
+},
+{
+"q": "At January 1, Tull Co. had a $400,000 pretax net loss in AOCI related to its pension plan. During the year, it had an asset gain of $50,000, a liability (actuarial) loss of $120,000, and amortization of net loss of $15,000. What is the net loss in AOCI at December 31?",
+"choices": [
+"$555,000",
+"$455,000",
+"$485,000",
+"$215,000"
+],
+"correct": 1,
+"exp": "$400,000 - $50,000 gain + $120,000 loss - $15,000 amortization = $455,000. $485,000 adds the amortization, but amortization moves loss out of AOCI into pension cost."
+},
+{
+"q": "Under ASU 2017-07, which component of net periodic pension cost is eligible to be capitalized into inventory or a self-constructed asset?",
+"choices": [
+"Interest cost",
+"Amortization of prior service cost",
+"Service cost only",
+"All components"
+],
+"correct": 2,
+"exp": "ASU 2017-07 limits capitalization to the service cost component; interest cost, expected return, and amortization amounts cannot be capitalized. Capitalizing all components was permitted before the amendment."
+},
+{
+"q": "Vale Co. closed a division, significantly reducing the expected years of future service of current employees covered by its pension plan. How should Vale account for unamortized prior service cost associated with the years of service no longer expected?",
+"choices": [
+"Continue to amortize it over the original period",
+"Charge it to retained earnings",
+"Reclassify it to goodwill",
+"Recognize it as a curtailment loss in earnings"
+],
+"correct": 3,
+"exp": "This is a curtailment under ASC 715-30: prior service cost for the years of service no longer expected is recognized immediately as a loss. Continuing normal amortization ignores that the future service has been eliminated."
+},
+{
+"q": "Which relationship among pension obligation measures is always true for a pay-related plan with expected future salary increases?",
+"choices": [
+"Vested benefit obligation <= accumulated benefit obligation <= projected benefit obligation",
+"Projected benefit obligation <= accumulated benefit obligation <= vested benefit obligation",
+"Accumulated benefit obligation <= vested benefit obligation <= projected benefit obligation",
+"Accumulated benefit obligation = projected benefit obligation"
+],
+"correct": 0,
+"exp": "The VBO counts only vested benefits; the ABO adds nonvested benefits at current pay; the PBO further adds projected salary increases. Equal ABO and PBO occur only in a non-pay-related plan."
+},
+{
+"q": "Wren Co.'s unfunded postretirement health care plan reported the following for the year: service cost $40,000; interest cost $30,000; amortization of prior service cost $5,000; benefits paid to retirees $25,000. What is net periodic postretirement benefit cost?",
+"choices": [
+"$100,000",
+"$75,000",
+"$50,000",
+"$70,000"
+],
+"correct": 1,
+"exp": "Net cost = $40,000 + $30,000 + $5,000 = $75,000; an unfunded plan has no expected return. Benefits paid reduce the obligation and cash but are not part of the cost, so $100,000 is wrong."
+},
+{
+"q": "At January 1, Yost Co. had a $300,000 unrecognized net actuarial loss in AOCI. Its PBO was $4,000,000 and the market-related value of plan assets was $3,800,000 on that date; the average remaining service period is 10 years. What amount of net loss must be amortized into pension cost for the year?",
+"choices": [
+"$30,000",
+"$10,000",
+"$7,000",
+"$0"
+],
+"correct": 3,
+"exp": "The corridor is 10% of the greater of PBO or market-related value, $400,000; the $300,000 net loss falls within it, so no minimum amortization is required (ASC 715-30). $30,000 amortizes the entire loss without applying the corridor."
+}
+]

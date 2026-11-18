@@ -1,0 +1,420 @@
+[
+ {
+  "q": "This year Ali has a $50,000 net §1231 gain. In the prior five years he had $30,000 of net §1231 losses, none of which has been recaptured. How is this year's gain characterized?",
+  "choices": [
+   "$50,000 long-term capital gain",
+   "$30,000 ordinary income and $20,000 long-term capital gain",
+   "$50,000 ordinary income",
+   "$20,000 ordinary income and $30,000 long-term capital gain"
+  ],
+  "correct": 1,
+  "exp": "Under the §1231 five-year lookback, net §1231 gain is ordinary income to the extent of nonrecaptured net §1231 losses from the prior five years ($30,000), and the remaining $20,000 is long-term capital gain. Treating all $50,000 as capital gain ignores the lookback."
+ },
+ {
+  "q": "Bea owns two business assets held for several years: Asset G, with a $100,000 built-in §1231 gain (no depreciation recapture), and Asset L, with a $100,000 built-in §1231 loss. She has no other §1231 transactions in any year and will sell both over the next two years. Which plan gives the most favorable character?",
+  "choices": [
+   "Sell both in the same year",
+   "Sell Asset L in Year 1 and Asset G in Year 2",
+   "The order makes no difference because the lookback rule equalizes the results",
+   "Sell Asset G in Year 1 and Asset L in Year 2"
+  ],
+  "correct": 3,
+  "exp": "Selling G first produces $100,000 of long-term capital gain in Year 1, and selling L in Year 2 produces a $100,000 ordinary loss; the lookback looks only backward, so the earlier gain is not recaptured. Selling L first would cause Year 2's gain to be recaptured as ordinary income, and selling both together nets to zero."
+ },
+ {
+  "q": "Cal sells business equipment for $120,000. It cost $100,000, and he had claimed $60,000 of depreciation. How is his gain characterized?",
+  "choices": [
+   "$60,000 ordinary income and $20,000 §1231 gain",
+   "$80,000 ordinary income",
+   "$80,000 §1231 gain",
+   "$20,000 ordinary income and $60,000 §1231 gain"
+  ],
+  "correct": 0,
+  "exp": "The $80,000 gain ($120,000 − $40,000 adjusted basis) is §1245 ordinary income to the extent of depreciation taken ($60,000), and the $20,000 excess over original cost is §1231 gain. Treating the full $80,000 as ordinary would recapture more than the depreciation actually claimed."
+ },
+ {
+  "q": "Dee, an individual, sells a commercial building (excluding land) held for 12 years for $600,000. It cost $500,000, and she claimed $150,000 of straight-line depreciation. She has no other §1231 transactions or lookback losses. How is the gain characterized?",
+  "choices": [
+   "$150,000 ordinary income and $100,000 long-term capital gain",
+   "$250,000 long-term capital gain taxed at 25%",
+   "$150,000 unrecaptured §1250 gain taxed at up to 25% and $100,000 long-term capital gain",
+   "$250,000 ordinary income"
+  ],
+  "correct": 2,
+  "exp": "Straight-line depreciation on real property creates no §1250 ordinary recapture for an individual, but the $150,000 of depreciation is unrecaptured §1250 gain taxed at a maximum 25% under §1(h), and the remaining $100,000 is taxed at regular long-term capital gain rates. Treating the depreciation as ordinary recapture applies §1245 rules to real property."
+ },
+ {
+  "q": "Elm Corp., a C corporation, sells a commercial building for $600,000. The building cost $500,000, and $150,000 of straight-line depreciation has been claimed. How much of the gain is ordinary income?",
+  "choices": [
+   "$0",
+   "$150,000",
+   "$50,000",
+   "$30,000"
+  ],
+  "correct": 3,
+  "exp": "Section 291 requires a corporation to treat 20% of the lesser of depreciation taken or the gain on §1250 property as ordinary income: 20% × $150,000 = $30,000; the remaining $220,000 is §1231 gain. Answering $0 applies the individual rule, under which straight-line depreciation creates no ordinary recapture."
+ },
+ {
+  "q": "Fay and Gil, married filing jointly, were the original purchasers of qualifying §1244 stock for $200,000. They sell it this year for $20,000. How is their $180,000 loss treated?",
+  "choices": [
+   "$180,000 ordinary loss",
+   "$100,000 ordinary loss and $80,000 capital loss",
+   "$50,000 ordinary loss and $130,000 capital loss",
+   "$180,000 capital loss"
+  ],
+  "correct": 1,
+  "exp": "Section 1244 allows an ordinary loss of up to $100,000 a year on a joint return ($50,000 otherwise); the excess is a capital loss, deductible against capital gains plus $3,000 of ordinary income. The $50,000 limit is for single filers."
+ },
+ {
+  "q": "In 2018, Hu bought newly issued stock of a qualifying C corporation for $500,000 and held it until this year, when he sold it for $12,500,000. The stock qualifies for the 100% §1202 exclusion, and for stock acquired at that time the per-issuer limit is the greater of $10,000,000 or 10 times his basis. How much of his gain is taxable?",
+  "choices": [
+   "$0",
+   "$7,000,000",
+   "$12,000,000",
+   "$2,000,000"
+  ],
+  "correct": 3,
+  "exp": "The $12,000,000 gain is excluded up to the greater of $10,000,000 or 10 × $500,000 basis ($5,000,000), so $10,000,000 is excluded and $2,000,000 is taxable. Using the 10× basis amount ($7,000,000 taxable) ignores the 'greater of' rule."
+ },
+ {
+  "q": "Ivy wants to qualify for the §1202 qualified small business stock exclusion. Which fact would disqualify her stock?",
+  "choices": [
+   "The corporation is a C corporation that manufactures medical devices",
+   "She bought the shares from a founding shareholder rather than from the corporation",
+   "She has held the stock for six years",
+   "The corporation's gross assets were well below the statutory limit when the stock was issued"
+  ],
+  "correct": 1,
+  "exp": "Section 1202 requires that the taxpayer acquire the stock at original issuance from a C corporation, in exchange for money, property, or services. Stock bought from another shareholder does not qualify, except for certain gift and death transfers. Manufacturing is a qualified trade or business."
+ },
+ {
+  "q": "Jon sold stock with a $50,000 basis to his son for $30,000, its fair market value. Two years later, the son sold the stock to an unrelated buyer for $60,000. How much gain does the son recognize?",
+  "choices": [
+   "$10,000",
+   "$30,000",
+   "$0",
+   "$15,000"
+  ],
+  "correct": 0,
+  "exp": "Jon's $20,000 loss is disallowed under §267 because his son is a related party, but under §267 the son may use the disallowed loss to reduce his later gain: ($60,000 − $30,000) − $20,000 = $10,000. The son does not take Jon's $50,000 basis, so a gain computed from that basis is wrong."
+ },
+ {
+  "q": "Kai has a $6,000 long-term capital gain this year. A $10,000 personal loan he made to a friend became totally worthless this year. Kai is not in the business of lending. What is his capital loss carryover to next year?",
+  "choices": [
+   "$0",
+   "$4,000 long-term",
+   "$1,000 short-term",
+   "$1,000 long-term"
+  ],
+  "correct": 2,
+  "exp": "A nonbusiness bad debt is a short-term capital loss under §166. The $10,000 STCL net of the $6,000 LTCG is a $4,000 net short-term loss; $3,000 offsets ordinary income and $1,000 carries over as short-term. Treating the debt as an ordinary loss ignores the nonbusiness bad-debt rule."
+ },
+ {
+  "q": "Lu bought stock on November 15, 2025, for $40,000. In June 2026 the company became bankrupt and the stock became totally worthless. Lu is a calendar-year individual. How is her loss reported?",
+  "choices": [
+   "$40,000 short-term capital loss",
+   "$40,000 long-term capital loss",
+   "$40,000 ordinary loss",
+   "$3,000 ordinary loss, with no carryover"
+  ],
+  "correct": 1,
+  "exp": "Under §165, a security that becomes worthless during the year is treated as sold on the last day of the tax year (December 31, 2026), which gives a holding period of more than one year and a long-term capital loss. Using the June date for the holding period would make the loss short-term."
+ },
+ {
+  "q": "Mo inherited stock worth $100,000 at his father's death. His father had bought it for $30,000 a year earlier. Mo sold the stock two months after the death for $110,000. What is Mo's gain and its character?",
+  "choices": [
+   "$10,000 long-term capital gain",
+   "$10,000 short-term capital gain",
+   "$80,000 long-term capital gain",
+   "$80,000 short-term capital gain"
+  ],
+  "correct": 0,
+  "exp": "Inherited property takes a §1014 basis of $100,000 and is automatically treated as held more than one year under §1223, so the $10,000 gain is long-term regardless of the actual holding period. Using the father's $30,000 basis applies the gift rules."
+ },
+ {
+  "q": "Nan's aunt gave her stock that the aunt bought for $50,000 three years ago; it was worth $35,000 on the date of the gift, and no gift tax was paid. Nan sold it four months later for $30,000. What is Nan's loss and its character?",
+  "choices": [
+   "$20,000 long-term capital loss",
+   "$5,000 long-term capital loss",
+   "$5,000 short-term capital loss",
+   "$20,000 short-term capital loss"
+  ],
+  "correct": 2,
+  "exp": "Because FMV at the gift was below the donor's basis, Nan's basis for loss is the $35,000 FMV, giving a $5,000 loss; when the FMV basis is used, the donor's holding period does not tack, so the four-month holding period makes the loss short-term. Tacking the aunt's holding period is allowed only when the donor's basis is used."
+ },
+ {
+  "q": "Oli, in the 35% ordinary bracket, sells shares of a physically backed gold ETF, structured as a grantor trust, held for three years at a $40,000 gain. Ignoring the net investment income tax, what is his federal tax on the gain?",
+  "choices": [
+   "$8,000",
+   "$14,000",
+   "$6,000",
+   "$11,200"
+  ],
+  "correct": 3,
+  "exp": "Gain on collectibles, including interests in a grantor trust holding physical gold, is taxed at a maximum 28% under §1(h): $40,000 × 28% = $11,200. Applying the 20% or 15% rate treats the ETF like ordinary stock."
+ },
+ {
+  "q": "Pia is a professional painter. She sells a painting she created five years ago for $50,000. Her friend Quinn, an investor, sells a painting he bought from another artist six years ago, realizing a $50,000 gain. How is each gain characterized?",
+  "choices": [
+   "Pia: ordinary income; Quinn: long-term capital gain taxed at up to 28% as a collectible",
+   "Pia: long-term capital gain; Quinn: long-term capital gain",
+   "Pia: §1231 gain; Quinn: ordinary income",
+   "Pia: long-term capital gain taxed at 28%; Quinn: long-term capital gain taxed at 20%"
+  ],
+  "correct": 0,
+  "exp": "Under §1221, artistic works held by the person who created them are excluded from capital assets, so Pia's gain is ordinary. Quinn's painting is a capital asset and a collectible taxed at up to 28%. The special capital-asset election applies only to self-created musical works, not paintings."
+ },
+ {
+  "q": "Ray, an individual inventor who is not a dealer, transfers all substantial rights to a patent he developed to an unrelated manufacturer in exchange for royalties based on units sold over the next 10 years. He reduced the invention to practice eight months ago. How are the payments taxed?",
+  "choices": [
+   "As ordinary royalty income",
+   "As short-term capital gain because the patent was held less than one year",
+   "As long-term capital gain under §1235, regardless of the holding period or the contingent form of payment",
+   "As §1231 gain only if the patent was used in a trade or business"
+  ],
+  "correct": 2,
+  "exp": "Section 1235 treats the transfer of all substantial rights to a patent by a holder (generally the individual inventor) to an unrelated party as a sale of a capital asset held more than one year, even when payments are contingent on use. Treating it as ordinary royalty income ignores §1235."
+ },
+ {
+  "q": "Sal is selling his sole proprietorship for $1,000,000. The buyer proposes allocating $100,000 to Sal's covenant not to compete, and Sal suggests allocating that amount to goodwill instead. Sal's goodwill is self-created. Sal is in the 37% ordinary bracket and the 20% capital gain bracket. Ignoring the NIIT, how much does Sal save if the $100,000 is allocated to goodwill?",
+  "choices": [
+   "$37,000",
+   "$17,000",
+   "$20,000",
+   "$0, because both are §197 intangibles"
+  ],
+  "correct": 1,
+  "exp": "Payments for a covenant not to compete are ordinary income to the seller (37%), while gain on self-created goodwill is capital gain (20%): $100,000 × 17% = $17,000. Both are 15-year §197 intangibles to the buyer, which is why the buyer is indifferent, but the seller is not."
+ },
+ {
+  "q": "Tam buys a business for $1,000,000. The assets acquired are cash of $50,000, accounts receivable with an FMV of $100,000, equipment with an FMV of $300,000, and a building with an FMV of $400,000. No other intangibles are identified. Under the §1060 residual method, how much of the price is allocated to goodwill?",
+  "choices": [
+   "$150,000",
+   "$200,000",
+   "$250,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "Under the residual method, the price is allocated to Class I through VI assets at FMV, and the remainder goes to Class VII goodwill: $1,000,000 − ($50,000 + $100,000 + $300,000 + $400,000) = $150,000. Leaving out the cash ($200,000) is a common error."
+ },
+ {
+  "q": "Una, a speculator, bought regulated futures contracts two months ago and closed them this year at a $50,000 gain. How is the gain characterized?",
+  "choices": [
+   "$50,000 short-term capital gain",
+   "$50,000 long-term capital gain",
+   "$50,000 ordinary income",
+   "$30,000 long-term and $20,000 short-term capital gain"
+  ],
+  "correct": 3,
+  "exp": "Section 1256 contracts are marked to market, and gain or loss is treated as 60% long-term and 40% short-term regardless of the holding period: $30,000 long-term and $20,000 short-term. Using the two-month actual holding period ignores the §1256 rule."
+ },
+ {
+  "q": "Vic owns appreciated stock with a $100,000 basis and a $500,000 value. In December, he sells short an identical number of shares of the same stock, intending to deliver his long shares in January. What is the tax effect in December?",
+  "choices": [
+   "No gain until he closes the short sale in January",
+   "Gain is deferred until the long shares have been held for one more year",
+   "The short sale is a constructive sale, so Vic recognizes $400,000 of gain in December",
+   "Only a loss would be recognized in December"
+  ],
+  "correct": 2,
+  "exp": "Under §1259, entering into a short sale of property substantially identical to an appreciated financial position held by the taxpayer is a constructive sale, so gain is recognized as if the position were sold at FMV. 'Short against the box' no longer defers the gain, with a narrow exception for positions closed by January 30 and held unhedged for 60 days afterward."
+ },
+ {
+  "q": "Win Corp., a C corporation, has $200,000 of ordinary taxable income and a $30,000 net capital loss this year. In the three prior years it had net capital gains of $10,000 (three years ago), $0 (two years ago), and $5,000 (last year). What is its capital loss carryforward after the carryback?",
+  "choices": [
+   "$27,000",
+   "$30,000",
+   "$15,000",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Under §1212, a corporation cannot deduct net capital loss against ordinary income but must carry it back three years and forward five as a short-term loss: $10,000 + $5,000 is absorbed by the carryback, leaving $15,000 to carry forward. The $3,000 annual offset against ordinary income ($27,000 carryforward) applies only to individuals."
+ },
+ {
+  "q": "Xia sold two personal-use assets this year: her personal car (basis $40,000) for $25,000 and her vacation home (basis $500,000, never rented) for $420,000. How much of these losses may she deduct?",
+  "choices": [
+   "$0",
+   "$95,000 capital loss, with $3,000 deductible this year",
+   "$80,000 capital loss",
+   "$15,000 capital loss"
+  ],
+  "correct": 0,
+  "exp": "Losses on the sale of personal-use property are nondeductible under §165, though gains on such property are taxable. Neither the car nor the vacation home was held for investment or business, so treating them as capital losses is wrong."
+ },
+ {
+  "q": "A flood (not in a federally declared disaster area) completely destroys business equipment with an adjusted basis of $20,000 and a pre-flood FMV of $30,000. Insurance pays $5,000. What is the deductible business casualty loss?",
+  "choices": [
+   "$25,000",
+   "$20,000",
+   "$15,000",
+   "$0, because the area was not federally declared"
+  ],
+  "correct": 2,
+  "exp": "When business property is completely destroyed, the loss is its adjusted basis less insurance: $20,000 − $5,000 = $15,000; the federal-disaster requirement limits only personal casualty losses. Using the $30,000 FMV would allow a deduction for appreciation never taxed."
+ },
+ {
+  "q": "Yan buys a call option on a stock for a $2,000 premium. Zed, the writer, receives the premium. The option expires unexercised four months later. What are the consequences?",
+  "choices": [
+   "Yan has a $2,000 ordinary loss; Zed has $2,000 of ordinary income",
+   "Yan has a $2,000 short-term capital loss; Zed has a $2,000 short-term capital gain",
+   "Neither party recognizes anything until the stock is sold",
+   "Yan has a $2,000 long-term capital loss; Zed has $2,000 of ordinary income"
+  ],
+  "correct": 1,
+  "exp": "Under §1234, the holder's loss on a lapsed option has the character of the underlying property (capital) and a holding period of four months (short-term). Under the same section, the writer's gain on lapse is always short-term capital gain. Calling the writer's premium ordinary income is a common mistake."
+ },
+ {
+  "q": "On December 20, Ada sold mutual fund shares in her taxable account at a $15,000 loss. On January 5, her IRA bought shares of the same fund. What is the effect on Ada?",
+  "choices": [
+   "The loss is allowed because the IRA is a separate taxpayer",
+   "The loss is disallowed, and her IRA basis increases by $15,000",
+   "The loss is allowed but deferred until the IRA shares are sold",
+   "The loss is disallowed, and no basis increase is available because IRA basis cannot be adjusted"
+  ],
+  "correct": 3,
+  "exp": "Under Rev. Rul. 2008-5, a purchase of substantially identical securities by the taxpayer's IRA within 30 days triggers the §1091 wash sale rule, and the disallowed loss is not added to the IRA's basis, so it is permanently lost. The usual basis adjustment cannot apply inside an IRA."
+ },
+ {
+  "q": "Bo bought stock on March 10, 2025, and wants any gain to be long-term. What is the earliest date he can sell the stock and have the gain treated as long-term?",
+  "choices": [
+   "March 11, 2026",
+   "March 10, 2026",
+   "March 9, 2026",
+   "March 31, 2026"
+  ],
+  "correct": 0,
+  "exp": "The holding period begins the day after acquisition, and long-term treatment requires holding the asset for more than one year, so the earliest qualifying sale date is March 11, 2026. A sale on the anniversary date (March 10) is exactly one year and produces short-term gain."
+ },
+ {
+  "q": "Cy's net long-term capital gain consists of $10,000 of 28%-rate collectibles gain, $20,000 of unrecaptured §1250 gain, and $30,000 of other long-term gain taxed at 15%. He also has a $15,000 net short-term capital loss. After netting, how much of his gain is taxed at the 25% rate?",
+  "choices": [
+   "$20,000",
+   "$5,000",
+   "$15,000",
+   "$10,000"
+  ],
+  "correct": 2,
+  "exp": "Under §1(h), a net short-term capital loss offsets the highest-rate groups first: the $15,000 eliminates the $10,000 of 28% gain, then reduces the 25% group by $5,000, leaving $15,000 at 25%. Applying the loss to the 15% group first would leave the full $20,000 at 25%."
+ },
+ {
+  "q": "Dan and Eva, married filing jointly, sell their principal residence, which they owned and lived in for 10 years, at a $200,000 gain. A home office within the dwelling unit gave them $12,000 of depreciation deductions over the past five years. Assuming the $500,000 exclusion otherwise applies, how much gain is taxable?",
+  "choices": [
+   "$12,000",
+   "$0",
+   "$188,000",
+   "$200,000"
+  ],
+  "correct": 0,
+  "exp": "The §121 exclusion does not apply to gain equal to depreciation claimed after May 6, 1997, so $12,000 is taxable as unrecaptured §1250 gain. Because the office is within the dwelling unit, no allocation of gain between business and residential use is required. Excluding all of the gain ignores the depreciation rule."
+ },
+ {
+  "q": "Under a divorce decree, Fred transfers to his ex-wife, Gina, stock with a $100,000 basis and a $300,000 FMV. A year later, Gina sells the stock for $320,000. How much gain do Fred and Gina recognize?",
+  "choices": [
+   "Fred $200,000; Gina $20,000",
+   "Fred $0; Gina $20,000",
+   "Fred $200,000; Gina $0",
+   "Fred $0; Gina $220,000"
+  ],
+  "correct": 3,
+  "exp": "Section 1041 treats a transfer incident to divorce as a gift: Fred recognizes no gain, and Gina takes his $100,000 carryover basis, so her gain is $320,000 − $100,000 = $220,000. Giving Gina an FMV basis treats the transfer as a taxable sale, which §1041 overrides."
+ },
+ {
+  "q": "Hal bought business equipment for $50,000 and should have claimed $20,000 of depreciation, but he claimed none. He now sells it for $45,000. What is Hal's gain, and how is it characterized?",
+  "choices": [
+   "$15,000 §1231 gain",
+   "$15,000 ordinary income",
+   "$0 gain",
+   "A $5,000 §1231 loss"
+  ],
+  "correct": 1,
+  "exp": "Basis is reduced by depreciation 'allowed or allowable' under §1016, so his adjusted basis is $30,000 and his gain is $15,000. Because the gain is less than the $20,000 of allowable depreciation, all of it is §1245 ordinary income. Using the unreduced $50,000 basis produces a loss. Hal can recover the missed depreciation through an accounting method change."
+ },
+ {
+  "q": "Ian has $200,000 of salary and no capital gains or other §1231 transactions this year, and no §1231 losses in prior years. He will sell one of two loss assets this year: investment land held for five years with a $40,000 loss, or a rental duplex (held for five years and not subject to passive loss limits on sale) with a $40,000 loss. Which sale produces the larger deduction this year?",
+  "choices": [
+   "The land, because a long-term capital loss is fully deductible against salary",
+   "Either one, because both produce $40,000 ordinary losses",
+   "Neither, because losses on real property are deferred until reinvestment",
+   "The duplex, because the net §1231 loss is an ordinary loss fully deductible against salary"
+  ],
+  "correct": 3,
+  "exp": "A net §1231 loss is ordinary, so the full $40,000 duplex loss offsets salary. The land is a capital asset, so its loss is capital and, with no capital gains, only $3,000 is deductible this year under §1211. Treating both losses as ordinary ignores the capital-asset status of investment land."
+ },
+ {
+  "q": "Jo gives her son business equipment that cost $100,000 and on which she claimed $40,000 of depreciation. The son never uses it in a business and sells it a year later for $90,000. How is the son's gain characterized?",
+  "choices": [
+   "$30,000 long-term capital gain",
+   "$30,000 §1231 gain",
+   "$30,000 ordinary income",
+   "$0, because the gift eliminated the depreciation recapture"
+  ],
+  "correct": 2,
+  "exp": "A gift is not a disposition that triggers §1245 recapture, but the recapture potential carries over to the donee with the carryover basis of $60,000. The son's $30,000 gain is therefore §1245 ordinary income. Assuming the gift wiped out the recapture is the trap."
+ },
+ {
+  "q": "Kim, a cash-method sole proprietor, sells her business, including $80,000 of accounts receivable (basis $0). How is the gain on the receivables characterized?",
+  "choices": [
+   "Long-term capital gain",
+   "§1231 gain",
+   "Short-term capital gain",
+   "Ordinary income"
+  ],
+  "correct": 3,
+  "exp": "Accounts receivable acquired for services or inventory sales in the ordinary course of business are excluded from capital assets under §1221, so the $80,000 gain is ordinary income. This is the income she would have reported when collecting the receivables."
+ },
+ {
+  "q": "Lyn acquired newly issued qualified small business stock in August 2025 and expects to sell at a $2,000,000 gain. Assume that for stock acquired after July 4, 2025, the §1202 exclusion is 50% after three years, 75% after four years, and 100% after five years, and that the per-issuer cap is not a factor. If she sells after holding the stock for four years and two months, how much gain is taxable?",
+  "choices": [
+   "$1,000,000",
+   "$500,000",
+   "$0",
+   "$1,500,000"
+  ],
+  "correct": 1,
+  "exp": "After four years, 75% of the gain is excluded: $2,000,000 × 25% = $500,000 taxable (at the 28% rate). Waiting until the five-year mark would make the exclusion 100%. Answering $1,500,000 confuses the excluded and taxable portions."
+ },
+ {
+  "q": "Mapleco, a C corporation, has a $50,000 capital loss carryforward expiring at the end of this year and no capital gains so far. It holds appreciated marketable securities with a $50,000 built-in long-term gain. Which action is best?",
+  "choices": [
+   "Sell the securities this year to absorb the expiring carryforward",
+   "Hold the securities, because capital gains of a corporation are taxed at a preferential rate",
+   "Deduct the carryforward against ordinary income this year",
+   "Carry the loss back three years instead"
+  ],
+  "correct": 0,
+  "exp": "A corporation's capital losses can offset only capital gains and expire after five years, so recognizing the $50,000 gain this year uses a loss that would otherwise be lost. C corporations get no preferential capital gain rate, and the carryback period for this loss has already passed."
+ },
+ {
+  "q": "Ned sells his sole proprietorship for $250,000, allocated as follows: inventory (FMV $80,000; basis $50,000); equipment (FMV $70,000; adjusted basis $40,000; depreciation taken $50,000); and self-created goodwill (FMV $100,000; basis $0). How much of Ned's gain is ordinary income?",
+  "choices": [
+   "$80,000",
+   "$30,000",
+   "$60,000",
+   "$160,000"
+  ],
+  "correct": 2,
+  "exp": "The sale is treated as a sale of individual assets: inventory gain of $30,000 is ordinary, and the $30,000 equipment gain is entirely §1245 recapture (less than the $50,000 of depreciation), so ordinary income totals $60,000; the $100,000 of goodwill gain is capital or §1231 gain. Answering $30,000 overlooks the depreciation recapture on the equipment."
+ },
+ {
+  "q": "Ola bought a business five years ago, paying $150,000 for goodwill, and has claimed $50,000 of §197 amortization on it. She now sells the business, and $180,000 of the price is allocated to goodwill. How is the goodwill gain characterized?",
+  "choices": [
+   "$80,000 long-term capital gain",
+   "$50,000 ordinary income and $30,000 §1231 gain",
+   "$80,000 ordinary income",
+   "$30,000 ordinary income and $50,000 §1231 gain"
+  ],
+  "correct": 1,
+  "exp": "Section 197 intangibles are treated as depreciable property, so amortization taken is recaptured as §1245 ordinary income ($50,000), and the remaining $30,000 of the $80,000 gain is §1231 gain. Self-created goodwill, by contrast, has no amortization to recapture."
+ },
+ {
+  "q": "Pine Corp. owns 100% of the stock of Sub Co., an operating company that has always earned more than 90% of its gross receipts from active business operations. Sub Co.'s stock becomes worthless this year. Pine's basis in the stock is $3,000,000. How is Pine's loss treated?",
+  "choices": [
+   "$3,000,000 ordinary loss",
+   "$3,000,000 capital loss, usable only against capital gains",
+   "$3,000 deductible this year, with the rest carried forward",
+   "No loss until Sub Co. is formally dissolved"
+  ],
+  "correct": 0,
+  "exp": "Under §165, a domestic corporation's worthless stock in an affiliated subsidiary (80% or more ownership) that meets the gross-receipts test produces an ordinary loss rather than a capital loss. Without that exception, the loss would be capital and usable only against capital gains, which is why the exception matters in planning."
+ }
+]

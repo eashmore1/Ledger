@@ -1,0 +1,332 @@
+[
+ {
+  "q": "Parent paid $1,000,000 cash to acquire 100% of Target. Target's identifiable assets had a fair value of $1,200,000 and a carrying amount of $900,000, and its liabilities had a fair value and carrying amount of $400,000. How much goodwill should Parent recognize?",
+  "choices": [
+   "$400,000",
+   "$200,000",
+   "$0",
+   "$500,000"
+  ],
+  "correct": 1,
+  "exp": "Goodwill = consideration of $1,000,000 - fair value of net identifiable assets ($1,200,000 - $400,000 = $800,000) = $200,000 (ASC 805-30-30-1). Using carrying amounts ($500,000 net) gives the $400,000 trap."
+ },
+ {
+  "q": "An acquirer paid $700,000 for 100% of a business whose identifiable net assets have a fair value of $800,000. After reassessing that all assets and liabilities were correctly identified and measured, how should the acquirer account for the difference?",
+  "choices": [
+   "Recognize negative goodwill as a liability",
+   "Reduce the recorded amounts of noncurrent assets proportionately",
+   "Recognize a $100,000 gain in earnings on the acquisition date",
+   "Recognize a $100,000 credit to additional paid-in capital"
+  ],
+  "correct": 2,
+  "exp": "ASC 805-30-25-2 requires a bargain purchase gain in earnings after the acquirer reassesses its identification and measurement. Proportionately reducing noncurrent assets was the superseded pre-2009 approach."
+ },
+ {
+  "q": "A reporting unit has a carrying amount of $2,300,000, including $500,000 of goodwill, and a fair value of $2,000,000. Under current U.S. GAAP for public business entities, what goodwill impairment loss should be recognized?",
+  "choices": [
+   "$500,000",
+   "$0",
+   "$200,000",
+   "$300,000"
+  ],
+  "correct": 3,
+  "exp": "Under ASU 2017-04, the impairment loss is the excess of the reporting unit's carrying amount over its fair value, $2,300,000 - $2,000,000 = $300,000, limited to the goodwill balance (ASC 350-20-35-8). Writing off all goodwill confuses the cap with the loss."
+ },
+ {
+  "q": "A reporting unit's fair value is $1,000,000. Its carrying amount is $1,800,000, of which $500,000 is goodwill. What goodwill impairment loss should be recognized?",
+  "choices": [
+   "$500,000",
+   "$800,000",
+   "$300,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "The shortfall of $800,000 exceeds the goodwill balance, so the loss is limited to the $500,000 of goodwill allocated to the reporting unit (ASC 350-20-35-8). Recognizing $800,000 ignores the limit; other assets are tested under their own guidance."
+ },
+ {
+  "q": "An entity elects to perform the optional qualitative assessment for goodwill impairment and concludes it is not more likely than not that a reporting unit's fair value is less than its carrying amount. What must it do next?",
+  "choices": [
+   "Perform the quantitative impairment test to confirm the conclusion",
+   "Nothing further is required for that reporting unit this year",
+   "Measure the implied fair value of goodwill",
+   "Test the goodwill for recoverability using undiscounted cash flows"
+  ],
+  "correct": 1,
+  "exp": "Under ASC 350-20-35-3A, if the qualitative assessment shows impairment is not more likely than not, the quantitative test is unnecessary. Implied fair value of goodwill was the eliminated Step 2, and undiscounted cash flows are used for long-lived assets, not goodwill."
+ },
+ {
+  "q": "A private company elects the private company accounting alternative for goodwill. Which of the following describes its accounting?",
+  "choices": [
+   "Goodwill is not amortized but is tested annually for impairment at the reporting unit level",
+   "Goodwill is amortized over 40 years and never tested for impairment",
+   "Goodwill is amortized on a straight-line basis over 10 years, or less if more appropriate, and tested for impairment only when a triggering event occurs",
+   "Goodwill is expensed immediately at acquisition"
+  ],
+  "correct": 2,
+  "exp": "ASC 350-20-35-63 permits private companies to amortize goodwill straight-line over 10 years or less and to test for impairment only upon a triggering event, at the entity or reporting unit level. Annual testing without amortization is the public-entity model."
+ },
+ {
+  "q": "On January 1, Year 1, a company purchased a patent for $170,000. The patent had a remaining legal life of 17 years and an estimated useful life of 10 years. On January 1, Year 4, the company paid $21,000 in legal fees to successfully defend the patent. What patent amortization expense should be recognized in Year 4?",
+  "choices": [
+   "$17,000",
+   "$38,000",
+   "$11,500",
+   "$20,000"
+  ],
+  "correct": 3,
+  "exp": "Annual amortization is $170,000 / 10 = $17,000; the successful defense costs are capitalized and amortized over the remaining 7 years of useful life, $3,000 per year, for a total of $20,000. Expensing the legal fees in Year 4 gives $38,000, and using the 17-year legal life ($10,000 + $1,500 = $11,500) is wrong when useful life is shorter."
+ },
+ {
+  "q": "A company incurred $60,000 of legal fees in an unsuccessful defense of a patent, after which the patent was determined to have no remaining value. The patent's carrying amount was $90,000. What total expense or loss should be recognized?",
+  "choices": [
+   "$150,000",
+   "$60,000",
+   "$90,000",
+   "$0, with the legal fees capitalized"
+  ],
+  "correct": 0,
+  "exp": "Legal costs of an unsuccessful defense are expensed, and the worthless patent's $90,000 carrying amount is written off: $60,000 + $90,000 = $150,000. Capitalizing legal fees is appropriate only for a successful defense."
+ },
+ {
+  "q": "A company spent $400,000 on research and development that resulted in a new product, then paid $20,000 in patent registration fees and $15,000 in legal fees to file the patent application. What amount should be capitalized as a patent?",
+  "choices": [
+   "$435,000",
+   "$35,000",
+   "$20,000",
+   "$0"
+  ],
+  "correct": 1,
+  "exp": "R&D costs are expensed as incurred under ASC 730, so only the legal and registration costs of obtaining the internally developed patent, $35,000, are capitalized. Capitalizing the R&D gives $435,000."
+ },
+ {
+  "q": "A software company developing a product for sale incurred: $300,000 for design and coding before technological feasibility; $120,000 for testing after technological feasibility; $80,000 to produce product masters; and $30,000 to duplicate software and package units for sale. What amount should be capitalized as software development costs?",
+  "choices": [
+   "$230,000",
+   "$500,000",
+   "$200,000",
+   "$120,000"
+  ],
+  "correct": 2,
+  "exp": "Under ASC 985-20, costs after technological feasibility through product masters are capitalized: $120,000 + $80,000 = $200,000. Pre-feasibility costs are R&D expense, and duplication and packaging costs are inventory, so including them gives $230,000."
+ },
+ {
+  "q": "A company has $600,000 of capitalized software development costs for a product with a remaining estimated economic life of five years. Current-year revenue from the product is $400,000, and total current and anticipated future revenue is $1,600,000. What is amortization expense for the current year?",
+  "choices": [
+   "$120,000",
+   "$400,000",
+   "$160,000",
+   "$150,000"
+  ],
+  "correct": 3,
+  "exp": "ASC 985-20-35-1 requires the greater of the revenue-ratio amount ($600,000 x $400,000 / $1,600,000 = $150,000) or straight-line ($600,000 / 5 = $120,000). Using straight-line only gives the $120,000 trap."
+ },
+ {
+  "q": "A company developed software for internal use and incurred: preliminary project stage evaluation $50,000; coding and installation $300,000; testing during development $40,000; data conversion $20,000; and employee training $25,000. How much should be capitalized under ASC 350-40?",
+  "choices": [
+   "$340,000",
+   "$360,000",
+   "$390,000",
+   "$435,000"
+  ],
+  "correct": 0,
+  "exp": "Only application development stage costs are capitalized: coding and installation plus testing = $340,000. Preliminary project costs, training and data conversion (other than software developed for conversion) are expensed; including data conversion gives $360,000."
+ },
+ {
+  "q": "A company enters into a cloud computing arrangement that is a service contract and incurs implementation costs during the application development stage. How should those costs be accounted for?",
+  "choices": [
+   "Expensed as incurred because the company does not own the software",
+   "Capitalized and expensed over the term of the hosting arrangement, presented in the same income statement line as the hosting fees",
+   "Capitalized as an intangible asset and amortized over five years in all cases",
+   "Capitalized as property, plant and equipment"
+  ],
+  "correct": 1,
+  "exp": "ASU 2018-15 (ASC 350-40) requires implementation costs of a hosting arrangement that is a service contract to be capitalized following the internal-use software stages and expensed over the arrangement's term, in the same line as the service fees. Expensing all such costs immediately is the trap."
+ },
+ {
+  "q": "A company's trademark has an indefinite useful life and a carrying amount of $800,000. Its fair value is $650,000, and the undiscounted future cash flows it is expected to generate total $900,000. What impairment loss should be recognized?",
+  "choices": [
+   "$0, because undiscounted cash flows exceed carrying amount",
+   "$250,000",
+   "$150,000",
+   "$100,000"
+  ],
+  "correct": 2,
+  "exp": "Indefinite-lived intangibles other than goodwill are tested by comparing fair value with carrying amount, with no undiscounted cash flow recoverability step (ASC 350-30-35-19): $800,000 - $650,000 = $150,000. Applying the ASC 360 recoverability test is the trap."
+ },
+ {
+  "q": "A finite-lived customer list has a carrying amount of $400,000. Because a major customer was lost, the company tested it: undiscounted expected cash flows are $380,000 and fair value is $300,000. What impairment loss should be recognized?",
+  "choices": [
+   "$20,000",
+   "$0",
+   "$80,000",
+   "$100,000"
+  ],
+  "correct": 3,
+  "exp": "Finite-lived intangibles follow ASC 360: the asset fails recoverability ($380,000 < $400,000), and the loss is carrying amount less fair value, $100,000. Measuring the loss against undiscounted cash flows gives $20,000."
+ },
+ {
+  "q": "A company acquired a trademark whose registration can be renewed every 10 years at nominal cost. The company intends to renew indefinitely and has the ability to do so, and cash flows are expected to continue indefinitely. How should the trademark be accounted for?",
+  "choices": [
+   "Not amortized; tested for impairment at least annually",
+   "Amortized over the 10-year registration period",
+   "Amortized over 40 years",
+   "Expensed when acquired"
+  ],
+  "correct": 0,
+  "exp": "An intangible with an indefinite useful life is not amortized but is tested for impairment at least annually (ASC 350-30-35-15). Amortizing over the 10-year legal term ignores the renewal intent and ability."
+ },
+ {
+  "q": "In a business combination, the acquirer obtains an in-process research and development project with a fair value of $2,000,000. How should the acquirer account for it at the acquisition date?",
+  "choices": [
+   "Expense it immediately as R&D",
+   "Recognize it as an indefinite-lived intangible asset until the project is completed or abandoned",
+   "Include it in goodwill",
+   "Recognize it as a finite-lived intangible and amortize it over five years"
+  ],
+  "correct": 1,
+  "exp": "ASC 805 and ASC 350-30-35-17A require acquired IPR&D in a business combination to be recognized at fair value as an indefinite-lived intangible until completion (then amortized) or abandonment (then written off). Immediate expensing applies to IPR&D acquired in an asset acquisition without alternative future use."
+ },
+ {
+  "q": "During the year, a company incurred $200,000 of research salaries and $50,000 of materials used in research. It bought equipment for $300,000 with alternative future uses and a five-year life (straight-line), and equipment for $80,000 usable only on a single research project. It also performed $40,000 of research for a client under contract. What R&D expense should it report?",
+  "choices": [
+   "$630,000",
+   "$430,000",
+   "$390,000",
+   "$310,000"
+  ],
+  "correct": 2,
+  "exp": "R&D expense = $200,000 + $50,000 + $60,000 depreciation on the alternative-use equipment + $80,000 for the single-project equipment = $390,000 (ASC 730-10-25-2). Research performed for others under contract is not the company's R&D, so including it gives $430,000."
+ },
+ {
+  "q": "Which of the following activities is considered research and development under ASC 730?",
+  "choices": [
+   "Routine quality control testing during commercial production",
+   "Market research for a new product",
+   "Seasonal design changes to existing products",
+   "Design, construction and testing of preproduction prototypes"
+  ],
+  "correct": 3,
+  "exp": "ASC 730-10-55-1 lists design, construction and testing of preproduction prototypes as R&D. Routine quality control, market research and routine or seasonal design changes are specifically excluded."
+ },
+ {
+  "q": "A newly formed corporation incurred $10,000 of legal fees to incorporate, $20,000 to train employees before opening a new store and $50,000 to purchase store equipment. How much should be expensed as start-up and organization costs?",
+  "choices": [
+   "$30,000",
+   "$10,000",
+   "$80,000",
+   "$0"
+  ],
+  "correct": 0,
+  "exp": "ASC 720-15 requires start-up activities, including organization costs and preopening training, to be expensed as incurred: $10,000 + $20,000 = $30,000. Equipment is capitalized as PP&E; capitalizing organization costs is a tax concept (IRC Section 248), not GAAP."
+ },
+ {
+  "q": "A franchisee paid a $100,000 initial fee for a 10-year franchise and pays continuing fees of 4% of sales. How should these costs be accounted for?",
+  "choices": [
+   "Expense both the initial fee and the continuing fees as incurred",
+   "Capitalize the initial fee and amortize it over 10 years; expense continuing fees as incurred",
+   "Capitalize the initial fee as an indefinite-lived intangible and the continuing fees as prepaid assets",
+   "Capitalize the initial fee and the estimated total continuing fees"
+  ],
+  "correct": 1,
+  "exp": "The initial franchise fee is an intangible asset amortized over the 10-year franchise term, while continuing fees relate to current-period sales and are expensed. A franchise with a fixed term is not indefinite-lived."
+ },
+ {
+  "q": "When must goodwill of a public business entity be tested for impairment?",
+  "choices": [
+   "Only when a triggering event occurs",
+   "Every three years at the entity level",
+   "At least annually at the reporting unit level, and between annual tests if a triggering event occurs",
+   "Only when the entity's market capitalization falls below book value"
+  ],
+  "correct": 2,
+  "exp": "ASC 350-20-35-28 and 35-30 require testing at least annually at the reporting unit level and between annual tests when events indicate impairment is more likely than not. Testing only upon a triggering event is the private company alternative."
+ },
+ {
+  "q": "A company is selling a business within a reporting unit. The business being sold has a fair value of $300,000, the portion of the reporting unit being retained has a fair value of $900,000, and the reporting unit's goodwill is $400,000. How much goodwill should be included in the carrying amount of the business sold?",
+  "choices": [
+   "$400,000",
+   "$133,333",
+   "$300,000",
+   "$100,000"
+  ],
+  "correct": 3,
+  "exp": "ASC 350-20-40-3 allocates goodwill based on relative fair values: $400,000 x $300,000 / $1,200,000 = $100,000. Dividing by the retained portion only ($300,000 / $900,000) gives $133,333."
+ },
+ {
+  "q": "A company paid $1,100,000 plus $50,000 of transaction costs to acquire a building (fair value $600,000) and a patent (fair value $400,000) in a transaction that is an asset acquisition, not a business combination. At what amount should the patent be recorded?",
+  "choices": [
+   "$460,000",
+   "$400,000",
+   "$440,000",
+   "$500,000"
+  ],
+  "correct": 0,
+  "exp": "In an asset acquisition, cost including transaction costs ($1,150,000) is allocated by relative fair value and no goodwill is recognized (ASC 805-50-30): $1,150,000 x 40% = $460,000. Excluding transaction costs gives $440,000, and recording at fair value with the excess as goodwill applies business combination accounting."
+ },
+ {
+  "q": "An acquirer incurred $250,000 of legal, accounting and advisory fees in completing a business combination. How should these costs be accounted for?",
+  "choices": [
+   "Added to goodwill",
+   "Expensed in the periods the costs are incurred and services are received",
+   "Allocated to the identifiable assets acquired",
+   "Deducted from the fair value of the consideration transferred"
+  ],
+  "correct": 1,
+  "exp": "ASC 805-10-25-23 requires acquisition-related costs to be expensed as incurred, except costs to issue debt or equity securities. Adding them to goodwill was the pre-2009 purchase method treatment."
+ },
+ {
+  "q": "In a business combination, the acquiree's skilled, assembled workforce is estimated to be worth $500,000. How should the acquirer account for it?",
+  "choices": [
+   "Recognize it as a separate finite-lived intangible asset",
+   "Recognize it as a separate indefinite-lived intangible asset",
+   "Do not recognize it separately; it is subsumed into goodwill",
+   "Expense it immediately"
+  ],
+  "correct": 2,
+  "exp": "ASC 805-20-55-6 prohibits recognizing an assembled workforce as an identifiable intangible asset because it is neither separable nor contractual-legal; its value is included in goodwill. Recognizing it separately is the most tempting error."
+ },
+ {
+  "q": "An acquirer paid $900,000 cash for 100% of a business and agreed to pay additional consideration if earnings targets are met; the contingent consideration's acquisition-date fair value is $100,000. The fair value of identifiable net assets is $850,000. What goodwill should be recognized?",
+  "choices": [
+   "$50,000",
+   "$100,000",
+   "$0",
+   "$150,000"
+  ],
+  "correct": 3,
+  "exp": "Contingent consideration is included at acquisition-date fair value: ($900,000 + $100,000) - $850,000 = $150,000. Ignoring it until paid gives $50,000; later changes in the fair value of a contingent consideration liability go to earnings, not goodwill."
+ },
+ {
+  "q": "A company paid $500,000 for a 10-year license. A third party has committed to purchase the license at the end of the 10 years for $100,000. What annual amortization should be recognized?",
+  "choices": [
+   "$40,000",
+   "$50,000",
+   "$60,000",
+   "$10,000"
+  ],
+  "correct": 0,
+  "exp": "Residual value is recognized because a third party has committed to buy the asset (ASC 350-30-35-8): ($500,000 - $100,000) / 10 = $40,000. Assuming zero residual value, the general default, gives $50,000."
+ },
+ {
+  "q": "A company determines that a trademark previously assessed as having an indefinite life now has a remaining useful life of five years. What should the company do?",
+  "choices": [
+   "Amortize the trademark retrospectively from acquisition",
+   "Test the trademark for impairment, then amortize its carrying amount prospectively over five years",
+   "Write the trademark off immediately",
+   "Continue not amortizing it but test it twice a year"
+  ],
+  "correct": 1,
+  "exp": "ASC 350-30-35-17 requires an impairment test when an indefinite-lived intangible is determined to have a finite life, followed by prospective amortization over the remaining useful life. Retrospective amortization would treat a change in estimate as an error."
+ },
+ {
+  "q": "Nine months after a business combination, an acquirer obtains information about facts that existed at the acquisition date showing that the fair value of an acquired building was $450,000 rather than the provisional $500,000. How should the acquirer account for this?",
+  "choices": [
+   "Recognize a $50,000 impairment loss in the current period",
+   "Restate prior-period financial statements as an error correction",
+   "Adjust the provisional amounts, increasing goodwill by $50,000, and recognize any related depreciation effect in the current period",
+   "Make no adjustment because the acquisition date has passed"
+  ],
+  "correct": 2,
+  "exp": "Measurement-period adjustments within one year for facts existing at the acquisition date adjust the provisional amounts with an offset to goodwill, and the cumulative income effect is recorded in the current period (ASC 805-10-25-13 through 25-17). Prior periods are not restated after ASU 2015-16."
+ }
+]

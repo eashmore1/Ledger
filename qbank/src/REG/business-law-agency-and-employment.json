@@ -1,0 +1,332 @@
+[
+ {
+  "q": "For several years Ames, a purchasing agent for Pine Co., regularly bought supplies from Cole Corp. on Pine's behalf. Pine fired Ames but did not notify Cole. Ames then ordered $8,000 of supplies from Cole in Pine's name and disappeared with them. Is Pine liable to Cole?",
+  "choices": [
+   "Yes, because Ames had apparent authority based on Pine's prior conduct toward Cole",
+   "No, because Ames's actual authority ended when he was fired",
+   "No, because Ames acted for his own benefit",
+   "Yes, because Ames still had express authority"
+  ],
+  "correct": 0,
+  "exp": "Apparent authority arises from the principal's manifestations to a third party; a principal must give actual notice of termination to third parties who previously dealt with the agent, or apparent authority continues. Termination ends actual authority but not lingering apparent authority."
+ },
+ {
+  "q": "Bell hired Dunn to manage Bell's retail hardware store, with no written limits on Dunn's authority. Which act is most likely within Dunn's implied authority?",
+  "choices": [
+   "Selling the store's building",
+   "Purchasing ordinary inventory for resale in the store",
+   "Borrowing money by mortgaging the store",
+   "Guaranteeing a customer's personal debts on Bell's behalf"
+  ],
+  "correct": 1,
+  "exp": "Implied authority covers acts reasonably necessary to accomplish the agent's express duties, such as buying inventory and hiring clerks for a store manager. Extraordinary acts like selling or mortgaging the business or guaranteeing others' debts require express authority."
+ },
+ {
+  "q": "Without any authority, Ford signed a contract in Gray's name to buy a used truck from Hill. Gray learned of all material terms, took possession of the truck, and used it in her business. Gray now refuses to pay. Which statement is correct?",
+  "choices": [
+   "Gray is not liable because Ford had no authority",
+   "Only Ford is liable, because he signed the contract",
+   "Gray ratified the contract by accepting its benefits with full knowledge and is bound",
+   "Gray may keep the truck and pay only its reasonable value"
+  ],
+  "correct": 2,
+  "exp": "Ratification may be express or implied from conduct, such as accepting benefits with knowledge of the material facts, and binds the principal to the entire contract as of the original date. A principal cannot accept the benefits while rejecting the burdens."
+ },
+ {
+  "q": "Ivan, with no authority, contracted in Jill's name to sell Jill's boat to Kent. Before Jill learned of the contract, Kent notified Ivan that he was withdrawing. Jill then tried to ratify. Is Kent bound?",
+  "choices": [
+   "Yes, because ratification relates back to the date of the original contract",
+   "Yes, because Jill had capacity when the contract was made",
+   "Yes, if Jill ratifies within a reasonable time",
+   "No, because Kent withdrew before Jill ratified"
+  ],
+  "correct": 3,
+  "exp": "A third party may withdraw from an unauthorized contract at any time before the principal ratifies, and ratification after withdrawal is ineffective. The relation-back effect applies only to a valid ratification."
+ },
+ {
+  "q": "Lowe, acting as agent for Main Corp., bought land from Nash without disclosing that he was acting for anyone. Main Corp. authorized the purchase. Main Corp. later refused to pay. Which statement is correct?",
+  "choices": [
+   "Nash may hold Lowe liable, and on discovering Main Corp.'s identity may instead elect to hold Main Corp. liable",
+   "Nash may hold only Main Corp. liable, because Lowe was an agent",
+   "Nash may hold only Lowe liable, because Nash did not know of Main Corp.",
+   "Neither is liable, because the agency was not disclosed"
+  ],
+  "correct": 0,
+  "exp": "When the principal is undisclosed, the agent is a party to the contract and is personally liable; once the principal is identified, the third party can hold the authorized principal liable (generally an election, not both). Agency status does not shield an agent who conceals it."
+ },
+ {
+  "q": "Owen, as agent for a disclosed principal, Park Inc., signed a contract with Quinn within the scope of his actual authority, signing 'Park Inc., by Owen, Agent.' Park Inc. breached. Who is liable to Quinn?",
+  "choices": [
+   "Owen and Park Inc. jointly",
+   "Only Park Inc.",
+   "Only Owen, because he signed the contract",
+   "Owen, but only if Park Inc. is insolvent"
+  ],
+  "correct": 1,
+  "exp": "An agent who acts within authority for a disclosed principal and signs in a representative capacity is not a party to the contract and is not liable for the principal's breach. Agents are personally liable when the principal is undisclosed or partially disclosed, or when they lack authority."
+ },
+ {
+  "q": "Rose, purporting to act as agent for Star Corp., contracted to sell Star Corp.'s equipment to Todd. Rose had no actual or apparent authority, and Star Corp. refused to ratify. What is Todd's remedy?",
+  "choices": [
+   "Todd may enforce the contract against Star Corp.",
+   "Todd has no remedy, because Rose was not a party",
+   "Todd may sue Rose for breach of the implied warranty of authority",
+   "Todd may sue Star Corp. for negligent supervision only"
+  ],
+  "correct": 2,
+  "exp": "An agent who purports to act for a principal impliedly warrants that she has authority and is liable to the third party if she does not. The principal is not bound absent actual or apparent authority or ratification."
+ },
+ {
+  "q": "Uma hired Vick to find and buy suitable land for Uma's new factory. Vick found a parcel for $500,000, bought it in his own name, and resold it to Uma for $600,000 without telling her of his interest. What is Uma's remedy?",
+  "choices": [
+   "None, because Uma agreed to the $600,000 price",
+   "Uma may recover only if the land was worth less than $600,000",
+   "Uma may sue the original seller for the $100,000",
+   "Uma may recover Vick's $100,000 secret profit for breach of the duty of loyalty"
+  ],
+  "correct": 3,
+  "exp": "An agent's fiduciary duty of loyalty forbids self-dealing and secret profits; the principal may recover any profit the agent made and may rescind. The fairness of the price is no defense to undisclosed self-dealing."
+ },
+ {
+  "q": "While making deliveries for his employer, Wade negligently ran a red light and injured Yale. What is the employer's liability?",
+  "choices": [
+   "The employer and Wade are both liable to Yale under respondeat superior",
+   "Only Wade is liable, because he was negligent",
+   "Only the employer is liable, because Wade was acting within the scope of employment",
+   "The employer is liable only if it negligently hired Wade"
+  ],
+  "correct": 0,
+  "exp": "Under respondeat superior, an employer is vicariously liable for torts committed by an employee within the scope of employment, without regard to the employer's own fault; the employee remains personally liable as well. Negligent hiring is a separate, direct-liability theory."
+ },
+ {
+  "q": "Zack, a delivery driver, finished his morning deliveries and, without permission, drove the company van 40 miles in the opposite direction to visit a friend on purely personal business. On the way he negligently injured a pedestrian. Is Zack's employer liable?",
+  "choices": [
+   "Yes, because Zack was driving a company vehicle",
+   "No, because Zack was on a frolic of his own outside the scope of employment",
+   "Yes, because employers are strictly liable for all acts of employees during working hours",
+   "No, because the employer did not authorize negligent driving"
+  ],
+  "correct": 1,
+  "exp": "A substantial departure for purely personal purposes is a frolic outside the scope of employment, so respondeat superior does not apply; a minor detour would remain within scope. Lack of authorization to be negligent is never a defense, because negligence is never authorized."
+ },
+ {
+  "q": "A nightclub employed Ace as a bouncer to keep order. When a patron became loud, Ace used excessive force in removing him, injuring the patron. Is the nightclub liable?",
+  "choices": [
+   "No, because employers are never liable for intentional torts of employees",
+   "No, because Ace exceeded his instructions",
+   "Yes, because the tort was committed within the scope of employment to further the employer's business",
+   "Yes, but only if the nightclub ratified Ace's conduct"
+  ],
+  "correct": 2,
+  "exp": "An employer may be liable for an employee's intentional tort when the act is within the scope of employment, such as force used by a bouncer to keep order. Disobeying instructions does not take conduct outside the scope if it furthers the employer's business."
+ },
+ {
+  "q": "Cara hired Demo Inc., an independent contractor, to demolish a building on her property using explosives. Demo's blasting damaged a neighbor's home. Is Cara liable to the neighbor?",
+  "choices": [
+   "No, because principals are never liable for torts of independent contractors",
+   "No, unless Cara controlled the manner of Demo's work",
+   "Yes, because Demo was Cara's employee",
+   "Yes, because blasting is an inherently dangerous activity for which liability cannot be delegated"
+  ],
+  "correct": 3,
+  "exp": "The general rule shields a principal from independent contractors' torts, but a principal remains liable for ultrahazardous or inherently dangerous activities and nondelegable duties. Control would make Demo an employee, but that is not needed here."
+ },
+ {
+  "q": "Which factor is most important in determining whether a worker is an employee rather than an independent contractor?",
+  "choices": [
+   "The degree of control the hiring party has over the manner and means of performing the work",
+   "Whether the parties signed a written contract",
+   "Whether the worker is paid by the hour or by the job",
+   "The label the parties use to describe the relationship"
+  ],
+  "correct": 0,
+  "exp": "The right to control the details of how the work is done is the principal test under common law and IRS standards. The parties' label and the method of payment are relevant only as factors and are not controlling."
+ },
+ {
+  "q": "Eve authorized Finn to sell her car. Unknown to Finn, Eve died on Monday. On Tuesday, Finn sold the car to Gil, who also did not know of Eve's death. Under the traditional common law rule, is Eve's estate bound?",
+  "choices": [
+   "Yes, because neither Finn nor Gil knew of Eve's death",
+   "No, because the agency terminated automatically on Eve's death",
+   "Yes, because Finn had apparent authority",
+   "No, unless the estate ratifies within 30 days"
+  ],
+  "correct": 1,
+  "exp": "Under the traditional rule, a principal's death terminates the agent's authority by operation of law immediately, without notice to the agent or third parties. Apparent authority cannot survive because there is no living principal to make manifestations."
+ },
+ {
+  "q": "To secure a loan, Hale gave his lender written authority to sell Hale's stock and apply the proceeds to the loan if Hale defaulted. Hale defaulted and then notified the lender that he revoked the authority. Which statement is correct?",
+  "choices": [
+   "The revocation is effective because a principal may always revoke an agent's authority",
+   "The revocation is effective, but Hale is liable for damages",
+   "The revocation is ineffective because the lender holds an agency coupled with an interest",
+   "The revocation is effective only after 30 days' notice"
+  ],
+  "correct": 2,
+  "exp": "An agency coupled with an interest (a power given to secure an obligation owed to the agent) is irrevocable by the principal and is not terminated by the principal's death or incapacity. Ordinary agencies may be revoked at will."
+ },
+ {
+  "q": "Ingrid hired Jon as her sales agent under a written contract for a fixed two-year term. After six months, without cause, Ingrid fired Jon. Which statement is correct?",
+  "choices": [
+   "Ingrid had no power to terminate the agency before the term expired",
+   "Ingrid had both the power and the right to terminate at any time without liability",
+   "The agency continues until a court orders it terminated",
+   "Ingrid had the power to terminate the agency, but is liable to Jon for breach of contract"
+  ],
+  "correct": 3,
+  "exp": "A principal always has the power to terminate an ordinary agency, but if the termination violates a contract for a fixed term, the principal lacks the right to do so and is liable for damages. Power and right are distinct."
+ },
+ {
+  "q": "In a state that follows the equal dignities rule, Kirk orally authorized Lee to sign a contract on Kirk's behalf to sell Kirk's land. Lee signed a written contract with a buyer. Kirk now refuses to convey. Is the contract enforceable against Kirk?",
+  "choices": [
+   "No, because Lee's authority to sign a contract that must be in writing had to be in writing",
+   "Yes, because the contract itself was in writing",
+   "Yes, because oral agency appointments are always valid",
+   "No, because agents may never sell land"
+  ],
+  "correct": 0,
+  "exp": "Under the equal dignities rule, when the contract the agent signs must be in writing under the statute of frauds (as a land sale must), the agent's authority must also be in writing. A written contract alone does not cure an oral grant of authority."
+ },
+ {
+  "q": "While performing authorized duties for his principal, an agent paid $500 of the principal's business expenses from his own funds. Which duty owed by the principal requires repayment?",
+  "choices": [
+   "The duty of loyalty",
+   "The duty to reimburse and indemnify the agent",
+   "The duty of obedience",
+   "The duty to account"
+  ],
+  "correct": 1,
+  "exp": "A principal owes the agent duties of compensation, reimbursement for authorized expenses, indemnification for authorized acts, and cooperation. Loyalty, obedience and accounting are duties owed by the agent to the principal."
+ },
+ {
+  "q": "Mona, a purchasing agent for Nord Co., learned during a business meeting that a supplier's goods were defective. She never told Nord Co., which later bought the goods. Nord Co. claims it had no notice of the defect. Which statement is correct?",
+  "choices": [
+   "Nord Co. is not charged with notice because Mona did not tell anyone",
+   "Nord Co. is charged with notice only if Mona was an officer",
+   "Mona's knowledge, acquired within the scope of her agency, is imputed to Nord Co.",
+   "Notice is imputed only if the supplier also told Nord Co. directly"
+  ],
+  "correct": 2,
+  "exp": "Knowledge an agent acquires within the scope of the agency concerning matters within her authority is imputed to the principal, whether or not communicated. Officer status is not required."
+ },
+ {
+  "q": "Opal, age 17, was appointed by Pratt, an adult, as his agent to buy a computer. Within the scope of her authority, Opal signed a purchase contract in Pratt's name with Quest Co. Pratt now seeks to avoid the contract because Opal is a minor. Is Pratt bound?",
+  "choices": [
+   "No, because a minor cannot act as an agent",
+   "No, because the contract is voidable by Pratt",
+   "Only if Pratt ratifies after Opal reaches majority",
+   "Yes, because the principal, not the agent, must have contractual capacity"
+  ],
+  "correct": 3,
+  "exp": "Because the contract is the principal's, only the principal needs capacity; a minor may serve as an agent and bind an adult principal. The minor's power to disaffirm relates to her own contracts, not the principal's."
+ },
+ {
+  "q": "Rita was injured at work when a machine malfunctioned. The machine was negligently manufactured by an outside company. Her employer carries workers' compensation insurance. Which statement is correct?",
+  "choices": [
+   "Rita may receive workers' compensation benefits and may also sue the negligent manufacturer",
+   "Rita may sue her employer for negligence in addition to receiving benefits",
+   "Rita must choose between workers' compensation and suing the manufacturer",
+   "Rita may receive benefits only if the employer was negligent"
+  ],
+  "correct": 0,
+  "exp": "Workers' compensation is the exclusive remedy against the employer and is paid without regard to fault, but the employee may still sue negligent third parties, subject to the insurer's subrogation rights. Employer negligence is not required."
+ },
+ {
+  "q": "Sam was injured on the job because he carelessly ignored a safety procedure. He was not intoxicated and did not intend to injure himself. Can Sam recover workers' compensation benefits?",
+  "choices": [
+   "No, because his own negligence caused the injury",
+   "Yes, because workers' compensation is a no-fault system and his negligence is not a defense",
+   "Yes, but benefits are reduced by his percentage of fault",
+   "No, unless his employer also was negligent"
+  ],
+  "correct": 1,
+  "exp": "Workers' compensation eliminates common-law defenses such as contributory negligence and assumption of risk; benefits are generally denied only for intentional self-injury, intoxication or injuries outside the course of employment. There is no comparative fault reduction."
+ },
+ {
+  "q": "Tran Co. failed to withhold the employee share of FICA taxes from its employees' wages. Which statement is correct?",
+  "choices": [
+   "The employees alone are liable for their share",
+   "Tran Co. is liable only for its own matching share",
+   "Tran Co. is liable for both the employer and employee shares, but may seek recovery from the employees",
+   "Neither party owes the employee share once the year has ended"
+  ],
+  "correct": 2,
+  "exp": "An employer is required to withhold the employee's FICA tax and is liable for it if it fails to do so, in addition to its matching share; it may try to recover the withheld amount from employees. Failure to withhold does not shift liability to the government or end the obligation."
+ },
+ {
+  "q": "Which statement about the federal unemployment tax (FUTA) is correct?",
+  "choices": [
+   "It is paid equally by the employer and the employee",
+   "It is withheld from employees' wages",
+   "It applies only to employers with 100 or more employees",
+   "It is paid only by the employer, which may receive a credit for state unemployment taxes paid"
+  ],
+  "correct": 3,
+  "exp": "FUTA is imposed solely on employers and may not be deducted from wages; employers receive a credit against FUTA for contributions to state unemployment funds. FICA, not FUTA, is shared by employer and employee."
+ },
+ {
+  "q": "Which worker is most likely eligible for state unemployment compensation benefits?",
+  "choices": [
+   "A worker laid off because the employer closed a plant",
+   "A worker who voluntarily quit to travel, without good cause",
+   "A worker fired for repeatedly stealing from the employer",
+   "A worker who refuses all offers of suitable work"
+  ],
+  "correct": 0,
+  "exp": "Unemployment compensation is generally available to workers who lose jobs through no fault of their own and are able and available to work. Voluntary quits without good cause, discharge for misconduct and refusal of suitable work typically disqualify a claimant."
+ },
+ {
+  "q": "A nonexempt employee covered by the Fair Labor Standards Act earns $20 per hour. During one workweek she worked 46 hours. What is the minimum gross pay she must receive for that week?",
+  "choices": [
+   "$920",
+   "$980",
+   "$1,380",
+   "$1,040"
+  ],
+  "correct": 1,
+  "exp": "The FLSA requires overtime at 1.5 times the regular rate for hours over 40 in a workweek: 40 × $20 + 6 × $30 = $980. Paying straight time for all hours gives $920."
+ },
+ {
+  "q": "Una Corp., which has 200 employees, discharged a 58-year-old manager with excellent performance reviews and replaced him with a 30-year-old. The manager believes he was fired because of his age. Under which federal law may he bring a claim?",
+  "choices": [
+   "Title VII of the Civil Rights Act, which expressly prohibits age discrimination",
+   "The Fair Labor Standards Act",
+   "The Age Discrimination in Employment Act, which protects workers age 40 and older",
+   "The Equal Pay Act"
+  ],
+  "correct": 2,
+  "exp": "The ADEA prohibits age discrimination against individuals 40 and older by covered employers (20 or more employees). Title VII covers race, color, religion, sex and national origin, but not age."
+ },
+ {
+  "q": "A qualified job applicant who uses a wheelchair applied to Vale Co., which has 300 employees. Vale refused to hire her because its office lacked an accessible entrance, which could be installed at modest cost. Which statement is correct under the Americans with Disabilities Act?",
+  "choices": [
+   "Vale has no obligation, because the ADA applies only to current employees",
+   "Vale may refuse to hire her if the accommodation costs anything",
+   "Vale must hire her only if she agrees to pay for the accommodation",
+   "Vale must provide reasonable accommodation unless doing so would impose an undue hardship"
+  ],
+  "correct": 3,
+  "exp": "The ADA requires covered employers to make reasonable accommodations for qualified individuals with disabilities, including applicants, unless the accommodation would cause undue hardship. A modest-cost ramp is unlikely to be an undue hardship."
+ },
+ {
+  "q": "Wynn, who has worked full-time for a 300-employee company for three years, needs time off to care for his newborn child. Under the Family and Medical Leave Act, what is he entitled to?",
+  "choices": [
+   "Up to 12 weeks of unpaid, job-protected leave during a 12-month period",
+   "Up to 12 weeks of fully paid leave",
+   "Up to 6 weeks of unpaid leave, available only to mothers",
+   "Leave only if his state has a family leave law"
+  ],
+  "correct": 0,
+  "exp": "The FMLA gives eligible employees of covered employers (50 or more employees) up to 12 weeks of unpaid leave per 12 months for birth or care of a child, a serious health condition or similar reasons, with job restoration. The federal leave is unpaid and available to either parent."
+ },
+ {
+  "q": "Which of the following is a valid defense to a claim of employment discrimination under Title VII?",
+  "choices": [
+   "Customers prefer to be served by employees of a particular race",
+   "A bona fide occupational qualification based on sex that is reasonably necessary to the normal operation of the business",
+   "A bona fide occupational qualification based on race",
+   "The employer did not intend to discriminate, even though its hiring test has an unjustified disparate impact"
+  ],
+  "correct": 1,
+  "exp": "Title VII allows a BFOQ defense for religion, sex or national origin when reasonably necessary to the business (such as a same-sex locker room attendant), but never for race or color. Customer preference is not a BFOQ, and disparate impact liability does not require intent."
+ }
+]

@@ -1,0 +1,420 @@
+[
+ {
+  "q": "A company requires employees to enter a password and then answer a security question to log on to the payroll system remotely. Management describes this as multi-factor authentication. Which assessment is correct?",
+  "choices": [
+   "It is multi-factor because two separate prompts are used",
+   "It is not multi-factor because both items are something the user knows",
+   "It is multi-factor because security questions are a possession factor",
+   "It is not multi-factor because remote access cannot use passwords"
+  ],
+  "correct": 1,
+  "exp": "Multi-factor authentication requires factors from different categories (know, have, are). A password and a security question are both knowledge factors, so this is only two-step, single-factor authentication."
+ },
+ {
+  "q": "Which authentication method provides the strongest protection against phishing attacks that trick users into entering credentials on a fake website?",
+  "choices": [
+   "SMS one-time passcodes",
+   "Longer passwords with special characters",
+   "FIDO2 hardware security keys bound to the legitimate site",
+   "Security questions with obscure answers"
+  ],
+  "correct": 2,
+  "exp": "FIDO2/WebAuthn authenticators are phishing-resistant because they cryptographically bind authentication to the legitimate origin. SMS codes can be relayed by a phishing site in real time, so they remain vulnerable."
+ },
+ {
+  "q": "Under NIST SP 800-63B guidance on memorized secrets (passwords), which practice is recommended?",
+  "choices": [
+   "Forcing password changes every 60 days regardless of compromise",
+   "Requiring a mix of character types instead of allowing longer passphrases",
+   "Allowing password hints accessible to unauthenticated users",
+   "Screening new passwords against lists of commonly used or previously breached passwords"
+  ],
+  "correct": 3,
+  "exp": "SP 800-63B recommends checking new passwords against breached and common-password lists and favors length over composition rules. It advises against periodic forced changes absent evidence of compromise, which is the common trap."
+ },
+ {
+  "q": "An employee transfers from accounts payable to treasury. Six months later, she still holds AP invoice-entry access in addition to her new treasury payment-release access. Which issue does this illustrate?",
+  "choices": [
+   "Privilege creep resulting in a segregation of duties conflict",
+   "Tailgating",
+   "A biometric false acceptance",
+   "Excessive session timeout"
+  ],
+  "correct": 0,
+  "exp": "Access that accumulates through role changes (privilege creep) can create incompatible combinations, here entering invoices and releasing payments. Access should be adjusted at transfer and caught in periodic recertification."
+ },
+ {
+  "q": "A hospital grants clinicians access to patient records based on attributes such as their department, the patient's assigned care team, the time of day and the device used. This model is:",
+  "choices": [
+   "Discretionary access control",
+   "Attribute-based access control",
+   "Mandatory access control",
+   "Rule of two-person integrity"
+  ],
+  "correct": 1,
+  "exp": "Attribute-based access control evaluates multiple attributes of the user, resource and environment to make dynamic decisions. Discretionary access control lets resource owners grant access at their own discretion without such policy attributes."
+ },
+ {
+  "q": "A military contractor classifies documents as Confidential, Secret or Top Secret, and users can access only documents at or below their clearance; owners cannot override these labels. Which access control model is in use?",
+  "choices": [
+   "Mandatory access control",
+   "Discretionary access control",
+   "Role-based access control",
+   "Attribute-based access control with owner discretion"
+  ],
+  "correct": 0,
+  "exp": "Mandatory access control enforces system-assigned security labels and clearances that owners cannot change. In discretionary access control, the data owner decides who gets access."
+ },
+ {
+  "q": "A company is selecting a biometric fingerprint system for its data center. Increasing the system's sensitivity reduces false acceptances but increases false rejections. Which metric is most useful to compare the overall accuracy of competing systems?",
+  "choices": [
+   "False rejection rate alone",
+   "False acceptance rate alone",
+   "Crossover error rate (equal error rate)",
+   "Enrollment time"
+  ],
+  "correct": 2,
+  "exp": "The crossover error rate is where FAR equals FRR; a lower CER indicates a more accurate system overall. Looking at FAR or FRR alone ignores the trade-off between them."
+ },
+ {
+  "q": "For a highly secured data center, which biometric error type is most dangerous from a security standpoint?",
+  "choices": [
+   "False rejection, because authorized staff are delayed",
+   "Failure to enroll",
+   "Long processing time",
+   "False acceptance, because an unauthorized person is granted entry"
+  ],
+  "correct": 3,
+  "exp": "A false acceptance (Type II error) lets an impostor in, directly compromising security. False rejections (Type I errors) inconvenience authorized users but do not grant unauthorized access."
+ },
+ {
+  "q": "Employees at a data center routinely hold the door open for people walking behind them. Which physical control most directly addresses this tailgating risk?",
+  "choices": [
+   "CCTV cameras recording the entrance",
+   "An access control vestibule (mantrap) that allows only one person through at a time",
+   "Annual review of badge holder lists",
+   "Visitor sign-in sheets at reception"
+  ],
+  "correct": 1,
+  "exp": "A vestibule or mantrap physically prevents more than one person from entering on a single authentication. CCTV is detective and records tailgating but does not prevent it."
+ },
+ {
+  "q": "A company's server room is protected by a badge reader. Which additional procedure best detects unauthorized physical access attempts?",
+  "choices": [
+   "Periodically reviewing badge access logs and failed entry attempts, investigating anomalies",
+   "Posting a sign that the room is restricted",
+   "Painting the door to blend into the wall",
+   "Issuing badges to all employees for convenience"
+  ],
+  "correct": 0,
+  "exp": "Reviewing badge logs and failed attempts is a detective control that identifies unauthorized or suspicious access. Signs and camouflage are deterrents at best and do not detect anything."
+ },
+ {
+  "q": "Which control best implements the principle of least privilege for system administrators who occasionally need domain administrator rights?",
+  "choices": [
+   "Granting all administrators permanent domain admin rights",
+   "Sharing a single domain admin password among administrators",
+   "Using a privileged access management tool that grants just-in-time elevated access with approval, password vaulting and session recording",
+   "Allowing administrators to grant themselves rights as needed"
+  ],
+  "correct": 2,
+  "exp": "Just-in-time privileged access with vaulted credentials and recorded sessions limits standing privileges and creates accountability. Permanent or self-granted rights contradict least privilege."
+ },
+ {
+  "q": "A company implements single sign-on (SSO) using SAML federation for its cloud applications. Which is the most significant risk introduced?",
+  "choices": [
+   "Users must remember more passwords",
+   "Users can no longer access cloud applications remotely",
+   "Audit trails become impossible to produce",
+   "Compromise of the SSO credential could grant access to all connected applications, so strong MFA on the identity provider is critical"
+  ],
+  "correct": 3,
+  "exp": "SSO concentrates access in one credential, so its compromise has broad impact; strong MFA and monitoring at the identity provider mitigate this. SSO reduces, rather than increases, the number of passwords users manage."
+ },
+ {
+  "q": "An application service account used for nightly batch integration has a password that never expires and is known by several developers. Which control is most appropriate?",
+  "choices": [
+   "Store the credential in a secrets vault, rotate it, restrict interactive logon, and limit knowledge of it",
+   "Disable logging for the service account to improve performance",
+   "Give the service account domain administrator rights to avoid failures",
+   "Email the password to the developers each quarter"
+  ],
+  "correct": 0,
+  "exp": "Service account credentials should be vaulted, rotated and restricted so they cannot be misused interactively. Granting broad rights or emailing passwords increases exposure."
+ },
+ {
+  "q": "Under NIST SP 800-53, the account lockout control that limits consecutive invalid logon attempts and locks the account or delays further attempts is primarily designed to mitigate:",
+  "choices": [
+   "Denial of service against web servers",
+   "Online password guessing (brute force) attacks",
+   "Physical theft of laptops",
+   "Insider misuse of authorized access"
+  ],
+  "correct": 1,
+  "exp": "AC-7 Unsuccessful Logon Attempts limits repeated guessing of credentials. Insider misuse involves valid credentials and would not trigger lockouts."
+ },
+ {
+  "q": "A user leaves her workstation unlocked while at lunch, and a coworker uses it to approve a payment. Which control would most directly have prevented this?",
+  "choices": [
+   "Encrypting the workstation hard drive",
+   "Annual access recertification",
+   "Automatic session lock after a short period of inactivity requiring re-authentication",
+   "Installing antivirus software"
+  ],
+  "correct": 2,
+  "exp": "Device or session lock (SP 800-53 AC-11) prevents use of an unattended, logged-in session. Full-disk encryption protects data at rest when a device is off or stolen, not an active unlocked session."
+ },
+ {
+  "q": "Which approach best reflects a zero trust architecture as described in NIST SP 800-207?",
+  "choices": [
+   "Trusting all devices once they are inside the corporate network perimeter",
+   "Relying solely on a strong perimeter firewall",
+   "Granting broad network access after VPN logon",
+   "Continuously verifying identity, device posture and context for each access request, regardless of network location"
+  ],
+  "correct": 3,
+  "exp": "Zero trust removes implicit trust based on network location and evaluates each access request per policy. Granting broad access after VPN logon is the perimeter-based model zero trust replaces."
+ },
+ {
+  "q": "An auditor reviewing access to the ERP finds 25 active accounts belonging to employees who left the company more than 90 days ago, though none were used after termination. What is the best conclusion?",
+  "choices": [
+   "The deprovisioning control is deficient even though no misuse occurred",
+   "No deficiency exists because the accounts were not used",
+   "The deficiency is in change management rather than access",
+   "The deficiency is only a physical security issue"
+  ],
+  "correct": 0,
+  "exp": "A control deficiency exists when the control does not operate as designed, regardless of whether harm occurred. Lack of misuse may affect severity but does not eliminate the deficiency."
+ },
+ {
+  "q": "A company's visitor policy requires visitors to sign in, show identification, wear a distinguishable badge and be escorted at all times. Which risk is primarily being addressed?",
+  "choices": [
+   "Network intrusion from external attackers",
+   "Unauthorized physical access and activity by non-employees",
+   "Loss of data from failed backups",
+   "Weak passwords"
+  ],
+  "correct": 1,
+  "exp": "Visitor identification, badges and escorts restrict and monitor non-employees' physical presence. These controls do not address network intrusions or password strength."
+ },
+ {
+  "q": "A company's access request form lets requesters check any combination of application roles. Which control most effectively prevents users from being granted conflicting roles?",
+  "choices": [
+   "Annual review of the request form layout",
+   "Allowing managers to approve all requests without restriction",
+   "An automated segregation of duties rule set that flags or blocks conflicting role combinations before provisioning",
+   "Reviewing access only when an audit is scheduled"
+  ],
+  "correct": 2,
+  "exp": "A preventive SoD rule set checks requested roles against a conflict matrix before access is granted. Unrestricted manager approval often misses conflicts because managers may not know which combinations are incompatible."
+ },
+ {
+  "q": "Which situation represents a possession factor of authentication?",
+  "choices": [
+   "A fingerprint scan",
+   "A personal identification number",
+   "A passphrase",
+   "A one-time code generated by an authenticator app on a registered smartphone"
+  ],
+  "correct": 3,
+  "exp": "A code from a registered device proves possession of that device, a 'something you have' factor. A PIN and passphrase are knowledge factors, and a fingerprint is an inherence factor."
+ },
+ {
+  "q": "A company's data center is in a multi-tenant building. Which physical control layering is most appropriate?",
+  "choices": [
+   "Building perimeter security, a badge-controlled data center entrance, locked server cages or racks, and monitoring with CCTV",
+   "A single lock on the building's main entrance",
+   "Relying on network firewalls to protect servers",
+   "Posting guards only during business hours with no other controls"
+  ],
+  "correct": 0,
+  "exp": "Defense in depth for physical security layers perimeter, facility, room and rack controls, with monitoring. Network firewalls do nothing to stop someone physically reaching a server."
+ },
+ {
+  "q": "An attacker uses lists of usernames and passwords stolen from other websites to attempt logons to a company's customer portal. Which control is most effective against this credential stuffing attack?",
+  "choices": [
+   "Requiring password changes every 30 days",
+   "Multi-factor authentication combined with detection and blocking of automated logon attempts",
+   "Displaying a privacy notice on the logon page",
+   "Encrypting the customer database at rest"
+  ],
+  "correct": 1,
+  "exp": "MFA prevents logon with stolen passwords alone, and bot detection or rate limiting blocks automated attempts. Encryption at rest protects stored data but does nothing to stop logons with valid stolen credentials."
+ },
+ {
+  "q": "A small company has only one IT administrator, who both creates user accounts and reviews the access logs. Which compensating control is most appropriate?",
+  "choices": [
+   "Eliminating access logging",
+   "Giving the administrator more privileges",
+   "Having a business manager independent of IT periodically review user access lists and administrator activity reports",
+   "Allowing the administrator to approve his own access changes"
+  ],
+  "correct": 2,
+  "exp": "When segregation of duties is impractical, independent review by someone outside the function compensates for the conflict. Eliminating logging removes the evidence needed for any review."
+ },
+ {
+  "q": "Which statement best describes the purpose of role-based access control (RBAC)?",
+  "choices": [
+   "Users choose who else can access the files they create",
+   "Access is granted based on clearance labels that users cannot change",
+   "Access is granted only to the system administrator",
+   "Permissions are assigned to roles based on job functions, and users receive permissions by being assigned to roles"
+  ],
+  "correct": 3,
+  "exp": "RBAC simplifies administration and supports least privilege by tying permissions to job roles. The ability of users to decide who accesses their files describes discretionary access control."
+ },
+ {
+  "q": "An organization's remote access policy allows employees to connect from personal devices. Which control best reduces the risk of a compromised personal device introducing malware into the network?",
+  "choices": [
+   "Network access control that checks device posture (patch level, endpoint protection) before granting access",
+   "Allowing any device with a valid password",
+   "Encrypting email attachments",
+   "Requiring users to sign an acceptable use policy only"
+  ],
+  "correct": 0,
+  "exp": "Device posture checks enforce minimum security before connection, limiting risk from unmanaged devices. A signed policy communicates expectations but does not technically prevent a compromised device from connecting."
+ },
+ {
+  "q": "A finance company keeps its backup tapes in an unlocked cabinet in an office hallway. Which risk is most directly created?",
+  "choices": [
+   "Slow restoration times",
+   "Unauthorized removal or disclosure of sensitive data on the tapes",
+   "Inability to perform backups",
+   "Incompatibility with new tape drives"
+  ],
+  "correct": 1,
+  "exp": "Unsecured backup media can be stolen or copied, exposing sensitive data. Physical access controls (and encryption) are needed for media, wherever it is stored."
+ },
+ {
+  "q": "Which control is most effective in ensuring that privileged database administrator activities are appropriate?",
+  "choices": [
+   "Allowing DBAs to review their own activity logs",
+   "Requiring DBAs to change passwords monthly",
+   "Logging privileged activities to a tamper-resistant repository that DBAs cannot alter, reviewed by an independent party",
+   "Disabling audit logging to protect performance"
+  ],
+  "correct": 2,
+  "exp": "Independent review of tamper-resistant logs provides accountability over powerful users. Self-review is ineffective because the person reviewing is the one being monitored."
+ },
+ {
+  "q": "A company issues employees proximity badges for building entry. An employee reports her badge lost. What is the most important immediate action?",
+  "choices": [
+   "Wait until the next quarterly access review to disable it",
+   "Issue a second badge while leaving the first active",
+   "Reprogram all building door locks",
+   "Deactivate the lost badge in the access control system"
+  ],
+  "correct": 3,
+  "exp": "Promptly deactivating the lost credential prevents its use by whoever finds it. Waiting for a periodic review leaves a window of unauthorized access."
+ },
+ {
+  "q": "Under the principle of need-to-know, which situation is a violation even though the user has appropriate clearance?",
+  "choices": [
+   "A payroll analyst with access to all employee salary data browses salaries of executives unrelated to her assigned tasks",
+   "A help desk technician resets a password after verifying identity",
+   "A manager approves a subordinate's access request",
+   "An auditor views data within the scope of the audit"
+  ],
+  "correct": 0,
+  "exp": "Need-to-know restricts access to information required for specific tasks, even if the user has broad authorization. The other activities are consistent with assigned duties."
+ },
+ {
+  "q": "An internal auditor finds that default vendor passwords on a newly installed network switch were never changed. Which risk is most significant?",
+  "choices": [
+   "The switch will have lower throughput",
+   "Attackers can easily gain administrative access using publicly known credentials",
+   "The switch warranty will be voided",
+   "Users will be locked out of the network"
+  ],
+  "correct": 1,
+  "exp": "Default credentials are published and widely known, making unauthorized administrative access trivial. Configuration baselines should require changing defaults before deployment."
+ },
+ {
+  "q": "A company wants to restrict access to its sales database so that each regional sales manager can see only customers in her region. Which control most directly accomplishes this?",
+  "choices": [
+   "Encrypting the database",
+   "Requiring stronger passwords",
+   "Row-level security that filters data based on the user's region attribute",
+   "Logging all queries"
+  ],
+  "correct": 2,
+  "exp": "Row-level (data-level) security restricts which records users can view based on attributes. Encryption and passwords control access to the database overall, not which rows a legitimate user can see."
+ },
+ {
+  "q": "Which of the following is a detective physical access control?",
+  "choices": [
+   "A locked server cage",
+   "A mantrap",
+   "Bollards in front of the building",
+   "Motion sensors and alarms that alert security when a restricted area is entered after hours"
+  ],
+  "correct": 3,
+  "exp": "Motion sensors and alarms detect and alert on intrusion. Locks, mantraps and bollards are preventive controls that stop or impede access."
+ },
+ {
+  "q": "When an employee is terminated involuntarily, which sequence of actions is most appropriate?",
+  "choices": [
+   "Disable logical access and collect physical access credentials at or before the time of notification",
+   "Allow the employee two weeks to transfer files, then disable access",
+   "Disable access at the next quarterly review",
+   "Collect the badge but leave system access active for knowledge transfer"
+  ],
+  "correct": 0,
+  "exp": "For involuntary terminations, access should be revoked at or before notification to prevent retaliation or data theft. Delaying revocation, even for knowledge transfer, creates an unnecessary window of risk."
+ },
+ {
+  "q": "A company uses biometric hand geometry readers but allows employees to bypass them by entering a four-digit code posted next to the reader. What is the most significant weakness?",
+  "choices": [
+   "Biometrics have high false rejection rates",
+   "The bypass code undermines the strength of the biometric control, effectively reducing it to a shared knowledge factor",
+   "Hand geometry is less accurate than retina scanning",
+   "The reader should be placed inside the room"
+  ],
+  "correct": 1,
+  "exp": "A widely known bypass code lets anyone enter, so the effective control is only as strong as the posted code. Comparing biometric types is irrelevant when the control can be bypassed."
+ },
+ {
+  "q": "Which access control activity best detects users whose access no longer matches their job responsibilities?",
+  "choices": [
+   "Password complexity enforcement",
+   "Account lockout after failed attempts",
+   "Periodic user access recertification by business owners",
+   "Single sign-on"
+  ],
+  "correct": 2,
+  "exp": "Access recertification has business owners confirm that each user's access remains appropriate, detecting excessive or outdated rights. Password complexity and lockout protect authentication but do not evaluate whether rights are appropriate."
+ },
+ {
+  "q": "A company's cloud storage buckets containing customer files are set to allow public read access because a developer needed to share a file quickly. Which control would most effectively prevent this misconfiguration?",
+  "choices": [
+   "Annual security awareness training",
+   "Encrypting files before upload",
+   "Increasing storage capacity",
+   "Organization-wide policy guardrails that block public access settings unless an approved exception exists, with continuous configuration monitoring"
+  ],
+  "correct": 3,
+  "exp": "Preventive guardrails and configuration monitoring stop or quickly detect public exposure of storage. Encryption at rest typically does not prevent access through a public link, because the provider decrypts for authorized reads."
+ },
+ {
+  "q": "Which is the best example of an access control that enforces separation of duties under NIST SP 800-53 AC-5?",
+  "choices": [
+   "Configuring the ERP so the user who creates a journal entry cannot approve it",
+   "Requiring 12-character passwords",
+   "Locking a session after 15 minutes",
+   "Logging all logon attempts"
+  ],
+  "correct": 0,
+  "exp": "AC-5 Separation of Duties defines and enforces incompatible duties, such as preventing a preparer from approving the same entry. Passwords, session locks and logging serve different control objectives."
+ },
+ {
+  "q": "A bank is redesigning entry to its vault room. Which combination provides true multi-factor authentication?",
+  "choices": [
+   "A badge and a second badge issued to the same employee",
+   "A PIN and a memorized passphrase",
+   "A smart card badge plus a PIN entered on the reader",
+   "A password and the answer to a security question"
+  ],
+  "correct": 2,
+  "exp": "A smart card (something you have) combined with a PIN (something you know) uses two different factor categories. Two badges or two memorized secrets are each a single factor type repeated."
+ }
+]

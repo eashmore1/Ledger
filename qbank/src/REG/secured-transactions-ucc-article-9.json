@@ -1,0 +1,332 @@
+[
+ {
+  "q": "Under UCC Article 9, which of the following is NOT a requirement for a security interest to attach to collateral that the secured party does not possess or control?",
+  "choices": [
+   "The secured party must file a financing statement",
+   "The secured party must give value",
+   "The debtor must have rights in the collateral",
+   "The debtor must authenticate a security agreement that describes the collateral"
+  ],
+  "correct": 0,
+  "exp": "Attachment under UCC 9-203 requires value, the debtor's rights in the collateral, and an authenticated security agreement (or possession or control). Filing relates to perfection, not attachment."
+ },
+ {
+  "q": "On March 1, Year 1, Lender properly filed a financing statement covering Borrower's equipment. No continuation statement has been filed. Which statement is correct?",
+  "choices": [
+   "The financing statement remains effective until the loan is repaid",
+   "The financing statement lapses on March 1, Year 6, unless a continuation statement is filed within the six months before that date",
+   "The financing statement lapses after three years",
+   "A continuation statement may be filed at any time after the original filing"
+  ],
+  "correct": 1,
+  "exp": "A financing statement is generally effective for five years (UCC 9-515) and may be continued only by a continuation statement filed within six months before lapse. A continuation filed earlier is ineffective, and lapse makes the interest unperfected."
+ },
+ {
+  "q": "An appliance store sold a refrigerator on credit to Fran for use in her home and took a written security agreement covering the refrigerator. The store did not file a financing statement. Is the store's security interest perfected?",
+  "choices": [
+   "No, because a financing statement must be filed for all goods",
+   "No, because the store did not take possession of the refrigerator",
+   "Yes, because a purchase-money security interest in consumer goods is perfected automatically on attachment",
+   "Yes, but only for 20 days after the sale"
+  ],
+  "correct": 2,
+  "exp": "Under UCC 9-309, a PMSI in consumer goods (other than titled goods such as motor vehicles) is automatically perfected when it attaches. The 20-day period relates to PMSI priority in other collateral, not automatic perfection."
+ },
+ {
+  "q": "A store holds an automatically perfected purchase-money security interest, with no financing statement filed, in a television it sold on credit to Gina for household use. Gina sold the television at a garage sale to her neighbor, Hal, who paid cash, did not know of the security interest, and bought it for his own household use. Does Hal take the television subject to the store's security interest?",
+  "choices": [
+   "Yes, because the store's interest was perfected",
+   "Yes, because Hal is not a buyer in the ordinary course of business",
+   "No, because a security interest never follows goods sold by a consumer",
+   "No, because Hal bought for value, without knowledge, for personal use, before any financing statement was filed"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 9-320, a consumer buyer from a consumer takes free of an automatically perfected PMSI if he buys without knowledge, for value, for personal or household use and before a financing statement is filed. Filing would have protected the store."
+ },
+ {
+  "q": "First Bank has a perfected security interest in all of Dealer's inventory of new cars, and its financing statement is on file. Kay bought a car from Dealer's lot for her personal use, paying full price. Kay knew that Dealer financed its inventory through First Bank. Dealer then defaulted. Does Kay take the car free of First Bank's security interest?",
+  "choices": [
+   "Yes, because Kay is a buyer in the ordinary course of business",
+   "No, because First Bank's security interest was perfected by filing",
+   "No, because Kay knew of the financing arrangement",
+   "Yes, but only if Kay paid in cash"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 9-320, a buyer in the ordinary course of business takes free of a security interest created by the seller, even if perfected and even if the buyer knows of it. Only knowledge that the sale violates the security agreement defeats ordinary-course status."
+ },
+ {
+  "q": "On January 5, Alpha Bank filed a financing statement covering Max's equipment. On January 10, Beta Bank lent Max money, took a security agreement covering the same equipment and filed a financing statement. On February 1, Alpha Bank lent Max money and Max signed a security agreement. Neither interest is a purchase-money security interest. Which bank has priority?",
+  "choices": [
+   "Beta Bank, because its security interest attached first",
+   "Alpha Bank, because it filed first",
+   "Beta Bank, because it was perfected first",
+   "The banks share pro rata"
+  ],
+  "correct": 1,
+  "exp": "Between perfected security interests, priority goes to the first to file or perfect (UCC 9-322), and a financing statement may be filed before attachment. Alpha filed on January 5, before Beta did anything."
+ },
+ {
+  "q": "Cora Bank and Dale Finance each obtained a security interest in the same equipment of a debtor. Cora's attached on May 1 and was never perfected. Dale's attached on June 1 and was perfected by filing on June 2. Which creditor has priority?",
+  "choices": [
+   "Cora Bank, because its interest attached first",
+   "Neither, because the interests are equal",
+   "Dale Finance, because a perfected security interest has priority over an unperfected one",
+   "Cora Bank, unless Dale knew of Cora's interest"
+  ],
+  "correct": 2,
+  "exp": "A perfected security interest has priority over a conflicting unperfected one (UCC 9-322); attachment order matters only between two unperfected interests. Article 9 has no knowledge exception for this rule."
+ },
+ {
+  "q": "Old Bank has a perfected security interest, with an after-acquired property clause, in all of Retailer's present and future inventory. New Supplier sells additional inventory to Retailer on credit and wants priority over Old Bank in that inventory. What must New Supplier do?",
+  "choices": [
+   "Nothing, because purchase-money interests always have priority",
+   "File a financing statement within 20 days after Retailer receives the inventory",
+   "Obtain Old Bank's written consent",
+   "Perfect its purchase-money security interest by the time Retailer receives the inventory and send authenticated notice to Old Bank before then"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 9-324, a PMSI in inventory has priority over an earlier-filed interest only if it is perfected when the debtor receives the inventory and the purchase-money creditor sends authenticated notification to the prior secured party beforehand. The 20-day grace period applies to non-inventory collateral such as equipment."
+ },
+ {
+  "q": "Eagle Bank has a perfected security interest in all of Ford Co.'s present and after-acquired equipment. Ford bought a new machine from a vendor on credit, giving the vendor a purchase-money security interest. Ford received the machine on April 1, and the vendor filed a financing statement on April 15. Which party has priority in the machine?",
+  "choices": [
+   "The vendor, because it perfected its purchase-money security interest within 20 days after Ford received possession",
+   "Eagle Bank, because it filed first",
+   "Eagle Bank, because the vendor did not notify it before delivery",
+   "The vendor, but only if Eagle Bank knew of the sale"
+  ],
+  "correct": 0,
+  "exp": "A PMSI in goods other than inventory has priority over a conflicting earlier interest if perfected when the debtor receives possession or within 20 days thereafter (UCC 9-324). No notice to the earlier secured party is required for equipment."
+ },
+ {
+  "q": "Glen lent money to Hart Co. and obtained a signed security agreement covering Hart's equipment, but never filed a financing statement. Later, a judgment creditor of Hart levied on the equipment, becoming a lien creditor. Hart then filed for bankruptcy. Which statement is correct?",
+  "choices": [
+   "Glen has priority because his security interest attached first",
+   "The lien creditor, and the bankruptcy trustee, have priority over Glen's unperfected security interest",
+   "Glen has priority because the lien creditor had notice",
+   "Glen and the lien creditor share pro rata"
+  ],
+  "correct": 1,
+  "exp": "An unperfected security interest is subordinate to a person who becomes a lien creditor before perfection (UCC 9-317), and the bankruptcy trustee has the status of a hypothetical lien creditor. Perfection is essential to protect against third parties."
+ },
+ {
+  "q": "Bank lends money to Ivy Corp. and takes a security interest in Ivy's deposit account at another bank as original collateral (not as proceeds). How may Bank perfect its security interest?",
+  "choices": [
+   "By filing a financing statement",
+   "Automatically upon attachment",
+   "Only by obtaining control of the deposit account",
+   "By taking possession of Ivy's checkbook"
+  ],
+  "correct": 2,
+  "exp": "A security interest in a deposit account as original collateral may be perfected only by control (UCC 9-312, 9-314), for example through an agreement with the depositary bank. Filing is ineffective for deposit accounts."
+ },
+ {
+  "q": "Jade Bank has a security interest in Kent's equipment, perfected by filing. Kent sold a piece of the equipment without authorization and deposited the cash proceeds in a separate account where they remain identifiable. Which statement is correct?",
+  "choices": [
+   "Jade's security interest ended when the equipment was sold",
+   "Jade's security interest attaches to the proceeds but is unperfected",
+   "Jade must file a new financing statement within 10 days to reach the proceeds",
+   "Jade's security interest continues in the identifiable cash proceeds and remains perfected"
+  ],
+  "correct": 3,
+  "exp": "A security interest continues in collateral after an unauthorized disposition and attaches to identifiable proceeds (UCC 9-315); if the original interest was perfected by filing, perfection continues in identifiable cash proceeds beyond the 20-day period. No new filing is needed for identifiable cash proceeds."
+ },
+ {
+  "q": "A security agreement grants Lender an interest in 'all of Debtor's equipment, now owned or hereafter acquired.' Debtor, a manufacturer, later buys a new forklift for its plant. Which statement is correct?",
+  "choices": [
+   "Lender's security interest attaches to the forklift when Debtor acquires rights in it",
+   "Lender must obtain a new security agreement to cover the forklift",
+   "After-acquired property clauses are unenforceable under Article 9",
+   "The clause covers the forklift only if acquired within 10 days of the agreement"
+  ],
+  "correct": 0,
+  "exp": "After-acquired property clauses are valid (UCC 9-204) and the interest attaches when the debtor acquires rights in new collateral. The 10-day limit applies only to consumer goods given as additional security."
+ },
+ {
+  "q": "A piano teacher bought a grand piano that she uses exclusively in her studio to give paid lessons. How is the piano classified as collateral under Article 9?",
+  "choices": [
+   "Consumer goods",
+   "Equipment",
+   "Inventory",
+   "General intangibles"
+  ],
+  "correct": 1,
+  "exp": "Goods are classified by the debtor's primary use; goods used primarily in a business that are not inventory or farm products are equipment (UCC 9-102). The same piano would be consumer goods if bought for household use, or inventory if held for sale."
+ },
+ {
+  "q": "Nova Corp. is incorporated in Delaware, has its headquarters in Ohio, and keeps the equipment that will serve as collateral in Texas. Where should a lender file a financing statement to perfect a security interest in Nova's equipment?",
+  "choices": [
+   "Ohio, where Nova's chief executive office is located",
+   "Texas, where the equipment is located",
+   "Delaware, Nova's state of organization",
+   "In all three states"
+  ],
+  "correct": 2,
+  "exp": "Under UCC 9-301 and 9-307, perfection by filing is governed by the law of the debtor's location, and a registered organization such as a corporation is located in its state of organization. Location of the collateral or headquarters is irrelevant for this purpose."
+ },
+ {
+  "q": "Which of the following is NOT required for a financing statement to be sufficient under Article 9?",
+  "choices": [
+   "The name of the debtor",
+   "The name of the secured party or its representative",
+   "An indication of the collateral covered",
+   "The debtor's signature"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 9-502, a financing statement needs only the debtor's name, the secured party's name and an indication of collateral; the debtor need only authorize the filing, not sign it. An authenticated security agreement is required for attachment, not the financing statement."
+ },
+ {
+  "q": "Debtor defaulted on a loan secured by a truck. In the middle of the night, the secured party towed the truck from Debtor's open driveway without confrontation and without a court order. Was the repossession proper?",
+  "choices": [
+   "Yes, because a secured party may repossess without judicial process if it does so without a breach of the peace",
+   "No, because repossession always requires a court order",
+   "No, because Debtor did not consent at the time",
+   "Yes, but only if Debtor was given 10 days' advance notice"
+  ],
+  "correct": 0,
+  "exp": "UCC 9-609 permits self-help repossession after default if it proceeds without a breach of the peace; taking a vehicle from an open driveway without confrontation is generally permissible. No prior notice or court order is required."
+ },
+ {
+  "q": "A store holds a purchase-money security interest in a consumer's home entertainment system. The consumer paid 70% of the cash price and then defaulted. The store repossessed the system. Absent a post-default waiver by the consumer, what must the store do?",
+  "choices": [
+   "The store may keep the system in full satisfaction of the debt",
+   "The store must dispose of the system within 90 days after taking possession",
+   "The store must return the system to the consumer",
+   "The store may keep the system and also sue for the unpaid balance"
+  ],
+  "correct": 1,
+  "exp": "Under UCC 9-620, when a consumer has paid 60% or more of the cash price of PMSI consumer goods, the secured party must dispose of the collateral within 90 days rather than retain it in satisfaction, unless the consumer waives this after default. Strict foreclosure is otherwise allowed only with consent."
+ },
+ {
+  "q": "After default, a secured party sold the collateral for $12,000. The secured debt was $10,000, and reasonable repossession and sale expenses were $1,000. A subordinate secured party with a $500 claim sent an authenticated demand for proceeds before distribution. How much is the debtor entitled to receive?",
+  "choices": [
+   "$2,000",
+   "$1,000",
+   "$500",
+   "$0"
+  ],
+  "correct": 2,
+  "exp": "Under UCC 9-615, proceeds go first to expenses ($1,000), then to the secured debt ($10,000), then to subordinate secured parties that made a demand ($500), and the remaining $500 surplus goes to the debtor. Ignoring the subordinate creditor gives $1,000."
+ },
+ {
+  "q": "A debtor owed $20,000 on a loan secured by equipment. After default, the secured party repossessed and sold the equipment in a commercially reasonable manner for $14,000, incurring $1,500 of reasonable expenses. The transaction is not a consumer transaction. What is the debtor's liability?",
+  "choices": [
+   "$6,000",
+   "$0, because repossession satisfies the debt",
+   "$4,500",
+   "$7,500"
+  ],
+  "correct": 3,
+  "exp": "Proceeds are applied first to expenses, leaving $12,500 for the $20,000 debt, so the debtor owes a $7,500 deficiency (UCC 9-615). Ignoring the expenses gives $6,000."
+ },
+ {
+  "q": "A secured party repossessed a debtor's equipment after default and scheduled a public sale. Before the sale, the debtor offered to pay the missed installments only. Which statement is correct?",
+  "choices": [
+   "The debtor may redeem the collateral only by tendering the full obligation secured plus reasonable expenses before disposition",
+   "The debtor may redeem by paying only the missed installments",
+   "The debtor has no right to redeem once the collateral is repossessed",
+   "The debtor may redeem within one year after the sale"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 9-623, the debtor may redeem before the secured party disposes of or accepts the collateral by fulfilling all obligations secured, plus reasonable expenses (accelerated balance if acceleration applies). Redemption rights end at disposition."
+ },
+ {
+  "q": "A secured party plans to sell repossessed manufacturing equipment at a private sale. Which statement about notice is correct?",
+  "choices": [
+   "No notice is required for a private sale",
+   "The secured party generally must send reasonable authenticated notification of the disposition to the debtor and any secondary obligors",
+   "Notice is required only if the collateral is consumer goods",
+   "Notice must be published in a newspaper for 30 days"
+  ],
+  "correct": 1,
+  "exp": "Under UCC 9-611, a secured party must send reasonable authenticated notice of disposition to the debtor, secondary obligors and certain other secured parties, except for perishable collateral or goods sold on a recognized market. Every aspect of the disposition must be commercially reasonable."
+ },
+ {
+  "q": "Which transaction creates a purchase-money security interest?",
+  "choices": [
+   "A bank lends money for working capital and takes a security interest in the borrower's existing equipment",
+   "A bank refinances an existing unsecured loan and takes a security interest in the borrower's inventory",
+   "A bank lends money that the borrower uses to buy a delivery van and takes a security interest in the van",
+   "A supplier takes a security interest in a customer's accounts receivable to secure past-due invoices"
+  ],
+  "correct": 2,
+  "exp": "A PMSI arises when the secured party (a seller or lender) gives value that enables the debtor to acquire the collateral (UCC 9-103). Security interests in property the debtor already owns, or securing antecedent debts, are not purchase-money."
+ },
+ {
+  "q": "Opie borrowed $1,000 from Pam and orally agreed that Pam could hold Opie's diamond ring as collateral. Pam took the ring. No written agreement was signed. Which statement is correct?",
+  "choices": [
+   "Pam has no security interest because there was no written security agreement",
+   "Pam has an unperfected security interest until she files a financing statement",
+   "Pam must file to perfect because jewelry is consumer goods",
+   "Pam has an attached and perfected security interest by possession"
+  ],
+  "correct": 3,
+  "exp": "When the secured party takes possession under the debtor's security agreement, an oral agreement satisfies attachment (UCC 9-203), and possession perfects the interest in goods (UCC 9-313). An authenticated writing is required only when the secured party does not have possession or control."
+ },
+ {
+  "q": "Mortgage Bank recorded a mortgage on Rob's commercial building. Later, Rob bought an industrial furnace on credit from Seller, which retained a purchase-money security interest. The furnace became a fixture on June 1, and Seller made a proper fixture filing on June 10. Who has priority in the furnace?",
+  "choices": [
+   "Seller, because it made a fixture filing for its PMSI within 20 days after the goods became fixtures",
+   "Mortgage Bank, because its mortgage was recorded first",
+   "Mortgage Bank, because fixtures become part of the real estate",
+   "Seller, but only if Mortgage Bank consented in writing"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 9-334, a PMSI in fixtures has priority over an earlier real estate interest if the interest is perfected by a fixture filing before the goods become fixtures or within 20 days thereafter. The general first-in-time rule yields to this purchase-money exception."
+ },
+ {
+  "q": "A secured party holds a debtor's valuable painting as pledged collateral. Which duty does the secured party owe while in possession?",
+  "choices": [
+   "No duty, because the debtor bears all risk of loss",
+   "A duty to use reasonable care in the custody and preservation of the collateral",
+   "A duty to insure the painting for its full value at its own expense",
+   "A duty to return the painting on demand before the debt is paid"
+  ],
+  "correct": 1,
+  "exp": "UCC 9-207 requires a secured party in possession to use reasonable care in custody and preservation; reasonable expenses, including insurance, are chargeable to the debtor and secured by the collateral. Return is required only when the obligation is satisfied."
+ },
+ {
+  "q": "Sue, an individual, borrowed money from Credit Union to buy a car for personal use, granting a security interest in the car. The state has a certificate-of-title statute covering motor vehicles. How does Credit Union perfect its security interest?",
+  "choices": [
+   "Automatically, because it is a purchase-money security interest in consumer goods",
+   "By filing a financing statement with the secretary of state",
+   "By having its security interest noted on the car's certificate of title",
+   "By taking possession of the car keys"
+  ],
+  "correct": 2,
+  "exp": "Under UCC 9-311, security interests in goods covered by a certificate-of-title statute are perfected by compliance with that statute, usually notation on the title. Automatic PMSI perfection for consumer goods does not extend to titled motor vehicles."
+ },
+ {
+  "q": "Tom paid off in full a loan secured by his household furniture. A financing statement had been filed. What is the secured party's obligation regarding the filing?",
+  "choices": [
+   "None; the financing statement simply lapses after five years",
+   "To file a termination statement only if Tom pays a fee",
+   "To return the original financing statement to Tom",
+   "To file a termination statement within one month after the obligation is satisfied, or within 20 days after an authenticated demand if earlier"
+  ],
+  "correct": 3,
+  "exp": "For financing statements covering consumer goods, UCC 9-513 requires the secured party to file a termination statement within one month after the obligation ends, or within 20 days after an authenticated demand, whichever is earlier. For non-consumer collateral, it must act on demand."
+ },
+ {
+  "q": "Uma, an individual, granted Bank a security interest in her equipment, which Bank perfected by filing in State X, where Uma lived. Uma then moved her principal residence to State Y. Bank did nothing. Which statement is correct?",
+  "choices": [
+   "Bank's perfection continues for four months after the move, and Bank must perfect in State Y within that period to remain continuously perfected",
+   "Bank's perfection lapses immediately upon the move",
+   "Bank's perfection continues for the remainder of the five-year filing period",
+   "Bank must refile in State Y within 20 days"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 9-316, when the debtor's location changes to another jurisdiction, perfection continues for four months (or until the filing would have lapsed, if sooner); if the secured party does not perfect in the new state within that time, the interest is deemed never perfected against purchasers for value."
+ },
+ {
+  "q": "Factor Co. bought Vale Co.'s accounts receivable outright for cash. Which statement is correct?",
+  "choices": [
+   "Article 9 does not apply because the transaction is a sale, not a loan",
+   "Article 9 applies to the sale of accounts, so Factor Co. must generally file a financing statement to perfect its interest",
+   "Factor Co.'s interest is automatically perfected regardless of the size of the transaction",
+   "Account debtors must pay Factor Co. even before they are notified of the sale"
+  ],
+  "correct": 1,
+  "exp": "Article 9 applies to sales of accounts and payment intangibles as well as secured loans (UCC 9-109), and the buyer generally perfects by filing; automatic perfection applies only to insignificant assignments. Account debtors may pay the assignor until notified (UCC 9-406)."
+ }
+]

@@ -1,0 +1,420 @@
+[
+ {
+  "q": "A company hosts a public web server and an internal accounting database. Which network design best protects the database if the web server is compromised?",
+  "choices": [
+   "Place both servers on the same internal subnet behind one firewall",
+   "Place the web server in a screened subnet (DMZ) and the database on an internal segment, with firewall rules allowing only required traffic between them",
+   "Place the database directly on the internet with strong passwords",
+   "Place the web server inside the internal network and the database in the DMZ"
+  ],
+  "correct": 1,
+  "exp": "A DMZ isolates internet-facing systems so a compromise does not give direct access to internal systems; only narrowly defined traffic is allowed inward. Putting both servers on one internal subnet lets an attacker pivot directly to the database."
+ },
+ {
+  "q": "A firewall tracks the state of active connections and allows inbound packets only if they belong to a session initiated from inside. This is a:",
+  "choices": [
+   "Static packet-filtering firewall",
+   "Application-level proxy firewall",
+   "Stateful inspection firewall",
+   "Web application firewall"
+  ],
+  "correct": 2,
+  "exp": "Stateful inspection firewalls maintain a connection table and evaluate packets in the context of established sessions. Static packet filters evaluate each packet independently against rules without session awareness."
+ },
+ {
+  "q": "A company's e-commerce site is repeatedly targeted by SQL injection and cross-site scripting attempts. Which control is specifically designed to filter this type of traffic?",
+  "choices": [
+   "A network-layer packet-filtering router",
+   "A VPN concentrator",
+   "A DHCP server",
+   "A web application firewall"
+  ],
+  "correct": 3,
+  "exp": "A WAF inspects HTTP/HTTPS traffic at the application layer and blocks attacks such as SQL injection and XSS. Packet-filtering routers examine IP addresses and ports and cannot interpret web application payloads."
+ },
+ {
+  "q": "Which statement correctly distinguishes an intrusion detection system (IDS) from an intrusion prevention system (IPS)?",
+  "choices": [
+   "An IDS monitors and alerts on suspicious activity; an IPS sits inline and can block malicious traffic automatically",
+   "An IDS blocks traffic; an IPS only logs it",
+   "Both only scan for viruses on endpoints",
+   "An IPS is a physical security device"
+  ],
+  "correct": 0,
+  "exp": "An IDS is a detective control that alerts, while an IPS is inline and preventive. Reversing their roles is the common trap."
+ },
+ {
+  "q": "To reduce the scope of its PCI DSS assessment, a retailer isolates systems that store, process or transmit cardholder data from the rest of the corporate network. This practice is:",
+  "choices": [
+   "Network address translation",
+   "Network segmentation",
+   "Port mirroring",
+   "Load balancing"
+  ],
+  "correct": 1,
+  "exp": "Segmentation separates the cardholder data environment so that only it, and connected systems, fall in scope, while also limiting attackers' lateral movement. NAT hides internal addresses but does not isolate environments."
+ },
+ {
+  "q": "A ransomware infection on one employee's laptop quickly spreads to servers across the company because the network is flat. Which architectural control would most directly limit such lateral movement?",
+  "choices": [
+   "Increasing internet bandwidth",
+   "Adding more DNS servers",
+   "Micro-segmentation with restrictive rules between workloads and user segments",
+   "Using a single large VLAN for all devices"
+  ],
+  "correct": 2,
+  "exp": "Micro-segmentation restricts east-west traffic so compromised systems cannot freely reach others. A single large VLAN is effectively a flat network and enables spread."
+ },
+ {
+  "q": "An organization configures its firewalls so that all traffic is blocked unless explicitly permitted by a rule. This approach is:",
+  "choices": [
+   "Default allow",
+   "Fail-open",
+   "Implicit trust",
+   "Default deny"
+  ],
+  "correct": 3,
+  "exp": "Default deny (deny by default, allow by exception) minimizes exposure to unanticipated traffic. Default allow permits anything not explicitly blocked, leaving unknown services exposed."
+ },
+ {
+  "q": "An attacker sets up a wireless access point in a coffee shop with the same network name as the shop's legitimate Wi-Fi to intercept customers' traffic. This attack is called:",
+  "choices": [
+   "An evil twin attack",
+   "A SYN flood",
+   "A replay attack on Kerberos",
+   "A SQL injection"
+  ],
+  "correct": 0,
+  "exp": "An evil twin is a rogue access point mimicking a legitimate SSID to intercept traffic. A SYN flood is a denial-of-service attack that does not involve impersonating a network."
+ },
+ {
+  "q": "Which wireless security protocol provides the strongest protection for a corporate Wi-Fi network?",
+  "choices": [
+   "WEP",
+   "WPA3-Enterprise with 802.1X authentication",
+   "WPA with TKIP",
+   "An open network with a hidden SSID"
+  ],
+  "correct": 1,
+  "exp": "WPA3-Enterprise with 802.1X provides individual authentication and strong encryption. Hiding the SSID offers no real protection because it is easily discovered."
+ },
+ {
+  "q": "A company's online store is overwhelmed by traffic from thousands of compromised devices, making it unavailable to customers. Which control is most effective?",
+  "choices": [
+   "Requiring stronger customer passwords",
+   "Encrypting the product database",
+   "Using a DDoS mitigation service or content delivery network that absorbs and filters malicious traffic upstream",
+   "Adding a second web server in the same data center only"
+  ],
+  "correct": 2,
+  "exp": "Distributed denial-of-service attacks are best handled by upstream scrubbing services or CDNs with large capacity. One additional local server is quickly overwhelmed, and passwords and encryption do not address traffic volume."
+ },
+ {
+  "q": "Employees working remotely need secure access to internal applications over the internet. Which technology creates an encrypted tunnel between the remote device and the corporate network?",
+  "choices": [
+   "A DMZ",
+   "A honeypot",
+   "A network switch",
+   "A virtual private network (VPN)"
+  ],
+  "correct": 3,
+  "exp": "A VPN encrypts traffic between the remote endpoint and the corporate network across untrusted networks. A DMZ is a network zone, not a means of securing remote connections."
+ },
+ {
+  "q": "A security team deploys a decoy server with fake data that has no legitimate business use, so any access to it indicates malicious activity. This is a:",
+  "choices": [
+   "Honeypot",
+   "Proxy server",
+   "Bastion host for administration",
+   "Load balancer"
+  ],
+  "correct": 0,
+  "exp": "A honeypot lures attackers and generates high-fidelity alerts because legitimate users have no reason to access it. A bastion host is a hardened system intentionally used for legitimate administrative access."
+ },
+ {
+  "q": "Administrators must connect to sensitive production servers. Which design best controls and monitors this access?",
+  "choices": [
+   "Allowing administrators to connect directly from any workstation",
+   "Requiring administrators to connect through a hardened jump server (bastion host) with MFA and session logging",
+   "Opening remote desktop to the internet for convenience",
+   "Sharing a single administrator account"
+  ],
+  "correct": 1,
+  "exp": "A jump server centralizes privileged access, enforcing MFA and logging, and limits direct connections to production. Exposing remote desktop to the internet is a common ransomware entry point."
+ },
+ {
+  "q": "A vulnerability scan reveals that Remote Desktop Protocol (TCP port 3389) on a finance server is reachable from the internet. What is the most appropriate response?",
+  "choices": [
+   "Leave it open but change the port number",
+   "Ignore it because RDP requires a password",
+   "Block direct internet access to RDP and require access through a VPN or secure gateway with MFA",
+   "Disable logging on the server"
+  ],
+  "correct": 2,
+  "exp": "Internet-exposed RDP is frequently exploited for brute-force and ransomware attacks, so it should be reachable only through secure, authenticated channels. Changing the port is security through obscurity and is easily discovered by scanning."
+ },
+ {
+  "q": "Which protocol should replace Telnet for remote administration of network devices?",
+  "choices": [
+   "FTP",
+   "HTTP",
+   "SNMPv1",
+   "SSH"
+  ],
+  "correct": 3,
+  "exp": "SSH provides encrypted remote administration, while Telnet sends credentials in clear text. FTP and SNMPv1 also transmit credentials unencrypted."
+ },
+ {
+  "q": "A company's mail domain is being spoofed in phishing emails sent to its customers. Which combination of controls best helps receiving mail servers reject spoofed messages?",
+  "choices": [
+   "SPF, DKIM and DMARC records for the company's domain",
+   "A larger mailbox quota",
+   "Stateful firewall rules on the company's internal network",
+   "Antivirus on employee laptops"
+  ],
+  "correct": 0,
+  "exp": "SPF, DKIM and DMARC let receiving servers verify that mail claiming to be from the domain is authorized and authentic, and tell them how to handle failures. Internal firewall rules do not affect mail sent from attackers' infrastructure."
+ },
+ {
+  "q": "A security operations center collects logs from firewalls, servers and applications into one platform that correlates events and generates alerts. This platform is a:",
+  "choices": [
+   "Data loss prevention system",
+   "Security information and event management (SIEM) system",
+   "Virtual private network",
+   "Network address translation device"
+  ],
+  "correct": 1,
+  "exp": "A SIEM aggregates and correlates logs across sources to detect security events. DLP focuses on preventing sensitive data from leaving the organization."
+ },
+ {
+  "q": "Which device operates mainly at OSI layer 3 and forwards traffic between different networks based on IP addresses?",
+  "choices": [
+   "Hub",
+   "Layer 2 switch",
+   "Router",
+   "Repeater"
+  ],
+  "correct": 2,
+  "exp": "Routers operate at the network layer, forwarding packets between networks using IP addresses. Layer 2 switches forward frames within a network using MAC addresses."
+ },
+ {
+  "q": "An organization wants to inspect outbound web traffic for malware and enforce acceptable-use policies for remote and office users alike, without backhauling traffic through headquarters. Which architecture best fits?",
+  "choices": [
+   "A single on-premises proxy at headquarters",
+   "Disabling remote work",
+   "Port forwarding on home routers",
+   "A secure access service edge (SASE) model with cloud-delivered secure web gateway"
+  ],
+  "correct": 3,
+  "exp": "SASE delivers network security functions such as secure web gateways from the cloud close to users wherever they are. Backhauling to a single headquarters proxy adds latency and does not scale for remote users."
+ },
+ {
+  "q": "A company's firewall rules have not been reviewed in five years and include many rules with 'any' as source or destination. What is the most appropriate control?",
+  "choices": [
+   "Periodic firewall rule review to remove unused, overly permissive or undocumented rules, with business justification for each rule",
+   "Adding more rules to cover new applications",
+   "Replacing the firewall with a router",
+   "Disabling the firewall during business hours"
+  ],
+  "correct": 0,
+  "exp": "Regular rule reviews ensure rules are needed, documented and as restrictive as possible. Adding rules without cleanup compounds the risk of overly permissive access."
+ },
+ {
+  "q": "An attacker on the same local network sends forged ARP messages so that traffic intended for the default gateway passes through the attacker's machine. This is an example of:",
+  "choices": [
+   "A denial-of-service flood",
+   "A man-in-the-middle attack via ARP spoofing",
+   "A brute-force password attack",
+   "Phishing"
+  ],
+  "correct": 1,
+  "exp": "ARP spoofing associates the attacker's MAC address with the gateway's IP, letting the attacker intercept traffic. It is a local-network interception technique, not a volume-based DoS."
+ },
+ {
+  "q": "Which control best detects unusual data flows, such as a server suddenly sending large volumes of data to an unfamiliar external IP address?",
+  "choices": [
+   "Password complexity rules",
+   "Annual security training",
+   "Network traffic monitoring and flow analysis with alerting on anomalies",
+   "Disk encryption"
+  ],
+  "correct": 2,
+  "exp": "Flow monitoring (e.g., NetFlow) and anomaly detection identify unusual traffic patterns that may indicate exfiltration. Password rules and encryption do not reveal what data are being sent where."
+ },
+ {
+  "q": "Why is egress (outbound) filtering at the network perimeter an important control?",
+  "choices": [
+   "It speeds up inbound web browsing",
+   "It prevents all phishing emails from arriving",
+   "It is required only for wireless networks",
+   "It limits malware's ability to communicate with command-and-control servers and exfiltrate data"
+  ],
+  "correct": 3,
+  "exp": "Restricting outbound traffic to approved destinations and ports can disrupt command-and-control and data exfiltration. Egress filtering does not stop inbound phishing emails."
+ },
+ {
+  "q": "A company's manufacturing plant has operational technology (OT) systems controlling production equipment. Which architecture is most appropriate?",
+  "choices": [
+   "Segmenting OT networks from the corporate IT network, with tightly controlled and monitored conduits between them",
+   "Connecting OT devices directly to the internet for remote vendor support",
+   "Placing OT and IT on the same flat network for easier management",
+   "Removing all firewalls from the OT network to reduce latency"
+  ],
+  "correct": 0,
+  "exp": "Segmentation between IT and OT, with controlled conduits, limits the spread of attacks to systems that control physical processes. Direct internet exposure of OT devices is a major risk."
+ },
+ {
+  "q": "Which DNS security measure helps ensure that DNS responses have not been forged or tampered with?",
+  "choices": [
+   "DHCP reservations",
+   "DNSSEC digital signatures",
+   "Increasing DNS cache time",
+   "Using a single DNS server"
+  ],
+  "correct": 1,
+  "exp": "DNSSEC uses digital signatures so resolvers can verify DNS data authenticity and integrity, mitigating cache poisoning. Longer cache times could prolong the effects of poisoned records rather than prevent them."
+ },
+ {
+  "q": "A company moves workloads to a public cloud. Which control most directly functions as a virtual firewall for individual cloud instances?",
+  "choices": [
+   "The cloud provider's physical data center guards",
+   "The company's on-premises perimeter firewall",
+   "Cloud security groups and network access control lists restricting traffic to and from instances",
+   "Antivirus on employee laptops"
+  ],
+  "correct": 2,
+  "exp": "Security groups and network ACLs control traffic to cloud resources at the instance or subnet level and are the customer's responsibility. On-premises firewalls do not inspect traffic that never passes through them."
+ },
+ {
+  "q": "A company uses network address translation (NAT) at its perimeter. Which statement best describes its security effect?",
+  "choices": [
+   "It encrypts all outbound traffic",
+   "It replaces the need for a firewall",
+   "It prevents phishing attacks",
+   "It hides internal IP addresses from external networks, but it is not a substitute for firewall filtering"
+  ],
+  "correct": 3,
+  "exp": "NAT conceals internal addressing, which offers some obscurity, but it does not enforce security policy like a firewall. It provides no encryption."
+ },
+ {
+  "q": "An organization requires that every device connecting to its network be authenticated and checked for compliance (e.g., patches, endpoint protection) before being placed on the appropriate network segment. This is:",
+  "choices": [
+   "Network access control (NAC)",
+   "Network address translation",
+   "A demilitarized zone",
+   "Port address translation"
+  ],
+  "correct": 0,
+  "exp": "NAC enforces authentication and posture checks before granting network access and can quarantine noncompliant devices. NAT and PAT translate addresses and do not evaluate device compliance."
+ },
+ {
+  "q": "Which approach best reflects defense in depth for a company's network?",
+  "choices": [
+   "Relying solely on a strong perimeter firewall",
+   "Layering perimeter firewalls, segmentation, endpoint protection, monitoring and access controls so that the failure of one control does not expose systems",
+   "Using one vendor's single security product for everything",
+   "Encrypting data only at rest"
+  ],
+  "correct": 1,
+  "exp": "Defense in depth uses multiple, overlapping layers of controls. Relying only on the perimeter fails once an attacker gets inside, for example through phishing."
+ },
+ {
+  "q": "A company's internal network allows employees to plug any device into wall jacks in conference rooms and gain full network access. Which control would most directly address this?",
+  "choices": [
+   "Encrypting the file servers",
+   "Increasing bandwidth to conference rooms",
+   "Port security or 802.1X authentication on switch ports, with unused ports disabled",
+   "Posting signs prohibiting personal devices"
+  ],
+  "correct": 2,
+  "exp": "802.1X and port security require authentication before network access and prevent unauthorized devices from connecting. Signs rely on voluntary compliance and do not technically prevent connection."
+ },
+ {
+  "q": "Which statement about TLS is most accurate?",
+  "choices": [
+   "TLS protects data at rest on a server's disk",
+   "TLS 1.0 is the recommended current version",
+   "TLS replaces the need for authentication of users",
+   "TLS protects data in transit by providing encryption, integrity and server authentication, and current guidance recommends TLS 1.2 or 1.3"
+  ],
+  "correct": 3,
+  "exp": "TLS secures communication channels; older versions such as TLS 1.0 and 1.1 are deprecated in favor of 1.2 and 1.3. TLS does not protect stored data or replace user authentication."
+ },
+ {
+  "q": "A penetration tester performs a port scan of a company's external IP range. What is the primary purpose of this step?",
+  "choices": [
+   "To identify open ports and services that could be attack vectors",
+   "To encrypt network traffic",
+   "To patch vulnerable systems automatically",
+   "To train employees"
+  ],
+  "correct": 0,
+  "exp": "Port scanning maps exposed services so testers (or attackers) can identify potential entry points. It does not remediate vulnerabilities by itself."
+ },
+ {
+  "q": "A company uses a load balancer to distribute customer traffic across several web servers. Which security objective does this most directly support?",
+  "choices": [
+   "Confidentiality of stored data",
+   "Availability and resilience of the service",
+   "Non-repudiation of transactions",
+   "Authentication of employees"
+  ],
+  "correct": 1,
+  "exp": "Load balancing spreads traffic and allows failover, supporting availability. It does not encrypt stored data or authenticate users."
+ },
+ {
+  "q": "A company's guest Wi-Fi network shares the same network segment as its corporate servers. What is the primary risk?",
+  "choices": [
+   "Guests will experience slower speeds",
+   "The guest network will require more IP addresses",
+   "Guests or compromised guest devices could reach internal systems",
+   "Corporate users will be unable to use Wi-Fi"
+  ],
+  "correct": 2,
+  "exp": "Without segmentation, untrusted guest devices can access internal resources. Guest networks should be isolated, typically allowing only internet access."
+ },
+ {
+  "q": "An application-level proxy firewall differs from a packet-filtering firewall in that it:",
+  "choices": [
+   "Only examines source and destination IP addresses",
+   "Operates exclusively at the physical layer",
+   "Cannot log traffic",
+   "Terminates connections and inspects application-layer content before forwarding requests on the client's behalf"
+  ],
+  "correct": 3,
+  "exp": "Proxy firewalls act as intermediaries, inspecting application content for specific protocols. Packet filters examine header information such as IP addresses and ports without understanding application content."
+ },
+ {
+  "q": "A security analyst redirects DNS queries for known malicious domains to an internal server that returns a non-routable address, preventing infected hosts from reaching attacker infrastructure. This technique is a:",
+  "choices": [
+   "DNS sinkhole",
+   "DNS zone transfer",
+   "Reverse proxy",
+   "VLAN trunk"
+  ],
+  "correct": 0,
+  "exp": "A DNS sinkhole returns false answers for malicious domains to block communication and identify infected hosts. A zone transfer replicates DNS records between servers and is not a blocking technique."
+ },
+ {
+  "q": "Under NIST SP 800-53, which control family includes boundary protection, transmission confidentiality and integrity, and network disconnect controls?",
+  "choices": [
+   "Access Control (AC)",
+   "System and Communications Protection (SC)",
+   "Physical and Environmental Protection (PE)",
+   "Awareness and Training (AT)"
+  ],
+  "correct": 1,
+  "exp": "The SC family includes SC-7 Boundary Protection, SC-8 Transmission Confidentiality and Integrity, and SC-10 Network Disconnect. AC covers account management and access enforcement rather than network boundary protection."
+ },
+ {
+  "q": "An IPS placed inline at the network perimeter is configured to fail open, so traffic passes uninspected if the device fails. Which trade-off does this configuration reflect?",
+  "choices": [
+   "It prioritizes confidentiality over availability",
+   "It eliminates the need for monitoring",
+   "It converts the IPS into a firewall",
+   "It prioritizes availability of network traffic over security inspection during a device failure"
+  ],
+  "correct": 3,
+  "exp": "Fail-open keeps traffic flowing when the device fails, favoring availability but allowing uninspected traffic through; fail-closed would block traffic and favor security. It does not change the device's function or remove the need for monitoring."
+ }
+]

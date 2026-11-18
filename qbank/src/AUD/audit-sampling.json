@@ -1,0 +1,332 @@
+[
+{
+"q": "In planning a statistical attribute sample for a test of controls, which change, with all other factors held constant, would increase the required sample size?",
+"choices": [
+"An increase in the acceptable risk of overreliance from 5% to 10%",
+"A decrease in the expected population deviation rate from 2% to 1%",
+"An increase in the population size from 20,000 to 60,000 items",
+"A decrease in the tolerable deviation rate from 7% to 4%"
+],
+"correct": 3,
+"exp": "Sample size is inversely related to the tolerable deviation rate, so a lower tolerable rate requires a larger sample. A higher acceptable risk of overreliance and a lower expected deviation rate both reduce sample size, and population size has little effect once the population is large."
+},
+{
+"q": "Based on prior-year results, an auditor raises the expected population deviation rate for a control from 1% to 2.5%, holding the tolerable rate at 6% and the risk of overreliance at 5%. The required sample size will",
+"choices": [
+"increase, because a larger sample is needed to show that the true rate does not exceed the tolerable rate",
+"decrease, because more deviations are expected",
+"stay the same, because the tolerable rate did not change",
+"decrease to zero, because the control should not be relied on"
+],
+"correct": 0,
+"exp": "As the expected deviation rate approaches the tolerable rate, a larger sample is needed to conclude with the desired confidence that the true rate does not exceed the tolerable rate. Expecting more deviations does not mean the control can no longer be relied on."
+},
+{
+"q": "In substantive tests of details, which aspect of sampling risk relates primarily to audit efficiency rather than audit effectiveness?",
+"choices": [
+"The risk of incorrect acceptance",
+"The risk of incorrect rejection",
+"The risk of overreliance on controls",
+"Nonsampling risk"
+],
+"correct": 1,
+"exp": "The risk of incorrect rejection leads the auditor to conclude that a fairly stated balance is misstated, which usually results in more work rather than a wrong opinion, so it is an efficiency risk. The risk of incorrect acceptance and the risk of overreliance affect effectiveness because they could lead to an inappropriate opinion."
+},
+{
+"q": "An auditor tests a control using a statistical sample of 100 items with a 5% risk of overreliance and a tolerable deviation rate of 6%. Three deviations are found, and the statistical table gives an upper deviation limit of 7.6%. What is the allowance for sampling risk, and what should the auditor conclude?",
+"choices": [
+"3.0%; the control can be relied on as planned because the sample deviation rate is below the tolerable rate",
+"1.6%; the control can be relied on with a slight increase in substantive testing",
+"4.6%; the control cannot be relied on as planned because the upper deviation limit exceeds the tolerable rate",
+"7.6%; the control cannot be relied on, because any deviation means the control is ineffective"
+],
+"correct": 2,
+"exp": "The sample deviation rate is 3/100 = 3%, and the allowance for sampling risk is 7.6% - 3.0% = 4.6%. The upper limit, not the sample rate, is compared with the tolerable rate. Because 7.6% exceeds 6%, the auditor cannot rely on the control as planned and should adjust the substantive procedures."
+},
+{
+"q": "An auditor examines a sample of 80 purchase orders for proper approval and finds 2 deviations. The tolerable deviation rate is 8%, and the statistical table gives an upper deviation limit of 7.6% at the planned risk of overreliance. Which conclusion is appropriate?",
+"choices": [
+"The sample deviation rate of 2.5% exceeds the expected rate, so the control cannot be relied on",
+"The auditor must expand the sample, because any deviations prevent a conclusion",
+"The sample results support relying on the control as planned, because the 7.6% upper deviation limit does not exceed the 8% tolerable rate",
+"The control cannot be relied on, because the upper deviation limit exceeds the sample deviation rate"
+],
+"correct": 2,
+"exp": "The decision rule compares the upper deviation limit (sample rate of 2/80 = 2.5% plus the allowance for sampling risk) with the tolerable rate. Because 7.6% is below 8%, the results support reliance. The upper limit always exceeds the sample rate, so that comparison means nothing."
+},
+{
+"q": "An auditor suspects that fictitious vendors may have been added to the vendor master file. The auditor wants to design a sample with a high probability of finding at least one fictitious vendor if the rate is at or above a very low critical level. Which sampling plan is most appropriate?",
+"choices": [
+"Discovery sampling",
+"Ratio estimation",
+"Stop-or-go sampling for a routine control",
+"Mean-per-unit estimation"
+],
+"correct": 0,
+"exp": "Discovery sampling is a form of attribute sampling used when the expected rate is near zero and even one occurrence, such as fraud, would be critical. Ratio and mean-per-unit estimation are variables methods that estimate dollar amounts."
+},
+{
+"q": "Which statement best describes sequential (stop-or-go) sampling in tests of controls?",
+"choices": [
+"Every nth item is selected after a random start",
+"The population is divided into strata, and each stratum is sampled separately",
+"Items are selected in proportion to their dollar amounts",
+"The sample is selected in stages, and whether more items are examined depends on the results of the earlier stages"
+],
+"correct": 3,
+"exp": "In sequential sampling, the auditor examines an initial sample and, depending on the deviations found, either stops or expands the sample. This can reduce sample sizes when few deviations are found. Selecting every nth item is systematic selection, and selecting in proportion to dollars is MUS."
+},
+{
+"q": "Using monetary unit sampling with no expected misstatement, an auditor tests accounts receivable with a recorded balance of $500,000. Tolerable misstatement is $25,000, and the reliability factor for zero misstatements at the desired risk of incorrect acceptance is 3.0. What is the sample size?",
+"choices": [
+"20",
+"60",
+"150",
+"8,333"
+],
+"correct": 1,
+"exp": "The sampling interval is $25,000 / 3.0 = $8,333, and the sample size is $500,000 / $8,333 = 60, which is the same as ($500,000 x 3.0) / $25,000. The $8,333 figure is the sampling interval, not the sample size."
+},
+{
+"q": "An auditor uses monetary unit sampling for inventory with a recorded amount of $600,000. Tolerable misstatement is $30,000, expected misstatement is $5,000, the reliability factor is 3.0, and the expansion factor is 1.6. What is the required sample size, rounded up?",
+"choices": [
+"60",
+"82",
+"72",
+"120"
+],
+"correct": 1,
+"exp": "Sample size = (BV x RF) / (TM - EM x expansion factor) = ($600,000 x 3.0) / ($30,000 - $8,000) = $1,800,000 / $22,000 = 81.8, which rounds up to 82. Ignoring the expected misstatement gives 60, and leaving out the expansion factor gives 72."
+},
+{
+"q": "In a monetary unit sample with a sampling interval of $10,000, the auditor finds two misstatements. One account recorded at $2,000 has an audited value of $1,500. Another account recorded at $15,000 has an audited value of $12,000. What is the total projected misstatement?",
+"choices": [
+"$3,500",
+"$8,000",
+"$5,500 overstatement",
+"$5,500 understatement"
+],
+"correct": 2,
+"exp": "For the $2,000 item, which is smaller than the interval, the tainting is $500 / $2,000 = 25%, and the projection is 25% x $10,000 = $2,500. The $15,000 item is larger than the interval, so its actual $3,000 misstatement is used without projection. The total is $5,500 overstatement. Adding only the actual differences gives $3,500."
+},
+{
+"q": "In a monetary unit sample, basic precision is $30,000, total projected misstatement is $5,500, and the incremental allowance for sampling risk is $1,875. Tolerable misstatement is $40,000. What is the upper limit on misstatement, and what should the auditor conclude?",
+"choices": [
+"$37,375; the results support the conclusion that the balance is not misstated by more than tolerable misstatement",
+"$35,500; the balance should be adjusted by the full upper limit",
+"$7,375; the balance is accepted because projected misstatement is less than tolerable misstatement",
+"$37,375; the balance must be rejected because the upper limit exceeds basic precision"
+],
+"correct": 0,
+"exp": "The upper misstatement limit is basic precision + projected misstatement + incremental allowance = $30,000 + $5,500 + $1,875 = $37,375. Because it is below the $40,000 tolerable misstatement, the results support acceptance. The upper limit always exceeds basic precision when misstatements are found."
+},
+{
+"q": "Monetary unit sampling would be least appropriate when the auditor's primary objective is to",
+"choices": [
+"test accounts receivable for overstatement",
+"test a population in which few misstatements are expected",
+"test accounts payable for understatement, including vendor accounts with zero recorded balances",
+"test a population in which each item has a recorded dollar amount"
+],
+"correct": 2,
+"exp": "MUS selects items in proportion to their recorded amounts, so understated items have less chance of selection and zero-balance items cannot be selected. It is well suited to testing overstatement in populations with few expected misstatements."
+},
+{
+"q": "In a monetary unit sampling application with a sampling interval of $12,000, which customer account is certain to be selected?",
+"choices": [
+"Any account with a balance between $6,000 and $12,000",
+"Any account that was misstated in the prior year",
+"The first account listed in the population",
+"Any account with a recorded balance of $12,000 or more"
+],
+"correct": 3,
+"exp": "With systematic selection of dollar units, any logical unit equal to or larger than the sampling interval contains at least one selected dollar and is certain to be selected. This automatic stratification is an advantage of MUS. Smaller balances have only a probability of selection proportional to their size."
+},
+{
+"q": "Using mean-per-unit estimation, an auditor selects a sample from a population of 5,000 inventory items. The average audited value of the sample items is $410. What is the estimated audited value of the population?",
+"choices": [
+"$410,000",
+"$2,050,000",
+"$2,000,000",
+"$205,000"
+],
+"correct": 1,
+"exp": "Mean-per-unit estimation multiplies the average audited value per sample item by the number of items in the population: $410 x 5,000 = $2,050,000. The estimate is then compared with the recorded amount and evaluated using the allowance for sampling risk."
+},
+{
+"q": "Using ratio estimation, an auditor selects a sample of accounts receivable with a total recorded amount of $50,000 and a total audited amount of $49,000. The population's recorded amount is $2,000,000. What is the projected misstatement?",
+"choices": [
+"$1,000 overstatement",
+"$40,000 understatement",
+"$20,000 overstatement",
+"$40,000 overstatement"
+],
+"correct": 3,
+"exp": "The ratio of audited to recorded amount is $49,000 / $50,000 = 0.98, so the estimated audited value is 0.98 x $2,000,000 = $1,960,000. That implies a $40,000 overstatement. The $1,000 is only the sample difference, not the projection."
+},
+{
+"q": "Using difference estimation, an auditor selects 200 items from a population of 4,000 vouchers with a recorded amount of $2,000,000. The total net difference in the sample is $1,000, with recorded amounts exceeding audited amounts. What is the projected misstatement for the population?",
+"choices": [
+"$20,000 overstatement",
+"$1,000 overstatement",
+"$10,000 overstatement",
+"$20,000 understatement"
+],
+"correct": 0,
+"exp": "The average difference per item is $1,000 / 200 = $5, and $5 x 4,000 items = $20,000. Because recorded amounts exceed audited amounts, the population is overstated. Reporting only the $1,000 sample difference ignores the projection."
+},
+{
+"q": "Ratio and difference estimation are generally most appropriate when",
+"choices": [
+"many differences between recorded and audited amounts are expected and the differences are not highly skewed",
+"few or no misstatements are expected and the main concern is overstatement",
+"the population contains no recorded book values for individual items",
+"the auditor wants a sample size that is unaffected by population variability"
+],
+"correct": 0,
+"exp": "Ratio and difference estimation need enough differences in the sample to produce reliable estimates, so they work best when many differences are expected. MUS is more efficient when few misstatements are expected. Both methods require book values, and variability affects classical sample sizes."
+},
+{
+"q": "When using classical variables sampling, an auditor stratifies an accounts receivable population into high-dollar and low-dollar groups. The primary benefit is that stratification",
+"choices": [
+"eliminates the need to project misstatements",
+"allows the auditor to ignore the low-dollar stratum",
+"reduces the variability within each stratum, allowing a smaller total sample size for the same precision and confidence",
+"converts the sample into a monetary unit sample"
+],
+"correct": 2,
+"exp": "Classical variables sample sizes depend heavily on the standard deviation of the population. Stratifying into more uniform groups reduces variability and therefore the required sample size. Misstatements must still be projected for each stratum, and no stratum may be ignored."
+},
+{
+"q": "Which sample selection method is acceptable for nonstatistical sampling but is not appropriate when statistical sampling is used?",
+"choices": [
+"Random selection",
+"Haphazard selection",
+"Systematic selection with a random start",
+"Selection with probability proportional to size"
+],
+"correct": 1,
+"exp": "AU-C 530 permits haphazard selection, which is selection without a conscious bias or predictable pattern, for nonstatistical samples. Statistical sampling requires selection methods with known, calculable probabilities, such as random, systematic with a random start, or PPS selection."
+},
+{
+"q": "An inventory population of $2,000,000 includes 10 key items totaling $500,000 that the auditor tests 100%, finding misstatements of $5,000. The remaining $1,500,000 is sampled nonstatistically. Sample items with a recorded amount of $100,000 contain misstatements of $2,000. Using ratio projection, what is the total projected misstatement for the account?",
+"choices": [
+"$7,000",
+"$40,000",
+"$35,000",
+"$30,000"
+],
+"correct": 2,
+"exp": "The sampled misstatement rate is $2,000 / $100,000 = 2%, and 2% x $1,500,000 = $30,000. The $5,000 found in the items tested 100% is added without projection, for a total of $35,000. Projecting over the full $2,000,000 gives $40,000, which double-counts the key items."
+},
+{
+"q": "During a substantive test, an auditor finds a large misstatement caused by a one-time system conversion error and believes it is not representative of the population. Under AU-C 530, the auditor may treat it as an anomaly only if",
+"choices": [
+"the misstatement is smaller than tolerable misstatement",
+"management represents in writing that the error was isolated",
+"the misstatement occurred in the first month of the year",
+"the auditor obtains a high degree of certainty, through additional procedures, that the misstatement is not representative of the population"
+],
+"correct": 3,
+"exp": "AU-C 530 says anomalies arise only in extremely rare circumstances and requires additional procedures giving a high degree of certainty that the misstatement is not representative. Management's representation alone is not sufficient, and the size of the misstatement is not the test."
+},
+{
+"q": "Which of the following procedures constitutes audit sampling under AU-C 530?",
+"choices": [
+"Examining all expense items over $50,000 and performing analytical procedures on the remainder",
+"Selecting 60 items at random from a population of disbursements to project conclusions to the population",
+"Performing a walkthrough of one sales transaction",
+"Recalculating every invoice in the population with data analytics software"
+],
+"correct": 1,
+"exp": "Audit sampling applies procedures to less than 100% of a population so that every sampling unit has a chance of selection, with the aim of drawing conclusions about the whole population. Testing all key items, a walkthrough, and 100% testing with analytics are not sampling."
+},
+{
+"q": "An auditor uses systematic selection to choose 120 vouchers from a population numbered 1 through 6,000. The random start is voucher 23. What is the number of the second voucher selected?",
+"choices": [
+"73",
+"50",
+"46",
+"123"
+],
+"correct": 0,
+"exp": "The sampling interval is 6,000 / 120 = 50, so the selections are 23, 73, 123, and so on. Using the interval itself as the second item, or adding 100 to the start, misapplies the interval."
+},
+{
+"q": "How should tolerable misstatement for a substantive sampling application ordinarily relate to performance materiality?",
+"choices": [
+"Tolerable misstatement should exceed overall materiality",
+"Tolerable misstatement should be set equal to the clearly trivial threshold",
+"Tolerable misstatement is ordinarily set at an amount no greater than performance materiality",
+"Tolerable misstatement is unrelated to materiality"
+],
+"correct": 2,
+"exp": "AU-C 530 links tolerable misstatement to performance materiality. Tolerable misstatement for a sampling application is ordinarily no greater than performance materiality, to control aggregation risk. Setting it above overall materiality would defeat that purpose."
+},
+{
+"q": "In a substantive test of details, the projected misstatement plus the allowance for sampling risk exceeds tolerable misstatement. Which response is most appropriate?",
+"choices": [
+"Accept the balance, because the projected misstatement alone is below tolerable misstatement",
+"Ask management to investigate the misstatements and the potential for further misstatement, and consider adjusting the balance, expanding the sample, or performing alternative procedures",
+"Treat all identified misstatements as anomalies",
+"Reduce the allowance for sampling risk by increasing the acceptable risk of incorrect acceptance after the fact"
+],
+"correct": 1,
+"exp": "When the results do not support acceptance, the auditor may request management to investigate and record adjustments, expand testing, or perform other procedures before concluding. Changing risk levels after the results are known to force acceptance would be inappropriate."
+},
+{
+"q": "Before selecting a sample of customer accounts from the accounts receivable subsidiary ledger, the auditor should",
+"choices": [
+"confirm all accounts with balances over tolerable misstatement",
+"obtain management's representation that the ledger is complete",
+"remove any accounts with credit balances so that the sample is more efficient",
+"foot the subsidiary ledger and reconcile its total to the general ledger control account"
+],
+"correct": 3,
+"exp": "AU-C 530 requires the auditor to determine that the population from which the sample is drawn is appropriate and complete. Footing the ledger and reconciling it to the general ledger does that. Removing credit balances would leave an incomplete population."
+},
+{
+"q": "According to AICPA audit sampling guidance, how should the size of a well-designed nonstatistical sample compare with the size of a statistical sample?",
+"choices": [
+"It may be much smaller, because nonstatistical sampling does not involve sampling risk",
+"It is determined by the population size alone",
+"It should ordinarily be comparable to the sample size from an efficient statistical sampling application with the same parameters",
+"It should always be exactly 25 items"
+],
+"correct": 2,
+"exp": "Nonstatistical sampling still involves sampling risk, and the same factors (risk, tolerable misstatement, expected misstatement, variability) determine sample size. A well-designed nonstatistical sample is therefore ordinarily comparable in size to an efficient statistical sample."
+},
+{
+"q": "An auditor plans to rely heavily on a control to significantly reduce substantive testing of sales. How should this affect the tolerable deviation rate for the test of that control?",
+"choices": [
+"The tolerable rate should be lower",
+"The tolerable rate should be higher",
+"The tolerable rate should equal the expected deviation rate",
+"The tolerable rate is unaffected by the planned degree of reliance"
+],
+"correct": 0,
+"exp": "Greater planned reliance means the auditor can accept fewer deviations, so the tolerable rate is set lower, which increases sample size. Setting the tolerable rate equal to the expected rate would make the required sample enormous."
+},
+{
+"q": "For a substantive test of details, an auditor decreases the acceptable risk of incorrect acceptance from 10% to 5% and holds all other factors constant. The effect on the required sample size is that it will",
+"choices": [
+"decrease, because the auditor is accepting less risk of incorrect rejection",
+"remain the same, because tolerable misstatement did not change",
+"decrease, because a lower risk means fewer errors are expected",
+"increase, because greater assurance is required"
+],
+"correct": 3,
+"exp": "A lower acceptable risk of incorrect acceptance means the auditor wants more confidence, which requires a larger sample. In MUS, for example, the reliability factor for zero misstatements rises from about 2.3 to 3.0. The risk of incorrect rejection is a separate risk."
+},
+{
+"q": "An auditor uses data analytics to recalculate the extension and footing of every sales invoice recorded during the year. Which statement about the risks involved is correct?",
+"choices": [
+"Sampling risk does not exist, but nonsampling risk remains, for example from using an incomplete data set",
+"Both sampling risk and nonsampling risk are eliminated",
+"Sampling risk is increased because more items are tested",
+"Nonsampling risk is eliminated, but sampling risk remains"
+],
+"correct": 0,
+"exp": "Testing 100% of a population eliminates sampling risk, but nonsampling risk remains, for example if the data set is incomplete or the procedure is misapplied. That is why the auditor still tests the completeness and accuracy of the data used."
+}
+]

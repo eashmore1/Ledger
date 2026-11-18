@@ -1,0 +1,332 @@
+[
+{
+"q": "Apex Corp. acquired 100% of Bolt Co. for $900,000 cash. On the acquisition date, the book value of Bolt's net assets was $600,000, and the fair value of its identifiable net assets was $750,000. What amount of goodwill should Apex recognize?",
+"choices": [
+"$300,000",
+"$150,000",
+"$0",
+"$900,000"
+],
+"correct": 1,
+"exp": "Goodwill = consideration transferred less the fair value of identifiable net assets acquired: $900,000 - $750,000 = $150,000 (ASC 805-30). $300,000 wrongly uses Bolt's book value."
+},
+{
+"q": "Cove Inc. acquired 80% of Dart Co. for $800,000. On that date, the fair value of the 20% noncontrolling interest was $190,000, and the fair value of Dart's identifiable net assets was $850,000. What goodwill should be reported in the consolidated balance sheet?",
+"choices": [
+"$120,000",
+"$150,000",
+"$140,000",
+"$0"
+],
+"correct": 2,
+"exp": "Under ASC 805, goodwill = consideration + fair value of NCI - fair value of identifiable net assets = $800,000 + $190,000 - $850,000 = $140,000. $120,000 is the parent-only (partial goodwill) amount, which current GAAP does not use."
+},
+{
+"q": "Echo Co. acquired 100% of Fern Co. for $500,000. After reassessing that all assets and liabilities were correctly identified and measured, the fair value of Fern's identifiable net assets was $560,000. How should Echo account for the difference?",
+"choices": [
+"Reduce the recorded values of Fern's noncurrent assets by $60,000",
+"Recognize negative goodwill of $60,000 as a liability",
+"Record a $60,000 credit to additional paid-in capital",
+"Recognize a $60,000 gain in earnings on the acquisition date"
+],
+"correct": 3,
+"exp": "A bargain purchase, after reassessment, is recognized as a gain in earnings attributable to the acquirer (ASC 805-30). Reducing noncurrent assets was the pre-2009 approach."
+},
+{
+"q": "In connection with acquiring Gale Co. by issuing common stock, Hart Corp. paid $20,000 of legal and due diligence fees and $15,000 of stock registration and issuance costs. How should Hart account for these costs?",
+"choices": [
+"Expense $20,000; reduce additional paid-in capital by $15,000",
+"Add $35,000 to goodwill",
+"Expense $35,000",
+"Add $20,000 to goodwill; reduce additional paid-in capital by $15,000"
+],
+"correct": 0,
+"exp": "Acquisition-related costs such as legal and advisory fees are expensed as incurred (ASC 805-10), while costs to issue equity securities reduce the proceeds recorded in APIC. Capitalizing costs into goodwill was eliminated by ASC 805."
+},
+{
+"q": "Iris Co.'s acquisition of Jade Co. included contingent consideration, classified as a liability, with an acquisition-date fair value of $100,000. At year-end, because Jade exceeded its earnings targets after the acquisition, the fair value of the contingent consideration was $130,000. How should Iris account for the $30,000 increase?",
+"choices": [
+"Increase goodwill by $30,000",
+"Recognize a $30,000 loss in earnings",
+"Recognize a $30,000 loss in other comprehensive income",
+"Make no entry until the consideration is paid"
+],
+"correct": 1,
+"exp": "Changes in the fair value of liability-classified contingent consideration from post-acquisition events are recognized in earnings (ASC 805-30); goodwill is not adjusted. Only measurement-period adjustments for facts existing at the acquisition date affect goodwill."
+},
+{
+"q": "Kent Co. recorded a business combination using provisional amounts. Eight months later, it obtained an appraisal that revealed facts existing at the acquisition date which reduced the fair value of acquired equipment by $40,000. How should Kent account for the adjustment?",
+"choices": [
+"Recognize a $40,000 impairment loss in the current period",
+"Restate the prior-period financial statements as an error correction",
+"Adjust the equipment and goodwill in the period the adjustment is determined, including any cumulative effect on earnings",
+"Make no adjustment, because the acquisition has been recorded"
+],
+"correct": 2,
+"exp": "Within the one-year measurement period, adjustments to provisional amounts for facts that existed at the acquisition date adjust goodwill and are recognized in the period determined, with any effect on earnings recorded then (ASU 2015-16). Retrospective restatement is no longer required."
+},
+{
+"q": "Lane Corp. sells merchandise to its 100%-owned subsidiary at a 25% gross margin on sales. During the year, intercompany sales were $200,000, and $40,000 of that merchandise (at transfer price) remained in the subsidiary's ending inventory. What unrealized profit should be eliminated from consolidated ending inventory?",
+"choices": [
+"$40,000",
+"$50,000",
+"$8,000",
+"$10,000"
+],
+"correct": 3,
+"exp": "Unrealized profit = ending intercompany inventory x gross margin = $40,000 x 25% = $10,000. $8,000 incorrectly treats 25% as a markup on cost ($40,000 x 25/125)."
+},
+{
+"q": "On January 1, Year 1, Mill Corp. sold equipment to its 100%-owned subsidiary for $60,000. The equipment had a carrying amount of $40,000 and a remaining useful life of 5 years, and the subsidiary uses straight-line depreciation. Compared with the sum of the separate entities' net incomes, what is the net effect of the required eliminations on Year 1 consolidated net income?",
+"choices": [
+"Decrease of $16,000",
+"Decrease of $20,000",
+"Increase of $4,000",
+"No effect"
+],
+"correct": 0,
+"exp": "The $20,000 intercompany gain is eliminated, and excess depreciation of $4,000 ($20,000 / 5) is also eliminated, giving a net decrease of $16,000. $20,000 ignores the depreciation that partly realizes the gain."
+},
+{
+"q": "Nord Co. owns 80% of Oslo Co. and measured the noncontrolling interest at fair value at acquisition. For the year, Oslo reported net income of $200,000, and amortization of the acquisition-date fair value adjustments (excess depreciation) was $20,000. What net income should be attributed to the noncontrolling interest?",
+"choices": [
+"$40,000",
+"$36,000",
+"$44,000",
+"$4,000"
+],
+"correct": 1,
+"exp": "NCI shares in the subsidiary's income as adjusted for fair value amortization: 20% x ($200,000 - $20,000) = $36,000. $40,000 ignores the amortization of the fair value adjustments."
+},
+{
+"q": "How should the noncontrolling interest in a subsidiary be presented in the consolidated balance sheet under current GAAP?",
+"choices": [
+"As a liability",
+"In the mezzanine section between liabilities and equity",
+"Within equity, separately from the parent's equity",
+"Netted against goodwill"
+],
+"correct": 2,
+"exp": "ASC 810-10 requires NCI to be reported in consolidated equity, separately from equity attributable to the parent. Liability or mezzanine presentation was common practice before current GAAP."
+},
+{
+"q": "Pike Corp. sold 10% of its 90%-owned subsidiary to outside investors for $150,000, keeping 80% and control. The carrying amount of the interest sold, as measured in the consolidated statements, was $110,000. How should Pike account for the sale in its consolidated statements?",
+"choices": [
+"Recognize a $40,000 gain in net income",
+"Recognize a $40,000 gain in other comprehensive income",
+"Reduce goodwill by $40,000",
+"Increase additional paid-in capital by $40,000 with no gain recognized"
+],
+"correct": 3,
+"exp": "Changes in a parent's ownership interest that do not result in loss of control are equity transactions (ASC 810-10): NCI increases by the carrying amount transferred, and the difference goes to APIC. A gain is recognized only on loss of control."
+},
+{
+"q": "Quin Co. owned 100% of Ruse Co., whose net assets had a carrying amount of $500,000 in the consolidated statements. Quin sold 60% of Ruse for $420,000 cash and lost control; the fair value of its retained 40% interest was $280,000. What gain should Quin recognize on deconsolidation?",
+"choices": [
+"$200,000",
+"$120,000",
+"$80,000",
+"$0"
+],
+"correct": 0,
+"exp": "On loss of control, the retained interest is remeasured to fair value and the gain = consideration + fair value of the retained interest - carrying amount of net assets: $420,000 + $280,000 - $500,000 = $200,000 (ASC 810-10). $120,000 omits the remeasurement of the retained interest."
+},
+{
+"q": "Sage Co. held a 20% equity-method investment in Tide Co. with a carrying amount of $150,000 and a fair value of $200,000. Sage then purchased an additional 60% of Tide, obtaining control. How should Sage account for its previously held 20% interest?",
+"choices": [
+"Keep it at $150,000 and include it in the consideration transferred",
+"Remeasure it to $200,000 and recognize a $50,000 gain in earnings",
+"Remeasure it to $200,000 and recognize a $50,000 gain in other comprehensive income",
+"Remeasure it to $200,000 with a $50,000 reduction of goodwill"
+],
+"correct": 1,
+"exp": "In a business combination achieved in stages, the acquirer remeasures its previously held equity interest to acquisition-date fair value and recognizes the gain or loss in earnings (ASC 805-10). Carrying it forward at book value was the old step-acquisition method."
+},
+{
+"q": "Under the variable interest model, which reporting entity must consolidate a variable interest entity (VIE)?",
+"choices": [
+"The entity holding the majority of the VIE's voting shares",
+"The entity that holds the largest variable interest, regardless of power",
+"The entity that has the power to direct the activities that most significantly affect the VIE's economic performance and the obligation to absorb losses or right to receive benefits that could be significant",
+"Every entity that holds any variable interest"
+],
+"correct": 2,
+"exp": "Under ASC 810-10, the primary beneficiary has both the power criterion and the economics criterion. Voting control is the test for voting interest entities, not VIEs."
+},
+{
+"q": "A reporting unit of Ulm Co. has a carrying amount of $1,200,000, including $300,000 of goodwill, and a fair value of $1,000,000. Ulm is a public business entity. What goodwill impairment loss should Ulm recognize?",
+"choices": [
+"$300,000",
+"$0",
+"$100,000",
+"$200,000"
+],
+"correct": 3,
+"exp": "Under ASU 2017-04, impairment equals the excess of the reporting unit's carrying amount over its fair value, $200,000, limited to the goodwill balance of $300,000. Writing off all goodwill confuses the cap with the measurement."
+},
+{
+"q": "Under the private company accounting alternative in ASC 350-20, how may an eligible private company account for goodwill?",
+"choices": [
+"Amortize it on a straight-line basis over 10 years, or less if a shorter life is more appropriate, and test for impairment only on a triggering event",
+"Expense it immediately on acquisition",
+"Amortize it over 40 years with annual impairment testing",
+"Never amortize it and test it annually for impairment"
+],
+"correct": 0,
+"exp": "ASU 2014-02 allows private companies to amortize goodwill straight-line over 10 years or less and to test for impairment only when a triggering event occurs. The 40-year life applied under rules eliminated in 2001."
+},
+{
+"q": "Vail Corp. owns 100% of Wick Co. Wick's bonds payable had a carrying amount of $980,000 on Wick's books. Vail bought all of the bonds from outside investors for $960,000. What should be reported in the consolidated statements in the year of purchase?",
+"choices": [
+"Investment in bonds of $960,000 and bonds payable of $980,000",
+"A loss of $20,000 on constructive retirement",
+"A gain of $20,000 on constructive retirement",
+"No gain or loss until the bonds mature"
+],
+"correct": 2,
+"exp": "From the consolidated perspective, the bonds are retired when the affiliate buys them; paying $960,000 for debt carried at $980,000 produces a $20,000 gain on constructive retirement. Both the investment and the bonds are eliminated, so neither appears."
+},
+{
+"q": "For the year, Xeno Corp. reported depreciation expense of $400,000 and its 100%-owned subsidiary Yarr Co. reported $200,000. At acquisition, Yarr's equipment had a fair value $50,000 above its carrying amount, with a remaining life of 5 years at that time; that life has not yet ended. What consolidated depreciation expense should be reported?",
+"choices": [
+"$600,000",
+"$650,000",
+"$590,000",
+"$610,000"
+],
+"correct": 3,
+"exp": "Consolidated depreciation = $400,000 + $200,000 + $10,000 of excess depreciation on the fair value step-up ($50,000 / 5) = $610,000. $650,000 expenses the entire step-up in one year."
+},
+{
+"q": "Zion Co. owns 80% of Arc Co. During the year, Arc declared and paid cash dividends of $50,000. How should the dividends be reflected in the consolidated financial statements?",
+"choices": [
+"Parent's dividend income of $40,000 is eliminated, and the $10,000 paid to outsiders reduces the noncontrolling interest",
+"Consolidated dividends declared include the full $50,000",
+"Consolidated retained earnings is reduced by $50,000",
+"The $40,000 received by the parent is reported as consolidated revenue"
+],
+"correct": 0,
+"exp": "Intercompany dividends are eliminated against the parent's dividend income (or investment account), and dividends to noncontrolling shareholders reduce NCI. Only the parent's own dividends appear as consolidated dividends."
+},
+{
+"q": "In a business combination, which of the following is NOT recognized as an identifiable intangible asset separate from goodwill?",
+"choices": [
+"Customer lists that could be sold or licensed",
+"An assembled workforce of skilled employees",
+"Patented technology",
+"A noncompete agreement with the seller"
+],
+"correct": 1,
+"exp": "An assembled workforce does not meet the contractual-legal or separability criterion and is subsumed into goodwill (ASC 805-20). The other items meet one of the two criteria and are recognized separately."
+},
+{
+"q": "In a business combination, Brio Co. acquired in-process research and development projects with a fair value of $300,000. How should Brio account for them at the acquisition date?",
+"choices": [
+"Expense $300,000 immediately as R&D",
+"Include $300,000 in goodwill",
+"Recognize an indefinite-lived intangible asset of $300,000, tested for impairment until the projects are completed or abandoned",
+"Recognize a finite-lived intangible asset amortized over 5 years from the acquisition date"
+],
+"correct": 2,
+"exp": "Acquired IPR&D is capitalized at fair value as an indefinite-lived intangible until completion (then amortized) or abandonment (then written off) (ASC 805-20 and 350-30). Immediate expensing applies to IPR&D acquired outside a business combination with no alternative future use."
+},
+{
+"q": "Cobb Co. owns 80% of Dyne Co. and measures NCI at fair value; there are no fair value adjustments to amortize. During the year Dyne sold inventory to Cobb at a profit, and $10,000 of that profit remains unrealized in Cobb's ending inventory. Dyne reported net income of $100,000. What net income should be attributed to the noncontrolling interest?",
+"choices": [
+"$20,000",
+"$22,000",
+"$2,000",
+"$18,000"
+],
+"correct": 3,
+"exp": "For upstream sales, the unrealized profit is eliminated from the subsidiary's income before allocation: 20% x ($100,000 - $10,000) = $18,000. $20,000 ignores the unrealized profit, which would be correct only for a downstream sale."
+},
+{
+"q": "Eden Corp. owns 100% of Fyfe Co. Eden's sales were $1,000,000, including $150,000 to Fyfe; Fyfe's sales were $600,000, including $50,000 to Eden. What are consolidated sales?",
+"choices": [
+"$1,400,000",
+"$1,600,000",
+"$1,450,000",
+"$1,550,000"
+],
+"correct": 0,
+"exp": "All intercompany sales are eliminated: $1,600,000 - $150,000 - $50,000 = $1,400,000. $1,450,000 eliminates only the downstream sales, but upstream sales are also eliminated in full."
+},
+{
+"q": "Gray Co. acquired 100% of Holt Co. by issuing 50,000 shares of $1 par common stock with a fair value of $20 per share and agreeing to make an additional payment if earnings targets are met; the contingent consideration had an acquisition-date fair value of $60,000. The fair value of Holt's identifiable net assets was $900,000. What goodwill should Gray recognize?",
+"choices": [
+"$100,000",
+"$160,000",
+"$0",
+"$210,000"
+],
+"correct": 1,
+"exp": "Consideration = $1,000,000 of stock + $60,000 contingent consideration at fair value = $1,060,000; goodwill = $1,060,000 - $900,000 = $160,000. Excluding the contingent payment gives $100,000, but ASC 805 includes it at acquisition-date fair value."
+},
+{
+"q": "On the acquisition date, Ives Corp. (retained earnings $800,000) acquired 100% of Jett Co. (retained earnings $300,000). What consolidated retained earnings should be reported immediately after the acquisition?",
+"choices": [
+"$1,100,000",
+"$300,000",
+"$800,000",
+"$500,000"
+],
+"correct": 2,
+"exp": "The subsidiary's equity at acquisition, including retained earnings, is eliminated against the investment; consolidated retained earnings at that date equals the parent's, $800,000. Only the subsidiary's post-acquisition earnings flow into consolidated retained earnings."
+},
+{
+"q": "Two companies under common control of the same parent combine, with one transferring its net assets to the other. How should the receiving entity measure the assets and liabilities received?",
+"choices": [
+"At fair value, with goodwill recognized",
+"At the lower of carrying amount or fair value",
+"At fair value, with any excess recognized as a gain",
+"At the carrying amounts of the transferring entity (the parent's basis if different)"
+],
+"correct": 3,
+"exp": "Transfers between entities under common control are not business combinations under ASC 805; the receiving entity uses the carrying amounts in the transferring entity's accounts, or the parent's historical basis if pushed down (ASC 805-50). Fair value and goodwill apply only to acquisitions by unrelated parties."
+},
+{
+"q": "Kirk Co. was acquired by Lark Corp. in a transaction in which Lark obtained control of Kirk. In Kirk's own separate financial statements, what does current GAAP allow regarding pushdown accounting?",
+"choices": [
+"Kirk may elect to apply pushdown accounting in the reporting period in which the change-in-control event occurs",
+"Pushdown accounting is prohibited",
+"Pushdown accounting is required whenever 95% or more of Kirk is acquired",
+"Pushdown accounting is required only for SEC registrants"
+],
+"correct": 0,
+"exp": "ASU 2014-17 gives an acquiree the option to apply pushdown accounting when an acquirer obtains control. The SEC's former ownership-percentage thresholds (such as 95%) were rescinded."
+},
+{
+"q": "How should net income attributable to a noncontrolling interest be presented in the consolidated income statement?",
+"choices": [
+"As an expense deducted in arriving at consolidated net income",
+"Consolidated net income includes amounts attributable to both the parent and the NCI, with each attribution shown on the face of the statement",
+"Only in the notes to the financial statements",
+"As a direct adjustment to consolidated retained earnings"
+],
+"correct": 1,
+"exp": "Under ASC 810-10, consolidated net income includes the NCI's share, and the amounts attributable to the parent and to the NCI are presented separately on the face of the income statement. Deducting NCI as an expense was pre-2009 practice."
+},
+{
+"q": "Myra Corp. sells inventory to its 100%-owned subsidiary at a profit. Unrealized intercompany profit in the subsidiary's inventory was $8,000 at the beginning of the year and $12,000 at the end of the year. Compared with the sum of the separate entities' net incomes, what is the net adjustment to consolidated net income for the year?",
+"choices": [
+"Increase of $4,000",
+"Decrease of $12,000",
+"Decrease of $4,000",
+"Increase of $8,000"
+],
+"correct": 2,
+"exp": "Beginning unrealized profit of $8,000 is realized this year when the goods are sold to outsiders (increase), and ending unrealized profit of $12,000 is deferred (decrease): net decrease of $4,000. Eliminating only the ending amount gives $12,000."
+},
+{
+"q": "In acquiring Nova Co., Opus Corp. recognized a $70,000 liability for an uncertain legal claim against Nova, and Nova's former owners contractually agreed to reimburse Opus for any payment above $20,000. Collectibility of the reimbursement is not in doubt. How should Opus account for the indemnification at the acquisition date?",
+"choices": [
+"Do not recognize it until cash is received from the former owners",
+"Recognize an indemnification asset of $50,000, measured on the same basis as the indemnified liability",
+"Reduce the recognized liability to $20,000",
+"Recognize a $50,000 gain in earnings"
+],
+"correct": 1,
+"exp": "ASC 805-20 requires an indemnification asset to be recognized at the same time and on the same basis as the indemnified item, here $70,000 - $20,000 = $50,000, subject to any collectibility allowance. The liability and the asset are reported gross, not netted."
+}
+]

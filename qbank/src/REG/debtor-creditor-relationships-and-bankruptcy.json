@@ -1,0 +1,332 @@
+[
+ {
+  "q": "Dex Corp. has 20 creditors and is not paying its debts as they become due. Assume the Bankruptcy Code requires petitioning creditors' qualifying claims to total at least $20,000 in the aggregate. Which group of creditors may file an involuntary Chapter 7 petition against Dex?",
+  "choices": [
+   "Three creditors with unsecured, undisputed claims of $8,000, $7,000 and $6,000",
+   "Two creditors with unsecured, undisputed claims totaling $50,000",
+   "Three creditors whose claims totaling $30,000 are subject to a bona fide dispute as to liability",
+   "Three creditors with claims of $8,000, $7,000 and $6,000 that are fully secured by collateral"
+  ],
+  "correct": 0,
+  "exp": "When a debtor has 12 or more creditors, at least three creditors holding noncontingent, undisputed claims whose unsecured portions total at least the threshold must join (11 U.S.C. §303). Two creditors are insufficient regardless of amount, and disputed or fully secured claims do not count."
+ },
+ {
+  "q": "Creditors properly filed an involuntary Chapter 7 petition against Ewing, an individual, who contested it. On which basis will the court most likely enter an order for relief?",
+  "choices": [
+   "Ewing's liabilities exceed the fair value of his assets on a balance-sheet basis",
+   "Ewing is generally not paying his undisputed debts as they become due",
+   "Ewing failed to pay one creditor on time",
+   "Ewing transferred property to a relative five years ago"
+  ],
+  "correct": 1,
+  "exp": "Under §303, an order for relief on a contested involuntary petition requires that the debtor is generally not paying undisputed debts as they come due, or that a custodian took possession of substantially all property within 120 days. Balance-sheet insolvency alone is not the test."
+ },
+ {
+  "q": "Against which of the following may creditors file an involuntary Chapter 7 petition?",
+  "choices": [
+   "A family farmer",
+   "A charitable nonprofit corporation",
+   "A for-profit retail corporation that is generally not paying its debts as they become due",
+   "An insurance company"
+  ],
+  "correct": 2,
+  "exp": "Section 303 bars involuntary petitions against farmers, family farmers and nonprofit (non-moneyed) corporations, and insurance companies and banks cannot be Chapter 7 debtors at all. Ordinary business corporations may be involuntary debtors."
+ },
+ {
+  "q": "Fay filed a voluntary Chapter 7 petition. Which action may proceed despite the automatic stay?",
+  "choices": [
+   "A creditor's lawsuit to collect a pre-petition credit card debt",
+   "A secured creditor's repossession of Fay's car",
+   "A landlord's letter demanding past-due rent",
+   "A proceeding to collect a domestic support obligation from property that is not property of the estate"
+  ],
+  "correct": 3,
+  "exp": "The automatic stay of §362 halts most collection activity, including suits, repossessions and demand letters, but has exceptions for criminal proceedings and for establishing or collecting domestic support obligations from non-estate property. A secured creditor must seek relief from the stay."
+ },
+ {
+  "q": "Sixty days before filing a Chapter 7 petition, while insolvent, Gale paid $10,000 to an unrelated unsecured supplier on an invoice that had been past due for five months. The payment was not in the ordinary course of business. Which statement is correct?",
+  "choices": [
+   "The trustee may avoid the payment as a preference",
+   "The payment is not avoidable because the supplier is not an insider",
+   "The payment is not avoidable because it was made more than 30 days before the petition",
+   "The payment is avoidable only if the supplier knew Gale was insolvent"
+  ],
+  "correct": 0,
+  "exp": "Under §547, a transfer to a creditor on an antecedent debt, made while insolvent within 90 days before the petition, that gives the creditor more than it would receive in Chapter 7 is avoidable. The creditor's knowledge of insolvency is irrelevant; insider status extends the period to one year."
+ },
+ {
+  "q": "Eight months before filing a Chapter 7 petition, while insolvent, Hale repaid a $15,000 unsecured loan to his brother that had been due for a year. Which statement is correct?",
+  "choices": [
+   "The payment is not avoidable because it was made more than 90 days before the petition",
+   "The trustee may avoid the payment as a preference to an insider",
+   "The payment is avoidable only as a fraudulent transfer",
+   "The payment is not avoidable because it repaid a legitimate debt"
+  ],
+  "correct": 1,
+  "exp": "For insiders such as relatives, the preference look-back period is one year rather than 90 days (§547). Repaying a legitimate debt is exactly what makes a transfer a preference."
+ },
+ {
+  "q": "Within 90 days before filing a Chapter 7 petition, while insolvent, Ivy Corp. made the following payments. Which is most likely NOT avoidable as a preference?",
+  "choices": [
+   "A payment to an unsecured lender on a loan that was six months overdue",
+   "A payment to an unsecured trade creditor accelerated because the creditor threatened suit",
+   "Payment of its monthly utility bill, made according to ordinary business terms in the ordinary course",
+   "A payment to its president on an old unsecured loan"
+  ],
+  "correct": 2,
+  "exp": "Section 547 excepts payments made in the ordinary course of business according to ordinary business terms, as well as contemporaneous exchanges for new value. Late, pressured or insider payments on old debts are classic preferences."
+ },
+ {
+  "q": "Eighteen months before filing for bankruptcy, while insolvent, Jay transferred his vacation home worth $300,000 to his cousin for $20,000. Which statement is correct?",
+  "choices": [
+   "The transfer cannot be avoided because it occurred more than one year before the petition",
+   "The transfer is a preference avoidable only if the cousin is an insider",
+   "The transfer cannot be avoided because the cousin paid some consideration",
+   "The trustee may avoid the transfer as a fraudulent conveyance because it was made within two years for less than reasonably equivalent value while insolvent"
+  ],
+  "correct": 3,
+  "exp": "Under §548, a transfer within two years before the petition for less than reasonably equivalent value while insolvent is constructively fraudulent and avoidable, without proof of intent. It is not a preference because the cousin was not a creditor."
+ },
+ {
+  "q": "In a Chapter 7 liquidation, which of the following unsecured claims is entitled to the highest priority?",
+  "choices": [
+   "A domestic support obligation owed to the debtor's former spouse",
+   "Wages owed to the debtor's employees",
+   "Federal income taxes owed by the debtor",
+   "General unsecured trade claims"
+  ],
+  "correct": 0,
+  "exp": "Under §507, domestic support obligations are first-priority unsecured claims (subject to trustee administrative costs related to them), ahead of wages and taxes. General unsecured claims share only after all priority claims are paid."
+ },
+ {
+  "q": "An employee is owed $18,000 of wages earned within 180 days before her employer's Chapter 7 petition. Assume the per-employee wage priority cap is $15,000. How is her claim treated?",
+  "choices": [
+   "$18,000 as a priority claim",
+   "$15,000 as a priority claim and $3,000 as a general unsecured claim",
+   "$18,000 as a general unsecured claim",
+   "$15,000 as a priority claim; the remaining $3,000 is discharged without payment"
+  ],
+  "correct": 1,
+  "exp": "Wage claims earned within 180 days are priority claims under §507 only up to the statutory cap; the excess is a general unsecured claim that shares pro rata with other unsecured creditors. The excess is not simply disallowed."
+ },
+ {
+  "q": "Kirk Bank holds a $55,000 claim against a Chapter 7 debtor secured by equipment worth $40,000. The estate will pay general unsecured creditors 20% of their claims. How much will Kirk Bank receive in total?",
+  "choices": [
+   "$55,000",
+   "$40,000",
+   "$43,000",
+   "$11,000"
+  ],
+  "correct": 2,
+  "exp": "Under §506, an undersecured claim is bifurcated: $40,000 is secured and paid from the collateral, and the $15,000 deficiency is a general unsecured claim receiving 20%, or $3,000, for $43,000. Treating the entire claim as secured gives $55,000."
+ },
+ {
+  "q": "Which of the following debts of an individual would ordinarily be discharged in a Chapter 7 bankruptcy?",
+  "choices": [
+   "Past-due child support",
+   "A student loan, absent a showing of undue hardship",
+   "A judgment for injuries the debtor caused while driving intoxicated",
+   "Credit card charges for groceries incurred without fraud a year before filing"
+  ],
+  "correct": 3,
+  "exp": "Section 523 excepts from discharge domestic support obligations, most student loans (absent undue hardship) and debts for personal injury caused by intoxicated driving, among others. Ordinary consumer debts incurred without fraud are dischargeable."
+ },
+ {
+  "q": "Which of the following would cause a court to deny an individual Chapter 7 debtor a discharge of all debts?",
+  "choices": [
+   "The debtor concealed valuable property from the trustee with intent to defraud creditors",
+   "The debtor owes nondischargeable student loans",
+   "The debtor received a Chapter 7 discharge ten years ago",
+   "The debtor's debts are primarily business debts"
+  ],
+  "correct": 0,
+  "exp": "Under §727, a discharge is denied entirely for acts such as concealing property with intent to defraud, making a false oath, or having received a Chapter 7 discharge in a case filed within eight years. Nondischargeable debts are excepted individually without denying the whole discharge."
+ },
+ {
+  "q": "Lark Corp. filed a voluntary Chapter 7 petition and its assets were liquidated and distributed. Which statement is correct?",
+  "choices": [
+   "Lark Corp. receives a discharge of its remaining unpaid debts",
+   "Lark Corp. does not receive a discharge in Chapter 7",
+   "Lark Corp. may claim the federal homestead exemption",
+   "Lark Corp. may keep exempt property up to the state limit"
+  ],
+  "correct": 1,
+  "exp": "Under §727, only individuals receive a Chapter 7 discharge; a liquidated corporation simply ceases operating with debts undischarged. Exemptions likewise apply only to individual debtors."
+ },
+ {
+  "q": "Mona, a Chapter 7 debtor not represented by an attorney, wants to keep her car by reaffirming the loan with her lender. Which statement is correct?",
+  "choices": [
+   "A reaffirmation agreement may be made at any time after the discharge",
+   "A reaffirmation agreement may be oral",
+   "The agreement must be made before discharge and filed with the court, and Mona may rescind it before the later of discharge or 60 days after filing",
+   "A reaffirmation agreement cannot be rescinded once signed"
+  ],
+  "correct": 2,
+  "exp": "Section 524 requires a reaffirmation agreement to be made before discharge and filed with the court, gives the debtor a right to rescind until the later of discharge or 60 days after filing, and requires court approval for unrepresented debtors. Agreements after discharge are unenforceable."
+ },
+ {
+  "q": "Nate, an individual with primarily consumer debts, filed a Chapter 7 petition. His current monthly income exceeds the median family income for his state, and after allowed expenses he has substantial disposable income. Which statement is correct?",
+  "choices": [
+   "Nate's case must be dismissed because Chapter 7 is unavailable to individuals with above-median income",
+   "The means test applies only to business debts",
+   "Nate's case will automatically be converted to Chapter 11",
+   "A presumption of abuse arises, and the case may be dismissed or, with Nate's consent, converted to Chapter 13"
+  ],
+  "correct": 3,
+  "exp": "Under the §707 means test, an above-median debtor with primarily consumer debts and sufficient disposable income faces a presumption of abuse, which can lead to dismissal or conversion to Chapter 13 with consent. The presumption can be rebutted by special circumstances."
+ },
+ {
+  "q": "In a Chapter 11 reorganization, a class of unsecured creditors has 100 members holding $1,000,000 of allowed claims. Sixty members holding $600,000 of claims voted. Of those voting, 40 members holding $420,000 voted to accept the plan. Has the class accepted the plan?",
+  "choices": [
+   "Yes, because more than one-half in number and at least two-thirds in amount of those voting accepted",
+   "No, because less than one-half of all class members accepted",
+   "No, because less than two-thirds of the total claims in the class accepted",
+   "Yes, because a majority of the total dollar amount voting accepted"
+  ],
+  "correct": 0,
+  "exp": "Under §1126, a class accepts if creditors holding at least two-thirds in amount and more than one-half in number of the allowed claims actually voting accept: 40/60 = 67% in number and $420,000/$600,000 = 70% in amount. Measuring against all class members, rather than those voting, is the trap."
+ },
+ {
+  "q": "Which of the following may file for relief under Chapter 13 of the Bankruptcy Code?",
+  "choices": [
+   "A corporation with regular income",
+   "An individual with regular income whose debts are within the Chapter 13 debt limits",
+   "A partnership with regular income",
+   "An individual with no source of income"
+  ],
+  "correct": 1,
+  "exp": "Chapter 13 is available only to individuals (including sole proprietors) with regular income whose debts are within statutory limits (§109). Corporations and partnerships must use Chapter 11 to reorganize."
+ },
+ {
+  "q": "Before filing for bankruptcy, Ola Co. granted Pine Bank a security interest in its equipment. Pine Bank never filed a financing statement or otherwise perfected. What can the bankruptcy trustee do?",
+  "choices": [
+   "Nothing, because the security interest attached before the petition",
+   "Avoid the security interest only if Pine Bank is an insider",
+   "Avoid the security interest using the trustee's status as a hypothetical lien creditor",
+   "Avoid the security interest only if it was granted within 90 days"
+  ],
+  "correct": 2,
+  "exp": "Under the strong-arm clause of §544, the trustee has the rights of a hypothetical lien creditor as of the petition date, and an unperfected security interest is subordinate to a lien creditor. Pine Bank becomes a general unsecured creditor."
+ },
+ {
+  "q": "Rae filed a Chapter 7 petition on January 15. Which of the following is property of the bankruptcy estate?",
+  "choices": [
+   "Wages Rae earns for work performed after January 15",
+   "A gift of cash Rae receives from a friend on June 1",
+   "Property Rae buys with post-petition wages",
+   "An inheritance Rae becomes entitled to on May 1 from her aunt's death on that date"
+  ],
+  "correct": 3,
+  "exp": "The estate includes property the debtor owns at filing plus property acquired by inheritance, divorce settlement or life insurance within 180 days after filing (§541). Post-petition earnings of an individual in Chapter 7 and ordinary post-petition gifts are excluded."
+ },
+ {
+  "q": "Within 90 days before filing a Chapter 7 petition, while insolvent, Sky Co. made a $20,000 payment to Trust Bank on a past-due loan. Trust Bank held a perfected security interest in Sky's equipment worth $50,000, and the loan balance before the payment was $40,000. Is the payment avoidable as a preference?",
+  "choices": [
+   "No, because Trust Bank was fully secured and did not receive more than it would have in a Chapter 7 liquidation",
+   "Yes, because it was paid on an antecedent debt within 90 days",
+   "Yes, because Sky was insolvent when it paid",
+   "No, because Trust Bank is an insider"
+  ],
+  "correct": 0,
+  "exp": "A preference requires that the creditor receive more than it would in a Chapter 7 liquidation (§547); a fully secured creditor would be paid in full from its collateral anyway. Antecedent debt and insolvency alone are not enough."
+ },
+ {
+  "q": "Uma guaranteed Vic's $30,000 loan from Wes Bank as a surety. Vic defaulted, and Uma paid the bank in full. The bank had held a security interest in Vic's truck. What rights does Uma have?",
+  "choices": [
+   "Only a right of contribution against Vic",
+   "A right of reimbursement from Vic and subrogation to the bank's rights, including its security interest in the truck",
+   "No rights, because she voluntarily guaranteed the loan",
+   "Only a right to sue the bank for failing to collect from Vic first"
+  ],
+  "correct": 1,
+  "exp": "A surety who pays the debt has a right of reimbursement from the principal debtor and is subrogated to the creditor's rights against the debtor, including collateral. Contribution runs between co-sureties, not against the debtor."
+ },
+ {
+  "q": "Xena was a compensated surety on Yale's $50,000 loan. Without Xena's consent, the lender released its security interest in Yale's equipment, worth $20,000. Yale then defaulted. What is the effect on Xena's liability?",
+  "choices": [
+   "Xena is fully discharged",
+   "Xena's liability is unaffected",
+   "Xena is discharged to the extent of the $20,000 value of the released collateral",
+   "Xena is liable for the full $50,000 but may sue the lender for negligence"
+  ],
+  "correct": 2,
+  "exp": "A creditor's release or impairment of collateral discharges the surety to the extent of the value of the collateral released, because it impairs the surety's subrogation rights. A release of collateral does not discharge the surety entirely."
+ },
+ {
+  "q": "Kyle and Lena are co-sureties on Mo's $60,000 debt. Kyle guaranteed up to $50,000 and Lena up to $100,000. Mo defaulted, and Lena paid the creditor the entire $60,000. How much can Lena recover from Kyle by way of contribution?",
+  "choices": [
+   "$30,000",
+   "$60,000",
+   "$40,000",
+   "$20,000"
+  ],
+  "correct": 3,
+  "exp": "Co-sureties share in proportion to the amounts they guaranteed: Kyle's share is $50,000 / $150,000 × $60,000 = $20,000. An equal split would give $30,000, which ignores the different limits."
+ },
+ {
+  "q": "Zoe signed as a surety for Ned's loan. Ned defaulted, and the creditor sued Zoe. Which of the following is NOT a defense available to Zoe?",
+  "choices": [
+   "Ned's incapacity because he was a minor when he borrowed",
+   "Fraud by the creditor that induced Zoe to sign",
+   "A material modification of Ned's loan made without Zoe's consent",
+   "The creditor's prior acceptance of full payment from Ned"
+  ],
+  "correct": 0,
+  "exp": "A surety cannot use defenses personal to the debtor, such as the debtor's minority, insolvency or bankruptcy; protecting against those risks is often the reason for the guarantee. Creditor fraud on the surety, material modification and payment are surety defenses."
+ },
+ {
+  "q": "A judgment creditor seeks to garnish the wages of a debtor whose disposable earnings are $800 per week. The debt is an ordinary consumer debt, not support, taxes or bankruptcy-related. Assume the minimum-wage-based floor does not limit the garnishment. Under federal law, what is the maximum amount that may be garnished each week?",
+  "choices": [
+   "$800",
+   "$200",
+   "$400",
+   "$80"
+  ],
+  "correct": 1,
+  "exp": "The Consumer Credit Protection Act generally limits garnishment for ordinary debts to 25% of disposable earnings (or the excess over 30 times the minimum wage, if less): 25% × $800 = $200. Higher limits apply to support orders."
+ },
+ {
+  "q": "Opie, who is in financial difficulty, entered into a composition agreement with four of his six creditors, each agreeing to accept 60% of its claim in full satisfaction. Which statement is correct?",
+  "choices": [
+   "The agreement binds all six creditors",
+   "The agreement is unenforceable for lack of consideration",
+   "The agreement binds only the four creditors who agreed; the other two may pursue their full claims",
+   "The agreement automatically places Opie in bankruptcy"
+  ],
+  "correct": 2,
+  "exp": "A common law composition is a contract among the debtor and participating creditors; the creditors' mutual promises supply consideration, but nonparticipating creditors are not bound. Only a bankruptcy plan can bind dissenters."
+ },
+ {
+  "q": "Pia, an individual, wants to file a voluntary Chapter 7 petition. Which statement is correct?",
+  "choices": [
+   "She must prove she is insolvent",
+   "She must have at least 12 creditors",
+   "She must obtain the consent of a majority of her creditors",
+   "She need not be insolvent, but generally must receive credit counseling from an approved agency within 180 days before filing"
+  ],
+  "correct": 3,
+  "exp": "A voluntary petition does not require insolvency or any minimum number of creditors, but under §109 an individual debtor generally must receive approved credit counseling within 180 days before filing. Creditor consent is irrelevant to a voluntary case."
+ },
+ {
+  "q": "Lender A recorded a mortgage on Quill's land in Year 1. In Year 3, Judgment Creditor B obtained and properly recorded a judgment lien against the land. Quill defaulted on both, and the land was sold for less than the total owed. Outside bankruptcy, which party has priority in the proceeds?",
+  "choices": [
+   "Lender A, because its mortgage was recorded first",
+   "Judgment Creditor B, because judgment liens take priority over consensual liens",
+   "Lender A and Judgment Creditor B share pro rata",
+   "Judgment Creditor B, because its lien arose more recently"
+  ],
+  "correct": 0,
+  "exp": "Under state recording law, liens on real property generally rank in order of recording, so the earlier recorded mortgage has priority over a later judgment lien. Judicial liens receive no special priority over prior perfected interests."
+ },
+ {
+  "q": "After secured creditors were paid from their collateral, a Chapter 7 estate has $100,000 of cash. Administrative expenses are $10,000, priority tax claims are $30,000, and general unsecured claims total $120,000. Rex holds a $24,000 general unsecured claim. How much will Rex receive?",
+  "choices": [
+   "$24,000",
+   "$12,000",
+   "$20,000",
+   "$14,000"
+  ],
+  "correct": 1,
+  "exp": "Priority claims are paid first ($10,000 + $30,000), leaving $60,000 for $120,000 of general unsecured claims, a 50% dividend; Rex receives 50% × $24,000 = $12,000 (§§507, 726). Sharing the full $100,000 pro rata ignores the priorities and gives $20,000."
+ }
+]

@@ -1,0 +1,332 @@
+[
+ {
+  "q": "A promissory note is otherwise in proper form. Which additional term would cause the note to be nonnegotiable under UCC Article 3?",
+  "choices": [
+   "'This note is subject to the terms of the purchase agreement between the maker and the payee dated June 1'",
+   "'Interest is payable at the payee bank's prime rate, as it varies from time to time'",
+   "'This note is secured by a mortgage dated June 1'",
+   "'Payable on demand'"
+  ],
+  "correct": 0,
+  "exp": "A promise expressly subject to or governed by another writing is conditional and not negotiable (UCC 3-106). A mere reference to collateral or a variable interest rate does not destroy negotiability."
+ },
+ {
+  "q": "Mae signed a writing stating, 'I promise to pay Ann Lee $1,000 on December 1, Year 2,' with no other terms. Which statement is correct?",
+  "choices": [
+   "It is a negotiable note because it is a written, unconditional promise to pay a fixed amount at a definite time",
+   "It is not a negotiable instrument because it is not payable to order or to bearer",
+   "It is a negotiable draft",
+   "It is negotiable only if Ann Lee indorses it"
+  ],
+  "correct": 1,
+  "exp": "To be negotiable under UCC 3-104, a note must contain words of negotiability, payable 'to the order of' or 'to bearer'; 'pay Ann Lee' lacks them. Only checks are excepted from the order-or-bearer requirement."
+ },
+ {
+  "q": "Which person is most likely a holder in due course of a properly negotiated note?",
+  "choices": [
+   "Dee, who bought the note two weeks after its due date",
+   "Eli, who received the note as a birthday gift from the payee",
+   "Fay, who paid the payee 90% of the note's face value before maturity, in good faith and without notice of any defense",
+   "Gus, who promised to pay the payee for the note next month and has not yet paid"
+  ],
+  "correct": 2,
+  "exp": "A holder in due course must take for value, in good faith and without notice that the instrument is overdue or subject to defenses (UCC 3-302); buying at a reasonable discount is still value. A gift is not value, an executory promise is not value until performed, and an overdue instrument gives notice."
+ },
+ {
+  "q": "Hal holds a note as a holder in due course. When Hal demanded payment, the maker raised several defenses. Which defense is effective against Hal?",
+  "choices": [
+   "The payee fraudulently induced the maker to sign the note by lying about the quality of goods",
+   "The goods for which the note was given were never delivered",
+   "The payee breached the underlying contract",
+   "The maker was a minor when she signed the note, and state law makes minors' contracts voidable"
+  ],
+  "correct": 3,
+  "exp": "Real defenses such as infancy (to the extent it is a defense to a simple contract), fraud in the execution, forgery, bankruptcy discharge and illegality that voids the obligation are good against a holder in due course (UCC 3-305). Fraud in the inducement, failure of consideration and breach of contract are personal defenses cut off by HDC status."
+ },
+ {
+  "q": "Ivy signed a $1,000 note payable to the order of Jack. Jack fraudulently raised the amount to $10,000 and negotiated the note to Kim, a holder in due course who could not detect the alteration. How much can Kim recover from Ivy?",
+  "choices": [
+   "$1,000",
+   "$10,000",
+   "$0, because the note was materially altered",
+   "$5,500"
+  ],
+  "correct": 0,
+  "exp": "A fraudulent material alteration discharges the maker except against a holder in due course, who may enforce the instrument according to its original terms (UCC 3-407). Kim therefore recovers the original $1,000."
+ },
+ {
+  "q": "Lou, a holder in due course of a note, gave the note to his niece, Mia, as a gift. The maker has a personal defense of failure of consideration against the original payee. Mia knew of the defense when she received the note. Can Mia enforce the note against the maker?",
+  "choices": [
+   "No, because Mia did not give value",
+   "Yes, because Mia acquired Lou's rights as a holder in due course under the shelter rule",
+   "No, because Mia knew of the defense",
+   "Yes, but only to the extent of the value Lou paid"
+  ],
+  "correct": 1,
+  "exp": "Under the shelter rule (UCC 3-203), a transferee acquires the transferor's rights, including HDC rights, even without value or with notice, unless the transferee participated in fraud or illegality affecting the instrument. Mia was not a party to any wrongdoing."
+ },
+ {
+  "q": "Nell received a check payable to her order and signed only her name on the back. She then lost the check. Oz found it and sold it to Pat, who paid value in good faith without notice of the loss. Which statement is correct?",
+  "choices": [
+   "Pat cannot be a holder because Oz's indorsement was missing",
+   "Pat took subject to Nell's claim because the check was lost",
+   "Pat can be a holder in due course because the blank indorsement made the check bearer paper, negotiable by delivery alone",
+   "Pat is a holder only if Oz also indorsed the check"
+  ],
+  "correct": 2,
+  "exp": "A blank indorsement (signature alone) converts order paper to bearer paper, which is negotiated by delivery alone (UCC 3-205), so Pat is a holder and can qualify as an HDC. A special indorsement would have prevented this result."
+ },
+ {
+  "q": "Quinn indorsed a note 'Without recourse, Quinn' and transferred it for value to Rose. The maker later refused to pay because of insolvency, of which Quinn had no knowledge. Which statement is correct?",
+  "choices": [
+   "Quinn is liable to Rose on her indorser's contract",
+   "Quinn is liable because she warranted that the maker would pay",
+   "Quinn's qualified indorsement made the note nonnegotiable",
+   "Quinn is not liable on her indorsement contract, but she still makes transfer warranties"
+  ],
+  "correct": 3,
+  "exp": "A qualified ('without recourse') indorsement disclaims the indorser's secondary contract liability for payment (UCC 3-415) but does not eliminate transfer warranties, which do not include a guarantee of the maker's solvency. It does not affect negotiability."
+ },
+ {
+  "q": "Ruth indorsed a note in blank and negotiated it to Sam. At maturity Sam presented the note to the maker, who dishonored it. To hold Ruth liable as an unqualified indorser, what must Sam generally do?",
+  "choices": [
+   "Give Ruth timely notice of dishonor",
+   "Sue the maker first and obtain an unsatisfied judgment",
+   "Have the note formally protested by a notary in all cases",
+   "Nothing further, because indorsers are primarily liable"
+  ],
+  "correct": 0,
+  "exp": "An indorser is secondarily liable; the obligation arises only after presentment and dishonor, and the indorser is discharged if timely notice of dishonor is not given (UCC 3-503). Protest is required only for certain international drafts."
+ },
+ {
+  "q": "A person who transfers a negotiable instrument for consideration makes several warranties to the transferee. Which of the following is NOT one of those transfer warranties?",
+  "choices": [
+   "The transferor is entitled to enforce the instrument",
+   "The maker or drawer is solvent and will pay the instrument",
+   "All signatures on the instrument are authentic and authorized",
+   "The instrument has not been altered"
+  ],
+  "correct": 1,
+  "exp": "Transfer warranties under UCC 3-416 include entitlement to enforce, authentic signatures, no alteration, no defenses good against the transferor, and no knowledge of insolvency proceedings against the obligor. A transferor does not warrant that the obligor is solvent or will pay."
+ },
+ {
+  "q": "An imposter, falsely claiming to be Tom Ward, persuaded Vale Co. to issue a check payable to 'Tom Ward.' The imposter indorsed the check 'Tom Ward' and cashed it at a bank, which collected from Vale's bank. Who generally bears the loss?",
+  "choices": [
+   "Vale's bank, because it paid on a forged indorsement",
+   "The cashing bank, because it took from a forger",
+   "Vale Co., because the imposter's indorsement is effective under the imposter rule",
+   "The real Tom Ward"
+  ],
+  "correct": 2,
+  "exp": "Under the imposter rule (UCC 3-404), an indorsement in the payee's name by the imposter is effective in favor of a person who pays or takes the instrument in good faith, so the drawer that was deceived bears the loss (subject to comparative negligence). The usual rule that a forged indorsement is ineffective does not apply."
+ },
+ {
+  "q": "On May 1, Walt orally ordered his bank to stop payment on a check he had written. He never confirmed the order in writing. On May 20 the check was presented, and the bank paid it. Which statement is correct?",
+  "choices": [
+   "The bank is liable because a stop-payment order is effective for six months",
+   "The bank is liable because oral stop-payment orders are effective until revoked",
+   "The bank is liable because it must honor any stop-payment order",
+   "The bank is not liable because an oral stop-payment order lapses after 14 days unless confirmed in writing"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 4-403, an oral stop-payment order is binding for only 14 days unless confirmed in writing within that time; a written order is effective for six months and may be renewed. The bank paid after the oral order lapsed."
+ },
+ {
+  "q": "A customer's ordinary check was presented to the drawee bank eight months after its date. The customer had not issued a stop-payment order, and the bank paid the check in good faith. Is the bank liable to the customer?",
+  "choices": [
+   "No, because a bank may, but is not obligated to, pay a stale check in good faith",
+   "Yes, because banks may not pay checks presented more than six months after their date",
+   "Yes, unless the customer confirmed the check in writing",
+   "No, because checks never become stale"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 4-404, a bank has no obligation to pay an uncertified check presented more than six months after its date, but it may pay in good faith and charge the customer's account. Staleness permits, but does not require, dishonor."
+ },
+ {
+  "q": "A consumer bought a defective refrigerator from a dealer and signed an installment note, which the dealer sold to a finance company that otherwise qualifies as a holder in due course. Under the FTC holder-in-due-course rule, which statement is correct?",
+  "choices": [
+   "The finance company takes free of the consumer's defenses",
+   "The consumer may assert claims and defenses against the seller against the finance company",
+   "The note is void",
+   "The consumer may assert defenses only if the finance company knew of the defect"
+  ],
+  "correct": 1,
+  "exp": "The FTC rule requires consumer credit contracts to contain a notice preserving the consumer's claims and defenses against any holder, effectively eliminating HDC protection in consumer credit sales. The finance company's knowledge is irrelevant."
+ },
+ {
+  "q": "On March 1, Ace Supply, a merchant, gave Bolt Co. a signed written offer to sell 500 valves at $20 each, stating the offer would remain open for 60 days. Bolt gave no consideration. On March 20, Ace revoked. On April 10, Bolt accepted. Is there a contract?",
+  "choices": [
+   "No, because Bolt gave no consideration to keep the offer open",
+   "No, because Ace revoked before acceptance",
+   "Yes, because Ace's signed written offer was an irrevocable firm offer for the stated period",
+   "Yes, but only if Bolt is also a merchant"
+  ],
+  "correct": 2,
+  "exp": "Under UCC 2-205, a merchant's signed written offer that gives assurance it will be held open is irrevocable without consideration for the time stated, up to three months. Only the offeror must be a merchant."
+ },
+ {
+  "q": "Cobb Co. sent Dart Co. a signed offer to sell goods, stating: 'Acceptance is expressly limited to the terms of this offer.' Dart, a merchant, replied with a definite acceptance that added a term requiring Cobb to pay freight. Which statement is correct?",
+  "choices": [
+   "There is no contract, because the acceptance added a term",
+   "A contract was formed, and the freight term is included because both parties are merchants",
+   "A contract was formed, and the freight term is included unless Cobb objects within 10 days",
+   "A contract was formed on Cobb's terms, and the freight term is not part of it"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 2-207, a definite acceptance with additional terms still forms a contract; between merchants, the additional terms become part of it unless the offer expressly limits acceptance to its terms, the terms materially alter it, or objection is given. The offer's limitation excludes the freight term."
+ },
+ {
+  "q": "Fox Corp. and Gale Co., both merchants, orally agreed that Fox would buy 1,000 widgets from Gale for $8,000. The next day Gale sent Fox a signed written confirmation of the agreement. Fox received it, read it, and did not respond. A month later Fox refused to accept delivery, citing the statute of frauds. Is the contract enforceable against Fox?",
+  "choices": [
+   "Yes, because Fox did not object in writing within 10 days after receiving the confirmation",
+   "No, because Fox never signed a writing",
+   "No, because the contract was for more than $500",
+   "Yes, but only up to $500"
+  ],
+  "correct": 0,
+  "exp": "Under the merchant confirmation rule of UCC 2-201, a written confirmation sufficient against the sender binds a merchant recipient who has reason to know its contents and fails to object in writing within 10 days. Fox's lack of signature does not matter."
+ },
+ {
+  "q": "Hoyt orally ordered 200 signs printed with his store's logo for $5,000 from Ink Co. The signs were not suitable for sale to others. After Ink had substantially completed production, Hoyt repudiated, citing the statute of frauds. Is the contract enforceable?",
+  "choices": [
+   "No, because a contract for goods of $500 or more must be in writing",
+   "Yes, because the goods were specially manufactured and the seller substantially began performance before repudiation",
+   "Yes, but only for $500",
+   "No, unless Hoyt admits the contract in court"
+  ],
+  "correct": 1,
+  "exp": "UCC 2-201 makes an oral contract enforceable for specially manufactured goods not suitable for sale to others if the seller has made a substantial beginning before notice of repudiation. Admission in court is a separate exception."
+ },
+ {
+  "q": "Jet Co. contracted to sell machinery to Kay Corp., 'F.O.B. Jet's warehouse.' Jet delivered conforming goods to the carrier and promptly notified Kay. The goods were destroyed in a highway accident while in transit. Who bears the risk of loss?",
+  "choices": [
+   "Jet, because Kay never received the goods",
+   "The carrier, because the goods were in its possession",
+   "Kay, because risk passed when conforming goods were duly delivered to the carrier under a shipment contract",
+   "Jet and Kay equally"
+  ],
+  "correct": 2,
+  "exp": "F.O.B. the seller's place of shipment creates a shipment contract; under UCC 2-509, risk passes to the buyer when the seller duly delivers conforming goods to the carrier. In a destination contract, risk would remain with the seller until tender at the destination."
+ },
+ {
+  "q": "Lark, a merchant furniture dealer, sold a sofa to Moe, who paid in full and agreed to pick it up the next day. That night, without Lark's fault, a fire destroyed the sofa at Lark's store. No carrier was involved. Who bears the loss?",
+  "choices": [
+   "Moe, because he had paid in full",
+   "Moe, because title passed at the time of contracting",
+   "Moe and Lark equally",
+   "Lark, because risk passes from a merchant seller only on the buyer's receipt of the goods"
+  ],
+  "correct": 3,
+  "exp": "When no carrier is involved, risk passes to the buyer on receipt of the goods if the seller is a merchant, or on tender of delivery if not (UCC 2-509). Title and payment do not control risk of loss under Article 2."
+ },
+ {
+  "q": "Nova Co. shipped goods to Ola Inc. under a shipment contract, but the goods did not conform to the contract specifications. The goods were destroyed in transit before Ola could inspect them. Who bears the risk of loss?",
+  "choices": [
+   "Nova, because risk does not pass to the buyer when the seller ships nonconforming goods that the buyer may reject",
+   "Ola, because the contract was a shipment contract",
+   "Ola, because it had not yet rejected the goods",
+   "The carrier only"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 2-510, when a tender or delivery so fails to conform that the buyer has a right to reject, risk of loss remains on the seller until cure or acceptance. The ordinary shipment-contract rule assumes conforming goods."
+ },
+ {
+  "q": "Pia left her watch for repair with Quill Jewelers, which also sells new and used watches. Quill mistakenly sold Pia's watch to Rob, who paid fair value and had no knowledge of Pia's ownership. Who is entitled to the watch?",
+  "choices": [
+   "Pia, because Quill had no title to the watch",
+   "Rob, because a merchant entrusted with goods of the kind it deals in can transfer the owner's rights to a buyer in the ordinary course of business",
+   "Pia, unless Rob paid more than fair value",
+   "Rob, only if Pia was negligent in choosing Quill"
+  ],
+  "correct": 1,
+  "exp": "Under the entrustment rule of UCC 2-403, entrusting goods to a merchant who deals in goods of that kind gives the merchant power to transfer all the entruster's rights to a buyer in the ordinary course. Pia's remedy is against Quill."
+ },
+ {
+  "q": "Sal bought a painting from Tia and paid with a check that later bounced. Before Tia discovered this, Sal sold the painting to Uri, who paid fair value in good faith without notice. Can Tia recover the painting from Uri?",
+  "choices": [
+   "Yes, because Sal never paid for the painting",
+   "Yes, because Sal obtained the painting by fraud",
+   "No, because Sal had voidable title and could transfer good title to a good-faith purchaser for value",
+   "No, because Tia was a merchant"
+  ],
+  "correct": 2,
+  "exp": "A buyer who obtains goods with a check later dishonored acquires voidable title and can transfer good title to a good-faith purchaser for value (UCC 2-403). A thief, by contrast, has void title and can pass none."
+ },
+ {
+  "q": "A used-car dealer wants to sell a car without any implied warranty of merchantability. Which of the following would most likely accomplish this?",
+  "choices": [
+   "An oral statement that the car carries no warranty of fitness for a particular purpose",
+   "A written disclaimer of merchantability printed in fine print on the back of the contract",
+   "A statement that the dealer is not bound by express statements made by its salespeople",
+   "Selling the car with a conspicuous notation that it is sold 'as is'"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 2-316, expressions like 'as is' or 'with all faults' exclude all implied warranties; otherwise a merchantability disclaimer must mention merchantability and, if written, be conspicuous. Fitness disclaimers must be in writing, and disclaimers inconsistent with express warranties are inoperative."
+ },
+ {
+  "q": "Vic, who is not a merchant, told Wren that he needed a pump capable of moving water 300 feet uphill on his farm, and relied on Wren to select one. Wren, also not a merchant, sold Vic a pump she selected, which could move water only 100 feet. Which warranty did Wren breach?",
+  "choices": [
+   "The implied warranty of fitness for a particular purpose",
+   "The implied warranty of merchantability",
+   "The warranty of title",
+   "No warranty, because Wren is not a merchant"
+  ],
+  "correct": 0,
+  "exp": "The implied warranty of fitness for a particular purpose (UCC 2-315) arises when the seller has reason to know the buyer's particular purpose and that the buyer relies on the seller's skill to select the goods; the seller need not be a merchant. Merchantability requires a merchant seller."
+ },
+ {
+  "q": "Yale Co. contracted to deliver 100 blue chairs to Zed Inc. by June 30. On June 10, Yale delivered red chairs, and Zed rejected them. Yale promptly notified Zed that it would deliver conforming blue chairs by June 25. Which statement is correct?",
+  "choices": [
+   "Zed may cancel the contract immediately because the tender was not perfect",
+   "Yale has the right to cure by delivering conforming goods by June 30",
+   "Yale may cure only if Zed consents",
+   "Zed must accept the red chairs at a reduced price"
+  ],
+  "correct": 1,
+  "exp": "Under UCC 2-508, when a nonconforming tender is rejected and the time for performance has not expired, the seller may seasonably notify the buyer and make a conforming delivery within the contract time. The perfect tender rule is tempered by this right to cure."
+ },
+ {
+  "q": "Seller breached a contract to deliver goods to Buyer for $10,000. Buyer promptly and reasonably bought substitute goods for $12,500 and incurred $300 of incidental expenses. Buyer saved no expenses because of the breach and has no consequential damages. What may Buyer recover?",
+  "choices": [
+   "$2,500",
+   "$12,800",
+   "$2,800",
+   "$300"
+  ],
+  "correct": 2,
+  "exp": "Cover damages under UCC 2-712 are the cover price minus the contract price ($2,500) plus incidental and consequential damages ($300), less expenses saved, for a total of $2,800. Omitting incidental damages gives $2,500."
+ },
+ {
+  "q": "Buyer wrongfully repudiated a contract to buy goods for $20,000. Seller resold the goods in a commercially reasonable private sale, with proper notice to Buyer, for $16,000 and incurred $500 of incidental expenses. Seller saved no expenses. What may Seller recover?",
+  "choices": [
+   "$4,000",
+   "$20,500",
+   "$3,500",
+   "$4,500"
+  ],
+  "correct": 3,
+  "exp": "Under UCC 2-706, the seller may recover the contract price less the resale price ($4,000) plus incidental damages ($500), less expenses saved, or $4,500. Subtracting the incidental expenses instead of adding them gives $3,500."
+ },
+ {
+  "q": "Seller shipped goods on credit to Buyer. While the goods were in transit, Seller learned that Buyer had become insolvent. What may Seller do?",
+  "choices": [
+   "Stop delivery of the goods in the carrier's possession and demand cash for them",
+   "Nothing, because title passed when the goods were shipped",
+   "Stop delivery only if Buyer has filed for bankruptcy",
+   "Sue Buyer for the price immediately without stopping delivery, but not stop the goods"
+  ],
+  "correct": 0,
+  "exp": "Under UCC 2-705, a seller who discovers the buyer's insolvency may stop delivery of goods in the possession of a carrier and refuse delivery except for cash. Passage of title does not prevent stoppage in transit, and a bankruptcy filing is not required."
+ },
+ {
+  "q": "Ann bought a computer system from a dealer and accepted it after a brief inspection. Two months later, she discovered a latent defect that caused frequent crashes and substantially impaired the system's value to her; the dealer was unable to fix it. Which statement is correct?",
+  "choices": [
+   "Ann cannot return the system because she accepted it",
+   "Ann may revoke her acceptance within a reasonable time after discovering the defect",
+   "Ann may only sue for damages and must keep the system",
+   "Ann may revoke acceptance only if the dealer agrees"
+  ],
+  "correct": 1,
+  "exp": "Under UCC 2-608, a buyer may revoke acceptance of goods whose nonconformity substantially impairs their value if acceptance was reasonably induced by the difficulty of discovering the defect, and revocation occurs within a reasonable time after discovery. Acceptance does not foreclose this remedy."
+ }
+]
