@@ -15810,7 +15810,7 @@ function updateAskBubbleSession(){
 }
 
 // Tap-to-ask suggestions above the input. Tailored to the section being studied.
-let _lbChipList=[];
+var _lbChipList=[]; // var, not let: the popup is built before this line runs
 function renderBubbleChips(){
   const el=document.getElementById('lb-chips');
   if(!el)return;
