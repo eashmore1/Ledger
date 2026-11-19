@@ -336,6 +336,15 @@ body.dark .nav-tab.active{color:#ff8a4c}
 body.dark #crew-onboard-card [style*="color:var(--mut)"]{color:#b8b3c9!important}
 body.dark .badge-FAR{color:#f87171}body.dark .badge-AUD{color:#60a5fa}body.dark .badge-REG{color:#34d399}
 body.dark .badge-BAR{color:#fbbf24}body.dark .badge-ISC{color:#c084fc}body.dark .badge-TCP{color:#2dd4bf}
+/* Same lift for the other accent colors that are too dim as text on the dark surfaces. */
+body.dark [style^="color:var(--aud)"],body.dark [style*=";color:var(--aud)"],body.dark [style*=" color:var(--aud)"]{color:#60a5fa!important}
+body.dark [style^="color:var(--isc)"],body.dark [style*=";color:var(--isc)"],body.dark [style*=" color:var(--isc)"],body.dark [style^="color:var(--pur)"],body.dark [style*=";color:var(--pur)"],body.dark [style*=" color:var(--pur)"]{color:#c084fc!important}
+body.dark [style^="color:var(--far)"],body.dark [style*=";color:var(--far)"],body.dark [style*=" color:var(--far)"]{color:#f87171!important}
+body.dark [style^="color:var(--amb)"],body.dark [style*=";color:var(--amb)"],body.dark [style*=" color:var(--amb)"]{color:#fbbf24!important}
+/* Section colors written as raw hex (EXAMS[x].color) get the same lift when used as text. */
+body.dark [style^="color:#dc2626"],body.dark [style*=";color:#dc2626"],body.dark [style*=" color:#dc2626"]{color:#f87171!important}
+body.dark [style^="color:#2563eb"],body.dark [style*=";color:#2563eb"],body.dark [style*=" color:#2563eb"]{color:#60a5fa!important}
+body.dark [style^="color:#9333ea"],body.dark [style*=";color:#9333ea"],body.dark [style*=" color:#9333ea"]{color:#c084fc!important}
 .skip-link{position:fixed;top:-60px;left:12px;z-index:1000000;background:var(--txt);color:var(--surf);padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none}
 .skip-link:focus{top:12px}
 /* ── USER PROFILE PAGE ── */
@@ -2333,7 +2342,7 @@ function showCancelConfirm(){
   if(!section) return;
   const tierName=subTierLabel();
   section.innerHTML=`
-<div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:16px 18px;margin-bottom:10px">
+<div style="background:var(--red-bg);border:1.5px solid rgba(239,68,68,.4);border-radius:12px;padding:16px 18px;margin-bottom:10px">
   <div style="font-size:14px;font-weight:800;color:var(--far);margin-bottom:6px">Cancel your ${tierName} plan?</div>
   <div style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:14px">You'll keep access until the end of your current billing period. After that your account reverts to Free — you'll lose AI Coach, Score Tracker, advanced analytics, and all Pro features.</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -3250,7 +3259,11 @@ function tsRestore(){
 function fmtElapsed(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
 function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?`${h}h ${m}m`:`${m}m ${s%60}s`;}
 
-function applyTheme(){document.body.classList.toggle('dark',isDark);}
+function applyTheme(){
+  document.body.classList.toggle('dark',isDark);
+  // Match the browser/status bar to the in-app theme, not just the phone's system setting.
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>m.setAttribute('content',isDark?'#0c0905':'#f2ede6'));
+}
 applyTheme();
 
 // ═══════════════════════════════════════════════
@@ -4698,7 +4711,7 @@ function renderObStep1(){
     </div>`).join('')}
   </div>
   <div style="margin-top:12px;padding:11px 13px;background:var(--surf2);border-radius:9px;font-size:11px;color:var(--mut);line-height:1.65">
-    <strong style="color:var(--sub)">How to choose:</strong> Tax path → <strong style="color:var(--tcp)">TCP</strong>. Audit/IT path → <strong style="color:#9333ea">ISC</strong>. Financial reporting/advisory → <strong style="color:var(--bar)">BAR</strong>. Most Big 4 tax candidates choose TCP (highest pass rate).
+    <strong style="color:var(--sub)">How to choose:</strong> Tax path → <strong style="color:var(--tcp)">TCP</strong>. Audit/IT path → <strong style="color:var(--isc)">ISC</strong>. Financial reporting/advisory → <strong style="color:var(--bar)">BAR</strong>. Most Big 4 tax candidates choose TCP (highest pass rate).
   </div>
 </div>
 <button class="ob-btn-back btn btn-ghost" onclick="obBack()" style="margin-right:8px">← Back</button>
@@ -7413,7 +7426,7 @@ function buildPacingAlert(){
     alerts.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;margin-bottom:8px">
       <div style="font-size:18px;flex-shrink:0">${ico('alarm')}</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:#92400e">You haven't studied in ${daysSinceStudy} days</div>
+        <div style="font-size:13px;font-weight:700;color:var(--amb)">You haven't studied in ${daysSinceStudy} days</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">Every day away from the material makes it harder to retain. Even 30 minutes today keeps the streak alive.</div>
       </div>
       <button class="btn btn-sm" style="background:#b45309;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openPostModal()">Log Session →</button>
@@ -7424,7 +7437,7 @@ function buildPacingAlert(){
     alerts.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:10px;margin-bottom:8px">
       <div style="font-size:18px;flex-shrink:0">${ico('trendDown')}</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:#991b1b"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
+        <div style="font-size:13px;font-weight:700;color:var(--red)"><span class="badge badge-${b.s}" style="margin-right:6px">${b.s}</span>${b.daysLeft} days to exam · ${b.needed}h still to cover</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">At your current ${b.available}h/wk pace you won't make it. You need <strong>${b.hrsPerWeek}h/week</strong> — about <strong>${b.catchUpHrsToday}h/day</strong>. Either increase your hours or push your exam date.</div>
       </div>
       <button class="btn btn-sm" style="background:#ef4444;color:#fff;border:none;flex-shrink:0;white-space:nowrap" onclick="openSubTab('dashboard','exams',{scrollTo:'dash-pacing'})">Reschedule →</button>
@@ -14015,7 +14028,7 @@ function injectMobileNav(){
     <button class="mob-more-close" onclick="closeMobileMoreSheet()">✕</button>
   </div>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('profile')">
-    <div class="mob-more-icon" style="background:var(--ind-bg)">◉</div>
+    <div class="mob-more-icon" style="background:var(--ind-bg);color:var(--ind)">◉</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Profile</div>
       <div class="mob-more-sub">Your sessions, streak &amp; achievements</div>
@@ -14023,7 +14036,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openMessagesPage()">
-    <div class="mob-more-icon" style="background:var(--aud-bg)">${ico('chat')}</div>
+    <div class="mob-more-icon" style="background:var(--aud-bg);color:var(--aud)">${ico('chat')}</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Messages</div>
       <div class="mob-more-sub">Study groups &amp; direct messages</div>
@@ -14031,7 +14044,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('plan')">
-    <div class="mob-more-icon" style="background:var(--ora-bg)">${ico('calendarDays')}</div>
+    <div class="mob-more-icon" style="background:var(--ora-bg);color:var(--ora)">${ico('calendarDays')}</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Study Plan</div>
       <div class="mob-more-sub">AI-generated day-by-day calendar</div>
@@ -14039,7 +14052,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();switchTab('explore')">
-    <div class="mob-more-icon" style="background:var(--pur-bg)">${ico('compass')}</div>
+    <div class="mob-more-icon" style="background:var(--pur-bg);color:var(--pur)">${ico('compass')}</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Explore</div>
       <div class="mob-more-sub">Find candidates, clubs &amp; leaderboards</div>
@@ -14047,7 +14060,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openNotificationCenter()">
-    <div class="mob-more-icon" style="background:var(--amb-bg)">${ico('bell')}</div>
+    <div class="mob-more-icon" style="background:var(--amb-bg);color:var(--amb)">${ico('bell')}</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Notifications</div>
       <div class="mob-more-sub">Activity &amp; alerts</div>
@@ -14055,7 +14068,7 @@ function injectMobileNav(){
     <span class="mob-more-chev">›</span>
   </button>
   <button class="mob-more-row" onclick="closeMobileMoreSheet();openAppSettings()">
-    <div class="mob-more-icon" style="background:var(--grn-bg)">${ico('gear')}</div>
+    <div class="mob-more-icon" style="background:var(--grn-bg);color:var(--grn)">${ico('gear')}</div>
     <div class="mob-more-text">
       <div class="mob-more-label">Settings</div>
       <div class="mob-more-sub">Account, plan &amp; preferences</div>
@@ -18996,7 +19009,7 @@ async function showCohortDigestCard(){
   el=document.createElement('div'); el.id='cohort-digest-overlay';
   el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:2100;display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .3s ease';
   el.innerHTML='<div style="background:var(--surf);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.35);max-height:90vh;overflow-y:auto">'+
-    '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;margin-bottom:4px">Cohort Weekly</div><div style="font-size:22px;font-weight:900;letter-spacing:-.03em">'+esc(stats.firmName)+'</div></div>'+
+    '<div style="text-align:center;margin-bottom:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ind);margin-bottom:4px">Cohort Weekly</div><div style="font-size:22px;font-weight:900;letter-spacing:-.03em">'+esc(stats.firmName)+'</div></div>'+
     '<div style="margin-bottom:16px"><canvas id="cohort-digest-canvas" width="1200" height="630" style="width:100%;border-radius:12px;display:block;box-shadow:0 4px 20px rgba(0,0,0,.3)"></canvas></div>'+
     '<div style="display:flex;gap:8px"><button id="cohort-digest-dl" style="flex:1;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↓ Download Card</button>'+
       '<a href="'+liUrl+'" target="_blank" rel="noopener" onclick="document.getElementById(\'cohort-digest-overlay\').remove()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:#0077b5;color:#fff;border-radius:11px;text-decoration:none;font-size:13px;font-weight:800">Share on LinkedIn</a></div>'+
