@@ -1032,7 +1032,7 @@ body.no-app-nav .mob-nav{display:none!important}
 body.no-app-nav .session-fab{display:none!important}
 /* ── MOBILE MORE SHEET ── */
 /* Mobile-only: never render on desktop, even if an .open class is erroneously left on. */
-@media(min-width:641px){.mob-more-sheet{display:none!important}}
+@media(min-width:901px){.mob-more-sheet{display:none!important}}
 .mob-more-sheet{position:fixed;inset:0;z-index:1100;pointer-events:none}
 .mob-more-sheet.open{pointer-events:all}
 .mob-more-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s ease}
@@ -1368,6 +1368,28 @@ html,body{overflow-x:hidden}
 .sess-clock.breathing{animation:clockBreath 2.4s ease-in-out infinite}
 /* ── PROFILE STAT COUNT-UP ── */
 .profile-stat-val{font-variant-numeric:tabular-nums}
+/* Tablet portrait (iPad mini/Air/Pro 11): the full top bar doesn't fit, so use the bottom tab bar like phones do. */
+@media(min-width:641px) and (max-width:900px){
+  .nav-tabs{display:none}
+  .nav-right{margin-left:auto}
+  #nav-log-btn,.nav-btn-msg,.nav-btn-set,#nav-avatar-btn{display:none!important}
+  .mob-nav{display:block}
+  .session-fab{display:flex}
+  .page{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+  .toast-wrap{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .ledger-bubble{bottom:calc(152px + env(safe-area-inset-bottom,0px))}
+  .ledger-panel{bottom:calc(222px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 300px)}
+  .calc-fab{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .calc-panel{bottom:calc(156px + env(safe-area-inset-bottom,0px))}
+  .mob-more-drawer{max-width:560px;margin:0 auto}
+}
+/* iPad landscape / 13" portrait: keep the top bar but tighten it so the right-side buttons fit. */
+@media(min-width:901px) and (max-width:1180px){
+  .topnav-inner{gap:var(--sp-3);padding:0 var(--sp-4)}
+  .nav-tab{padding:7px 10px}
+  .nav-right{gap:4px}
+  #nav-log-btn{padding:9px 14px}
+}
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
@@ -6724,7 +6746,6 @@ function _cohortClubId(){ if(!S||!S.firmCode)return ''; return 'firm_'+String(S.
 function buildCohortCard(){
   if(!S.firmCode)return '';
   const firmName=S.firmName||'Your Cohort';
-  const inviteUrl='https://ledgercpa.app/join?c='+S.firmCode+(AUTH?.uid?'&uid='+encodeURIComponent(AUTH.uid):'')+(S.name?'&from='+encodeURIComponent(S.name):'')+(S.firmName?'&fn='+encodeURIComponent(S.firmName):'');
   // Hydrate live cohort stats after this string is inserted into the DOM.
   setTimeout(()=>{try{_loadCohortCardStats();}catch(e){}},60);
   return`<div class="card card-pad" style="margin-bottom:var(--sp-4);border:1px solid var(--ind-bdr);background:var(--ind-bg)">
@@ -6733,7 +6754,6 @@ function buildCohortCard(){
     <button class="btn btn-ind btn-xs" onclick="shareInvite()">Invite</button>
   </div>
   <div id="cohort-stats-slot"></div>
-  <div style="font-size:10px;color:var(--mut);background:var(--surf2);padding:7px 10px;border-radius:7px;word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>showToast('Copied!','ok'))" data-url="${inviteUrl}" title="Click to copy">${inviteUrl}</div>
 </div>`;
 }
 
@@ -6755,10 +6775,10 @@ async function _loadCohortCardStats(){
   if(cntEl) cntEl.textContent=n+' member'+(n!==1?'s':'');
   if(n<=1){
     // Founding-member seeding state — the captain's most important moment.
-    slot.innerHTML='<div style="background:linear-gradient(135deg,#1a1430,#241a3d);border:1px solid var(--ind-bdr);border-radius:12px;padding:14px 15px;margin-bottom:8px">'+
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:18px;color:#6ee7b7">'+ico('sprout')+'</span><div style="font-size:13px;font-weight:800;color:#fff">You\'re the founding member</div></div>'+
-      '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.55">Ledger comes alive when your crew is in it. Share your invite link below to bring '+esc(S.firmName||'your cohort')+' to life — you\'ll see each other study live, keep a group streak, and stay accountable through the exam grind.</div>'+
-      '<button class="btn btn-ind btn-sm" style="margin-top:10px" onclick="shareInvite()">Text my invite</button>'+
+    slot.innerHTML='<div style="display:flex;align-items:flex-start;gap:10px;background:var(--surf);border:1px solid var(--ind-bdr);border-radius:10px;padding:10px 12px">'+
+      '<span style="font-size:16px;color:var(--grn,#047857);line-height:1.2;flex-shrink:0">'+ico('sprout')+'</span>'+
+      '<div style="min-width:0"><div style="font-size:13px;font-weight:700;color:var(--txt)">You\'re the founding member</div>'+
+      '<div style="font-size:12px;color:var(--sub);line-height:1.45;margin-top:2px">Invite your study group to see each other study live and keep a group streak.</div></div>'+
     '</div>';
     return;
   }
