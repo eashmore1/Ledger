@@ -32,8 +32,8 @@ export default function handler(req, res){
   const fn = first(q.fn) || '';
   const title = fn ? ('Join ' + fn + ' on Ledger') : 'Study together. Pass together.';
   const desc = (from ? from + ' invited you to study together on Ledger. ' : '')
-    + 'The accountability layer for your CPA study group — log hours side by side, keep a group streak alive, and never grind alone.';
-  const img = 'https://ledgercpa.app/og-cohort.png';
+    + 'Log CPA study hours side by side, keep a group streak alive, and see who is studying right now. Works alongside any review course.';
+  const img = 'https://ledgercpa.app/og-cohort.png?v=2';
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -49,14 +49,14 @@ export default function handler(req, res){
 <meta property="og:image" content="${img}">
 <meta property="og:image:secure_url" content="${img}">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Ledger — Study together. Pass together.">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="Ledger: Study together. Pass together. A study group card with a live group streak.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="twitter:image" content="${img}">
-</head><body style="font-family:system-ui;background:#0d0a18;color:#fff">
+</head><body style="font-family:system-ui;background:#f2ede6;color:#18103a">
 Redirecting to Ledger…
 <script>location.replace(${JSON.stringify(humanUrl)});</script>
 </body></html>`);
