@@ -1101,6 +1101,11 @@ body.no-app-nav .session-fab{display:none!important}
 .lb-input:focus{border-color:var(--ind)}
 .lb-send{padding:10px 16px;background:var(--ind);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;transition:filter .15s}
 .lb-send:hover{filter:brightness(1.08)}
+.lb-chips{display:flex;gap:6px;overflow-x:auto;margin:0 -12px 9px;padding:0 12px 2px;scrollbar-width:none}
+.lb-chips::-webkit-scrollbar{display:none}
+.lb-chip{flex-shrink:0;padding:6px 11px;background:var(--surf2);border:1px solid var(--bdr);border-radius:999px;color:var(--txt);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s,background .15s}
+.lb-chip:hover,.lb-chip:focus-visible{border-color:var(--ind);color:var(--ind);outline:none}
+.lb-chip:active{background:var(--surf)}
 @media(max-width:640px){
   .ledger-bubble{right:14px;bottom:calc(142px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:17px}
   .ledger-panel{right:8px;left:8px;width:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));top:62px;height:auto;max-height:none}
@@ -15760,6 +15765,7 @@ function injectAskBubble(){
     '</div>'+
     '<div id="lb-msgs" class="lb-msgs"></div>'+
     '<div class="lb-foot">'+
+      '<div id="lb-chips" class="lb-chips" role="group" aria-label="Suggested questions"></div>'+
       '<div class="lb-row">'+
         '<input id="lb-input" class="lb-input" type="text" placeholder="Ask me anything about the CPA exam..." onkeydown="if(event.key===\'Enter\')sendBubbleMessage()">'+
         '<button class="lb-send" onclick="sendBubbleMessage()">Send</button>'+
@@ -15800,6 +15806,44 @@ function updateAskBubbleSession(){
     if(sub)sub.textContent='Your CPA study coach';
     if(inp)inp.placeholder='Ask me anything about the CPA exam...';
   }
+  renderBubbleChips();
+}
+
+// Tap-to-ask suggestions above the input. Tailored to the section being studied.
+let _lbChipList=[];
+function renderBubbleChips(){
+  const el=document.getElementById('lb-chips');
+  if(!el)return;
+  const inSession=typeof TS!=='undefined'&&(TS.phase==='active'||TS.phase==='paused');
+  const sec=inSession?TS.section:null;
+  _lbChipList=sec?[
+    'Explain the toughest '+sec+' concept simply',
+    'Quiz me on '+sec,
+    'Common '+sec+' exam traps',
+    'Give me a memory trick for '+sec,
+    'What should I review next in '+sec+'?'
+  ]:[
+    'Which section should I take first?',
+    'Build me a weekly study plan',
+    'How is the CPA exam scored?',
+    'Tips for multiple-choice questions',
+    'How do I beat exam-day nerves?',
+    'Explain a concept I’m stuck on'
+  ];
+  el.innerHTML=_lbChipList.map(function(t,i){
+    return '<button type="button" class="lb-chip" onclick="askBubbleChip('+i+')">'+t+'</button>';
+  }).join('');
+}
+
+function askBubbleChip(i){
+  const inp=document.getElementById('lb-input');
+  const text=_lbChipList[i];
+  if(!inp||!text)return;
+  if(document.querySelector('[id^="lb-typing-"]'))return; // one question at a time
+  // "Explain a concept I'm stuck on" needs the user's own words — prefill instead of sending.
+  if(/stuck on$/.test(text)){ inp.value='Can you explain '; inp.focus(); return; }
+  inp.value=text;
+  sendBubbleMessage();
 }
 
 function _lbBubbleHTML(text,mine){
