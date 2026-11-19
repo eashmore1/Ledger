@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- Source for og-image.png (the link preview card). Render at 1200x630, deviceScaleFactor 2. -->
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:#f2ede6;color:#18103a;
+    font-family:'Libre Franklin',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{position:relative;width:1200px;height:630px;padding:64px 72px 56px}
+  /* thin navy rule along the top edge, like a bound ledger */
+  .card::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:#18103a}
+
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand svg{width:46px;height:46px;display:block}
+  .wordmark{font-family:'Fraunces',serif;font-variation-settings:'opsz' 72;font-size:32px;font-weight:600;letter-spacing:-.01em}
+
+  .left{position:absolute;left:72px;top:64px;bottom:56px;width:600px;display:flex;flex-direction:column}
+  .eyebrow{margin-top:68px;font-size:15px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#c23a00}
+  h1{
+    margin-top:18px;font-family:'Fraunces',serif;font-variation-settings:'opsz' 144;
+    font-size:74px;line-height:1.04;font-weight:560;letter-spacing:-.012em;
+  }
+  h1 em{font-style:italic;font-weight:500;color:#c23a00}
+  .sub{margin-top:24px;font-size:23px;line-height:1.45;color:#4a5568;max-width:540px}
+  .url{margin-top:auto;font-size:19px;font-weight:600;letter-spacing:.01em;color:#18103a}
+
+  /* the ledger sheet */
+  .sheet{
+    position:absolute;right:72px;top:92px;width:400px;
+    background:#fffdf9;border:1px solid #e2dbd2;border-radius:6px;
+    box-shadow:0 1px 0 #e2dbd2, 0 18px 40px -18px rgba(24,16,58,.28);
+    padding:30px 32px 28px;
+  }
+  .sheet-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid #18103a}
+  .sheet-title{font-family:'Fraunces',serif;font-variation-settings:'opsz' 48;font-size:25px;font-weight:600}
+  .sheet-meta{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6b665c}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6b665c;text-align:left;padding:12px 0 8px}
+  td{font-size:18px;padding:9px 0;border-top:1px solid #ebe4da;color:#18103a}
+  .r{text-align:right}
+  .sec{font-weight:700;font-size:15px;letter-spacing:.06em}
+  .far{color:#b91c1c}.aud{color:#2563eb}.reg{color:#047857}
+  .day{color:#4a5568}
+  tr.total td{border-top:1.5px solid #18103a;font-weight:700;padding-top:11px}
+  tr.total td.r span{display:inline-block;border-bottom:4px double #18103a;padding-bottom:2px}
+
+  .streak{margin-top:22px;display:flex;align-items:center;justify-content:space-between}
+  .dots{display:flex;gap:5px}
+  .dots i{width:14px;height:14px;border-radius:3px;background:#18103a;display:block}
+  .dots i.today{background:#c23a00}
+  .streak-label{font-size:15px;font-weight:600;color:#18103a;white-space:nowrap}
+  .streak-label b{color:#c23a00}
+</style></head>
+<body>
+<div class="card">
+  <div class="left">
+    <div class="brand">
+      <svg viewBox="0 0 180 180" aria-hidden="true">
+        <rect width="180" height="180" rx="40" fill="#18103a"/>
+        <rect x="26" y="55" width="128" height="5" rx="2.5" fill="#fff" opacity=".14"/>
+        <rect x="26" y="80" width="128" height="5" rx="2.5" fill="#fff" opacity=".14"/>
+        <rect x="26" y="105" width="128" height="5" rx="2.5" fill="#fff" opacity=".14"/>
+        <rect x="26" y="130" width="128" height="5" rx="2.5" fill="#fff" opacity=".14"/>
+        <rect x="34" y="40" width="26" height="96" rx="6" fill="#fff"/>
+        <rect x="34" y="116" width="82" height="26" rx="6" fill="#fff"/>
+        <circle cx="142" cy="44" r="13" fill="#e85d04"/>
+      </svg>
+      <span class="wordmark">Ledger</span>
+    </div>
+    <div class="eyebrow">For CPA candidates</div>
+    <h1>Show up every day.<br><em>Pass the CPA.</em></h1>
+    <p class="sub">The accountability tracker that keeps you consistent, alongside any review course.</p>
+    <div class="url">ledgercpa.app</div>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <span class="sheet-title">Study log</span>
+      <span class="sheet-meta">Week 6</span>
+    </div>
+    <table>
+      <thead><tr><th>Day</th><th>Section</th><th class="r">Hours</th></tr></thead>
+      <tbody>
+        <tr><td class="day">Mon</td><td><span class="sec far">FAR</span></td><td class="r">2.5</td></tr>
+        <tr><td class="day">Tue</td><td><span class="sec far">FAR</span></td><td class="r">3.0</td></tr>
+        <tr><td class="day">Wed</td><td><span class="sec aud">AUD</span></td><td class="r">2.0</td></tr>
+        <tr><td class="day">Thu</td><td><span class="sec far">FAR</span></td><td class="r">2.5</td></tr>
+        <tr><td class="day">Fri</td><td><span class="sec reg">REG</span></td><td class="r">1.5</td></tr>
+        <tr class="total"><td>Total</td><td></td><td class="r"><span>11.5</span></td></tr>
+      </tbody>
+    </table>
+    <div class="streak">
+      <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="today"></i></div>
+      <span class="streak-label"><b>41</b>-day streak</span>
+    </div>
+  </div>
+</div>
+</body></html>
