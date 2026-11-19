@@ -136,6 +136,11 @@ module.exports = async (req, res) => {
       body: JSON.stringify({
         model: 'claude-sonnet-5-5',
         max_tokens: Math.min(maxTokens || 600, 4096), // cap at 4096
+        // Sonnet 5.5 thinks by default, and thinking counts against max_tokens:
+        // with a 600-token chat budget it could use it all and return no text.
+        // between_tools turns thinking off; low effort suits chat and keeps cost down.
+        thinking: { type: 'between_tools' },
+        output_config: { effort: 'low' },
         system: system || 'You are Ledger, an expert CPA exam tutor.',
         messages,
       }),
@@ -148,6 +153,9 @@ module.exports = async (req, res) => {
     }
 
     const data = await resp.json();
+    if (data.stop_reason === 'refusal') {
+      return res.json({ text: 'I can’t help with that one. Ask me about accounting, tax, audit, or your CPA study plan.' });
+    }
     // Join every text block: a reply can open with a non-text block, and reading
     // only content[0] would then come back empty and look like "AI offline".
     const text = (Array.isArray(data.content) ? data.content : [])
