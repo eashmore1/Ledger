@@ -15574,6 +15574,11 @@ function buildAIStudyCoach() {
       '<div id="coach-chat-msgs" style="min-height:60px;max-height:220px;overflow-y:auto;margin-bottom:10px">' +
         (chatMsgs || '<div style="text-align:center;color:var(--mut);padding:14px 10px">' + _ledgerMascotSVG(48) + '<div style="font-size:12px;margin-top:6px">Ask me anything — CPA concepts, exam strategy, study advice...</div></div>') +
       '</div>' +
+      '<div class="lb-chips" style="margin:0 0 9px;padding:0" role="group" aria-label="Suggested questions">' +
+        _coachChipList.map(function(t, i) {
+          return '<button type="button" class="lb-chip" onclick="askCoachChip(' + i + ')">' + t + '</button>';
+        }).join('') +
+      '</div>' +
       '<div style="display:flex;gap:8px">' +
         '<input id="coach-input" type="text" placeholder="e.g. How does partnership basis work under IRC 705?" ' +
           'style="flex:1;padding:9px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:12px;outline:none" ' +
@@ -15586,6 +15591,25 @@ function buildAIStudyCoach() {
       '</div>' +
     '</div>' +
   '</div>';
+}
+
+// Tap-to-ask suggestions for the inline chat (the popup has its own, see renderBubbleChips).
+var _coachChipList = [
+  'Which section should I take first?',
+  'Build me a weekly study plan',
+  'How is the CPA exam scored?',
+  'Tips for multiple-choice questions',
+  'How do I beat exam-day nerves?',
+  'Explain a concept I’m stuck on'
+];
+function askCoachChip(i) {
+  const inp = document.getElementById('coach-input');
+  const text = _coachChipList[i];
+  if (!inp || !text) return;
+  if (document.querySelector('[id^="ledger-typing-"]')) return; // one question at a time
+  if (/stuck on$/.test(text)) { inp.value = 'Can you explain '; inp.focus(); return; }
+  inp.value = text;
+  sendCoachMessage();
 }
 
 function _loadAskLedgerUsage() {
