@@ -148,7 +148,14 @@ module.exports = async (req, res) => {
     }
 
     const data = await resp.json();
-    const text = data.content?.[0]?.text || '';
+    // Join every text block: a reply can open with a non-text block, and reading
+    // only content[0] would then come back empty and look like "AI offline".
+    const text = (Array.isArray(data.content) ? data.content : [])
+      .filter((b) => b && (b.type === 'text' || b.type === undefined) && typeof b.text === 'string')
+      .map((b) => b.text)
+      .join('')
+      .trim();
+    if (!text) console.error('Anthropic returned no text:', data.stop_reason, JSON.stringify(data.content || []).slice(0, 300));
     return res.json({ text });
 
   } catch (e) {
