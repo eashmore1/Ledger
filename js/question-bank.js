@@ -567,7 +567,7 @@ function _showQuizLoading(section){
   overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="margin-bottom:16px">'+LedgerBuddy('think',120)+'</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
 }
 
-async function openQuizModal(section, type, topic) {
+async function openQuizModal(section, type, topic, count) {
   // AI custom sets aren't in the bank — replay the last generated set (free), or generate anew.
   if (type === 'ai') {
     if (_lastAIQuiz && _lastAIQuiz.section === section && _lastAIQuiz.questions.length) {
@@ -590,7 +590,8 @@ async function openQuizModal(section, type, topic) {
 
   const elite = isElite(), pro = isPro();
   // Per-attempt size by type, then capped by tier: Free taster / paid unlimited.
-  const want = type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20;
+  const custom = type === 'custom' ? Math.max(1, Math.floor(Number(count)) || 20) : 0;
+  const want = custom || (type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20);
   let cap;
   if (!pro) cap = 5;
   else if (elite) cap = Math.min(want, pick.length);
@@ -605,9 +606,10 @@ async function openQuizModal(section, type, topic) {
   for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t; }
   const qs = shuffled.slice(0, Math.max(1, Math.min(cap, pick.length)));
   if (pro && !elite) _aiQbConsume(section, qs.length); // bank reads are free, but Pro is metered to 20/section/day
+  if (custom && qs.length < custom) showToast('Starting with ' + qs.length + ' questions, the most available right now', 'info');
 
   _quiz = {
-    active: true, finished: false, section, type, topic: topic || null,
+    active: true, finished: false, section, type, topic: topic || null, count: custom || null,
     questions: qs, current: 0,
     selected: null, answered: false,
     score: 0, timerInterval: null,
@@ -652,7 +654,7 @@ function _qbVars(code){
   return '--c:'+c+';--ct:'+_sectionText(code)+';--cb:'+c+'1f';
 }
 function _qbTypeLabel(type, topic){
-  return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
+  return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', custom:'Custom quiz', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
 }
 
 function _renderQuiz() {
@@ -816,7 +818,7 @@ function _finishQuiz() {
     '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="' + grade.c + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/></svg>' +
     '<div class="qr-pct">' + pct + '%</div></div>';
 
-  const retry = '_quiz.finished=false;openQuizModal(\'' + section + '\',\'' + type + '\'' + (_quiz.topic ? ',' + JSON.stringify(_quiz.topic).replace(/"/g, '&quot;') : '') + ')';
+  const retry = '_quiz.finished=false;openQuizModal(\'' + section + '\',\'' + type + '\',' + (_quiz.topic ? JSON.stringify(_quiz.topic).replace(/"/g, '&quot;') : 'null') + (_quiz.count ? ',' + _quiz.count : '') + ')';
 
   overlay.innerHTML =
     '<div class="qz" style="' + _qbVars(section) + '">' +
@@ -881,6 +883,25 @@ function openQBSection(code) {
       '<span class="qb-chev">' + ico(locked ? 'lock' : 'arrow') + '</span></button>';
   }).join('');
 
+  // Custom quiz: the student picks the length. Capped by the bank size, and for
+  // metered Pro by what's left of today's allowance (openQuizModal clamps again).
+  const customMax = elite ? (sec.mcqTotal || 500) : quota.remaining;
+  const customDef = Math.max(1, Math.min(25, customMax));
+  const customHTML = !pro
+    ? '<button type="button" class="qb-mode locked" onclick="openUpgradeModal(\'Question Bank — Custom quiz\')">' +
+        '<span class="qb-mode-ico">' + ico('target') + '</span>' +
+        '<span style="flex:1;min-width:0"><span class="qb-mode-t">Custom quiz<span class="qb-pro">PRO</span></span><span class="qb-mode-d" style="display:block">Choose how many questions you want</span></span>' +
+        '<span class="qb-chev">' + ico('lock') + '</span></button>'
+    : '<div class="qb-mode qb-custom">' +
+        '<span class="qb-mode-ico">' + ico('target') + '</span>' +
+        '<span style="flex:1;min-width:0"><span class="qb-mode-t" style="white-space:nowrap">Custom quiz</span><span class="qb-mode-d" style="display:block">' +
+          (customMax > 0 ? 'Pick 1–' + customMax.toLocaleString() : 'None left today') + '</span></span>' +
+        '<label class="qb-custom-n"><span class="sr-only">Number of questions</span>' +
+          '<input id="qb-custom-n" type="number" inputmode="numeric" min="1" max="' + customMax + '" value="' + customDef + '"' + (customMax > 0 ? '' : ' disabled') +
+          ' onkeydown="if(event.key===\'Enter\'){_startCustomQuiz(\'' + code + '\')}"></label>' +
+        '<button type="button" class="qz-btn qb-custom-go"' + (customMax > 0 ? '' : ' disabled') + ' onclick="_startCustomQuiz(\'' + code + '\')">Start</button>' +
+      '</div>';
+
   let aiBlock;
   if (!pro) {
     aiBlock = '<button type="button" class="qb-mode locked" onclick="openUpgradeModal(\'AI Question Generator\')">' +
@@ -910,7 +931,7 @@ function openQBSection(code) {
         '<div class="qb-meta"><span><b style="color:var(--txt)">' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + ' answered</span><span>' + acc + '</span></div>' +
       '</div>' +
       '<div class="qb-body">' +
-        '<div class="qb-eyebrow">Practice</div>' + modeHTML +
+        '<div class="qb-eyebrow">Practice</div>' + modeHTML + customHTML +
         '<div class="qb-eyebrow" style="margin-top:16px">Drill a topic' + (pro ? '' : '<span class="qb-pro">PRO</span>') + '</div>' +
         '<div id="qb-topic-list"><div class="qb-skel"></div></div>' +
         '<div class="qb-eyebrow" style="margin-top:18px">AI questions</div>' + aiBlock +
@@ -932,6 +953,15 @@ function openQBSection(code) {
     }).join('') + '</div>' +
     (many ? '<button class="qb-more" onclick="this.previousElementSibling.classList.remove(\'short\');this.remove()">Show all ' + order.length + ' topics</button>' : '');
   });
+}
+
+function _startCustomQuiz(code) {
+  const el = document.getElementById('qb-custom-n');
+  const max = Number(el && el.max) || 0;
+  const n = Math.floor(Number(el && el.value));
+  if (!n || n < 1) { showToast('Enter how many questions you want', 'info'); if (el) el.focus(); return; }
+  closeQBSection();
+  openQuizModal(code, 'custom', null, max ? Math.min(n, max) : n);
 }
 
 function closeQBSection() {

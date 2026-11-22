@@ -1369,6 +1369,11 @@ html,body{overflow-x:hidden}
 .qb-mode.locked .qb-mode-t{color:var(--sub)}
 .qb-mode-t{font-size:14px;font-weight:700}
 .qb-mode-d{font-size:12px;color:var(--mut);margin-top:1px}
+.qb-custom{cursor:default;gap:10px}
+.qb-custom-n input{width:58px;box-sizing:border-box;padding:8px 6px;text-align:center;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font:inherit;font-size:14px;font-weight:700;outline:none;-moz-appearance:textfield}
+.qb-custom-n input:focus{border-color:var(--c)}
+.qb-custom-n input::-webkit-inner-spin-button,.qb-custom-n input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.qz-btn.qb-custom-go{flex:0 0 auto;width:auto;padding:9px 13px;font-size:13px;flex-shrink:0}
 .qb-pro{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--ora);background:var(--ora-bg);padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:1px}
 .qb-chev{margin-left:auto;color:var(--mut);font-size:15px;flex-shrink:0}
 .qb-topics{border:1px solid var(--bdr);border-radius:13px;overflow:hidden}
