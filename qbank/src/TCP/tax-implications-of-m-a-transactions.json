@@ -1,0 +1,332 @@
+[
+{
+"q": "Buyer Corp. is negotiating to acquire Target Inc., a C corporation whose assets have a fair market value far above their tax basis. From Buyer's tax perspective alone, what is the main advantage of a taxable asset purchase over a stock purchase?",
+"choices": [
+"Buyer takes a cost basis in the assets, producing larger depreciation and amortization deductions",
+"Buyer inherits Target's net operating losses without any limitation",
+"Buyer avoids the need to allocate the purchase price among the assets",
+"Buyer can deduct the entire purchase price in the year of acquisition"
+],
+"correct": 0,
+"exp": "In an asset purchase the buyer's basis is its cost, stepping up the assets and generating future cost recovery. Tax attributes such as NOLs stay with the seller in an asset deal, and the price must be allocated under §1060."
+},
+{
+"q": "Tango Corp., a C corporation owned entirely by Hector (stock basis $1,000,000), sells all its assets (basis $2,000,000) for $5,000,000 cash and then liquidates, distributing the after-tax cash to Hector. Assuming a 21% corporate rate and no liabilities, what gain does Hector recognize on the liquidation?",
+"choices": [
+"$4,000,000",
+"$3,370,000",
+"$3,000,000",
+"$4,370,000"
+],
+"correct": 1,
+"exp": "Tango pays 21% x ($5,000,000 - $2,000,000) = $630,000, distributing $4,370,000; Hector's gain is $4,370,000 - $1,000,000 = $3,370,000. Ignoring the corporate-level tax gives $4,000,000 and overlooks the double taxation of a C corporation asset sale."
+},
+{
+"q": "In an applicable asset acquisition, Buyer pays $5,000,000 for a business with cash of $200,000, receivables of $300,000, inventory of $500,000, equipment worth $1,500,000 and a customer list worth $1,000,000. How much of the price is allocated to goodwill and going concern value?",
+"choices": [
+"$2,500,000",
+"$1,000,000",
+"$1,500,000",
+"$0"
+],
+"correct": 2,
+"exp": "Under the §1060 residual method, price is allocated to Class I through VI assets at fair market value ($3,500,000 total), and the remainder, $5,000,000 - $3,500,000 = $1,500,000, goes to Class VII goodwill. Adding the customer list to goodwill gives $2,500,000, but the list is a separate Class VI intangible."
+},
+{
+"q": "Continuing the acquisition, Buyer allocated $1,000,000 to an acquired customer list and $1,500,000 to goodwill. What is Buyer's amortization of these intangibles for a full year?",
+"choices": [
+"$100,000",
+"$250,000",
+"$62,500",
+"$166,667"
+],
+"correct": 3,
+"exp": "Both are §197 intangibles amortized ratably over 15 years: ($1,000,000 + $1,500,000) / 15 = $166,667. Amortizing only goodwill gives $100,000, and $62,500 reflects an outdated 40-year book life."
+},
+{
+"q": "As part of an asset acquisition, Buyer pays the selling owner $300,000 for a three-year covenant not to compete. How is the payment treated?",
+"choices": [
+"Ordinary income to the seller; amortized by Buyer over 15 years",
+"Capital gain to the seller; amortized by Buyer over three years",
+"Ordinary income to the seller; deducted by Buyer over three years",
+"Capital gain to the seller; added to Buyer's goodwill basis"
+],
+"correct": 0,
+"exp": "A noncompete is ordinary income to the recipient, and one entered into in connection with acquiring a business is a §197 intangible amortized over 15 years regardless of its stated term. Deducting it over the three-year term is the common error."
+},
+{
+"q": "Pace Corp. buys 100% of the stock of Loss Co. for cash and makes no §338 election. Which statement describes the tax result to Pace and Loss Co.?",
+"choices": [
+"Loss Co.'s asset bases are stepped up to reflect the purchase price",
+"Loss Co.'s NOLs are eliminated because of the change in ownership",
+"Loss Co. keeps its historical asset bases, and its NOLs carry forward subject to §382",
+"Pace may amortize the stock purchase premium over 15 years"
+],
+"correct": 2,
+"exp": "A stock purchase does not change the target's inside basis, and its tax attributes remain, with NOL use limited by §382 after the ownership change. Stock is not an amortizable asset, so any premium over inside basis yields no deduction."
+},
+{
+"q": "Pine Corp. makes a qualified stock purchase of Target, a standalone C corporation owned by individuals, and unilaterally makes a regular §338 election. Which statement is correct?",
+"choices": [
+"Only the selling shareholders are taxed; Target recognizes nothing",
+"Target is treated as selling its assets, so Target's gain is taxed in addition to the shareholders' gain on their stock",
+"Target recognizes no gain, but Pine still obtains a stepped-up basis",
+"The election must be made jointly with the selling shareholders"
+],
+"correct": 1,
+"exp": "Under a regular §338 election, old Target is deemed to sell its assets and recognizes gain, a tax the buyer economically bears, while the sellers are still taxed on their stock sale. That double tax is why such elections are usually made only when the target has NOLs to absorb the deemed-sale gain."
+},
+{
+"q": "In which acquisition may the parties make a joint §338(h)(10) election?",
+"choices": [
+"An individual buys 100% of the stock of a subsidiary from its corporate parent",
+"A corporation buys 60% of an S corporation's stock from its shareholders",
+"A corporation buys 100% of a standalone C corporation's stock from individual shareholders",
+"A corporation buys 100% of an S corporation's stock from its shareholders within 12 months"
+],
+"correct": 3,
+"exp": "A §338(h)(10) election requires a qualified stock purchase by a corporation of a target that is an S corporation or a member of a selling consolidated or affiliated group. A purchase by an individual is not a qualified stock purchase, 60% fails the 80% test, and a standalone C corporation owned by individuals is not eligible."
+},
+{
+"q": "Parent sells all the stock of its consolidated subsidiary, Sub, to Acquirer for $10,000,000. Parent's basis in the Sub stock is $4,000,000, and Sub's assets have a basis of $6,000,000. Ignoring liabilities, what gain does the Parent group recognize if a §338(h)(10) election is made?",
+"choices": [
+"$4,000,000",
+"$6,000,000",
+"$10,000,000",
+"$0"
+],
+"correct": 0,
+"exp": "With the election, Sub is treated as selling its assets ($10,000,000 - $6,000,000 = $4,000,000 gain) and then liquidating tax-free into Parent, and the stock sale is ignored. Without it Parent would recognize $6,000,000 on the stock, so the election here both reduces the seller's gain and gives Acquirer a stepped-up basis."
+},
+{
+"q": "What constitutes a qualified stock purchase for purposes of §338?",
+"choices": [
+"Acquisition by any person of more than 50% of the target's stock within three years",
+"Acquisition by a corporation of at least 80% of the target's stock in a tax-free reorganization",
+"Acquisition by purchase by a corporation of stock meeting the 80% vote and value test within a 12-month period",
+"Acquisition by a corporation of all of the target's assets for cash"
+],
+"correct": 2,
+"exp": "A qualified stock purchase is the purchase by a corporation of stock with at least 80% of the voting power and 80% of the value within a 12-month acquisition period. Stock received in a reorganization is not acquired by purchase, and the more-than-50% three-year test belongs to §382."
+},
+{
+"q": "Target merges into Acquirer under state law. Target's shareholders receive consideration worth $10,000,000, half in Acquirer common stock and half in cash. Which statement is correct?",
+"choices": [
+"The merger is fully taxable because more than 20% of the consideration is cash",
+"The merger can qualify as a Type A reorganization, but shareholders recognize gain to the extent of the cash received",
+"The merger qualifies, and the shareholders recognize no gain at all",
+"The merger qualifies only if all the consideration is voting stock"
+],
+"correct": 1,
+"exp": "A statutory merger allows flexible consideration as long as continuity of interest is met, and the regulations treat 40% stock consideration as sufficient, so 50% stock qualifies. The cash is boot, taxable to the extent of realized gain; the solely-voting-stock rule applies to Type B, not Type A."
+},
+{
+"q": "Acquirer wants to obtain 90% of Target's stock directly from Target's shareholders in a Type B reorganization. Which consideration is permitted?",
+"choices": [
+"Acquirer voting stock plus up to 20% cash",
+"Acquirer nonvoting preferred stock only",
+"Acquirer voting stock plus Acquirer bonds",
+"Solely Acquirer voting stock, with control held immediately after"
+],
+"correct": 3,
+"exp": "A Type B reorganization requires the acquisition of stock solely for voting stock, with the acquirer in control (80%) immediately afterward. Any boot, apart from cash for fractional shares, disqualifies it; the 20% boot allowance applies to Type C."
+},
+{
+"q": "In a qualifying reorganization, Uma exchanges Target stock with a basis of $100,000 for Acquirer stock worth $250,000 plus $50,000 of cash. The cash is not treated as a dividend. What gain does Uma recognize, and what is her basis in the Acquirer stock?",
+"choices": [
+"$200,000 gain; $250,000 basis",
+"$0 gain; $100,000 basis",
+"$50,000 gain; $100,000 basis",
+"$50,000 gain; $150,000 basis"
+],
+"correct": 2,
+"exp": "Realized gain is $300,000 - $100,000 = $200,000, recognized only to the extent of $50,000 of boot. Her stock basis is $100,000 + $50,000 gain recognized - $50,000 cash = $100,000; adding the gain without subtracting the boot gives $150,000."
+},
+{
+"q": "Vic held Target shares with a $270,000 basis. When Target merged into Acquirer in a transaction meeting all §368 requirements, he received $50,000 cash and Acquirer shares valued at $250,000. How much gain must Vic report?",
+"choices": [
+"$30,000",
+"$50,000",
+"$0",
+"$20,000"
+],
+"correct": 0,
+"exp": "Realized gain is $300,000 - $270,000 = $30,000, and recognized gain is the lesser of realized gain or boot ($50,000), so $30,000. Recognizing the full $50,000 of boot ignores the cap at realized gain."
+},
+{
+"q": "Wes surrenders his Target shares, basis $400,000, in a tax-free statutory merger and gets Acquirer common shares valued at $250,000 together with $50,000 cash. What loss does he recognize, and what basis does he take in the new shares?",
+"choices": [
+"A $100,000 recognized loss and a $250,000 stock basis",
+"A $50,000 recognized gain and a $400,000 stock basis",
+"No recognized loss and a $400,000 stock basis",
+"No recognized loss and a $350,000 stock basis"
+],
+"correct": 3,
+"exp": "Losses are never recognized in a reorganization exchange, even when boot is received, so the $100,000 realized loss is deferred. Basis is $400,000 - $50,000 boot + $0 gain = $350,000, which preserves the deferred loss."
+},
+{
+"q": "In a Type A merger of Target into Acquirer, what are the consequences to the two corporations?",
+"choices": [
+"Target recognizes gain on its appreciated assets, and Acquirer takes a fair market value basis",
+"Target recognizes no gain, Acquirer takes Target's asset bases and inherits Target's tax attributes",
+"Acquirer recognizes gain on the stock it issues, and Target's NOLs expire",
+"Target recognizes no gain, but Acquirer takes a fair market value basis"
+],
+"correct": 1,
+"exp": "Target recognizes no gain under §361, Acquirer recognizes nothing on issuing its stock under §1032 and takes a carryover basis under §362, and Target's attributes pass to Acquirer under §381. A stepped-up basis would be inconsistent with nonrecognition."
+},
+{
+"q": "Which requirement for a tax-free reorganization does the continuity of business enterprise doctrine impose?",
+"choices": [
+"The acquirer must continue Target's historic business or use a significant portion of its historic business assets",
+"Target's shareholders must keep their acquirer stock for at least five years",
+"The acquirer must have conducted an active business for five years before the deal",
+"Target's management must remain in place after the acquisition"
+],
+"correct": 0,
+"exp": "Continuity of business enterprise requires the acquirer to continue a significant historic business of the target or use a significant portion of its historic business assets. Shareholder retention relates to continuity of interest, and the five-year active business test belongs to §355."
+},
+{
+"q": "Which feature describes a Type C reorganization?",
+"choices": [
+"The acquirer obtains at least 80% of Target's stock solely for voting stock",
+"Target changes only its state of incorporation",
+"The acquirer obtains substantially all of Target's assets mainly for voting stock, and Target generally must liquidate",
+"Target distributes the stock of a subsidiary to its shareholders"
+],
+"correct": 2,
+"exp": "A Type C is an acquisition of substantially all the target's properties for voting stock, with limited boot permitted (liabilities count as boot when other boot is used), and the target must distribute the consideration and liquidate. A stock-for-stock acquisition is Type B, a mere change of domicile is Type F and a spin-off is a §355 transaction."
+},
+{
+"q": "Acquirer creates a merger subsidiary that merges into Target, so Target survives as Acquirer's wholly owned subsidiary. Which requirement applies to qualify as a reverse triangular merger?",
+"choices": [
+"Target must transfer substantially all its assets to Acquirer's parent",
+"Target's shareholders may receive any mix of consideration as long as 40% is stock",
+"Acquirer must already own at least 50% of Target before the merger",
+"Target shareholders must exchange stock constituting control of Target for Acquirer voting stock"
+],
+"correct": 3,
+"exp": "Under the reverse triangular merger rules, former Target shareholders must exchange an amount of Target stock constituting control (80%) for voting stock of the controlling corporation, and Target must hold substantially all its and the merger subsidiary's assets. The 40% stock rule of thumb applies to direct and forward triangular mergers, not this structure."
+},
+{
+"q": "For §382 purposes, when does an ownership change occur?",
+"choices": [
+"When any shareholder acquires more than 50% of the loss corporation's stock in a single year",
+"When the percentage of stock owned by 5% shareholders increases by more than 50 percentage points over their lowest holdings within a three-year testing period",
+"When the loss corporation issues new stock equal to at least 80% of its value",
+"When the loss corporation changes its principal business activity"
+],
+"correct": 1,
+"exp": "An ownership change occurs when one or more 5% shareholders increase their combined ownership by more than 50 percentage points over their lowest percentage during the three-year testing period. A change in business is relevant to the continuity of business enterprise requirement, not the definition of an ownership change."
+},
+{
+"q": "Loss Co., which has a $2,000,000 NOL carryforward, undergoes an ownership change when its stock is worth $10,000,000. Assume the long-term tax-exempt rate is 3%. What is the annual §382 limitation?",
+"choices": [
+"$300,000",
+"$2,000,000",
+"$600,000",
+"$60,000"
+],
+"correct": 0,
+"exp": "The annual limitation is the value of the old loss corporation's stock immediately before the change times the long-term tax-exempt rate: $10,000,000 x 3% = $300,000. Applying the rate to the NOL ($2,000,000 x 3% = $60,000) uses the wrong base."
+},
+{
+"q": "Loss Co.'s annual §382 limitation is $300,000. In the first year after the ownership change it has only $100,000 of taxable income before NOLs. In the second year it has $800,000 of taxable income before NOLs. Assuming ample pre-change NOLs and that the 80%-of-taxable-income limit does not bind, how much pre-change NOL can it use in the second year?",
+"choices": [
+"$300,000",
+"$400,000",
+"$500,000",
+"$800,000"
+],
+"correct": 2,
+"exp": "Unused limitation carries forward: year one uses $100,000 of the $300,000, so $200,000 is added to year two's $300,000 limit, for $500,000. The 80% limit would allow $640,000, so it does not bind; ignoring the carryforward of unused limitation gives $300,000."
+},
+{
+"q": "After an ownership change, the new owners discontinue all of Loss Co.'s historic business and do not use a significant portion of its historic business assets within two years. What is the effect on Loss Co.'s pre-change NOLs?",
+"choices": [
+"They become fully available because the §382 limitation no longer applies",
+"The annual limitation is cut in half",
+"They may be used only against capital gains",
+"The §382 limitation is generally zero, so the NOLs are effectively unusable"
+],
+"correct": 3,
+"exp": "If the new loss corporation fails the continuity of business enterprise requirement during the two years after the change, the §382 limitation is generally zero, apart from certain built-in gain increases. This prevents trafficking in loss corporations purely for their NOLs."
+},
+{
+"q": "Loss Co. has a net unrealized built-in gain at the time of its ownership change, and it sells an appreciated asset it held on the change date two years later. How does §382 treat the recognized built-in gain?",
+"choices": [
+"It is excluded from income because it accrued before the change",
+"It increases the §382 limitation for that year, allowing more pre-change NOLs to offset it",
+"It reduces the §382 limitation for that year",
+"It is taxed at a special 35% rate"
+],
+"correct": 1,
+"exp": "Recognized built-in gain during the five-year recognition period increases the annual limitation, since that gain economically accrued while the loss corporation's old owners held it. Built-in losses, by contrast, are treated like pre-change losses subject to the limitation."
+},
+{
+"q": "Buyer Corp. pays an investment banker a $1,000,000 success-based fee for a covered acquisition, and it elects the safe harbor of Rev. Proc. 2011-29. How much of the fee may it deduct?",
+"choices": [
+"$700,000",
+"$1,000,000",
+"$300,000",
+"$0"
+],
+"correct": 0,
+"exp": "The safe harbor lets the taxpayer treat 70% of a success-based fee as not facilitating the transaction and deduct it, so $700,000 is deductible and $300,000 is capitalized. Without the election the taxpayer must document which portion is not facilitative, which defaults to capitalization."
+},
+{
+"q": "Cove Inc. converted from a C corporation to an S corporation three years ago, when its assets had built-in gain. A buyer now proposes to buy Cove's assets for cash. What tax issue is most significant?",
+"choices": [
+"The gain is exempt because S corporations are pass-through entities",
+"The shareholders cannot use the installment method",
+"Cove may owe corporate-level tax under §1374 on net recognized built-in gain because the sale falls within the five-year recognition period",
+"The sale terminates Cove's S election retroactively to its conversion date"
+],
+"correct": 2,
+"exp": "A former C corporation that sells assets within five years of its S election pays corporate-level tax on net recognized built-in gain, in addition to the pass-through of the gain to shareholders. After the recognition period, an S corporation asset sale generally produces only one level of tax."
+},
+{
+"q": "Why do individual shareholders of a C corporation usually prefer to sell their stock rather than have the corporation sell its assets?",
+"choices": [
+"A stock sale lets them deduct the corporation's NOLs personally",
+"A stock sale gives the buyer a stepped-up basis at no cost to the sellers",
+"A stock sale is always tax-free to the selling shareholders",
+"A stock sale generally produces one level of tax, usually capital gain, instead of corporate tax followed by shareholder tax"
+],
+"correct": 3,
+"exp": "Selling stock generally results in a single level of tax at capital gain rates, while an asset sale followed by liquidation taxes the gain at both the corporate and shareholder levels. The trade-off is that the buyer gets no basis step-up, which often leads to a lower price."
+},
+{
+"q": "In an asset sale, an S corporation sells equipment with an original cost of $500,000 and an adjusted basis of $200,000 for $600,000. How is the gain characterized?",
+"choices": [
+"$400,000 of §1231 gain",
+"$300,000 of ordinary income and $100,000 of §1231 gain",
+"$400,000 of ordinary income",
+"$100,000 of ordinary income and $300,000 of §1231 gain"
+],
+"correct": 1,
+"exp": "Section 1245 recaptures depreciation as ordinary income up to the lesser of depreciation taken ($300,000) or gain ($400,000), so $300,000 is ordinary and the remaining $100,000 is §1231 gain. Treating all gain as §1231 ignores recapture, which applies in asset deals but not stock sales."
+},
+{
+"q": "In connection with a change in control, an executive with a base amount of $200,000 receives a $700,000 payment contingent on the change. What are the §280G and §4999 consequences?",
+"choices": [
+"No consequences, because the payment is less than five times the base amount",
+"$700,000 is nondeductible, and the executive owes a $140,000 excise tax",
+"$500,000 is nondeductible, and the executive owes a $100,000 excise tax",
+"$100,000 is nondeductible, and the executive owes a $20,000 excise tax"
+],
+"correct": 2,
+"exp": "The payment equals or exceeds three times the base amount ($600,000), so the excess parachute payment is the amount over one times the base: $700,000 - $200,000 = $500,000. The corporation loses that deduction and the executive owes a 20% excise tax of $100,000; measuring from three times the base gives $100,000."
+},
+{
+"q": "Parent wants to distribute the stock of its subsidiary to its shareholders tax-free under §355 before a planned acquisition of Parent. Which requirement must be met?",
+"choices": [
+"Both Parent and the subsidiary must be engaged in an active trade or business conducted for at least five years before the distribution",
+"Parent must distribute at least 50% of the subsidiary's stock",
+"The distribution must be pro rata among all shareholders",
+"The subsidiary must have been formed within the last five years"
+],
+"correct": 0,
+"exp": "Section 355 requires active businesses conducted for five years before the distribution, distribution of control (80%), a business purpose and that the transaction not be a device to distribute earnings. Non-pro-rata split-offs can qualify, and a 50% distribution falls short of the control requirement."
+}
+]

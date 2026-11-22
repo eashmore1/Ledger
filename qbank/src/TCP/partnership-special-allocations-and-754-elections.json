@@ -1,0 +1,332 @@
+[
+  {
+    "q": "Ann contributes land with a basis of $40,000 and an FMV of $100,000 to the AB partnership, and Bo contributes $100,000 of cash. They share profits equally and use the traditional §704(c) method. Two years later the partnership sells the land for $120,000. How is the $80,000 tax gain allocated?",
+    "choices": [
+      "Ann $40,000; Bo $40,000",
+      "Ann $60,000; Bo $20,000",
+      "Ann $70,000; Bo $10,000",
+      "Ann $80,000; Bo $0"
+    ],
+    "correct": 2,
+    "exp": "The $60,000 built-in gain at contribution goes to Ann, and the $20,000 of post-contribution (book) gain is shared equally, so Ann has $60,000 + $10,000 = $70,000 and Bo $10,000. Splitting the whole gain equally ignores the §704 contributed-property rules."
+  },
+  {
+    "q": "Cy contributes equipment with an FMV of $100,000 and a tax basis of $40,000 (five years of recovery left, straight-line) to a 50/50 partnership, and Di contributes $100,000 of cash. Annual book depreciation is $20,000 and tax depreciation is $8,000. Under the traditional §704(c) method, how much tax depreciation is allocated to Di each year?",
+    "choices": [
+      "$10,000",
+      "$4,000",
+      "$0",
+      "$8,000"
+    ],
+    "correct": 3,
+    "exp": "Di should get tax depreciation equal to her $10,000 share of book depreciation, but the ceiling rule limits allocations to the $8,000 of actual tax depreciation, so all $8,000 goes to her and Cy gets none. The $2,000 shortfall is the ceiling-rule distortion that the curative and remedial methods fix."
+  },
+  {
+    "q": "Which statement correctly describes the remedial method for contributed property with a ceiling-rule limitation?",
+    "choices": [
+      "The partnership creates offsetting notional tax items: a remedial deduction for the noncontributing partner and equal remedial income for the contributing partner",
+      "The partnership reallocates actual tax gain from other partnership property to the noncontributing partner",
+      "The contributing partner recognizes the entire built-in gain in the year of contribution",
+      "The partnership revalues the property to its tax basis so that book and tax depreciation match"
+    ],
+    "correct": 0,
+    "exp": "The remedial method eliminates ceiling-rule distortions by creating tax items that do not otherwise exist, with remedial deductions to the noncontributing partner offset by remedial income of the same character to the contributor. Reallocating other actual tax items describes the curative method."
+  },
+  {
+    "q": "Eve contributes land with a basis of $40,000 and an FMV of $100,000 to a 50/50 partnership with Fox, who contributes $100,000 of cash. The partnership uses the traditional method and later sells the land for $90,000. How is the $50,000 tax gain allocated?",
+    "choices": [
+      "Eve $55,000 gain; Fox $5,000 loss",
+      "Eve $50,000 gain; Fox $0",
+      "Eve $25,000 gain; Fox $25,000 gain",
+      "Eve $60,000 gain; Fox $10,000 loss"
+    ],
+    "correct": 1,
+    "exp": "There is a $10,000 book loss (split $5,000 each) but a $50,000 tax gain, and under the ceiling rule the partnership cannot allocate more tax gain or loss than actually exists. All $50,000 of tax gain goes to Eve and Fox gets no tax loss; the $55,000 / $5,000 split would require the remedial method."
+  },
+  {
+    "q": "Gus contributes stock with a basis of $100,000 and an FMV of $60,000 to a partnership. Later Gus sells his entire partnership interest to Hope, and the partnership then sells the stock for $60,000. How much of the partnership's $40,000 tax loss can be allocated to Hope?",
+    "choices": [
+      "$40,000",
+      "$20,000",
+      "$0",
+      "$10,000"
+    ],
+    "correct": 2,
+    "exp": "Under §704 a built-in loss on contributed property can be taken into account only by the contributing partner; for other partners, including a buyer of his interest, the property's basis is treated as its $60,000 FMV at contribution. Hope has no loss, because Gus's built-in loss is personal to him."
+  },
+  {
+    "q": "In 2023 Ike contributed land with a basis of $30,000 and an FMV of $80,000 to a partnership. In 2026, when the land is worth $90,000, the partnership distributes it to another partner, Jo. How much gain does Ike recognize?",
+    "choices": [
+      "$0",
+      "$50,000",
+      "$60,000",
+      "$55,000"
+    ],
+    "correct": 1,
+    "exp": "Distributing contributed property to another partner within 7 years causes the contributor to recognize the gain he would have been allocated had the property been sold at FMV, which is his $50,000 precontribution gain ($80,000 − $30,000). The later $10,000 of appreciation is not precontribution gain, so $60,000 is wrong."
+  },
+  {
+    "q": "For a partnership allocation to have economic effect under the basic test of the §704(b) regulations, which requirements must the partnership agreement meet?",
+    "choices": [
+      "Allocations must follow ownership percentages, and capital accounts must be kept on the tax basis",
+      "Capital accounts must be kept on the tax basis, and all partners must sign each year's allocations",
+      "Liquidating distributions must follow profit percentages, and all debt must be nonrecourse",
+      "Capital accounts must be maintained under the regulations, liquidating distributions must follow positive capital accounts, and partners with deficits must restore them"
+    ],
+    "correct": 3,
+    "exp": "The basic economic effect test requires proper capital account maintenance, liquidation in accordance with positive capital account balances, and an unconditional deficit restoration obligation. Allocations need not follow ownership percentages; that is the point of a special allocation."
+  },
+  {
+    "q": "Kay and Lu each contribute $50,000 to a partnership that buys equipment for $100,000. The agreement allocates all depreciation to Kay, maintains capital accounts properly, liquidates per positive capital accounts, and contains a qualified income offset, but neither partner has a deficit restoration obligation. Depreciation is $30,000 a year and there are no liabilities or other items. How much of year 2 depreciation can be allocated to Kay?",
+    "choices": [
+      "$20,000",
+      "$30,000",
+      "$15,000",
+      "$0"
+    ],
+    "correct": 0,
+    "exp": "After year 1 Kay's capital account is $50,000 − $30,000 = $20,000. Under the alternate economic effect test an allocation may not create a deficit for a partner with no restoration obligation, so only $20,000 goes to Kay and the other $10,000 is allocated to Lu."
+  },
+  {
+    "q": "A partnership expects $100,000 of tax-exempt interest and $100,000 of taxable dividends each year. Partner Mo is in a high tax bracket and Partner Ned has expiring losses. The agreement allocates all tax-exempt interest to Mo and an equal amount of dividends to Ned, and their capital accounts would be the same as under a 50/50 split. Why will the allocation fail?",
+    "choices": [
+      "It lacks economic effect, because capital accounts are not maintained",
+      "It is a transitory allocation, because it reverses within 5 years",
+      "It is not substantial, because it shifts tax consequences within the year without changing the partners' economic results",
+      "It violates the ceiling rule for contributed property"
+    ],
+    "correct": 2,
+    "exp": "An allocation is a shifting allocation, and not substantial, when partners' capital accounts end up about the same as without it while their total tax liability goes down. A transitory allocation involves offsetting allocations in different years, not the same year."
+  },
+  {
+    "q": "A partnership agreement allocates $50,000 of income to Partner Ola in year 1 and an offsetting $50,000 of deductions to her in year 2, so her capital account is unchanged by the end of year 2. Ola has an expiring NOL in year 1. When is the allocation likely to fail the substantiality test?",
+    "choices": [
+      "When there was a strong likelihood at the time the allocation became part of the agreement that the offsetting allocation would occur within 5 years",
+      "Only when the offsetting allocation occurs in the same tax year",
+      "Only when the partners are related to each other",
+      "Never, because Ola's capital account reflects both allocations"
+    ],
+    "correct": 0,
+    "exp": "A transitory allocation is not substantial if, when it is agreed to, there is a strong likelihood that offsetting allocations within 5 years will leave capital accounts about where they would have been while reducing total taxes. Same-year offsets are tested as shifting allocations instead."
+  },
+  {
+    "q": "Why must deductions attributable to partnership nonrecourse liabilities be allocated under special rules rather than the general economic effect test?",
+    "choices": [
+      "Because nonrecourse deductions must always be allocated equally among the partners",
+      "Because the lender, not any partner, bears the economic risk of loss, so the allocations cannot have economic effect",
+      "Because nonrecourse liabilities do not increase partners' outside basis",
+      "Because nonrecourse deductions are not deductible until the debt is repaid"
+    ],
+    "correct": 1,
+    "exp": "Nonrecourse deductions cannot have economic effect because no partner bears the economic burden; they are deemed to follow the partners' interests if the agreement meets the safe harbor, including a minimum gain chargeback. Nonrecourse liabilities do increase partners' outside basis."
+  },
+  {
+    "q": "The ABC partnership, which has a §754 election in effect and no liabilities, holds cash of $30,000, inventory with a basis of $30,000 and an FMV of $60,000, and land with a basis of $60,000 and an FMV of $90,000. Cal buys Al's one-third interest for $60,000. What is Cal's §743(b) adjustment?",
+    "choices": [
+      "$0",
+      "$60,000",
+      "$40,000",
+      "$20,000"
+    ],
+    "correct": 3,
+    "exp": "The adjustment is Cal's $60,000 outside basis minus his one-third share of the $120,000 inside basis ($40,000), or $20,000. Under §755 it is allocated $10,000 to the inventory and $10,000 to the land, one-third of each asset's appreciation."
+  },
+  {
+    "q": "Following Cal's purchase of a one-third interest, he has a $10,000 positive basis adjustment allocated to partnership inventory with a basis of $30,000 and an FMV of $60,000. The partnership sells the inventory for $60,000. How much ordinary income does Cal report from the sale?",
+    "choices": [
+      "$10,000",
+      "$0",
+      "$20,000",
+      "$30,000"
+    ],
+    "correct": 1,
+    "exp": "The partnership's $30,000 gain gives Cal a $10,000 distributive share, which his $10,000 inventory basis adjustment offsets, so he reports $0. Without a §754 election he would have reported $10,000 of ordinary income on appreciation he had already paid for."
+  },
+  {
+    "q": "A partnership with a §754 election has $60,000 of liabilities shared by profit percentages. Dee buys a 25% interest for $50,000 of cash. The partnership's total adjusted basis in its assets is $200,000. What is Dee's §743(b) adjustment?",
+    "choices": [
+      "$15,000",
+      "$0",
+      "$65,000",
+      "$35,000"
+    ],
+    "correct": 0,
+    "exp": "Dee's outside basis is $50,000 cash plus her $15,000 share of liabilities, or $65,000. Her share of inside basis is 25% × $200,000 = $50,000, so the adjustment is $65,000 − $50,000 = $15,000. Leaving out the liability share wrongly gives $0."
+  },
+  {
+    "q": "A partner dies holding a one-third partnership interest worth $300,000 whose share of inside basis is $120,000. The partnership has no §754 election and later sells its appreciated assets. What is the effect on the heir?",
+    "choices": [
+      "The heir's outside basis stays at $120,000 because there was no election",
+      "The partnership's inside basis is automatically stepped up by $180,000",
+      "The heir recognizes no gain on the sale because the death stepped up the inside basis",
+      "The heir's outside basis is $300,000, but the heir is still allocated a share of gain on the sale, creating a mismatch that may reverse only as a loss later"
+    ],
+    "correct": 3,
+    "exp": "Section 1014 steps up the heir's outside basis to FMV, but inside basis changes only with a §754 election (or a mandatory adjustment), so the heir is taxed on gain already reflected in the step-up. That excess outside basis is recovered only on a later sale or liquidation of the interest."
+  },
+  {
+    "q": "A partnership without a §754 election holds property with an adjusted basis of $2 million and an FMV of $1.6 million. A partner sells his 25% interest. Which statement is correct?",
+    "choices": [
+      "No adjustment is made because no §754 election is in effect",
+      "A downward §743 adjustment is mandatory because the partnership has a substantial built-in loss",
+      "The partnership must make a §754 election before the sale is valid",
+      "The buyer may elect a downward adjustment, but it is optional"
+    ],
+    "correct": 1,
+    "exp": "A §743 basis adjustment is mandatory, even without a §754 election, when the partnership has a substantial built-in loss, meaning its adjusted basis exceeds FMV by more than $250,000. Here the $400,000 excess requires the buyer's downward adjustment, preventing a duplicated loss."
+  },
+  {
+    "q": "The ABC partnership, which has a §754 election and no liabilities, holds $60,000 of cash and land with a basis of $30,000 and an FMV of $120,000. Each partner has a one-third interest and an outside basis of $30,000. The partnership distributes $60,000 of cash to Abe in complete liquidation. What is the §734(b) adjustment?",
+    "choices": [
+      "$30,000 increase to the land",
+      "$60,000 increase to the land",
+      "No adjustment, because Abe received only cash",
+      "$30,000 decrease to the land"
+    ],
+    "correct": 0,
+    "exp": "Abe recognizes $60,000 − $30,000 = $30,000 of capital gain, and the partnership increases the basis of its remaining capital gain property, the land, by the same $30,000. That keeps the gain from being taxed again to the remaining partners when the land is sold."
+  },
+  {
+    "q": "A partnership with a §754 election distributes land with an inside basis of $50,000 to Bea in complete liquidation of her interest. Bea's outside basis is $30,000, so she takes a $30,000 basis in the land. What adjustment does the partnership make to its remaining property?",
+    "choices": [
+      "No adjustment, because Bea recognized no gain",
+      "A $20,000 decrease",
+      "A $20,000 increase",
+      "A $50,000 increase"
+    ],
+    "correct": 2,
+    "exp": "When a distributee's basis in distributed property is less than the partnership's basis in it, the partnership increases the basis of its remaining property by the difference, here $50,000 − $30,000 = $20,000. That preserves the $20,000 of basis Bea lost."
+  },
+  {
+    "q": "Cruz, whose outside basis is $80,000, retires from a partnership that has a §754 election in effect. In complete liquidation of his interest he receives only a parcel of land that the partnership holds with a $50,000 basis, and he takes an $80,000 basis in it. What must the partnership do to the basis of its remaining property?",
+    "choices": [
+      "A $30,000 increase",
+      "No adjustment, because the land's basis increased",
+      "A $80,000 decrease",
+      "A $30,000 decrease"
+    ],
+    "correct": 3,
+    "exp": "When the distributee's basis in distributed property exceeds the partnership's basis, the partnership must reduce the basis of its remaining property by the difference, $80,000 − $50,000 = $30,000. Without the reduction the same $30,000 of basis would be used twice."
+  },
+  {
+    "q": "Which statement about making and revoking a §754 election is correct?",
+    "choices": [
+      "The transferee partner makes the election on his own return for the year of purchase",
+      "It is made by a statement with the partnership's timely filed return and applies to all later transfers and distributions until revoked with IRS consent",
+      "It applies only to the transfer described in the election and must be renewed for each later transfer",
+      "It may be revoked by the partnership at any time without IRS consent"
+    ],
+    "correct": 1,
+    "exp": "The partnership makes the §754 election with its timely filed return (including extensions) for the year of the transfer or distribution, and it applies to all later transfers and distributions. It can be revoked only with IRS approval, which is why partnerships weigh it carefully."
+  },
+  {
+    "q": "Dot buys a one-fourth partnership interest, and a §743(b) increase of $40,000 is allocated to the partnership's depreciable equipment. Who benefits from the extra depreciation on the $40,000?",
+    "choices": [
+      "Dot alone, because the adjustment is personal to the transferee",
+      "All partners in proportion to their capital accounts",
+      "The partner who sold the interest to Dot",
+      "All partners equally, because the adjustment changes the partnership's common basis"
+    ],
+    "correct": 0,
+    "exp": "A §743 adjustment affects only the transferee partner's basis in partnership property, not the partnership's common basis, so only Dot deducts the extra depreciation. A §734 distribution adjustment, by contrast, changes common basis and benefits all remaining partners."
+  },
+  {
+    "q": "The assets of a partnership with no §754 election have declined substantially in value, though not by enough to trigger a mandatory adjustment. A partner plans to sell his interest. Why might the partnership choose not to make a §754 election?",
+    "choices": [
+      "Because the election would give the buyer a basis step-up the IRS would challenge",
+      "Because the election cannot be made in a year in which a partner sells an interest",
+      "Because the election would require a downward adjustment for the buyer and would apply to all later transfers and distributions",
+      "Because the election would cause the selling partner to recognize ordinary income"
+    ],
+    "correct": 2,
+    "exp": "A §754 election requires both positive and negative adjustments, so with depreciated assets the buyer's inside basis would be reduced, and the election stays in effect for all later transfers and distributions. The election does not change the seller's gain or loss."
+  },
+  {
+    "q": "Fay joins an existing partnership on July 1 of a calendar year by contributing cash. The partnership had a large loss from January through June. Which allocation is permitted?",
+    "choices": [
+      "Fay may be allocated an equal share of the full-year loss if the partners agree",
+      "Fay may be allocated losses only for the part of the year after she joined, using an interim closing or proration",
+      "Fay may be allocated the January-to-June loss because her contribution funded it",
+      "Fay may be allocated no losses until the following year"
+    ],
+    "correct": 1,
+    "exp": "Under the varying-interest rules of §706, partnership items must reflect each partner's interest during the year, so retroactive allocations of losses incurred before a partner joins are not allowed. The partnership uses an interim closing of the books or a proration method."
+  },
+  {
+    "q": "A partnership revalues its property when Gil is admitted as a new partner for cash. The property's FMV exceeds its tax basis. How must the partnership later allocate tax items from that property?",
+    "choices": [
+      "Equally among all partners, including Gil, with no special allocations",
+      "Entirely to Gil, because he paid FMV for his interest",
+      "Under the §743 rules, with a basis adjustment for Gil",
+      "Under reverse §704 principles, so the existing partners bear the tax on the pre-admission appreciation"
+    ],
+    "correct": 3,
+    "exp": "A revaluation creates book-tax differences treated like contributed property (reverse §704 allocations), so the unrealized appreciation at admission is taxed to the existing partners. A §743 adjustment does not apply because Gil acquired his interest by contribution, not by transfer."
+  },
+  {
+    "q": "A partnership agreement allocates all depreciation on a building to Hal and provides that any later gain on the building is first charged back to Hal up to the depreciation he received. Capital accounts are maintained properly and Hal has a deficit restoration obligation. Why is this allocation generally respected?",
+    "choices": [
+      "Because depreciation allocations are never tested for substantiality",
+      "Because a gain chargeback cancels the economic effect of the depreciation",
+      "Because the regulations presume a property's value equals its book basis, so the chargeback is not treated as a certain offset",
+      "Because Hal bears no economic risk of the depreciation"
+    ],
+    "correct": 2,
+    "exp": "The substantiality rules presume that the value of property equals its adjusted book basis, so a later gain chargeback is not considered likely, and the depreciation allocation is not treated as transitory. Hal bears the economic burden through his capital account and deficit restoration obligation."
+  },
+  {
+    "q": "Ivo buys a partnership interest, creating a total §743(b) adjustment of $10,000. His share of the net appreciation in the partnership's ordinary income property is $15,000, and his share of the net depreciation in its capital gain property is $5,000. How is the adjustment allocated under §755?",
+    "choices": [
+      "$10,000 to ordinary income property; $0 to capital gain property",
+      "$15,000 increase to ordinary income property; $5,000 decrease to capital gain property",
+      "$5,000 to each class",
+      "$10,000 to capital gain property; $0 to ordinary income property"
+    ],
+    "correct": 1,
+    "exp": "Section 755 first allocates the adjustment between classes based on the gain or loss the transferee would be allocated in a hypothetical sale, so one class can be increased while the other is decreased. The net of +$15,000 and −$5,000 equals the $10,000 total adjustment."
+  },
+  {
+    "q": "Jill contributes $100,000 of cash to a partnership in exchange for a 25% interest. The partnership has a §754 election in effect. Which basis adjustment applies?",
+    "choices": [
+      "None under §743 or §734, because acquiring an interest by contribution is neither a transfer nor a distribution",
+      "A §743 adjustment equal to the difference between her cash and her share of inside basis",
+      "A §734 adjustment to the partnership's remaining property",
+      "A mandatory adjustment, because she paid cash"
+    ],
+    "correct": 0,
+    "exp": "Section 743 applies only to a sale or exchange of an existing interest or a transfer at death, and §734 applies only to distributions, so a contribution for a new interest triggers neither. The partnership uses a revaluation and reverse allocations to address pre-existing appreciation."
+  },
+  {
+    "q": "Which event can trigger a §734(b) adjustment rather than a §743(b) adjustment for a partnership with a §754 election?",
+    "choices": [
+      "A partner's sale of her interest to an outsider",
+      "The death of a partner whose interest passes to an heir",
+      "A partner's gift of her interest to her child",
+      "A distribution of cash in complete liquidation of a partner's interest"
+    ],
+    "correct": 3,
+    "exp": "Section 734 adjustments arise from partnership distributions, such as a liquidating cash distribution that produces gain to the distributee. A sale or an inheritance of an interest is a transfer that triggers a §743 adjustment instead."
+  },
+  {
+    "q": "Kim contributed land with a $100,000 built-in gain to a partnership 12 years ago, and the partnership still holds it. If the partnership sells the land this year, how is the built-in gain allocated?",
+    "choices": [
+      "Among all partners by profit share, because the 7-year period has expired",
+      "To Kim, because the contributed-property allocation rules apply for as long as the partnership holds the property",
+      "To Kim only if she elects to accept it",
+      "To no one, because the built-in gain expired after 10 years"
+    ],
+    "correct": 1,
+    "exp": "The rule requiring built-in gain to be allocated to the contributing partner has no time limit. The 7-year period applies only to the distribution rules that tax the contributor when the property, or other property, is distributed."
+  },
+  {
+    "q": "A partnership with a §754 election and no liabilities holds assets with a total adjusted basis of $300,000 and a total FMV of $240,000. Eli buys a one-third interest from an existing partner for $80,000. What is Eli's §743(b) adjustment?",
+    "choices": [
+      "$0",
+      "$20,000 increase",
+      "$20,000 decrease",
+      "$60,000 decrease"
+    ],
+    "correct": 2,
+    "exp": "Eli's $80,000 outside basis is less than his one-third share of inside basis ($300,000 / 3 = $100,000), so the election requires a $20,000 downward adjustment. The $60,000 answer uses the partnership's entire built-in loss instead of Eli's one-third share."
+  }
+]

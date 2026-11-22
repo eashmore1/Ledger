@@ -1,0 +1,302 @@
+[
+  {
+    "q": "Ava is the sole shareholder of an S corporation with no E&P. Her stock basis at the start of the year is $10,000 and she has no debt basis. For the year, the corporation reports $20,000 of ordinary income, $2,000 of tax-exempt interest, $1,000 of nondeductible expenses and a $9,000 long-term capital loss, and it distributes $25,000 to her. No special elections are made. How much of the capital loss can Ava deduct this year?",
+    "choices": ["$9,000", "$6,000", "$7,000", "$3,000"],
+    "correct": 1,
+    "exp": "Basis is increased by income ($10,000 + $20,000 + $2,000 = $32,000), then reduced by the $25,000 distribution ($7,000) and the $1,000 nondeductible expenses ($6,000), and only then by losses. She deducts $6,000 and carries $3,000 forward; answering $7,000 skips the nondeductible expenses, which come before losses."
+  },
+  {
+    "q": "Ben's S corporation stock basis is $5,000 on January 1. In February the corporation, which has no E&P, distributes $30,000 to him. For the full year his share of ordinary income is $40,000. What are the results of the distribution?",
+    "choices": [
+      "$25,000 capital gain; ending basis $40,000",
+      "$25,000 capital gain; ending basis $15,000",
+      "No gain; ending basis $15,000",
+      "No gain; ending basis $45,000"
+    ],
+    "correct": 2,
+    "exp": "Basis is adjusted at year-end, with the year's income added before distributions are applied, so the $30,000 is measured against $5,000 + $40,000 = $45,000 and is tax-free, leaving $15,000. Comparing the distribution with the January 1 basis ignores this ordering rule."
+  },
+  {
+    "q": "Cole has held his S corporation shares for five years. After this year's income, his stock basis is $12,000. The corporation has never been a C corporation and distributes $20,000 to him. What does Cole report?",
+    "choices": [
+      "$8,000 dividend income",
+      "$20,000 long-term capital gain",
+      "$8,000 ordinary income",
+      "$8,000 long-term capital gain"
+    ],
+    "correct": 3,
+    "exp": "With no E&P, a distribution is tax-free up to stock basis, and the $20,000 − $12,000 = $8,000 excess is treated as gain from the sale of the stock, long-term because he has held it more than a year. It is not a dividend because there are no earnings and profits."
+  },
+  {
+    "q": "Dana is the sole shareholder of an S corporation with $15,000 of AAA and $10,000 of accumulated E&P from its C corporation years. Her stock basis is $30,000 after this year's income, and she receives a $30,000 distribution. No elections are made. What are her dividend income and ending stock basis?",
+    "choices": [
+      "$10,000 dividend; ending basis $10,000",
+      "$0 dividend; ending basis $0",
+      "$10,000 dividend; ending basis $0",
+      "$15,000 dividend; ending basis $15,000"
+    ],
+    "correct": 0,
+    "exp": "The first $15,000 comes from AAA and is tax-free (basis falls to $15,000), the next $10,000 is a dividend from E&P that does not reduce basis, and the last $5,000 is a return of basis, leaving $10,000. Ignoring the E&P layer gives the $0 dividend answer."
+  },
+  {
+    "q": "An S corporation with accumulated E&P from its C corporation years wants its distributions to come out of E&P before AAA. Which statement about this election is correct?",
+    "choices": [
+      "The corporation may make it alone, without shareholder consent",
+      "It requires the consent of all shareholders who receive distributions during the year, and the E&P distributed is taxable as dividends",
+      "It makes the distributions of E&P tax-free because the corporation is now an S corporation",
+      "It is available only in the first year after the S election takes effect"
+    ],
+    "correct": 1,
+    "exp": "The election to distribute E&P first requires consent from every affected shareholder, and the E&P comes out as dividend income. Corporations make it to eliminate E&P, which removes the exposure to the excess passive investment income tax and to termination of the S election."
+  },
+  {
+    "q": "An S corporation with accumulated E&P of $100,000 starts the year with AAA of $50,000. During the year it has a $40,000 ordinary loss and distributes $30,000. Shareholders have ample basis. How much of the distribution comes from AAA, and what is ending AAA?",
+    "choices": [
+      "$10,000 from AAA; ending AAA $0",
+      "$30,000 from AAA; ending AAA $0",
+      "$30,000 from AAA; ending AAA ($20,000)",
+      "$0 from AAA; ending AAA ($20,000)"
+    ],
+    "correct": 2,
+    "exp": "In a year with a net negative adjustment, distributions are applied to AAA before the loss, so $50,000 − $30,000 = $20,000 covers the full distribution, and the $40,000 loss then takes AAA to ($20,000). Losses, unlike distributions, can make AAA negative; applying the loss first gives the $10,000 answer."
+  },
+  {
+    "q": "Which item increases an S corporation shareholder's stock basis but does not increase the corporation's accumulated adjustments account?",
+    "choices": [
+      "Tax-exempt interest income",
+      "Ordinary business income",
+      "Net §1231 gain",
+      "Long-term capital gain"
+    ],
+    "correct": 0,
+    "exp": "Tax-exempt income increases stock basis but is tracked outside AAA (in the other adjustments account), so it is not part of the AAA that comes out first when the corporation has E&P. All taxable income items increase both stock basis and AAA."
+  },
+  {
+    "q": "Erin's S corporation stock basis is $10,000. She has lent the corporation $20,000 directly, and she has personally guaranteed a $50,000 bank loan to it. Her share of the corporation's ordinary loss is $45,000. How much of the loss can she deduct, before the at-risk and passive activity limits?",
+    "choices": ["$10,000", "$45,000", "$30,000", "$20,000"],
+    "correct": 2,
+    "exp": "Losses are deductible up to stock basis ($10,000) plus debt basis from loans the shareholder made directly to the corporation ($20,000), for $30,000, with $15,000 suspended. A guarantee of a third-party loan does not create debt basis unless she actually pays on it."
+  },
+  {
+    "q": "Last year losses reduced Finn's stock basis to $0 and the basis of his $20,000 loan to his S corporation to $12,000. This year his share of ordinary income is $15,000, there are no distributions, and the loan has not been repaid. What are his ending stock basis and debt basis?",
+    "choices": [
+      "Stock $15,000; debt $12,000",
+      "Stock $0; debt $27,000",
+      "Stock $7,500; debt $19,500",
+      "Stock $7,000; debt $20,000"
+    ],
+    "correct": 3,
+    "exp": "A net increase in basis first restores debt basis to its face amount: $8,000 brings the loan back to $20,000, and the remaining $7,000 increases stock basis. Debt basis can never exceed the face amount of the loan, so $27,000 is impossible."
+  },
+  {
+    "q": "Gail's S corporation stock basis is $0, and her $20,000 loan to the corporation has a reduced basis of $5,000. This year her share of ordinary income is $10,000 and she receives a $10,000 cash distribution. What are the results?",
+    "choices": [
+      "The distribution is tax-free; stock basis is $0 and debt basis stays at $5,000",
+      "Debt basis is restored to $15,000, and the $10,000 distribution is capital gain",
+      "Debt basis is restored to $15,000, and the distribution reduces it back to $5,000",
+      "The distribution is tax-free; stock basis is $10,000 and debt basis is $5,000"
+    ],
+    "correct": 0,
+    "exp": "Debt basis is restored only by a net increase, which is income minus distributions and losses; here that is $0. The $10,000 of income raises stock basis and the distribution then takes it back to $0 tax-free, leaving debt basis at $5,000."
+  },
+  {
+    "q": "Hal lent his S corporation $20,000 three years ago in exchange for a formal written note. Losses have reduced the note's basis to $5,000, and this year the corporation repays the full $20,000. What does Hal recognize?",
+    "choices": [
+      "No gain, because loan repayments are a return of capital",
+      "$15,000 of ordinary income",
+      "$15,000 of long-term capital gain",
+      "$20,000 of long-term capital gain"
+    ],
+    "correct": 2,
+    "exp": "Repaying a debt whose basis has been reduced by losses produces gain of $20,000 − $5,000 = $15,000. Because the debt is a note held as a capital asset for more than a year, the gain is long-term capital gain."
+  },
+  {
+    "q": "A shareholder advanced funds to her S corporation on an open account, with no written note. Losses reduced the debt basis, and the corporation now repays the advances in full. How is the shareholder's gain on the repayment characterized?",
+    "choices": [
+      "As capital gain, because the debt is a capital asset in her hands",
+      "As a tax-free return of capital, because there is no note",
+      "As dividend income to the extent of AAA",
+      "As ordinary income, because repayment of an open account is not a sale or exchange"
+    ],
+    "correct": 3,
+    "exp": "Repaying an open account debt is not a sale or exchange, so gain from repaying reduced-basis open account advances is ordinary income. A formal note held as a capital asset would instead produce capital gain on repayment."
+  },
+  {
+    "q": "Ivy's S corporation will produce large first-year losses, but her stock basis is small. The corporation can borrow $200,000 from a bank if she guarantees it. Which arrangement gives her basis for the losses?",
+    "choices": [
+      "She guarantees the bank loan to the corporation",
+      "She borrows $200,000 from the bank personally and lends it to the corporation",
+      "She pledges her personal residence as collateral for the corporation's loan",
+      "The corporation borrows from a partnership in which she is a partner"
+    ],
+    "correct": 1,
+    "exp": "Debt basis arises only from bona fide debt the corporation owes directly to the shareholder, so a back-to-back loan through the shareholder creates basis. A guarantee or pledge does not create basis until the shareholder actually pays the corporation's debt."
+  },
+  {
+    "q": "A corporation's S election terminated at the end of last year, when the shareholder had $30,000 of suspended losses, $0 stock basis and $10,000 of debt basis. Which statement about deducting the suspended losses is correct?",
+    "choices": [
+      "They are deductible during the post-termination transition period up to her stock basis at the end of that period",
+      "They are deductible at any time in the future up to her stock and debt basis",
+      "They are deductible immediately up to her $10,000 of debt basis",
+      "They are lost on termination and can never be deducted"
+    ],
+    "correct": 0,
+    "exp": "Suspended losses are treated as incurred on the last day of the post-termination transition period, but only to the extent of stock basis at that time; debt basis does not count. The shareholder can make a capital contribution during the period to create the basis."
+  },
+  {
+    "q": "Jon has $25,000 of losses from his S corporation suspended for lack of basis. He sells all of his shares to an unrelated buyer. What happens to the suspended losses?",
+    "choices": [
+      "They pass to the buyer along with the shares",
+      "They increase Jon's basis in the shares sold",
+      "They expire unused; suspended losses are personal to Jon and do not transfer to the buyer",
+      "They become a capital loss carryforward that Jon may deduct in later years"
+    ],
+    "correct": 2,
+    "exp": "Losses suspended under the basis limitation can be used only by the shareholder who incurred them and are lost when the shares are sold to an unrelated party. A transfer to a spouse or incident to divorce is the main exception, so a shareholder planning a sale should restore basis first."
+  },
+  {
+    "q": "A C corporation elected S status effective January 1, 2024, with a net unrealized built-in gain of $100,000. In 2026 it sells equipment for $95,000 that had a basis of $30,000 and an FMV of $90,000 on January 1, 2024. Its 2026 taxable income computed as a C corporation is $80,000. What is the built-in gains tax?",
+    "choices": ["$12,600", "$13,650", "$21,000", "$16,800"],
+    "correct": 0,
+    "exp": "Only the appreciation at conversion is built-in gain: $90,000 − $30,000 = $60,000, and the post-conversion $5,000 is not taxed. The tax is $60,000 × 21% = $12,600, which falls within both the $80,000 taxable income limit and the $100,000 NUBIG limit; $13,650 taxes the whole $65,000 gain."
+  },
+  {
+    "q": "In the third year after converting from a C corporation, an S corporation has a $60,000 net recognized built-in gain, but its taxable income computed as if it were a C corporation is only $40,000. Its remaining net unrealized built-in gain is ample. What is the result?",
+    "choices": [
+      "Built-in gains tax of $12,600; nothing carries forward",
+      "Built-in gains tax of $8,400; nothing carries forward",
+      "Built-in gains tax of $4,200 on the $20,000 excess",
+      "Built-in gains tax of $8,400; the $20,000 excess carries forward to later years in the recognition period"
+    ],
+    "correct": 3,
+    "exp": "The recognized built-in gain taxed is limited to taxable income, so the tax is $40,000 × 21% = $8,400. The $20,000 excess is treated as recognized built-in gain in the next year, but only if that year is still within the recognition period."
+  },
+  {
+    "q": "A C corporation's S election took effect January 1, 2020. In February 2026, it sells land that was worth $200,000 more than its basis on January 1, 2020. Is the sale subject to the built-in gains tax?",
+    "choices": [
+      "Yes, because the land was held on the conversion date",
+      "No, because the 5-year recognition period ended December 31, 2024",
+      "Yes, because the recognition period is 10 years",
+      "No, because land is never subject to the built-in gains tax"
+    ],
+    "correct": 1,
+    "exp": "The recognition period is the 5 years beginning on the first day of the first S year, here 2020 through 2024, so a 2026 sale escapes the tax. Waiting until the period ends is the simplest built-in gains planning; the 10-year period is an outdated rule."
+  },
+  {
+    "q": "An S corporation owned 100% by Kim recognizes a $60,000 §1231 gain that is all built-in gain and pays $12,600 of built-in gains tax on it. What net §1231 gain passes through to Kim?",
+    "choices": ["$60,000", "$12,600", "$47,400", "$72,600"],
+    "correct": 2,
+    "exp": "The built-in gains tax paid is treated as a loss to the shareholders with the same character as the gain that caused it, so Kim's net §1231 gain is $60,000 − $12,600 = $47,400. Passing through the full $60,000 ignores this rule and taxes the tax."
+  },
+  {
+    "q": "During its recognition period, a former C corporation sells an asset at a gain. The IRS treats the entire gain as built-in gain. Which planning step at the time of the S election is most important in rebutting this?",
+    "choices": [
+      "Distributing all accumulated E&P before the election takes effect",
+      "Electing a calendar year for the S corporation",
+      "Contributing additional capital to raise shareholder basis",
+      "Obtaining a reliable appraisal of the corporation's assets as of the conversion date"
+    ],
+    "correct": 3,
+    "exp": "Gain recognized in the recognition period is presumed to be built-in gain unless the corporation shows the asset was acquired later or the gain exceeds the appreciation at conversion. A contemporaneous appraisal is the main evidence; distributing E&P addresses the passive investment income tax, not this one."
+  },
+  {
+    "q": "In year 4 of its recognition period, an S corporation sells a built-in gain asset on the installment method and collects payments in years 4 through 8. How is the built-in gain treated?",
+    "choices": [
+      "Only payments received in years 4 and 5 are subject to the built-in gains tax",
+      "Built-in gain recognized from all of the payments, including those after the period ends, is subject to the tax",
+      "The installment method is not allowed for built-in gain assets",
+      "None of the gain is taxed because the sale was not paid in full during the period"
+    ],
+    "correct": 1,
+    "exp": "Under the regulations, a sale made during the recognition period keeps its built-in gain character, so installment gain recognized after the period ends is still subject to the tax. An installment sale therefore does not avoid the built-in gains tax."
+  },
+  {
+    "q": "Lena's stock basis in her wholly owned S corporation is $70,000 before a distribution. The corporation, which has no E&P, distributes land with a basis of $40,000 and an FMV of $100,000 to her. What are the results?",
+    "choices": [
+      "No gain; land basis $40,000; stock basis $30,000",
+      "$60,000 gain passed through; land basis $100,000; stock basis $0 and $30,000 capital gain",
+      "$60,000 gain passed through; land basis $40,000; stock basis $90,000",
+      "$60,000 gain passed through; land basis $100,000; stock basis $30,000"
+    ],
+    "correct": 3,
+    "exp": "The corporation recognizes $60,000 of gain as if it sold the land, which passes through and raises Lena's basis to $130,000. The $100,000 FMV distribution then reduces it to $30,000 tax-free, and she takes a $100,000 basis in the land; the capital gain answer forgets the basis increase from the pass-through gain."
+  },
+  {
+    "q": "An S corporation owns investment land with a basis of $90,000 and an FMV of $50,000 and plans to give it to its sole shareholder. What is the better tax plan?",
+    "choices": [
+      "Distribute the land, because the $40,000 loss passes through to the shareholder",
+      "Distribute the land, because the shareholder takes a $90,000 basis",
+      "Sell the land to an unrelated buyer, recognize the $40,000 loss, and distribute the cash",
+      "Sell the land to the shareholder, because the loss is allowed on related-party sales"
+    ],
+    "correct": 2,
+    "exp": "A corporation recognizes no loss on distributing depreciated property, and the shareholder's basis is only the $50,000 FMV, so the loss vanishes. A sale to a more-than-50% shareholder is disallowed under §267, so selling to an unrelated buyer preserves the loss."
+  },
+  {
+    "q": "When can an S corporation become liable for the tax on excess net passive income?",
+    "choices": [
+      "When it has accumulated E&P from C years at year-end and its passive investment income exceeds 25% of gross receipts",
+      "Whenever its passive investment income exceeds 25% of gross receipts, even with no E&P",
+      "When it has accumulated E&P and its passive investment income exceeds 50% of taxable income",
+      "When any shareholder has passive losses from other activities"
+    ],
+    "correct": 0,
+    "exp": "The tax applies only if the corporation has accumulated E&P at year-end and passive investment income above 25% of gross receipts; three consecutive such years also terminate the S election. An S corporation that never had E&P is never subject to it."
+  },
+  {
+    "q": "An S corporation's governing documents give every share identical rights to distributions. One year, the corporation distributes cash to some shareholders a few months before distributing equal amounts per share to the others. What is the effect on the S election?",
+    "choices": [
+      "The election terminates because the corporation now has a second class of stock",
+      "There is no second class of stock, because the governing provisions confer identical rights, though the timing differences should be corrected",
+      "The early recipients must treat their distributions as dividends",
+      "The late recipients may deduct the delay as a loss"
+    ],
+    "correct": 1,
+    "exp": "Whether a second class of stock exists depends on the governing provisions; differences in the timing of actual distributions under identical rights do not create one, although the IRS may recharacterize them. Making distributions pro rata per share and on the same dates avoids the question."
+  },
+  {
+    "q": "Max is the sole shareholder and full-time CEO of a profitable S corporation. He takes no salary and instead receives $300,000 of distributions. What is the main tax risk?",
+    "choices": [
+      "The distributions will be taxed as dividends because the corporation is profitable",
+      "The S election will terminate for paying disproportionate distributions",
+      "The corporation will lose its deduction for the distributions",
+      "The IRS may recharacterize part of the distributions as wages subject to employment taxes"
+    ],
+    "correct": 3,
+    "exp": "A shareholder who performs significant services must receive reasonable compensation, and distributions that substitute for salary can be treated as wages subject to FICA and withholding. Distributions to a sole shareholder cannot be disproportionate."
+  },
+  {
+    "q": "Nia's S corporation stock basis is $10,000 after this year's income. Her share of nondeductible, noncapital expenses is $4,000 and her share of ordinary loss is $10,000. She elects to reduce basis by losses before nondeductible expenses. How much loss can she deduct this year?",
+    "choices": ["$6,000", "$14,000", "$4,000", "$10,000"],
+    "correct": 3,
+    "exp": "With the election, the $10,000 loss reduces her $10,000 basis first and is fully deductible, and the $4,000 of nondeductible expenses carries forward to reduce future basis. Without the election, the expenses come first and only $6,000 of loss is deductible."
+  },
+  {
+    "q": "An LLC taxed as a partnership and an S corporation each borrow $500,000 from a bank on a recourse basis for their operations, and in each case the owner contributed $50,000. Why can the S corporation owner usually deduct less of the business's early losses?",
+    "choices": [
+      "S corporation losses are limited to 50% of stock basis",
+      "Entity-level debt is not included in an S shareholder's basis, while a partner's basis includes a share of partnership liabilities",
+      "S corporation losses are deductible only against S corporation income",
+      "S corporation shareholders cannot carry suspended losses forward"
+    ],
+    "correct": 1,
+    "exp": "A partner's outside basis includes a share of partnership liabilities, but an S shareholder gets basis only for stock and for loans made directly to the corporation. The S owner's loss capacity is therefore $50,000 plus any direct shareholder loans."
+  },
+  {
+    "q": "An S corporation has accumulated E&P of $20,000 and begins the year with AAA of ($10,000). This year it has $15,000 of ordinary income and distributes $12,000 to its sole shareholder, who has ample basis. How much of the distribution is a dividend?",
+    "choices": ["$7,000", "$0", "$12,000", "$2,000"],
+    "correct": 0,
+    "exp": "The year's income brings AAA to −$10,000 + $15,000 = $5,000, so $5,000 of the distribution is from AAA and the remaining $7,000 comes from E&P as a dividend. Treating the full $15,000 of income as AAA ignores the negative opening balance."
+  },
+  {
+    "q": "Omar sells all of his 40% interest in a calendar-year S corporation to Pia on July 1. Most of the corporation's income for the year was earned after June 30. Absent any election, how is the year's income allocated between them?",
+    "choices": [
+      "Pro rata on a per-share, per-day basis over the whole year",
+      "Entirely to Pia, who owns the shares at year-end",
+      "According to the income actually earned before and after July 1",
+      "Entirely to Omar, who owned the shares on January 1"
+    ],
+    "correct": 0,
+    "exp": "S corporation items are allocated per share, per day unless the corporation elects, with the consent of all affected shareholders, to close its books on the date of the sale. That election would assign Omar only the income actually earned through June 30."
+  }
+]

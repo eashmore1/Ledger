@@ -1,0 +1,272 @@
+[
+  {
+    "q": "Vale Corp., a C corporation, earns $100,000 of pretax income and distributes all of its after-tax earnings to its sole shareholder as a qualified dividend. The shareholder pays 20% on qualified dividends plus the 3.8% net investment income tax. What is the combined corporate and shareholder tax on the $100,000?",
+    "choices": ["$39,802", "$23,800", "$21,000", "$44,800"],
+    "correct": 0,
+    "exp": "Corporate tax is $100,000 × 21% = $21,000, leaving a $79,000 dividend taxed at 23.8% = $18,802, for a total of $39,802. Adding the two rates to get $44,800 ignores that the shareholder tax applies only to the after-tax amount actually distributed."
+  },
+  {
+    "q": "Birch Corp. has gross income from operations of $200,000, operating expenses of $210,000, and $100,000 of dividends from a domestic corporation in which it owns 30% of the stock. What is Birch's dividends-received deduction?",
+    "choices": ["$65,000", "$58,500", "$45,000", "$50,000"],
+    "correct": 1,
+    "exp": "Taxable income before the DRD is $200,000 + $100,000 − $210,000 = $90,000. The 65% DRD ($65,000) is limited to 65% × $90,000 = $58,500, and the limit applies because taking the full $65,000 would not create an NOL ($90,000 − $65,000 is still positive). The $65,000 answer ignores the taxable income limitation."
+  },
+  {
+    "q": "Cedar Corp. owns 30% of a domestic corporation and receives $100,000 of dividends from it. Cedar also has $200,000 of operating income and $240,000 of operating expenses. How much DRD may Cedar claim?",
+    "choices": ["$39,000", "$60,000", "$65,000", "$30,000"],
+    "correct": 2,
+    "exp": "Taxable income before the DRD is $60,000, and the full 65% DRD of $65,000 would create a $5,000 NOL, so the taxable income limitation does not apply and the full $65,000 is allowed. Answering $39,000 (65% × $60,000) applies the limitation even though the NOL exception overrides it."
+  },
+  {
+    "q": "Dune Corp. has taxable income of $400,000 before any NOL deduction and an NOL carryforward of $500,000 that arose in a tax year beginning after 2020. What is Dune's regular federal income tax for the year?",
+    "choices": ["$0", "$84,000", "$67,200", "$16,800"],
+    "correct": 3,
+    "exp": "Post-2017 NOLs may offset only 80% of taxable income, so the deduction is $320,000, leaving $80,000 × 21% = $16,800 of tax and a $180,000 carryforward. A $0 answer wrongly lets the NOL offset 100% of taxable income."
+  },
+  {
+    "q": "Elm Corp. has $300,000 of ordinary income, a $20,000 long-term capital gain and a $50,000 short-term capital loss for the year. How is the net capital loss treated?",
+    "choices": [
+      "It is not deductible this year; it is carried back 3 years and forward 5 years as a short-term capital loss",
+      "Up to $3,000 offsets ordinary income, and the rest carries forward indefinitely",
+      "It offsets ordinary income in full, reducing taxable income to $270,000",
+      "It is carried back 2 years and forward 20 years as an ordinary loss"
+    ],
+    "correct": 0,
+    "exp": "A corporation may deduct capital losses only against capital gains; the $30,000 net capital loss is carried back 3 years and forward 5 years, always as a short-term loss. The $3,000 ordinary offset and indefinite carryforward are individual rules."
+  },
+  {
+    "q": "Fir Corp., a C corporation, sells a commercial building for $1,100,000. It bought the building for $1,000,000 and took $300,000 of straight-line depreciation. How much of the gain is ordinary income under §291?",
+    "choices": ["$300,000", "$0", "$60,000", "$80,000"],
+    "correct": 2,
+    "exp": "The gain is $1,100,000 − $700,000 = $400,000. Section 291 treats 20% of the lesser of the depreciation taken ($300,000) or the gain ($400,000) as ordinary income: 20% × $300,000 = $60,000. Answering $80,000 applies the 20% to the total gain instead of to the depreciation."
+  },
+  {
+    "q": "At the start of the year, Grove Corp. has an accumulated E&P deficit of $50,000. Its current E&P for the year is $30,000, and it distributes $40,000 cash to its sole shareholder, whose stock basis is $100,000. How much of the distribution is a taxable dividend?",
+    "choices": ["$0", "$30,000", "$40,000", "$10,000"],
+    "correct": 1,
+    "exp": "A distribution is a dividend to the extent of current E&P even when accumulated E&P is negative, so $30,000 is a dividend and the remaining $10,000 is a return of basis. Answering $0 wrongly nets the accumulated deficit against current E&P before the year ends."
+  },
+  {
+    "q": "Hale Corp. distributes land to its shareholder as a dividend. The land has a basis of $30,000 and an FMV of $100,000 and is subject to a $120,000 mortgage that the shareholder assumes. What gain does Hale recognize?",
+    "choices": ["$70,000", "$0", "$20,000", "$90,000"],
+    "correct": 3,
+    "exp": "When distributed property is subject to a liability greater than its value, the FMV is treated as not less than the liability, so Hale recognizes $120,000 − $30,000 = $90,000. The $70,000 answer uses the $100,000 FMV and ignores the liability rule."
+  },
+  {
+    "q": "Iris Corp. has ample E&P and distributes investment land to its sole shareholder. The land has a basis of $80,000 and an FMV of $50,000. What are the tax results?",
+    "choices": [
+      "Iris recognizes no loss; the shareholder has a $50,000 dividend and a $50,000 basis in the land",
+      "Iris recognizes a $30,000 loss; the shareholder has a $50,000 dividend and a $50,000 basis",
+      "Iris recognizes no loss; the shareholder has an $80,000 dividend and an $80,000 basis",
+      "Iris recognizes no loss; the shareholder has a $50,000 dividend and an $80,000 basis"
+    ],
+    "correct": 0,
+    "exp": "A corporation cannot recognize a loss on a nonliquidating distribution of property, and the shareholder's dividend and basis both equal the $50,000 FMV, so the $30,000 loss disappears. Better planning would be to sell the land, recognize the loss, and distribute the cash."
+  },
+  {
+    "q": "Jett Corp. has 100 shares of voting common stock outstanding. Amy owns 60 shares, and unrelated individuals own the rest. Jett redeems 30 of Amy's shares. How is the redemption treated?",
+    "choices": [
+      "As a dividend, because Amy still owns more than 20% of the stock",
+      "As an exchange, because Amy's interest falls to about 42.9%, below both 50% and 80% of her prior 60%",
+      "As a dividend, because only a complete termination qualifies for exchange treatment",
+      "As an exchange, but only if Amy waives family attribution for 10 years"
+    ],
+    "correct": 1,
+    "exp": "After the redemption Amy owns 30 of 70 shares (42.9%). That is under 50% and under 80% × 60% = 48%, so the redemption is substantially disproportionate under §302 and treated as an exchange. Complete termination is only one of several ways to get exchange treatment."
+  },
+  {
+    "q": "Father and Son each own 50 of the 100 outstanding shares of Kite Corp. Kite redeems all of Father's shares for cash. What lets Father treat the redemption as an exchange rather than a dividend?",
+    "choices": [
+      "Nothing, because Son's shares are always attributed to Father",
+      "Father staying on as a paid consultant to keep the business stable",
+      "Father waiving family attribution: no interest other than as a creditor, no reacquisition for 10 years, and a filed agreement",
+      "Father receiving a note instead of cash for the shares"
+    ],
+    "correct": 2,
+    "exp": "Without a waiver, Father constructively owns Son's shares and so owns 100% after the redemption. Section 302 waives family attribution if Father keeps no interest other than as a creditor (not as an employee or consultant), acquires none for 10 years, and files the agreement."
+  },
+  {
+    "q": "Which statement about the accumulated earnings tax is correct?",
+    "choices": [
+      "It applies to S corporations that retain more than $250,000 of earnings",
+      "It is self-assessed each year on a schedule attached to Form 1120",
+      "It is imposed at 37% on undistributed taxable income",
+      "Earnings retained for documented, reasonably anticipated business needs reduce the amount subject to tax"
+    ],
+    "correct": 3,
+    "exp": "The 20% accumulated earnings tax reaches only earnings retained beyond the reasonable needs of the business, so a specific, documented plan (such as a plant expansion) is the main defense. It is assessed by the IRS rather than self-reported, and it does not apply to S corporations."
+  },
+  {
+    "q": "Lark Corp., a manufacturer, had accumulated E&P of $180,000 at the end of the prior year. For the current year its accumulated taxable income before the accumulated earnings credit is $200,000, it paid no dividends, and it cannot show any reasonable business needs. What is its accumulated earnings tax?",
+    "choices": ["$40,000", "$0", "$26,000", "$10,000"],
+    "correct": 2,
+    "exp": "The minimum credit for a non-service corporation is $250,000 − $180,000 = $70,000, so the tax is 20% × ($200,000 − $70,000) = $26,000. The $40,000 answer ignores the minimum credit, which would be the result for a personal service corporation, whose $150,000 minimum is already exceeded by the $180,000 of accumulated E&P."
+  },
+  {
+    "q": "A closely held C corporation is a personal holding company when which conditions are both met?",
+    "choices": [
+      "At least 60% of adjusted ordinary gross income is PHC income, and five or fewer individuals own more than 50% of the stock value at any time in the last half of the year",
+      "At least 50% of gross income is passive, and ten or fewer individuals own more than 80% of the voting stock at year-end",
+      "At least 25% of gross receipts are passive investment income, and the corporation has accumulated E&P",
+      "At least 60% of taxable income is retained, and five or fewer individuals own more than 50% of the voting stock"
+    ],
+    "correct": 0,
+    "exp": "The PHC tests are an income test (60% of adjusted ordinary gross income) and an ownership test (more than 50% of value held by five or fewer individuals during the last half of the year). The 25% passive investment income test is an S corporation rule."
+  },
+  {
+    "q": "Mesa Corp. discovers after year-end that it was a personal holding company and owes PHC tax. Which step can reduce its undistributed PHC income for that year even after the year has closed?",
+    "choices": [
+      "A capital contribution by its shareholders",
+      "A deficiency dividend paid after the PHC liability is determined",
+      "A pro rata stock dividend to its common shareholders",
+      "A retroactive election to be taxed as an S corporation"
+    ],
+    "correct": 1,
+    "exp": "The deficiency dividend procedure lets a PHC pay a dividend after the liability is determined and deduct it for the earlier year, removing the 20% PHC tax (interest and penalties still apply). A stock dividend does not distribute earnings, so it gives no dividends-paid deduction."
+  },
+  {
+    "q": "Nash Corp. is a closely held C corporation that is not a personal service corporation. This year it has $100,000 of net active business income, $30,000 of portfolio income, and a $120,000 loss from a passive rental activity. How much of the passive loss may Nash deduct?",
+    "choices": ["$0", "$120,000", "$25,000", "$100,000"],
+    "correct": 3,
+    "exp": "A closely held C corporation that is not a PSC may use passive losses against net active income but not against portfolio income, so it deducts $100,000 and carries $20,000 forward. A personal service corporation could deduct none of the loss."
+  },
+  {
+    "q": "Oak Corp., an accrual-method calendar-year C corporation, accrues a $50,000 bonus on December 31, 2026, for its president, a cash-method individual who owns 60% of its stock. The bonus is paid on March 1, 2027. When may Oak deduct it?",
+    "choices": [
+      "In 2026, because it is paid within 2½ months after year-end",
+      "In 2026, because all events fixing the liability occurred in 2026",
+      "In 2027, when the shareholder includes it in income",
+      "Never, because compensation to a majority shareholder is a dividend"
+    ],
+    "correct": 2,
+    "exp": "Under §267, an accrual-method corporation cannot deduct an amount owed to a cash-method related party (more than 50% owner) until the payee includes it in income, which is 2027. The 2½-month rule applies only to unrelated employees."
+  },
+  {
+    "q": "Pine Corp. is formed and begins business on July 1 of its first calendar tax year. It incurred $53,000 of organizational expenditures. What is its maximum deduction for organizational expenditures in the first year?",
+    "choices": ["$3,700", "$5,000", "$2,000", "$6,700"],
+    "correct": 0,
+    "exp": "The $5,000 immediate deduction is reduced dollar for dollar by the $3,000 above $50,000, leaving $2,000. The remaining $51,000 is amortized over 180 months: $51,000 / 180 × 6 = $1,700, for a total of $3,700. The $6,700 answer forgets the phase-out of the $5,000 amount."
+  },
+  {
+    "q": "Quill Corp. pays its sole shareholder-employee a salary far above what comparable businesses pay for similar services. On audit, how is the IRS most likely to treat the excess?",
+    "choices": [
+      "As a nondeductible constructive dividend to the extent of E&P",
+      "As a deductible salary, because the board approved it",
+      "As a loan from Quill to the shareholder that must be repaid",
+      "As a capital contribution that increases the shareholder's stock basis"
+    ],
+    "correct": 0,
+    "exp": "Only reasonable compensation is deductible; the excess paid to a shareholder-employee is recharacterized as a constructive dividend, which the corporation cannot deduct and which is still taxable to the shareholder. In an S corporation the IRS usually challenges the opposite pattern, salaries that are too low."
+  },
+  {
+    "q": "Shareholders of a new C corporation are deciding whether to fund it with part debt and part equity instead of all equity. What is the main tax advantage of including bona fide shareholder debt?",
+    "choices": [
+      "Interest paid is deductible by the corporation, and principal repayments are a tax-free return of the loan rather than dividends",
+      "Interest received by the shareholders qualifies for the 20% dividend rate",
+      "The debt raises the shareholders' stock basis, allowing them to deduct corporate losses",
+      "Repaying the debt is deductible by the corporation in the year paid"
+    ],
+    "correct": 0,
+    "exp": "Interest is deductible (subject to limits such as §163(j)), and principal repayments are a tax-free recovery of the loan, whereas equity returns come out as nondeductible dividends. If the debt lacks real debt features, the IRS may reclassify it as equity under §385 principles."
+  },
+  {
+    "q": "Parent Corp. owns 70% of Sub Corp.'s voting stock and 70% of its value. Parent wants to offset Sub's operating losses against its own income. What must change for the two to file a consolidated federal return?",
+    "choices": [
+      "Nothing; 50% ownership is enough for a consolidated return",
+      "Parent must own at least 80% of Sub's voting power and 80% of its value",
+      "Sub must elect to be treated as a personal holding company",
+      "Parent must own 80% of Sub's voting power; value is irrelevant"
+    ],
+    "correct": 1,
+    "exp": "An affiliated group needs a common parent that directly owns stock with at least 80% of the total voting power and at least 80% of the total value of the subsidiary. Once affiliated, members may file a consolidated return that nets one member's losses against another's income."
+  },
+  {
+    "q": "Pratt Corp. owns 100% of Spoke Corp. and completely liquidates it. Pratt's basis in the Spoke stock is $200,000. Spoke's assets have an adjusted basis of $500,000 and an FMV of $900,000, and it has no liabilities. What gain does Pratt recognize, and what basis does it take in the assets?",
+    "choices": [
+      "$700,000 gain; $900,000 basis",
+      "$0 gain; $900,000 basis",
+      "$0 gain; $200,000 basis",
+      "$0 gain; $500,000 basis"
+    ],
+    "correct": 3,
+    "exp": "Under §332, a parent owning at least 80% of the vote and value recognizes no gain or loss on a subsidiary's liquidation, and it takes Spoke's $500,000 carryover basis. The $200,000 stock basis disappears, so it is not the asset basis."
+  },
+  {
+    "q": "Ridge Corp. adopts a plan of complete liquidation and distributes land (basis $100,000, FMV $400,000) to its sole individual shareholder, whose stock basis is $50,000. What gain does Ridge recognize, and what is the shareholder's basis in the land?",
+    "choices": [
+      "$0 gain; $100,000 basis",
+      "$300,000 gain; $400,000 basis",
+      "$300,000 gain; $100,000 basis",
+      "$0 gain; $50,000 basis"
+    ],
+    "correct": 1,
+    "exp": "Under §336 a liquidating corporation recognizes gain as if it sold the property at FMV ($400,000 − $100,000 = $300,000). The shareholder is taxed under §331 on the excess of FMV over stock basis and takes a $400,000 FMV basis. The carryover basis applies only to an 80% corporate parent under §332."
+  },
+  {
+    "q": "Stark Corp. had taxable income of over $1 million in one of its three preceding tax years. Which statement about Stark's current-year estimated tax payments is correct?",
+    "choices": [
+      "It may base all four installments on 100% of last year's tax",
+      "It must pay 110% of last year's tax to use the prior-year safe harbor",
+      "It may use last year's tax only for the first installment and must base the rest on current-year tax",
+      "It is not required to make estimated payments if it files by the extended due date"
+    ],
+    "correct": 2,
+    "exp": "A large corporation (taxable income of $1 million or more in any of the three prior years) may use the prior-year safe harbor only for its first installment and must recapture any shortfall in the second. The 110% rule applies to high-income individuals, not corporations."
+  },
+  {
+    "q": "Which statement about the corporate alternative minimum tax (CAMT) is correct?",
+    "choices": [
+      "It is 21% of taxable income after adding back tax preference items",
+      "It applies to every C corporation with financial statement income above $1 million",
+      "It is 20% of adjusted current earnings and applies to all corporations",
+      "It is 15% of adjusted financial statement income and generally applies only to corporations averaging more than $1 billion of it"
+    ],
+    "correct": 3,
+    "exp": "The CAMT enacted in 2022 is 15% of adjusted financial statement income (book income with specified adjustments) and generally reaches only corporations whose average annual AFSI over three years exceeds $1 billion. Any CAMT paid creates a minimum tax credit for later years."
+  },
+  {
+    "q": "A publicly traded domestic corporation repurchases $50 million of its stock during the year and issues $20 million of new stock to employees and investors in the same year. What is its stock buyback excise tax?",
+    "choices": ["$500,000", "$300,000", "$700,000", "$6,300,000"],
+    "correct": 1,
+    "exp": "The excise tax is 1% of the FMV of stock repurchased, reduced by the FMV of stock issued during the year: 1% × ($50 million − $20 million) = $300,000. The $500,000 answer ignores the netting for stock issued."
+  },
+  {
+    "q": "The founder of a profitable C corporation plans to keep the stock until death and let earnings build inside the company for real business needs. Which tax effect makes this a common planning strategy?",
+    "choices": [
+      "Retained earnings escape the corporate-level tax",
+      "Accumulated E&P is eliminated when the founder dies",
+      "The heirs' stock basis steps up to FMV, so the shareholder-level tax on the retained earnings can be avoided",
+      "The corporation may deduct the value of the founder's stock at death"
+    ],
+    "correct": 2,
+    "exp": "Under §1014, the heirs take an FMV basis in the stock, so a later sale or redemption produces little gain and the second tax on retained earnings may never be paid. The corporation still pays its 21% tax, and its E&P stays intact."
+  },
+  {
+    "q": "A business owner who works full time in her company is comparing a C corporation with an S corporation. Which fringe-benefit advantage does a C corporation offer her?",
+    "choices": [
+      "Employer-paid health insurance is excluded from her income even though she owns 100% of the stock",
+      "Her salary is exempt from FICA tax",
+      "She may exclude $50,000 of dividends each year as a fringe benefit",
+      "Her share of corporate income is taxed only when distributed as salary"
+    ],
+    "correct": 0,
+    "exp": "A shareholder-employee of a C corporation is an employee for fringe-benefit purposes, so employer-paid health coverage is excluded under §106. A more-than-2% S corporation shareholder is treated like a partner and must include those premiums in wages."
+  },
+  {
+    "q": "Teal Corp. buys 5% of a domestic corporation's stock 10 days before the ex-dividend date, receives a $40,000 dividend, and sells the stock 20 days after the ex-dividend date. How much DRD may Teal claim on the dividend?",
+    "choices": ["$20,000", "$26,000", "$0", "$40,000"],
+    "correct": 2,
+    "exp": "The DRD is denied unless the stock is held more than 45 days during the 91-day period beginning 45 days before the ex-dividend date; Teal held it about 30 days. Otherwise the 50% DRD for less-than-20% ownership would have given $20,000."
+  },
+  {
+    "q": "What happens when a C corporation distributes appreciated property, rather than cash, to a shareholder as a nonliquidating distribution?",
+    "choices": [
+      "The corporation recognizes no gain, and the shareholder takes a carryover basis",
+      "The corporation recognizes gain as if it sold the property at FMV, which can produce two levels of tax on the appreciation",
+      "The corporation recognizes gain only if the shareholder owns more than 50% of the stock",
+      "The corporation recognizes gain, but the shareholder's dividend is limited to the corporation's basis"
+    ],
+    "correct": 1,
+    "exp": "Section 311 taxes the corporation on the appreciation as if it sold the property, and the shareholder also has a dividend equal to FMV (to the extent of E&P) with an FMV basis. That is why appreciated property is usually a poor choice to distribute from a C corporation."
+  }
+]

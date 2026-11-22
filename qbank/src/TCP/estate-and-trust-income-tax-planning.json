@@ -1,0 +1,332 @@
+[
+{
+"q": "A simple trust earns $30,000 of taxable interest and realizes a $10,000 long-term capital gain that the governing instrument allocates to corpus. A $2,000 trustee fee is charged entirely to corpus, and the trustee distributes the $30,000 of trust accounting income to the beneficiary. What is the trust's taxable income?",
+"choices": [
+"$10,000",
+"$9,700",
+"$7,700",
+"$9,900"
+],
+"correct": 1,
+"exp": "DNI is $30,000 - $2,000 = $28,000 (the corpus gain is excluded), so the distribution deduction is the lesser of $30,000 distributed or $28,000 DNI. Taxable income is $30,000 + $10,000 - $2,000 - $28,000 - $300 exemption = $9,700; deducting the full $30,000 distribution ignores the DNI ceiling."
+},
+{
+"q": "Which set of facts allows a trust to be treated as a simple trust for the current year?",
+"choices": [
+"The trust may accumulate income but made no distributions during the year",
+"The trust must distribute all income currently and also paid a charitable bequest",
+"The trust must distribute all income currently, has no charitable purpose and distributed no corpus",
+"The trust has only one beneficiary, regardless of its distribution requirements"
+],
+"correct": 2,
+"exp": "A simple trust must be required to distribute all income currently, may not provide for charitable contributions and may not distribute corpus during the year. A trust that distributes corpus or makes a charitable payment is complex for that year, and the number of beneficiaries is irrelevant."
+},
+{
+"q": "Which combination correctly states the personal exemptions allowed under §642 on Form 1041?",
+"choices": [
+"Estate $600; simple trust $300; complex trust $100",
+"Estate $300; simple trust $600; complex trust $100",
+"Estate $600; simple trust $100; complex trust $300",
+"Estate $100; simple trust $300; complex trust $600"
+],
+"correct": 0,
+"exp": "Section 642 allows $600 for an estate, $300 for a trust required to distribute all income currently and $100 for all other trusts. These amounts are not indexed, and the larger trust exemption goes to the trust that must distribute everything, not the complex trust."
+},
+{
+"q": "A simple trust has $40,000 of taxable interest and $10,000 of tax-exempt municipal bond interest, and no expenses. It distributes all $50,000 of accounting income to its sole beneficiary. How much must the beneficiary include in gross income?",
+"choices": [
+"$50,000",
+"$10,000",
+"$0",
+"$40,000"
+],
+"correct": 3,
+"exp": "DNI of $50,000 includes the tax-exempt interest, but the distribution keeps its character, so $10,000 stays tax-exempt to the beneficiary and only $40,000 is taxable. The trust's distribution deduction is also limited to the $40,000 taxable portion."
+},
+{
+"q": "A complex trust has trust accounting income and DNI of $60,000, all taxable interest. The instrument requires $40,000 of income to be paid to Ava each year, and the trustee also makes a discretionary $40,000 distribution of corpus to Ben. How much does Ben include in gross income?",
+"choices": [
+"$40,000",
+"$20,000",
+"$30,000",
+"$0"
+],
+"correct": 1,
+"exp": "Under the tier system, Ava's required income distribution is a first-tier distribution and absorbs $40,000 of DNI first. Only the remaining $60,000 - $40,000 = $20,000 of DNI is carried out to Ben's second-tier distribution; splitting DNI equally ignores the tier ordering."
+},
+{
+"q": "A trust has $60,000 of trust accounting income and $50,000 of DNI because $10,000 of trustee fees are charged to corpus. The instrument requires all income to be paid equally to Cole and Dana, so each receives $30,000. How much does each include in income?",
+"choices": [
+"$30,000",
+"$20,000",
+"$25,000",
+"$27,500"
+],
+"correct": 2,
+"exp": "When first-tier distributions ($60,000) exceed DNI ($50,000), DNI is allocated pro rata: $50,000 x ($30,000 / $60,000) = $25,000 each. Including the full $30,000 would tax more than the trust's DNI, which caps what distributions carry out."
+},
+{
+"q": "A calendar-year complex trust had trust accounting income of $80,000 and DNI of $70,000 for 2025, and it distributed $50,000 during 2025. What is the maximum amount of distributions made in the first 65 days of 2026 that the trustee may elect to treat as made in 2025?",
+"choices": [
+"$30,000",
+"$20,000",
+"$80,000",
+"$70,000"
+],
+"correct": 0,
+"exp": "The election is limited to the greater of trust accounting income or DNI for the year, reduced by distributions already made in that year: $80,000 - $50,000 = $30,000. Using DNI ($70,000 - $50,000 = $20,000) applies the lesser rather than the greater amount."
+},
+{
+"q": "Which statement about the 65-day election is correct?",
+"choices": [
+"It is available only to simple trusts and must be made by January 31",
+"It is made by filing a separate request with the IRS within 65 days of death",
+"It applies automatically to every distribution made within 65 days of year-end",
+"Estates and complex trusts may make it on a timely filed return, including extensions"
+],
+"correct": 3,
+"exp": "The election is available to estates and complex trusts for distributions in the first 65 days of the following year and is made on the Form 1041 filed by its due date, including extensions. It is not automatic, and simple trusts already must distribute all income currently."
+},
+{
+"q": "Why is the 65-day rule a valuable income tax planning tool for a complex trust?",
+"choices": [
+"It allows the trust to defer paying its own tax until the following year",
+"After year-end the trustee knows actual income and can shift it to beneficiaries in lower brackets",
+"It converts accumulated capital gains into tax-exempt income for the beneficiaries",
+"It lets the trust avoid the throwback rules on foreign accumulation distributions only"
+],
+"correct": 1,
+"exp": "Trust brackets are highly compressed, so trustees benefit from distributing income to lower-bracket beneficiaries, and the 65-day window lets them do so after the year's income is known. The rule changes who is taxed on the income; it does not defer tax or change character."
+},
+{
+"q": "A complex trust sells stock for a $25,000 long-term capital gain. The governing instrument and local law allocate capital gains to principal, and the trustee makes no distribution of the proceeds. Who is taxed on the gain?",
+"choices": [
+"The income beneficiaries, because DNI always includes capital gains",
+"The remainder beneficiaries, in the year the trust terminates",
+"The trust, because gains allocated to corpus and not distributed are excluded from DNI",
+"No one, because the trust receives a stepped-up basis each year"
+],
+"correct": 2,
+"exp": "Capital gains allocated to corpus and not paid, credited or required to be distributed are excluded from DNI, so the trust pays the tax. Gains are included in DNI only when allocated to income, consistently treated as distributed, or distributed in the final year."
+},
+{
+"q": "In a trust's final taxable year, deductions exceed gross income and the trust also has an unused capital loss carryover. What happens to these items?",
+"choices": [
+"They pass through to the beneficiaries succeeding to the trust property",
+"They are lost because the trust no longer exists",
+"They are carried back to the trust's three prior years",
+"They pass to the grantor, who reports them on Form 1040"
+],
+"correct": 0,
+"exp": "Under §642, unused loss carryovers and excess deductions on termination are allowed to the beneficiaries succeeding to the property. They are not forfeited, and a nongrantor trust's items do not revert to the grantor."
+},
+{
+"q": "A complex trust's DNI of $100,000 consists of $60,000 of qualified dividends and $40,000 of taxable interest. The trust distributes $50,000 to its sole beneficiary and the instrument has no special allocation provisions. How does the beneficiary report the distribution?",
+"choices": [
+"$50,000 of qualified dividends, because dividends are deemed distributed first",
+"$50,000 of ordinary interest income, because interest is deemed distributed first",
+"$25,000 of qualified dividends and $25,000 of interest",
+"$30,000 of qualified dividends and $20,000 of interest"
+],
+"correct": 3,
+"exp": "Absent a specific allocation in the instrument, a distribution carries out each class of income in proportion to its share of DNI: 60% x $50,000 = $30,000 of dividends and 40% x $50,000 = $20,000 of interest. There is no rule that one class is distributed first."
+},
+{
+"q": "A simple trust has $60,000 of taxable interest, $40,000 of tax-exempt interest and a $10,000 trustee fee charged to corpus. It distributes all $100,000 of accounting income. What is the trust's distribution deduction?",
+"choices": [
+"$60,000",
+"$54,000",
+"$50,000",
+"$90,000"
+],
+"correct": 1,
+"exp": "40% of the fee ($4,000) is allocated to tax-exempt income and is nondeductible, so DNI is $90,000, of which $36,000 is net tax-exempt income. The deduction is limited to DNI less net tax-exempt income: $90,000 - $36,000 = $54,000; $60,000 ignores the expense allocated to taxable income."
+},
+{
+"q": "Maria creates a revocable living trust, retaining the right to amend or revoke it at any time. The trust earns $50,000 of dividends this year. Who reports the dividend income?",
+"choices": [
+"The trust, on Form 1041 at compressed trust rates",
+"The remainder beneficiaries, as the income accrues",
+"Maria, because a revocable trust is a grantor trust",
+"No one until Maria's death, when the trust becomes irrevocable"
+],
+"correct": 2,
+"exp": "A power to revoke makes the grantor the owner of the trust under §676, so Maria reports the income on her own return. The trust is ignored for income tax purposes during her life; income is not deferred until death."
+},
+{
+"q": "A grantor creates an irrevocable trust for her children and retains, in a nonfiduciary capacity, the power to reacquire trust assets by substituting other property of equal value. What is the main planning result?",
+"choices": [
+"The trust is a grantor trust for income tax purposes, but its assets are generally excluded from her gross estate",
+"The trust is a nongrantor trust, and its assets are included in her gross estate",
+"The trust is a grantor trust, and its assets are included in her gross estate",
+"The power is ignored for both income and transfer tax purposes"
+],
+"correct": 0,
+"exp": "A nonfiduciary swap power under §675 makes the trust a grantor trust, and the IRS has ruled that such a power alone does not cause estate inclusion. This combination is the basis of the intentionally defective grantor trust; income tax and estate tax 'ownership' rules differ."
+},
+{
+"q": "Leo sells stock with a basis of $200,000 and a fair market value of $1,000,000 to his intentionally defective grantor trust in exchange for a $1,000,000 interest-bearing note. How much gain does Leo recognize on the sale?",
+"choices": [
+"$800,000, recognized in the year of sale",
+"$800,000, recognized as note principal is collected",
+"$1,000,000, because the trust takes a carryover basis",
+"$0, because a sale to one's own grantor trust is disregarded"
+],
+"correct": 3,
+"exp": "Because Leo is treated as owning the grantor trust's assets, a sale to it is a transaction with himself and no gain is recognized; the interest on the note is likewise disregarded. The installment method is irrelevant because there is no sale for income tax purposes."
+},
+{
+"q": "The grantor of an intentionally defective grantor trust pays $120,000 of income tax on the trust's income from her own funds, and the trust instrument does not require reimbursement. What are the gift tax consequences?",
+"choices": [
+"A $120,000 taxable gift to the trust beneficiaries",
+"No gift, because the grantor is paying her own legal obligation",
+"A gift only to the extent the payment exceeds the trust's income",
+"A gift that qualifies automatically for the marital deduction"
+],
+"correct": 1,
+"exp": "The grantor is legally liable for tax on grantor trust income, so paying it is not a gift to the beneficiaries. This is why grantor trusts are attractive: the tax payments shrink the grantor's estate while the trust grows untaxed."
+},
+{
+"q": "Which retained interest causes a trust to be treated as a grantor trust under §673?",
+"choices": [
+"A power held by an independent trustee to sprinkle income among the children",
+"A right to receive trust income only after the death of an adverse party who must consent",
+"A reversionary interest in corpus worth more than 5% of the trust's value at creation",
+"A right to remove the trustee and appoint an unrelated, independent successor"
+],
+"correct": 2,
+"exp": "Section 673 treats the grantor as owner of any portion in which he has a reversionary interest exceeding 5% of that portion's value at inception. Powers held by independent trustees and the power to appoint an independent successor trustee do not trigger grantor trust status."
+},
+{
+"q": "An irrevocable trust's income may, without the consent of an adverse party, be used to pay premiums on insurance policies on the grantor's life. What are the income tax consequences?",
+"choices": [
+"The grantor is taxed on the trust income under §677",
+"The trust is taxed on the income at compressed rates",
+"The insurance company is treated as owner of the trust",
+"The beneficiaries are taxed whether or not income is distributed"
+],
+"correct": 0,
+"exp": "Section 677 treats the grantor as owner of any portion whose income may be applied to premiums on insurance on the grantor's life without an adverse party's consent. Taxing the beneficiaries on undistributed income has no basis here."
+},
+{
+"q": "A trust created by her father gives Nina, a beneficiary, the unrestricted power, exercisable solely by herself, to withdraw all trust income each year. Nina never exercises it. Who is taxed on the trust income?",
+"choices": [
+"Her father, as grantor of the trust",
+"The trust, because Nina did not withdraw the income",
+"The trust and Nina equally",
+"Nina, who is treated as the owner under §678"
+],
+"correct": 3,
+"exp": "Section 678 treats a person other than the grantor as owner of any portion over which she holds a power exercisable solely by herself to vest income or corpus in herself. Not exercising the power does not change the result, and the father is not the owner unless §§671-677 apply to him."
+},
+{
+"q": "After a decedent's death, the executor and the trustee of the decedent's qualified revocable trust make a §645 election. What is its principal effect?",
+"choices": [
+"The trust's income is taxed to the decedent's final Form 1040",
+"The trust is treated and taxed as part of the estate, which may adopt a fiscal year",
+"The trust becomes a grantor trust of the surviving spouse",
+"The trust's assets are excluded from the decedent's gross estate"
+],
+"correct": 1,
+"exp": "A §645 election treats the qualified revocable trust as part of the estate, giving it estate benefits such as a fiscal year and the estate's estimated tax relief. It has no effect on estate tax inclusion, and the decedent's final Form 1040 covers only the period before death."
+},
+{
+"q": "Which statement about estimated income tax payments by estates and trusts is correct?",
+"choices": [
+"Neither estates nor trusts are ever required to pay estimated tax",
+"Trusts are exempt from estimated tax for the first two years after creation",
+"An estate is not required to pay estimated tax for its tax years ending within two years after the decedent's death",
+"Estates must pay estimated tax beginning with the first fiscal year after death"
+],
+"correct": 2,
+"exp": "Section 6654(l) generally requires estates and trusts to pay estimated tax but exempts an estate (and a trust treated as part of it) for tax years ending within two years of death. The two-year relief is for estates, not newly created trusts."
+},
+{
+"q": "A complex trust with DNI of $60,000 distributes stock to a beneficiary. The trust's basis is $20,000 and fair market value is $50,000, and the trustee makes no §643(e) election. What are the beneficiary's basis and the amount of the distribution taken into account?",
+"choices": [
+"Basis $20,000; distribution counted at $20,000",
+"Basis $50,000; distribution counted at $50,000",
+"Basis $20,000; distribution counted at $50,000",
+"Basis $50,000; distribution counted at $20,000"
+],
+"correct": 0,
+"exp": "Without the election, the beneficiary takes the trust's $20,000 basis and the distribution is counted at the lesser of basis or fair market value, $20,000. Counting it at $50,000 would apply only if the trust elected to recognize the $30,000 gain."
+},
+{
+"q": "Using the same stock (basis $20,000, value $50,000), the trustee instead makes a §643(e) election for the distribution. What is the result?",
+"choices": [
+"The beneficiary recognizes the $30,000 gain when the stock is received",
+"The trust recognizes no gain, but the beneficiary's basis is stepped up to $50,000",
+"The election applies only to that one asset and only to the extent of DNI",
+"The trust recognizes $30,000 of gain, and the beneficiary's basis is $50,000"
+],
+"correct": 3,
+"exp": "Under the election, the trust recognizes gain as if it sold the property ($50,000 - $20,000 = $30,000), the distribution is counted at $50,000 and the beneficiary's basis is $50,000. The election applies to all in-kind distributions the trust makes that year, not just one asset."
+},
+{
+"q": "A will leaves Sam a pecuniary bequest of $100,000. The executor satisfies it by distributing land with an estate basis of $80,000 (its value at death) and a current fair market value of $100,000. What are the tax consequences?",
+"choices": [
+"No gain is recognized, and Sam takes an $80,000 basis",
+"The estate recognizes $20,000 of gain, and Sam's basis is $100,000",
+"Sam recognizes $20,000 of gain, and his basis is $100,000",
+"The estate recognizes $20,000 of gain, and Sam's basis is $80,000"
+],
+"correct": 1,
+"exp": "Satisfying a fixed-dollar bequest with appreciated property is treated as a sale by the estate, so it recognizes $100,000 - $80,000 = $20,000 of gain and Sam takes a $100,000 basis. A distribution of specifically bequeathed property, by contrast, triggers no gain."
+},
+{
+"q": "An estate with DNI of $40,000 distributes a painting that the will specifically bequeathed to the decedent's niece. The distribution is made in a single installment. What are the income tax effects?",
+"choices": [
+"The estate deducts the painting's value, up to $40,000, and the niece includes it",
+"The niece includes $40,000 in income, and the estate deducts $40,000",
+"The estate gets no distribution deduction, and the niece has no income from the distribution",
+"The estate recognizes gain equal to the painting's appreciation since death"
+],
+"correct": 2,
+"exp": "Under §663, a gift or bequest of specific property paid in no more than three installments is excluded from the distribution rules, so it carries out no DNI. No gain arises because the estate is delivering the specific property, not satisfying a dollar amount."
+},
+{
+"q": "A trustee is deciding whether to accumulate or distribute $50,000 of interest and dividend income. The trust's beneficiaries are all in low tax brackets. Which consideration most strongly favors distributing the income?",
+"choices": [
+"Trust brackets reach the top rate at a far lower income level, and undistributed investment income may also bear the 3.8% NIIT",
+"Distributions reduce DNI to zero for all future years",
+"Accumulated income is always taxed again when distributed in later years",
+"A trust cannot deduct any expenses unless it distributes all of its income"
+],
+"correct": 0,
+"exp": "The compressed trust brackets and the low NIIT threshold for trusts mean accumulated investment income is usually taxed at higher rates than in low-bracket beneficiaries' hands. Domestic trusts are not subject to a second tax on accumulated income when it is later distributed."
+},
+{
+"q": "Which statement about the charitable deduction of a complex trust under §642 is correct?",
+"choices": [
+"It is limited to 60% of the trust's adjusted gross income",
+"It is available to simple trusts for amounts paid out of corpus",
+"It is allowed only for amounts paid to public charities, not private foundations",
+"It is allowed without percentage limit for gross income paid for charitable purposes under the governing instrument"
+],
+"correct": 3,
+"exp": "Section 642 allows a trust an unlimited deduction for amounts of gross income paid for charitable purposes pursuant to the governing instrument. The individual AGI limits do not apply, and a trust making charitable payments cannot be a simple trust."
+},
+{
+"q": "At his death, Ray was owed a $30,000 final bonus by his employer, which the employer pays to his estate. Estate tax was paid on the estate. How is the bonus treated?",
+"choices": [
+"It is excluded from income because the estate's basis was stepped up to $30,000",
+"It is income in respect of a decedent, taxable to the estate, with a §691 deduction for related estate tax",
+"It is taxable only on Ray's final Form 1040",
+"It is taxable to the estate, with no deduction available for estate tax"
+],
+"correct": 1,
+"exp": "Amounts Ray earned but had not received are IRD, which gets no basis step-up and is taxed to the recipient when collected. The recipient may deduct the federal estate tax attributable to the IRD under §691, so the item is not taxed on the final return as a cash-basis taxpayer."
+},
+{
+"q": "A calendar-year complex trust has gross income of $5,000. When is its Form 1041 due, and what extension is available?",
+"choices": [
+"March 15, with an automatic 6-month extension",
+"April 15, with an automatic 6-month extension by filing Form 4868",
+"April 15, with an automatic 5 1/2-month extension by filing Form 7004",
+"No return is required because gross income is below $10,000"
+],
+"correct": 2,
+"exp": "Form 1041 for a calendar-year trust is due April 15, and Form 7004 provides an automatic 5 1/2-month extension (to September 30). A return is required because gross income is at least $600; Form 4868 is the individual extension form."
+}
+]

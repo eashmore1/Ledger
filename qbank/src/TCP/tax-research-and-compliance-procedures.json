@@ -1,0 +1,332 @@
+[
+{
+"q": "A tax researcher finds four sources addressing the same issue. Which ranking lists them from greatest to least authoritative weight?",
+"choices": [
+"Treasury regulations, Internal Revenue Code, revenue rulings, private letter rulings",
+"Internal Revenue Code, Treasury regulations, revenue rulings, private letter rulings",
+"Internal Revenue Code, revenue rulings, Treasury regulations, private letter rulings",
+"Internal Revenue Code, private letter rulings, Treasury regulations, revenue rulings"
+],
+"correct": 1,
+"exp": "The Code is the primary statutory source, regulations interpret it, revenue rulings are IRS administrative positions with less weight than regulations, and PLRs apply only to the requesting taxpayer. Regulations can never override the statute they interpret."
+},
+{
+"q": "A provision of a U.S. income tax treaty conflicts with a provision of the Internal Revenue Code. Which rule generally resolves the conflict?",
+"choices": [
+"The treaty always prevails because treaties are ratified by the Senate",
+"The Code always prevails because it is enacted by both houses of Congress",
+"Neither has preferential status, and the one adopted later in time generally controls",
+"The provision more favorable to the taxpayer always controls"
+],
+"correct": 2,
+"exp": "The Code provides that neither treaties nor statutes have preferential status by reason of being one or the other, so the later-in-time rule generally applies. A treaty therefore does not automatically override the Code, and taxpayers must disclose treaty-based return positions."
+},
+{
+"q": "Which statement about a private letter ruling is correct?",
+"choices": [
+"It binds the IRS only for the taxpayer that requested it and may not be cited as precedent, although it counts as authority for substantial authority purposes",
+"It binds the IRS for all taxpayers with similar facts once it is published",
+"It has the same weight as a Treasury regulation",
+"It is not considered authority for any purpose"
+],
+"correct": 0,
+"exp": "A PLR applies only to the requesting taxpayer and by statute may not be used or cited as precedent, but the regulations list PLRs among the authorities considered in evaluating substantial authority. Revenue rulings, not PLRs, may be relied on by all taxpayers with substantially similar facts."
+},
+{
+"q": "How does a revenue procedure differ from a revenue ruling?",
+"choices": [
+"A revenue procedure is issued by Congress, while a revenue ruling is issued by Treasury",
+"A revenue procedure is binding on courts, while a revenue ruling is not",
+"A revenue procedure applies only to one taxpayer, while a revenue ruling applies to all",
+"A revenue procedure states procedures and practices, while a revenue ruling applies the law to a specific set of facts"
+],
+"correct": 3,
+"exp": "Both are published in the Internal Revenue Bulletin; a revenue ruling gives the IRS's conclusion on how the law applies to particular facts, while a revenue procedure announces procedures, such as how to request a ruling or method change. Neither binds the courts."
+},
+{
+"q": "Which statement about proposed Treasury regulations is correct?",
+"choices": [
+"They are binding on taxpayers from the date they are proposed",
+"They are not binding, but they may be considered authority for substantial authority purposes",
+"They automatically expire after three years",
+"They carry more weight than final regulations because they are more recent"
+],
+"correct": 1,
+"exp": "Proposed regulations generally have no binding effect until finalized, but they reflect Treasury's views and are listed as authority for substantial authority. The three-year sunset applies to temporary regulations, not proposed ones."
+},
+{
+"q": "Which statement describes temporary Treasury regulations issued under current law?",
+"choices": [
+"They are not binding and serve only as guidance",
+"They are issued without any corresponding proposed regulations",
+"They are binding when issued, must also be issued as proposed regulations, and expire within three years",
+"They remain in force until Congress repeals them"
+],
+"correct": 2,
+"exp": "Temporary regulations have the force of final regulations when issued, must simultaneously be issued as proposed regulations, and expire three years after issuance. Treating them as nonbinding confuses them with proposed regulations."
+},
+{
+"q": "After the Supreme Court's 2024 decision in Loper Bright Enterprises v. Raimondo, how does a court review a Treasury regulation interpreting an ambiguous Code provision?",
+"choices": [
+"The court exercises its own independent judgment on the best reading of the statute rather than deferring because the statute is ambiguous",
+"The court must defer to any reasonable Treasury interpretation",
+"The court may not consider the regulation at all",
+"The court must defer to the IRS's litigating position"
+],
+"correct": 0,
+"exp": "Loper Bright overruled Chevron, so courts no longer defer to an agency's reasonable interpretation merely because a statute is ambiguous; they decide the best reading themselves. Courts may still respect agency views and must honor express delegations of authority within constitutional limits."
+},
+{
+"q": "A taxpayer residing in a state within the Ninth Circuit litigates a deficiency in the U.S. Tax Court. The Ninth Circuit has ruled on the precise issue, but the Tax Court has previously reached the opposite result in another taxpayer's case. Which precedent will the Tax Court follow?",
+"choices": [
+"Its own prior decision, because the Tax Court is a national court",
+"Whichever decision is more favorable to the IRS",
+"The decision of the Federal Circuit",
+"The Ninth Circuit decision, because an appeal would lie to that circuit"
+],
+"correct": 3,
+"exp": "Under the Golsen rule, the Tax Court follows the precedent of the court of appeals to which the case would be appealed when that circuit has squarely ruled on the issue. Otherwise it follows its own precedent; the Federal Circuit hears appeals from the Court of Federal Claims."
+},
+{
+"q": "A taxpayer has received a notice of deficiency, does not want to pay the tax before litigating, and wants judges who specialize in tax law. Which forum should she choose?",
+"choices": [
+"U.S. District Court",
+"U.S. Tax Court",
+"U.S. Court of Federal Claims",
+"U.S. Court of Appeals"
+],
+"correct": 1,
+"exp": "The Tax Court is the only trial forum that does not require payment of the disputed tax first, and its judges specialize in tax. The District Court and Court of Federal Claims are refund forums that require payment, and the courts of appeals do not hear cases at trial."
+},
+{
+"q": "A taxpayer wants a jury to decide a factual issue in his tax dispute. In which forum is a jury trial available?",
+"choices": [
+"U.S. Tax Court",
+"U.S. Court of Federal Claims",
+"U.S. District Court",
+"The IRS Independent Office of Appeals"
+],
+"correct": 2,
+"exp": "Only a U.S. District Court refund suit offers a jury trial, and the taxpayer must first pay the tax and file a refund claim. Tax Court and Court of Federal Claims cases are decided by judges, and Appeals is an administrative settlement function, not a court."
+},
+{
+"q": "A taxpayer in the Fifth Circuit faces an unfavorable Fifth Circuit precedent on her issue but favorable Federal Circuit precedent. She is willing to pay the tax first and does not need a jury. Where should she file suit?",
+"choices": [
+"U.S. Court of Federal Claims",
+"U.S. Tax Court",
+"U.S. District Court in her home district",
+"The U.S. Supreme Court"
+],
+"correct": 0,
+"exp": "The Court of Federal Claims is a refund forum whose decisions are appealed to the Federal Circuit, so it follows Federal Circuit rather than Fifth Circuit precedent. The Tax Court and her local District Court would be bound by the Fifth Circuit, and the Supreme Court does not hear tax cases at trial."
+},
+{
+"q": "Which statement about the Tax Court's small tax case procedure is correct?",
+"choices": [
+"It is available for any deficiency if the taxpayer is an individual",
+"Its decisions are appealable to the regional court of appeals",
+"Its decisions are binding precedent for later Tax Court cases",
+"It is available when the amount in dispute for a year does not exceed $50,000, and its decisions are not appealable"
+],
+"correct": 3,
+"exp": "The taxpayer may elect the informal small case procedure when the deficiency, including penalties, is $50,000 or less for a tax year; the decision is final and cannot be appealed or cited as precedent. The procedure is not limited to individuals, nor available for unlimited amounts."
+},
+{
+"q": "What does the IRS communicate when it announces a nonacquiescence in a court decision it lost?",
+"choices": [
+"That it agrees with the decision and will follow it for all taxpayers",
+"That it disagrees with the decision and will not follow it in other taxpayers' cases",
+"That the decision has been reversed on appeal",
+"That the decision is binding on the IRS nationwide"
+],
+"correct": 1,
+"exp": "A nonacquiescence signals that the IRS will not follow an adverse decision in disputes with other taxpayers, though the decision still binds the parties to that case. An acquiescence, in contrast, means the IRS accepts the result."
+},
+{
+"q": "In determining whether a return position is supported by substantial authority under the accuracy-related penalty regulations, which of the following is not considered authority?",
+"choices": [
+"A private letter ruling issued to another taxpayer",
+"The Joint Committee on Taxation's General Explanation of a tax act",
+"An article in a respected tax treatise or journal",
+"A proposed Treasury regulation"
+],
+"correct": 2,
+"exp": "The regulations exclude conclusions in treatises, legal periodicals and opinions of tax professionals, although the authorities they cite may be considered. PLRs, proposed regulations and the Joint Committee's General Explanation (the Blue Book) are expressly treated as authority."
+},
+{
+"q": "Which list ranks the reporting standards from the lowest to the highest likelihood of a position being sustained?",
+"choices": [
+"Reasonable basis, substantial authority, more likely than not",
+"Substantial authority, reasonable basis, more likely than not",
+"More likely than not, substantial authority, reasonable basis",
+"Reasonable basis, more likely than not, substantial authority"
+],
+"correct": 0,
+"exp": "Reasonable basis is a relatively low standard (significantly higher than not frivolous), substantial authority is higher, and more likely than not requires a greater than 50% likelihood of success. Substantial authority is less stringent than more likely than not."
+},
+{
+"q": "An individual reported tax of $70,000, but the correct tax is $80,000. The position had neither substantial authority nor disclosure. What is the accuracy-related penalty for substantial understatement?",
+"choices": [
+"$0, because the understatement does not exceed 10% of the correct tax",
+"$2,000",
+"$4,000",
+"$1,000"
+],
+"correct": 1,
+"exp": "For an individual, an understatement is substantial if it exceeds the greater of 10% of the correct tax ($8,000) or $5,000; the $10,000 understatement qualifies, so the penalty is 20% x $10,000 = $2,000. Comparing $10,000 to 10% of the reported tax rather than the correct tax is a common error, and $4,000 uses the 40% gross valuation rate."
+},
+{
+"q": "How can an individual taxpayer avoid the substantial understatement penalty for a position that is not a tax shelter item?",
+"choices": [
+"By having a reasonable basis for the position, without disclosure",
+"By obtaining any written opinion from a tax adviser",
+"By showing the position is not frivolous and disclosing it",
+"By having substantial authority for the position, or a reasonable basis plus adequate disclosure"
+],
+"correct": 3,
+"exp": "The understatement is reduced for items supported by substantial authority, or for items adequately disclosed (for example, on Form 8275) that have a reasonable basis. Reasonable basis alone, without disclosure, is not enough, and a nonfrivolous disclosed position fails the reasonable basis threshold."
+},
+{
+"q": "A paid preparer takes an undisclosed position on a client's return that is not a tax shelter or reportable transaction. To avoid the §6694 preparer penalty for an unreasonable position, what standard must the position meet?",
+"choices": [
+"Reasonable basis",
+"More likely than not",
+"Substantial authority",
+"Realistic possibility of success"
+],
+"correct": 2,
+"exp": "Under §6694, an undisclosed position must have substantial authority, while a disclosed position needs only a reasonable basis; tax shelters and reportable transactions require a reasonable belief the position is more likely than not correct. Reasonable basis alone suffices only with disclosure."
+},
+{
+"q": "A preparer who charged a $3,000 fee for preparing a return is liable for the §6694 penalty for an unreasonable position, with no willful or reckless conduct. What is the penalty?",
+"choices": [
+"$1,500",
+"$1,000",
+"$3,000",
+"$5,000"
+],
+"correct": 0,
+"exp": "The unreasonable position penalty is the greater of $1,000 or 50% of the income derived from the return: 50% x $3,000 = $1,500. The $5,000 minimum applies to the separate penalty for willful or reckless conduct."
+},
+{
+"q": "While preparing a client's current-year return, a CPA who practices before the IRS discovers that the client omitted income on a prior-year return. Under Circular 230, what must the CPA do?",
+"choices": [
+"Notify the IRS of the omission within 30 days",
+"Promptly advise the client of the noncompliance and its consequences",
+"Amend the prior-year return without the client's consent",
+"Withdraw immediately from all engagements with the client"
+],
+"correct": 1,
+"exp": "Circular 230 requires a practitioner who knows of a client's noncompliance or omission to promptly advise the client of it and of the consequences of not correcting it. The practitioner has no duty to inform the IRS and cannot amend a return without the client."
+},
+{
+"q": "Which list correctly states the original due dates of calendar-year returns for these entities?",
+"choices": [
+"Partnership April 15; S corporation March 15; C corporation March 15",
+"Partnership March 15; S corporation April 15; C corporation March 15",
+"Partnership April 15; S corporation April 15; C corporation April 15",
+"Partnership March 15; S corporation March 15; C corporation April 15"
+],
+"correct": 3,
+"exp": "Partnership and S corporation returns are due the 15th day of the third month after year-end (March 15), and C corporation returns are due the 15th day of the fourth month (April 15). The C corporation due date moved to April 15 for most corporations under 2015 legislation."
+},
+{
+"q": "An individual files Form 4868 by April 15 but makes no tax payment with it. Which statement is correct?",
+"choices": [
+"The return is due October 15, but interest and the failure-to-pay penalty run on unpaid tax from April 15",
+"The time to file and the time to pay are both extended to October 15",
+"No penalties or interest apply until October 15",
+"The extension is invalid unless at least 50% of the tax is paid"
+],
+"correct": 0,
+"exp": "An automatic extension extends only the time to file, so interest and the failure-to-pay penalty accrue on unpaid tax from the original due date. The extension remains valid without payment, and the failure-to-file penalty is avoided if the return is filed by October 15."
+},
+{
+"q": "An individual owed $10,000 of tax for the year, filed no extension, and filed the return and paid the entire balance on June 10 (due date April 15). There was no reasonable cause. Ignoring interest, what are the combined failure-to-file and failure-to-pay penalties?",
+"choices": [
+"$1,100",
+"$500",
+"$1,000",
+"$900"
+],
+"correct": 2,
+"exp": "The return is two months late (a partial month counts as a full month). The failure-to-pay penalty is 0.5% x 2 x $10,000 = $100, and the 5% per month failure-to-file penalty ($1,000) is reduced by the failure-to-pay penalty for the same months to $900, for a total of $1,000. Adding the two without the offset gives $1,100."
+},
+{
+"q": "An individual whose return is due April 15 of Year 1 files it on February 10 of Year 1. Absent fraud or a substantial omission, when does the general period for the IRS to assess additional tax expire?",
+"choices": [
+"February 10 of Year 4",
+"April 15 of Year 4",
+"October 15 of Year 4",
+"April 15 of Year 7"
+],
+"correct": 1,
+"exp": "The general assessment period is three years from the later of the filing date or the due date, because an early return is treated as filed on its due date, so it runs to April 15 of Year 4. The six-year period applies only to substantial omissions of gross income."
+},
+{
+"q": "A taxpayer reported gross income of $400,000 and omitted $120,000 of gross income from the return, with no fraud. What is the assessment period?",
+"choices": [
+"Six years, because the omission exceeds 25% of the gross income reported",
+"Three years, because there was no fraud",
+"Unlimited, because income was omitted",
+"Seven years, because the omission exceeds 25% of gross income"
+],
+"correct": 0,
+"exp": "The six-year period applies when omitted gross income exceeds 25% of the gross income stated on the return: $120,000 is more than 25% x $400,000 = $100,000. The unlimited period requires fraud or failure to file, and seven years relates to bad debt and worthless securities refund claims."
+},
+{
+"q": "A taxpayer filed a return on time but paid an additional assessment two years later. Within what period must she file a refund claim to recover that payment?",
+"choices": [
+"Within three years from the payment only",
+"Within two years from the filing date",
+"Within six years from the original due date",
+"Within the later of three years from filing the return or two years from paying the tax"
+],
+"correct": 3,
+"exp": "A refund claim must be filed within three years from the time the return was filed or two years from the time the tax was paid, whichever is later, and a claim filed in the two-year window recovers only tax paid during it. Using only one of the two periods misstates the rule."
+},
+{
+"q": "A taxpayer mails her return by U.S. Postal Service first-class mail with a postmark of April 15, its due date, and the IRS receives it on April 19. When is the return considered filed?",
+"choices": [
+"April 19, the date the IRS received it",
+"April 16, the next business day after mailing",
+"April 15, because a timely postmarked return is treated as filed on the postmark date",
+"It is late unless sent by certified mail"
+],
+"correct": 2,
+"exp": "Under the timely mailing rule, a properly addressed return with a timely U.S. postmark (or a designated private delivery service's record) is treated as filed when mailed. Certified mail is not required, though it provides proof of mailing."
+},
+{
+"q": "Zoe's prior-year AGI was $200,000 and her prior-year tax was $40,000 for a full 12-month year. She expects $60,000 of tax this year. What is the minimum annual amount of estimated tax and withholding she must pay timely to avoid an underpayment penalty?",
+"choices": [
+"$40,000",
+"$44,000",
+"$54,000",
+"$60,000"
+],
+"correct": 1,
+"exp": "The required annual payment is the lesser of 90% of current-year tax ($54,000) or prior-year tax, which must be 110% because prior-year AGI exceeded $150,000: 110% x $40,000 = $44,000. Using 100% of prior-year tax ($40,000) applies only when prior-year AGI was $150,000 or less."
+},
+{
+"q": "A CPA is asked to research whether a client's transaction qualifies for nonrecognition. What should be the first step in the research process?",
+"choices": [
+"Establish the relevant facts and identify the tax issues they raise",
+"Search for court cases that reached a favorable result",
+"Draft the client communication describing the conclusion",
+"Locate the applicable Treasury regulations"
+],
+"correct": 0,
+"exp": "Tax research starts by gathering the facts and framing the questions, because the facts determine which authorities are relevant. Locating and evaluating authority, reaching a conclusion and communicating it follow; searching only for favorable cases is a biased approach."
+},
+{
+"q": "A taxpayer living in the United States receives a statutory notice of deficiency. What must he do to contest the deficiency in the Tax Court without paying it first?",
+"choices": [
+"Request a conference with the IRS Independent Office of Appeals within 30 days",
+"Pay the tax and file a refund claim within two years",
+"File Form 1040-X within 60 days",
+"File a petition with the Tax Court within 90 days of the notice's mailing"
+],
+"correct": 3,
+"exp": "The notice of deficiency (90-day letter) is the taxpayer's ticket to the Tax Court, and he must petition within 90 days (150 days if addressed to a person outside the United States). The 30-day letter precedes it and offers an Appeals conference; paying and claiming a refund leads to the refund forums instead."
+}
+]

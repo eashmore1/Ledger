@@ -1,0 +1,332 @@
+[
+{
+"q": "In 2025, Ellen, who has AGI of $200,000 and itemizes, gives $150,000 of cash to her church, a public charity. She makes no other contributions. What is her 2025 deduction?",
+"choices": [
+"$120,000 deduction; $30,000 carried forward five years",
+"$100,000 deduction; $50,000 carried forward five years",
+"$150,000 deduction; no carryover",
+"$120,000 deduction; the $30,000 excess is lost"
+],
+"correct": 0,
+"exp": "Cash gifts to public charities are limited to 60% of AGI: 60% x $200,000 = $120,000, and the $30,000 excess carries forward for five years. The 50% limit applies to noncash property, not cash, and excess contributions are not forfeited."
+},
+{
+"q": "In 2025, Victor, with AGI of $200,000, donates publicly traded stock held for three years (basis $30,000, fair market value $90,000) to a public charity. He makes no other gifts and no special election. What is his current deduction?",
+"choices": [
+"$30,000, with no carryover",
+"$90,000, with no carryover",
+"$60,000, with a $30,000 carryover",
+"$100,000, with no carryover"
+],
+"correct": 2,
+"exp": "Long-term capital gain property given to a public charity is deductible at fair market value but limited to 30% of AGI: 30% x $200,000 = $60,000, with the $30,000 excess carried forward. The 50% limit would apply only if he elected to deduct basis instead."
+},
+{
+"q": "Same facts as a gift of long-term stock worth $90,000 with a $30,000 basis to a public charity by a donor with $200,000 of AGI, but the donor elects to reduce the contribution to basis. What is the result?",
+"choices": [
+"A $90,000 deduction under the 50% limit",
+"A $30,000 deduction under the 50% limit, and the $60,000 of appreciation is never deducted",
+"A $30,000 deduction now and a $60,000 carryover",
+"A $60,000 deduction under the 30% limit and no carryover"
+],
+"correct": 1,
+"exp": "The election measures the gift at its $30,000 basis but moves it to the 50% limit ($100,000), so $30,000 is deducted now and the appreciation is permanently lost. It makes sense mainly when appreciation is small or the donor cannot use a carryover."
+},
+{
+"q": "Gina, a sole proprietor who runs a bookstore, donates inventory with a cost of $4,000 and a retail value of $10,000 to a public library. What is her charitable deduction?",
+"choices": [
+"$10,000",
+"$6,000",
+"$7,000",
+"$4,000"
+],
+"correct": 3,
+"exp": "Inventory is ordinary income property, so the deduction is reduced by the ordinary income that would have been recognized on a sale, leaving the $4,000 cost. No enhanced inventory deduction applies because the books are not food and are not used to care for the ill, the needy or infants, so $7,000 is not available."
+},
+{
+"q": "Hal donates stock he has held for ten months (basis $6,000, fair market value $10,000) to a public charity. What is his charitable deduction?",
+"choices": [
+"$6,000",
+"$10,000",
+"$4,000",
+"$8,000"
+],
+"correct": 0,
+"exp": "Stock held one year or less is short-term capital gain property, treated like ordinary income property, so the deduction is limited to the $6,000 basis. Fair market value is allowed only for property held more than one year."
+},
+{
+"q": "Iris donates a painting she has owned for five years (basis $20,000, fair market value $50,000) to a hospital, which she knows will sell it to raise funds. What is her deduction?",
+"choices": [
+"$50,000, limited to 30% of AGI",
+"$35,000, the average of basis and value",
+"$20,000, because the property is put to an unrelated use",
+"$0, because the hospital is not a museum"
+],
+"correct": 2,
+"exp": "Long-term tangible personal property whose use is unrelated to the donee's exempt purpose is deductible only at basis, $20,000. Fair market value would be allowed only if the donee used the painting in its exempt function, such as an art museum displaying it."
+},
+{
+"q": "Jack, whose AGI is $400,000, donates a sculpture he has owned for six years (basis $20,000, fair market value $50,000) to an art museum that will display it in its permanent collection. What is his deduction?",
+"choices": [
+"$20,000, limited to 50% of AGI",
+"$50,000, limited to 30% of AGI",
+"$50,000, limited to 60% of AGI",
+"$30,000, the amount of appreciation"
+],
+"correct": 1,
+"exp": "Because the museum uses the sculpture in its exempt purpose, it is long-term capital gain property deductible at $50,000 fair market value, subject to the 30% limit ($120,000 here). The 60% limit applies only to cash gifts to public charities."
+},
+{
+"q": "Kara donates land held ten years (basis $40,000, fair market value $100,000) to her family's private nonoperating foundation. What are the amount and AGI limit of her deduction?",
+"choices": [
+"$100,000, limited to 30% of AGI",
+"$100,000, limited to 20% of AGI",
+"$40,000, limited to 30% of AGI",
+"$40,000, limited to 20% of AGI"
+],
+"correct": 3,
+"exp": "Long-term capital gain property given to a private nonoperating foundation is deductible only at basis, $40,000, and is limited to 20% of AGI. Fair market value is allowed only for qualified appreciated stock, meaning publicly traded stock, not land."
+},
+{
+"q": "In 2025, Leon, with AGI of $300,000, donates publicly traded stock held for four years (basis $20,000, fair market value $80,000) to a private nonoperating foundation. What are his deduction and carryover?",
+"choices": [
+"$60,000 deduction; $20,000 carryover",
+"$20,000 deduction; no carryover",
+"$80,000 deduction; no carryover",
+"$60,000 deduction; the $20,000 excess is lost"
+],
+"correct": 0,
+"exp": "Qualified appreciated stock given to a private foundation is deductible at fair market value, subject to the 20% limit: 20% x $300,000 = $60,000, with the $20,000 excess carried forward five years. Limiting the gift to basis applies to other capital gain property, not publicly traded stock."
+},
+{
+"q": "In 2025, Mona, with AGI of $100,000, gives $40,000 of cash to a private nonoperating foundation and makes no other gifts. What is her deduction?",
+"choices": [
+"$40,000, under the 60% cash limit",
+"$20,000, with a $20,000 carryover",
+"$30,000, with a $10,000 carryover",
+"$30,000, with the $10,000 excess lost"
+],
+"correct": 2,
+"exp": "Cash gifts to private nonoperating foundations are limited to 30% of AGI: 30% x $100,000 = $30,000, and the $10,000 excess carries forward five years. The 60% cash limit applies only to public charities; 20% applies to capital gain property given to such foundations."
+},
+{
+"q": "In 2025, Ned has AGI of $100,000. He gives $20,000 of cash and long-term stock worth $40,000 (basis $15,000) to his church, a public charity, and makes no elections. What is his total current deduction?",
+"choices": [
+"$60,000, because the overall limit is 60% of AGI",
+"$35,000, because the stock is deducted at basis",
+"$40,000, with a $20,000 carryover",
+"$50,000, with a $10,000 carryover"
+],
+"correct": 3,
+"exp": "The cash ($20,000) is allowed in full, and the capital gain stock is limited to the lesser of 30% of AGI ($30,000) or 50% of AGI less the cash gift ($50,000 - $20,000 = $30,000). Total is $50,000, with $10,000 of stock carried forward; the 60% limit does not apply to property."
+},
+{
+"q": "A donor has a charitable contribution carryover from a prior year and also makes new contributions this year. How are they applied against this year's limits?",
+"choices": [
+"Carryovers are used first, oldest first, before current-year gifts",
+"Current-year contributions are deducted first, then carryovers in the order they arose",
+"Carryovers and current gifts are prorated against the limit",
+"Carryovers may be used only if no current-year gifts are made"
+],
+"correct": 1,
+"exp": "Current-year contributions are applied first, then carryovers from the earliest year, each keeping its original percentage-limit character for up to five years. Applying carryovers first is a common error that would let older amounts crowd out new gifts."
+},
+{
+"q": "Owen sells land with a basis of $40,000 and fair market value of $100,000 to a public charity for $40,000, intending the difference as a gift. What gain does he recognize, and what is his contribution?",
+"choices": [
+"No gain; $60,000 contribution",
+"$60,000 gain; $100,000 contribution",
+"$24,000 gain; $60,000 contribution",
+"$24,000 gain; $76,000 contribution"
+],
+"correct": 2,
+"exp": "In a bargain sale, basis is allocated in proportion to the sale price: $40,000 x ($40,000 / $100,000) = $16,000, so gain is $40,000 - $16,000 = $24,000. The contribution is the $60,000 of value given up; assuming full basis offsets the price ignores the allocation rule."
+},
+{
+"q": "Pia owns stock with a basis of $50,000 and a fair market value of $30,000. She wants to benefit a public charity. Which approach gives her the best tax result?",
+"choices": [
+"Sell the stock, recognize the $20,000 capital loss and donate the $30,000 cash",
+"Donate the stock directly and deduct its $50,000 basis",
+"Donate the stock directly and deduct $30,000 plus the $20,000 loss",
+"Donate the stock to a donor-advised fund to preserve the loss"
+],
+"correct": 0,
+"exp": "Donating depreciated property yields a deduction of only fair market value and the loss is never recognized, so selling first captures the $20,000 capital loss and still produces a $30,000 cash deduction. A donor-advised fund gift is also a gift of the stock and loses the loss."
+},
+{
+"q": "Quinn holds long-term stock with a basis of $10,000 and a value of $50,000 and plans to give $50,000 to a public charity. Compared with selling the stock and donating the after-tax proceeds plus cash to reach $50,000, what does donating the stock directly accomplish?",
+"choices": [
+"It produces a larger deduction of $90,000",
+"It converts the $40,000 gain into ordinary income for the charity",
+"It allows the gain to be deferred until the charity sells",
+"It avoids tax on the $40,000 gain while still producing a $50,000 deduction"
+],
+"correct": 3,
+"exp": "Long-term capital gain property is deductible at fair market value and the donor never recognizes the built-in gain, so a direct gift saves tax on $40,000 that a sale would trigger. The charity, being tax-exempt, pays no tax when it later sells, so nothing is merely deferred."
+},
+{
+"q": "Rita pays $500 for a ticket to a charity gala at which she receives a dinner worth $150. What is her deduction, and what must the charity provide?",
+"choices": [
+"$500; a receipt only if the payment exceeds $250",
+"$350; a written statement disclosing the value of the dinner",
+"$350; no statement, because the benefit is under $250",
+"$150; a statement of the amount Rita paid"
+],
+"correct": 1,
+"exp": "Only the excess of the payment over the value received is deductible: $500 - $150 = $350. A quid pro quo payment over $75 requires the charity to give a written disclosure of the good-faith estimate of the benefit, regardless of the $250 acknowledgment rule."
+},
+{
+"q": "Sean makes a single $1,000 cash gift to a public charity by check. What substantiation must he have to claim the deduction?",
+"choices": [
+"His canceled check is sufficient for any cash gift",
+"A qualified appraisal attached to his return",
+"A contemporaneous written acknowledgment from the charity, obtained by the earlier of filing or the return's due date, including extensions",
+"A Form 8283 signed by the charity and attached to his return"
+],
+"correct": 2,
+"exp": "A single contribution of $250 or more requires a contemporaneous written acknowledgment stating the amount and whether any goods or services were provided, obtained by the earlier of the filing date or the extended due date. A canceled check alone is not enough at this level, and appraisals and Form 8283 relate to noncash gifts."
+},
+{
+"q": "Which of the following donations requires the donor to obtain a qualified appraisal to support the deduction?",
+"choices": [
+"Stock of a closely held corporation valued at $12,000",
+"Publicly traded stock valued at $50,000",
+"A $20,000 cash gift to a university",
+"Used clothing in good condition valued at $400"
+],
+"correct": 0,
+"exp": "Noncash gifts of property (or similar items) claimed at more than $5,000 generally need a qualified appraisal, and closely held stock is not excepted. Publicly traded securities are excepted because their value is readily determinable, and cash never requires an appraisal."
+},
+{
+"q": "Tom donates a used car with a published blue-book value of $6,000 to a charity, which sells it at auction for $2,500 without making any significant use of it or improving it. What is Tom's maximum deduction?",
+"choices": [
+"$6,000",
+"$4,250",
+"$500",
+"$2,500"
+],
+"correct": 3,
+"exp": "When a donated vehicle claimed at more than $500 is sold by the charity without significant intervening use or material improvement, the deduction is limited to the gross proceeds reported on Form 1098-C, $2,500. The blue-book value is not used, and $500 is only the threshold that triggers the rule."
+},
+{
+"q": "Uma, an attorney, volunteers 20 hours of legal work for a public charity. Her normal billing rate is $300 per hour, and she spends $150 of her own money on supplies used for the project. What is her charitable deduction?",
+"choices": [
+"$6,150",
+"$150",
+"$6,000",
+"$0"
+],
+"correct": 1,
+"exp": "The value of donated services is never deductible, but unreimbursed out-of-pocket expenses incurred while performing services for a charity are deductible, so Uma deducts $150. Treating the forgone $6,000 of fees as a contribution is the common error."
+},
+{
+"q": "Which of the following payments is deductible in 2025 by a calendar-year individual who itemizes?",
+"choices": [
+"A written pledge made in December 2025 and paid in February 2026",
+"A note payable to the charity signed in December 2025 and paid in 2026",
+"A contribution charged to a credit card on December 28, 2025, and paid to the card issuer in January 2026",
+"A check dated December 31, 2025, but mailed on January 5, 2026"
+],
+"correct": 2,
+"exp": "A charge to a credit card is deductible when charged, even if the card balance is paid the next year. Pledges and the taxpayer's own notes are deductible only when paid, and a check counts when mailed or delivered, which here occurred in 2026."
+},
+{
+"q": "Which of the following is deductible as a charitable contribution by an individual who itemizes?",
+"choices": [
+"A cash gift to a state university's general scholarship fund",
+"A gift to a scholarship fund earmarked for a named student",
+"The cost of raffle tickets bought from a church",
+"Membership dues paid to a country club"
+],
+"correct": 0,
+"exp": "Gifts to a state university for its own use are deductible because a state institution is a qualified donee. Earmarking a gift for a specific individual makes it a gift to that person, and raffle tickets are purchases of a chance to win rather than gifts."
+},
+{
+"q": "For 2025, Watt Corp. has taxable income of $480,000 after a $20,000 dividends-received deduction but before any charitable deduction. It made $70,000 of qualifying cash contributions and has no NOL or capital loss carrybacks. What is its charitable deduction?",
+"choices": [
+"$48,000",
+"$50,000",
+"$70,000",
+"$35,000"
+],
+"correct": 1,
+"exp": "A corporation's limit is 10% of taxable income computed without the charitable deduction or the dividends-received deduction: 10% x ($480,000 + $20,000) = $50,000. The $20,000 excess carries forward five years; computing the limit after the DRD gives $48,000."
+},
+{
+"q": "Which transfer of a partial interest in property produces a charitable deduction outside a trust?",
+"choices": [
+"A gift of the right to use a vacation home rent-free for two weeks",
+"A gift of a 10-year term of years in an office building",
+"A gift of the right to receive rent from a building while the donor keeps the building",
+"A gift of a remainder interest in the donor's personal residence"
+],
+"correct": 3,
+"exp": "Partial interests are generally nondeductible, but a remainder interest in a personal residence or farm is a specific statutory exception. Rent-free use of property and income interests carved out of property the donor keeps fail the partial interest rule."
+},
+{
+"q": "How does a charitable remainder annuity trust differ from a charitable remainder unitrust?",
+"choices": [
+"A CRAT pays a fixed amount set at creation and cannot accept additional contributions; a CRUT pays a fixed percentage of annually revalued assets",
+"A CRAT pays a fixed percentage of annually revalued assets; a CRUT pays a fixed dollar amount",
+"A CRAT is taxable on its income, while a CRUT is exempt",
+"A CRAT's payout may be as low as 1%, while a CRUT's payout must be at least 10%"
+],
+"correct": 0,
+"exp": "A CRAT pays a fixed annuity of at least 5% (and not more than 50%) of initial value and may not receive later additions, while a CRUT pays a fixed percentage of its value redetermined each year and may accept additions. Both are tax-exempt, and the 5% minimum payout applies to both."
+},
+{
+"q": "Yara transfers stock with a large built-in gain to a charitable remainder unitrust, which immediately sells it and reinvests the proceeds. What are the income tax consequences?",
+"choices": [
+"Yara recognizes the gain on the sale because she arranged it",
+"The trust pays capital gains tax on the sale at trust rates",
+"The trust is generally exempt, so the gain is not taxed on the sale, and Yara's payouts are taxed under a tiered ordering that can carry out the gain over time",
+"Neither the trust nor Yara is ever taxed on the gain"
+],
+"correct": 2,
+"exp": "A CRT is exempt from income tax, so a sale inside the trust defers tax on the gain, and distributions are taxed in the order ordinary income, capital gain, other income and then corpus. The gain is not permanently exempt, because it can be carried out to Yara in her annual payments."
+},
+{
+"q": "Zack funds a charitable remainder unitrust with $1,000,000 of property, retaining a lifetime unitrust interest with the remainder to his alma mater. What income tax deduction does he receive in the year of funding?",
+"choices": [
+"$1,000,000, the full value transferred",
+"The present value of the charitable remainder, which must be at least 10% of the value contributed",
+"Nothing until the charity receives the remainder at his death",
+"The present value of his retained unitrust interest"
+],
+"correct": 1,
+"exp": "The donor deducts the present value of the remainder interest passing to charity, and a CRT must have a remainder of at least 10% of the initial value to qualify. He cannot deduct his own retained payment stream, and the deduction is not deferred until the charity receives the assets."
+},
+{
+"q": "Abby expects unusually high income this year and wants to fund her charitable giving for the next five years while deciding later which charities to support. Which strategy best fits, and why?",
+"choices": [
+"Make pledges to several charities, because pledges are deductible when made",
+"Create a private nonoperating foundation, because gifts to it receive the highest AGI limits",
+"Transfer property to a charitable lead trust, because the remainder returns to her",
+"Contribute to a donor-advised fund, deducting the gift now at public charity limits while recommending grants later"
+],
+"correct": 3,
+"exp": "A gift to a donor-advised fund is a completed gift to a public charity, deductible in the high-income year, while Abby keeps only advisory privileges over later grants. Pledges are deductible only when paid, and private foundations have lower AGI limits than public charities."
+},
+{
+"q": "Which statement about a qualified charitable distribution from an IRA is correct?",
+"choices": [
+"The owner includes the distribution in income and claims an offsetting itemized deduction",
+"It may be made to a donor-advised fund if the owner is at least age 70 1/2",
+"It is excluded from income, may count toward the owner's required minimum distribution and produces no charitable deduction",
+"It is available from any retirement plan, including an active 401(k)"
+],
+"correct": 2,
+"exp": "A QCD paid directly from an IRA to an eligible charity by an owner at least age 70 1/2 is excluded from income and can satisfy the RMD, but no deduction is allowed. Donor-advised funds and supporting organizations are not eligible recipients, and QCDs must come from an IRA."
+},
+{
+"q": "Ben transfers property to a charitable lead annuity trust that pays a fixed annuity to charity for 15 years, with the remainder then passing to his children. The trust is structured as a nongrantor trust. Which statement is correct?",
+"choices": [
+"Ben receives an immediate income tax deduction for the present value of the annuity",
+"Ben receives no income tax deduction, and the trust deducts its payments to charity",
+"Ben is taxed annually on the trust's income",
+"The children receive an income tax deduction when the remainder vests"
+],
+"correct": 1,
+"exp": "With a nongrantor CLT, the donor gets no upfront income tax deduction, and the trust itself deducts the amounts paid to charity from its gross income. The upfront deduction, with the donor taxed on trust income each year, applies only to a grantor lead trust."
+}
+]

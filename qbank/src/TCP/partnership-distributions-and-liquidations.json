@@ -1,0 +1,332 @@
+[
+  {
+    "q": "Abe's outside basis in his partnership interest is $50,000. In a current (nonliquidating) distribution he receives $20,000 of cash and land with a partnership basis of $40,000 and an FMV of $60,000. What gain does Abe recognize, and what is his basis in the land?",
+    "choices": [
+      "$0 gain; $40,000 land basis",
+      "$10,000 gain; $40,000 land basis",
+      "$0 gain; $30,000 land basis",
+      "$30,000 gain; $60,000 land basis"
+    ],
+    "correct": 2,
+    "exp": "Cash first reduces outside basis to $30,000, and the land's $40,000 carryover basis is limited to that remaining $30,000, so Abe has no gain and a $0 outside basis. A partner recognizes gain only when cash exceeds outside basis, so the $10,000 gain answer is wrong."
+  },
+  {
+    "q": "Bree's outside basis is $15,000. The partnership distributes $25,000 of cash to her in a current distribution, and there are no liability changes or other items for the year. What does Bree recognize?",
+    "choices": [
+      "$10,000 of ordinary income",
+      "$10,000 of capital gain",
+      "$25,000 of capital gain",
+      "No gain, with a negative outside basis of $10,000"
+    ],
+    "correct": 1,
+    "exp": "Cash distributed in excess of outside basis produces gain treated as gain from the sale of the partnership interest, generally capital: $25,000 − $15,000 = $10,000, leaving a $0 basis. Outside basis can never go below zero."
+  },
+  {
+    "q": "Cass's outside basis is $30,000, which includes her $40,000 share of partnership liabilities offset by prior losses. During a year in which the partnership has no income or loss, it repays all of its liabilities. What is the result to Cass?",
+    "choices": [
+      "No gain, because she received no actual cash",
+      "$40,000 of capital gain",
+      "$10,000 of ordinary income from cancellation of debt",
+      "$10,000 of capital gain"
+    ],
+    "correct": 3,
+    "exp": "A decrease in a partner's share of partnership liabilities is treated as a distribution of money, so Cass has a $40,000 deemed cash distribution against a $30,000 basis, producing $10,000 of capital gain. The debt was repaid, not canceled, so there is no cancellation of debt income."
+  },
+  {
+    "q": "Dev's outside basis is $30,000. In a current distribution he receives inventory with a partnership basis of $20,000 and an FMV of $25,000, plus land with a partnership basis of $30,000 and an FMV of $50,000. What are his bases in the distributed assets?",
+    "choices": [
+      "Inventory $20,000; land $10,000",
+      "Inventory $12,000; land $18,000",
+      "Inventory $20,000; land $30,000",
+      "Inventory $25,000; land $5,000"
+    ],
+    "correct": 0,
+    "exp": "Outside basis is allocated first to inventory and unrealized receivables at their carryover basis ($20,000), and the remaining $10,000 goes to the land. Allocating in proportion to the partnership bases ignores the priority given to hot assets."
+  },
+  {
+    "q": "Eli's outside basis is $80,000. In complete liquidation of his interest he receives $10,000 of cash, inventory with a partnership basis of $20,000 and land with a partnership basis of $15,000. What is Eli's basis in the land?",
+    "choices": [
+      "$15,000",
+      "$70,000",
+      "$45,000",
+      "$50,000"
+    ],
+    "correct": 3,
+    "exp": "In a liquidating distribution, outside basis is reduced by cash ($70,000) and then by the carryover basis of inventory ($50,000), and the land takes the entire $50,000 remainder, so no loss is recognized. A $15,000 carryover basis would apply only if outside basis were too small."
+  },
+  {
+    "q": "Faye's outside basis is $50,000. In complete liquidation she receives only $10,000 of cash and inventory with a partnership basis of $25,000. What are the results?",
+    "choices": [
+      "$15,000 capital loss; inventory basis $25,000",
+      "No loss; inventory basis $40,000",
+      "$15,000 ordinary loss; inventory basis $25,000",
+      "No loss; inventory basis $25,000 and $15,000 carried forward"
+    ],
+    "correct": 0,
+    "exp": "Inventory cannot take a basis higher than the partnership's, and a liquidating distribution of only cash, unrealized receivables and inventory allows a loss: $50,000 − $10,000 − $25,000 = $15,000, a capital loss. Stepping the inventory up to $40,000 is allowed only for property other than hot assets."
+  },
+  {
+    "q": "Gil, a partner in a cash-method service partnership, has an outside basis of $40,000. In complete liquidation he receives zero-basis accounts receivable with a face value of $12,000 and land with a partnership basis of $10,000. Later he collects the receivables in full. What is his land basis and the character of the $12,000 collected?",
+    "choices": [
+      "Land $28,000; $12,000 capital gain",
+      "Land $40,000; $12,000 ordinary income",
+      "Land $10,000; $12,000 ordinary income and a $30,000 capital loss",
+      "Land $40,000; $12,000 capital gain"
+    ],
+    "correct": 1,
+    "exp": "The receivables keep their $0 carryover basis and the land absorbs the remaining $40,000 of outside basis. Distributed unrealized receivables always produce ordinary income when collected or sold, regardless of how long the partner holds them."
+  },
+  {
+    "q": "Hana's outside basis is $100,000. In complete liquidation she receives $20,000 of cash, Lot A (partnership basis $20,000, FMV $30,000) and Lot B (partnership basis $30,000, FMV $70,000). What are her bases in Lot A and Lot B?",
+    "choices": [
+      "Lot A $32,000; Lot B $48,000",
+      "Lot A $20,000; Lot B $60,000",
+      "Lot A $26,000; Lot B $54,000",
+      "Lot A $24,000; Lot B $56,000"
+    ],
+    "correct": 2,
+    "exp": "After cash, $80,000 must be allocated, a $30,000 increase over the $50,000 carryover bases. The increase goes first to the lots with appreciation in proportion to it ($10,000 and $40,000), so Lot A gets $6,000 and Lot B $24,000, for $26,000 and $54,000. Allocating in proportion to FMV gives the $24,000 / $56,000 answer."
+  },
+  {
+    "q": "Ira's outside basis is $40,000. In a current distribution he receives Lot X (partnership basis $30,000, FMV $20,000) and Lot Y (partnership basis $30,000, FMV $50,000). What are his bases in the two lots?",
+    "choices": [
+      "Lot X $20,000; Lot Y $20,000",
+      "Lot X $16,000; Lot Y $24,000",
+      "Lot X $20,000; Lot Y $30,000",
+      "Lot X $10,000; Lot Y $30,000"
+    ],
+    "correct": 1,
+    "exp": "The required $20,000 decrease goes first to property with unrealized depreciation, reducing Lot X by $10,000 to $20,000. The remaining $10,000 decrease is allocated by relative adjusted basis ($20,000 and $30,000), giving Lot X $16,000 and Lot Y $24,000."
+  },
+  {
+    "q": "A partnership distributes marketable securities with an FMV of $30,000 to Jae, whose outside basis is $20,000. Jae did not contribute the securities, and the partnership is not an investment partnership. What is the general rule for this distribution?",
+    "choices": [
+      "The securities are treated as property, so Jae recognizes no gain and takes a $20,000 basis",
+      "Jae recognizes no gain unless she sells the securities within 7 years",
+      "The securities are treated as money at FMV, so Jae generally recognizes gain to the extent that FMV exceeds her basis",
+      "The partnership recognizes gain on the securities' appreciation"
+    ],
+    "correct": 2,
+    "exp": "Marketable securities are generally treated as money equal to their FMV, so gain is recognized when that amount exceeds outside basis, reduced by the partner's share of the partnership's net appreciation in its securities. Exceptions apply to securities the partner contributed and to investment partnerships."
+  },
+  {
+    "q": "Kai receives inventory with a partnership basis of $10,000 in a current distribution and holds it as an investment. Two years later he sells it for $16,000. What does Kai report?",
+    "choices": [
+      "$6,000 of long-term capital gain",
+      "$6,000 of short-term capital gain",
+      "$6,000 of §1231 gain",
+      "$6,000 of ordinary income"
+    ],
+    "correct": 3,
+    "exp": "Distributed inventory keeps its ordinary character if the partner sells it within 5 years of the distribution, regardless of how he holds it, so the $16,000 − $10,000 gain is ordinary. After 5 years the character would depend on its use in his hands."
+  },
+  {
+    "q": "A partnership distributes land it has held for four years to Lin, a partner, who sells it three months later at a gain. The land is a capital asset in Lin's hands. How is her gain characterized?",
+    "choices": [
+      "Long-term capital gain, because she includes the partnership's holding period",
+      "Short-term capital gain, because she held the land for only three months",
+      "Ordinary income, because the land came from a partnership",
+      "Long-term capital gain only if she held her partnership interest for more than a year"
+    ],
+    "correct": 0,
+    "exp": "A partner's holding period for distributed property includes the partnership's holding period, so Lin's holding period exceeds one year and her gain is long-term. Her holding period in the partnership interest is not what counts."
+  },
+  {
+    "q": "In 2023 Max contributed land with a basis of $20,000 and an FMV of $50,000 to a partnership, which still holds it. In 2026, when his outside basis is still $20,000, the partnership distributes other property to him with a basis and FMV of $60,000. What gain does Max recognize, and what is his basis in the distributed property?",
+    "choices": [
+      "$40,000 gain; $60,000 basis",
+      "$0 gain; $20,000 basis",
+      "$30,000 gain; $60,000 basis",
+      "$30,000 gain; $50,000 basis"
+    ],
+    "correct": 3,
+    "exp": "Under §737, Max recognizes the lesser of the excess of the property's FMV over his outside basis ($40,000) or his net precontribution gain ($30,000). The $30,000 gain raises his outside basis to $50,000, which then limits his basis in the distributed property."
+  },
+  {
+    "q": "Three years ago Nell contributed appreciated land to a partnership. This year the partnership distributes the same land back to Nell. Which statement is correct?",
+    "choices": [
+      "Nell recognizes her precontribution gain because the distribution occurred within 7 years",
+      "Nell recognizes no precontribution gain because the land was distributed back to the partner who contributed it",
+      "The partnership recognizes the precontribution gain on the distribution",
+      "Nell recognizes gain equal to the land's appreciation since contribution"
+    ],
+    "correct": 1,
+    "exp": "Both the rule taxing a contributor when contributed property goes to another partner and §737 exclude a distribution of the property back to its contributor. Nell takes the land with a carryover basis, which keeps the built-in gain with her."
+  },
+  {
+    "q": "A partnership distributes land with a basis of $30,000 and an FMV of $90,000 to a partner in a current distribution. How does the partnership's treatment differ from that of a C corporation making a similar distribution to a shareholder?",
+    "choices": [
+      "Both recognize the $60,000 gain",
+      "The partnership recognizes the $60,000 gain, but the corporation does not",
+      "The partnership generally recognizes no gain, but the corporation recognizes the $60,000 gain",
+      "Neither recognizes gain, but the corporation reduces E&P by FMV"
+    ],
+    "correct": 2,
+    "exp": "Under §731 a partnership generally recognizes no gain or loss on distributions, and the partner takes a carryover basis, whereas a corporation recognizes gain on appreciated property as if it were sold. Exceptions such as disproportionate distributions of hot assets can still trigger gain."
+  },
+  {
+    "q": "Ola, a general partner, retires from a law partnership in which capital is not a material income-producing factor. The agreement says nothing about goodwill. How are the payments for her share of unrealized receivables and goodwill classified?",
+    "choices": [
+      "As income payments under §736, taxed to her as ordinary income",
+      "As payments for partnership property, producing capital gain",
+      "As nontaxable returns of capital",
+      "As proceeds from a sale of her interest under §751"
+    ],
+    "correct": 0,
+    "exp": "When capital is not a material income-producing factor and the retiring partner is a general partner, payments for unrealized receivables and for goodwill not provided for in the agreement are income payments under §736, taxed as ordinary income. Payments for her share of other partnership property are treated as distributions."
+  },
+  {
+    "q": "Pat, a general partner in a service partnership where capital is not a material income-producing factor, retires and receives $100,000: $60,000 for his share of the partnership's capital assets, $30,000 for his share of zero-basis receivables and $10,000 for goodwill the agreement does not mention. His outside basis is $50,000. What are his ordinary income and capital gain?",
+    "choices": [
+      "$30,000 ordinary; $20,000 capital gain",
+      "$40,000 ordinary; $10,000 capital gain",
+      "$0 ordinary; $50,000 capital gain",
+      "$40,000 ordinary; $60,000 capital gain"
+    ],
+    "correct": 1,
+    "exp": "The $30,000 for receivables and the $10,000 for unstated goodwill are income payments taxed as ordinary income ($40,000). The $60,000 for property is a distribution against his $50,000 basis, giving $10,000 of capital gain; treating the goodwill as property gives the $20,000 answer."
+  },
+  {
+    "q": "A partnership makes payments to a retiring partner. Some qualify as guaranteed payments under §736(a) and the rest are §736(b) payments for her interest in partnership property. How do the payments affect the remaining partners?",
+    "choices": [
+      "Both types are deductible by the partnership",
+      "Neither type affects the remaining partners' taxable income",
+      "Only the property payments are deductible by the partnership",
+      "The guaranteed payments are deductible by the partnership, reducing the remaining partners' income, while the property payments are not"
+    ],
+    "correct": 3,
+    "exp": "Guaranteed payments to a retiring partner are deductible by the partnership, so the remaining partners' distributive shares go down. Payments for partnership property are treated as distributions and give no deduction, which is why partners often negotiate over how the payments are classified."
+  },
+  {
+    "q": "A retiring partner with an outside basis of $90,000 will receive $150,000 for her interest in partnership property in three equal annual payments. Absent an election, how is the gain on these distributions recognized?",
+    "choices": [
+      "All $60,000 of gain is recognized in the year of retirement",
+      "Basis is recovered first, so no gain is recognized until the third payment, when $60,000 is recognized",
+      "One-third of the gain, $20,000, is recognized with each payment",
+      "None of the gain is recognized because the payments are deferred"
+    ],
+    "correct": 1,
+    "exp": "For fixed liquidating payments for partnership property made over several years, the partner recovers her basis first and recognizes gain only after the payments exceed it: $50,000 after year 1, $100,000 after year 2, and $60,000 of gain in year 3. A ratable approach requires an election."
+  },
+  {
+    "q": "In March, Ray buys a 60% interest in a partnership from an existing partner. The partnership's business continues unchanged. Does the partnership terminate for tax purposes?",
+    "choices": [
+      "Yes, because 50% or more of the interests changed hands within 12 months",
+      "Yes, but only if the partnership has a §754 election",
+      "No, because a partnership terminates only if no part of its business continues to be carried on by any partners",
+      "No, unless the buyer was not already a partner"
+    ],
+    "correct": 2,
+    "exp": "Since technical terminations were repealed for tax years after 2017, a partnership terminates only when no part of its business, financial operation or venture continues by any of its partners in a partnership. The 50%-in-12-months technical termination is no longer law."
+  },
+  {
+    "q": "Why can a distribution that changes a partner's share of the partnership's hot assets cause the partner or the partnership to recognize ordinary income, even though distributions are normally tax-free?",
+    "choices": [
+      "Because distributions of inventory are always taxable at FMV",
+      "Because hot assets cannot be distributed without the IRS's consent",
+      "Because the partnership must make a §754 election when hot assets are distributed",
+      "Because a disproportionate distribution under §751 is treated as an exchange of hot assets for other property"
+    ],
+    "correct": 3,
+    "exp": "Section 751 treats a distribution that shifts a partner's share of unrealized receivables or substantially appreciated inventory relative to other property as a partial sale or exchange, preventing ordinary income from being converted to capital gain. A distribution proportionate in both classes stays tax-free."
+  },
+  {
+    "q": "Sia's outside basis is $25,000. In a current distribution she receives land with a basis of $30,000 and an FMV of $50,000, subject to a $20,000 mortgage that she assumes. Before the distribution her share of that mortgage, the partnership's only liability, was 50%. What is her basis in the land?",
+    "choices": [
+      "$25,000",
+      "$15,000",
+      "$30,000",
+      "$35,000"
+    ],
+    "correct": 2,
+    "exp": "Sia's liability increase ($20,000 assumed) and decrease ($10,000 share removed) are netted, a $10,000 net increase that raises her outside basis to $35,000. The land then takes its $30,000 carryover basis, leaving $5,000 of outside basis; ignoring the netting limits the land to $25,000."
+  },
+  {
+    "q": "Tom is leaving a partnership. His outside basis is only $15,000, and the partnership liquidates his entire interest by giving him a single item: inventory that it carries at a $20,000 basis. What are the tax consequences to Tom?",
+    "choices": [
+      "$5,000 of gain; inventory basis $20,000",
+      "No gain or loss; inventory basis $15,000",
+      "$5,000 of ordinary income; inventory basis $20,000",
+      "No gain or loss; inventory basis $20,000"
+    ],
+    "correct": 1,
+    "exp": "A partner never recognizes gain on distributed property other than money, and the inventory's basis is reduced to his $15,000 outside basis. The lower basis preserves the ordinary income he will recognize when he sells it."
+  },
+  {
+    "q": "Uma's outside basis is $40,000. She receives a $10,000 cash distribution that does not end her interest in the partnership. What are the results?",
+    "choices": [
+      "No gain or loss; outside basis $30,000",
+      "$30,000 capital loss; outside basis $0",
+      "No gain or loss; outside basis $40,000",
+      "$10,000 capital gain; outside basis $40,000"
+    ],
+    "correct": 0,
+    "exp": "A partner cannot recognize a loss on a current distribution; the cash simply reduces outside basis to $30,000. A loss may be recognized only in a liquidating distribution of money, unrealized receivables and inventory."
+  },
+  {
+    "q": "Val's outside basis at the start of the year is $10,000. During the year she draws $30,000 of cash as advances against her share of profits, and her distributive share of partnership income for the year is $25,000. What are her gain and ending outside basis?",
+    "choices": [
+      "$20,000 gain; ending basis $25,000",
+      "$5,000 gain; ending basis $0",
+      "No gain; ending basis $5,000",
+      "No gain; ending basis $35,000"
+    ],
+    "correct": 2,
+    "exp": "Draws against a partner's distributive share are treated as current distributions made on the last day of the year, after basis is increased for the year's income to $35,000. The $30,000 is therefore tax-free and leaves $5,000; testing the draws against the opening $10,000 produces the wrong gain."
+  },
+  {
+    "q": "Which statement about the inventory that §751 treats as a hot asset is correct?",
+    "choices": [
+      "All inventory is a hot asset on a sale of an interest, but for disproportionate distributions only substantially appreciated inventory counts",
+      "Only substantially appreciated inventory is a hot asset on a sale of an interest",
+      "Inventory is a hot asset only if it is worth more than 200% of its basis",
+      "Inventory is never a hot asset if the partnership uses the cash method"
+    ],
+    "correct": 0,
+    "exp": "Since 1997, all inventory items are hot assets when a partner sells an interest, while the disproportionate distribution rules apply only to inventory whose FMV exceeds 120% of its basis. The cash method affects unrealized receivables, not whether inventory counts."
+  },
+  {
+    "q": "A partner dies, and the partnership makes ongoing payments to her estate that are classified under §736(a). How are those payments treated?",
+    "choices": [
+      "As tax-free distributions, because the estate's basis was stepped up at death",
+      "As capital gain, because they relate to the partner's interest",
+      "As gifts from the surviving partners",
+      "As income in respect of a decedent, ordinary income to the estate with no basis step-up"
+    ],
+    "correct": 3,
+    "exp": "Payments to a deceased partner's successor that are income payments under §736 are income in respect of a decedent under §753, so the estate reports them as ordinary income and the stepped-up basis does not shelter them. Payments for partnership property are recovered against the stepped-up outside basis."
+  },
+  {
+    "q": "Wes retires from a manufacturing partnership in which capital is a material income-producing factor. Part of his liquidation payment is attributable to his share of unrealized receivables. How is that portion treated?",
+    "choices": [
+      "As a guaranteed payment deductible by the partnership",
+      "As a payment for property that is subject to the hot-asset rules, so it produces ordinary income to Wes",
+      "As capital gain, because the payment is for partnership property",
+      "As a tax-free return of capital"
+    ],
+    "correct": 1,
+    "exp": "Because capital is a material income-producing factor, the payment for receivables is a payment for partnership property, but the disproportionate distribution rules of §751 still make it ordinary income to Wes. It is not a guaranteed payment, so the partnership gets no deduction."
+  },
+  {
+    "q": "Xia's outside basis of $70,000 includes her $30,000 share of partnership liabilities. In complete liquidation she receives $50,000 of cash and is relieved of her entire share of the liabilities. What does she recognize?",
+    "choices": [
+      "$20,000 capital loss",
+      "No gain or loss",
+      "$10,000 capital gain",
+      "$40,000 capital gain"
+    ],
+    "correct": 2,
+    "exp": "Relief from her $30,000 share of liabilities is a deemed distribution of money, so total money is $50,000 + $30,000 = $80,000 against a $70,000 basis, giving $10,000 of capital gain. Ignoring the liability relief would produce a $20,000 loss."
+  },
+  {
+    "q": "A partnership distributes land with a tax basis of $30,000 and an FMV of $90,000 to Yan in a current distribution. How does the distribution affect Yan's capital account and her outside basis?",
+    "choices": [
+      "Both are reduced by $90,000",
+      "Both are reduced by $30,000",
+      "The capital account is reduced by $30,000, and outside basis is reduced by $90,000",
+      "The capital account is reduced by $90,000 after the land is booked up, and outside basis is reduced by $30,000"
+    ],
+    "correct": 3,
+    "exp": "Book capital accounts are reduced by the FMV of distributed property after the partnership books the unrealized gain to all partners, while outside basis is reduced by the land's carryover basis of $30,000. Treating the two the same mixes book and tax rules."
+  }
+]
