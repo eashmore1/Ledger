@@ -567,7 +567,7 @@ function _showQuizLoading(section){
   overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="margin-bottom:16px">'+LedgerBuddy('think',120)+'</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
 }
 
-async function openQuizModal(section, type, topic, count) {
+async function openQuizModal(section, type, topic, count, timed) {
   // AI custom sets aren't in the bank — replay the last generated set (free), or generate anew.
   if (type === 'ai') {
     if (_lastAIQuiz && _lastAIQuiz.section === section && _lastAIQuiz.questions.length) {
@@ -591,6 +591,7 @@ async function openQuizModal(section, type, topic, count) {
   const elite = isElite(), pro = isPro();
   // Per-attempt size by type, then capped by tier: Free taster / paid unlimited.
   const custom = type === 'custom' ? Math.max(1, Math.floor(Number(count)) || 20) : 0;
+  const isTimed = type === 'timed' || (!!custom && !!timed);
   const want = custom || (type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20);
   let cap;
   if (!pro) cap = 5;
@@ -609,11 +610,11 @@ async function openQuizModal(section, type, topic, count) {
   if (custom && qs.length < custom) showToast('Starting with ' + qs.length + ' questions, the most available right now', 'info');
 
   _quiz = {
-    active: true, finished: false, section, type, topic: topic || null, count: custom || null,
+    active: true, finished: false, section, type, topic: topic || null, count: custom || null, timed: isTimed,
     questions: qs, current: 0,
     selected: null, answered: false,
     score: 0, timerInterval: null,
-    timeLeft: type === 'timed' ? qs.length * 60 : 0,
+    timeLeft: isTimed ? qs.length * 60 : 0,
     results: [],
   };
 
@@ -627,13 +628,12 @@ async function openQuizModal(section, type, topic, count) {
   overlay.style.display = 'block';
   _renderQuiz();
 
-  if (type === 'timed') {
+  if (isTimed) {
     _quiz.timerInterval = setInterval(function() {
       _quiz.timeLeft--;
       const el = document.getElementById('quiz-timer');
       if (el) {
-        const m = Math.floor(_quiz.timeLeft / 60), s = _quiz.timeLeft % 60;
-        el.textContent = m + ':' + String(s).padStart(2,'0');
+        el.textContent = _fmtQuizTime(_quiz.timeLeft);
         el.style.color = _quiz.timeLeft < 60 ? 'var(--red)' : _quiz.timeLeft < 180 ? 'var(--amb)' : 'var(--grn)';
       }
       if (_quiz.timeLeft <= 0) { clearInterval(_quiz.timerInterval); _finishQuiz(); }
@@ -653,21 +653,28 @@ function _qbVars(code){
   const c=_sectionColor(code);
   return '--c:'+c+';--ct:'+_sectionText(code)+';--cb:'+c+'1f';
 }
-function _qbTypeLabel(type, topic){
+// m:ss, or h:mm:ss once a long custom timed quiz passes an hour.
+function _fmtQuizTime(t) {
+  t = Math.max(0, t | 0);
+  const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), sec = String(t % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
+}
+function _qbTypeLabel(type, topic, timed){
+  if (type === 'custom' && timed) return 'Custom timed quiz';
   return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', custom:'Custom quiz', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
 }
 
 function _renderQuiz() {
   const overlay = document.getElementById('quiz-overlay');
   if (!overlay) return;
-  const { section, type, questions, current, selected, answered, timeLeft } = _quiz;
+  const { section, type, questions, current, selected, answered, timeLeft, timed } = _quiz;
   const q = questions[current];
   const total = questions.length;
   const L = ['A','B','C','D'];
   const pct = total > 0 ? Math.round((current + (answered ? 1 : 0)) / total * 100) : 0;
 
-  const timerHTML = type === 'timed'
-    ? '<div class="qz-timer">' + ico('timer') + '<span id="quiz-timer" style="color:' + (timeLeft < 60 ? 'var(--red)' : timeLeft < 180 ? 'var(--amb)' : 'var(--grn)') + '">' + Math.floor(timeLeft/60) + ':' + String(timeLeft%60).padStart(2,'0') + '</span></div>'
+  const timerHTML = timed
+    ? '<div class="qz-timer">' + ico('timer') + '<span id="quiz-timer" style="color:' + (timeLeft < 60 ? 'var(--red)' : timeLeft < 180 ? 'var(--amb)' : 'var(--grn)') + '">' + _fmtQuizTime(timeLeft) + '</span></div>'
     : '';
 
   const opts = q.choices.map(function(c, i) {
@@ -703,7 +710,7 @@ function _renderQuiz() {
       '<div class="qz-top">' +
         '<button class="qb-x" onclick="closeQuizOverlay()" aria-label="Close">' + ico('x') + '</button>' +
         '<span class="qb-chip">' + section + '</span>' +
-        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic)) + '</span>' +
+        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic, _quiz.timed)) + '</span>' +
         timerHTML +
         '<span class="qz-count">' + (current + 1) + ' / ' + total + '</span>' +
       '</div>' +
@@ -818,14 +825,14 @@ function _finishQuiz() {
     '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="' + grade.c + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/></svg>' +
     '<div class="qr-pct">' + pct + '%</div></div>';
 
-  const retry = '_quiz.finished=false;openQuizModal(\'' + section + '\',\'' + type + '\',' + (_quiz.topic ? JSON.stringify(_quiz.topic).replace(/"/g, '&quot;') : 'null') + (_quiz.count ? ',' + _quiz.count : '') + ')';
+  const retry = '_quiz.finished=false;openQuizModal(\'' + section + '\',\'' + type + '\',' + (_quiz.topic ? JSON.stringify(_quiz.topic).replace(/"/g, '&quot;') : 'null') + (_quiz.count ? ',' + _quiz.count + (_quiz.timed ? ',true' : '') : '') + ')';
 
   overlay.innerHTML =
     '<div class="qz" style="' + _qbVars(section) + '">' +
       '<div class="qz-top">' +
         '<button class="qb-x" onclick="closeQuizOverlay()" aria-label="Close">' + ico('x') + '</button>' +
         '<span class="qb-chip">' + section + '</span>' +
-        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic)) + ' · Results</span>' +
+        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic, _quiz.timed)) + ' · Results</span>' +
       '</div>' +
       '<div class="qr-hero">' + ring +
         '<div style="min-width:0"><div class="qr-grade" style="color:' + grade.c + '">' + grade.label + '</div>' +
@@ -901,6 +908,8 @@ function openQBSection(code) {
             '<input id="qb-custom-n" type="number" inputmode="numeric" min="1" max="' + customMax + '" value="' + customDef + '"' + (customMax > 0 ? '' : ' disabled') +
             ' aria-label="Number of questions in the quiz" oninput="_customQuizLabel()" onkeydown="if(event.key===\'Enter\'){_startCustomQuiz(\'' + code + '\')}">' +
             '<span>questions</span></label>' +
+          '<label class="qb-custom-t"><input id="qb-custom-timed" type="checkbox"' + (customMax > 0 ? '' : ' disabled') + ' onchange="_customQuizLabel()">' +
+            '<span>' + ico('timer') + 'Timed <span class="qb-custom-t-d">· 1 min per question</span></span></label>' +
           '<button type="button" id="qb-custom-go" class="qz-btn qb-custom-go"' + (customMax > 0 ? '' : ' disabled') + ' onclick="_startCustomQuiz(\'' + code + '\')">' + _customQuizBtn(customDef) + '</button>' +
         '</div>' +
       '</div>';
@@ -958,8 +967,11 @@ function openQBSection(code) {
   });
 }
 
-function _customQuizBtn(n) {
-  return n > 0 ? 'Start ' + n.toLocaleString() + '-question quiz' : 'Start quiz';
+function _customQuizBtn(n, timed) {
+  const kind = timed ? 'timed quiz' : 'quiz';
+  if (!(n > 0)) return 'Start ' + kind;
+  const mins = timed ? ' (' + (n >= 60 ? Math.floor(n / 60) + 'h' + (n % 60 ? ' ' + (n % 60) + 'm' : '') : n + ' min') + ')' : '';
+  return 'Start ' + n.toLocaleString() + '-question ' + kind + mins;
 }
 function _customQuizLabel() {
   const el = document.getElementById('qb-custom-n'), btn = document.getElementById('qb-custom-go');
@@ -967,7 +979,8 @@ function _customQuizLabel() {
   const max = Number(el.max) || 0;
   let n = Math.floor(Number(el.value)) || 0;
   if (max && n > max) n = max;
-  btn.textContent = _customQuizBtn(n);
+  const t = document.getElementById('qb-custom-timed');
+  btn.textContent = _customQuizBtn(n, !!(t && t.checked));
 }
 
 function _startCustomQuiz(code) {
@@ -976,7 +989,8 @@ function _startCustomQuiz(code) {
   const n = Math.floor(Number(el && el.value));
   if (!n || n < 1) { showToast('Enter how many questions you want', 'info'); if (el) el.focus(); return; }
   closeQBSection();
-  openQuizModal(code, 'custom', null, max ? Math.min(n, max) : n);
+  const t = document.getElementById('qb-custom-timed');
+  openQuizModal(code, 'custom', null, max ? Math.min(n, max) : n, !!(t && t.checked));
 }
 
 function closeQBSection() {
