@@ -532,6 +532,32 @@ function _launchAIQuiz(section, questions, topic){
 // Both are plain reads with no AI cost, cached for the session.
 let _qbBankCache = {}; // section -> {questions:[...], loadedAt}
 function _qbKey(q){ return String(q||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+
+// ── PER-QUESTION HISTORY ────────────────────────────────────────────────────
+// S.qbHist[section][id] = 1 if the last attempt was right, 0 if it was wrong.
+// The id is a short hash of the question text, so history survives reshuffles
+// and stays small enough for the synced state document (~10 bytes a question).
+function _qbId(q){
+  const k = _qbKey(q && q.q);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < k.length; i++) { h ^= k.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+}
+function _qbHist(section){
+  S.qbHist = S.qbHist || {};
+  return S.qbHist[section] = S.qbHist[section] || {};
+}
+// Seen / missed counts, measured against the bank when it's loaded.
+function _qbHistStats(section, bank){
+  const h = (S.qbHist || {})[section] || {};
+  if (!bank || !bank.length) {
+    const v = Object.keys(h).map(function(k){ return h[k]; });
+    return {seen: v.length, missed: v.filter(function(x){ return x === 0; }).length, total: 0};
+  }
+  let seen = 0, missed = 0;
+  bank.forEach(function(q){ const v = h[_qbId(q)]; if (v !== undefined) { seen++; if (v === 0) missed++; } });
+  return {seen, missed, total: bank.length};
+}
 async function _qbStatic(section){
   try{
     const r=await fetch('/qbank/'+section+'.json');
@@ -577,14 +603,17 @@ async function openQuizModal(section, type, topic, count, timed) {
     }
     return;
   }
-  if (!isPro() && type !== 'mcq') { openUpgradeModal('Question Bank — ' + type); return; }
+  if (!isPro() && type !== 'mcq' && type !== 'missed') { openUpgradeModal('Question Bank — ' + type); return; }
 
   // Primary source = the pre-generated bank (random, curated, free to serve).
   // Falls back to the built-in static set until the bank is populated.
   let bank = (_qbBankCache[section] || {}).questions;
   if (bank === undefined) { _showQuizLoading(section); bank = await loadQuestionBank(section); }
   const pool = (bank && bank.length) ? bank : (QB_QUESTIONS[section] || []);
-  const pick = topic ? pool.filter(function(q){ return q.topic === topic; }) : pool;
+  const hist = _qbHist(section);
+  let pick = topic ? pool.filter(function(q){ return q.topic === topic; }) : pool;
+  if (type === 'missed') pick = pick.filter(function(q){ return hist[_qbId(q)] === 0; });
+  if (type === 'missed' && !pick.length) { closeQuizOverlay(); showToast("No missed " + section + " questions right now. Nice work!", 'success'); return; }
   if (topic && !pick.length) { closeQuizOverlay(); showToast('No questions found for that topic yet', 'info'); return; }
   if (!pool.length) { closeQuizOverlay(); showToast('Questions coming soon for ' + section, 'info'); return; }
 
@@ -605,7 +634,11 @@ async function openQuizModal(section, type, topic, count, timed) {
   // Fisher–Yates shuffle (sort-by-random is biased).
   const shuffled = pick.slice();
   for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t; }
-  const qs = shuffled.slice(0, Math.max(1, Math.min(cap, pick.length)));
+  // Questions never answered come first; once those run out, repeats follow.
+  const ordered = type === 'missed' ? shuffled
+    : shuffled.filter(function(q){ return hist[_qbId(q)] === undefined; })
+        .concat(shuffled.filter(function(q){ return hist[_qbId(q)] !== undefined; }));
+  const qs = ordered.slice(0, Math.max(1, Math.min(cap, pick.length)));
   if (pro && !elite) _aiQbConsume(section, qs.length); // bank reads are free, but Pro is metered to 20/section/day
   if (custom && qs.length < custom) showToast('Starting with ' + qs.length + ' questions, the most available right now', 'info');
 
@@ -643,6 +676,7 @@ async function openQuizModal(section, type, topic, count, timed) {
 
 function closeQuizOverlay() {
   if (_quiz.timerInterval) clearInterval(_quiz.timerInterval);
+  if (_quiz.histDirty) { _quiz.histDirty = false; saveState(); }
   _quiz.active = false;
   const overlay = document.getElementById('quiz-overlay');
   if (overlay) overlay.style.display = 'none';
@@ -661,7 +695,7 @@ function _fmtQuizTime(t) {
 }
 function _qbTypeLabel(type, topic, timed){
   if (type === 'custom' && timed) return 'Custom timed quiz';
-  return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', custom:'Custom quiz', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
+  return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', custom:'Custom quiz', missed:'Missed questions', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
 }
 
 function _renderQuiz() {
@@ -742,6 +776,8 @@ function _submitAnswer() {
   const correct = _quiz.selected === q.correct;
   if (correct) _quiz.score++;
   _quiz.results.push({ correct, selected: _quiz.selected, correctIdx: q.correct });
+  // AI-generated sets aren't in the bank, so they can't be served again later.
+  if (_quiz.type !== 'ai') { _qbHist(_quiz.section)[_qbId(q)] = correct ? 1 : 0; _quiz.histDirty = true; }
   _renderQuiz();
 }
 
@@ -786,6 +822,7 @@ function _finishQuiz() {
   p.mcqDone = Math.min((p.mcqDone || 0) + done, 99999);
   p.graded = (p.graded || 0) + done;
   p.correct = (p.correct || 0) + score;
+  _quiz.histDirty = false;
   saveState();
 
   const overlay = document.getElementById('quiz-overlay');
@@ -844,9 +881,11 @@ function _finishQuiz() {
         (missed ? '<button class="qr-tab" onclick="_qrFilter(this,true)">Missed ' + missed + '</button>' : '') + '</div>' +
         '<div class="qr-list">' + rows + '</div>' : '') +
       '<div class="qb-disc" style="border:none;margin-top:8px">Original practice questions written with AI help. They may contain errors, so check anything surprising against your review course.</div>' +
-      '<div class="qz-act"><div class="qz-act-in">' +
+      '<div class="qz-act"><div class="qz-act-in' + (missed && type !== 'ai' && type !== 'missed' ? ' three' : '') + '">' +
         '<button class="qz-btn ghost" onclick="closeQuizOverlay()">Done</button>' +
-        '<button class="qz-btn" onclick="' + retry + '">Practice again</button>' +
+        (missed && type !== 'ai' && type !== 'missed'
+          ? '<button class="qz-btn ghost" onclick="_quiz.finished=false;openQuizModal(\'' + section + '\',\'missed\')">Retry missed</button>' : '') +
+        '<button class="qz-btn" onclick="' + retry + '">' + (type === 'missed' ? 'Keep reviewing' : 'Practice again') + '</button>' +
       '</div></div>' +
     '</div>';
   overlay.scrollTop = 0;
@@ -882,6 +921,13 @@ function openQBSection(code) {
     {type:'random', icon:'dice',   label:'Random quiz',  desc: elite ? '50 shuffled questions, any topic' : 'Shuffled questions, any topic', free:false},
     {type:'timed',  icon:'timer',  label:'Timed set',    desc:'10 questions in 10 minutes, like exam pace', free:false},
   ];
+  const hs = _qbHistStats(code, (_qbBankCache[code] || {}).questions);
+  const missedHTML =
+    '<button type="button" id="qb-missed-btn" class="qb-mode' + (hs.missed ? '' : ' off') + '" onclick="closeQBSection();openQuizModal(\'' + code + '\',\'missed\')"' + (hs.missed ? '' : ' disabled') + '>' +
+      '<span class="qb-mode-ico">' + ico('refresh') + '</span>' +
+      '<span style="flex:1;min-width:0"><span class="qb-mode-t">Missed questions<span class="qb-n" id="qb-missed-n"' + (hs.missed ? '' : ' hidden') + '>' + hs.missed + '</span></span>' +
+      '<span class="qb-mode-d" id="qb-missed-d" style="display:block">' + _qbMissedDesc(hs.missed, pro) + '</span></span>' +
+      '<span class="qb-chev">' + ico('arrow') + '</span></button>';
   const modeHTML = modes.map(function(m) {
     const locked = !pro && !m.free;
     return '<button type="button" class="qb-mode' + (locked ? ' locked' : '') + '" onclick="' + (locked ? 'openUpgradeModal(\'Question Bank — ' + m.label + '\')' : 'closeQBSection();openQuizModal(\'' + code + '\',\'' + m.type + '\')') + '">' +
@@ -941,9 +987,10 @@ function openQBSection(code) {
         '<div class="qb-title">' + sec.full + '</div>' +
         '<div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
         '<div class="qb-meta"><span><b style="color:var(--txt)">' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + ' answered</span><span>' + acc + '</span></div>' +
+        '<div class="qb-seen" id="qb-seen">' + _qbSeenLine(hs) + '</div>' +
       '</div>' +
       '<div class="qb-body">' +
-        '<div class="qb-eyebrow">Practice</div>' + modeHTML + customHTML +
+        '<div class="qb-eyebrow">Practice</div>' + (hs.missed ? missedHTML + modeHTML + customHTML : modeHTML + customHTML + missedHTML) +
         '<div class="qb-eyebrow" style="margin-top:16px">Drill a topic' + (pro ? '' : '<span class="qb-pro">PRO</span>') + '</div>' +
         '<div id="qb-topic-list"><div class="qb-skel"></div></div>' +
         '<div class="qb-eyebrow" style="margin-top:18px">AI questions</div>' + aiBlock +
@@ -953,6 +1000,13 @@ function openQBSection(code) {
   overlay.style.display = 'flex';
 
   loadQuestionBank(code).then(function(bank) {
+    // Refresh the counts against the real bank (history may hold removed questions).
+    const st = _qbHistStats(code, bank);
+    const seenEl = document.getElementById('qb-seen'); if (seenEl) seenEl.innerHTML = _qbSeenLine(st);
+    const mb = document.getElementById('qb-missed-btn'), mn = document.getElementById('qb-missed-n'), md = document.getElementById('qb-missed-d');
+    if (mb) { mb.disabled = !st.missed; mb.classList.toggle('off', !st.missed); }
+    if (mn) { mn.textContent = st.missed; mn.hidden = !st.missed; }
+    if (md) md.textContent = _qbMissedDesc(st.missed, pro);
     const box = document.getElementById('qb-topic-list');
     if (!box) return;
     const counts = {}, order = [];
@@ -965,6 +1019,15 @@ function openQBSection(code) {
     }).join('') + '</div>' +
     (many ? '<button class="qb-more" onclick="this.previousElementSibling.classList.remove(\'short\');this.remove()">Show all ' + order.length + ' topics</button>' : '');
   });
+}
+
+function _qbMissedDesc(n, pro) {
+  if (!n) return 'Questions you get wrong collect here so you can retry them';
+  return 'Retry the ' + (n === 1 ? 'question' : n.toLocaleString() + ' questions') + ' you got wrong' + (pro || n <= 5 ? '' : ', 5 at a time') + '. Get one right and it leaves the list';
+}
+function _qbSeenLine(st) {
+  if (!st.seen) return 'New questions are served first, so you won\'t see repeats until you\'ve seen them all';
+  return '<b>' + st.seen.toLocaleString() + '</b>' + (st.total ? ' of ' + st.total.toLocaleString() : '') + ' unique questions seen · new ones are served first';
 }
 
 function _customQuizBtn(n, timed) {
