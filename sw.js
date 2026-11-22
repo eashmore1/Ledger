@@ -9,8 +9,8 @@
  *     sync when the connection returns.
  */
 'use strict';
-const VERSION = 'ledger-v14';
-const SHELL = ['/', '/logo.svg', '/icons.js?v=2', '/mascot.js?v=2', '/calc.js?v=1', '/moderation.js?v=1', '/fonts/fonts.css', '/fonts/libre-franklin-latin-wght-normal.woff2', '/fonts/fraunces-latin-opsz-normal.woff2', '/fonts/fraunces-latin-opsz-italic.woff2', '/manifest.json', '/icons/icon-192.png'];
+const VERSION = 'ledger-v15';
+const SHELL = ['/', '/logo.svg', '/css/app.css?v=77f16bda', '/icons.js?v=68639721', '/mascot.js?v=99334d09', '/calc.js?v=8c236bed', '/moderation.js?v=00756301', '/js/firebase.js?v=187fdac2', '/js/onboarding-tour.js?v=3cf3999e', '/js/core.js?v=b6009704', '/js/subscription.js?v=d2d07244', '/js/auth.js?v=41ee5432', '/js/onboarding.js?v=caa9c4c8', '/js/app-shell.js?v=558f9b23', '/js/today.js?v=75749e48', '/js/rooms-and-push.js?v=ebff2261', '/js/feed.js?v=1cc5d804', '/js/dashboard.js?v=189a8ac4', '/js/profile-explore.js?v=607c9359', '/js/sessions.js?v=2c07c6b1', '/js/social.js?v=9532ddda', '/js/messages-clubs.js?v=893c7860', '/js/misc.js?v=0ad17a93', '/js/settings.js?v=1bc439bf', '/js/question-bank.js?v=bf4dfbbe', '/js/progress-report.js?v=bff75f61', '/js/ask-ledger.js?v=ed5ccc54', '/js/study-lab.js?v=6c1bf06a', '/js/study-plan.js?v=334b3d8c', '/js/engagement.js?v=99ef3f15', '/js/start.js?v=e60ee834', '/js/consent-and-keyboard.js?v=cd1dd4db', '/fonts/fonts.css', '/fonts/libre-franklin-latin-wght-normal.woff2', '/fonts/fraunces-latin-opsz-normal.woff2', '/fonts/fraunces-latin-opsz-italic.woff2', '/manifest.json', '/icons/icon-192.png'];
 // Third-party scripts and fonts the app shell needs to boot offline.
 const CDN_OK = /^https:\/\/(www\.gstatic\.com\/firebasejs\/|cdn\.jsdelivr\.net\/npm\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 

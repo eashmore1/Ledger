@@ -23,10 +23,11 @@ that's expected locally, not a bug.
 ## Project structure
 
 ```
-index.html          The entire logged-in app (one file, ~17k lines). All
-                     screens are rendered by swapping innerHTML — there's
-                     no router or framework; see TODOS.md for the
-                     deferred plan to split this up once it's warranted.
+index.html          The logged-in app's page: markup, plus the list of files
+                     below in load order. Screens are rendered by swapping
+                     innerHTML; there's no router or framework.
+css/app.css          The app's styles
+js/                  The app's code, one file per area (see Code layout)
 landing.html         Marketing homepage (first-touch acquisition page)
 pricing.html         Pricing page
 faq.html             FAQ (with search/filter)
@@ -52,14 +53,54 @@ ios/ android/          Capacitor-wrapped native shells
 TODOS.md               Prioritized backlog from the last engineering review
 ```
 
-### Why one giant `index.html`?
+### Code layout
 
-This is a deliberate "ship fast, no tooling" choice, not an oversight — see
-the note in `TODOS.md`. It works functionally (every page loads fast, no
-render-blocking issues found in the pre-launch audit), but it does mean no
-minification, no code-splitting, and the file is genuinely large to navigate.
-Modularization is tracked in `TODOS.md` with an explicit trigger condition —
-don't take this on casually, it's a real engineering project of its own.
+The app has no build step. `index.html` loads `css/app.css` and then the files
+in `js/` as ordinary `<script>` tags, in a fixed order. Classic scripts share
+one global scope, so `onclick="openQBSection('FAR')"` in markup and calls
+between files work as if it were one file.
+
+| File | What's in it |
+|---|---|
+| `firebase.js` | Firebase setup, untrusted-text helpers, two-step verification |
+| `onboarding-tour.js` | The section-by-section tour hosted by Ask Ledger |
+| `core.js` | Stripe config, exam data, goals, achievements, block & report, app state, shared helpers |
+| `subscription.js` | Plans, trials, what Pro unlocks |
+| `auth.js` | Start-up, sign-in and sign-up |
+| `onboarding.js` | First-run setup |
+| `app-shell.js` | The main shell, tabs, animations |
+| `today.js` | The Today screen and the exam journey |
+| `rooms-and-push.js` | Study rooms, push notifications, offline banner |
+| `feed.js` | The feed |
+| `dashboard.js` | Readiness, pacing, weekly commitment, dashboard |
+| `profile-explore.js` | Profile, achievements, Explore, goals |
+| `sessions.js` | Logging, editing and timing study sessions; props and comments |
+| `social.js` | Followers, user profiles, page navigation helpers |
+| `messages-clubs.js` | Messages, study clubs, notifications, search, invites |
+| `misc.js` | Tab handlers, modal accessibility, heat map, score tracker |
+| `settings.js` | Profile and app settings, mobile nav |
+| `question-bank.js` | Question bank sections and the quiz |
+| `progress-report.js` | The in-app progress report |
+| `ask-ledger.js` | Ask Ledger chat and the floating assistant |
+| `study-lab.js` | Study Lab: flashcards, AI quizzes, question bank panel |
+| `study-plan.js` | Analytics and the study plan calendar |
+| `engagement.js` | Milestone cards, review prompt, streaks, exam results, install prompt |
+| `start.js` | Boots the app once the page has loaded |
+| `consent-and-keyboard.js` | Cookie banner, keyboard access for clickable cards |
+
+Two rules when editing:
+
+1. **Code that runs while the page loads** (not inside a function or event
+   handler) can only use functions from its own file or an earlier one.
+   Anything else is fine: by the time a click or `init()` happens, every file
+   has loaded. `npm test` checks this (`scripts/check-load-order.js`).
+2. **After changing anything in `js/` or `css/`, run
+   `node scripts/stamp-assets.js`.** It puts a hash of each file in its URL
+   (`?v=…`) and in the service worker's offline list, so returning visitors
+   never run an old file next to a new one. `npm test` fails if you forget.
+
+A new file goes in `js/`, gets a `<script>` line in `index.html` in the right
+place, and then a stamp.
 
 ## Testing
 
@@ -221,7 +262,7 @@ errors in production, this is almost always the reason.
 ### Mobile (Capacitor)
 
 ```bash
-npm run cap:sync      # sync web build into native shells
+npm run cap:sync      # sync web build into native shells (copy js/ and css/ too)
 npm run cap:ios        # open the iOS project in Xcode
 npm run cap:android    # open the Android project in Android Studio
 ```

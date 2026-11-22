@@ -81,22 +81,10 @@ especially valuable — it tells you if LinkedIn is actually the right channel.
 
 ## P3 — Future
 
-### index.html Modularization
-**What:** Split index.html (~10,477 lines and growing) into separate JS modules or
-a simple build step (Vite or esbuild). At minimum, extract feature-specific logic
-into separate files imported via `<script type="module">`.
-
-**Why:** The file is 55% larger than it was 11 days ago. A second engineer (or AI
-agent) will struggle to navigate it beyond ~15,000 lines. The right time is when
-you know which features are permanent vs candidates for deletion.
-
-**Trigger:** When index.html exceeds 12,000 lines OR after first 100 real users,
-whichever comes first. **Note (added 2026-04-28):** The retention mechanics sprint
-(7 features) is expected to push the file past 12,000 lines during implementation.
-Trigger is imminent — plan the modularization before or immediately after that sprint ships.
-
-**Effort:** human ~2 days / CC ~3 hrs  
-**Priority:** P3 — not blocking, but don't defer past the trigger
+### index.html Modularization: done (2026-11-22)
+The app is now `css/app.css` plus 25 files in `js/`, loaded in order as plain
+scripts (README → Code layout). Still open, only if it's ever needed: a build step
+(esbuild) to minify, or moving to `<script type="module">`.
 
 ---
 

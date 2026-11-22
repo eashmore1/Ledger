@@ -48,7 +48,7 @@ test('the build drops bad and duplicate questions and keeps the right answer aft
 
 test('question counts shown in the app and on the landing page match the shipped bank', () => {
   const sections = ['FAR', 'AUD', 'REG', 'TCP', 'BAR', 'ISC'];
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'js', 'question-bank.js'), 'utf8');
   let total = 0;
   for (const s of sections) {
     const file = path.join(ROOT, s + '.json');
@@ -57,7 +57,7 @@ test('question counts shown in the app and on the landing page match the shipped
     total += n;
     const m = html.match(new RegExp("\\{code:'" + s + "',[^}]*mcqTotal:(\\d+)\\}"));
     assert.ok(m, s + ' has an mcqTotal');
-    assert.equal(Number(m[1]), n, s + ' mcqTotal in index.html matches qbank/' + s + '.json');
+    assert.equal(Number(m[1]), n, s + ' mcqTotal in js/question-bank.js matches qbank/' + s + '.json');
   }
   const landing = fs.readFileSync(path.join(__dirname, '..', 'landing.html'), 'utf8');
   const claim = landing.match(/([\d,]+)\+ questions/);

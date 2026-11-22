@@ -1,8 +1,8 @@
 // Emulator-backed harness for driving the signed-in app in a real browser.
 //
 // Requires the Firebase Auth + Firestore emulators to be running (see
-// README "End-to-end tests"). The production index.html is served unchanged
-// except for two injected lines that point the Firebase SDK at the local
+// README "End-to-end tests"). The production app is served unchanged
+// except for two lines injected into js/firebase.js that point the Firebase SDK at the local
 // emulators; third-party CDN scripts are served from node_modules so the
 // suite works offline.
 'use strict';
@@ -61,18 +61,20 @@ async function oobCodes() {
   return (await r.json()).oobCodes || [];
 }
 
-function injectEmulators(html) {
+// Points the app's Firebase setup (js/firebase.js) at the emulators.
+function injectEmulators(js) {
   const [fh, fp] = FS_HOST.split(':');
-  const out = html
+  const out = js
     .replace('firebaseAuth = firebase.auth();',
       `firebaseAuth = firebase.auth(); firebaseAuth.useEmulator('${AUTH_EMU}',{disableWarnings:true});`)
     .replace('firebaseDb = firebase.firestore();',
-      `firebaseDb = firebase.firestore(); firebaseDb.useEmulator('${fh}',${fp});`)
-    // SRI hash is for the minified CDN build; we serve the npm build.
-    .replace(/ integrity="sha384-[^"]+"/g, '');
-  if (out === html) throw new Error('emulator injection points not found in index.html');
+      `firebaseDb = firebase.firestore(); firebaseDb.useEmulator('${fh}',${fp});`);
+  if (out === js) throw new Error('emulator injection points not found in js/firebase.js');
   return out;
 }
+
+// SRI hashes are for the minified CDN builds; we serve the npm builds.
+const stripSri = (html) => html.replace(/ integrity="sha384-[^"]+"/g, '');
 
 async function launch() {
   const server = await startServer();
@@ -105,8 +107,11 @@ async function newUser(env, { api = {}, viewport = { width: 1280, height: 900 },
           !fs.existsSync(path.join(ROOT, u.pathname + '.html'))) {
         const res = await route.fetch();
         const body = await res.text();
-        if (body.includes('FIREBASE_CONFIG')) return route.fulfill({ response: res, body: injectEmulators(body) });
-        return route.fulfill({ response: res, body });
+        return route.fulfill({ response: res, body: stripSri(body) });
+      }
+      if (u.pathname === '/js/firebase.js') {
+        const res = await route.fetch();
+        return route.fulfill({ response: res, body: injectEmulators(await res.text()) });
       }
       return route.continue();
     }
