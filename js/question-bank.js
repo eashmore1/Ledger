@@ -845,6 +845,14 @@ function _finishQuiz() {
     : '';
 
   const missed = results.filter(function(r){ return r && !r.correct; }).length;
+  // Missed review: how many were cleared and how many are still on the list.
+  const left = type === 'missed' ? _qbHistStats(section, (_qbBankCache[section] || {}).questions).missed : 0;
+  const reviewHTML = type === 'missed'
+    ? '<div class="qr-clear' + (left ? '' : ' done') + '">' + ico(left ? 'refresh' : 'check') + '<span>' +
+        (score ? '<b>' + score + ' cleared</b> from your missed list. ' : '') +
+        (left ? left.toLocaleString() + ' still to retry.' : 'Your missed list for ' + section + ' is empty.') +
+      '</span></div>'
+    : '';
   const rows = questions.map(function(q, i) {
     const r = results[i];
     if (!r) return '';
@@ -876,7 +884,7 @@ function _finishQuiz() {
         '<div class="qr-sub">' + score + ' of ' + done + ' correct' + (done < total ? ' · ' + (total - done) + ' not answered' : '') + '</div>' +
         '<div class="qr-sub" style="color:var(--mut);font-size:12px">The exam passing score is 75.</div></div>' +
       '</div>' +
-      weakHTML +
+      reviewHTML + weakHTML +
       (done ? '<div class="qr-tabs"><button class="qr-tab on" onclick="_qrFilter(this,false)">All ' + done + '</button>' +
         (missed ? '<button class="qr-tab" onclick="_qrFilter(this,true)">Missed ' + missed + '</button>' : '') + '</div>' +
         '<div class="qr-list">' + rows + '</div>' : '') +
@@ -885,7 +893,9 @@ function _finishQuiz() {
         '<button class="qz-btn ghost" onclick="closeQuizOverlay()">Done</button>' +
         (missed && type !== 'ai' && type !== 'missed'
           ? '<button class="qz-btn ghost" onclick="_quiz.finished=false;openQuizModal(\'' + section + '\',\'missed\')">Retry missed</button>' : '') +
-        '<button class="qz-btn" onclick="' + retry + '">' + (type === 'missed' ? 'Keep reviewing' : 'Practice again') + '</button>' +
+        (type === 'missed' && !left
+          ? '<button class="qz-btn" onclick="_quiz.finished=false;openQuizModal(\'' + section + '\',\'mcq\')">New practice set</button>'
+          : '<button class="qz-btn" onclick="' + retry + '">' + (type === 'missed' ? 'Keep reviewing' : 'Practice again') + '</button>') +
       '</div></div>' +
     '</div>';
   overlay.scrollTop = 0;
@@ -904,7 +914,6 @@ function openQBSection(code) {
   const quota = _aiQbQuota(code);
   const prog = (S.qbProgress || {})[code] || {mcqDone:0};
   const done = prog.mcqDone || 0;
-  const pct = Math.min(100, Math.round(done / sec.mcqTotal * 100));
   const acc = prog.graded ? Math.round(prog.correct / prog.graded * 100) + '% correct' : 'No score yet';
 
   let overlay = document.getElementById('qb-section-overlay');
@@ -922,6 +931,7 @@ function openQBSection(code) {
     {type:'timed',  icon:'timer',  label:'Timed set',    desc:'10 questions in 10 minutes, like exam pace', free:false},
   ];
   const hs = _qbHistStats(code, (_qbBankCache[code] || {}).questions);
+  if (!hs.total) hs.total = sec.mcqTotal;
   const missedHTML =
     '<button type="button" id="qb-missed-btn" class="qb-mode' + (hs.missed ? '' : ' off') + '" onclick="closeQBSection();openQuizModal(\'' + code + '\',\'missed\')"' + (hs.missed ? '' : ' disabled') + '>' +
       '<span class="qb-mode-ico">' + ico('refresh') + '</span>' +
@@ -985,9 +995,7 @@ function openQBSection(code) {
         '<div style="display:flex;align-items:center;justify-content:space-between"><span class="qb-chip">' + code + '</span>' +
         '<button class="qb-x" onclick="closeQBSection()" aria-label="Close">' + ico('x') + '</button></div>' +
         '<div class="qb-title">' + sec.full + '</div>' +
-        '<div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
-        '<div class="qb-meta"><span><b style="color:var(--txt)">' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + ' answered</span><span>' + acc + '</span></div>' +
-        '<div class="qb-seen" id="qb-seen">' + _qbSeenLine(hs) + '</div>' +
+        '<div id="qb-prog">' + _qbProgHTML(hs, done, acc) + '</div>' +
       '</div>' +
       '<div class="qb-body">' +
         '<div class="qb-eyebrow">Practice</div>' + (hs.missed ? missedHTML + modeHTML + customHTML : modeHTML + customHTML + missedHTML) +
@@ -1002,7 +1010,7 @@ function openQBSection(code) {
   loadQuestionBank(code).then(function(bank) {
     // Refresh the counts against the real bank (history may hold removed questions).
     const st = _qbHistStats(code, bank);
-    const seenEl = document.getElementById('qb-seen'); if (seenEl) seenEl.innerHTML = _qbSeenLine(st);
+    const progEl = document.getElementById('qb-prog'); if (progEl) progEl.innerHTML = _qbProgHTML(st, done, acc);
     const mb = document.getElementById('qb-missed-btn'), mn = document.getElementById('qb-missed-n'), md = document.getElementById('qb-missed-d');
     if (mb) { mb.disabled = !st.missed; mb.classList.toggle('off', !st.missed); }
     if (mn) { mn.textContent = st.missed; mn.hidden = !st.missed; }
@@ -1025,9 +1033,21 @@ function _qbMissedDesc(n, pro) {
   if (!n) return 'Questions you get wrong collect here so you can retry them';
   return 'Retry the ' + (n === 1 ? 'question' : n.toLocaleString() + ' questions') + ' you got wrong' + (pro || n <= 5 ? '' : ', 5 at a time') + '. Get one right and it leaves the list';
 }
-function _qbSeenLine(st) {
-  if (!st.seen) return 'New questions are served first, so you won\'t see repeats until you\'ve seen them all';
-  return '<b>' + st.seen.toLocaleString() + '</b>' + (st.total ? ' of ' + st.total.toLocaleString() : '') + ' unique questions seen · new ones are served first';
+// Header progress. Once per-question history exists the bar tracks unique
+// questions seen; before that it falls back to the old answered count.
+function _qbProgHTML(st, done, acc) {
+  const total = st.total || 1;
+  const n = st.seen || done;
+  const pct = Math.min(100, Math.round(n / total * 100));
+  const head = st.seen
+    ? '<b style="color:var(--txt)">' + st.seen.toLocaleString() + '</b> of ' + total.toLocaleString() + ' seen'
+    : '<b style="color:var(--txt)">' + done.toLocaleString() + '</b> of ' + total.toLocaleString() + ' answered';
+  const note = !st.seen ? 'Questions you haven\'t answered yet come first'
+    : st.seen >= total ? 'You\'ve seen every question. Repeats come up now, so focus on your misses'
+    : (total - st.seen).toLocaleString() + ' new questions left, served first' + (done > st.seen ? ' · ' + done.toLocaleString() + ' answers in total' : '');
+  return '<div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="qb-meta"><span>' + head + '</span><span>' + acc + '</span></div>' +
+    '<div class="qb-seen">' + note + '</div>';
 }
 
 function _customQuizBtn(n, timed) {

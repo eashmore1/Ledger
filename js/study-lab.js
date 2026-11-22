@@ -92,15 +92,18 @@ function _buildQBankPanel() {
     const p = S.qbProgress[sec.code] || {};
     const done = p.mcqDone || 0;
     totalDone += done; graded += p.graded || 0; correct += p.correct || 0; totalQ += sec.mcqTotal;
-    const pct = Math.min(100, Math.round(done / sec.mcqTotal * 100));
+    const hs = _qbHistStats(sec.code, (_qbBankCache[sec.code] || {}).questions);
+    const shown = hs.seen || done;
+    const pct = Math.min(100, Math.round(shown / sec.mcqTotal * 100));
     const acc = p.graded ? Math.round(p.correct / p.graded * 100) + '% correct' : (done ? '' : 'Not started');
     return '<button type="button" class="qb-card" style="' + _qbVars(sec.code) + '" onclick="openQBSection(\'' + sec.code + '\')">' +
       '<div class="qb-card-top"><span class="qb-chip">' + sec.code + '</span>' +
         (pro ? '' : '<span class="qb-pro" style="margin-left:2px;color:var(--sub);background:var(--surf2)">5 FREE</span>') +
+        (hs.missed ? '<span class="qb-card-miss">' + hs.missed + ' to retry</span>' : '') +
         '<span class="qb-card-go">' + ico('arrow') + '</span></div>' +
       '<div class="qb-card-name">' + sec.full + '</div>' +
       '<div><div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
-        '<div class="qb-card-foot"><span><b>' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + '</span><span>' + acc + '</span></div></div>' +
+        '<div class="qb-card-foot"><span><b>' + shown.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + (hs.seen ? ' seen' : '') + '</span><span>' + acc + '</span></div></div>' +
     '</button>';
   }).join('');
 

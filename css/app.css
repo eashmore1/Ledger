@@ -1376,7 +1376,13 @@ html,body{overflow-x:hidden}
 .qb-n{font-size:11px;font-weight:800;color:#fff;background:var(--red);padding:1px 7px;border-radius:20px;margin-left:7px;vertical-align:1px;font-variant-numeric:tabular-nums}
 .qb-n[hidden]{display:none}
 .qb-seen{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.45}
-.qb-seen b{color:var(--sub);font-variant-numeric:tabular-nums}
+.qr-clear{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;margin:0 0 14px;border-radius:13px;background:var(--surf);border:1px solid var(--bdr);color:var(--sub);font-size:13.5px;line-height:1.5}
+.qr-clear>svg{flex-shrink:0;color:var(--mut)!important;margin-top:3px}
+.qr-clear b{color:var(--grn)}
+.qr-clear.done{background:color-mix(in srgb,var(--grn) 10%,var(--surf));border-color:color-mix(in srgb,var(--grn) 30%,transparent);color:var(--txt)}
+.qr-clear.done>svg{color:var(--grn)!important}
+.qb-card-miss{font-size:10.5px;font-weight:800;color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);padding:2px 8px;border-radius:20px;margin-left:auto;font-variant-numeric:tabular-nums}
+.qb-card-miss+.qb-card-go{margin-left:0}
 .qb-custom{cursor:default;flex-wrap:wrap;row-gap:10px}
 .qb-custom-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;width:100%;padding-left:51px;box-sizing:border-box}
 .qb-custom-n{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--sub);cursor:text}
