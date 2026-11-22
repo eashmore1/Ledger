@@ -894,12 +894,15 @@ function openQBSection(code) {
         '<span class="qb-chev">' + ico('lock') + '</span></button>'
     : '<div class="qb-mode qb-custom">' +
         '<span class="qb-mode-ico">' + ico('target') + '</span>' +
-        '<span style="flex:1;min-width:0"><span class="qb-mode-t" style="white-space:nowrap">Custom quiz</span><span class="qb-mode-d" style="display:block">' +
-          (customMax > 0 ? 'Pick 1–' + customMax.toLocaleString() : 'None left today') + '</span></span>' +
-        '<label class="qb-custom-n"><span class="sr-only">Number of questions</span>' +
-          '<input id="qb-custom-n" type="number" inputmode="numeric" min="1" max="' + customMax + '" value="' + customDef + '"' + (customMax > 0 ? '' : ' disabled') +
-          ' onkeydown="if(event.key===\'Enter\'){_startCustomQuiz(\'' + code + '\')}"></label>' +
-        '<button type="button" class="qz-btn qb-custom-go"' + (customMax > 0 ? '' : ' disabled') + ' onclick="_startCustomQuiz(\'' + code + '\')">Start</button>' +
+        '<span style="flex:1;min-width:0"><span class="qb-mode-t">Custom quiz</span><span class="qb-mode-d" style="display:block">' +
+          (customMax > 0 ? 'Choose how many questions your quiz has (up to ' + customMax.toLocaleString() + ')' : "You've used today's questions for this section") + '</span></span>' +
+        '<div class="qb-custom-ctl">' +
+          '<label class="qb-custom-n" for="qb-custom-n">' +
+            '<input id="qb-custom-n" type="number" inputmode="numeric" min="1" max="' + customMax + '" value="' + customDef + '"' + (customMax > 0 ? '' : ' disabled') +
+            ' aria-label="Number of questions in the quiz" oninput="_customQuizLabel()" onkeydown="if(event.key===\'Enter\'){_startCustomQuiz(\'' + code + '\')}">' +
+            '<span>questions</span></label>' +
+          '<button type="button" id="qb-custom-go" class="qz-btn qb-custom-go"' + (customMax > 0 ? '' : ' disabled') + ' onclick="_startCustomQuiz(\'' + code + '\')">' + _customQuizBtn(customDef) + '</button>' +
+        '</div>' +
       '</div>';
 
   let aiBlock;
@@ -953,6 +956,18 @@ function openQBSection(code) {
     }).join('') + '</div>' +
     (many ? '<button class="qb-more" onclick="this.previousElementSibling.classList.remove(\'short\');this.remove()">Show all ' + order.length + ' topics</button>' : '');
   });
+}
+
+function _customQuizBtn(n) {
+  return n > 0 ? 'Start ' + n.toLocaleString() + '-question quiz' : 'Start quiz';
+}
+function _customQuizLabel() {
+  const el = document.getElementById('qb-custom-n'), btn = document.getElementById('qb-custom-go');
+  if (!el || !btn) return;
+  const max = Number(el.max) || 0;
+  let n = Math.floor(Number(el.value)) || 0;
+  if (max && n > max) n = max;
+  btn.textContent = _customQuizBtn(n);
 }
 
 function _startCustomQuiz(code) {
