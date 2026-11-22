@@ -1,0 +1,332 @@
+[
+  {
+    "q": "A company reports cash of $40,000, marketable securities of $20,000, net accounts receivable of $60,000, inventory of $100,000, prepaid expenses of $10,000, and current liabilities of $100,000. What is its quick (acid-test) ratio?",
+    "choices": [
+      "1.2",
+      "2.3",
+      "2.2",
+      "1.3"
+    ],
+    "correct": 0,
+    "exp": "Quick assets are cash, marketable securities and net receivables: ($40,000 + $20,000 + $60,000) / $100,000 = 1.2. The 1.3 figure wrongly includes prepaid expenses, which, like inventory, cannot be quickly converted to cash; 2.3 is the current ratio."
+  },
+  {
+    "q": "A company has current assets of $200,000 and current liabilities of $100,000. It pays $20,000 of accounts payable in cash. What is the effect on its current ratio and working capital?",
+    "choices": [
+      "Current ratio is unchanged; working capital decreases",
+      "Current ratio increases; working capital is unchanged",
+      "Current ratio decreases; working capital is unchanged",
+      "Both the current ratio and working capital increase"
+    ],
+    "correct": 1,
+    "exp": "Both current assets and current liabilities fall by $20,000, so working capital stays at $100,000, while the current ratio rises from 2.0 to $180,000 / $80,000 = 2.25. When the ratio exceeds 1, an equal decrease in both numerator and denominator increases it, so assuming it stays unchanged is the common error."
+  },
+  {
+    "q": "A company has current assets of $80,000 and current liabilities of $100,000. It purchases $20,000 of inventory on account. What is the effect on its current ratio?",
+    "choices": [
+      "Decreases",
+      "No effect",
+      "Increases",
+      "Decreases to zero working capital"
+    ],
+    "correct": 2,
+    "exp": "The ratio moves from $80,000 / $100,000 = 0.80 to $100,000 / $120,000 = 0.83, an increase, because an equal addition to both terms moves a ratio below 1 toward 1. Candidates who assume the ratio is above 1 conclude it decreases, which would be true only in that case."
+  },
+  {
+    "q": "A company had total sales of $1,080,000, of which $900,000 were on credit. Accounts receivable were $140,000 at the beginning of the year and $160,000 at year-end. Using a 360-day year, what is the average collection period (days sales outstanding)?",
+    "choices": [
+      "64 days",
+      "56 days",
+      "50 days",
+      "60 days"
+    ],
+    "correct": 3,
+    "exp": "Receivables turnover = credit sales / average receivables = $900,000 / $150,000 = 6.0, so the collection period is 360 / 6 = 60 days. The 50-day figure uses total sales, including cash sales that never create receivables; 64 days uses ending rather than average receivables."
+  },
+  {
+    "q": "A company reports sales of $900,000 and cost of goods sold of $600,000. Inventory was $110,000 at the beginning of the year and $130,000 at year-end. What is the inventory turnover?",
+    "choices": [
+      "5.0 times",
+      "7.5 times",
+      "4.6 times",
+      "5.45 times"
+    ],
+    "correct": 0,
+    "exp": "Inventory turnover = cost of goods sold / average inventory = $600,000 / [($110,000 + $130,000) / 2] = $600,000 / $120,000 = 5.0 times. Using sales gives 7.5 times, which mixes a selling-price numerator with a cost-based denominator."
+  },
+  {
+    "q": "A company's days inventory outstanding is 73 days, days sales outstanding is 40 days, and days payables outstanding is 30 days. What is its cash conversion cycle?",
+    "choices": [
+      "113 days",
+      "83 days",
+      "143 days",
+      "63 days"
+    ],
+    "correct": 1,
+    "exp": "Cash conversion cycle = days inventory + days receivables - days payables = 73 + 40 - 30 = 83 days. The 113-day figure is the operating cycle, which ignores that supplier credit delays the company's own cash outflow."
+  },
+  {
+    "q": "A company's cost of goods sold was $500,000. Inventory increased from $80,000 to $100,000 during the year, and accounts payable (all for inventory purchases) increased from $60,000 to $70,000. What is the accounts payable turnover based on purchases and average payables?",
+    "choices": [
+      "7.7 times",
+      "7.4 times",
+      "8.0 times",
+      "8.7 times"
+    ],
+    "correct": 2,
+    "exp": "Purchases = COGS + ending inventory - beginning inventory = $500,000 + $100,000 - $80,000 = $520,000; average payables = $65,000; turnover = $520,000 / $65,000 = 8.0 times. The 7.7 figure uses cost of goods sold instead of purchases, ignoring the inventory build-up."
+  },
+  {
+    "q": "A company has total liabilities of $400,000 and total stockholders' equity of $600,000. What is its debt-to-equity ratio?",
+    "choices": [
+      "0.40",
+      "1.50",
+      "0.60",
+      "0.67"
+    ],
+    "correct": 3,
+    "exp": "Debt-to-equity = total liabilities / total equity = $400,000 / $600,000 = 0.67. The 0.40 figure is the debt ratio (liabilities / total assets of $1,000,000), a related but different solvency measure."
+  },
+  {
+    "q": "A company reports net income of $120,000, income tax expense of $40,000, and interest expense of $20,000. What is its times-interest-earned ratio?",
+    "choices": [
+      "9.0 times",
+      "8.0 times",
+      "6.0 times",
+      "7.0 times"
+    ],
+    "correct": 0,
+    "exp": "Times interest earned = EBIT / interest = ($120,000 + $40,000 + $20,000) / $20,000 = 9.0 times. The 8.0 figure uses pretax income of $160,000 without adding back the interest itself, understating the earnings available to cover interest."
+  },
+  {
+    "q": "A company reports net income of $150,000 and total assets of $2,000,000. Stockholders' equity was $900,000 at the beginning of the year and $1,100,000 at year-end. What is the return on average stockholders' equity?",
+    "choices": [
+      "13.6%",
+      "15.0%",
+      "16.7%",
+      "7.5%"
+    ],
+    "correct": 1,
+    "exp": "Return on equity = net income / average equity = $150,000 / [($900,000 + $1,100,000) / 2] = $150,000 / $1,000,000 = 15.0%. The 13.6% figure uses ending equity, and 7.5% is return on total assets."
+  },
+  {
+    "q": "A company has a net profit margin of 8%, total asset turnover of 1.5, and an equity multiplier (average assets / average equity) of 2.0. Using the DuPont model, what is its return on equity?",
+    "choices": [
+      "12%",
+      "16%",
+      "24%",
+      "11.5%"
+    ],
+    "correct": 2,
+    "exp": "DuPont ROE = profit margin x asset turnover x equity multiplier = 8% x 1.5 x 2.0 = 24%. The 12% figure is return on assets (8% x 1.5), which omits the effect of financial leverage."
+  },
+  {
+    "q": "A company reports net income of $540,000. It has cumulative preferred stock with annual dividends of $45,000, which were not declared this year. Weighted-average common shares outstanding were 90,000, and 110,000 common shares were outstanding at year-end. What is basic earnings per share?",
+    "choices": [
+      "$6.00",
+      "$4.50",
+      "$4.91",
+      "$5.50"
+    ],
+    "correct": 3,
+    "exp": "Basic EPS = (net income - current-year cumulative preferred dividends, whether or not declared) / weighted-average shares = ($540,000 - $45,000) / 90,000 = $5.50. The $6.00 figure fails to subtract the cumulative preferred dividends, and $4.50 divides by year-end shares instead of the weighted average."
+  },
+  {
+    "q": "A company's earnings per share is $5.50, its market price per share is $66, and it paid common dividends of $2.20 per share. What is its dividend payout ratio?",
+    "choices": [
+      "40.0%",
+      "3.3%",
+      "60.0%",
+      "12.0%"
+    ],
+    "correct": 0,
+    "exp": "Dividend payout = dividends per share / EPS = $2.20 / $5.50 = 40%. The 3.3% figure is the dividend yield ($2.20 / $66), which uses market price rather than earnings as the denominator."
+  },
+  {
+    "q": "A company has preferred stock with a liquidation value of $500,000 (par $400,000) and $30,000 of dividends in arrears. Total stockholders' equity is $2,500,000, and 100,000 common shares are outstanding. What is book value per common share?",
+    "choices": [
+      "$20.00",
+      "$19.70",
+      "$21.00",
+      "$25.00"
+    ],
+    "correct": 1,
+    "exp": "Equity allocated to common = $2,500,000 - $500,000 liquidation value - $30,000 arrearage = $1,970,000, or $19.70 per share. The $20.00 figure omits the dividends in arrears, which preferred holders must receive before common holders."
+  },
+  {
+    "q": "A company reports net sales of $800,000, cost of goods sold of $520,000, and operating expenses of $160,000. What is its gross profit margin?",
+    "choices": [
+      "15.0%",
+      "53.8%",
+      "35.0%",
+      "65.0%"
+    ],
+    "correct": 2,
+    "exp": "Gross profit margin = (sales - COGS) / sales = ($800,000 - $520,000) / $800,000 = 35%. The 15% figure is the operating margin after operating expenses, and 53.8% divides gross profit by COGS rather than sales."
+  },
+  {
+    "q": "A company reports net sales of $3,000,000. Total assets were $1,800,000 at the beginning of the year and $2,200,000 at year-end. What is its total asset turnover?",
+    "choices": [
+      "1.36 times",
+      "1.67 times",
+      "0.67 times",
+      "1.50 times"
+    ],
+    "correct": 3,
+    "exp": "Asset turnover = net sales / average total assets = $3,000,000 / $2,000,000 = 1.50 times. Using ending assets gives 1.36 times, and 0.67 inverts the ratio."
+  },
+  {
+    "q": "A company's current liabilities are $200,000, its current ratio is 2.5, and its quick ratio is 1.5. Its current assets consist only of cash, accounts receivable and inventory. What is its inventory?",
+    "choices": [
+      "$200,000",
+      "$300,000",
+      "$500,000",
+      "$100,000"
+    ],
+    "correct": 0,
+    "exp": "Current assets = 2.5 x $200,000 = $500,000 and quick assets = 1.5 x $200,000 = $300,000, so inventory, the only nonquick current asset, is $500,000 - $300,000 = $200,000. The $300,000 figure is the quick assets, not the inventory."
+  },
+  {
+    "q": "A company with a current ratio greater than 1.0 declares a cash dividend payable next month. What is the effect of the declaration on its current ratio and working capital?",
+    "choices": [
+      "Current ratio decreases; working capital is unchanged",
+      "Both the current ratio and working capital decrease",
+      "Neither is affected until the dividend is paid",
+      "Current ratio increases; working capital decreases"
+    ],
+    "correct": 1,
+    "exp": "Declaration debits retained earnings and credits dividends payable, a current liability, so working capital decreases and the current ratio falls because only the denominator rises. Waiting for payment is wrong because the liability arises on the declaration date."
+  },
+  {
+    "q": "A company collects $50,000 of accounts receivable. What is the effect on its current ratio and quick ratio?",
+    "choices": [
+      "Both ratios increase",
+      "The current ratio is unchanged and the quick ratio increases",
+      "Neither ratio changes",
+      "Both ratios decrease"
+    ],
+    "correct": 2,
+    "exp": "Collection exchanges one quick, current asset (receivables) for another (cash), so total current assets, quick assets and current liabilities are all unchanged. Thinking that more cash improves the quick ratio ignores that receivables were already in the quick numerator."
+  },
+  {
+    "q": "Under the allowance method, a company writes off a $10,000 uncollectible account receivable. What is the effect on its current ratio and working capital?",
+    "choices": [
+      "Both decrease by the amount of the write-off",
+      "Current ratio decreases; working capital is unchanged",
+      "Both increase because the allowance is reduced",
+      "Neither is affected"
+    ],
+    "correct": 3,
+    "exp": "The write-off debits the allowance and credits accounts receivable, so net receivables and total current assets are unchanged. The decrease in current assets happened earlier, when bad debt expense was recorded and the allowance was established."
+  },
+  {
+    "q": "A company with a current ratio greater than 1.0 issues ten-year bonds at par for cash. What is the effect on its current ratio and debt-to-equity ratio?",
+    "choices": [
+      "Both ratios increase",
+      "Current ratio increases; debt-to-equity is unchanged",
+      "Current ratio is unchanged; debt-to-equity increases",
+      "Current ratio decreases; debt-to-equity increases"
+    ],
+    "correct": 0,
+    "exp": "Cash, a current asset, increases while the bonds are a noncurrent liability, so the current ratio rises; total liabilities increase with no change in equity, so debt-to-equity rises. Treating the bond as having no liquidity effect overlooks the cash received."
+  },
+  {
+    "q": "Holders of a company's convertible bonds convert them into common stock, and no gain or loss is recognized. What is the effect on the company's debt-to-equity ratio and its times-interest-earned ratio for future periods?",
+    "choices": [
+      "Debt-to-equity increases; times interest earned decreases",
+      "Debt-to-equity decreases; times interest earned increases",
+      "Debt-to-equity decreases; times interest earned decreases",
+      "Neither ratio is affected because total capital is unchanged"
+    ],
+    "correct": 1,
+    "exp": "Conversion moves the bonds' carrying amount from liabilities to equity, lowering debt-to-equity, and eliminates future interest expense, so EBIT covers the remaining interest more times. Total capital is unchanged, but its mix between debt and equity, which these ratios measure, has shifted."
+  },
+  {
+    "q": "A company purchases its own common stock for cash to hold as treasury stock. Assuming net income is unchanged and the current ratio exceeds 1.0, what is the effect on its debt-to-equity ratio and earnings per share?",
+    "choices": [
+      "Debt-to-equity decreases; EPS increases",
+      "Debt-to-equity increases; EPS decreases",
+      "Debt-to-equity increases; EPS increases",
+      "Debt-to-equity is unchanged; EPS is unchanged"
+    ],
+    "correct": 2,
+    "exp": "Treasury stock reduces total equity with no change in liabilities, raising debt-to-equity, and fewer shares outstanding raises EPS. Candidates sometimes treat treasury stock as an asset, which would leave equity and debt-to-equity unchanged."
+  },
+  {
+    "q": "A company declares and issues a 2-for-1 stock split. What is the effect on its debt-to-equity ratio and its earnings per share?",
+    "choices": [
+      "Debt-to-equity increases; EPS is halved",
+      "Debt-to-equity decreases; EPS is unchanged",
+      "Both ratios are unchanged",
+      "Debt-to-equity is unchanged; EPS is halved"
+    ],
+    "correct": 3,
+    "exp": "A stock split changes only the number of shares and the par value per share, so total equity and debt-to-equity are unchanged, while doubling the shares halves EPS (prior periods are restated). Thinking equity changes confuses a split with a dividend or a share repurchase."
+  },
+  {
+    "q": "During a period of rising prices, how does a company using LIFO compare with an otherwise identical company using FIFO?",
+    "choices": [
+      "LIFO produces a higher inventory turnover and a lower current ratio",
+      "LIFO produces a lower inventory turnover and a higher current ratio",
+      "LIFO produces a higher inventory turnover and a higher current ratio",
+      "LIFO produces a higher gross margin and a lower inventory turnover"
+    ],
+    "correct": 0,
+    "exp": "In rising prices LIFO charges newer, higher costs to COGS and leaves older, lower costs in inventory, so the turnover numerator rises and the denominator falls, while lower inventory reduces the current ratio. LIFO lowers rather than raises gross margin when prices rise."
+  },
+  {
+    "q": "A company writes down inventory to net realizable value, charging the loss to cost of goods sold. Assuming the current ratio exceeds 1.0, what is the effect on its current ratio and inventory turnover?",
+    "choices": [
+      "Current ratio increases; inventory turnover decreases",
+      "Current ratio decreases; inventory turnover increases",
+      "Current ratio decreases; inventory turnover decreases",
+      "Neither ratio is affected because the write-down is a noncash charge"
+    ],
+    "correct": 1,
+    "exp": "The write-down reduces inventory, a current asset, which lowers the current ratio, and it both reduces average inventory and increases COGS, which raises inventory turnover. Being noncash does not prevent a write-down from reducing a balance sheet asset."
+  },
+  {
+    "q": "A company has a current ratio of 3.0 but a quick ratio of only 0.6, while its industry averages are 2.0 and 1.0, respectively. Which conclusion is best supported?",
+    "choices": [
+      "The company has excessive accounts receivable relative to sales",
+      "The company is highly leveraged relative to its industry",
+      "A large portion of its current assets is tied up in inventory and other nonquick assets",
+      "The company has more cash than it needs to meet current obligations"
+    ],
+    "correct": 2,
+    "exp": "The gap between the current and quick ratios is caused by current assets excluded from the quick ratio, chiefly inventory and prepaid items, so the company's liquidity depends on selling its inventory. Excess cash or receivables would raise the quick ratio, not depress it."
+  },
+  {
+    "q": "Which of the following ratios is primarily a measure of long-term solvency rather than short-term liquidity or operating efficiency?",
+    "choices": [
+      "Acid-test ratio",
+      "Days sales in accounts receivable",
+      "Current ratio",
+      "Debt-to-total-assets ratio"
+    ],
+    "correct": 3,
+    "exp": "Solvency ratios, such as debt-to-total-assets, debt-to-equity and times interest earned, assess the ability to meet long-term obligations and the extent of financial leverage. The acid-test and current ratios measure short-term liquidity, and days sales in receivables is an activity ratio."
+  },
+  {
+    "q": "An analyst wants to compare the cost structures of two companies of very different sizes by expressing each income statement line item as a percentage of net sales. What type of analysis is this?",
+    "choices": [
+      "Vertical (common-size) analysis",
+      "Horizontal (trend) analysis",
+      "DuPont analysis",
+      "Ratio analysis of solvency"
+    ],
+    "correct": 0,
+    "exp": "Vertical analysis restates each line as a percentage of a base within the same statement, net sales for the income statement or total assets for the balance sheet, which neutralizes size differences. Horizontal analysis instead compares the same line item across periods, often as a percentage change from a base year."
+  },
+  {
+    "q": "Why is the acid-test ratio considered a more stringent test of liquidity than the current ratio?",
+    "choices": [
+      "It includes long-term investments that can be sold if needed",
+      "It excludes inventory and prepaid expenses, which are less readily converted into cash",
+      "It uses only cash and ignores receivables and marketable securities",
+      "It subtracts long-term debt from current assets before dividing by current liabilities"
+    ],
+    "correct": 1,
+    "exp": "The acid-test ratio limits the numerator to cash, marketable securities and net receivables, excluding inventory, which must first be sold and often collected, and prepaid items, which will never produce cash. A ratio of only cash and cash equivalents to current liabilities is the cash ratio, an even stricter measure."
+  }
+]

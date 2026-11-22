@@ -1,0 +1,332 @@
+[
+  {
+    "q": "A company runs its ERP system on virtual machines it rents under an infrastructure-as-a-service (IaaS) arrangement. Attackers exploit an unpatched vulnerability in the guest operating system of one of the virtual machines. Under the shared responsibility model, who was responsible for patching that operating system?",
+    "choices": [
+      "The cloud provider, because it owns the underlying hardware",
+      "The cloud provider, because patching is always a provider duty",
+      "The company, because IaaS customers manage the guest operating system and everything above it",
+      "Responsibility is shared equally, so neither party is accountable alone"
+    ],
+    "correct": 2,
+    "exp": "In IaaS the provider secures the physical facilities, hardware, network and virtualization layer, while the customer is responsible for the guest operating system, middleware, applications, data and access. Assuming the provider patches everything is the classic shared-responsibility misunderstanding that leaves IaaS workloads exposed."
+  },
+  {
+    "q": "A company subscribes to a software-as-a-service (SaaS) payroll application. Which security responsibility remains with the company rather than the SaaS provider?",
+    "choices": [
+      "Patching the application code and underlying servers",
+      "Granting, reviewing and removing user access to the application",
+      "Physical security of the data centers hosting the application",
+      "Maintaining the hypervisor that runs the provider's virtual machines"
+    ],
+    "correct": 1,
+    "exp": "Even in SaaS, where the provider runs the application stack, the customer is responsible for its own data, user identities and access rights, including periodic user access reviews and prompt deprovisioning. Patching and physical security belong to the provider under SaaS."
+  },
+  {
+    "q": "A development team uses a platform-as-a-service (PaaS) offering to deploy custom web applications without managing servers. Which layer is the team, rather than the provider, responsible for securing?",
+    "choices": [
+      "The operating system and runtime environment",
+      "The physical network and storage hardware",
+      "The virtualization layer",
+      "The custom application code and the data it processes"
+    ],
+    "correct": 3,
+    "exp": "In PaaS the provider manages the infrastructure, operating system and runtime, and the customer is responsible for the applications it builds and the data and access configured within them. Treating the operating system as the customer's job describes IaaS, not PaaS."
+  },
+  {
+    "q": "Several regional hospitals with the same regulatory obligations jointly use cloud infrastructure that is shared among them but not offered to the general public. Which cloud deployment model does this describe?",
+    "choices": [
+      "Community cloud",
+      "Public cloud",
+      "Hybrid cloud",
+      "Private cloud"
+    ],
+    "correct": 0,
+    "exp": "A community cloud is provisioned for exclusive use by a specific group of organizations with shared concerns, such as compliance requirements. A private cloud serves a single organization, and a public cloud is open to the general public."
+  },
+  {
+    "q": "A retailer keeps its customer cardholder database in its own data center but automatically shifts web front-end workloads to a public cloud provider during holiday traffic peaks. Which deployment model and practice does this illustrate?",
+    "choices": [
+      "Community cloud with resource pooling",
+      "Hybrid cloud with cloud bursting",
+      "Private cloud with multi-tenancy",
+      "Public cloud with data residency controls"
+    ],
+    "correct": 1,
+    "exp": "A hybrid cloud combines private or on-premises infrastructure with public cloud services, and using the public cloud for overflow capacity during demand spikes is called cloud bursting. Multi-tenancy is a characteristic of shared public infrastructure, not of a single-tenant private cloud."
+  },
+  {
+    "q": "An auditor plans to rely on controls at a cloud service provider that hosts a client's general ledger application. Which evidence and procedure is most appropriate?",
+    "choices": [
+      "The provider's marketing description of its security certifications",
+      "A SOC 2 Type 1 report covering only the design of the provider's controls",
+      "A SOC 1 Type 2 report on the provider, together with testing of the complementary user entity controls at the client",
+      "A SOC 3 report, because it is designed for general use"
+    ],
+    "correct": 2,
+    "exp": "A SOC 1 Type 2 report addresses controls relevant to user entities' financial reporting and their operating effectiveness over a period, and the user auditor must evaluate whether the client has the complementary user entity controls the report assumes. A Type 1 report covers only design at a point in time and does not support reliance on operating effectiveness."
+  },
+  {
+    "q": "A company discovers that a cloud storage bucket containing customer records was configured for public read access by an administrator, exposing the data for weeks. Which control would most effectively prevent or quickly detect this type of exposure in the future?",
+    "choices": [
+      "Encrypting the data in transit with TLS",
+      "Requiring the provider to obtain an annual SOC 2 report",
+      "Increasing the provider's uptime service level agreement",
+      "Continuous automated configuration monitoring, such as a cloud security posture management tool, that flags public storage settings"
+    ],
+    "correct": 3,
+    "exp": "Customer-side misconfiguration is a leading cause of cloud data exposure, and automated posture management continuously compares configurations against policy and alerts on or remediates public access. Encrypting data in transit does not help when the stored data is readable by anyone, and the provider's SOC 2 report does not cover the customer's own configuration choices."
+  },
+  {
+    "q": "A multinational company is concerned that its cloud provider might store European customer data in data centers outside the jurisdictions permitted by regulators. Which control best addresses this data residency risk?",
+    "choices": [
+      "Contractually specifying the approved storage regions and configuring the service to restrict data to those regions",
+      "Encrypting the data at rest with keys managed by the provider",
+      "Requiring multi-factor authentication for all cloud administrators",
+      "Performing daily backups to a second cloud provider"
+    ],
+    "correct": 0,
+    "exp": "Data residency risk is about where data physically resides, so the remedy is contractual and technical restriction of storage and processing to approved regions, verified through monitoring or provider attestations. Encryption protects confidentiality but does not change the legal jurisdiction in which the data is stored."
+  },
+  {
+    "q": "A company built its key applications using proprietary services unique to one cloud provider and now finds that moving to another provider would require a costly rewrite. Which risk has materialized, and what control would have mitigated it?",
+    "choices": [
+      "Multi-tenancy risk; mitigated by dedicated hosts",
+      "Vendor lock-in; mitigated by an exit strategy, portable architectures and data export terms in the contract",
+      "Insider threat; mitigated by background checks of provider staff",
+      "Availability risk; mitigated by a higher service level agreement"
+    ],
+    "correct": 1,
+    "exp": "Vendor lock-in arises when dependence on proprietary services, formats or terms makes switching providers impractical, and it is mitigated by planning exit and transition rights, data portability and use of open standards where feasible. A higher SLA improves uptime but does nothing to make the workloads portable."
+  },
+  {
+    "q": "In a public cloud, many customers' workloads run on the same physical servers. Which risk is inherent in this characteristic, and which provider control primarily addresses it?",
+    "choices": [
+      "Vendor lock-in; addressed by open APIs",
+      "Data residency; addressed by geographic redundancy",
+      "Data leakage between tenants; addressed by strong logical isolation of tenants' resources",
+      "Insufficient elasticity; addressed by capacity planning"
+    ],
+    "correct": 2,
+    "exp": "Multi-tenancy creates the risk that a flaw in isolation, such as a hypervisor vulnerability, lets one tenant access another's data, so providers rely on strong logical separation of compute, storage and network resources. Elasticity is a benefit of pooled resources rather than the risk created by sharing them."
+  },
+  {
+    "q": "Business units at a company have subscribed to dozens of SaaS applications with corporate credit cards, without IT's knowledge, and are uploading customer data to them. Which risk does this represent, and which tool is designed to give visibility and control over it?",
+    "choices": [
+      "Shadow IT; a cloud access security broker (CASB)",
+      "Vendor lock-in; a disaster recovery plan",
+      "Model drift; a model performance dashboard",
+      "Multi-tenancy; a hypervisor upgrade"
+    ],
+    "correct": 0,
+    "exp": "Unsanctioned cloud services adopted outside IT governance are shadow IT, and a CASB sits between users and cloud services to discover cloud usage and enforce security policies such as data loss prevention. A disaster recovery plan addresses recovery of approved systems, not the discovery of unapproved ones."
+  },
+  {
+    "q": "A bank's machine learning model for detecting fraudulent transactions was highly accurate when deployed two years ago, but its detection rate has steadily declined as customer behavior and fraud schemes have changed. Which risk is this, and what is the most appropriate control?",
+    "choices": [
+      "Overfitting; increase the number of model parameters",
+      "Data poisoning; encrypt the training data set",
+      "Hallucination; require human review of every transaction",
+      "Model drift; ongoing monitoring of model performance against defined thresholds, with retraining and revalidation when breached"
+    ],
+    "correct": 3,
+    "exp": "Model drift occurs when the data a model sees in production diverges from the data it was trained on, degrading performance over time, so models need ongoing performance monitoring and periodic retraining and revalidation. Data poisoning involves deliberate manipulation of training data, not gradual changes in real-world behavior."
+  },
+  {
+    "q": "A lender trains a credit-approval model on ten years of its historical lending decisions. Testing reveals that the model approves applicants from certain neighborhoods at much lower rates than equally qualified applicants elsewhere. What is the most likely cause and the best control?",
+    "choices": [
+      "Insufficient computing power; move training to a larger cloud instance",
+      "Bias embedded in the historical training data; test outcomes across groups and use representative, reviewed training data",
+      "Model drift; retrain the model weekly on the same historical data",
+      "A software bug; perform regression testing of the user interface"
+    ],
+    "correct": 1,
+    "exp": "Models learn the patterns in their training data, so historical decisions that reflected bias are reproduced, and controls include fairness testing across groups, review of input features that act as proxies, and curated training data. Retraining more often on the same biased history would simply reinforce the problem."
+  },
+  {
+    "q": "A company uses a complex neural network to decide which customers receive credit limit increases, but cannot explain to regulators or customers why a particular applicant was declined. Which AI risk does this primarily represent?",
+    "choices": [
+      "Lack of explainability (transparency)",
+      "Model drift",
+      "Excessive data retention",
+      "Prompt injection"
+    ],
+    "correct": 0,
+    "exp": "Black-box models whose decisions cannot be traced to understandable factors create explainability risk, which is especially significant where laws or stakeholders require reasons for adverse decisions; controls include explainability techniques, simpler models for high-stakes uses and documentation of key drivers. Drift concerns declining accuracy over time, not whether a decision can be explained."
+  },
+  {
+    "q": "Staff at an accounting firm use a generative AI tool to draft research memos, and one memo cited a standard that does not exist. Which control most directly addresses this risk?",
+    "choices": [
+      "Restricting the tool to use only during business hours",
+      "Increasing the length of the prompts staff submit",
+      "Requiring documented human review that verifies outputs and citations against authoritative sources before use",
+      "Encrypting the memos after they are generated"
+    ],
+    "correct": 2,
+    "exp": "Generative AI can produce fluent but fabricated content (hallucinations), so outputs used in professional work need review by a knowledgeable person who verifies facts and citations to authoritative sources. Encryption protects confidentiality but has no effect on whether the content is accurate."
+  },
+  {
+    "q": "Employees have been pasting confidential client financial data into a free public generative AI chatbot to summarize it. Which combination of controls best addresses the primary risk?",
+    "choices": [
+      "Requiring employees to use longer prompts and clear their browser history",
+      "Relying on the chatbot provider's general terms of service",
+      "Allowing the practice but requiring employees to log the prompts in a spreadsheet",
+      "An acceptable use policy for AI tools, an approved enterprise AI service with contractual data protections, and data loss prevention controls"
+    ],
+    "correct": 3,
+    "exp": "The primary risk is disclosure of confidential data to a third party that may retain it or use it for training, so organizations combine policy, approved tools whose contracts restrict data use and retention, and technical DLP controls. Public terms of service generally do not provide the confidentiality protections a firm owes its clients."
+  },
+  {
+    "q": "An attacker gains access to the data pipeline feeding a company's spam-filtering model and inserts mislabeled examples so that the retrained model lets certain malicious emails through. What type of attack is this?",
+    "choices": [
+      "Model inversion",
+      "Data poisoning",
+      "Denial of service",
+      "Phishing"
+    ],
+    "correct": 1,
+    "exp": "Data poisoning corrupts a model's training data so that it learns behavior the attacker wants, and it is mitigated by controlling access to training pipelines, validating data provenance and testing models before deployment. Model inversion instead attempts to extract sensitive training data from a deployed model's outputs."
+  },
+  {
+    "q": "A data scientist updated the parameters of the company's revenue-forecasting model, which feeds the allowance and budgeting processes, and deployed the change directly to production without testing or approval. Which control deficiency is most evident?",
+    "choices": [
+      "Weak model change management and lack of independent validation before deployment",
+      "Insufficient computing capacity for the model",
+      "Inadequate physical security over the data center",
+      "Lack of encryption of data in transit"
+    ],
+    "correct": 0,
+    "exp": "AI and analytical models used in financial processes should be governed like other systems, with an inventory, change management requiring testing and approval, segregation between developers and those who promote changes to production, and independent validation. Physical security and encryption do not address unauthorized or untested changes to model logic."
+  },
+  {
+    "q": "A client records its sales on a blockchain shared with its customers. The auditor notes that the ledger is immutable and distributed. Which limitation remains most important for the auditor to consider?",
+    "choices": [
+      "Blockchain records can be easily altered by any participant",
+      "Distributed ledgers cannot record monetary amounts",
+      "A transaction recorded on the blockchain is not necessarily a valid, properly authorized or arm's-length business transaction",
+      "Blockchain transactions do not have timestamps"
+    ],
+    "correct": 2,
+    "exp": "A blockchain can provide evidence that a transaction was recorded and has not been altered, but it does not establish that the underlying transaction is genuine, correctly classified, authorized or free of related-party or side-agreement issues. Immutability is the opposite of easy alteration, and it also means erroneous entries must be corrected by new transactions rather than deleted."
+  },
+  {
+    "q": "A company holds bitcoin in a wallet whose private key is stored on a single employee's laptop. Which risk is most significant, and which control best mitigates it?",
+    "choices": [
+      "Model drift; periodic retraining",
+      "Hallucination; human review of outputs",
+      "Vendor lock-in; contractual exit terms",
+      "Loss or theft of the key, which means loss of the assets; multi-signature authorization and secure cold storage of keys"
+    ],
+    "correct": 3,
+    "exp": "Control of a digital asset is control of its private key, so a lost key makes the assets unrecoverable and a stolen key lets the thief transfer them irreversibly. Multi-signature wallets requiring several approvers, offline cold storage and key backup procedures eliminate the single point of failure."
+  },
+  {
+    "q": "An auditor is testing the existence and rights of a client's cryptocurrency holdings that the client keeps in its own wallets. Which procedure provides the most persuasive evidence that the client controls the assets?",
+    "choices": [
+      "Inspecting a screenshot of the wallet balance provided by management",
+      "Having the client demonstrate control of the private key, such as by signing a message or moving a small amount, and agreeing the address balance to the public blockchain",
+      "Obtaining a written representation from management that it owns the wallets",
+      "Recalculating the fair value of the holdings using a quoted exchange price"
+    ],
+    "correct": 1,
+    "exp": "The public blockchain shows that an address holds the assets, and a demonstration using the private key shows the client can actually control them, together supporting existence and rights. A screenshot or representation is weak, management-prepared evidence, and fair value testing addresses valuation rather than control."
+  },
+  {
+    "q": "A consortium of banks builds a shared ledger for interbank settlements in which only vetted member institutions may validate and view transactions. Which type of blockchain is this?",
+    "choices": [
+      "Permissioned (private or consortium) blockchain",
+      "Permissionless public blockchain",
+      "Proof-of-work public blockchain",
+      "Centralized relational database"
+    ],
+    "correct": 0,
+    "exp": "A permissioned blockchain restricts who can participate in validation and access, which suits regulated institutions that know their counterparties. In a permissionless public blockchain, such as Bitcoin, anyone can join, read the ledger and participate in consensus."
+  },
+  {
+    "q": "A company uses a smart contract on a blockchain to release payments automatically to suppliers when shipment data is received. Which risk is most distinctive to this arrangement, and what control addresses it?",
+    "choices": [
+      "Paper documents may be lost; maintain physical file rooms",
+      "Payments may be delayed by manual approvals; add more approvers",
+      "Coding errors execute automatically and are difficult to reverse; perform independent code review and testing before deployment",
+      "Supplier names may be misspelled; use a spell-checker"
+    ],
+    "correct": 2,
+    "exp": "A smart contract executes its coded terms automatically, so a logic flaw or vulnerability can cause incorrect payments at scale that cannot easily be undone on an immutable ledger; independent code audits, testing and change controls over the code are key. Smart contracts remove manual approvals, so adding approvers misidentifies the risk."
+  },
+  {
+    "q": "A smart contract settles crop insurance claims automatically based on rainfall data supplied by an external weather data feed. What is the primary risk associated with this external data source?",
+    "choices": [
+      "The blockchain will reject any data that originates off-chain",
+      "The weather data will be permanently encrypted and unreadable",
+      "The smart contract will require manual signatures for each claim",
+      "The oracle may supply inaccurate or manipulated data, which the contract will act on automatically"
+    ],
+    "correct": 3,
+    "exp": "Smart contracts rely on oracles to bring off-chain data on-chain, and the blockchain cannot verify that data's accuracy, so a faulty or compromised oracle causes incorrect automatic payouts. Controls include reputable or multiple independent data sources and monitoring for anomalies."
+  },
+  {
+    "q": "In a public proof-of-work blockchain, what is a 51% attack?",
+    "choices": [
+      "A group controlling a majority of the network's mining power reorganizes recent blocks, enabling double-spending",
+      "An attacker steals 51% of the private keys held by a custodian",
+      "A regulator seizes a majority of the network's nodes",
+      "A software bug causes 51% of transactions to fail validation"
+    ],
+    "correct": 0,
+    "exp": "Proof-of-work consensus follows the chain with the most accumulated work, so a party controlling a majority of hash power can rewrite recent blocks and spend the same coins twice. The risk is greatest on smaller networks, where acquiring majority power is cheaper; it does not involve stealing private keys."
+  },
+  {
+    "q": "A manufacturer installed hundreds of internet-connected sensors and smart thermostats that still use factory-default passwords and sit on the same network segment as its ERP servers. Which pair of controls best reduces the risk?",
+    "choices": [
+      "Increasing the sensors' data sampling rate and adding more devices",
+      "Changing default credentials and segmenting IoT devices onto a separate network",
+      "Encrypting ERP backups and extending the retention period",
+      "Moving the ERP system to a SaaS provider and keeping the default passwords"
+    ],
+    "correct": 1,
+    "exp": "IoT devices often ship with default credentials and limited patching, so attackers can compromise them and pivot to critical systems; changing credentials and isolating devices on separate segments limits both entry and lateral movement. Encrypting backups protects recovery data but does not stop compromised devices from reaching the ERP servers."
+  },
+  {
+    "q": "Attackers compromised large numbers of poorly secured internet-connected cameras and routers and used them together to flood a company's website with traffic. Which threat does this illustrate?",
+    "choices": [
+      "Data poisoning of a machine learning model",
+      "A 51% attack on a blockchain",
+      "A distributed denial-of-service attack launched from an IoT botnet",
+      "A smart contract coding error"
+    ],
+    "correct": 2,
+    "exp": "Insecure IoT devices can be recruited into botnets that generate massive traffic from many sources, which is a distributed denial-of-service attack against availability. Data poisoning targets the integrity of AI training data, not the availability of a website."
+  },
+  {
+    "q": "A company deploys software bots through robotic process automation (RPA) to post vendor invoices. To simplify setup, all bots log in with the user ID and password of the accounts payable manager, which has broad posting and vendor-maintenance rights. Which control improvement is most important?",
+    "choices": [
+      "Running the bots only at night to reduce system load",
+      "Adding more bots to reduce processing backlogs",
+      "Requiring the manager to change the shared password once a year",
+      "Assigning each bot a unique ID with least-privilege access, storing credentials in a secure vault and logging bot activity"
+    ],
+    "correct": 3,
+    "exp": "Bots using a human's credentials destroy accountability and give the bots excessive rights, including conflicting duties such as vendor maintenance and payment posting; unique bot identities, least privilege, vaulted credentials and activity logs restore control. Changing a shared password annually leaves both the accountability and segregation problems in place."
+  },
+  {
+    "q": "After a vendor updated the screen layout of a company's invoicing application, an RPA bot began entering amounts into the wrong fields without stopping. Which controls would have best prevented or detected this problem?",
+    "choices": [
+      "Change management that tests bots when underlying applications change, plus monitoring of bot exceptions and output reconciliations",
+      "Increasing the speed at which the bot processes invoices",
+      "Replacing the bot's password with a longer one",
+      "Purchasing additional RPA licenses"
+    ],
+    "correct": 0,
+    "exp": "RPA bots typically interact with application screens, so changes to the underlying system can break them silently; bots should be covered by ITGCs such as change management, with regression testing, exception monitoring and reconciliations of processed output. Stronger passwords address access risk, not processing integrity after a system change."
+  },
+  {
+    "q": "Which type of process is generally best suited to robotic process automation (RPA)?",
+    "choices": [
+      "Low-volume tasks requiring professional judgment about ambiguous information",
+      "High-volume, repetitive, rules-based tasks using structured digital data",
+      "Negotiating contract terms with new customers",
+      "Designing the company's internal control framework"
+    ],
+    "correct": 1,
+    "exp": "RPA mimics human keystrokes following predefined rules, so it works best for stable, repetitive, rules-based work on structured data, such as data entry and reconciliations. Tasks requiring judgment about unstructured or ambiguous information are poor candidates unless paired with other technologies and human review."
+  }
+]
