@@ -1399,6 +1399,127 @@ html,body{overflow-x:hidden}
   .nav-right{gap:4px}
   #nav-log-btn{padding:9px 14px}
 }
+/* ── Question Bank ──────────────────────────────────────────────────────────
+   Section colour comes in as custom properties on each element:
+   --c (fill), --ct (readable text), --cb (soft tint). */
+.qb-sum{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surf);border:1px solid var(--bdr);border-radius:16px;margin-bottom:18px;overflow:hidden}
+.qb-sum>div{padding:16px 18px;border-left:1px solid var(--bdr);min-width:0}
+.qb-sum>div:first-child{border-left:none}
+.qb-sum-v{font-family:var(--font-display);font-size:28px;font-weight:700;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--txt)}
+.qb-sum-l{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin-top:7px}
+.qb-upsell{display:flex;align-items:center;gap:14px;background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:14px;padding:14px 16px;margin-bottom:18px;cursor:pointer}
+.qb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.qb-card{display:flex;flex-direction:column;gap:14px;text-align:left;width:100%;background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:18px;cursor:pointer;font-family:inherit;color:var(--txt);transition:border-color var(--transition),transform var(--transition),box-shadow var(--transition)}
+.qb-card:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.qb-card:focus-visible,.qb-mode:focus-visible,.qb-topic:focus-visible,.qz-opt:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.qb-card-top{display:flex;align-items:center;gap:8px}
+.qb-card-name{font-size:15px;font-weight:800;line-height:1.3;letter-spacing:-.005em}
+.qb-card-go{margin-left:auto;color:var(--mut);font-size:15px;transition:transform var(--transition),color var(--transition)}
+.qb-card:hover .qb-card-go{color:var(--ct);transform:translateX(2px)}
+.qb-card-foot{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--mut);margin-top:8px;font-variant-numeric:tabular-nums}
+.qb-card-foot b{color:var(--txt);font-weight:700}
+.qb-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 9px;border-radius:7px;color:var(--ct);background:var(--cb)}
+.qb-bar{height:6px;background:var(--surf3);border-radius:99px;overflow:hidden}
+.qb-bar>i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width .5s}
+.qb-disc{font-size:11.5px;color:var(--mut);line-height:1.6;margin-top:22px;padding-top:16px;border-top:1px solid var(--bdr)}
+
+.qb-sheet{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden}
+.qb-sheet-head{padding:18px 20px;background:linear-gradient(180deg,var(--cb),transparent 92%);border-bottom:1px solid var(--bdr);flex-shrink:0}
+.qb-x{width:34px;height:34px;border-radius:10px;border:1px solid var(--bdr);background:var(--surf);color:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0;font-family:inherit}
+.qb-x:hover{color:var(--txt);border-color:var(--bdr2)}
+.qb-title{font-family:var(--font-display);font-size:23px;font-weight:700;line-height:1.2;margin:12px 0 12px;color:var(--txt)}
+.qb-meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--sub);margin-top:8px;font-variant-numeric:tabular-nums}
+.qb-body{padding:16px 20px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.qb-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);margin:6px 0 10px}
+.qb-mode{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:12px 14px;border:1px solid var(--bdr);border-radius:13px;background:var(--surf);cursor:pointer;margin-bottom:8px;font-family:inherit;color:var(--txt);transition:border-color var(--transition),background-color var(--transition)}
+.qb-mode:hover{border-color:var(--c);background:var(--cb)}
+.qb-mode-ico{width:38px;height:38px;border-radius:11px;background:var(--cb);color:var(--ct);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.qb-mode.locked .qb-mode-ico{background:var(--surf2);color:var(--mut)}
+.qb-mode.locked .qb-mode-t{color:var(--sub)}
+.qb-mode-t{font-size:14px;font-weight:700}
+.qb-mode-d{font-size:12px;color:var(--mut);margin-top:1px}
+.qb-pro{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--ora);background:var(--ora-bg);padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:1px}
+.qb-chev{margin-left:auto;color:var(--mut);font-size:15px;flex-shrink:0}
+.qb-topics{border:1px solid var(--bdr);border-radius:13px;overflow:hidden}
+.qb-topic{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surf);border:none;border-top:1px solid var(--bdr);text-align:left;font-family:inherit;color:var(--txt);font-size:13px;line-height:1.4;cursor:pointer;width:100%}
+.qb-topic:first-child{border-top:none}
+.qb-topic:hover{background:var(--cb)}
+.qb-topic-name{flex:1;min-width:0}
+.qb-topic-n{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums;flex-shrink:0}
+.qb-topics.short .qb-topic:nth-child(n+7){display:none}
+.qb-more{width:100%;padding:10px;background:none;border:none;color:var(--ct);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.qb-skel{height:42px;border-radius:13px;background:var(--surf2);animation:qbPulse 1.2s ease-in-out infinite}
+@keyframes qbPulse{50%{opacity:.5}}
+.qb-ai{background:var(--surf2);border:1px solid var(--bdr);border-radius:13px;padding:14px}
+.qb-ai input{width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;outline:none;margin:10px 0}
+.qb-ai input:focus{border-color:var(--ind)}
+
+.qz{max-width:720px;margin:0 auto;padding:0 16px 130px}
+.qz-top{position:sticky;top:0;z-index:2;background:var(--bg);padding:max(14px,env(safe-area-inset-top)) 0 12px;display:flex;align-items:center;gap:10px}
+.qz-mode{font-size:13px;font-weight:700;color:var(--sub);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qz-count{font-size:12.5px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums;flex-shrink:0}
+.qz-timer{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid var(--bdr);border-radius:9px;background:var(--surf);font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
+.qz-card{background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:24px;margin-top:14px}
+.qz-eyebrow{font-size:11.5px;font-weight:700;color:var(--ct);margin-bottom:10px;line-height:1.4}
+.qz-eyebrow span{color:var(--mut);font-weight:600}
+.qz-q{font-size:17px;font-weight:600;line-height:1.6;color:var(--txt);margin-bottom:20px;white-space:pre-line}
+.qz-opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--bdr);border-radius:13px;background:var(--surf);margin-bottom:9px;cursor:pointer;font-family:inherit;color:var(--txt);font-size:14px;line-height:1.55;transition:border-color .15s,background-color .15s,opacity .15s}
+.qz-opt:hover:not(:disabled){border-color:var(--bdr2);background:var(--surf2)}
+.qz-opt:disabled{cursor:default}
+.qz-opt-t{flex:1;padding-top:2px}
+.qz-l{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--bdr2);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:background-color .15s,border-color .15s,color .15s}
+/* Picked-but-unchecked uses neutral indigo: a red FAR tint would read as "wrong". */
+.qz-opt.sel,.qz-opt.sel:hover:not(:disabled){border-color:var(--ind);background:var(--ind-bg)}
+.qz-opt.sel .qz-l{background:var(--ind);border-color:var(--ind);color:#fff}
+.qz-opt.ok{border-color:var(--grn);background:var(--grn-bg)}
+.qz-opt.ok .qz-l{background:var(--grn);border-color:var(--grn);color:#fff}
+.qz-opt.bad{border-color:var(--red);background:var(--red-bg)}
+.qz-opt.bad .qz-l{background:var(--red);border-color:var(--red);color:#fff}
+.qz-opt.dim{opacity:.55}
+.qz-fb{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin:18px 0 10px}
+.qz-fb i{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-style:normal}
+.qz-exp{background:var(--surf2);border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.7;color:var(--sub)}
+.qz-act{position:fixed;left:0;right:0;bottom:0;z-index:3;background:linear-gradient(180deg,transparent,var(--bg) 28px);padding:28px 16px max(16px,env(safe-area-inset-bottom))}
+.qz-act-in{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.qz-btn{flex:1;padding:14px 18px;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;color:#fff;background:var(--ora);box-shadow:var(--shadow-btn);transition:background-color var(--transition),transform var(--transition)}
+.qz-btn:hover:not(:disabled){background:var(--ora-dk)}
+.qz-btn:disabled{background:var(--surf3);color:var(--mut);box-shadow:none;cursor:not-allowed}
+.qz-btn.ghost{flex:0 0 auto;background:var(--surf);color:var(--sub);border:1px solid var(--bdr);box-shadow:none}
+.qz-btn.ghost:hover{background:var(--surf2)}
+.qz-keys{font-size:11px;color:var(--mut);text-align:center;margin-top:12px}
+@media (hover:none){.qz-keys{display:none}}
+
+.qr-hero{display:flex;align-items:center;gap:22px;background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:22px;margin-top:14px}
+.qr-ring{position:relative;width:112px;height:112px;flex-shrink:0}
+.qr-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.qr-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--txt)}
+.qr-grade{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.2}
+.qr-sub{font-size:13px;color:var(--sub);margin-top:5px;line-height:1.5}
+.qr-weak{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:16px 18px;margin-top:12px}
+.qr-weak-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-top:1px solid var(--bdr)}
+.qr-weak-row:first-of-type{border-top:none}
+.qr-weak-row span:last-child{color:var(--red);font-weight:700;font-variant-numeric:tabular-nums;flex-shrink:0}
+.qr-tabs{display:flex;gap:6px;margin:22px 0 12px;align-items:center}
+.qr-tab{padding:7px 12px;border-radius:9px;border:1px solid var(--bdr);background:var(--surf);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
+.qr-tab.on{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.qr-list.missed .qr-row[data-ok="1"]{display:none}
+.qr-row{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:10px}
+.qr-row-h{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.qr-dot{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;flex-shrink:0}
+.qr-q{font-size:14px;font-weight:600;line-height:1.55;margin-bottom:10px;color:var(--txt)}
+.qr-a{font-size:13px;line-height:1.5;margin-bottom:4px;color:var(--sub)}
+.qr-a b{font-weight:700}
+.qr-row .qz-exp{margin-top:10px;font-size:12.5px;padding:11px 13px}
+@media (max-width:520px){
+  .qb-sum>div{padding:14px 12px}
+  .qb-sum-v{font-size:23px}
+  .qz-card{padding:18px 16px;border-radius:16px}
+  .qz-q{font-size:16px}
+  .qr-hero{gap:16px;padding:18px}
+  .qr-ring{width:92px;height:92px}
+  .qr-pct{font-size:25px}
+  .qr-grade{font-size:19px}
+}
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
@@ -14666,7 +14787,7 @@ function _showQuizLoading(section){
   overlay.innerHTML='<div style="max-width:520px;margin:100px auto;text-align:center;padding:0 20px"><div style="margin-bottom:16px">'+LedgerBuddy('think',120)+'</div><div style="font-size:20px;font-weight:900;letter-spacing:-.03em">Loading your '+section+' question bank…</div></div>';
 }
 
-async function openQuizModal(section, type) {
+async function openQuizModal(section, type, topic) {
   // AI custom sets aren't in the bank — replay the last generated set (free), or generate anew.
   if (type === 'ai') {
     if (_lastAIQuiz && _lastAIQuiz.section === section && _lastAIQuiz.questions.length) {
@@ -14683,6 +14804,8 @@ async function openQuizModal(section, type) {
   let bank = (_qbBankCache[section] || {}).questions;
   if (bank === undefined) { _showQuizLoading(section); bank = await loadQuestionBank(section); }
   const pool = (bank && bank.length) ? bank : (QB_QUESTIONS[section] || []);
+  const pick = topic ? pool.filter(function(q){ return q.topic === topic; }) : pool;
+  if (topic && !pick.length) { closeQuizOverlay(); showToast('No questions found for that topic yet', 'info'); return; }
   if (!pool.length) { closeQuizOverlay(); showToast('Questions coming soon for ' + section, 'info'); return; }
 
   const elite = isElite(), pro = isPro();
@@ -14690,18 +14813,21 @@ async function openQuizModal(section, type) {
   const want = type === 'timed' ? 10 : type === 'random' ? (elite ? 50 : 20) : 20;
   let cap;
   if (!pro) cap = 5;
-  else if (elite) cap = Math.min(want, pool.length);
+  else if (elite) cap = Math.min(want, pick.length);
   else {
     const rem = _aiQbQuota(section).remaining;
     if (rem <= 0) { closeQuizOverlay(); showToast("You've used today's " + AI_QB_PRO_DAILY + " " + section + " questions — resets in 24h.", 'info'); return; }
     cap = Math.min(want, rem);
   }
 
-  const qs = [...pool].sort(function(){ return Math.random() - 0.5; }).slice(0, Math.max(1, Math.min(cap, pool.length)));
+  // Fisher–Yates shuffle (sort-by-random is biased).
+  const shuffled = pick.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t; }
+  const qs = shuffled.slice(0, Math.max(1, Math.min(cap, pick.length)));
   if (pro && !elite) _aiQbConsume(section, qs.length); // bank reads are free, but Pro is metered to 20/section/day
 
   _quiz = {
-    active: true, section, type,
+    active: true, finished: false, section, type, topic: topic || null,
     questions: qs, current: 0,
     selected: null, answered: false,
     score: 0, timerInterval: null,
@@ -14740,80 +14866,78 @@ function closeQuizOverlay() {
   if (overlay) overlay.style.display = 'none';
 }
 
+// Section colour as custom properties for the .qb-*/.qz-* styles.
+function _qbVars(code){
+  const c=_sectionColor(code);
+  return '--c:'+c+';--ct:'+_sectionText(code)+';--cb:'+c+'1f';
+}
+function _qbTypeLabel(type, topic){
+  return topic || ({mcq:'Practice set', timed:'Timed set', random:'Random quiz', ai:'AI practice', topic:'Topic drill'})[type] || 'Practice';
+}
+
 function _renderQuiz() {
   const overlay = document.getElementById('quiz-overlay');
   if (!overlay) return;
-  const { section, type, questions, current, selected, answered, score, timeLeft } = _quiz;
+  const { section, type, questions, current, selected, answered, timeLeft } = _quiz;
   const q = questions[current];
   const total = questions.length;
-  const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
-  const color = sec ? sec.color : '#6366f1';
-  const choiceLetters = ['A','B','C','D'];
-  const typeLabels = {mcq:'MCQ Practice', timed:'Timed Set', random:'Random Quiz', ai:'AI Practice'};
-  const pct = total > 0 ? Math.round(current / total * 100) : 0;
+  const L = ['A','B','C','D'];
+  const pct = total > 0 ? Math.round((current + (answered ? 1 : 0)) / total * 100) : 0;
 
   const timerHTML = type === 'timed'
-    ? '<div style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px"><span>'+ico('timer')+'</span><span id="quiz-timer" style="font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--grn)">' + Math.floor(timeLeft/60) + ':' + String(timeLeft%60).padStart(2,'0') + '</span></div>'
+    ? '<div class="qz-timer">' + ico('timer') + '<span id="quiz-timer" style="color:' + (timeLeft < 60 ? 'var(--red)' : timeLeft < 180 ? 'var(--amb)' : 'var(--grn)') + '">' + Math.floor(timeLeft/60) + ':' + String(timeLeft%60).padStart(2,'0') + '</span></div>'
     : '';
 
-  const choicesHTML = q.choices.map(function(c, i) {
-    let bg = 'var(--surf2)', border = '2px solid var(--bdr)', txtColor = 'var(--txt)', badge = '';
+  const opts = q.choices.map(function(c, i) {
+    let cls = 'qz-opt';
     if (answered) {
-      if (i === q.correct) { bg = 'var(--grn-bg)'; border = '2px solid var(--grn)'; badge = '<span style="margin-left:auto;font-size:11px;font-weight:800;color:var(--grn);flex-shrink:0">✓ Correct</span>'; }
-      else if (i === selected && i !== q.correct) { bg = 'var(--red-bg)'; border = '2px solid var(--red)'; badge = '<span style="margin-left:auto;font-size:11px;font-weight:800;color:var(--red);flex-shrink:0">✗ Wrong</span>'; }
-      else { border = '2px solid var(--bdr)'; }
-    } else if (i === selected) {
-      bg = color + '15'; border = '2px solid ' + color;
-    }
-    const click = answered ? '' : 'onclick="_selectAnswer(' + i + ')"';
-    return '<div ' + click + ' style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:' + border + ';background:' + bg + ';border-radius:11px;margin-bottom:9px;cursor:' + (answered?'default':'pointer') + ';transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s">' +
-      '<span style="width:26px;height:26px;border-radius:50%;background:' + (i===selected&&!answered ? color : answered&&i===q.correct ? 'var(--grn)' : answered&&i===selected ? 'var(--red)' : 'var(--bdr2)') + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">' + choiceLetters[i] + '</span>' +
-      '<span style="font-size:13px;line-height:1.55;color:' + txtColor + ';padding-top:3px;flex:1">' + esc(c) + '</span>' +
-      badge +
-    '</div>';
+      if (i === q.correct) cls += ' ok';
+      else if (i === selected) cls += ' bad';
+      else cls += ' dim';
+    } else if (i === selected) cls += ' sel';
+    const mark = answered && i === q.correct ? ico('check') : answered && i === selected ? ico('x') : L[i];
+    return '<button type="button" class="' + cls + '" ' + (answered ? 'disabled' : 'onclick="_selectAnswer(' + i + ')"') + ' aria-pressed="' + (i === selected) + '">' +
+      '<span class="qz-l">' + mark + '</span><span class="qz-opt-t">' + esc(c) + '</span></button>';
   }).join('');
 
-  const expHTML = answered
-    ? '<div style="background:var(--ind-bg);border:1px solid rgba(90,95,207,.25);border-radius:10px;padding:14px 16px;margin-top:4px">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ind);margin-bottom:6px">Explanation</div>' +
-        '<div style="font-size:13px;color:var(--sub);line-height:1.65">' + esc(q.exp) + '</div>' +
-      '</div>'
-    : '';
+  let feedback = '';
+  if (answered) {
+    const right = selected === q.correct;
+    feedback =
+      '<div class="qz-fb" style="color:' + (right ? 'var(--grn)' : 'var(--red)') + '">' +
+        '<i style="background:' + (right ? 'var(--grn)' : 'var(--red)') + '">' + ico(right ? 'check' : 'x') + '</i>' +
+        (right ? 'Correct' : 'Not quite. The answer is ' + L[q.correct] + '.') +
+      '</div>' +
+      '<div class="qz-exp">' + esc(q.exp) + '</div>';
+  }
 
-  const actionBtn = answered
-    ? (current < total - 1
-        ? '<button onclick="_nextQuestion()" style="flex:1;padding:13px;background:' + color + ';color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">Next Question →</button>'
-        : '<button onclick="_finishQuiz()" style="flex:1;padding:13px;background:var(--grn);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">See Results</button>'
-      )
-    : '<button onclick="_submitAnswer()" style="flex:1;padding:13px;background:' + (selected===null?'var(--bdr)':'var(--ind)') + ';color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:800;cursor:pointer" ' + (selected===null?'disabled':'') + '>Submit Answer</button>';
+  const last = current >= total - 1;
+  const btn = answered
+    ? '<button class="qz-btn" onclick="' + (last ? '_finishQuiz()' : '_nextQuestion()') + '">' + (last ? 'See results' : 'Next question') + '</button>'
+    : '<button class="qz-btn" onclick="_submitAnswer()" ' + (selected === null ? 'disabled' : '') + '>Check answer</button>';
 
   overlay.innerHTML =
-    '<div style="max-width:720px;margin:0 auto;padding:24px 16px 80px">' +
-    // Header
-    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">' +
-      '<button onclick="closeQuizOverlay()" style="padding:8px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--sub)">← Back</button>' +
-      '<span class="badge badge-' + section + '" style="font-size:12px;padding:4px 10px">' + section + '</span>' +
-      '<div style="font-size:13px;font-weight:700;color:var(--sub);flex:1">' + typeLabels[type] + '</div>' +
-      timerHTML +
-      '<div style="font-size:12px;color:var(--mut)">' + (current+1) + ' / ' + total + '</div>' +
-    '</div>' +
-    // Progress bar
-    '<div style="height:5px;background:var(--bdr);border-radius:4px;margin-bottom:12px;overflow:hidden">' +
-      '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;transition:width .4s"></div>' +
-    '</div>' +
-    '<div style="font-size:11px;color:var(--mut);text-align:right;margin-bottom:16px;font-style:italic">AI-generated — verify answers with your review course</div>' +
-    // Question card
-    '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:26px;margin-bottom:16px;box-shadow:var(--shadow-md)">' +
-      '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:' + color + ';margin-bottom:12px">Question ' + (current+1) + ' of ' + total + '</div>' +
-      '<div style="font-size:16px;font-weight:600;line-height:1.6;color:var(--txt);margin-bottom:22px">' + esc(q.q) + '</div>' +
-      choicesHTML +
-      expHTML +
-    '</div>' +
-    // Action
-    '<div style="display:flex;gap:10px">' +
-      actionBtn +
-    '</div>' +
+    '<div class="qz" style="' + _qbVars(section) + '">' +
+      '<div class="qz-top">' +
+        '<button class="qb-x" onclick="closeQuizOverlay()" aria-label="Close">' + ico('x') + '</button>' +
+        '<span class="qb-chip">' + section + '</span>' +
+        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic)) + '</span>' +
+        timerHTML +
+        '<span class="qz-count">' + (current + 1) + ' / ' + total + '</span>' +
+      '</div>' +
+      '<div class="qb-bar" style="height:4px"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="qz-card">' +
+        '<div class="qz-eyebrow">Question ' + (current + 1) + (q.topic ? ' <span>· ' + esc(q.topic) + '</span>' : '') + '</div>' +
+        '<div class="qz-q">' + esc(q.q) + '</div>' +
+        opts + feedback +
+      '</div>' +
+      '<div class="qz-keys">Keys: 1–4 or A–D to choose, Enter to continue</div>' +
+      '<div class="qz-act"><div class="qz-act-in">' + btn + '</div></div>' +
     '</div>';
+  if (answered) {
+    const fb = overlay.querySelector('.qz-fb');
+    if (fb && fb.getBoundingClientRect().top > window.innerHeight - 160) fb.scrollIntoView({behavior:'smooth', block:'center'});
+  }
 }
 
 function _selectAnswer(idx) {
@@ -14823,7 +14947,7 @@ function _selectAnswer(idx) {
 }
 
 function _submitAnswer() {
-  if (_quiz.selected === null) return;
+  if (_quiz.selected === null || _quiz.answered) return;
   _quiz.answered = true;
   const q = _quiz.questions[_quiz.current];
   const correct = _quiz.selected === q.correct;
@@ -14837,74 +14961,123 @@ function _nextQuestion() {
   _quiz.selected = null;
   _quiz.answered = false;
   _renderQuiz();
+  const o = document.getElementById('quiz-overlay'); if (o) o.scrollTop = 0;
 }
+
+// Keyboard: 1–4 / A–D pick an answer, Enter checks it or moves on, Esc closes.
+document.addEventListener('keydown', function(e) {
+  const o = document.getElementById('quiz-overlay');
+  if (!_quiz || !_quiz.active || !o || o.style.display === 'none') return;
+  if (e.metaKey || e.ctrlKey || e.altKey || /input|textarea|select/i.test((e.target || {}).tagName || '')) return;
+  const k = e.key.toLowerCase();
+  if (_quiz.finished) { if (k === 'escape') closeQuizOverlay(); return; }
+  const idx = '1234'.indexOf(k) >= 0 ? '1234'.indexOf(k) : 'abcd'.indexOf(k);
+  if (idx >= 0 && !_quiz.answered && _quiz.questions[_quiz.current].choices[idx] !== undefined) { e.preventDefault(); _selectAnswer(idx); }
+  else if (k === 'enter') {
+    e.preventDefault();
+    if (!_quiz.answered) _submitAnswer();
+    else if (_quiz.current < _quiz.questions.length - 1) _nextQuestion();
+    else _finishQuiz();
+  } else if (k === 'escape') closeQuizOverlay();
+});
 
 function _finishQuiz() {
   if (_quiz.timerInterval) clearInterval(_quiz.timerInterval);
+  if (_quiz.finished) return;
+  _quiz.finished = true;
   const { section, score, questions, results, type } = _quiz;
+  const done = results.length;
   const total = questions.length;
-  const pct = Math.round(score / total * 100);
-  const sec = QB_SECTIONS.find(function(s){ return s.code === section; });
-  const color = sec ? sec.color : '#6366f1';
-  const grade = pct >= 75 ? {label:'Passing level', icon:'✓', c:'var(--grn)'} : pct >= 55 ? {label:'Getting close', icon:'', c:'var(--amb)'} : {label:'Needs review', icon:'', c:'var(--red)'};
+  const pct = done ? Math.round(score / done * 100) : 0;
+  const grade = pct >= 75 ? {label:'Passing level', c:'var(--grn)'} : pct >= 55 ? {label:'Getting close', c:'var(--amb)'} : {label:'Needs review', c:'var(--red)'};
 
-  // Save progress
+  // Save progress: only questions actually answered count.
   S.qbProgress = S.qbProgress || {};
-  S.qbProgress[section] = S.qbProgress[section] || {mcqDone:0};
-  S.qbProgress[section].mcqDone = Math.min((S.qbProgress[section].mcqDone||0) + total, 9999);
+  const p = S.qbProgress[section] = S.qbProgress[section] || {mcqDone:0};
+  p.mcqDone = Math.min((p.mcqDone || 0) + done, 99999);
+  p.graded = (p.graded || 0) + done;
+  p.correct = (p.correct || 0) + score;
   saveState();
 
   const overlay = document.getElementById('quiz-overlay');
   if (!overlay) return;
+  const L = ['A','B','C','D'];
 
-  const reviewRows = questions.map(function(q, i) {
-    const r = results[i] || {};
-    const letters = ['A','B','C','D'];
-    return '<div style="padding:14px 0;border-bottom:1px solid var(--bdr)">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-        '<span style="width:22px;height:22px;border-radius:50%;background:' + (r.correct?'var(--grn)':'var(--red)') + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">' + (r.correct?'✓':'✗') + '</span>' +
-        '<span style="font-size:12px;color:var(--sub)">Q' + (i+1) + '</span>' +
-      '</div>' +
-      '<div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;line-height:1.5">' + esc(q.q) + '</div>' +
-      '<div style="font-size:12px;color:' + (r.correct?'var(--grn)':'var(--red)') + ';font-weight:700;margin-bottom:4px">' + (r.correct?'Your answer: ':'You chose: ') + letters[r.selected!==undefined?r.selected:r.correctIdx] + ' — ' + esc(q.choices[r.selected!==undefined?r.selected:r.correctIdx]) + '</div>' +
-      (!r.correct && r.selected !== undefined ? '<div style="font-size:12px;color:var(--grn);font-weight:700;margin-bottom:6px">Correct: ' + letters[q.correct] + ' — ' + esc(q.choices[q.correct]) + '</div>' : '') +
-      '<div style="font-size:11px;color:var(--sub);background:var(--ind-bg);border-radius:7px;padding:9px 12px;line-height:1.6">' + esc(q.exp) + '</div>' +
+  // Topics with misses, worst first.
+  const byTopic = {};
+  questions.forEach(function(q, i) {
+    const r = results[i]; if (!r || !q.topic) return;
+    const t = byTopic[q.topic] = byTopic[q.topic] || {n:0, miss:0};
+    t.n++; if (!r.correct) t.miss++;
+  });
+  const weak = Object.keys(byTopic).filter(function(t){ return byTopic[t].miss; })
+    .sort(function(a, b){ return byTopic[b].miss - byTopic[a].miss; }).slice(0, 4);
+  const weakHTML = weak.length
+    ? '<div class="qr-weak"><div class="qb-eyebrow" style="margin-top:0">Topics to review</div>' +
+        weak.map(function(t){ return '<div class="qr-weak-row"><span>' + esc(t) + '</span><span>' + byTopic[t].miss + ' missed</span></div>'; }).join('') +
+      '</div>'
+    : '';
+
+  const missed = results.filter(function(r){ return r && !r.correct; }).length;
+  const rows = questions.map(function(q, i) {
+    const r = results[i];
+    if (!r) return '';
+    return '<div class="qr-row" data-ok="' + (r.correct ? 1 : 0) + '">' +
+      '<div class="qr-row-h"><span class="qr-dot" style="background:' + (r.correct ? 'var(--grn)' : 'var(--red)') + '">' + ico(r.correct ? 'check' : 'x') + '</span>Question ' + (i + 1) + (q.topic ? ' · ' + esc(q.topic) : '') + '</div>' +
+      '<div class="qr-q">' + esc(q.q) + '</div>' +
+      '<div class="qr-a"><b style="color:' + (r.correct ? 'var(--grn)' : 'var(--red)') + '">You chose ' + L[r.selected] + ':</b> ' + esc(q.choices[r.selected]) + '</div>' +
+      (r.correct ? '' : '<div class="qr-a"><b style="color:var(--grn)">Answer ' + L[q.correct] + ':</b> ' + esc(q.choices[q.correct]) + '</div>') +
+      '<div class="qz-exp">' + esc(q.exp) + '</div>' +
     '</div>';
   }).join('');
 
+  const R = 52, C = 2 * Math.PI * R;
+  const ring = '<div class="qr-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="' + R + '" fill="none" stroke="var(--surf3)" stroke-width="10"/>' +
+    '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="' + grade.c + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/></svg>' +
+    '<div class="qr-pct">' + pct + '%</div></div>';
+
+  const retry = '_quiz.finished=false;openQuizModal(\'' + section + '\',\'' + type + '\'' + (_quiz.topic ? ',' + JSON.stringify(_quiz.topic).replace(/"/g, '&quot;') : '') + ')';
+
   overlay.innerHTML =
-    '<div style="max-width:720px;margin:0 auto;padding:32px 16px 80px">' +
-    // Score hero
-    '<div style="background:linear-gradient(155deg,#0e0804,#1c1008,#0e0804);border-radius:20px;padding:36px 28px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden">' +
-      '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at -10% 65%,rgba(212,64,0,.6),transparent 50%),radial-gradient(ellipse at 100% 0%,rgba(90,95,207,.2),transparent 40%)"></div>' +
-      '<div style="position:relative;z-index:1">' +
-        (grade.icon ? '<div style="font-size:44px;margin-bottom:10px;color:' + grade.c + '">' + grade.icon + '</div>' : '') +
-        '<div style="font-size:68px;font-weight:900;color:' + grade.c + ';line-height:1;letter-spacing:-3px">' + pct + '%</div>' +
-        '<div style="font-size:16px;font-weight:800;color:' + grade.c + ';margin-top:6px">' + grade.label + '</div>' +
-        '<div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:8px">' + score + ' of ' + total + ' correct</div>' +
+    '<div class="qz" style="' + _qbVars(section) + '">' +
+      '<div class="qz-top">' +
+        '<button class="qb-x" onclick="closeQuizOverlay()" aria-label="Close">' + ico('x') + '</button>' +
+        '<span class="qb-chip">' + section + '</span>' +
+        '<span class="qz-mode">' + esc(_qbTypeLabel(type, _quiz.topic)) + ' · Results</span>' +
       '</div>' +
-    '</div>' +
-    // Actions
-    '<div style="display:flex;gap:10px;margin-bottom:24px">' +
-      '<button onclick="openQuizModal(\'' + section + '\',\'' + type + '\')" style="flex:1;padding:12px;background:' + color + ';color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer">↺ Retry</button>' +
-      '<button onclick="closeQuizOverlay()" style="flex:1;padding:12px;background:var(--surf);border:1px solid var(--bdr);border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;color:var(--sub)">← Back to Question Bank</button>' +
-    '</div>' +
-    // Review
-    '<div style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:20px 22px">' +
-      '<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:4px">Answer Review</div>' +
-      reviewRows +
-    '</div>' +
+      '<div class="qr-hero">' + ring +
+        '<div style="min-width:0"><div class="qr-grade" style="color:' + grade.c + '">' + grade.label + '</div>' +
+        '<div class="qr-sub">' + score + ' of ' + done + ' correct' + (done < total ? ' · ' + (total - done) + ' not answered' : '') + '</div>' +
+        '<div class="qr-sub" style="color:var(--mut);font-size:12px">The exam passing score is 75.</div></div>' +
+      '</div>' +
+      weakHTML +
+      (done ? '<div class="qr-tabs"><button class="qr-tab on" onclick="_qrFilter(this,false)">All ' + done + '</button>' +
+        (missed ? '<button class="qr-tab" onclick="_qrFilter(this,true)">Missed ' + missed + '</button>' : '') + '</div>' +
+        '<div class="qr-list">' + rows + '</div>' : '') +
+      '<div class="qb-disc" style="border:none;margin-top:8px">Original practice questions written with AI help. They may contain errors, so check anything surprising against your review course.</div>' +
+      '<div class="qz-act"><div class="qz-act-in">' +
+        '<button class="qz-btn ghost" onclick="closeQuizOverlay()">Done</button>' +
+        '<button class="qz-btn" onclick="' + retry + '">Practice again</button>' +
+      '</div></div>' +
     '</div>';
+  overlay.scrollTop = 0;
+}
+function _qrFilter(btn, missedOnly) {
+  btn.parentNode.querySelectorAll('.qr-tab').forEach(function(b){ b.classList.toggle('on', b === btn); });
+  const list = document.querySelector('#quiz-overlay .qr-list');
+  if (list) list.classList.toggle('missed', missedOnly);
 }
 
 function openQBSection(code) {
   const sec = QB_SECTIONS.find(function(s){ return s.code === code; });
   if (!sec) return;
-  loadQuestionBank(code); // warm the cache so practice starts instantly
   const pro = isPro();
   const elite = isElite();
   const quota = _aiQbQuota(code);
   const prog = (S.qbProgress || {})[code] || {mcqDone:0};
+  const done = prog.mcqDone || 0;
+  const pct = Math.min(100, Math.round(done / sec.mcqTotal * 100));
+  const acc = prog.graded ? Math.round(prog.correct / prog.graded * 100) + '% correct' : 'No score yet';
 
   let overlay = document.getElementById('qb-section-overlay');
   if (!overlay) {
@@ -14916,152 +15089,74 @@ function openQBSection(code) {
   }
 
   const modes = [
-    {type:'mcq',    icon:'\u{1F4DD}', label:'MCQ Practice',      desc: pro ? 'Work through all practice questions' : 'Try 5 free questions', free:true},
-    {type:'random', icon:'\u{1F500}', label:'Random Quiz',        desc:'Shuffled questions, any order',  free:false},
-    {type:'timed',  icon:'\u23F1', label:'Timed Set',          desc:'10 questions, beat the clock',   free:false},
+    {type:'mcq',    icon:'pencil', label:'Practice set', desc: pro ? '20 questions from across the section' : 'Try 5 free questions', free:true},
+    {type:'random', icon:'dice',   label:'Random quiz',  desc: elite ? '50 shuffled questions, any topic' : 'Shuffled questions, any topic', free:false},
+    {type:'timed',  icon:'timer',  label:'Timed set',    desc:'10 questions in 10 minutes, like exam pace', free:false},
   ];
-
-  const modeCards = modes.map(function(m) {
+  const modeHTML = modes.map(function(m) {
     const locked = !pro && !m.free;
-    return '<div onclick="' + (locked ? 'openUpgradeModal(\'Question Bank \u2014 ' + m.label + '\')' : 'closeQBSection();openQuizModal(\'' + code + '\',\'' + m.type + '\')') + '" ' +
-      'style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:13px;border:1.5px solid ' + (locked ? 'var(--bdr)' : 'var(--bdr)') + ';background:var(--surf2);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s,opacity .15s;margin-bottom:10px" ' +
-      'onmouseover="if(' + (!locked) + '){this.style.borderColor=\'' + sec.color + '\';this.style.background=\'' + sec.color + '12\'}" ' +
-      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.background=\'var(--surf2)\'">' +
-      '<span style="font-size:24px;width:36px;text-align:center;flex-shrink:0">' + ico(m.icon) + '</span>' +
-      '<div style="flex:1">' +
-        '<div style="font-size:14px;font-weight:700;color:' + (locked ? 'var(--mut)' : 'var(--txt)') + '">' + m.label + (locked ? ' <span style="font-size:10px;font-weight:800;color:var(--ora);background:var(--ora-bg);padding:2px 7px;border-radius:20px;margin-left:4px">PRO</span>' : '') + '</div>' +
-        '<div style="font-size:12px;color:var(--mut);margin-top:2px">' + m.desc + '</div>' +
-      '</div>' +
-      '<span style="font-size:18px;color:' + (locked ? 'var(--bdr2)' : sec.color) + '">' + (locked ? '\uD83D\uDD12' : '\u203A') + '</span>' +
-    '</div>';
+    return '<button type="button" class="qb-mode' + (locked ? ' locked' : '') + '" onclick="' + (locked ? 'openUpgradeModal(\'Question Bank — ' + m.label + '\')' : 'closeQBSection();openQuizModal(\'' + code + '\',\'' + m.type + '\')') + '">' +
+      '<span class="qb-mode-ico">' + ico(m.icon) + '</span>' +
+      '<span style="flex:1;min-width:0"><span class="qb-mode-t">' + m.label + (locked ? '<span class="qb-pro">PRO</span>' : '') + '</span><span class="qb-mode-d" style="display:block">' + m.desc + '</span></span>' +
+      '<span class="qb-chev">' + ico(locked ? 'lock' : 'arrow') + '</span></button>';
   }).join('');
 
-  const pct = Math.min(100, Math.round((prog.mcqDone || 0) / sec.mcqTotal * 100));
-
-  // ✦ AI question generator block (Step 6)
   let aiBlock;
   if (!pro) {
-    aiBlock =
-      '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">AI-Generated Questions</div>' +
-        '<div onclick="openUpgradeModal(\'AI Question Generator\')" style="background:var(--surf2);border:1px dashed var(--bdr2);border-radius:13px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px">' +
-          '<div style="font-size:24px">'+ico('lock')+'</div>' +
-          '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--txt)">Unlimited fresh questions with AI</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Pro: unlimited new questions, every section, plus topic focus</div></div>' +
-          '<span style="font-size:10px;font-weight:800;color:var(--ora);background:var(--ora-bg);padding:3px 9px;border-radius:20px">PRO</span>' +
-        '</div>' +
-      '</div>';
+    aiBlock = '<button type="button" class="qb-mode locked" onclick="openUpgradeModal(\'AI Question Generator\')">' +
+      '<span class="qb-mode-ico">' + ico('sparkles') + '</span>' +
+      '<span style="flex:1;min-width:0"><span class="qb-mode-t">Generate new questions<span class="qb-pro">PRO</span></span><span class="qb-mode-d" style="display:block">Fresh AI-written questions on any topic you name</span></span>' +
+      '<span class="qb-chev">' + ico('lock') + '</span></button>';
   } else {
     const disabled = !elite && quota.remaining <= 0;
-    const quotaLabel = elite ? 'Unlimited generation' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today');
+    const quotaLabel = elite ? 'Unlimited for Pro' : (quota.remaining + ' of ' + AI_QB_PRO_DAILY + ' left today');
     aiBlock =
-      '<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr)">' +
-        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:10px">AI-Generated Questions</div>' +
-        '<div style="background:linear-gradient(135deg,var(--ind-bg),var(--pur-bg));border:1px solid rgba(90,95,207,.25);border-radius:13px;padding:16px">' +
-          '<div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--txt)">Fresh questions, infinite practice</div>' +
-          '<div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.5">Generate brand-new ' + code + ' questions on demand. Leave the topic blank for a mixed set, or name a topic for a focused drill.</div>' +
-          '<input id="ai-qb-topic" type="text" placeholder="Optional topic — e.g. ASC 842 lease modifications" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:12px;outline:none;margin-bottom:10px" onkeydown="if(event.key===\'Enter\'){generateAIQuestions(\'' + code + '\',this.value)}">' +
-          '<button onclick="generateAIQuestions(\'' + code + '\',(document.getElementById(\'ai-qb-topic\')||{}).value||\'\')" ' + (disabled?'disabled':'') + ' style="width:100%;padding:11px;background:' + (disabled?'var(--surf3)':'var(--ind)') + ';color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:' + (disabled?'not-allowed':'pointer') + '">✦ Generate ' + AI_QB_SET_SIZE + ' Questions</button>' +
-          '<div style="font-size:10px;color:var(--mut);text-align:center;margin-top:8px">' + quotaLabel + '</div>' +
-        '</div>' +
+      '<div class="qb-ai">' +
+        '<div style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--txt)"><span style="color:var(--ind)">' + ico('sparkles') + '</span>Generate new questions</div>' +
+        '<div style="font-size:12px;color:var(--sub);margin-top:4px;line-height:1.5">Leave the topic blank for a mixed set, or name one for a focused drill.</div>' +
+        '<input id="ai-qb-topic" type="text" placeholder="e.g. ASC 842 lease modifications" onkeydown="if(event.key===\'Enter\'){generateAIQuestions(\'' + code + '\',this.value)}">' +
+        '<button class="qz-btn" style="width:100%;padding:11px;font-size:13.5px;background:var(--ind)" ' + (disabled ? 'disabled' : '') + ' onclick="generateAIQuestions(\'' + code + '\',(document.getElementById(\'ai-qb-topic\')||{}).value||\'\')">Generate ' + AI_QB_SET_SIZE + ' questions</button>' +
+        '<div style="font-size:11px;color:var(--mut);text-align:center;margin-top:8px">' + quotaLabel + '</div>' +
       '</div>';
   }
 
   overlay.innerHTML =
-    '<div style="background:var(--surf);border-radius:20px;width:100%;max-width:460px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden">' +
-    // Header
-    '<div style="background:' + sec.color + ';padding:22px 24px 18px;flex-shrink:0">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
-        '<div style="display:flex;align-items:center;gap:10px">' +
-          '<span style="font-size:13px;font-weight:900;color:#fff;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;letter-spacing:.02em">' + code + '</span>' +
-        '</div>' +
-        '<button onclick="closeQBSection()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">\u00d7</button>' +
+    '<div class="qb-sheet" role="dialog" aria-label="' + sec.full + '" style="' + _qbVars(code) + '">' +
+      '<div class="qb-sheet-head">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between"><span class="qb-chip">' + code + '</span>' +
+        '<button class="qb-x" onclick="closeQBSection()" aria-label="Close">' + ico('x') + '</button></div>' +
+        '<div class="qb-title">' + sec.full + '</div>' +
+        '<div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="qb-meta"><span><b style="color:var(--txt)">' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + ' answered</span><span>' + acc + '</span></div>' +
       '</div>' +
-      '<div style="font-size:20px;font-weight:800;color:#fff;margin-top:10px">' + sec.full + '</div>' +
-      '<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">Practice \u00b7 ' + (prog.mcqDone||0) + ' questions answered</div>' +
-      // Progress bar
-      '<div style="margin-top:14px;height:5px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden">' +
-        '<div style="height:100%;width:' + pct + '%;background:#fff;border-radius:4px;transition:width .5s"></div>' +
+      '<div class="qb-body">' +
+        '<div class="qb-eyebrow">Practice</div>' + modeHTML +
+        '<div class="qb-eyebrow" style="margin-top:16px">Drill a topic' + (pro ? '' : '<span class="qb-pro">PRO</span>') + '</div>' +
+        '<div id="qb-topic-list"><div class="qb-skel"></div></div>' +
+        '<div class="qb-eyebrow" style="margin-top:18px">AI questions</div>' + aiBlock +
+        '<div class="qb-note qb-disc" style="margin-top:16px">Original practice questions written with AI help, not official AICPA questions. They may contain errors, so check anything surprising against your review course.</div>' +
       '</div>' +
-    '</div>' +
-    // Modes (scrolls within the modal so it never spans the full screen)
-    '<div style="padding:18px 22px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch">' +
-      '<div style="display:flex;align-items:flex-start;gap:8px;background:var(--ind-bg);border:1px solid rgba(90,95,207,.2);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--sub);line-height:1.5;margin-bottom:16px">' +
-        '<span style="flex-shrink:0">'+LedgerBuddy.face(20,{still:true})+'</span>' +
-        '<span><strong style="color:var(--ind)">AI-generated questions.</strong> A study aid that may contain errors — always verify against your review course (Becker, Gleim, Roger, Wiley) before your exam.</span>' +
-      '</div>' +
-      '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin-bottom:12px">Choose a practice mode</div>' +
-      modeCards +
-      aiBlock +
-    '</div>' +
     '</div>';
-
   overlay.style.display = 'flex';
+
+  loadQuestionBank(code).then(function(bank) {
+    const box = document.getElementById('qb-topic-list');
+    if (!box) return;
+    const counts = {}, order = [];
+    (bank || []).forEach(function(q){ if (!q.topic) return; if (!counts[q.topic]) { counts[q.topic] = 0; order.push(q.topic); } counts[q.topic]++; });
+    if (!order.length) { box.innerHTML = '<div class="qb-mode-d">Topic drills will appear once the bank loads.</div>'; return; }
+    const many = order.length > 6;
+    box.innerHTML = '<div class="qb-topics' + (many ? ' short' : '') + '">' + order.map(function(t) {
+      const go = pro ? 'closeQBSection();openQuizModal(\'' + code + '\',\'topic\',' + JSON.stringify(t).replace(/"/g, '&quot;') + ')' : 'openUpgradeModal(\'Question Bank — Topic drills\')';
+      return '<button type="button" class="qb-topic" onclick="' + go + '"><span class="qb-topic-name">' + esc(t) + '</span><span class="qb-topic-n">' + counts[t] + '</span><span class="qb-chev" style="margin-left:0">' + ico(pro ? 'arrow' : 'lock') + '</span></button>';
+    }).join('') + '</div>' +
+    (many ? '<button class="qb-more" onclick="this.previousElementSibling.classList.remove(\'short\');this.remove()">Show all ' + order.length + ' topics</button>' : '');
+  });
 }
 
 function closeQBSection() {
   const overlay = document.getElementById('qb-section-overlay');
   if (overlay) overlay.style.display = 'none';
-}
-
-function buildQuestionBank() {
-  S.qbProgress = S.qbProgress || {};
-  const pro = isPro();
-
-  const cards = QB_SECTIONS.map(function(sec) {
-    const prog = S.qbProgress[sec.code] || {mcqDone:0};
-    const mcqDone = prog.mcqDone || 0;
-    const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
-
-    return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
-      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:14px;padding:18px 20px;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;position:relative;overflow:hidden" ' +
-      'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
-      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
-      '<div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:' + sec.color + ';border-radius:14px 0 0 14px"></div>' +
-      '<div style="padding-left:8px">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
-          '<span style="font-size:11px;font-weight:900;color:' + sec.color + ';background:' + sec.color + '18;padding:3px 10px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
-          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' answered</span>' +
-        '</div>' +
-        '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;line-height:1.4">' + sec.full + '</div>' +
-        '<div style="height:5px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-bottom:10px">' +
-          '<div style="height:100%;width:' + pct + '%;background:' + sec.color + ';border-radius:4px;transition:width .5s"></div>' +
-        '</div>' +
-        '<div style="display:flex;align-items:center;justify-content:space-between">' +
-          '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">' + sec.mcqTotal.toLocaleString() + '+ questions</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 8px;border-radius:6px">AI-Powered</span>' +
-            (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 8px;border-radius:6px;font-weight:700">5 free</span>') +
-          '</div>' +
-          '<span style="font-size:18px;color:var(--mut)">\u203a</span>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  const freeNote = pro ? '' :
-    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px;cursor:pointer" onclick="openUpgradeModal(\'Full Question Bank\')">' +
-      '<div style="flex:1">' +
-        '<div style="font-size:13px;font-weight:800;color:var(--ora)">Unlock the Full Question Bank</div>' +
-        '<div style="font-size:12px;color:var(--sub);margin-top:2px">Pro unlocks the full question bank, timed sets, and random quizzes per section.</div>' +
-      '</div>' +
-      '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openUpgradeModal(\'Full Question Bank\')">Upgrade</button>' +
-    '</div>';
-
-  return '<div style="max-width:860px;margin:0 auto">' +
-    '<div style="margin-bottom:20px">' +
-      '<h1 style="font-size:22px;font-weight:900;letter-spacing:-.02em">Question Bank</h1>' +
-      '<p style="color:var(--mut);font-size:13px;margin-top:4px">Select a section to start practicing.</p>' +
-    '</div>' +
-    '<div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--sub);line-height:1.6">' +
-      '<strong>Practice Question Disclaimer:</strong> These questions are original educational content created by Ledger and are <strong>not</strong> official AICPA CPA Exam questions. ' +
-      'Ledger is not affiliated with or endorsed by the AICPA, NASBA, or any exam review provider. ' +
-      'Always study from your official review course (Becker, Gleim, Roger, Wiley, or UWorld) for authentic exam preparation material.' +
-    '</div>' +
-    freeNote +
-    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">' +
-      cards +
-    '</div>' +
-  '</div>';
 }
 
 // ═══════════════════════════════════════════════
@@ -16060,71 +16155,44 @@ function buildStudyLab() {
 function _buildQBankPanel() {
   S.qbProgress = S.qbProgress || {};
   const pro = isPro();
+  let totalDone = 0, graded = 0, correct = 0, totalQ = 0;
 
   const cards = QB_SECTIONS.map(function(sec) {
-    const prog = S.qbProgress[sec.code] || {mcqDone:0};
-    const mcqDone = prog.mcqDone || 0;
-    const pct = Math.min(100, Math.round(mcqDone / sec.mcqTotal * 100));
-    return '<div onclick="openQBSection(\'' + sec.code + '\')" ' +
-      'style="background:var(--surf);border:1.5px solid var(--bdr);border-radius:16px;padding:22px 22px;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s,opacity .2s;position:relative;overflow:hidden" ' +
-      'onmouseover="this.style.borderColor=\'' + sec.color + '\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'var(--shadow-md)\'" ' +
-      'onmouseout="this.style.borderColor=\'var(--bdr)\';this.style.transform=\'\';this.style.boxShadow=\'\'">' +
-      '<div style="position:absolute;top:0;left:0;bottom:0;width:5px;background:' + sec.color + ';border-radius:16px 0 0 16px"></div>' +
-      '<div style="padding-left:10px">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
-          '<span style="font-size:12px;font-weight:900;color:' + _sectionText(sec.code) + ';background:' + sec.color + '18;padding:4px 12px;border-radius:20px;letter-spacing:.04em">' + sec.code + '</span>' +
-          '<span style="font-size:11px;color:var(--mut)">' + mcqDone + ' answered</span>' +
-        '</div>' +
-        '<div style="font-size:14px;font-weight:800;color:var(--txt);margin-bottom:12px;line-height:1.35">' + sec.full + '</div>' +
-        '<div style="height:6px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-bottom:12px">' +
-          '<div style="height:100%;width:' + pct + '%;background:' + sec.color + ';border-radius:4px;transition:width .5s"></div>' +
-        '</div>' +
-        '<div style="display:flex;align-items:center;justify-content:space-between">' +
-          '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">' + sec.mcqTotal.toLocaleString() + '+ questions</span>' +
-            '<span style="font-size:10px;color:var(--mut);background:var(--surf2);border:1px solid var(--bdr);padding:3px 9px;border-radius:6px">AI-Powered</span>' +
-            (pro ? '' : '<span style="font-size:10px;color:var(--ora);background:var(--ora-bg);border:1px solid var(--ora-bdr);padding:3px 9px;border-radius:6px;font-weight:700">5 free</span>') +
-          '</div>' +
-          '<span style="font-size:20px;color:var(--mut)">›</span>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
+    const p = S.qbProgress[sec.code] || {};
+    const done = p.mcqDone || 0;
+    totalDone += done; graded += p.graded || 0; correct += p.correct || 0; totalQ += sec.mcqTotal;
+    const pct = Math.min(100, Math.round(done / sec.mcqTotal * 100));
+    const acc = p.graded ? Math.round(p.correct / p.graded * 100) + '% correct' : (done ? '' : 'Not started');
+    return '<button type="button" class="qb-card" style="' + _qbVars(sec.code) + '" onclick="openQBSection(\'' + sec.code + '\')">' +
+      '<div class="qb-card-top"><span class="qb-chip">' + sec.code + '</span>' +
+        (pro ? '' : '<span class="qb-pro" style="margin-left:2px;color:var(--sub);background:var(--surf2)">5 FREE</span>') +
+        '<span class="qb-card-go">' + ico('arrow') + '</span></div>' +
+      '<div class="qb-card-name">' + sec.full + '</div>' +
+      '<div><div class="qb-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="qb-card-foot"><span><b>' + done.toLocaleString() + '</b> of ' + sec.mcqTotal.toLocaleString() + '</span><span>' + acc + '</span></div></div>' +
+    '</button>';
   }).join('');
 
-  const freeNote = pro ? '' :
-    '<div style="background:var(--ora-bg);border:1px solid var(--ora-bdr);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:24px;cursor:pointer" onclick="openUpgradeModal(\'Full Question Bank\')">' +
-      '<div style="font-size:28px">'+ico('unlock')+'</div>' +
-      '<div style="flex:1">' +
-        '<div style="font-size:13px;font-weight:800;color:var(--ora)">Unlock the Full Question Bank</div>' +
-        '<div style="font-size:12px;color:var(--sub);margin-top:2px">Pro unlocks the full question bank, timed sets, and random quizzes per section.</div>' +
+  const summary =
+    '<div class="qb-sum">' +
+      '<div><div class="qb-sum-v">' + totalDone.toLocaleString() + '</div><div class="qb-sum-l">Answered</div></div>' +
+      '<div><div class="qb-sum-v">' + (graded ? Math.round(correct / graded * 100) + '%' : '—') + '</div><div class="qb-sum-l">Accuracy</div></div>' +
+      '<div><div class="qb-sum-v">' + totalQ.toLocaleString() + '</div><div class="qb-sum-l">In the bank</div></div>' +
+    '</div>';
+
+  const upsell = pro ? '' :
+    '<div class="qb-upsell" onclick="openUpgradeModal(\'Full Question Bank\')">' +
+      '<span style="font-size:22px;color:var(--ora);flex-shrink:0">' + ico('unlock') + '</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13px;font-weight:800;color:var(--ora)">Unlock every question</div>' +
+        '<div style="font-size:12px;color:var(--sub);margin-top:2px">Pro opens the full bank, topic drills, timed sets and random quizzes.</div>' +
       '</div>' +
       '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openUpgradeModal(\'Full Question Bank\')">Upgrade</button>' +
     '</div>';
 
-  const totalDone = QB_SECTIONS.reduce(function(a,s){ return a + ((S.qbProgress[s.code]||{}).mcqDone||0); }, 0);
-  const totalQ = QB_SECTIONS.reduce(function(a,s){ return a + s.mcqTotal; }, 0);
-  const totalPct = Math.round(totalDone/totalQ*100);
-
-  const statsBar =
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">' +
-      '<div class="card card-pad" style="text-align:center;padding:14px">' +
-        '<div style="font-size:26px;font-weight:900;color:var(--ind);letter-spacing:-.04em">' + totalDone + '</div>' +
-        '<div style="font-size:11px;color:var(--mut);margin-top:2px">Questions Done</div>' +
-      '</div>' +
-      '<div class="card card-pad" style="text-align:center;padding:14px">' +
-        '<div style="font-size:26px;font-weight:900;color:var(--grn);letter-spacing:-.04em">' + totalPct + '%</div>' +
-        '<div style="font-size:11px;color:var(--mut);margin-top:2px">Overall Progress</div>' +
-      '</div>' +
-      '<div class="card card-pad" style="text-align:center;padding:14px">' +
-        '<div style="font-size:26px;font-weight:900;color:var(--ora);letter-spacing:-.04em">' + QB_SECTIONS.length + '</div>' +
-        '<div style="font-size:11px;color:var(--mut);margin-top:2px">Sections Available</div>' +
-      '</div>' +
-    '</div>';
-
-  return statsBar + freeNote +
-    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">' +
-      cards +
-    '</div>';
+  return summary + upsell +
+    '<div class="qb-grid">' + cards + '</div>' +
+    '<div class="qb-disc">These are original practice questions written by Ledger with AI help. They are not official AICPA questions, and Ledger is not affiliated with the AICPA, NASBA or any review course. Use them alongside your review course, not instead of it.</div>';
 }
 
 // ─── Study Tools panel (AI flashcards/quizzes/summaries) ─────────────────────
