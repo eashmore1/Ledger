@@ -430,6 +430,7 @@ function _openPushUrl(u){
 function _runShortcut(action){
   if(action==='start') openSessionModal();
   else if(action==='log'){ openSessionModal(); setTimeout(()=>{ if(TS.phase==='setup') toggleManualLog(); },80); }
+  else if(action==='recap'){ switchTab('today'); setTimeout(()=>openWeekRecap(),200); }
   else if(action==='rooms'){ switchTab('today'); setTimeout(()=>document.getElementById('rooms-card')?.scrollIntoView({behavior:'smooth',block:'center'}),300); }
 }
 
@@ -457,7 +458,11 @@ function _notifyProfile(){
   return {
     tz, name:(S.name||'').split(' ')[0].slice(0,40), streak:getStreak(), lastStudyDate:last,
     week:{key:wk.weekKey,hrs:Math.round(wk.hrs*10)/10,days:wk.days.filter(d=>d.hrs>0).length,target:wk.target},
-    today:{hours:tgt.hours||0,section:tgt.section||''},
+    // today.rest: days that hold the streak (rest days and shields), so the
+    // evening job doesn't warn about a streak that is safe. (Inside `today`
+    // because the notify doc's database rules fix its top-level fields.)
+    today:{hours:tgt.hours||0,section:tgt.section||'',
+      rest:Object.keys(S.restDays||{}).filter(k=>restKind(k)&&k>=_dayShift(today,-14)&&k<=_dayShift(today,14)).sort()},
     exams, scoreDue, prefs, watch
   };
 }
@@ -580,6 +585,87 @@ function notifyEvent(type,payload){
     if(!token) return;
     return fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(Object.assign({type},payload||{}))});
   }).catch(()=>{});
+}
+
+// Same endpoint, for calls whose answer matters. Resolves {ok,status,data}.
+async function notifyCall(type,payload){
+  if(!firebaseAuth||!firebaseAuth.currentUser) return {ok:false,status:0,data:{}};
+  try{
+    const token=await _getAuthToken(); if(!token) return {ok:false,status:0,data:{}};
+    const r=await fetch('/api/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(Object.assign({type},payload||{}))});
+    let data={}; try{ data=await r.json(); }catch(e){}
+    return {ok:r.ok,status:r.status,data};
+  }catch(e){ return {ok:false,status:0,data:{}}; }
+}
+
+// ── NUDGES ──────────────────────────────────────────────────────
+// A friend who follows you back hasn't studied today: one tap sends them a
+// push and a bell notification. Once a day per person (the server enforces it).
+function _nudgedToday(uid){
+  const n=S&&S._nudgesOut;
+  return !!(n&&n.day===todayStr()&&(n.ids||[]).includes(uid));
+}
+function _markNudged(uid){
+  const t=todayStr();
+  if(!S._nudgesOut||S._nudgesOut.day!==t) S._nudgesOut={day:t,ids:[]};
+  if(!S._nudgesOut.ids.includes(uid)) S._nudgesOut.ids.push(uid);
+}
+// Can I nudge this friend right now? '' if yes, otherwise why not (for a tooltip).
+function nudgeBlocker(f){
+  if(!f||!f.id||!AUTH||!AUTH.uid) return 'signin';
+  const t=todayStr();
+  if(!(f.following||[]).includes(AUTH.uid)) return 'not-mutual';
+  if((f.restDays||[]).includes(t)) return 'resting';
+  if((f.activities||[]).some(a=>(a.date||'').slice(0,10)===t&&_isStudyAct(a))) return 'studied';
+  if(_nudgedToday(f.id)) return 'done';
+  return '';
+}
+async function sendNudge(uid,btn){
+  const f=(REAL_USERS||[]).find(x=>x.id===uid);
+  const first=((f&&f.name)||'them').split(' ')[0]; // toasts render text, not HTML
+  if(_nudgedToday(uid)){ showToast('You already nudged '+first+' today.','info'); return; }
+  if(btn){ btn.disabled=true; btn.classList.add('sent'); btn.textContent='Nudged'; }
+  _markNudged(uid); saveState();
+  try{ await syncNotifyProfile(); }catch(e){} // the server checks I studied today
+  const r=await notifyCall('nudge',{toUid:uid});
+  if(r.ok){ showToast('Nudge sent to '+first+'.','ok'); logLedgerEvent('nudge_sent'); return; }
+  if(r.status===429&&r.data&&r.data.error==='already-nudged'){ showToast('You already nudged '+first+' today.','info'); return; }
+  // Didn't go through: undo so they can try again.
+  if(S._nudgesOut) S._nudgesOut.ids=(S._nudgesOut.ids||[]).filter(x=>x!==uid);
+  saveState();
+  if(btn){ btn.disabled=false; btn.classList.remove('sent'); btn.textContent='Nudge'; }
+  const err=r.data&&r.data.error;
+  showToast(r.status===403&&err==='not-mutual'?'You can nudge people who follow you back.':r.status===403&&err==='study-first'?'Log today\u2019s session first, then nudge.':r.status===0?'You\u2019re offline. Try again in a moment.':'That nudge didn\u2019t send. Try again in a moment.','err');
+}
+// Nudges sent to me: called from syncSocial. Turns new ones into bell
+// notifications and keeps today's list for the Today screen.
+let _nudgeInboxAt=0;
+async function syncNudges(force){
+  if(!S||!AUTH||!AUTH.uid) return false;
+  if(!force&&Date.now()-_nudgeInboxAt<5*60000) return false;
+  _nudgeInboxAt=Date.now();
+  const r=await notifyCall('nudge_inbox');
+  if(!r.ok||!r.data) return false;
+  let dirty=false;
+  const seen=new Set(S._seenNudges||[]), firstRun=!Array.isArray(S._seenNudges);
+  const items=(r.data.nudges||[]).filter(n=>n&&n.from&&!isBlocked(n.from));
+  for(const n of items){
+    const key=n.from+'@'+n.at;
+    if(seen.has(key)) continue;
+    seen.add(key); dirty=true;
+    if(!firstRun) addNotification('nudge','wave',esc(n.name)+' nudged you to study today.',n.from,'user',n.from);
+  }
+  if(dirty) S._seenNudges=[...seen].slice(-100);
+  const t=todayStr();
+  const todays=items.filter(n=>_ymd(new Date(n.at))===t).map(n=>({from:n.from,name:n.name}));
+  if(JSON.stringify(todays)!==JSON.stringify((S._nudgesIn&&S._nudgesIn.day===t)?S._nudgesIn.list:[])){ S._nudgesIn={day:t,list:todays}; dirty=true; }
+  // Who I nudged (from any device) so buttons read "Nudged" after a reload.
+  (r.data.sent||[]).forEach(x=>{ if(x&&x.to&&_ymd(new Date(x.at))===t&&!_nudgedToday(x.to)){ _markNudged(x.to); dirty=true; } });
+  return dirty;
+}
+function nudgesToday(){
+  const n=S&&S._nudgesIn;
+  return n&&n.day===todayStr()?(n.list||[]):[];
 }
 
 // ── UI ──────────────────────────────────────────────────────────

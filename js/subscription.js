@@ -49,7 +49,7 @@ const PRO_FEATURES={
   examSimulator:    {label:'Question Bank',icon:'pencil',desc:'Unlimited MCQs per section with explanations, timed sets, and random quizzes.'},
   unlimitedClubs:   {label:'Unlimited Study Clubs',icon:'columns',desc:'Create unlimited private clubs. Free tier is limited to 1 club.'},
   priorityBadges:   {label:'Member Badge',icon:'medal',desc:'Pro member badge visible on your public profile and in your study circle.'},
-  streakShield:     {label:'Streak Shield',icon:'shield',desc:'Miss a day? Use a Streak Shield to protect your streak — 3 shields per month.'},
+  streakShield:     {label:'Streak Shield',icon:'shield',desc:'Missed a day? A Streak Shield brings your streak back, covering up to 3 missed days from the past week. Use one whenever you need it.'},
   exportData:       {label:'Export Your Data',icon:'upload',desc:'Download all your sessions, scores, and progress as a JSON file at any time.'},
   customGoals:      {label:'Custom Weekly Goals',icon:'target',desc:'Set custom per-section weekly hour goals with smart reminders.'},
   // Formerly the Elite tier — all included in Pro as of 2026-11-02
@@ -119,6 +119,7 @@ function renderUpgradeModal(featureHint){
     {on:true,text:'1 Study Club'},
     {on:true,text:'Study Circle (community view)'},
     {on:true,text:'Basic Achievements'},
+    {on:true,text:'1 rest day a week (keeps your streak)'},
     {on:false,text:'Full Question Bank'},
     {on:false,text:'Streak Shield'},
     {on:false,text:'Exam Day Protocol'},

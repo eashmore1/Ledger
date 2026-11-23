@@ -122,10 +122,14 @@ function _todayHero(sec,tgt,done){
     head='Session in progress';
     sub=esc(TS.section)+(TS.material?' · '+esc(TS.material):'')+' · <span id="today-timer">'+fmtElapsed(TS.elapsed)+'</span>'+(TS.phase==='paused'?' (paused)':'');
     cta=`<button class="today-cta" id="today-start-btn" onclick="openSessionModal()">${TS.phase==='paused'?'Resume session':'Open timer'}</button>`;
+  } else if(restKind(todayStr())==='rest'&&!logged){
+    head='Rest day';
+    sub=streak>0?'Your '+streak+'-day streak is safe today. Recharge, and pick it back up tomorrow.':'Recharge today. Pick it back up tomorrow.';
+    cta=startBtn('Study anyway')+`<button class="today-cta-2" onclick="cancelRestDay('${todayStr()}')">Undo rest day</button>`;
   } else if(tgt.rest&&!logged){
     head='Rest day';
     sub=esc(tgt.why)+'. Rest is part of the plan — or get ahead if you feel like it.';
-    cta=startBtn('Study anyway')+pastBtn;
+    cta=startBtn('Study anyway')+(restKind(todayStr())||restBlocker(todayStr())?pastBtn:`<button class="today-cta-2" onclick="takeRestDay()">Keep my streak: rest today</button>`);
   } else if(tgt.hours>0&&done>=tgt.hours){
     head='Done for today';
     sub=_hrs(done)+' logged — target hit. Anything more is a bonus.';
@@ -140,17 +144,21 @@ function _todayHero(sec,tgt,done){
     cta=startBtn(logged?'Start another session':'Start Session')+pastBtn;
   }
   const hr=new Date().getHours();
-  const buddyPose=stage.k==='examday'?'cheer':active?'idle':(tgt.rest&&!logged)?'sleep':(tgt.hours>0&&done>=tgt.hours)?'cheer':!(S.activities||[]).some(_isStudyAct)?'wave':(streak>0&&!logged&&hr>=18)?'worry':logged?'idle':'point';
-  const streakChip=streak>0
-    ?`<span class="today-chip${logged?' ok':' warn'}">${ico('flame')} ${streak}-day streak · ${logged?'safe for today':'log today to keep it'}</span>`
-    :`<span class="today-chip">${logged?'Streak started today':'Study today to start a streak'}</span>`;
+  const resting=restKind(todayStr())==='rest'&&!logged;
+  const buddyPose=stage.k==='examday'?'cheer':active?'idle':((tgt.rest||resting)&&!logged)?'sleep':(tgt.hours>0&&done>=tgt.hours)?'cheer':!(S.activities||[]).some(_isStudyAct)?'wave':(streak>0&&!logged&&hr>=18)?'worry':logged?'idle':'point';
+  const canRest=!logged&&!resting&&!active&&!restBlocker(todayStr());
+  const restLink=canRest&&streak>0?`<button class="today-chip-link" onclick="takeRestDay()">or rest today</button>`:'';
+  const streakChip=(streak>0
+    ?`<span class="today-chip${logged||resting?' ok':' warn'}">${ico('flame')} ${streak}-day streak · ${logged?'safe for today':resting?'resting today':'log today to keep it'}</span>`
+    :`<span class="today-chip">${logged?'Streak started today':'Study today to start a streak'}</span>`)
+    +restLink+`<button class="today-chip-link" onclick="openRestDayModal()">Rest days</button>`;
   return `<div class="today-hero" id="today-hero" style="--sec:${ex.color}">
     <div class="today-hero-txt">
       <div class="today-eyebrow">${_getGreeting()}, ${S.name} · ${dateLine}</div>
       <h1 class="today-head">${head}</h1>
       <div class="today-sub">${sub}</div>
       <div class="today-cta-row">${cta}</div>
-      <div style="margin-top:14px">${streakChip}</div>
+      <div class="today-chip-row">${streakChip}</div>
     </div>
     <div class="today-hero-ring"><div class="today-buddy" id="today-buddy" data-pose="${buddyPose}">${LedgerBuddy(buddyPose,92)}</div><div class="today-ring-col">${ring}<div class="today-ring-lbl"><span class="badge badge-${tgt.section}" style="background:rgba(255,255,255,.14);color:#fff">${tgt.section}</span></div></div></div>
   </div>`;
@@ -183,8 +191,10 @@ function _todayCatchUp(sec){
 function _todayWeek(){
   const wk=_thisWeek();
   const pct=Math.min(100,Math.round(wk.hrs/Math.max(1,wk.target)*100));
-  const cells=wk.days.map(d=>`<div class="today-day${d.isToday?' is-today':''}${d.hrs>0?' done':''}${d.future?' future':''}" title="${_fmtDay(d.key)}: ${_hrs(d.hrs)}">
-      <div class="today-day-dot">${d.hrs>0?_hrs(d.hrs).replace('h',''):''}</div><div class="today-day-lbl">${d.lbl}</div></div>`).join('');
+  const cells=wk.days.map(d=>{
+    const rk=d.hrs>0?null:restKind(d.key);
+    return `<div class="today-day${d.isToday?' is-today':''}${d.hrs>0?' done':''}${d.future?' future':''}${rk?' rest':''}" title="${_fmtDay(d.key)}: ${rk==='rest'?'rest day':rk==='shield'?'covered by a Streak Shield':_hrs(d.hrs)}">
+      <div class="today-day-dot">${d.hrs>0?_hrs(d.hrs).replace('h',''):rk?(rk==='rest'?'R':ico('shield')):''}</div><div class="today-day-lbl">${d.lbl}</div></div>`;}).join('');
   return `<div class="card card-pad today-card" id="today-week">
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px">
       <div class="section-title" style="margin:0">This week</div>
@@ -209,32 +219,51 @@ function _todayCrew(){
   const rows=followed.map(f=>{
     const acts=(f.activities||[]).filter(a=>a.date&&a.date.slice(0,10)===today&&_isStudyAct(a));
     const hrs=acts.reduce((s,a)=>s+(a.hours||0),0);
-    return {f,hrs,sec:acts.length?acts[acts.length-1].section:'',visible:(f.activities||[]).length>0,partner:S.accountabilityPartner===f.id};
-  }).sort((a,b)=>(b.partner-a.partner)||(b.hrs-a.hrs)||((b.f.streak||0)-(a.f.streak||0)));
+    const resting=(f.restDays||[]).includes(today);
+    const nb=typeof nudgeBlocker==='function'?nudgeBlocker(f):'n/a';
+    return {f,hrs,sec:acts.length?acts[acts.length-1].section:'',visible:(f.activities||[]).length>0,partner:S.accountabilityPartner===f.id,resting,
+      canNudge:hrs===0&&!resting&&(nb===''||nb==='done'),nudged:nb==='done'};
+  }).sort((a,b)=>(b.partner-a.partner)||(b.hrs-a.hrs)||(b.canNudge-a.canNudge)||((b.f.streak||0)-(a.f.streak||0)));
   const studied=rows.filter(r=>r.hrs>0).length;
-  const list=rows.slice(0,5).map(r=>{
-    const f=r.f, first=esc((f.name||'').split(' ')[0]);
+  const waiting=rows.filter(r=>r.canNudge);
+  const iStudied=_hoursOn(today)>0;
+  const list=rows.slice(0,6).map(r=>{
+    const f=r.f;
     const status=r.hrs>0?`<span style="color:var(--grn);font-weight:700">${_hrs(r.hrs)}${r.sec?' '+esc(r.sec):''} today</span>`
+      :r.resting?'Rest day'
       :r.visible?'Not yet today'+(f.streak?' · '+f.streak+'d streak':''):(f.streak?f.streak+'d streak':'CPA candidate');
     const av=f.profilePic?`<img src="${f.profilePic}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc(f.initials||'?');
+    const right=r.canNudge&&iStudied
+      ?`<button class="nudge-btn${r.nudged?' sent':''}" ${r.nudged?'disabled':''} onclick="event.stopPropagation();sendNudge('${f.id}',this)" aria-label="Nudge ${esc(f.name)} to study">${r.nudged?'Nudged':'Nudge'}</button>`
+      :`<span class="today-dot${r.hrs>0?' on':''}"></span>`;
     return `<div class="today-crew-row" onclick="openUserProfile('${f.id}')">
       <div class="avatar av-sm" style="background:${f.color};color:#fff;overflow:hidden;padding:0;position:relative">${av}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}${r.partner?' <span class="today-tag">Partner</span>':''}</div>
         <div style="font-size:11px;color:var(--mut)">${status}</div>
       </div>
-      ${r.partner&&r.hrs===0&&r.visible?`<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();pingStudyPartner('${f.id}','${first}')">Nudge</button>`
-        :`<span class="today-dot${r.hrs>0?' on':''}"></span>`}
+      ${right}
     </div>`;
   }).join('');
+  // Who nudged me today (until I study).
+  const inbox=!iStudied&&typeof nudgesToday==='function'?nudgesToday():[];
+  const nudgedMe=inbox.length?`<div class="nudge-in" role="status">
+      <span class="nudge-in-ic">${ico('wave')}</span>
+      <span style="flex:1;min-width:0"><strong>${esc(inbox[0].name.split(' ')[0])}</strong>${inbox.length>1?' and '+(inbox.length-1)+' other'+(inbox.length>2?'s':''):''} nudged you to study today.</span>
+      <button class="btn btn-primary btn-xs" onclick="openSessionModal()">Start</button>
+    </div>`:'';
+  const hint=waiting.length&&iStudied?`<div class="nudge-hint">${waiting.length===1?esc(waiting[0].f.name.split(' ')[0])+' hasn’t':waiting.length+' people haven’t'} studied yet. A nudge helps.</div>`
+    :waiting.length?`<div class="nudge-hint">${waiting.length===1?'1 person hasn’t':waiting.length+' people haven’t'} studied yet today. Log a session and you can nudge them.</div>`:'';
   return `<div class="card card-pad today-card" id="today-crew">
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px">
       <div class="section-title" style="margin:0">Your crew today</div>
       <div style="font-size:12px;color:var(--mut)"><strong style="color:var(--txt)">${studied}</strong> of ${followed.length} studied</div>
     </div>
+    ${nudgedMe}
     <div id="today-live"></div>
+    ${hint}
     ${list}
-    ${followed.length>5?`<button class="btn btn-ghost btn-xs" style="width:100%;justify-content:center;margin-top:8px" onclick="switchTab('feed')">See everyone in the feed →</button>`:''}
+    ${followed.length>6?`<button class="btn btn-ghost btn-xs" style="width:100%;justify-content:center;margin-top:8px" onclick="switchTab('feed')">See everyone in the feed →</button>`:''}
   </div>`;
 }
 
@@ -258,6 +287,7 @@ function buildToday(){
       ${_todayCatchUp(sec)}
       ${_todayPushPrompt()}
       ${_todayWeek()}
+      ${typeof buildWeekRecapPrompt==='function'?buildWeekRecapPrompt():''}
       ${_todayQuick()}
     </div>
     <div class="today-side">

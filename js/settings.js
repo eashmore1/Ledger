@@ -682,6 +682,7 @@ function buildSettingsNotifications(){
     {id:'study_reminders',label:'Study Reminders',sub:'An evening nudge if you haven\'t studied, exam-eve reminders, and your Sunday recap',def:true},
     {id:'streak_alerts',label:'Streak Alerts',sub:'Warn you before your streak is about to break',def:true},
     {id:'crew_activity',label:'Crew Activity',sub:'When your study partner or people you follow log a session or open a study room',def:true},
+    {id:'nudges',label:'Nudges',sub:'When a friend nudges you to study on a day you haven\u2019t yet',def:true},
     {id:'messages',label:'Direct Messages',sub:'When someone sends you a message',def:true},
     {id:'weekly_email',label:'Weekly Recap Email',sub:'Your week in one short email on Sunday evening',def:true},
     {id:'props_notifs',label:'Props & Comments',sub:'When someone gives you props or comments',def:true},

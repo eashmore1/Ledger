@@ -36,6 +36,7 @@ const PREF_FOR = {
   follow: 'leaderboard',
   dm: 'messages',
   crew: 'crew_activity',
+  nudge: 'nudges',
 };
 const DAILY_CAP = 8;  // pushes per person per day, all kinds together
 const CREW_CAP = 3;   // of which "someone you follow studied / opened a room"
@@ -84,7 +85,13 @@ function pickReminder(profile, now, mode) {
   const last = p.lastStudyDate || '';
   const studiedToday = last === t.ymd;
   const streak = Number(p.streak) || 0;
-  const streakAtRisk = !studiedToday && streak > 0 && last === yesterday;
+  // Rest days and Streak Shields hold a streak: it is alive if every day
+  // between the last study day and today is one of them.
+  const rest = new Set(p.today && Array.isArray(p.today.rest) ? p.today.rest : []);
+  let alive = !!last && last <= yesterday;
+  for (let d = yesterday; alive && d > last; d = addDays(d, -1)) if (!rest.has(d)) alive = false;
+  const restingToday = rest.has(t.ymd);
+  const streakAtRisk = !studiedToday && !restingToday && streak > 0 && alive;
   const once = (kind) => kind + '-' + t.ymd;
 
   const examTomorrow = Object.keys(p.exams || {}).find((s) => p.exams[s] === tomorrow);
@@ -110,7 +117,7 @@ function pickReminder(profile, now, mode) {
       : target > 0 ? `${hrs(target - done)} short of your ${hrs(target)} goal. New week tomorrow.`
       : 'New week tomorrow.';
     if (streakAtRisk) body += ` Your ${streak}-day streak ends at midnight.`;
-    return { type: 'recap', onceKey: 'recap-' + weekStart, tag: 'recap', url: '/#dashboard',
+    return { type: 'recap', onceKey: 'recap-' + weekStart, tag: 'recap', url: '/?action=recap',
       title: done > 0 ? `Your week: ${hrs(done)} over ${days} day${days === 1 ? '' : 's'}` : 'Your week in review', body };
   }
 
@@ -118,7 +125,7 @@ function pickReminder(profile, now, mode) {
     return { type: 'streak', onceKey: once('rem'), tag: 'reminder', url: '/?action=start',
       title: `Your ${streak}-day streak ends at midnight`, body: 'Even 25 minutes keeps it alive.' };
   }
-  if (!studiedToday && last && last >= addDays(t.ymd, -7)) {
+  if (!studiedToday && !restingToday && last && last >= addDays(t.ymd, -7)) {
     const tgt = p.today && Number(p.today.hours) > 0 ? `Today's target is ${hrs(p.today.hours)}${p.today.section ? ' of ' + clean(p.today.section, 6) : ''}. ` : '';
     return { type: 'reminder', onceKey: once('rem'), tag: 'reminder', url: '/?action=start',
       title: "You haven't studied today", body: tgt + 'Even 25 minutes counts.' };

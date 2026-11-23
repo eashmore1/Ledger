@@ -478,6 +478,7 @@ function _renderActivityPage(actId){
   <div style="padding:20px 16px 0">
     <div style="display:flex;gap:10px;margin-bottom:18px">${statBlocks}</div>
     ${act.material?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Material</div><div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div></div>`:''}
+    ${studySrcLabel(act)?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Studied with</div><div class="ac-tags">${_srcTagsHTML(act)}</div></div>`:''}
     ${act.location?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Location</div><div style="font-size:13px;font-weight:600;color:var(--sub)">${ico('pin')} ${esc(act.location)}</div></div>`:''}
     ${act.caption?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Notes</div><div style="font-size:13px;color:var(--sub);line-height:1.65;background:var(--surf2);border-radius:10px;padding:10px 12px">"${act.caption}"</div></div>`:''}
     ${(act.concepts||[]).length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Concepts (${act.concepts.length})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${act.concepts.map(c=>`<span style="font-size:11px;background:rgba(212,64,0,.1);border:1px solid rgba(212,64,0,.2);color:var(--ora);padding:3px 10px;border-radius:20px;font-weight:600">${c}</span>`).join('')}</div></div>`:''}
@@ -642,7 +643,7 @@ function _renderFullUserProfile(u){
                 <span style="font-size:22px;font-weight:900;color:${ex.color};letter-spacing:-.04em;line-height:1">${a.hours}</span>
                 <span style="font-size:11px;color:var(--mut);font-weight:600">hrs</span>
               </div>
-              ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.material}</div>`:''}
+              ${a.material||studySrcLabel(a)?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${[a.material,studySrcLabel(a)].filter(Boolean).join(' · ')}</div>`:''}
               ${a.caption?`<div style="font-size:11px;color:var(--sub);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${a.caption}"</div>`:''}
               ${diffStars?`<div style="font-size:11px;margin-top:4px">${diffStars}</div>`:''}
             </div>

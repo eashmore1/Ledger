@@ -58,16 +58,6 @@ function leaveChallenge(chId){
   renderTab();
   showToast('Left challenge','info');
 }
-function useStreakShield(){
-  if(!isPro()){openUpgradeModal('Streak Shield');return;}
-  const used=S.shieldsUsed||0;
-  const max=isElite()?999:3;
-  if(used>=max){showToast('No shields left this month. Resets on the 1st.','err');return;}
-  S.shieldsUsed=(used+1);
-  saveState();
-  showToast('Streak Shield used! Your streak is protected.','ok');
-  renderTab();
-}
 function checkChallengeAchievements(){
   const joined=S.challenges||[];
   const newlyCompleted=[];
@@ -122,7 +112,7 @@ function renderApp(){
   if(typeof _detachDMConvListener==='function') _detachDMConvListener();
   if(typeof _detachDMInboxListener==='function') _detachDMInboxListener();
   // Once per page load: rehydrate an in-progress study session so a reload never loses the timer.
-  if(!window._tsRestored){window._tsRestored=true;if(tsRestore())showToast('Paused study session restored — resume or save it.','info');}
+  if(!window._tsRestored){window._tsRestored=true;try{tsResumeAfterLoad();}catch(e){console.warn('[Ledger] session restore:',e);}}
   // Once per page load: push my current study stats to my clubs' shared leaderboards.
   if(!window._clubSynced){window._clubSynced=true;setTimeout(()=>{try{syncClubActivity();}catch(e){}},2500);}
   // Once per page load: backfill follower edges so existing follows count correctly cross-user.

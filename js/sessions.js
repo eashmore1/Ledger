@@ -4,6 +4,7 @@
 let postFeeling='💪';let postDiff=3;
 function openPostModal(prefSection=''){
   postFeeling='💪';postDiff=3;
+  _srcPick.pm={course:S.lastCourse||'',kind:''};
   const sectionOpts=(S.sections||['FAR','AUD','REG','TCP']).map(s=>`<option value="${s}"${s===prefSection?' selected':''}>${s} — ${EXAMS[s]?.full||s}</option>`).join('');
   const feelingOpts=['💪','😤','😅','🤔','😵','🔥'].map(f=>`<div class="feeling-opt${f===postFeeling?' selected':''}" onclick="selectFeeling('${f}',this)">${ico(f)}</div>`).join('');
   const diffOpts=[1,2,3,4,5].map(d=>`<div class="diff-opt${d===postDiff?' selected':''}" onclick="selectDiff(${d},this)">${d}</div>`).join('');
@@ -27,6 +28,7 @@ function openPostModal(prefSection=''){
   <label>Material Covered <span style="color:var(--mut);font-weight:400">(optional)</span></label>
   <input id="pm-material" type="text" maxlength="120" placeholder="e.g. Governmental Accounting — Fund Structure">
 </div>
+${studySrcPickerHTML('pm','form-grp')}
 <div class="form-grp">
   <label>Session Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
   <textarea id="pm-caption" maxlength="500" placeholder="How did it go? What clicked? What's still tricky?"></textarea>
@@ -77,6 +79,9 @@ function submitPost(){
   if(btn){btn.disabled=true;btn.textContent='Saving…';}
   const isPrivate=document.getElementById('pm-private')?.checked||false;
   const act={id:'u'+Date.now(),date:date+'T'+new Date().toTimeString().slice(0,8),section,hours,material,caption,difficulty:postDiff,feeling:postFeeling,kudos:[],comments:[],private:isPrivate};
+  if(_srcPick.pm.course) act.course=_srcPick.pm.course;
+  if(_srcPick.pm.kind) act.kind=_srcPick.pm.kind;
+  rememberStudySrc(act.course);
   S.activities.push(act);
   saveState();
   checkAchievements();
@@ -635,6 +640,11 @@ function openActivityDetail(actId){
       <div style="font-size:13px;font-weight:600;color:var(--ind)">${act.material}</div>
     </div>`:''}
 
+    ${studySrcLabel(act)?`<div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Studied with</div>
+      <div class="ac-tags">${_srcTagsHTML(act)}</div>
+    </div>`:''}
+
     ${act.location?`<div style="margin-bottom:14px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:5px">Location</div>
       <div style="font-size:13px;font-weight:600;color:var(--sub)">${ico('pin')} ${esc(act.location)}</div>
@@ -678,6 +688,7 @@ function openEditActivityModal(actId){
   if(!act)return;
   _editConcepts=[...(act.concepts||[])];
   _editPhoto=act.photo||null;
+  _srcPick.edit={course:act.course||'',kind:act.kind||''};
   _editFeeling=act.feeling||'💪';
   _editDiff=act.difficulty||3;
   const ex=EXAMS[act.section]||{color:'var(--ind)',icon:'book',full:act.section};
@@ -719,6 +730,7 @@ function openEditActivityModal(actId){
       <label>Material Covered <span style="color:var(--mut);font-weight:400">(optional)</span></label>
       <input id="edit-material" type="text" maxlength="120" value="${(act.material||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="e.g. Governmental Accounting — Fund Structure">
     </div>
+    ${studySrcPickerHTML('edit','form-grp')}
     <div class="form-grp">
       <label>Session Notes <span style="color:var(--mut);font-weight:400">(optional)</span></label>
       <textarea id="edit-caption" maxlength="500" placeholder="How did it go? What clicked? What's still tricky?">${act.caption||''}</textarea>
@@ -831,6 +843,8 @@ function saveEditedActivity(actId){
     section,hours,
     date:date+'T'+(existing.date?.slice(11)||new Date().toTimeString().slice(0,8)),
     material,caption,
+    course:_srcPick.edit.course||undefined,
+    kind:_srcPick.edit.kind||undefined,
     difficulty:_editDiff,feeling:_editFeeling,
     concepts:[..._editConcepts],
     photo:_editPhoto,
@@ -851,10 +865,11 @@ function openSessionModal(prefSection='', prefMaterial=''){
   if(!S){showToast('Complete setup first','err');return;}
   // In a study room the room is the timer screen.
   if(typeof _room!=='undefined'&&_room&&(TS.phase==='active'||TS.phase==='paused')){openRoomView();return;}
-  if(TS.phase==='active'||TS.phase==='paused'){overlay.classList.add('open');renderSessCard();return;}
+  if(TS.phase==='active'||TS.phase==='paused'||TS.phase==='recap'){overlay.classList.add('open');renderSessCard();return;}
   if(prefSection)TS.section=prefSection;
   else if(!TS.section&&S.sections?.length)TS.section=S.sections[0];
   if(prefMaterial)TS.material=prefMaterial;
+  if(!TS.course)TS.course=S.lastCourse||'';
   TS.phase='setup';
   TS.date=todayStr();
   overlay.classList.add('open');
@@ -892,8 +907,9 @@ function renderSessCard(){
       </div>
       <div class="sess-fgrp">
         <label>Material / Topic</label>
-        <input id="ss-mat" type="text" placeholder="e.g. Governmental Accounting — Fund Types" value="${TS.material||''}">
+        <input id="ss-mat" type="text" placeholder="e.g. Governmental Accounting — Fund Types" value="${esc(TS.material||'')}">
       </div>
+      ${studySrcPickerHTML('ts')}
       <div class="sess-2col">
         <div class="sess-fgrp">
           <label>Goal (hours, optional)</label>
@@ -921,6 +937,39 @@ function renderSessCard(){
   }
   else if((TS.phase==='active'||TS.phase==='paused')&&typeof _room!=='undefined'&&_room){
     box.innerHTML=''; // in a room, the room screen is the timer
+  }
+  else if(TS.phase==='paused'&&TS.longCheck){
+    // Ledger came back to a timer that ran for hours. Probably left on, so
+    // ask before crediting it rather than logging 9 hours nobody studied.
+    const h=Math.floor(TS.elapsed/3600), m=Math.round((TS.elapsed%3600)/60);
+    box.innerHTML=`<div class="room-box solo-box" role="dialog" aria-label="Timer check">
+    <div class="room-hdr">
+      <div style="min-width:0;flex:1">
+        <div class="room-name">Welcome back</div>
+        <div class="room-sub">${esc(TS.section||'')}${ex?' · '+esc(ex.full):''}${TS.material?' · '+esc(TS.material):''}</div>
+      </div>
+    </div>
+    <div class="room-clock-wrap">
+      <div class="room-phase"><span class="rec-dot" style="animation:none;opacity:.4"></span> Timer held</div>
+      <div class="room-clock" id="sess-clock">${fmtElapsed(TS.elapsed)}</div>
+      <div class="room-phase-sub">Your timer kept running while Ledger was closed${TS.elapsed>=TS_MAX_SECS?' and stopped at the 16-hour limit':''}. Were you studying the whole time?</div>
+    </div>
+    <div class="ts-check">
+      <button class="room-btn room-btn-main" onclick="tsLongEnd()">Yes, log ${fmtDur(TS.elapsed).replace(/ 0s$/,'')}</button>
+      <div class="ts-check-set">
+        <div class="solo-lbl">No, I actually studied</div>
+        <div class="ts-check-row">
+          <input id="ts-fix-h" type="number" inputmode="numeric" min="0" max="16" step="1" value="${Math.min(h,2)}" aria-label="Hours"><span>h</span>
+          <input id="ts-fix-m" type="number" inputmode="numeric" min="0" max="59" step="5" value="${h>=2?0:m}" aria-label="Minutes"><span>m</span>
+          <button class="room-btn" onclick="tsLongSet()">Log this</button>
+        </div>
+      </div>
+      <div class="ts-check-links">
+        <button onclick="tsLongKeep()">Keep the timer running</button>
+        <button onclick="discardSession()">Discard session</button>
+      </div>
+    </div>
+  </div>`;
   }
   else if(TS.phase==='active'||TS.phase==='paused'){
     // Same look as a study room: full-screen night sky, one big clock.
@@ -1009,7 +1058,7 @@ function renderSessCard(){
           </div>
           <div class="sess-fgrp">
             <label>Session Notes</label>
-            <textarea class="sess-notes-ta" id="sess-notes-ta" placeholder="What clicked? What's still fuzzy? Anything to revisit next time?" style="min-height:90px">${TS.notes}</textarea>
+            <textarea class="sess-notes-ta" id="sess-notes-ta" oninput="TS.notes=this.value;tsPersist()" placeholder="What clicked? What's still fuzzy? Anything to revisit next time?" style="min-height:90px">${esc(TS.notes||'')}</textarea>
           </div>
           <div class="sess-fgrp">
             <label>Photo <span style="font-size:10px;color:var(--mut);font-weight:400">optional</span></label>
@@ -1029,14 +1078,15 @@ function renderSessCard(){
                 oninput="setSessLocation(this.value,true)" onclick="event.stopPropagation()">
             </div>
           </div>
+          ${studySrcPickerHTML('ts')}
           <div class="sess-2col" style="margin-bottom:16px">
             <div class="sess-fgrp" style="margin-bottom:0">
               <label>Section</label>
-              <select id="recap-sec" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">${sectionOpts}</select>
+              <select id="recap-sec" onchange="TS.section=this.value;tsPersist()" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">${sectionOpts}</select>
             </div>
             <div class="sess-fgrp" style="margin-bottom:0">
               <label>Date</label>
-              <input id="recap-date" type="date" value="${TS.date||todayStr()}" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">
+              <input id="recap-date" type="date" max="${todayStr()}" onchange="TS.date=this.value;tsPersist()" value="${TS.date||todayStr()}" style="width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:13px;outline:none">
             </div>
           </div>
           <button class="sess-save-btn" onclick="saveSession()">✓ Log Session</button>
@@ -1112,14 +1162,9 @@ function startTimer(opts){
   if(!sec){showToast('Select a section','err');return;}
   if(_badWords(mat)) return;
   TS.section=sec;TS.material=mat;TS.goalHours=goal;TS.date=date;
+  if(!TS.course)TS.course=S.lastCourse||'';
   TS.elapsed=0;TS.startTime=Date.now();TS.phase='active';
-  clearInterval(timerInterval);
-  timerInterval=setInterval(()=>{
-    if(TS.phase==='active'){
-      TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-      _sessTickUI();
-    }
-  },1000);
+  tsStartTicking();
   tsPersist();
   _startPresence(); // broadcast "studying now" to my clubs
   renderSessCard();
@@ -1160,7 +1205,7 @@ function logPastSession(){
 function pauseTimer(){
   if(TS.phase!=='active')return;
   clearInterval(timerInterval);timerInterval=null;
-  TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
+  TS.elapsed=Math.min(TS_MAX_SECS,Math.floor((Date.now()-TS.startTime)/1000));
   TS.phase='paused';
   tsPersist();
   _stopPresence();
@@ -1171,14 +1216,8 @@ function pauseTimer(){
 function resumeTimer(){
   if(TS.phase!=='paused')return;
   TS.startTime=Date.now()-(TS.elapsed*1000);
-  TS.phase='active';
-  clearInterval(timerInterval);
-  timerInterval=setInterval(()=>{
-    if(TS.phase==='active'){
-      TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-      _sessTickUI();
-    }
-  },1000);
+  TS.phase='active';TS.longCheck=false;
+  tsStartTicking();
   tsPersist();
   _startPresence();
   renderSessCard();updateNavChip();
@@ -1188,13 +1227,45 @@ function resumeTimer(){
 function endSession(){
   if(typeof _room!=='undefined'&&_room) leaveRoom(true);
   clearInterval(timerInterval);timerInterval=null;
-  if(TS.phase==='active')TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-  TS.phase='recap';
+  if(TS.phase==='active')TS.elapsed=Math.min(TS_MAX_SECS,Math.floor((Date.now()-TS.startTime)/1000));
+  TS.phase='recap';TS.longCheck=false;
   // Preselect the last place they studied
   if(!TS.location){try{TS.location=localStorage.getItem('pf2-last-loc')||'';}catch(e){}}
-  tsPersist(); // phase is 'recap' → clears the persisted active-session key
+  tsPersist(); // keeps the recap, so closing the app mid-recap doesn't lose the session
   _stopPresence();
   renderSessCard();updateNavChip();
+}
+
+// Answers to the "were you studying the whole time?" check.
+function tsLongEnd(){ TS.longCheck=false; endSession(); }
+function tsLongKeep(){ TS.longCheck=false; resumeTimer(); }
+function tsLongSet(){
+  const h=parseFloat(document.getElementById('ts-fix-h')?.value)||0;
+  const m=parseFloat(document.getElementById('ts-fix-m')?.value)||0;
+  const secs=Math.round(h*3600+m*60);
+  if(h<0||m<0||secs<60){showToast('Enter how long you studied','err');return;}
+  if(secs>TS.elapsed){showToast('That is longer than the timer ran. Use "Yes, log" instead.','err');return;}
+  TS.elapsed=secs; TS.longCheck=false;
+  endSession();
+}
+// Bring back a session saved before the app closed (called once per page load).
+function tsResumeAfterLoad(){
+  const got=tsRestore();
+  if(!got) return;
+  const sec=TS.section?TS.section+' ':'';
+  if(got==='running'){
+    tsStartTicking(); _sessTickUI();
+    setTimeout(()=>{ try{ _startPresence(); }catch(e){} },2500);
+    showToast('Your '+sec+'session kept running while you were away · '+fmtElapsed(TS.elapsed),'info');
+  } else if(got==='paused'){
+    showToast('Your paused '+sec+'session is still here. Resume or log it.','info');
+  } else {
+    // 'long' asks a question and 'recap' is a half-finished log: show them.
+    if(got==='recap') showToast('Finish logging your '+sec+'session.','info');
+    document.getElementById('sess-overlay')?.classList.add('open');
+    renderSessCard();
+  }
+  updateNavChip();
 }
 
 function updateNavChip(){
@@ -1202,7 +1273,12 @@ function updateNavChip(){
   const btn=document.getElementById('nav-log-btn');
   if(!chip)return;
   const isActive=TS.phase==='active'||TS.phase==='paused';
-  if(isActive){
+  if(TS.phase==='recap'){
+    // A finished session that hasn't been logged yet (recap closed with Esc, or brought back after a reload).
+    chip.style.display='inline-flex';
+    chip.innerHTML=`<span class="active-sess-chip" onclick="openSessionModal()">${esc(TS.section||'')} <span class="active-sess-time">Finish log</span></span>`;
+    if(btn){btn.textContent='Finish log';btn.onclick=()=>openSessionModal();}
+  } else if(isActive){
     chip.style.display='inline-flex';
     chip.innerHTML=`<span class="active-sess-chip" onclick="openSessionModal()"><span class="rec-dot" ${TS.phase==='paused'?'style="animation:none;opacity:.4"':''}></span>${TS.section} <span class="active-sess-time" id="topbar-timer">${fmtElapsed(TS.elapsed)}</span></span>`;
     if(btn){btn.textContent='Resume';btn.onclick=()=>openSessionModal();}
@@ -1219,7 +1295,7 @@ function addConceptTag(){
   if(!inp)return;
   const val=inp.value.trim();
   if(!val||TS.concepts.includes(val))return;
-  TS.concepts.push(val);
+  TS.concepts.push(val);tsPersist();
   inp.value='';
   const wrap=document.getElementById('concept-tags-wrap');
   if(wrap)wrap.innerHTML=TS.concepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
@@ -1227,13 +1303,13 @@ function addConceptTag(){
 }
 
 function removeConceptTag(idx){
-  TS.concepts.splice(idx,1);
+  TS.concepts.splice(idx,1);tsPersist();
   const wrap=document.getElementById('concept-tags-wrap');
   if(wrap)wrap.innerHTML=TS.concepts.map((c,i)=>`<span class="concept-tag">${c}<span class="concept-tag-x" onclick="removeConceptTag(${i})">×</span></span>`).join('')||'<span style="font-size:11px;color:var(--mut)">No concepts yet</span>';
 }
 
 function setSessFeeling(f){
-  TS.feeling=f;
+  TS.feeling=f;tsPersist();
   document.querySelectorAll('.feeling-r-btn').forEach(b=>b.classList.toggle('sel',b.textContent===f));
 }
 
@@ -1241,7 +1317,7 @@ function setSessLocation(loc, isCustom){
   loc=(loc||'').trim();
   // Tapping the already-selected pill clears it
   if(!isCustom&&TS.location===loc) loc='';
-  TS.location=loc;
+  TS.location=loc;tsPersist();
   document.querySelectorAll('.sess-loc-btn').forEach(b=>b.classList.toggle('sel',b.textContent===loc));
   if(!isCustom){
     const other=document.getElementById('sess-loc-other');
@@ -1250,7 +1326,7 @@ function setSessLocation(loc, isCustom){
 }
 
 function setSessDiff(d){
-  TS.difficulty=d;
+  TS.difficulty=d;tsPersist();
   document.querySelectorAll('.diff-r-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===d));
 }
 
@@ -1271,6 +1347,8 @@ function saveSession(){
     date:date+'T'+new Date().toTimeString().slice(0,8),
     section,hours:Math.max(0.1,hours),
     material:TS.material,
+    course:TS.course||undefined,
+    kind:TS.kind||undefined,
     caption:notes,
     difficulty:TS.difficulty,
     feeling:TS.feeling,
@@ -1282,6 +1360,7 @@ function saveSession(){
     kudos:[],comments:[]
   };
   if(TS.location){try{localStorage.setItem('pf2-last-loc',TS.location);}catch(e){}}
+  rememberStudySrc(TS.course);
   const _priorScore=calcReadinessScore().score;
   S.activities.push(act);
   logLedgerEvent('session_logged', {section: act.section, hours: act.hours});

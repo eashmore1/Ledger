@@ -2,7 +2,7 @@
 // Ledger — /api/notify
 // Turns something a signed-in user just did into a push notification for the
 // people it concerns: props, a comment, a follow, a direct message, a logged
-// session, or a study room opening.
+// session, a study room opening, or a nudge from a friend.
 //
 // The caller only says WHAT happened and to which record. Who gets notified and
 // what the notification says are worked out here from Firestore, so this can't
@@ -18,10 +18,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 'use strict';
 const crypto = require('crypto');
-const { admin, initAdmin, sendToUser, clean, hrs } = require('./_lib/push');
+const { admin, initAdmin, sendToUser, clean, hrs, localParts } = require('./_lib/push');
 
 const HOURLY_LIMIT = 60;      // events one person may raise per hour
 const SAFE_ID = /^[A-Za-z0-9_-]{1,128}$/;
+const NUDGE_GAP_MS = 20 * 3600 * 1000; // one nudge per pair per day, give or take time zones
 
 function unsubToken(uid) {
   return crypto.createHmac('sha256', process.env.CRON_SECRET || '').update('unsub:' + uid).digest('hex').slice(0, 32);
@@ -90,7 +91,8 @@ module.exports = async (req, res) => {
   const db = admin.firestore();
 
   try {
-    if (await overHourlyLimit(db, uid)) return res.status(429).json({ error: 'Too many notifications' });
+    // Reading your own nudge inbox doesn't notify anyone, so it isn't metered.
+    if (type !== 'nudge_inbox' && await overHourlyLimit(db, uid)) return res.status(429).json({ error: 'Too many notifications' });
 
     const meSnap = await db.collection('users').doc(uid).get();
     const me = meSnap.exists ? (meSnap.data() || {}) : {};
@@ -168,6 +170,51 @@ module.exports = async (req, res) => {
         results.push(await sendToUser(w.id, { type: 'crew', onceKey: 'room-' + roomId, tag: 'room-' + uid, url: '/?room=' + roomId,
           title: `${first} opened a study room`, body: `"${clean(room.data().name, 60)}" — join and study on the same clock.` }, { snap: w }));
       }
+
+    } else if (type === 'nudge') {
+      // "Go study": one tap from a friend who has studied today, to a friend
+      // who hasn't. Only between people who follow each other, once a day per
+      // pair, and never past a block. Stored server-side (nudges/{to}__{from});
+      // the app reads its inbox through 'nudge_inbox' below.
+      const to = id('toUid');
+      if (!to || to === uid) return res.status(400).json({ error: 'Nothing to notify' });
+      const [theyHaveMe, iHaveThem] = await Promise.all([
+        db.collection('users').doc(to).collection('followers').doc(uid).get(),
+        db.collection('users').doc(uid).collection('followers').doc(to).get(),
+      ]);
+      if (!theyHaveMe.exists || !iHaveThem.exists) return res.status(403).json({ error: 'not-mutual' });
+      if (await blockedEither(to)) return res.status(403).json({ error: 'blocked' });
+      // You nudge after doing your own work: the sender must have studied today.
+      const mine = await db.collection('notify').doc(uid).get();
+      const mp = mine.exists ? (mine.data() || {}) : {};
+      if (!mp.lastStudyDate || mp.lastStudyDate !== localParts(mp.tz, Date.now()).ymd) return res.status(403).json({ error: 'study-first' });
+      const ref = db.collection('nudges').doc(to + '__' + uid);
+      const prev = await ref.get();
+      const now = Date.now();
+      if (prev.exists && now - (Number(prev.data().at) || 0) < NUDGE_GAP_MS) return res.status(429).json({ error: 'already-nudged' });
+      await ref.set({ to, from: uid, fromName: name, at: now });
+      await send(to, { type: 'nudge', onceKey: 'nudge-' + uid + '-' + new Date(now).toISOString().slice(0, 10), tag: 'nudge-' + uid,
+        url: '/?action=start', title: `${first} nudged you`, body: 'They studied today and want to see you do it too. Even 25 minutes counts.' });
+
+    } else if (type === 'nudge_inbox') {
+      // Nudges to me from the last three days, and who I've nudged recently
+      // (so the app can show "Nudged" on a reload or another device).
+      const [inQ, outQ] = await Promise.all([
+        db.collection('nudges').where('to', '==', uid).limit(40).get(),
+        db.collection('nudges').where('from', '==', uid).limit(60).get(),
+      ]);
+      const now = Date.now();
+      const nudges = [];
+      for (const d of inQ.docs) {
+        const x = d.data() || {};
+        if (!SAFE_ID.test(String(x.from || '')) || !(now - (Number(x.at) || 0) < 3 * 86400000)) continue;
+        if (await blockedEither(x.from)) continue;
+        nudges.push({ from: x.from, name: clean(x.fromName || 'A friend', 40), at: Number(x.at) });
+      }
+      const sent = outQ.docs.map((d) => d.data() || {})
+        .filter((x) => SAFE_ID.test(String(x.to || '')) && now - (Number(x.at) || 0) < NUDGE_GAP_MS)
+        .map((x) => ({ to: x.to, at: Number(x.at) }));
+      return res.status(200).json({ ok: true, nudges, sent });
 
     } else if (type === 'report') {
       // A report was just filed in Firestore (rules make sure it is the

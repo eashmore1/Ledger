@@ -439,6 +439,7 @@ function firestoreToFriend(u){
     bio:_clean(u.bio),
     activities:(u.recentActivities||[]).map(a=>({...a,material:_clean(a.material),caption:_clean(a.caption),userId:u.uid})),
     isPrivate:!!u.isPrivate,
+    restDays:Array.isArray(u.restDays)?u.restDays.filter(d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)):[],
     allowMessages:u.allowMessages!==false,
     discoverable:u.discoverable!==false,
     profilePic:u.profilePic||'',
@@ -817,6 +818,8 @@ async function writeUserProfile(){
       tier: (SUB&&SUB.tier)||'free',
       hoursTotal: showHours ? parseFloat((()=>{try{return(S.activities||[]).reduce((s,a)=>s+(a.hours||0),0).toFixed(1);}catch{return 0;}})()) : 0,
       currentStreak: showStreak ? getStreak() : 0,
+      // Rest days near today, so friends see "rest day" instead of a nudge.
+      restDays: Object.keys(S.restDays||{}).filter(k=>restKind(k)&&k>=_dayShift(todayStr(),-7)&&k<=_dayShift(todayStr(),7)).sort(),
       hideHours: !showHours,
       hideStreak: !showStreak,
       allowMessages: privacyPref('allow_messages'),
@@ -834,6 +837,7 @@ async function writeUserProfile(){
         type:a.type||'session',score:(typeof a.score==='number'?a.score:null),
         sectionHours:a.sectionHours||0,sitDate:a.sitDate||'',
         material:a.material||'',caption:a.caption||'',
+        course:a.course||'',kind:a.kind||'',
         difficulty:a.difficulty||3,feeling:a.feeling||'',
         kudos:a.kudos||[],comments:(a.comments||[]).slice(-3)
       })),
@@ -896,6 +900,10 @@ function mergeStates(base, other){
   out.sectionPassed=[...new Set([...(base.sectionPassed||[]),...(other.sectionPassed||[])])];
   out.achievements=[...new Set([...(base.achievements||[]),...(other.achievements||[])])];
   out.longestStreak=Math.max(base.longestStreak||0,other.longestStreak||0);
+  // Rest days and shields: the newer write wins day by day (so a cancel sticks).
+  const rd={...(other.restDays||{})};
+  Object.entries(base.restDays||{}).forEach(([k,v])=>{ if(!rd[k]||((v&&v.at)||0)>=((rd[k]&&rd[k].at)||0)) rd[k]=v; });
+  out.restDays=rd;
   return out;
 }
 
@@ -1005,34 +1013,106 @@ let TS = {
   sessionPhoto: null, // base64 image attached at recap
   location: '',       // where the session happened (optional)
 };
-function tsReset(){TS={phase:'setup',section:'',material:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null,location:''};try{localStorage.removeItem(tsPersistKey());}catch(e){}}
+function tsReset(){TS={phase:'setup',section:'',material:'',course:'',kind:'',goalHours:0,startTime:null,elapsed:0,date:'',concepts:[],notes:'',feeling:'💪',difficulty:3,sessionPhoto:null,location:''};try{localStorage.removeItem(tsPersistKey());}catch(e){}}
 // ── In-progress session persistence (survives page reload) ──────────────────
 function tsPersistKey(){return 'pf2-active-session-'+((typeof AUTH!=='undefined'&&AUTH&&AUTH.uid)||'anon');}
+// A running session is saved with its wall-clock start, so the clock keeps going
+// while Ledger is closed: people start the timer, then spend an hour in their
+// review course's app, and the phone may unload Ledger in the meantime. The
+// recap screen is saved too, so a half-filled recap isn't lost either.
+const TS_MAX_SECS=16*3600;     // the longest single session Ledger accepts
+const TS_CHECK_SECS=4*3600;    // past this, ask whether the clock really was studying
 function tsPersist(){
   try{
-    if(TS.phase==='active'||TS.phase==='paused'){
+    if(TS.phase==='active'||TS.phase==='paused'||TS.phase==='recap'){
       const snap={...TS};
-      if(TS.phase==='active'&&TS.startTime)snap.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
-      snap.startTime=null; // recomputed on resume — closed-tab time is not credited
+      delete snap.sessionPhoto; // a photo can be megabytes; it isn't worth losing the session over
+      delete snap.longCheck;
+      if(TS.phase==='active'&&TS.startTime) snap.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
+      snap.savedAt=Date.now();
       localStorage.setItem(tsPersistKey(),JSON.stringify(snap));
     } else {
       localStorage.removeItem(tsPersistKey());
     }
   }catch(e){}
 }
+// Returns what was brought back: 'running' | 'long' | 'paused' | 'recap' | false.
 function tsRestore(){
   try{
     const raw=localStorage.getItem(tsPersistKey());
     if(!raw)return false;
     const snap=JSON.parse(raw);
-    if(snap&&(snap.phase==='active'||snap.phase==='paused')){
-      // Restore as paused at the last-known elapsed so the user can resume or save —
-      // the running timer is never silently lost on reload.
-      TS={...TS,...snap,phase:'paused',startTime:null};
-      return true;
+    if(!snap||!['active','paused','recap'].includes(snap.phase)) return false;
+    if(snap.phase==='active'&&snap.startTime){
+      const secs=Math.max(0,Math.floor((Date.now()-snap.startTime)/1000));
+      if(secs<=TS_CHECK_SECS){
+        TS={...TS,...snap,phase:'active',elapsed:secs};
+        return 'running';
+      }
+      // Hours later: most likely the timer was left on. Hold it and ask.
+      TS={...TS,...snap,phase:'paused',startTime:null,elapsed:Math.min(secs,TS_MAX_SECS),longCheck:true};
+      return 'long';
     }
+    if(snap.phase==='recap'){ TS={...TS,...snap}; return 'recap'; }
+    TS={...TS,...snap,phase:'paused',startTime:null};
+    return 'paused';
   }catch(e){}
   return false;
+}
+// ── Where and how a session was studied ──────────────────────────────────────
+// Ledger sits beside the review course people already pay for, so a session can
+// say which course and what kind of work: "FAR · Becker · MCQs". Both optional.
+const STUDY_COURSES=[
+  {id:'becker',name:'Becker'},{id:'uworld',name:'UWorld Roger'},{id:'gleim',name:'Gleim'},
+  {id:'surgent',name:'Surgent'},{id:'wiley',name:'Wiley'},{id:'ninja',name:'NINJA CPA'},
+  {id:'ledger',name:'Ledger Q-bank'},{id:'other',name:'Other'},
+];
+const STUDY_KINDS=[
+  {id:'mcq',name:'MCQs'},{id:'sim',name:'Simulations'},{id:'lecture',name:'Lectures'},
+  {id:'reading',name:'Reading'},{id:'review',name:'Review & notes'},{id:'exam',name:'Practice exam'},
+  {id:'flash',name:'Flashcards'},
+];
+function courseName(id){const c=STUDY_COURSES.find(x=>x.id===id);return c?c.name:'';}
+function kindName(id){const k=STUDY_KINDS.find(x=>x.id===id);return k?k.name:'';}
+// "Becker · MCQs", or '' when neither was picked.
+function studySrcLabel(a){return [courseName(a&&a.course),kindName(a&&a.kind)].filter(Boolean).join(' · ');}
+// Picker state for the forms that aren't the timer (the timer keeps its own in TS).
+const _srcPick={pm:{course:'',kind:''},edit:{course:'',kind:''}};
+function _srcGet(scope){return scope==='ts'?{course:TS.course||'',kind:TS.kind||''}:_srcPick[scope];}
+// Two rows of chips: course, then kind. `scope` says which form they belong to.
+function studySrcPickerHTML(scope,wrapCls){
+  const cur=_srcGet(scope);
+  const row=(field,list)=>`<div class="src-row" role="group" data-src="${scope}-${field}">${list.map(o=>
+    `<button type="button" class="src-chip${cur[field]===o.id?' sel':''}" data-id="${o.id}" aria-pressed="${cur[field]===o.id}" onclick="pickStudySrc('${scope}','${field}','${o.id}')">${esc(o.name)}</button>`).join('')}</div>`;
+  return `<div class="${wrapCls||'sess-fgrp'}"><label>Course <span class="src-opt">optional</span></label>${row('course',STUDY_COURSES)}</div>
+  <div class="${wrapCls||'sess-fgrp'}"><label>What you're doing <span class="src-opt">optional</span></label>${row('kind',STUDY_KINDS)}</div>`;
+}
+function pickStudySrc(scope,field,id){
+  const cur=_srcGet(scope), val=cur[field]===id?'':id; // tap again to clear
+  if(scope==='ts'){TS[field]=val;tsPersist();} else _srcPick[scope][field]=val;
+  document.querySelectorAll(`[data-src="${scope}-${field}"] .src-chip`).forEach(b=>{
+    const on=!!val&&b.dataset.id===val;
+    b.classList.toggle('sel',on); b.setAttribute('aria-pressed',on);
+  });
+}
+// Remember the course for next time: most people use one course for months.
+// Small pills for a feed card or session page.
+function _srcTagsHTML(a){
+  return [courseName(a&&a.course),kindName(a&&a.kind)].filter(Boolean).map((t,i)=>`<span class="ac-tag${i===0&&a.course?' course':''}">${esc(t)}</span>`).join('');
+}
+function rememberStudySrc(course){ if(S&&course&&S.lastCourse!==course) S.lastCourse=course; }
+
+// The 1-second clock for a running session (shared by start, resume and restore).
+function tsStartTicking(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    if(TS.phase!=='active') return;
+    TS.elapsed=Math.floor((Date.now()-TS.startTime)/1000);
+    if(TS.elapsed>=TS_MAX_SECS){ // never let a forgotten timer run past the cap
+      TS.elapsed=TS_MAX_SECS; if(typeof pauseTimer==='function') pauseTimer(); return;
+    }
+    if(typeof _sessTickUI==='function') _sessTickUI();
+  },1000);
 }
 function fmtElapsed(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
 function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?`${h}h ${m}m`:`${m}m ${s%60}s`;}
@@ -1072,19 +1152,69 @@ function showToast(msg,type='ok'){
   requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
 }
-function getStreak(){
-  if(!S||!S.activities.length)return 0;
-  let streak=0;
-  const today=new Date();today.setHours(0,0,0,0);
-  const logDates=new Set(S.activities.map(a=>a.date.slice(0,10)));
-  let check=new Date(today);
-  while(true){
-    const key=_ymd(check);
-    if(logDates.has(key)){streak++;check.setDate(check.getDate()-1);}
-    else if(check.getTime()===today.getTime()){check.setDate(check.getDate()-1);}
-    else break;
+// ── Rest days and Streak Shields ─────────────────────────────────────────────
+// A streak counts days studied in a row. Two kinds of day hold it without
+// adding to it:
+//   rest   — planned ahead (today or a coming day). Everyone gets one a week,
+//            Monday to Sunday. Discipline includes rest; a wedding or a deadline
+//            shouldn't wipe out 40 days.
+//   shield — Pro: patch a day already missed (up to 3 in a row, last 7 days).
+// S.restDays = { 'YYYY-MM-DD': {t:'rest'|'shield'|null, at:ms} }; t:null is a
+// cancelled day, kept so another device's older copy can't bring it back.
+const REST_PER_WEEK=1, SHIELD_MAX_GAP=3;
+function _dayShift(ymd,n){const d=new Date(ymd+'T12:00:00');d.setDate(d.getDate()+n);return _ymd(d);}
+function _weekMonday(ymd){const d=new Date(ymd+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return _ymd(d);}
+function restKind(ymd){const r=S&&S.restDays&&S.restDays[ymd];return r&&r.t||null;}
+function _studiedOn(ymd){return (S&&S.activities||[]).some(a=>(a.date||'').slice(0,10)===ymd);}
+// Rest days already used in the week holding `ymd` (a day you studied anyway doesn't count).
+function restUsedInWeek(ymd,exceptDay){
+  const mon=_weekMonday(ymd);
+  let n=0;
+  for(let i=0;i<7;i++){const k=_dayShift(mon,i);if(k!==exceptDay&&restKind(k)==='rest'&&!_studiedOn(k))n++;}
+  return n;
+}
+function _setRest(ymd,t){
+  if(!S.restDays) S.restDays={};
+  S.restDays[ymd]={t:t||null,at:Date.now()};
+  // Keep about four months of history.
+  const cut=_dayShift(todayStr(),-120);
+  Object.keys(S.restDays).forEach(k=>{if(k<cut)delete S.restDays[k];});
+}
+function _streakFrom(logDates,today){
+  let streak=0, check=today;
+  for(let guard=0;guard<4000;guard++){
+    if(logDates.has(check)) streak++;
+    else if(check!==today&&!restKind(check)) break;
+    check=_dayShift(check,-1);
   }
   return streak;
+}
+function getStreak(){
+  if(!S||!(S.activities||[]).length)return 0;
+  const logDates=new Set(S.activities.map(a=>(a.date||'').slice(0,10)));
+  return _streakFrom(logDates,todayStr());
+}
+// A streak that broke recently enough for a Streak Shield to patch:
+// {days:[missed ymd…], was:N (streak before the gap), restored:N (streak once patched)} or null.
+function streakGap(){
+  if(!S||!(S.activities||[]).length) return null;
+  const today=todayStr();
+  const logDates=new Set(S.activities.map(a=>(a.date||'').slice(0,10)));
+  let d=_dayShift(today,-1); // today can't be "missed" yet
+  // Walk back past what still counts (study or rest) to the first missed day.
+  while(logDates.has(d)||restKind(d)) d=_dayShift(d,-1);
+  const days=[];
+  while(!logDates.has(d)&&!restKind(d)&&days.length<=SHIELD_MAX_GAP){ days.push(d); d=_dayShift(d,-1); }
+  if(!days.length||days.length>SHIELD_MAX_GAP) return null;
+  if(days[0]<_dayShift(today,-7)) return null;
+  const was=_streakFrom(logDates,d); // the run that ended just before the gap
+  if(was<2) return null;
+  const tmp=S.restDays; S.restDays={...(tmp||{})};
+  days.forEach(k=>{S.restDays[k]={t:'shield',at:0};});
+  const restored=_streakFrom(logDates,today);
+  S.restDays=tmp;
+  if(restored<=getStreak()) return null;
+  return {days:days.slice().reverse(),was,restored};
 }
 function getTotalHours(){if(!S)return 0;return S.activities.reduce((a,act)=>a+(act.hours||0),0);}
 function getWeekHours(){
@@ -1125,6 +1255,7 @@ function checkAchievements(){
   const earned=new Set(S.achievements||[]);
   const newOnes=[];
 
+  if(streak>(S.longestStreak||0)) S.longestStreak=streak;
   const check=(id,cond)=>{if(cond&&!earned.has(id)){earned.add(id);newOnes.push(id);}};
   const sessionCount=S.activities.length;
   check('first_session',sessionCount>=1);

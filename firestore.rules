@@ -277,6 +277,12 @@ service cloud.firestore {
     // Private: what the reminder job needs to know about a user (time zone,
     // streak, exam dates, preferences) and their devices' push tokens.
     // notifyMeta/{uid} (send counters) has no rule on purpose: server only.
+    // Nudges between friends are written and read only by /api/notify, which
+    // checks that the two follow each other and limits them to one a day.
+    match /nudges/{nudgeId} {
+      allow read, write: if false;
+    }
+
     match /notify/{userId} {
       allow read, delete: if request.auth != null && request.auth.uid == userId;
       allow create, update: if request.auth != null && request.auth.uid == userId &&

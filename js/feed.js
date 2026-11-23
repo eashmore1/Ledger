@@ -435,6 +435,7 @@ function buildActivityCard(a){
         <span class="badge badge-${a.section}" style="font-size:9px">${a.section}</span>
         <span style="font-size:11px;color:var(--sub)">${LedgerIcon(ex.icon)} ${ex.full} Session</span>
       </div>
+      ${studySrcLabel(a)?`<div class="ac-tags" style="margin-top:6px">${_srcTagsHTML(a)}</div>`:''}
     </div>
   </div>
   <div class="ac-stat-row">

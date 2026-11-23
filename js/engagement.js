@@ -826,17 +826,137 @@ function buildBurnoutCheckIn(){
   </div>`;
 }
 
+// ═══════════════════════════════════════════════
+// REST DAYS + STREAK SHIELDS (rules live next to getStreak in core.js)
+// ═══════════════════════════════════════════════
+function _restAfterChange(msg){
+  saveState();
+  try{ if(typeof syncNotifyProfile==='function') syncNotifyProfile(); }catch(e){}
+  if(msg) showToast(msg,'ok');
+  if(document.getElementById('rest-modal')) _renderRestModal();
+  try{ renderTab(); }catch(e){}
+}
+function _restDayLabel(ymd){
+  const t=todayStr();
+  if(ymd===t) return 'today';
+  if(ymd===_dayShift(t,1)) return 'tomorrow';
+  return new Date(ymd+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+}
+// Why a day can't be a rest day, or '' when it can.
+function restBlocker(ymd){
+  const t=todayStr();
+  if(ymd<t) return 'That day has passed.';
+  if(ymd>_dayShift(t,13)) return 'Plan rest days up to two weeks ahead.';
+  if(_studiedOn(ymd)) return 'You already studied that day.';
+  if(restUsedInWeek(ymd,ymd)>=REST_PER_WEEK) return 'You have used this week’s rest day.';
+  return '';
+}
+function takeRestDay(ymd){
+  if(!S) return;
+  ymd=ymd||todayStr();
+  if(restKind(ymd)==='rest') return;
+  const why=restBlocker(ymd);
+  if(why){ showToast(why,'err'); return; }
+  _setRest(ymd,'rest');
+  logLedgerEvent&&logLedgerEvent('rest_day_taken',{ahead:ymd!==todayStr()});
+  const st=getStreak();
+  _restAfterChange(ymd===todayStr()
+    ?(st>0?'Rest day set. Your '+st+'-day streak is safe today.':'Rest day set. Enjoy it.')
+    :'Rest day planned for '+_restDayLabel(ymd)+'.');
+}
+function cancelRestDay(ymd){
+  if(!S||restKind(ymd)!=='rest') return;
+  _setRest(ymd,null);
+  _restAfterChange('Rest day removed.');
+}
+// Pro: patch the missed days of a streak that just broke.
+function useStreakShield(){
+  if(!S) return;
+  const gap=streakGap();
+  if(!gap){ showToast('There is no broken streak to restore right now.','info'); return; }
+  if(!isPro()){ openUpgradeModal('Streak Shield'); return; }
+  gap.days.forEach(d=>_setRest(d,'shield'));
+  S.shieldsUsed=(S.shieldsUsed||0)+gap.days.length;
+  logLedgerEvent&&logLedgerEvent('streak_shield_used',{days:gap.days.length});
+  checkAchievements();
+  _restAfterChange('Streak restored: '+getStreak()+' days. Study today to keep it going.');
+}
+
+// The rest-day planner: this week and next, one tap to set or clear a day.
+function openRestDayModal(){
+  document.getElementById('rest-modal')?.remove();
+  const el=document.createElement('div');
+  el.id='rest-modal'; el.className='modal-overlay open';
+  el.innerHTML='<div class="modal-box" style="max-width:430px" onclick="event.stopPropagation()"><div class="modal-hdr"><div class="modal-title">Rest days</div><button class="modal-close" aria-label="Close" onclick="document.getElementById(\'rest-modal\').remove()">×</button></div><div class="modal-body" id="rest-modal-body"></div></div>';
+  el.addEventListener('click',e=>{ if(e.target===el) el.remove(); });
+  document.body.appendChild(el);
+  _renderRestModal();
+}
+function _renderRestModal(){
+  const body=document.getElementById('rest-modal-body'); if(!body) return;
+  const t=todayStr(), mon=_weekMonday(t);
+  const week=(off)=>{
+    const m=_dayShift(mon,off*7);
+    const used=restUsedInWeek(m);
+    const cells=[0,1,2,3,4,5,6].map(i=>{
+      const k=_dayShift(m,i), kind=restKind(k), studied=_studiedOn(k);
+      const past=k<t, d=new Date(k+'T12:00:00');
+      let cls='rest-day', act='', note='';
+      if(studied){cls+=' studied';note='Studied';}
+      else if(kind==='rest'){cls+=' rest';note='Rest';if(!past)act=`cancelRestDay('${k}')`;}
+      else if(kind==='shield'){cls+=' shield';note='Shield';}
+      else if(past){cls+=' past';}
+      else if(!restBlocker(k)){cls+=' open';act=`takeRestDay('${k}')`;}
+      else cls+=' locked';
+      if(k===t) cls+=' is-today';
+      const label=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})+(note?': '+note:'')+(act?(kind==='rest'?'. Tap to remove.':'. Tap to rest.'):'');
+      return `<button class="${cls}" ${act?`onclick="${act}"`:'disabled'} aria-label="${label}" title="${label}">
+        <span class="rest-dow">${d.toLocaleDateString('en-US',{weekday:'short'}).slice(0,2)}</span>
+        <span class="rest-num">${d.getDate()}</span>
+        <span class="rest-note">${note||(k===t?'Today':'')}</span>
+      </button>`;
+    }).join('');
+    return `<div class="rest-week"><div class="rest-week-hd"><span>${off===0?'This week':'Next week'}</span><span>${used>=REST_PER_WEEK?'Rest day used':REST_PER_WEEK+' rest day available'}</span></div><div class="rest-grid">${cells}</div></div>`;
+  };
+  const st=getStreak(), gap=streakGap();
+  body.innerHTML=`
+    <div class="rest-intro">A rest day keeps your streak going without counting toward it. You get <strong>one a week</strong>, Monday to Sunday. Plan it today or up to two weeks ahead.${st>0?` Your streak is <strong>${st} day${st===1?'':'s'}</strong>.`:''}</div>
+    ${week(0)}${week(1)}
+    <div class="rest-shield">
+      <span class="rest-shield-ic">${ico('shield')}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:800">Streak Shield${isPro()?'':' · Pro'}</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.5;margin-top:2px">${gap
+          ?`Your ${gap.was}-day streak broke on ${_restDayLabel(gap.days[0]).replace(/^today$/,'today')}. A shield covers the missed day${gap.days.length>1?'s':''} and brings it back to ${gap.restored}.`
+          :'Missed a day without planning it? A shield covers up to 3 missed days from the past week, after the fact.'}</div>
+      </div>
+      ${gap?`<button class="btn btn-sm ${isPro()?'btn-primary':'btn-ghost'}" onclick="useStreakShield()">${isPro()?'Restore':'Get Pro'}</button>`:''}
+    </div>`;
+}
+
 function buildStreakRecovery(){
   if(!S)return'';
   const streak=getStreak();
   if(streak>0)return'';
+  const gap=streakGap();
+  if(gap){
+    const day=_restDayLabel(gap.days[0]);
+    return`<div class="streak-save" role="status">
+      <div class="streak-save-ic">${ico('shield')}</div>
+      <div style="flex:1;min-width:0">
+        <div class="streak-save-t">Your ${gap.was}-day streak broke ${day==='today'?'today':'on '+day.split(',')[0]}</div>
+        <div class="streak-save-s">${isPro()?`A Streak Shield covers the missed day${gap.days.length>1?'s':''} and brings it back to ${gap.restored}.`:`Pro members can bring it back to ${gap.restored} with a Streak Shield.`}</div>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="useStreakShield()">${isPro()?'Use a shield':'Restore with Pro'}</button>
+    </div>`;
+  }
   const longest=S.longestStreak||0;
   if(longest===0&&!(S.activities||[]).length)return'';
   return`<div style="background:var(--surf);border:1.5px solid rgba(245,158,11,.3);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
     <div style="font-size:24px;flex-shrink:0">${ico('flame')}</div>
     <div style="flex:1">
       <div style="font-size:13px;font-weight:800;color:var(--txt)">Streak broken${longest>0?` — Your longest: ${longest} days`:''}</div>
-      <div style="font-size:12px;color:var(--sub);margin-top:2px">Study 3 days in a row to get back on track.</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:2px">Study today to start a new one.</div>
     </div>
     <button onclick="openSessionModal()" style="padding:7px 13px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">Study Now</button>
   </div>`;
@@ -848,6 +968,9 @@ function buildStreakRecovery(){
 function checkStudyNudge(){
   if(!S||document.getElementById('study-nudge-banner'))return;
   if(hasLoggedToday())return;
+  if(restKind(todayStr()))return;
+  // Never over a session in progress or a recap being filled in.
+  if(TS.phase!=='setup'||document.getElementById('sess-overlay')?.classList.contains('open'))return;
   const today=todayStr();
   if(localStorage.getItem('nudgeDismissedDate')===today)return;
   if(document.getElementById('post-ob-offer'))return; // don't stack on the first-run plan offer
@@ -945,6 +1068,8 @@ function checkStreakUrgency(){
   if(document.getElementById('streak-urgency-banner'))return;
   const dismissKey='streak_urgency_dismissed_'+_ymd(new Date());
   if(localStorage.getItem(dismissKey))return;
+  if(restKind(todayStr()))return; // resting today: nothing is at risk
+  const _canRest=!restBlocker(todayStr());
 
   const banner=document.createElement('div');
   banner.id='streak-urgency-banner';
@@ -954,10 +1079,10 @@ function checkStreakUrgency(){
   <div style="font-size:26px;flex-shrink:0;line-height:1;margin-top:2px">${ico('flame')}</div>
   <div style="flex:1;min-width:0">
     <div style="font-size:13px;font-weight:800;margin-bottom:3px">Your ${streak}-day streak ends at midnight.</div>
-    <div style="font-size:11px;opacity:.7;margin-bottom:10px;line-height:1.5">Log a session to keep it alive. Pro members get Streak Shields — miss a day without losing your streak.</div>
+    <div style="font-size:11px;opacity:.7;margin-bottom:10px;line-height:1.5">${_canRest?'Log a session to keep it alive, or make today your rest day for the week.':'Log a session to keep it alive. Even 25 minutes counts.'}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button onclick="document.getElementById('streak-urgency-banner').remove();openSessionModal()" style="padding:7px 14px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Log Session Now</button>
-      <button onclick="document.getElementById('streak-urgency-banner').remove();openUpgradeModal('Streak Shield')" style="padding:7px 14px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Get Streak Shield</button>
+      ${_canRest?`<button onclick="document.getElementById('streak-urgency-banner').remove();takeRestDay()" style="padding:7px 14px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Take a rest day</button>`:''}
     </div>
   </div>
   <button onclick="document.getElementById('streak-urgency-banner').remove();localStorage.setItem('${dismissKey}','1')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1;margin-top:-2px" title="Dismiss">&times;</button>
@@ -965,3 +1090,214 @@ function checkStreakUrgency(){
   document.body.appendChild(banner);
 }
 
+
+// ═══════════════════════════════════════════════
+// WEEKLY RECAP CARD — a story-sized (1080×1920) picture of one Monday–Sunday
+// week: hours, the seven days, sessions, streak, sections and study mix.
+// Opened from the profile, from Today on Sunday/Monday, and from the Sunday
+// recap notification (/?action=recap).
+// ═══════════════════════════════════════════════
+function weekRecapStats(mon){
+  const days=[], t=todayStr();
+  for(let i=0;i<7;i++){
+    const k=_dayShift(mon,i), acts=(S.activities||[]).filter(a=>(a.date||'').slice(0,10)===k&&_isStudyAct(a));
+    days.push({key:k,hrs:acts.reduce((s,a)=>s+(a.hours||0),0),n:acts.length,rest:acts.length?null:restKind(k),future:k>t,isToday:k===t});
+  }
+  const acts=(S.activities||[]).filter(a=>{const d=(a.date||'').slice(0,10);return d>=mon&&d<=_dayShift(mon,6)&&_isStudyAct(a);});
+  const prevMon=_dayShift(mon,-7);
+  const prev=(S.activities||[]).filter(a=>{const d=(a.date||'').slice(0,10);return d>=prevMon&&d<mon&&_isStudyAct(a);}).reduce((s,a)=>s+(a.hours||0),0);
+  const hasPrev=(S.activities||[]).some(a=>(a.date||'').slice(0,10)<mon);
+  const by=(key)=>{const m={};acts.forEach(a=>{if(a[key])m[a[key]]=(m[a[key]]||0)+(a.hours||0);});return Object.entries(m).sort((x,y)=>y[1]-x[1]);};
+  const secs=by('section');
+  const total=days.reduce((s,d)=>s+d.hrs,0);
+  return {
+    mon, end:_dayShift(mon,6), days, total, sessions:acts.length,
+    daysStudied:days.filter(d=>d.hrs>0).length, prev, hasPrev,
+    target:(S.commitments&&S.commitments[mon])||S.hoursPerWeek||15,
+    secs, kind:(by('kind')[0]||[])[0]||'', course:(by('course')[0]||[])[0]||'',
+    streak:getStreak(), isCurrent:mon===_weekMonday(t),
+  };
+}
+function _wrRange(st){
+  const a=new Date(st.mon+'T12:00:00'), b=new Date(st.end+'T12:00:00');
+  const m=d=>d.toLocaleDateString('en-US',{month:'short'});
+  return (m(a)===m(b)?m(a)+' '+a.getDate()+'–'+b.getDate():m(a)+' '+a.getDate()+' – '+m(b)+' '+b.getDate()).toUpperCase();
+}
+function drawWeekRecap(canvas,st){
+  const W=1080,H=1920,ctx=canvas.getContext('2d');
+  canvas.width=W;canvas.height=H;
+  const F="'Libre Franklin',system-ui,sans-serif", ORA='#ff7a3d', L=80, R=W-80;
+  const rr=(x,y,w,h,r)=>{ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);};
+  const txt=(s,x,y,font,color,align)=>{ctx.font=font;ctx.fillStyle=color;ctx.textAlign=align||'left';ctx.fillText(s,x,y);ctx.textAlign='left';};
+  const hrsTxt=n=>{n=Math.round(n*10)/10;return n%1===0?String(n):n.toFixed(1);};
+  // Background
+  ctx.fillStyle='#0d0a18';ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W*0.85,260,20,W*0.85,260,900);
+  g.addColorStop(0,'rgba(255,122,61,.26)');g.addColorStop(.45,'rgba(212,64,0,.08)');g.addColorStop(1,'rgba(13,10,24,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,.03)';
+  for(let x=40;x<W;x+=54)for(let y=40;y<H;y+=54){ctx.beginPath();ctx.arc(x,y,1.6,0,Math.PI*2);ctx.fill();}
+  // Header
+  ctx.letterSpacing='6px';
+  txt('LEDGER',L,140,`800 30px ${F}`,'rgba(255,255,255,.55)');
+  txt(_wrRange(st),R,140,`700 30px ${F}`,ORA,'right');
+  ctx.letterSpacing='0px';
+  const first=((S.name||'').trim().split(' ')[0]||'My');
+  txt((first==='My'?'My':first+'’s')+' CPA week',L,300,`700 58px ${F}`,'rgba(255,255,255,.88)');
+  // Hours
+  const big=hrsTxt(st.total);
+  ctx.font=`800 280px ${F}`;const bw=ctx.measureText(big).width;
+  txt(big,L-8,580,`800 280px ${F}`,'#ffffff');
+  txt(st.total===1?'hour':'hours',L+bw+18,580,`600 68px ${F}`,'rgba(255,255,255,.55)');
+  // Change vs last week
+  let delta='First week on Ledger', dc='rgba(255,255,255,.55)';
+  if(st.isCurrent&&st.total<st.prev){
+    // A week still in progress isn't "less" than a finished one yet.
+    const left=st.days.filter(d=>d.future||d.isToday).length;
+    delta='So far · '+left+' day'+(left===1?'':'s')+' to go';
+  } else if(st.hasPrev){
+    const d=Math.round((st.total-st.prev)*10)/10;
+    if(d>0){delta='▲ '+hrsTxt(d)+'h more than last week';dc='#34d399';}
+    else if(d<0){delta='▼ '+hrsTxt(-d)+'h less than last week';dc='#fbbf24';}
+    else delta='Same as last week';
+  }
+  txt(delta,L,668,`700 38px ${F}`,dc);
+  // Goal bar
+  const pct=Math.min(1,st.total/Math.max(1,st.target)), hit=st.total>=st.target;
+  rr(L,722,R-L,20,10);ctx.fillStyle='rgba(255,255,255,.1)';ctx.fill();
+  if(pct>0){rr(L,722,Math.max(20,(R-L)*pct),20,10);ctx.fillStyle=hit?'#34d399':ORA;ctx.fill();}
+  txt(hit?'Weekly goal hit: '+hrsTxt(st.target)+'h':Math.round(pct*100)+'% of a '+hrsTxt(st.target)+'h weekly goal',L,800,`600 32px ${F}`,'rgba(255,255,255,.6)');
+  // Seven days
+  const D=112, step=(R-L-D)/6, cy=950;
+  const lbl=['M','T','W','T','F','S','S'];
+  st.days.forEach((d,i)=>{
+    const cx=L+D/2+i*step;
+    ctx.beginPath();ctx.arc(cx,cy,D/2,0,Math.PI*2);
+    if(d.hrs>0){ctx.fillStyle=ORA;ctx.fill();txt(hrsTxt(d.hrs),cx,cy+13,`800 ${d.hrs>=10?32:36}px ${F}`,'#1d0b02','center');}
+    else if(d.rest){ctx.setLineDash([10,9]);ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=4;ctx.stroke();ctx.setLineDash([]);txt(d.rest==='shield'?'Shield':'Rest',cx,cy+9,`700 24px ${F}`,'rgba(255,255,255,.7)','center');}
+    else{ctx.strokeStyle=d.future?'rgba(255,255,255,.07)':'rgba(255,255,255,.16)';ctx.lineWidth=4;ctx.stroke();}
+    if(d.isToday){ctx.beginPath();ctx.arc(cx,cy,D/2+12,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=3;ctx.stroke();}
+    txt(lbl[i],cx,cy+D/2+56,`700 28px ${F}`,'rgba(255,255,255,.5)','center');
+  });
+  // Tiles
+  const ty=1130, tw=(R-L-48)/3, tiles=[[String(st.sessions),st.sessions===1?'Session':'Sessions'],[st.daysStudied+'/7','Days studied'],[String(st.streak),'Day streak']];
+  tiles.forEach((tl,i)=>{
+    const x=L+i*(tw+24);
+    rr(x,ty,tw,210,30);ctx.fillStyle='rgba(255,255,255,.06)';ctx.fill();
+    txt(tl[0],x+tw/2,ty+118,`800 86px ${F}`,'#ffffff','center');
+    ctx.letterSpacing='2px';txt(tl[1].toUpperCase(),x+tw/2,ty+170,`700 24px ${F}`,'rgba(255,255,255,.5)','center');ctx.letterSpacing='0px';
+  });
+  // Sections
+  let y=1440;
+  if(st.secs.length){
+    ctx.letterSpacing='4px';txt('BY SECTION',L,y,`700 26px ${F}`,'rgba(255,255,255,.45)');ctx.letterSpacing='0px';
+    const max=st.secs[0][1]||1;
+    st.secs.slice(0,4).forEach(([sec,h],i)=>{
+      const yy=y+64+i*72, col=(EXAMS[sec]&&EXAMS[sec].color)||ORA;
+      txt(sec,L,yy+12,`800 36px ${F}`,col);
+      const bx=L+130, bmax=R-L-130-150;
+      rr(bx,yy-10,bmax,22,11);ctx.fillStyle='rgba(255,255,255,.08)';ctx.fill();
+      rr(bx,yy-10,Math.max(22,bmax*h/max),22,11);ctx.fillStyle=col;ctx.fill();
+      txt(hrsTxt(h)+'h',R,yy+12,`700 34px ${F}`,'#ffffff','right');
+    });
+    y+=64+Math.min(4,st.secs.length)*72+30;
+  }
+  // Study mix
+  const mix=[kindName(st.kind)?'Mostly '+kindName(st.kind):'',courseName(st.course)].filter(Boolean).join(' · ');
+  if(mix&&y<1720){
+    ctx.letterSpacing='4px';txt('STUDIED WITH',L,y+20,`700 26px ${F}`,'rgba(255,255,255,.45)');ctx.letterSpacing='0px';
+    txt(mix,L,y+76,`700 40px ${F}`,'rgba(255,255,255,.85)');
+  }
+  // Footer
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(L,1800);ctx.lineTo(R,1800);ctx.stroke();
+  txt('Tracked on Ledger',L,1856,`600 30px ${F}`,'rgba(255,255,255,.5)');
+  txt('ledgercpa.app',R,1856,`700 30px ${F}`,ORA,'right');
+}
+let _wrMon=null, _wrBlobCache=null;
+function openWeekRecap(which){
+  if(!S) return;
+  const t=todayStr(), thisMon=_weekMonday(t), lastMon=_dayShift(thisMon,-7);
+  // Early in a new week, the finished week is the one worth sharing.
+  let mon=which==='last'?lastMon:which==='this'?thisMon:thisMon;
+  if(!which){ const cur=weekRecapStats(thisMon); if(cur.total===0||((new Date().getDay()===1)&&weekRecapStats(lastMon).total>0)) mon=lastMon; }
+  _wrMon=mon;
+  let el=document.getElementById('week-recap');
+  if(!el){
+    el=document.createElement('div');
+    el.id='week-recap';el.className='modal-overlay open';
+    el.addEventListener('click',e=>{if(e.target===el)el.remove();});
+    document.body.appendChild(el);
+  }
+  const st=weekRecapStats(mon);
+  el.innerHTML=`<div class="modal-box wr-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">Your week</div><button class="modal-close" aria-label="Close" onclick="document.getElementById('week-recap').remove()">×</button></div>
+    <div class="modal-body" style="padding-top:2px">
+      <div class="wr-seg" role="tablist" aria-label="Which week">
+        <button role="tab" aria-selected="${mon===lastMon}" class="${mon===lastMon?'on':''}" onclick="openWeekRecap('last')">Last week</button>
+        <button role="tab" aria-selected="${mon===thisMon}" class="${mon===thisMon?'on':''}" onclick="openWeekRecap('this')">This week</button>
+      </div>
+      <div class="wr-canvas-wrap"><canvas id="wr-canvas" width="1080" height="1920" role="img" aria-label="Weekly recap: ${_hrs(st.total)} over ${st.daysStudied} days, ${st.sessions} sessions"></canvas></div>
+      ${st.total===0?`<div class="wr-empty">${st.isCurrent?'Nothing logged this week yet. Your card fills in as you study.':'No sessions that week.'}</div>`:''}
+      <div class="wr-actions">
+        <button class="btn btn-primary" id="wr-share" ${st.total===0?'disabled':''} onclick="shareWeekRecap()">Share</button>
+        <button class="btn btn-ghost" ${st.total===0?'disabled':''} onclick="downloadWeekRecap()">Save image</button>
+      </div>
+      <div class="wr-foot">Sized for Instagram and TikTok stories. Only your first name is on it.</div>
+    </div>
+  </div>`;
+  // The image is made ahead of time: iPhone only opens the share sheet when it
+  // is called straight from the tap, with nothing awaited first.
+  const draw=()=>{const c=document.getElementById('wr-canvas');if(!c)return;drawWeekRecap(c,st);_wrBlobCache=null;c.toBlob(b=>{_wrBlobCache=b;},'image/png');};
+  draw(); // draw now with whatever font is ready, then again once fonts load
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+  logLedgerEvent('week_recap_opened',{week:mon===thisMon?'this':'last'});
+}
+function _wrCaption(){
+  const st=weekRecapStats(_wrMon||_weekMonday(todayStr()));
+  return `${_hrs(st.total)} of CPA studying over ${st.daysStudied} day${st.daysStudied===1?'':'s'} this week. Tracking every session on Ledger.`;
+}
+function _wrBlob(){
+  const c=document.getElementById('wr-canvas');
+  return new Promise(res=>{ if(!c) return res(null); c.toBlob(b=>res(b),'image/png'); });
+}
+async function shareWeekRecap(){
+  const blob=_wrBlobCache||await _wrBlob(); if(!blob) return;
+  const file=new File([blob],'ledger-week-'+(_wrMon||'')+'.png',{type:'image/png'});
+  const text=_wrCaption();
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],text}); logLedgerEvent('week_recap_shared',{via:'share'}); }catch(e){}
+    return;
+  }
+  downloadWeekRecap();
+  try{ await navigator.clipboard.writeText(text+' https://ledgercpa.app'); showToast('Image saved and caption copied.','ok'); }catch(e){}
+}
+async function downloadWeekRecap(){
+  const blob=await _wrBlob(); if(!blob) return;
+  const a=document.createElement('a');
+  a.download='ledger-week-'+(_wrMon||'')+'.png';
+  a.href=URL.createObjectURL(blob); a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  logLedgerEvent('week_recap_shared',{via:'download'});
+}
+// On Today: a quiet card on Sunday (this week) and Monday (last week).
+function buildWeekRecapPrompt(){
+  if(!S) return '';
+  const dow=new Date().getDay(); // 0 Sun, 1 Mon
+  if(dow!==0&&dow!==1) return '';
+  const which=dow===0?'this':'last';
+  const mon=which==='this'?_weekMonday(todayStr()):_dayShift(_weekMonday(todayStr()),-7);
+  try{ if(localStorage.getItem('wrPromptHidden')===mon) return ''; }catch(e){}
+  const st=weekRecapStats(mon);
+  if(st.total<1) return '';
+  return `<div class="card card-pad today-card wr-prompt" id="wr-prompt">
+    <div style="flex:1;min-width:0">
+      <div class="section-title" style="margin-bottom:4px">${which==='this'?'Your week so far':'Last week'}</div>
+      <div style="font-size:15px;font-weight:800;line-height:1.35">${_hrs(st.total)} over ${st.daysStudied} day${st.daysStudied===1?'':'s'}${st.total>=st.target?' · goal hit':''}</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:3px">Share your week so your friends see the work.</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button class="btn btn-primary btn-sm" onclick="openWeekRecap('${which}')">Share</button>
+      <button class="wr-x" aria-label="Hide" onclick="try{localStorage.setItem('wrPromptHidden','${mon}')}catch(e){};document.getElementById('wr-prompt').remove()">×</button>
+    </div>
+  </div>`;
+}

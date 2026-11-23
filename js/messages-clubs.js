@@ -606,8 +606,8 @@ function _defaultNotifications(){
 
 // Settings → Notifications. Each in-app notification type maps to one toggle;
 // a switched-off type is simply never recorded.
-const NOTIF_PREF_DEFAULTS={study_reminders:true,streak_alerts:true,props_notifs:true,club_messages:true,achievements:true,leaderboard:true,messages:true,crew_activity:true,weekly_email:true};
-const NOTIF_TYPE_TO_PREF={props:'props_notifs',kudos:'props_notifs',comment:'props_notifs',club:'club_messages',achievement:'achievements',follow:'leaderboard',request:'leaderboard'};
+const NOTIF_PREF_DEFAULTS={study_reminders:true,streak_alerts:true,props_notifs:true,club_messages:true,achievements:true,leaderboard:true,messages:true,crew_activity:true,nudges:true,weekly_email:true};
+const NOTIF_TYPE_TO_PREF={props:'props_notifs',kudos:'props_notifs',comment:'props_notifs',club:'club_messages',achievement:'achievements',follow:'leaderboard',request:'leaderboard',nudge:'nudges'};
 function notifPref(id){
   const p=(S&&S.notifPrefs)||{};
   return p[id]!==undefined ? !!p[id] : NOTIF_PREF_DEFAULTS[id]!==false;
@@ -828,6 +828,9 @@ async function syncSocial(){
       }
       if(firstRun || all.length!==seen.size || all.some(id=>!seen.has(id))){ S._seenReactions=all.slice(-400); dirty=true; }
     }catch(e){}
+
+    // 5) Nudges from friends (read through /api/notify; see syncNudges).
+    try{ if(typeof syncNudges==='function'&&await syncNudges()) dirty=true; }catch(e){}
   }finally{
     _socialSyncBusy=false;
     if(dirty){ saveState(); if(document.querySelector('.nav-tab')&&(currentTab==='profile'||currentTab==='feed'||currentTab==='today')){ try{renderTab();}catch(e){} } }

@@ -133,7 +133,7 @@ function _buildHeatmap(activities, weekOffset, containerId){
     +navBtn(-1,canPrev)
     +'<div style="text-align:center;flex:1">'
     +'<div style="font-size:12px;font-weight:700">'+weekLabel+'</div>'
-    +'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+weekActive+' days · '+weekH.toFixed(1)+'h</div>'
+    +'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+weekActive+(weekActive===1?' day · ':' days · ')+weekH.toFixed(1)+'h</div>'
     +'</div>'
     +navBtn(1,canNext)
     +'</div>'
@@ -153,6 +153,27 @@ function _stepHeatmap(delta, containerId){
     var el2=document.getElementById(containerId);
     if(el2){var tmp2=document.createElement('div');tmp2.innerHTML=_buildHeatmap(S.activities||[],_heatmapOwnOffset,containerId);el2.replaceWith(tmp2.firstChild);}
   }
+}
+
+// "How you study": the last 30 days of sessions split by kind of work and by
+// course, from the optional tags on each session.
+function _studyMixHTML(acts){
+  const since=_ymd(new Date(Date.now()-30*86400000));
+  const recent=(acts||[]).filter(a=>(!a.type||a.type==='session')&&(a.date||'').slice(0,10)>=since);
+  if(!recent.length) return '';
+  const sum=(key,list)=>list.map(o=>({o,h:recent.filter(a=>a[key]===o.id).reduce((t,a)=>t+(a.hours||0),0)})).filter(x=>x.h>0).sort((x,y)=>y.h-x.h);
+  const kinds=sum('kind',STUDY_KINDS), courses=sum('course',STUDY_COURSES);
+  const tagged=recent.filter(a=>a.kind||a.course).length;
+  const kTotal=kinds.reduce((t,k)=>t+k.h,0)||1;
+  const head=`<div class="sb-title" style="display:flex;justify-content:space-between;align-items:baseline"><span>How you study</span><span style="font-size:10px;color:var(--mut);font-weight:600;text-transform:none;letter-spacing:0">Last 30 days</span></div>`;
+  if(!tagged) return `<div class="sb-card">${head}<div style="font-size:12px;color:var(--sub);line-height:1.55">Pick a course and what you're doing when you log a session. Ledger will show how your hours split between questions, lectures and review.</div></div>`;
+  const COLORS=['#d44000','#5a5fcf','#0ea574','#d97706','#0fb5aa','#9333ea','#64748b'];
+  const pct=h=>Math.max(1,Math.round(h/kTotal*100));
+  const bar=kinds.length?`<div class="mix-bar" role="img" aria-label="${kinds.map(k=>k.o.name+' '+pct(k.h)+'%').join(', ')}">${kinds.map((k,i)=>`<span style="width:${k.h/kTotal*100}%;background:${COLORS[i%COLORS.length]}"></span>`).join('')}</div>
+    <div class="mix-legend">${kinds.map((k,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${esc(k.o.name)} <b>${pct(k.h)}%</b></span>`).join('')}</div>`:'';
+  const crs=courses.length?`<div class="mix-courses">${courses.slice(0,4).map(c=>`<div><span>${esc(c.o.name)}</span><b>${_hrs(c.h)}</b></div>`).join('')}</div>`:'';
+  const untagged=recent.filter(a=>!a.kind).length;
+  return `<div class="sb-card">${head}${bar}${crs}${untagged>0?`<div style="font-size:10.5px;color:var(--mut);margin-top:8px">${untagged} session${untagged===1?'':'s'} without a type not in the split</div>`:''}</div>`;
 }
 
 function buildProfile(){
@@ -186,7 +207,7 @@ function buildProfile(){
           ${a.elapsed?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· ${fmtDur(a.elapsed)}</span>`:''}
           ${a.location?`<span style="font-size:10px;color:var(--mut);padding-bottom:2px">· ${ico('pin')} ${esc(a.location)}</span>`:''}
         </div>
-        ${a.material?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">${a.material}</div>`:''}
+        ${a.material||studySrcLabel(a)?`<div style="font-size:11px;font-weight:600;color:var(--ind);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">${[a.material,studySrcLabel(a)].filter(Boolean).join(' · ')}</div>`:''}
         ${a.caption?`<div style="font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4">${a.caption}</div>`:''}
         ${(a.concepts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${a.concepts.slice(0,3).map(c=>`<span style="font-size:10px;background:rgba(212,64,0,.09);border:1px solid rgba(212,64,0,.18);color:var(--ora);padding:2px 8px;border-radius:20px;font-weight:600">${c}</span>`).join('')}${a.concepts.length>3?`<span style="font-size:10px;color:var(--mut)">+${a.concepts.length-3}</span>`:''}</div>`:''}
         ${diffStars?`<div style="font-size:11px;margin-top:6px">${diffStars}</div>`:''}
@@ -332,8 +353,13 @@ function buildProfile(){
         <span style="font-size:12px;color:var(--mut);font-weight:600;padding-bottom:4px">of ${S.hoursPerWeek||15}h goal</span>
       </div>
       <div class="prog-bar" style="height:7px"><div class="prog-fill" style="width:${Math.min(100,Math.round(weekHrs/(S.hoursPerWeek||15)*100))}%;background:${weekHrs>=(S.hoursPerWeek||15)?'var(--grn)':'var(--ora)'}"></div></div>
-      ${isPro()?`<button class="btn btn-ghost btn-xs" style="margin-top:10px;width:100%" onclick="openProgressReport()">View Weekly Report</button>`:''}
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-ghost btn-xs" style="flex:1;justify-content:center" onclick="openWeekRecap()">Share my week</button>
+        ${isPro()?`<button class="btn btn-ghost btn-xs" style="flex:1;justify-content:center" onclick="openProgressReport()">Weekly report</button>`:''}
+      </div>
     </div>
+
+    ${_studyMixHTML(S.activities||[])}
 
     <!-- Exam Progress -->
     <div class="sb-card">
@@ -366,10 +392,11 @@ function buildProfile(){
       ${clubs.length>4?`<button class="btn btn-ghost btn-xs" style="width:100%;margin-top:6px" onclick="openMessagesModal()">View all ${clubs.length} →</button>`:''}
     </div>
 
-    ${isPro()?(()=>{
-      const remaining=isElite()?'∞':(3-(S.shieldsUsed||0));
-      return`<div class="sb-card" style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">${ico('shield')}</span><div style="flex:1"><div style="font-size:12px;font-weight:700">Streak Shield</div><div style="font-size:11px;color:var(--mut)">${remaining} remaining</div></div><button class="btn btn-ghost btn-xs" onclick="useStreakShield()">Use</button></div>`;
-    })():''}
+    ${(()=>{
+      const t=todayStr(), used=restUsedInWeek(t), next=Object.keys(S.restDays||{}).filter(k=>k>=t&&restKind(k)==='rest').sort()[0];
+      const line=next?'Next: '+_restDayLabel(next):(used>=REST_PER_WEEK?'This week\u2019s rest day is used':'1 rest day left this week');
+      return`<div class="sb-card" style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">${ico('shield')}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">Rest days${isPro()?' &amp; shields':''}</div><div style="font-size:11px;color:var(--mut)">${line}</div></div><button class="btn btn-ghost btn-xs" onclick="openRestDayModal()">Plan</button></div>`;
+    })()}
 
   </div>
 </div>`;

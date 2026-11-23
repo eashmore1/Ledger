@@ -126,6 +126,15 @@ test('evening reminders: who gets what', async (t) => {
     assert.match(push.pickReminder({ ...base, exams: { FAR: '2026-11-18' } }, TUE_EVENING, 'daily').title, /FAR is tomorrow/);
     assert.match(push.pickReminder({ ...base, scoreDue: { AUD: '2026-11-18' } }, TUE_EVENING, 'daily').title, /AUD scores are expected tomorrow/);
   });
+  await t.test('rest days and shields hold a streak, and silence a rest day', () => {
+    // Studied Saturday the 14th, rested Sunday, shielded Monday: still alive Tuesday.
+    const held = { ...base, lastStudyDate: '2026-11-14', today: { rest: ['2026-11-15', '2026-11-16'] } };
+    assert.equal(push.pickReminder(held, TUE_EVENING, 'daily').type, 'streak');
+    // A gap the rest days don't cover means the streak is gone: plain reminder.
+    assert.equal(push.pickReminder({ ...held, today: { rest: ['2026-11-16'] } }, TUE_EVENING, 'daily').type, 'reminder');
+    // Resting today: nothing at all.
+    assert.equal(push.pickReminder({ ...base, today: { rest: ['2026-11-17'] } }, TUE_EVENING, 'daily'), null);
+  });
   await t.test('Sunday is the week in review', () => {
     const p = { ...base, lastStudyDate: '2026-11-21', week: { key: '2026-11-16', hrs: 11.5, days: 4, target: 15 } };
     const m = push.pickReminder(p, SUN_EVENING, 'daily');
@@ -240,6 +249,34 @@ test('/api/notify only announces things that really happened', async (t) => {
     assert.equal(mails.length, 1);
     assert.deepEqual(mails[0].to, ['support@ledgercpa.app']);
     assert.doesNotMatch(mails[0].html, /<script>|<b>Zed/);
+  });
+  await t.test('nudges: mutual follows only, after studying, once a day, past no block', async () => {
+    const today = require('../api/_lib/push.js').localParts('America/Chicago', Date.now()).ymd;
+    const mutual = {
+      'users/bob/followers/ann': { at: 1 }, 'users/ann/followers/bob': { at: 1 },
+      'notify/ann': { tz: 'America/Chicago', lastStudyDate: today },
+    };
+    const c = load({ ...seed(), ...mutual });
+    const r = await post(c, { type: 'nudge', toUid: 'bob' });
+    assert.equal(r.code, 200);
+    assert.equal(r.body.sent, 1);
+    assert.equal(c.sent[0].data.title, 'Ann nudged you');
+    assert.equal(c.sent[0].data.url, '/?action=start');
+    assert.equal((await post(c, { type: 'nudge', toUid: 'bob' })).code, 429, 'once a day per pair');
+    // Bob's inbox shows it; Ann's shows she sent it.
+    const inbox = await post(c, { type: 'nudge_inbox' }, 'tok:bob');
+    assert.equal(inbox.body.nudges.length, 1);
+    assert.equal(inbox.body.nudges[0].from, 'ann');
+    assert.equal((await post(c, { type: 'nudge_inbox' })).body.sent[0].to, 'bob');
+
+    const oneWay = load({ ...seed(), 'users/bob/followers/ann': { at: 1 }, 'notify/ann': { tz: 'America/Chicago', lastStudyDate: today } });
+    assert.equal((await post(oneWay, { type: 'nudge', toUid: 'bob' })).code, 403, 'bob does not follow ann back');
+    const lazy = load({ ...seed(), ...mutual, 'notify/ann': { tz: 'America/Chicago', lastStudyDate: '2020-01-01' } });
+    assert.equal((await post(lazy, { type: 'nudge', toUid: 'bob' })).body.error, 'study-first');
+    const blocked = load({ ...seed(), ...mutual, 'users/bob/blocks/ann': { blocked: 'ann' } });
+    assert.equal((await post(blocked, { type: 'nudge', toUid: 'bob' })).code, 403);
+    assert.equal((await post(c, { type: 'nudge', toUid: 'ann' })).code, 400, 'not yourself');
+    assert.equal(oneWay.sent.length + lazy.sent.length + blocked.sent.length, 0);
   });
   await t.test('a room can only be announced by its host', async () => {
     const c = load({ ...seed(), 'rooms/r1': { hostUid: 'zed', name: 'x' }, 'rooms/r2': { hostUid: 'ann', name: 'FAR grind' } });
