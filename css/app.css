@@ -1572,12 +1572,15 @@ html,body{overflow-x:hidden}
 .wr-x{background:none;border:none;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
 
 /* Profile photo positioner: drag only, no zoom */
-.crop-stage{position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:16px;background:var(--surf2);touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
-.crop-stage.crop-x{cursor:ew-resize}
-.crop-stage.crop-y{cursor:ns-resize}
-.crop-stage.crop-x.crop-y{cursor:grab}
+.crop-stage{position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:16px;background:#fff;touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
 .crop-stage.dragging{cursor:grabbing}
 #crop-circle:focus-visible{outline:none}
 .crop-stage:focus-visible .crop-ring{border-width:4px}
 .crop-stage img{position:absolute;left:0;top:0;max-width:none;pointer-events:none;-webkit-user-drag:none;will-change:transform}
 .crop-ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 400px rgba(0,0,0,.55);border:3px solid var(--ora);pointer-events:none}
+.crop-stage{cursor:grab}
+.crop-zoom{display:flex;align-items:center;gap:8px;margin:14px auto 0;max-width:260px}
+.crop-zoom input[type=range]{flex:1;min-width:0;accent-color:var(--ora)}
+.crop-zbtn{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--bdr);background:var(--surf);color:var(--txt);display:grid;place-items:center;cursor:pointer;padding:0}
+.crop-reset{flex-shrink:0;border:none;background:none;color:var(--mut);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:6px 2px}
+@media(hover:hover){.crop-zbtn:hover{border-color:var(--ora);color:var(--ora)}.crop-reset:hover{color:var(--txt)}}

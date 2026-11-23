@@ -139,10 +139,16 @@ function openCropModal(dataUrl){
   cropEl.innerHTML=
     '<div class="modal-box" onclick="event.stopPropagation()" style="padding:24px;max-width:360px">' +
       '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Position your photo</div>' +
-      '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag the photo to center yourself in the circle.</div>' +
-      '<div class="crop-stage" id="crop-circle" tabindex="0" role="application" aria-label="Photo position. Drag, or use the arrow keys, to move the photo.">' +
+      '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to move it. Pinch, scroll or use the slider to zoom.</div>' +
+      '<div class="crop-stage" id="crop-circle" tabindex="0" role="application" aria-label="Photo position. Drag or use the arrow keys to move; plus and minus to zoom.">' +
         '<img id="crop-img" alt="" draggable="false">' +
         '<div class="crop-ring" aria-hidden="true"></div>' +
+      '</div>' +
+      '<div class="crop-zoom">' +
+        '<button type="button" class="crop-zbtn" onclick="_cropZoomStep(-1)" aria-label="Zoom out"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>' +
+        '<input type="range" id="crop-zoom" min="0" max="1000" value="0" aria-label="Zoom">' +
+        '<button type="button" class="crop-zbtn" onclick="_cropZoomStep(1)" aria-label="Zoom in"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>' +
+        '<button type="button" class="crop-reset" onclick="_cropReset()">Reset</button>' +
       '</div>' +
       '<div style="display:flex;gap:8px;margin-top:18px">' +
         '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Use photo</button>' +
@@ -151,55 +157,118 @@ function openCropModal(dataUrl){
     '</div>';
   cropEl.classList.add('open');
 
-  const SIZE=260;
+  const SIZE=260, C=SIZE/2;
   const img=document.getElementById('crop-img');
   const stage=document.getElementById('crop-circle');
-  let scale=1, ox=0, oy=0, drag=null;
+  const slider=document.getElementById('crop-zoom');
+  let scale=1, ox=0, oy=0, minS=1, maxS=4, coverS=1;
+  const pts=new Map(); let gesture=null;
 
+  // Each axis: a photo bigger than the frame must keep covering it; a smaller
+  // one can sit anywhere inside the frame. So the photo can go wherever you want.
   function clampPos(){
     const iw=img.naturalWidth*scale, ih=img.naturalHeight*scale;
-    ox=Math.min(0,Math.max(SIZE-iw,ox));
-    oy=Math.min(0,Math.max(SIZE-ih,oy));
+    ox=iw>=SIZE?Math.min(0,Math.max(SIZE-iw,ox)):Math.max(0,Math.min(SIZE-iw,ox));
+    oy=ih>=SIZE?Math.min(0,Math.max(SIZE-ih,oy)):Math.max(0,Math.min(SIZE-ih,oy));
   }
   function applyTransform(){
     img.style.width=(img.naturalWidth*scale)+'px';
     img.style.height=(img.naturalHeight*scale)+'px';
     img.style.transform='translate('+ox+'px,'+oy+'px)';
   }
-  function initCrop(){
-    // Fill the circle (cover), centered. No zoom: the user only drags.
-    scale=Math.max(SIZE/img.naturalWidth,SIZE/img.naturalHeight);
+  // Slider is logarithmic so zoom feels even across the range.
+  const toSlider=s=>Math.round(1000*Math.log(s/minS)/Math.log(maxS/minS));
+  const fromSlider=v=>minS*Math.pow(maxS/minS,v/1000);
+  // Zoom to scale ns, keeping the point (px,py) in the frame still.
+  function zoomTo(ns,px,py){
+    ns=Math.max(minS,Math.min(maxS,ns));
+    if(px==null){px=C;py=C;}
+    ox=px-(px-ox)*(ns/scale);
+    oy=py-(py-oy)*(ns/scale);
+    scale=ns;
+    clampPos();applyTransform();
+    slider.value=toSlider(scale);
+  }
+  function reset(){
+    scale=coverS;
     ox=(SIZE-img.naturalWidth*scale)/2;
     oy=(SIZE-img.naturalHeight*scale)/2;
-    const canX=img.naturalWidth*scale>SIZE+1, canY=img.naturalHeight*scale>SIZE+1;
-    stage.classList.toggle('crop-x',canX);
-    stage.classList.toggle('crop-y',canY);
     applyTransform();
+    slider.value=toSlider(scale);
+  }
+  function initCrop(){
+    const w=img.naturalWidth, h=img.naturalHeight;
+    coverS=Math.max(SIZE/w,SIZE/h);
+    // Zoom out until the whole photo fits (or a bit smaller for square photos),
+    // zoom in up to 5x the fill size.
+    minS=Math.min(SIZE/w,SIZE/h)*0.6;
+    maxS=coverS*5;
+    reset();
     window._cropData={img, getScale:()=>scale, getOx:()=>ox, getOy:()=>oy};
   }
+  window._cropZoomStep=dir=>zoomTo(scale*(dir>0?1.2:1/1.2));
+  window._cropReset=reset;
 
   // Wire onload BEFORE setting src to guarantee it fires for data URLs
   img.onload=initCrop;
   img.src=dataUrl;
 
+  slider.oninput=function(){zoomTo(fromSlider(+this.value));};
+
+  const local=e=>{const r=stage.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+  function startGesture(){
+    const p=[...pts.values()];
+    if(p.length>=2){
+      const [a,b]=p;
+      gesture={pinch:true,d:Math.hypot(a.x-b.x,a.y-b.y)||1,mx:(a.x+b.x)/2,my:(a.y+b.y)/2,s:scale,ox,oy};
+    }else if(p.length===1){
+      gesture={pinch:false,x:p[0].x,y:p[0].y,ox,oy};
+    }else gesture=null;
+  }
   stage.onpointerdown=function(e){
     if(e.button>0)return;
-    drag={id:e.pointerId,x:e.clientX,y:e.clientY,ox,oy};
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     try{stage.setPointerCapture(e.pointerId);}catch(_){}
     stage.classList.add('dragging');
+    startGesture();
     e.preventDefault();
   };
   stage.onpointermove=function(e){
-    if(!drag||e.pointerId!==drag.id)return;
-    ox=drag.ox+(e.clientX-drag.x);
-    oy=drag.oy+(e.clientY-drag.y);
-    clampPos();applyTransform();
+    if(!pts.has(e.pointerId)||!gesture)return;
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const p=[...pts.values()];
+    if(gesture.pinch&&p.length>=2){
+      const [a,b]=p;
+      const d=Math.hypot(a.x-b.x,a.y-b.y)||1, mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      // Restore the start state, zoom around the pinch midpoint, then follow it.
+      scale=gesture.s;ox=gesture.ox;oy=gesture.oy;
+      const r=stage.getBoundingClientRect();
+      const ns=Math.max(minS,Math.min(maxS,gesture.s*d/gesture.d));
+      const px=gesture.mx-r.left, py=gesture.my-r.top;
+      ox=px-(px-ox)*(ns/scale)+(mx-gesture.mx);
+      oy=py-(py-oy)*(ns/scale)+(my-gesture.my);
+      scale=ns;
+      clampPos();applyTransform();slider.value=toSlider(scale);
+    }else if(!gesture.pinch){
+      ox=gesture.ox+(e.clientX-gesture.x);
+      oy=gesture.oy+(e.clientY-gesture.y);
+      clampPos();applyTransform();
+    }
   };
   stage.onpointerup=stage.onpointercancel=function(e){
-    if(!drag||e.pointerId!==drag.id)return;
-    drag=null;stage.classList.remove('dragging');
+    if(!pts.has(e.pointerId))return;
+    pts.delete(e.pointerId);
+    startGesture();
+    if(!pts.size)stage.classList.remove('dragging');
+  };
+  stage.onwheel=function(e){
+    e.preventDefault();
+    const [px,py]=local(e);
+    zoomTo(scale*Math.exp(-e.deltaY*0.0015),px,py);
   };
   stage.onkeydown=function(e){
+    if(e.key==='+'||e.key==='='){e.preventDefault();window._cropZoomStep(1);return;}
+    if(e.key==='-'||e.key==='_'){e.preventDefault();window._cropZoomStep(-1);return;}
     const step=e.shiftKey?40:10;
     const d={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
     if(!d)return;
@@ -221,6 +290,7 @@ function applyCrop(){
   canvas.width=OUT;canvas.height=OUT;
   const ctx=canvas.getContext('2d');
   // Circular clip
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,OUT,OUT);
   ctx.beginPath();ctx.arc(OUT/2,OUT/2,OUT/2,0,Math.PI*2);ctx.clip();
   // Draw image scaled up 2x
   ctx.drawImage(img, ox*2, oy*2, img.naturalWidth*currentScale*2, img.naturalHeight*currentScale*2);
