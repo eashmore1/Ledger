@@ -236,7 +236,7 @@ async function reactivateSubscription(){
           if(data.sub && data.sub.tier && data.sub.tier !== 'free'){
             SUB = {...SUB, ...data.sub};
             saveSub(SUB);
-            logLedgerEvent('purchase', {tier: SUB.tier});
+            logLedgerEvent('purchase', {tier: SUB.tier}); setLedgerUserProps();
             showToast('Subscription activated! Welcome to ' + navProLabel() + '.','ok');
             renderApp();
             return;

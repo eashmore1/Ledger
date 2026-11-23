@@ -101,13 +101,30 @@ function initAnalyticsIfConsented(){
   if(firebaseAnalytics||!firebaseApp) return;
   let ok=false; try{ ok=localStorage.getItem('ledger-cookie-consent')==='accepted'; }catch(e){}
   if(!ok) return;
-  try{ firebaseAnalytics = firebase.analytics(); }catch(e){}
+  try{ firebaseAnalytics = firebase.analytics(); setLedgerUserProps(); }catch(e){}
 }
 
 // Thin wrapper — never throws, safe to call anywhere
 function logLedgerEvent(name, params){
   try{ if(firebaseAnalytics) firebaseAnalytics.logEvent(name, params||{}); }catch(e){}
 }
+// Who someone is, in coarse buckets only (never name, email or uid), so any
+// chart can be split by plan, cohort membership or how far along they are.
+function setLedgerUserProps(){
+  try{
+    if(!firebaseAnalytics||typeof S==='undefined'||!S) return;
+    const passed=(S.sectionPassed||[]).length;
+    const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+    firebaseAnalytics.setUserProperties({
+      plan:(typeof SUB!=='undefined'&&SUB&&SUB.tier)||'free',
+      in_cohort:S.firmCode?'yes':'no',
+      sections_passed:String(passed),
+      following_bucket:(n=>n===0?'0':n<5?'1-4':n<20?'5-19':'20+')((S.following||[]).length),
+      installed:standalone?'yes':'no'
+    });
+  }catch(e){}
+}
+
 // Milestone events (first session, week-2 return, onboarding complete) are only
 // meaningful the first time they happen. The guard is per-device in localStorage:
 // a re-install double-counts, which is the right trade for not needing a server

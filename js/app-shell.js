@@ -95,6 +95,7 @@ function checkChallengeAchievements(){
 // ═══════════════════════════════════════════════
 function renderApp(){
   logLedgerEvent('app_open');
+  setLedgerUserProps();
   // Retention buckets. Firebase can derive retention from app_open alone, but
   // only as a cohort chart — these fire once per user so they can be used as
   // conversion goals and audience definitions, and so day-N return is visible
@@ -262,6 +263,7 @@ function switchTab(tab){
   if(typeof _onbOnNavigate==='function') _onbOnNavigate(tab);
   const prevTab=currentTab;
   currentTab=tab;
+  if(tab!==prevTab) logLedgerEvent('screen_view',{firebase_screen:tab,screen_name:tab});
   const tabOrder=['today','feed','dashboard','studylab','plan','explore','profile'];
   syncNavActive(tab);
   const page=document.getElementById('page-content');

@@ -2,6 +2,16 @@
 // POST MODAL
 // ═══════════════════════════════════════════════
 let postFeeling='💪';let postDiff=3;
+// One event per logged session. No notes, captions or material text: only
+// the shape of the session, so the dashboard can show how people study.
+function _logSessionEvent(act,via){
+  const p={section:act.section,hours:Math.round((+act.hours||0)*4)/4,via,course:act.course||'none',kind:act.kind||'none',has_photo:!!act.photo,private:!!act.private};
+  logLedgerEvent('session_logged',p);
+  // The activation moment. Everything before this is setup; a user who never
+  // reaches it never had a chance to retain.
+  if((S.activities||[]).length===1) logLedgerEventOnce('first_session_logged',p);
+}
+
 function openPostModal(prefSection=''){
   postFeeling='💪';postDiff=3;
   _srcPick.pm={course:S.lastCourse||'',kind:''};
@@ -83,6 +93,7 @@ function submitPost(){
   if(_srcPick.pm.kind) act.kind=_srcPick.pm.kind;
   rememberStudySrc(act.course);
   S.activities.push(act);
+  _logSessionEvent(act,'manual');
   saveState();
   checkAchievements();
   checkChallengeAchievements();
@@ -180,7 +191,7 @@ function giveProps(actId,userId){
     if(_ref)_ref.delete().catch(()=>{});
   }
   else{
-    act.kudos.push(me);S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();
+    act.kudos.push(me);S.propsGiven=(S.propsGiven||0)+1;saveState();checkAchievements();logLedgerEvent('props_given',{});
     if(_ref)_ref.set({activityId:actId,reactor:me,author:authorUid,at:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>notifyEvent('kudos',{toUid:authorUid,activityId:actId})).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t save that — please try again.','err');});
   }
   // Animate button
@@ -312,6 +323,7 @@ function addComment(actId,userId){
   if(!act.comments)act.comments=[];
   const c={user:myName,text,from:me,at:Date.now()};
   act.comments.push(c);
+  logLedgerEvent('comment_posted',{own_post:authorUid===me});
   // Persist to the author's comments subcollection so the comment reaches them + everyone.
   if(firebaseDb){firebaseDb.collection('users').doc(authorUid).collection('comments').add({activityId:actId,from:me,name:myName,text,at:firebase.firestore.FieldValue.serverTimestamp()}).then(ref=>{ c.id=ref.id; if(authorUid!==me) notifyEvent('comment',{toUid:authorUid,activityId:actId}); }).catch(e=>{if(e.code==='permission-denied')showToast('Couldn\'t post that comment — please try again.','err');});}
   if(authorUid===me)saveState();
@@ -490,6 +502,7 @@ function _sendFollowRequest(uid, btn){
     showToast('Follow request cancelled','info');
   } else {
     S.pendingRequests.push(uid);
+    logLedgerEvent('follow',{private:true});
     if(btn){btn.textContent='Requested';btn.classList.remove('following');btn.style.background='var(--surf2)';btn.style.color='var(--sub)';}
     saveState();
     showToast('Follow request sent','ok');
@@ -512,6 +525,7 @@ function toggleFollow(fId,btn){
   } else {
     following.push(fId);
     S.following=following;
+    logLedgerEvent('follow',{private:false});
     if(btn){btn.textContent='Following';btn.classList.add('following');btn.style.background='';btn.style.color='';btn.classList.remove('just-followed');void btn.offsetWidth;btn.classList.add('just-followed');}
     saveState();checkAchievements();saveFollowToFirestore();
     showToast('Following! Their sessions will now appear in your feed.','ok');
@@ -1166,6 +1180,7 @@ function startTimer(opts){
   TS.elapsed=0;TS.startTime=Date.now();TS.phase='active';
   tsStartTicking();
   tsPersist();
+  logLedgerEvent('timer_started',{section:sec,course:TS.course||'none',kind:TS.kind||'none',has_goal:goal>0,quick:direct});
   _startPresence(); // broadcast "studying now" to my clubs
   renderSessCard();
   updateNavChip();
@@ -1363,10 +1378,7 @@ function saveSession(){
   rememberStudySrc(TS.course);
   const _priorScore=calcReadinessScore().score;
   S.activities.push(act);
-  logLedgerEvent('session_logged', {section: act.section, hours: act.hours});
-  // The activation moment. Everything before this is setup; a user who never
-  // reaches it never had a chance to retain.
-  if((S.activities||[]).length===1) logLedgerEventOnce('first_session_logged',{section:act.section,hours:act.hours});
+  _logSessionEvent(act,TS.manual?'manual':'timer');
   window._notifySession=true;
   const _priorAch=new Set(S.achievements||[]);
   saveState();checkAchievements();checkChallengeAchievements();

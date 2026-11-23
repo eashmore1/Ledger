@@ -1008,9 +1008,12 @@ window.addEventListener('beforeinstallprompt',e=>{
   if(sessions>=2&&!localStorage.getItem('pwaPromptDismissed'))setTimeout(showPWAPrompt,2500);
 });
 
+window.addEventListener('appinstalled',()=>{ logLedgerEvent('pwa_installed',{}); });
+
 function showPWAPrompt(){
   if(document.getElementById('pwa-prompt-banner'))return;
   if(localStorage.getItem('pwaPromptDismissed'))return;
+  logLedgerEvent('pwa_prompt_shown',{ios:/iPhone|iPad/.test(navigator.userAgent)});
   const isIOS=/iPhone|iPad/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.userAgent));
   const banner=document.createElement('div');
   banner.id='pwa-prompt-banner';
@@ -1022,7 +1025,7 @@ function showPWAPrompt(){
         <div style="font-size:13px;font-weight:700">Add Ledger to your Home Screen</div>
         <div style="font-size:11px;opacity:.7;margin-top:3px;line-height:1.5">Tap <strong>Share ⎙</strong> then <strong>Add to Home Screen</strong> for one-tap access.</div>
       </div>
-      <button onclick="document.getElementById('pwa-prompt-banner').remove();localStorage.setItem('pwaPromptDismissed','1')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1;margin-top:-2px">×</button>
+      <button onclick="document.getElementById('pwa-prompt-banner').remove();localStorage.setItem('pwaPromptDismissed','1');logLedgerEvent('pwa_prompt_dismissed',{})" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1;margin-top:-2px">×</button>
     </div>`;
   }else{
     banner.innerHTML=`<div style="background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px">
@@ -1031,8 +1034,8 @@ function showPWAPrompt(){
         <div style="font-size:13px;font-weight:700">Add Ledger to your Home Screen</div>
         <div style="font-size:11px;opacity:.7;margin-top:2px">Get one-tap access from your home screen.</div>
       </div>
-      <button onclick="if(_deferredInstallPrompt){_deferredInstallPrompt.prompt();_deferredInstallPrompt.userChoice.then(()=>{localStorage.setItem('pwaPromptDismissed','1');document.getElementById('pwa-prompt-banner')?.remove()})}" style="padding:7px 12px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Install</button>
-      <button onclick="document.getElementById('pwa-prompt-banner').remove();localStorage.setItem('pwaPromptDismissed','1')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1">×</button>
+      <button onclick="if(_deferredInstallPrompt){_deferredInstallPrompt.prompt();_deferredInstallPrompt.userChoice.then(c=>{logLedgerEvent('pwa_prompt_choice',{outcome:(c&&c.outcome)||'unknown'});localStorage.setItem('pwaPromptDismissed','1');document.getElementById('pwa-prompt-banner')?.remove()})}" style="padding:7px 12px;background:var(--ora);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Install</button>
+      <button onclick="document.getElementById('pwa-prompt-banner').remove();localStorage.setItem('pwaPromptDismissed','1');logLedgerEvent('pwa_prompt_dismissed',{})" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0;flex-shrink:0;line-height:1">×</button>
     </div>`;
   }
   document.body.appendChild(banner);
@@ -1213,7 +1216,7 @@ function drawWeekRecap(canvas,st){
   txt('Tracked on Ledger',L,1856,`600 30px ${F}`,'rgba(255,255,255,.5)');
   txt('ledgercpa.app',R,1856,`700 30px ${F}`,ORA,'right');
 }
-let _wrMon=null, _wrBlobCache=null;
+let _wrMon=null, _wrBlobCache=null, _wrDataUrl='';
 function openWeekRecap(which){
   if(!S) return;
   const t=todayStr(), thisMon=_weekMonday(t), lastMon=_dayShift(thisMon,-7);
@@ -1236,7 +1239,7 @@ function openWeekRecap(which){
         <button role="tab" aria-selected="${mon===lastMon}" class="${mon===lastMon?'on':''}" onclick="openWeekRecap('last')">Last week</button>
         <button role="tab" aria-selected="${mon===thisMon}" class="${mon===thisMon?'on':''}" onclick="openWeekRecap('this')">This week</button>
       </div>
-      <div class="wr-canvas-wrap"><canvas id="wr-canvas" width="1080" height="1920" role="img" aria-label="Weekly recap: ${_hrs(st.total)} over ${st.daysStudied} days, ${st.sessions} sessions"></canvas></div>
+      <div class="wr-canvas-wrap"><canvas id="wr-canvas" width="1080" height="1920" aria-hidden="true"></canvas><img id="wr-img" alt="Weekly recap: ${_hrs(st.total)} over ${st.daysStudied} days, ${st.sessions} sessions"></div>
       ${st.total===0?`<div class="wr-empty">${st.isCurrent?'Nothing logged this week yet. Your card fills in as you study.':'No sessions that week.'}</div>`:''}
       <div class="wr-actions">
         <button class="btn btn-primary" id="wr-share" ${st.total===0?'disabled':''} onclick="shareWeekRecap()">Share</button>
@@ -1246,38 +1249,105 @@ function openWeekRecap(which){
     </div>
   </div>`;
   // The image is made ahead of time: iPhone only opens the share sheet when it
-  // is called straight from the tap, with nothing awaited first.
-  const draw=()=>{const c=document.getElementById('wr-canvas');if(!c)return;drawWeekRecap(c,st);_wrBlobCache=null;c.toBlob(b=>{_wrBlobCache=b;},'image/png');};
+  // is called straight from the tap, with nothing awaited first. The previous
+  // image stays usable until the redraw (after fonts load) has finished.
+  // Shown as an <img> (not the canvas) so press-and-hold offers Save on phones.
+  const draw=()=>{
+    const c=document.getElementById('wr-canvas'),im=document.getElementById('wr-img');if(!c||_wrMon!==mon)return;
+    drawWeekRecap(c,st);
+    try{ _wrDataUrl=c.toDataURL('image/png'); }catch(e){ _wrDataUrl=''; }
+    _wrBlobCache=null;
+    if(im&&_wrDataUrl) im.src=_wrDataUrl;
+  };
+  _wrBlobCache=null;_wrDataUrl='';
   draw(); // draw now with whatever font is ready, then again once fonts load
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
   logLedgerEvent('week_recap_opened',{week:mon===thisMon?'this':'last'});
 }
 function _wrCaption(){
   const st=weekRecapStats(_wrMon||_weekMonday(todayStr()));
-  return `${_hrs(st.total)} of CPA studying over ${st.daysStudied} day${st.daysStudied===1?'':'s'} this week. Tracking every session on Ledger.`;
+  const span=st.isCurrent?'so far this week':'last week';
+  return `${_hrs(st.total)} of CPA studying over ${st.daysStudied} day${st.daysStudied===1?'':'s'} ${span}. Tracking every session on Ledger.`;
 }
-function _wrBlob(){
-  const c=document.getElementById('wr-canvas');
-  return new Promise(res=>{ if(!c) return res(null); c.toBlob(b=>res(b),'image/png'); });
+// The image as a Blob, made without awaiting anything so it can be used
+// inside the tap that opens the share sheet.
+function _wrBlobNow(){
+  if(_wrBlobCache) return _wrBlobCache;
+  if(!_wrDataUrl) return null;
+  try{
+    const bin=atob(_wrDataUrl.split(',')[1]);
+    const u=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+    return _wrBlobCache=new Blob([u],{type:'image/png'});
+  }catch(e){ return null; }
+}
+function _wrFile(blob){
+  const name='ledger-week-'+(_wrMon||'')+'.png';
+  try{ return new File([blob],name,{type:'image/png'}); }catch(e){ return null; }
+}
+function _wrCanShareFile(file){
+  try{ return !!(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})); }catch(e){ return false; }
+}
+// iPhone and iPad (including iPads that report as a Mac).
+function _wrIsIOS(){ return /iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent)); }
+function _wrBusy(on){
+  document.querySelectorAll('.wr-actions button').forEach(b=>{ if(on){b.dataset.wasDisabled=b.disabled?'1':'';b.disabled=true;} else {b.disabled=b.dataset.wasDisabled==='1';} });
 }
 async function shareWeekRecap(){
-  const blob=_wrBlobCache||await _wrBlob(); if(!blob) return;
-  const file=new File([blob],'ledger-week-'+(_wrMon||'')+'.png',{type:'image/png'});
+  const blob=_wrBlobNow();
+  if(!blob){ showToast('Couldn’t make the image. Try again.','err'); return; }
+  const file=_wrFile(blob);
   const text=_wrCaption();
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{ await navigator.share({files:[file],text}); logLedgerEvent('week_recap_shared',{via:'share'}); }catch(e){}
+  if(_wrCanShareFile(file)){
+    _wrBusy(true);
+    try{
+      await navigator.share({files:[file],text});
+      logLedgerEvent('week_recap_shared',{via:'share'});
+    }catch(e){
+      // Closing the share sheet is not an error.
+      if(e&&e.name==='AbortError'){ logLedgerEvent('week_recap_share_cancelled',{}); }
+      else { logLedgerEvent('week_recap_share_failed',{err:(e&&e.name)||'unknown'}); _wrSaveFallback(blob,text); }
+    }finally{ _wrBusy(false); }
     return;
   }
-  downloadWeekRecap();
-  try{ await navigator.clipboard.writeText(text+' https://ledgercpa.app'); showToast('Image saved and caption copied.','ok'); }catch(e){}
+  // No file sharing here (most desktop browsers, some in-app browsers): save the
+  // image and copy a caption so it can be posted by hand.
+  _wrSaveFallback(blob,text);
 }
-async function downloadWeekRecap(){
-  const blob=await _wrBlob(); if(!blob) return;
+async function _wrSaveFallback(blob,text){
+  _wrDownload(blob);
+  let copied=false;
+  try{ if(navigator.clipboard){ await navigator.clipboard.writeText(text+' https://ledgercpa.app'); copied=true; } }catch(e){}
+  showToast(copied?'Image saved and caption copied. Paste it with your post.':'Image saved.','ok');
+}
+function _wrDownload(blob){
+  const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.download='ledger-week-'+(_wrMon||'')+'.png';
-  a.href=URL.createObjectURL(blob); a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  a.href=url; a.rel='noopener'; a.style.display='none';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
   logLedgerEvent('week_recap_shared',{via:'download'});
+}
+async function downloadWeekRecap(){
+  const blob=_wrBlobNow();
+  if(!blob){ showToast('Couldn’t make the image. Try again.','err'); return; }
+  // On iPhone a download link opens the picture full screen, and in the
+  // installed app there is no way back. The share sheet has "Save Image".
+  if(_wrIsIOS()){
+    const file=_wrFile(blob);
+    if(_wrCanShareFile(file)){
+      _wrBusy(true);
+      try{ await navigator.share({files:[file]}); logLedgerEvent('week_recap_shared',{via:'save_sheet'}); }
+      catch(e){ if(!e||e.name!=='AbortError') showToast('Couldn’t open Save Image. Press and hold the picture to save it.','info'); }
+      finally{ _wrBusy(false); }
+      return;
+    }
+    showToast('Press and hold the picture, then tap Save to Photos.','info');
+    return;
+  }
+  _wrDownload(blob);
+  showToast('Image saved.','ok');
 }
 // On Today: a quiet card on Sunday (this week) and Monday (last week).
 function buildWeekRecapPrompt(){

@@ -515,7 +515,7 @@ async function enablePush(){
   if(!firebaseDb||!AUTH||!AUTH.uid){ showToast('Connect to the internet to turn on notifications','err'); return false; }
   let perm='default';
   try{ perm=await Notification.requestPermission(); }catch(e){}
-  if(perm!=='granted'){ _refreshPushUI(); if(perm==='denied') showToast('Notifications blocked — you can allow them in your browser settings','info'); return false; }
+  if(perm!=='granted'){ logLedgerEvent('push_declined',{perm}); _refreshPushUI(); if(perm==='denied') showToast('Notifications blocked — you can allow them in your browser settings','info'); return false; }
   try{
     const token=await _pushGetToken();
     if(!token) throw new Error('no token');

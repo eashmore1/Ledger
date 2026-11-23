@@ -1562,8 +1562,9 @@ html,body{overflow-x:hidden}
 .wr-seg button{flex:1;padding:8px;border:none;background:transparent;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
 .wr-seg button.on{background:var(--surf);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .wr-canvas-wrap{display:flex;justify-content:center}
-.wr-canvas-wrap canvas{width:100%;max-width:300px;aspect-ratio:9/16;height:auto;border-radius:16px;box-shadow:0 10px 34px rgba(0,0,0,.35);display:block}
-@media(max-height:760px){.wr-canvas-wrap canvas{max-width:240px}}
+.wr-canvas-wrap canvas{display:none}
+.wr-canvas-wrap img{width:100%;max-width:300px;aspect-ratio:9/16;height:auto;border-radius:16px;box-shadow:0 10px 34px rgba(0,0,0,.35);display:block;-webkit-touch-callout:default;user-select:auto}
+@media(max-height:760px){.wr-canvas-wrap img{max-width:240px}}
 .wr-empty{font-size:12px;color:var(--sub);text-align:center;margin-top:10px}
 .wr-actions{display:flex;gap:8px;margin-top:14px}
 .wr-actions .btn{flex:1;justify-content:center;padding:11px}
@@ -1584,3 +1585,8 @@ html,body{overflow-x:hidden}
 .crop-zbtn{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--bdr);background:var(--surf);color:var(--txt);display:grid;place-items:center;cursor:pointer;padding:0}
 .crop-reset{flex-shrink:0;border:none;background:none;color:var(--mut);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:6px 2px}
 @media(hover:hover){.crop-zbtn:hover{border-color:var(--ora);color:var(--ora)}.crop-reset:hover{color:var(--txt)}}
+/* A popup is open: floating buttons and the install banner step aside so they
+   never cover its buttons. */
+body:has(.modal-overlay.open) .calc-fab,
+body:has(.modal-overlay.open) .ledger-bubble,
+body:has(.modal-overlay.open) #pwa-prompt-banner{display:none!important}

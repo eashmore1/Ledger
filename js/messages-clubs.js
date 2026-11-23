@@ -594,6 +594,7 @@ async function joinPublicClub(pubId){
     }catch(e){ console.warn('Club join Firestore error:',e); }
   }
   renderTab();
+  logLedgerEvent('club_joined',{type:'public'});
   showToast('Joined '+pc.name+'!','ok');
 }
 
