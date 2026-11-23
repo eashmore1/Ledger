@@ -124,8 +124,6 @@ function handleProfilePicUpload(input){
 }
 
 function closeCropModal(){
-  if(window._cropMouseMove) document.removeEventListener('mousemove',window._cropMouseMove);
-  if(window._cropMouseUp) document.removeEventListener('mouseup',window._cropMouseUp);
   document.getElementById('crop-modal')?.classList.remove('open');
 }
 function openCropModal(dataUrl){
@@ -139,84 +137,74 @@ function openCropModal(dataUrl){
   }
   // Note: img src is NOT set here — we set it after onload is wired (fixes data URL onload timing)
   cropEl.innerHTML=
-    '<div class="modal-box" onclick="event.stopPropagation()" style="padding:24px;max-width:400px">' +
-      '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Crop Photo</div>' +
-      '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag to reposition · Scroll to zoom</div>' +
-      '<div style="position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:50%;border:3px solid var(--ora);cursor:move;touch-action:none" id="crop-circle">' +
-        '<img id="crop-img" alt="Photo being cropped" style="position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;cursor:move">' +
-      '</div>' +
-      '<div style="margin-top:14px;display:flex;align-items:center;gap:10px">' +
-        '<span style="font-size:11px;color:var(--mut);flex-shrink:0">Zoom</span>' +
-        '<input type="range" id="crop-zoom" min="1" max="300" value="100" style="flex:1;accent-color:var(--ora)">' +
+    '<div class="modal-box" onclick="event.stopPropagation()" style="padding:24px;max-width:360px">' +
+      '<div style="font-size:16px;font-weight:800;margin-bottom:4px">Position your photo</div>' +
+      '<div style="font-size:12px;color:var(--mut);margin-bottom:16px">Drag the photo to center yourself in the circle.</div>' +
+      '<div class="crop-stage" id="crop-circle" tabindex="0" role="application" aria-label="Photo position. Drag, or use the arrow keys, to move the photo.">' +
+        '<img id="crop-img" alt="" draggable="false">' +
+        '<div class="crop-ring" aria-hidden="true"></div>' +
       '</div>' +
       '<div style="display:flex;gap:8px;margin-top:18px">' +
-        '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Apply</button>' +
+        '<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="applyCrop()">Use photo</button>' +
         '<button class="btn btn-ghost" onclick="closeCropModal()">Cancel</button>' +
       '</div>' +
     '</div>';
   cropEl.classList.add('open');
 
+  const SIZE=260;
   const img=document.getElementById('crop-img');
-  const circle=document.getElementById('crop-circle');
-  const zoomSlider=document.getElementById('crop-zoom');
-  let scale=1, ox=0, oy=0, dragging=false, startX=0, startY=0, baseOx=0, baseOy=0;
+  const stage=document.getElementById('crop-circle');
+  let scale=1, ox=0, oy=0, drag=null;
 
   function clampPos(){
     const iw=img.naturalWidth*scale, ih=img.naturalHeight*scale;
-    ox=Math.min(0,Math.max(260-iw,ox));
-    oy=Math.min(0,Math.max(260-ih,oy));
+    ox=Math.min(0,Math.max(SIZE-iw,ox));
+    oy=Math.min(0,Math.max(SIZE-ih,oy));
   }
   function applyTransform(){
     img.style.width=(img.naturalWidth*scale)+'px';
     img.style.height=(img.naturalHeight*scale)+'px';
-    img.style.left=ox+'px';
-    img.style.top=oy+'px';
+    img.style.transform='translate('+ox+'px,'+oy+'px)';
   }
   function initCrop(){
-    // Scale image to fill 260×260 circle (cover, not contain)
-    const minScale=Math.max(260/img.naturalWidth,260/img.naturalHeight);
-    scale=minScale;
-    ox=(260-img.naturalWidth*scale)/2;
-    oy=(260-img.naturalHeight*scale)/2;
-    const minVal=Math.max(1,Math.round(minScale*100));
-    zoomSlider.min=minVal;
-    zoomSlider.max=Math.max(300,minVal*3);
-    zoomSlider.value=minVal;
+    // Fill the circle (cover), centered. No zoom: the user only drags.
+    scale=Math.max(SIZE/img.naturalWidth,SIZE/img.naturalHeight);
+    ox=(SIZE-img.naturalWidth*scale)/2;
+    oy=(SIZE-img.naturalHeight*scale)/2;
+    const canX=img.naturalWidth*scale>SIZE+1, canY=img.naturalHeight*scale>SIZE+1;
+    stage.classList.toggle('crop-x',canX);
+    stage.classList.toggle('crop-y',canY);
     applyTransform();
-    // Store live getters so applyCrop always gets current values
-    window._cropData={img, getScale:function(){return scale;}, getOx:function(){return ox;}, getOy:function(){return oy;}};
+    window._cropData={img, getScale:()=>scale, getOx:()=>ox, getOy:()=>oy};
   }
 
   // Wire onload BEFORE setting src to guarantee it fires for data URLs
   img.onload=initCrop;
   img.src=dataUrl;
 
-  zoomSlider.oninput=function(){
-    const ns=parseInt(this.value)/100;
-    const cx=130,cy=130;
-    ox=cx-(cx-ox)*(ns/scale);
-    oy=cy-(cy-oy)*(ns/scale);
-    scale=ns;
+  stage.onpointerdown=function(e){
+    if(e.button>0)return;
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,ox,oy};
+    try{stage.setPointerCapture(e.pointerId);}catch(_){}
+    stage.classList.add('dragging');
+    e.preventDefault();
+  };
+  stage.onpointermove=function(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    ox=drag.ox+(e.clientX-drag.x);
+    oy=drag.oy+(e.clientY-drag.y);
     clampPos();applyTransform();
   };
-  circle.onmousedown=function(e){dragging=true;startX=e.clientX;startY=e.clientY;baseOx=ox;baseOy=oy;e.preventDefault();};
-  window._cropMouseMove=function(e){if(!dragging)return;ox=baseOx+(e.clientX-startX);oy=baseOy+(e.clientY-startY);clampPos();applyTransform();};
-  window._cropMouseUp=function(){dragging=false;};
-  document.addEventListener('mousemove',window._cropMouseMove);
-  document.addEventListener('mouseup',window._cropMouseUp);
-  circle.ontouchstart=function(e){if(e.touches.length===1){dragging=true;startX=e.touches[0].clientX;startY=e.touches[0].clientY;baseOx=ox;baseOy=oy;e.preventDefault();}};
-  circle.ontouchmove=function(e){if(dragging&&e.touches.length===1){ox=baseOx+(e.touches[0].clientX-startX);oy=baseOy+(e.touches[0].clientY-startY);clampPos();applyTransform();e.preventDefault();}};
-  circle.ontouchend=function(){dragging=false;};
-  circle.onwheel=function(e){
+  stage.onpointerup=stage.onpointercancel=function(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    drag=null;stage.classList.remove('dragging');
+  };
+  stage.onkeydown=function(e){
+    const step=e.shiftKey?40:10;
+    const d={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
+    if(!d)return;
     e.preventDefault();
-    const delta=e.deltaY<0?1.08:0.93;
-    const ns=Math.max(parseInt(zoomSlider.min)/100,Math.min(parseInt(zoomSlider.max)/100,scale*delta));
-    const cx=130,cy=130;
-    ox=cx-(cx-ox)*(ns/scale);
-    oy=cy-(cy-oy)*(ns/scale);
-    scale=ns;
-    zoomSlider.value=Math.round(ns*100);
-    clampPos();applyTransform();
+    ox+=d[0];oy+=d[1];clampPos();applyTransform();
   };
 }
 

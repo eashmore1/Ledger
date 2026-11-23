@@ -1570,3 +1570,14 @@ html,body{overflow-x:hidden}
 .wr-foot{font-size:11px;color:var(--mut);text-align:center;margin-top:10px}
 .wr-prompt{display:flex;align-items:center;gap:12px}
 .wr-x{background:none;border:none;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+
+/* Profile photo positioner: drag only, no zoom */
+.crop-stage{position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:16px;background:var(--surf2);touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
+.crop-stage.crop-x{cursor:ew-resize}
+.crop-stage.crop-y{cursor:ns-resize}
+.crop-stage.crop-x.crop-y{cursor:grab}
+.crop-stage.dragging{cursor:grabbing}
+#crop-circle:focus-visible{outline:none}
+.crop-stage:focus-visible .crop-ring{border-width:4px}
+.crop-stage img{position:absolute;left:0;top:0;max-width:none;pointer-events:none;-webkit-user-drag:none;will-change:transform}
+.crop-ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 400px rgba(0,0,0,.55);border:3px solid var(--ora);pointer-events:none}
