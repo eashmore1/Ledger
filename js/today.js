@@ -51,7 +51,8 @@ function _todayTarget(sec){
   if(pd){
     if(!pd.isStudy) return {section:sec,hours:0,rest:true,why:(pd.blocked&&_planDayLabel(plan,today))||'Rest day on your study plan'};
     const m=(typeof ACTIVITY_MODES!=='undefined'&&ACTIVITY_MODES[pd.mode])||null;
-    return {section:pd.section||plan.primarySec||sec,hours:pd.hours||0,why:'From your study plan'+(m?' · '+m.label:'')};
+    const label=typeof _planDayModeLabel==='function'?_planDayModeLabel(plan,pd):(m&&m.label);
+    return {section:pd.section||plan.primarySec||sec,hours:pd.hours||0,why:'From your study plan'+(label?' · '+label:'')};
   }
   const pace=_sectionPace(sec);
   if(pace){

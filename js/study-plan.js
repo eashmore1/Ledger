@@ -135,12 +135,198 @@ const ACTIVITY_MODES = {
       'Sleep > cramming the night before. Seriously.',
     ],
   },
+  course:{
+    label:'Course Units',icon:'book',color:'#4f46e5',
+    desc:'Work through the units scheduled for today in your review course: lectures first, then that unit\'s MCQs and simulations.',
+    tips:[
+      'Finish a unit\'s MCQs before moving on. That\'s where the lecture actually sticks.',
+      'Ahead of schedule? Check the unit off and the rest of the plan spreads out.',
+      'Missed a day? Don\'t double up blindly. Check off what you finished and the plan re-paces.',
+    ],
+  },
   rest:{
     label:'Rest Day',icon:'bed',color:'var(--mut)',
     desc:'Scheduled rest. Recovery is part of the plan.',
     tips:['Rest is productive. Your brain consolidates memory during sleep.'],
   },
 };
+
+// ── REVIEW COURSE UNITS (Becker and others) ──────────────────────────────────
+// Review courses don't share progress, so the student tells Ledger how many
+// units their course has for a section and checks them off as they finish.
+// Progress lives on S.courseProgress[sec] = {course, units, done:[unit numbers]}
+// (outside the plan) so rebuilding the plan never loses check-offs. The plan
+// spreads the units that are left across its study days, weighted by hours.
+const PLAN_COURSES=['becker','uworld','gleim','surgent','wiley','ninja'];
+
+function _courseFor(sec){
+  const cp=S.courseProgress&&S.courseProgress[sec];
+  return cp&&cp.course&&cp.units>0?cp:null;
+}
+function _courseLabel(cp){
+  return (cp&&typeof courseName==='function'&&courseName(cp.course))||'Course';
+}
+function _unitsLeft(cp){
+  if(!cp) return [];
+  const done=new Set(cp.done||[]);
+  const out=[];
+  for(let u=1;u<=cp.units;u++) if(!done.has(u)) out.push(u);
+  return out;
+}
+// "Unit 4", "Units 4–5", "Units 4, 6"
+function _unitsText(units){
+  if(!units||!units.length) return '';
+  if(units.length===1) return 'Unit '+units[0];
+  const contiguous=units.every((u,i)=>i===0||u===units[i-1]+1);
+  return 'Units '+(contiguous?units[0]+'–'+units[units.length-1]:units.join(', '));
+}
+// Short form for calendar cells: "U4", "U4–5"
+function _unitsShort(units){
+  if(!units||!units.length) return '';
+  return 'U'+units[0]+(units.length>1?'–'+units[units.length-1]:'');
+}
+// Mode label for a plan day: "Becker Unit 4" on course days, else the mode name.
+function _planDayModeLabel(plan,day){
+  const m=ACTIVITY_MODES[day.mode]||ACTIVITY_MODES.new_material;
+  if(day.mode==='course'&&day.units&&day.units.length){
+    return _courseLabel(_courseFor(plan.primarySec))+' '+_unitsText(day.units);
+  }
+  return m.label;
+}
+function _planDayDesc(plan,day){
+  const m=ACTIVITY_MODES[day.mode]||ACTIVITY_MODES.new_material;
+  if(day.mode==='course'&&day.units&&day.units.length){
+    return 'Work through '+_courseLabel(_courseFor(plan.primarySec))+' '+plan.primarySec+' '+_unitsText(day.units)+': lectures first, then the unit\'s MCQs and simulations. Check a unit off when you finish it.';
+  }
+  if(day.mode==='course') return 'Course units are done. Use today to redo missed MCQs from your weakest units.';
+  return m.desc;
+}
+
+// Spread the units still left over the upcoming study days before review
+// starts. Past days keep what they had, so the calendar stays a true record.
+function _assignCourseUnits(plan){
+  if(!plan||!Array.isArray(plan.days)) return;
+  const cp=_courseFor(plan.primarySec);
+  const today=_ymd(new Date());
+  plan.coursePacedOn=today;
+  plan.courseOverflow=0;
+  const future=plan.days.filter(d=>d.date>=today);
+  future.forEach(d=>{ delete d.units; });
+  if(!cp||!plan.learnEnd) return;
+  const left=_unitsLeft(cp);
+  const slots=future.filter(d=>d.isStudy&&!d.blocked&&d.date<plan.learnEnd&&d.mode==='course');
+  if(!left.length) return;
+  if(!slots.length){ plan.courseOverflow=left.length; return; }
+  const total=slots.reduce((s,d)=>s+(d.hours||1),0)||slots.length;
+  const per=total/left.length; // hours per unit
+  let c=0;
+  slots.forEach(d=>{
+    const a=c, b=c+(d.hours||1);
+    c=b;
+    const first=Math.floor(a/per+1e-9);
+    const last=Math.min(left.length-1,Math.max(first,Math.ceil(b/per-1e-9)-1));
+    d.units=left.slice(first,last+1);
+  });
+}
+
+// Units per week needed from today to finish before review starts.
+function _coursePace(plan){
+  const cp=_courseFor(plan.primarySec);
+  if(!cp||!plan.learnEnd) return null;
+  const today=_ymd(new Date());
+  const left=_unitsLeft(cp).length;
+  const daysToReview=Math.max(0,Math.round((new Date(plan.learnEnd+'T12:00:00')-new Date(today+'T12:00:00'))/86400000));
+  const perWeek=daysToReview>0?left/daysToReview*7:null;
+  return {cp,left,done:cp.units-left,daysToReview,perWeek};
+}
+
+// This calendar week's units (Sun–Sat), from the plan.
+function _courseUnitsThisWeek(plan){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const start=new Date(now); start.setDate(now.getDate()-now.getDay());
+  const end=new Date(start); end.setDate(start.getDate()+6);
+  const s=_ymd(start), e=_ymd(end), today=_ymd(now);
+  const set=new Set();
+  plan.days.forEach(d=>{ if(d.date>=s&&d.date<=e&&d.date>=today&&d.units) d.units.forEach(u=>set.add(u)); });
+  return [...set].sort((a,b)=>a-b);
+}
+
+function toggleCourseUnit(sec,n){
+  const cp=_courseFor(sec); if(!cp) return;
+  cp.done=cp.done||[];
+  const i=cp.done.indexOf(n);
+  const finishing=i<0;
+  if(finishing) cp.done.push(n); else cp.done.splice(i,1);
+  cp.done.sort((a,b)=>a-b);
+  const plan=S.aiStudyPlan;
+  if(plan&&plan.primarySec===sec) _assignCourseUnits(plan);
+  saveState();
+  const modalDate=document.getElementById('plan-day-modal')?.dataset.date;
+  if(currentTab==='plan') renderTab();
+  if(modalDate) openPlanDayDetail(modalDate);
+  const left=_unitsLeft(cp).length;
+  if(finishing){
+    showToast(left?'Unit '+n+' done · '+left+' to go':'All '+cp.units+' '+_courseLabel(cp)+' units done. On to review!','ok');
+    if(!left) burstConfetti(document.body);
+  } else showToast('Unit '+n+' marked not done','ok');
+}
+
+// "Mark Unit 4 finished" buttons for a plan day's units.
+function _unitButtonsHTML(plan,day){
+  const cp=_courseFor(plan.primarySec);
+  if(!cp||!day||!day.units||!day.units.length) return '';
+  const done=new Set(cp.done||[]);
+  return `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">${day.units.map(u=>done.has(u)
+    ?`<button onclick="toggleCourseUnit('${plan.primarySec}',${u})" style="width:100%;padding:9px;background:#10b98118;border:1.5px solid #10b98155;border-radius:10px;font-size:12px;font-weight:700;color:var(--grn);cursor:pointer">✓ Unit ${u} finished</button>`
+    :`<button onclick="toggleCourseUnit('${plan.primarySec}',${u})" style="width:100%;padding:9px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer">Finished Unit ${u}</button>`).join('')}</div>`;
+}
+
+// Sidebar card: course progress, this week's units, pace, and a unit grid.
+function _courseProgressCard(plan){
+  const pace=_coursePace(plan);
+  if(!pace) return '';
+  const {cp,left,done}=pace;
+  const cName=_courseLabel(cp);
+  const ex=EXAMS[plan.primarySec]||{color:'var(--ind)'};
+  const pct=Math.round(done/cp.units*100);
+  const week=_courseUnitsThisWeek(plan);
+  const doneSet=new Set(cp.done||[]);
+  const reviewOn=new Date(plan.learnEnd+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  let paceLine;
+  if(!left) paceLine=`<span style="color:var(--grn);font-weight:700">Course finished.</span> The rest of the plan is review.`;
+  else if(plan.courseOverflow) paceLine=`<span style="color:#ef4444;font-weight:700">Review time has started with ${left} unit${left!==1?'s':''} left.</span> Finish them first, or move your exam date and rebuild.`;
+  else{
+    const pw=pace.perWeek||left;
+    const behind=plan.courseStartPace&&pw>plan.courseStartPace*1.15;
+    const every=Math.round(7/pw);
+    const pwTxt=pw>=1.05?(Math.round(pw*10)/10)+' units a week':every<=7?'about 1 unit a week':'about 1 unit every '+every+' days';
+    paceLine=`${left} left · ${pwTxt} to finish by ${reviewOn}${behind?` <span style="color:var(--amb);font-weight:700">· a bit behind your starting pace</span>`:''}`;
+  }
+  const cells=[];
+  for(let u=1;u<=cp.units;u++){
+    const on=doneSet.has(u), wk=week.includes(u);
+    cells.push(`<button onclick="toggleCourseUnit('${plan.primarySec}',${u})" aria-pressed="${on}" aria-label="Unit ${u}${on?', finished':''}" style="height:30px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid ${on?ex.color:wk?ex.color+'88':'var(--bdr)'};background:${on?ex.color:wk?ex.color+'14':'var(--surf2)'};color:${on?'#fff':wk?ex.color:'var(--mut)'}">${on?'✓':u}</button>`);
+  }
+  return `<div class="card card-pad" style="margin-bottom:14px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)">${esc(cName)} ${plan.primarySec}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--sub)">${done}/${cp.units} units</div>
+    </div>
+    <div style="height:6px;background:var(--surf2);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:6px;background:${ex.color};border-radius:4px;width:${pct}%"></div></div>
+    ${week.length&&left?`<div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:4px">This week: ${_unitsText(week)}</div>`:''}
+    <div style="font-size:11px;color:var(--sub);line-height:1.5;margin-bottom:12px">${paceLine}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px">${cells.join('')}</div>
+    <div style="font-size:10px;color:var(--mut);margin-top:10px;line-height:1.5">Tap a unit when you finish it in ${esc(cName)}. The plan re-paces the rest.</div>
+  </div>`;
+}
+
+// The course most of this person's tagged sessions came from, if any.
+function _mostUsedCourse(){
+  const counts={};
+  (S.activities||[]).forEach(a=>{ if(a&&PLAN_COURSES.includes(a.course)) counts[a.course]=(counts[a.course]||0)+1; });
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  return top?top[0]:'';
+}
 
 function _getPlanTip(mode){
   const m=ACTIVITY_MODES[mode]||ACTIVITY_MODES.new_material;
@@ -202,6 +388,24 @@ function generateAIPlan(settings){
     phases=[{n:1,mode:'final_review',name:'Exam Crunch',icon:'flame',start:1,end:planDays,focus:'High-yield MCQs and key TBS only. No new material. Stay sharp and rested.',color:'#ef4444'}];
   }
 
+  // Following a review course: finish its units first, then review. The course
+  // already mixes lectures, MCQs and sims inside each unit, so those don't get
+  // phases of their own. Review gets ~15% of the time (more when time is short).
+  const cp=_courseFor(primarySec);
+  const courseLeft=_unitsLeft(cp).length;
+  let learnEndDay=0;
+  if(cp&&courseLeft>0&&planDays>=5){
+    const cName=_courseLabel(cp);
+    const reviewDays=planDays>=28?Math.max(7,Math.round(planDays*0.15))
+      :planDays>=14?Math.max(4,Math.round(planDays*0.3))
+      :Math.max(2,Math.round(planDays*0.35));
+    learnEndDay=planDays-reviewDays;
+    phases=[
+      {n:1,mode:'course',name:'Phase 1 — '+cName+' units',icon:'book',start:1,end:learnEndDay,focus:'Finish your remaining '+courseLeft+' '+cName+' '+primarySec+' unit'+(courseLeft!==1?'s':'')+'. Each day says which unit to work on.',color:'#4f46e5'},
+      {n:2,mode:'final_review',name:'Phase 2 — Final Review',icon:'rocket',start:learnEndDay+1,end:planDays,focus:'Course finished. Mock exams, your weakest areas, and '+cName+' Final Review if you have it. Protect your sleep.',color:'#9333ea'},
+    ];
+  }
+
   // Sprint alternating modes for final phase
   const sprintModes=['mock_exam','final_review','mcq_practice','final_review','mock_exam','tbs_practice'];
 
@@ -254,6 +458,15 @@ function generateAIPlan(settings){
     blockedDates:[],
     timeOff:[],
   };
+  if(learnEndDay){
+    // First day of review; course units are scheduled on study days before it.
+    const t=new Date(today); t.setDate(today.getDate()+learnEndDay);
+    S.aiStudyPlan.learnEnd=_ymd(t);
+    S.aiStudyPlan.course=cp.course;
+    _assignCourseUnits(S.aiStudyPlan);
+    const pace=_coursePace(S.aiStudyPlan);
+    S.aiStudyPlan.courseStartPace=pace&&pace.perWeek;
+  }
   saveState();
 }
 
@@ -305,6 +518,7 @@ function rebalanceStudyPlan(){
     const w=totalWeight?baseH(d)/totalWeight:1/recip.length;
     d.hours=Math.min(8,Math.max(1,parseFloat((poolHours*w).toFixed(1))));
   });
+  _assignCourseUnits(plan);
   plan.rebalancedAt=Date.now();
   saveState();
 }
@@ -424,6 +638,8 @@ function buildStudyPlanTab(){
   if(_planGenerating) return _buildPlanLoading();
   const plan=S.aiStudyPlan;
   if(!plan) return _buildPlanSetup();
+  // New day: re-spread the units still left from today forward.
+  if(plan.learnEnd&&plan.coursePacedOn!==_ymd(new Date())){ _assignCourseUnits(plan); saveState(); }
   return _buildPlanCalendar(plan);
 }
 
@@ -508,6 +724,34 @@ function _buildPlanSetup(){
   const daysLeft=examDate?Math.max(0,Math.ceil((new Date(examDate+' 00:00')-Date.now())/86400000)):null;
   const canGenerate=!!examDate&&daysLeft>0;
 
+  // Review course: which one, how many units, how many already finished.
+  const savedCp=(S.courseProgress&&S.courseProgress[selectedSec])||null;
+  const course=storedSettings.course!=null?storedSettings.course:(savedCp?savedCp.course:_mostUsedCourse());
+  const units=storedSettings.units!=null?storedSettings.units:(savedCp?savedCp.units:'');
+  const unitsDone=storedSettings.unitsDone!=null?storedSettings.unitsDone:(savedCp?(savedCp.done||[]).length:0);
+  const cName=course?courseName(course):'';
+  const courseChips=[...PLAN_COURSES.map(id=>({id,name:courseName(id)})),{id:'',name:'None'}].map(o=>{
+    const on=o.id===course;
+    return `<button onclick="_planSelectCourse('${o.id}')" aria-pressed="${on}" style="padding:8px 14px;border-radius:20px;border:2px solid ${on?ex.color:'var(--bdr)'};background:${on?ex.color+'14':'var(--surf2)'};color:${on?ex.color:'var(--sub)'};font-size:12px;font-weight:700;cursor:pointer">${o.name}</button>`;
+  }).join('');
+  const numStyle='width:76px;padding:9px 10px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:14px;font-weight:700;outline:none';
+  const courseCard=`<div class="card card-pad" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px">Which review course are you using?</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:14px">Ledger schedules your course unit by unit, so each day tells you which unit to work on.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${courseChips}</div>
+      ${course?`<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:16px">
+        <div>
+          <label for="plan-units" style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">Units in your ${esc(cName)} ${selectedSec} course</label>
+          <input id="plan-units" type="number" inputmode="numeric" min="1" max="60" placeholder="e.g. 10" value="${units||''}" oninput="_planUpdateSettings()" style="${numStyle}">
+        </div>
+        <div>
+          <label for="plan-units-done" style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">Units already finished</label>
+          <input id="plan-units-done" type="number" inputmode="numeric" min="0" max="60" value="${unitsDone||0}" oninput="_planUpdateSettings()" style="${numStyle}">
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5">Count the units listed for ${selectedSec} in your ${esc(cName)} course. Leave it blank and the plan schedules by study type instead.</div>`:''}
+    </div>`;
+
   return`<div style="max-width:680px;margin:0 auto;padding:20px 0">
     <div style="margin-bottom:28px">
       <h1 style="font-size:26px;font-weight:900;letter-spacing:-.04em;margin-bottom:6px">Build Your Study Plan</h1>
@@ -544,6 +788,8 @@ function _buildPlanSetup(){
       ${!canGenerate&&examDate?`<div style="font-size:11px;color:#ef4444;margin-top:8px">${ico('warning')} That date is in the past — pick a future date</div>`:!examDate?`<div style="font-size:11px;color:var(--amb);margin-top:8px">Pick your exam date to continue</div>`:''}
     </div>
 
+    ${courseCard}
+
     <!-- Daily hours + study days -->
     <div class="card card-pad" style="margin-bottom:16px">
       <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study schedule</div>
@@ -565,8 +811,8 @@ function _buildPlanSetup(){
       <div style="font-size:10px;color:var(--mut);margin-top:10px" id="plan-long-hint">${longDays.length>0?`${ico('flame')} Long days: ${longDays.map(i=>dayNames[i]).join(', ')} · ~${Math.min(8,Math.round(weeklyHrs/6*1.6*10)/10)}h on these days`:'No long days — tap a day above to mark it as a long session day'}</div>`}
     </div>
 
-    <!-- Study style -->
-    <div class="card card-pad" style="margin-bottom:28px">
+    <!-- Study style (a review course sets its own mix of lectures, MCQs and sims) -->
+    <div class="card card-pad" style="margin-bottom:28px;${course?'display:none':''}">
       <div style="font-size:13px;font-weight:800;margin-bottom:4px">Study style</div>
       <div style="font-size:11px;color:var(--mut);margin-bottom:14px">How do you want to split your time across the plan?</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -592,7 +838,13 @@ function _planSelectSection(sec){
   _planSettings=Object.assign({},_planSettings||{},{
     section:sec,
     examDate:S.examDates?.[sec]||'',
+    course:undefined,units:undefined,unitsDone:undefined, // reload this section's saved course
   });
+  renderTab();
+}
+function _planSelectCourse(id){
+  _planUpdateSettings();
+  _planSettings=Object.assign({},_planSettings||{},{course:id});
   renderTab();
 }
 function _planSelectStyle(style){
@@ -648,6 +900,25 @@ function _planUpdateSettings(){
   const hrsEl=document.getElementById('plan-hrs');
   if(dateEl) _planSettings=Object.assign({},_planSettings||{},{examDate:dateEl.value});
   if(hrsEl) _planSettings=Object.assign({},_planSettings||{},{dailyHrs:parseFloat(hrsEl.value)||2});
+  const uEl=document.getElementById('plan-units');
+  const udEl=document.getElementById('plan-units-done');
+  if(uEl) _planSettings=Object.assign({},_planSettings||{},{units:uEl.value===''?'':Math.max(0,Math.min(60,parseInt(uEl.value,10)||0))});
+  if(udEl) _planSettings=Object.assign({},_planSettings||{},{unitsDone:Math.max(0,Math.min(60,parseInt(udEl.value,10)||0))});
+}
+
+// Save the course picked in setup to S.courseProgress. Keeps existing
+// check-offs when the count of finished units hasn't changed.
+// Picking "None" keeps the units and check-offs; the plan just stops using them.
+function _savePlanCourse(sec,settings){
+  if(!S.courseProgress) S.courseProgress={};
+  const prev=S.courseProgress[sec]||null;
+  const course=settings.course!=null?settings.course:(prev?prev.course:_mostUsedCourse());
+  const units=settings.units!=null?(parseInt(settings.units,10)||0):(prev?prev.units:0);
+  if(!course&&!prev) return;
+  const doneCount=Math.min(units,settings.unitsDone!=null?settings.unitsDone:((prev&&prev.done)||[]).length);
+  let done=((prev&&prev.done)||[]).filter(u=>u<=units);
+  if(done.length!==doneCount){ done=[]; for(let u=1;u<=doneCount;u++) done.push(u); }
+  S.courseProgress[sec]={course:course||'',units,done};
 }
 
 function submitPlanSetup(){
@@ -661,6 +932,7 @@ function submitPlanSetup(){
   // Save exam date back to state if changed
   if(!S.examDates) S.examDates={};
   S.examDates[sec]=examDate;
+  _savePlanCourse(sec,settings);
   saveState();
   _planGenerating=true;
   renderTab();
@@ -711,7 +983,7 @@ function _buildPlanCalendar(plan){
       border=isToday?`2px solid ${ex.color}`:`1px solid ${ex.color}28`;
       inner=`<div style="font-size:10px;font-weight:${isToday?900:700};color:${isToday?ex.color:'var(--sub)'};margin-bottom:4px">${dayNum}</div>
         <div style="font-size:18px;line-height:1;margin-bottom:3px">${d.done?ico('checkCircle'):ico(m.icon)}</div>
-        <div style="font-size:10px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px">${d.section}</div>
+        <div style="font-size:10px;font-weight:700;color:${ex.color};background:${ex.color}20;border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:2px"${d.units&&d.units.length?` title="${_unitsText(d.units)}"`:''}>${d.units&&d.units.length?_unitsShort(d.units):d.section}</div>
         <div style="font-size:10px;color:var(--mut)">${d.hours}h${d.isLong?' '+ico('flame')+'':''}</div>`;
     }else if(d&&d.blocked){
       const lbl=_planDayLabel(plan,cellStr);
@@ -741,11 +1013,12 @@ function _buildPlanCalendar(plan){
     todaySide=`<div style="background:linear-gradient(135deg,${ex.color}14,${ex.color}06);border:1.5px solid ${ex.color}44;border-radius:14px;padding:16px;margin-bottom:14px">
       <div style="font-size:10px;font-weight:800;color:${ex.color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Today — Day ${todayEntry.dayNum}</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-        <div style="background:${m.color};color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:800">${ico(m.icon)} ${m.label}</div>
+        <div style="background:${m.color};color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:800">${ico(m.icon)} ${esc(_planDayModeLabel(plan,todayEntry))}</div>
         <span class="badge badge-${todayEntry.section}">${todayEntry.section}</span>
       </div>
       <div style="font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px">${todayEntry.hours}h${todayEntry.isLong?' <span style="font-size:14px;background:#f9731620;color:#f97316;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:800;vertical-align:middle">'+ico('flame')+' Long Day</span>':''}</div>
-      <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${m.desc}</div>
+      <div style="font-size:11px;color:var(--sub);line-height:1.55;margin-bottom:12px">${esc(_planDayDesc(plan,todayEntry))}</div>
+      ${_unitButtonsHTML(plan,todayEntry)}
       <div style="font-size:11px;color:var(--mut);font-style:italic;border-top:1px solid ${ex.color}22;padding-top:10px;margin-bottom:12px">${_getPlanTip(todayEntry.mode)}</div>
       ${todayEntry.done
         ?`<div style="background:#10b98120;color:var(--grn);border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:700">✓ Day Complete!</div>`
@@ -814,7 +1087,7 @@ function _buildPlanCalendar(plan){
         </div>
         <!-- Mode legend -->
         <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-          ${Object.entries(ACTIVITY_MODES).filter(([k])=>k!=='rest').map(([k,m])=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${ico(m.icon)} ${m.label}</div>`).join('')}
+          ${Object.entries(ACTIVITY_MODES).filter(([k])=>k!=='rest'&&plan.days.some(d=>d.isStudy&&d.mode===k)).map(([k,m])=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${ico(m.icon)} ${m.label}</div>`).join('')}
           <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)">${ico('checkCircle')} Done &nbsp;${ico('bed')} Rest &nbsp;${ico('plane')} Off</div>
         </div>
         <div style="font-size:10px;color:var(--mut);margin-bottom:12px;font-style:italic">Life happens — tap any upcoming day to mark it off. Your hours move to the rest of the plan automatically.</div>
@@ -842,6 +1115,8 @@ function _buildPlanCalendar(plan){
           </div>
         </div>
 
+        ${_courseProgressCard(plan)}
+
         <!-- Phase roadmap -->
         <div class="card card-pad" style="margin-bottom:14px">
           <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px">Your Roadmap</div>
@@ -861,7 +1136,7 @@ function _buildPlanCalendar(plan){
               <div style="font-size:10px;color:var(--mut);margin-top:2px">${l}</div>
             </div>`).join('')}
           </div>
-          <div style="font-size:10px;color:var(--mut);text-align:center;margin-top:10px;line-height:1.5">Generated ${timeAgo(plan.generated)} · <em>Becker/Gleim guides the what — this plan guides the when</em></div>
+          <div style="font-size:10px;color:var(--mut);text-align:center;margin-top:10px;line-height:1.5">Generated ${timeAgo(plan.generated)} · <em>${_courseFor(plan.primarySec)&&plan.learnEnd?'Built around your '+esc(_courseLabel(_courseFor(plan.primarySec)))+' units':'Becker/Gleim guides the what — this plan guides the when'}</em></div>
         </div>
       </div>
     </div>
@@ -893,6 +1168,7 @@ function openPlanDayDetail(dateStr){
   document.getElementById('plan-day-modal')?.remove();
   const el=document.createElement('div');
   el.id='plan-day-modal';
+  el.dataset.date=dateStr;
   el.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;--ov:1;justify-content:center;padding:20px;animation:fadeIn .15s ease';
   el.innerHTML=`<div style="background:var(--surf);border-radius:20px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.3)">
     <div style="height:5px;background:${ex.color}"></div>
@@ -915,11 +1191,12 @@ function openPlanDayDetail(dateStr){
           :dateStr>=todayStr?`<button onclick="toggleBlockDay('${dateStr}')" style="width:100%;padding:11px;background:var(--surf2);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer">Reopen this day</button>`:''}
       `:day.isStudy?`
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-          <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${ico(m.icon)} ${m.label}</div>
+          <div style="background:${m.color};color:#fff;border-radius:8px;padding:6px 13px;font-size:13px;font-weight:800">${ico(m.icon)} ${esc(_planDayModeLabel(plan,day))}</div>
           <span class="badge badge-${day.section}">${day.section}</span>
           <span style="font-size:15px;font-weight:900;color:var(--txt)">${day.hours}h</span>
         </div>
-        <div style="font-size:13px;color:var(--sub);line-height:1.6;background:var(--surf2);border-radius:10px;padding:12px 14px;margin-bottom:14px">${m.desc}</div>
+        <div style="font-size:13px;color:var(--sub);line-height:1.6;background:var(--surf2);border-radius:10px;padding:12px 14px;margin-bottom:14px">${esc(_planDayDesc(plan,day))}</div>
+        ${dateStr<=todayStr?_unitButtonsHTML(plan,day):''}
         <div style="font-size:11px;color:var(--mut);font-style:italic;margin-bottom:16px">${_getPlanTip(day.mode)}</div>
         ${day.done
           ?`<div style="background:#10b98120;color:var(--grn);border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:700">✓ Completed</div>`
@@ -973,6 +1250,7 @@ function regeneratePlan(){
       dailyHrs:S.aiStudyPlan.dailyHrs||2,
       studyStyle:S.aiStudyPlan.studyStyle||'balanced',
       studyDays:S.aiStudyPlan.studyDays||[1,2,3,4,5,6],
+      longDays:S.aiStudyPlan.longDays||[],
     };
   }
   S.aiStudyPlan=null;saveState();
