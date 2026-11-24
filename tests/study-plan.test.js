@@ -66,6 +66,11 @@ test('study plan schedules Becker units and re-paces on check-off', { timeout: 1
 
       // Setup: Becker is preselected from tagged sessions.
       assert(await page.isVisible('button[aria-pressed="true"]:has-text("Becker")'), 'Becker preselected from sessions');
+      assert0.equal(await page.inputValue('#plan-units'), '6', "Becker FAR prefilled with Becker's 6 units");
+      await page.click('button:has-text("Gleim")');
+      assert0.equal(await page.inputValue('#plan-units'), '', 'Becker count not carried over to Gleim');
+      await page.click('button:has-text("Becker")');
+      assert0.equal(await page.inputValue('#plan-units'), '6', 'Becker prefill comes back');
       await page.fill('#plan-units', '10');
       await page.fill('#plan-units-done', '2');
       if (vp.name === 'phone') await page.screenshot({ path: path.join(OUT, 'setup-phone.png'), fullPage: true });

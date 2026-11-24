@@ -158,6 +158,13 @@ const ACTIVITY_MODES = {
 // (outside the plan) so rebuilding the plan never loses check-offs. The plan
 // spreads the units that are left across its study days, weighted by hours.
 const PLAN_COURSES=['becker','uworld','gleim','surgent','wiley','ninja'];
+// Units per section in Becker's current course, from Becker's LiveOnline page
+// (core sections 6 units, BAR 5, ISC and TCP 4). Prefilled, always editable,
+// since older Becker versions had more (FAR used to run F1–F9 or F10).
+const COURSE_UNIT_DEFAULTS={becker:{AUD:6,FAR:6,REG:6,BAR:5,ISC:4,TCP:4}};
+function _defaultUnits(course,sec){
+  return (COURSE_UNIT_DEFAULTS[course]&&COURSE_UNIT_DEFAULTS[course][sec])||'';
+}
 
 function _courseFor(sec){
   const cp=S.courseProgress&&S.courseProgress[sec];
@@ -727,7 +734,8 @@ function _buildPlanSetup(){
   // Review course: which one, how many units, how many already finished.
   const savedCp=(S.courseProgress&&S.courseProgress[selectedSec])||null;
   const course=storedSettings.course!=null?storedSettings.course:(savedCp?savedCp.course:_mostUsedCourse());
-  const units=storedSettings.units!=null?storedSettings.units:(savedCp?savedCp.units:'');
+  const units=storedSettings.units!=null?storedSettings.units:((savedCp&&savedCp.units)||_defaultUnits(course,selectedSec));
+  const isDefaultUnits=!!units&&units===_defaultUnits(course,selectedSec)&&!(savedCp&&savedCp.units);
   const unitsDone=storedSettings.unitsDone!=null?storedSettings.unitsDone:(savedCp?(savedCp.done||[]).length:0);
   const cName=course?courseName(course):'';
   const courseChips=[...PLAN_COURSES.map(id=>({id,name:courseName(id)})),{id:'',name:'None'}].map(o=>{
@@ -749,7 +757,7 @@ function _buildPlanSetup(){
           <input id="plan-units-done" type="number" inputmode="numeric" min="0" max="60" value="${unitsDone||0}" oninput="_planUpdateSettings()" style="${numStyle}">
         </div>
       </div>
-      <div style="font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5">Count the units listed for ${selectedSec} in your ${esc(cName)} course. Leave it blank and the plan schedules by study type instead.</div>`:''}
+      <div style="font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5">${isDefaultUnits?`Becker's current ${selectedSec} course has ${units} units. If yours shows a different number, change it here.`:`Count the units listed for ${selectedSec} in your ${esc(cName)} course. Leave it blank and the plan schedules by study type instead.`}</div>`:''}
     </div>`;
 
   return`<div style="max-width:680px;margin:0 auto;padding:20px 0">
@@ -844,7 +852,12 @@ function _planSelectSection(sec){
 }
 function _planSelectCourse(id){
   _planUpdateSettings();
-  _planSettings=Object.assign({},_planSettings||{},{course:id});
+  const s=_planSettings||{};
+  const sec=s.section||getCurrentSection();
+  const prevCourse=s.course!=null?s.course:((S.courseProgress&&S.courseProgress[sec]&&S.courseProgress[sec].course)||_mostUsedCourse());
+  // Don't carry one course's prefilled count over to another course.
+  const clear=s.units===''||(s.units!=null&&s.units===_defaultUnits(prevCourse,sec));
+  _planSettings=Object.assign({},s,{course:id},clear?{units:undefined}:{});
   renderTab();
 }
 function _planSelectStyle(style){
@@ -913,7 +926,7 @@ function _savePlanCourse(sec,settings){
   if(!S.courseProgress) S.courseProgress={};
   const prev=S.courseProgress[sec]||null;
   const course=settings.course!=null?settings.course:(prev?prev.course:_mostUsedCourse());
-  const units=settings.units!=null?(parseInt(settings.units,10)||0):(prev?prev.units:0);
+  const units=settings.units!=null?(parseInt(settings.units,10)||0):((prev&&prev.units)||_defaultUnits(course,sec)||0);
   if(!course&&!prev) return;
   const doneCount=Math.min(units,settings.unitsDone!=null?settings.unitsDone:((prev&&prev.done)||[]).length);
   let done=((prev&&prev.done)||[]).filter(u=>u<=units);
