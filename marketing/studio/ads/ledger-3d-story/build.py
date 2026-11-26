@@ -37,6 +37,7 @@ def main():
             run([PY, os.path.join(STUDIO, "scripts", "generate_voice.py"), "--script", os.path.join(HERE, f"script-{v}.json"), "--out", vo])
             run([PY, os.path.join(STUDIO, "scripts", "transcribe_words.py"), "--audio", vo + ".wav", "--out", words])
         shutil.copy(words, os.path.join(APP, "public", "ledger-3d-story"))
+        run([PY, os.path.join(STUDIO, "scripts", "mouth_sync.py"), vo, "--out", os.path.join(APP, "public", "ledger-3d-story", f"mouth-{v}.json")])
         run([PY, os.path.join(HERE, "mix.py"), v], env={**os.environ, "REPORT": "1"})
 
         raw = os.path.join(APP, "out", f"ledger-3d-story-{v}.raw.mp4")

@@ -36,16 +36,14 @@ export const storyBeats = (tl: Timeline) => {
   };
 };
 
-/** Mouth openness for a speaker from word timings (simple, convincing lip-sync). */
+/** Mouth openness for a speaker, from the voice track's loudness (scripts/mouth_sync.py). */
 export const mouthFor = (tl: Timeline, who: string, t: number) => {
-  for (const w of tl.words) {
-    if (t < w.start - 0.02 || t > w.end + 0.02) continue;
-    if ((tl.L[w.line]?.who || "S") !== who) continue;
-    const syl = Math.max(1, Math.round(w.word.replace(/[^aeiouy]/gi, "").length * 0.8));
-    const k = (t - w.start) / Math.max(0.05, w.end - w.start);
-    return 0.35 + 0.65 * Math.abs(Math.sin(Math.PI * k * syl));
-  }
-  return 0;
+  const m = tl.mouth;
+  const arr = m?.[who];
+  if (!m || !Array.isArray(arr)) return 0;
+  const x = t * m.fps, i = Math.floor(x), k = x - i;
+  const a = arr[i] ?? 0, b = arr[i + 1] ?? 0;
+  return a + (b - a) * k;
 };
 
 const Rain: React.FC<{ t: number; count: number; box: [number, number, number, number, number]; speed: number; opacity: number; len: number }> = ({ t, count, box, speed, opacity, len }) => {
@@ -81,7 +79,7 @@ const Cloud: React.FC<{ t: number; position: V3; scale: number; dark: number }> 
   );
 };
 
-const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; bookShake: number }> = ({ t, day, flash, bookGlow, bookShake }) => {
+export const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; bookShake: number; rain?: boolean }> = ({ t, day, flash, bookGlow, bookShake, rain = true }) => {
   const sky = useCanvasTex(300, 380, (c, w, h) => skyFace(c, w, h, day, flash), `${day.toFixed(2)}-${flash.toFixed(2)}`);
   const spines = [
     useCanvasTex(400, 80, (c, w, h) => spineFace(c, w, h, "FAR", "#c2410c"), "far"),
@@ -104,7 +102,7 @@ const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; 
           <planeGeometry args={[1.2, 1.52]} />
           <meshBasicMaterial map={sky} toneMapped={false} />
         </mesh>
-        <Rain t={t} count={90} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={6} opacity={0.55 * (1 - day)} len={0.16} />
+        <Rain t={t} count={90} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={6} opacity={rain ? 0.55 * (1 - day) : 0} len={0.16} />
         {[[0, 0.79, 1.36, 0.08], [0, -0.79, 1.36, 0.08], [-0.64, 0, 0.08, 1.66], [0.64, 0, 0.08, 1.66], [0, 0, 0.04, 1.6], [0, 0, 1.3, 0.04]].map(([x, y, w, h], i) => (
           <mesh key={i} position={[x, y, 0.03]}>
             <boxGeometry args={[w, h, 0.06]} />
@@ -297,8 +295,10 @@ export const StoryScene3D: React.FC<{ t: number; tl: Timeline; aspect: number }>
   /* ---- Ledger on the desk ---- */
   const jump = prog(t, B.pop, 0.5);
   const ledgerOn = t >= B.pop && inRoom;
-  const lY = -0.38 + Math.sin(Math.PI * Math.min(1, jump)) * 0.9 * (1 - jump * 0.3);
-  const lX = lerp(0.85, 0.72, easeOut(jump));
+  // top of the book stack: desk (-0.8) + three 0.14 books -> feet stand at y = -0.385
+  const STACK_TOP = -0.8 + 0.07 + 2 * 0.14 + 0.065;
+  const lY = STACK_TOP + Math.sin(Math.PI * Math.min(1, jump)) * 0.75;
+  const lX = 0.85;
   const land = t - (B.pop + 0.5);
   const squash = land > 0 && land < 0.5 ? Math.sin(land * 22) * Math.exp(-land * 8) * 0.22 : jump < 1 ? -0.15 : 0;
   const ledgerBlinkPh = (t * 1.1) % 2.9;
@@ -363,7 +363,7 @@ export const StoryScene3D: React.FC<{ t: number; tl: Timeline; aspect: number }>
           <Cloud t={t} position={[0, 1.55, -0.55]} scale={cloudS * 0.95} dark={nightAmb} />
           <Flame t={t} position={[-0.05, 1.6, -0.7]} scale={flameS * 0.36} />
           {flameS > 0 && <FacePlane w={1.4} h={0.7} drawKey={`st${nStreak}`} draw={(c, w, h) => streakCard(c, w, h, nStreak)} position={[0.62, 1.52, -0.3]} scale={flameS * 0.62} />}
-          {ledgerOn && <Mascot {...ledgerPose} position={[lX, lY - 0.42, 0.55]} rotation={[0, -0.45, 0]} scale={0.42} />}
+          {ledgerOn && <Mascot {...ledgerPose} position={[lX, lY, 0.45]} rotation={[0, -0.45, 0]} scale={0.42} />}
           {ledgerOn && t < B.pop + 0.8 && <Glow color="rgba(255,200,120,0.95)" size={1.8} opacity={Math.max(0, 1 - (t - B.pop) * 1.4)} position={[0.75, -0.2, 0.7]} />}
           {/* sparkles around the pop */}
           {t > B.pop && t < B.pop + 1.2 &&

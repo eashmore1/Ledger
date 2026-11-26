@@ -20,16 +20,18 @@ export type MascotPose = {
   happy?: number; // 0..1 happy (^ ^) eyes
   look?: [number, number]; // pupil offset -1..1
   squash?: number; // + squash, - stretch
+  run?: number; // 0..1 blend into a sprint cycle
+  runPhase?: number; // radians; one stride per PI
 };
 
 const plastic = (color: string, rough = 0.42) => (
   <meshPhysicalMaterial color={color} roughness={rough} clearcoat={0.35} clearcoatRoughness={0.4} />
 );
 
-const Limb: React.FC<{ from: [number, number, number]; len: number; rot: number; rotY?: number; color: string; hand?: string; r?: number }> = ({
-  from, len, rot, rotY = 0, color, hand, r = 0.055,
+const Limb: React.FC<{ from: [number, number, number]; len: number; rot: number; rotY?: number; rotX?: number; color: string; hand?: string; r?: number }> = ({
+  from, len, rot, rotY = 0, rotX = 0, color, hand, r = 0.055,
 }) => (
-  <group position={from} rotation={[0, rotY, rot]}>
+  <group position={from} rotation={[rotX, rotY, rot]}>
     <mesh position={[0, -len / 2, 0]}>
       <capsuleGeometry args={[r, len, 8, 16]} />
       {plastic(color, 0.5)}
@@ -44,7 +46,7 @@ const Limb: React.FC<{ from: [number, number, number]; len: number; rot: number;
 );
 
 export const Mascot: React.FC<MascotPose & { position?: [number, number, number]; rotation?: [number, number, number]; scale?: number }> = ({
-  wave = 0, waveT = 0, cheer = 0, point = 0, blink = 0, mouth = 0, happy = 0, look = [0, 0], squash = 0,
+  wave = 0, waveT = 0, cheer = 0, point = 0, blink = 0, mouth = 0, happy = 0, look = [0, 0], squash = 0, run = 0, runPhase = 0,
   position = [0, 0, 0], rotation = [0, 0, 0], scale = 1,
 }) => {
   const smile = useMemo(() => new THREE.TorusGeometry(0.085, 0.022, 12, 32, Math.PI), []);
@@ -55,6 +57,9 @@ export const Mascot: React.FC<MascotPose & { position?: [number, number, number]
   const wig = Math.sin(waveT * 12) * 0.35;
   const rightArm = -0.35 - cheer * 2.25 - wave * (2.35 + wig) - point * 1.25; // screen-left side is mascot's right
   const leftArm = 0.35 + cheer * 2.25;
+  // sprint: legs swing from the hip, arms pump opposite, body bobs twice per cycle
+  const swing = Math.sin(runPhase) * run;
+  const bob = Math.abs(Math.cos(runPhase)) * 0.08 * run;
   return (
     <group position={position} rotation={rotation} scale={scale}>
       {/* soft blob shadow */}
@@ -62,22 +67,22 @@ export const Mascot: React.FC<MascotPose & { position?: [number, number, number]
         <circleGeometry args={[0.62, 48]} />
         <meshBasicMaterial color="#000" transparent opacity={0.22} depthWrite={false} />
       </mesh>
-      <group scale={[sxz, sy, sxz]}>
+      <group scale={[sxz, sy, sxz]} position={[0, bob, 0]}>
         {/* legs + shoes */}
         {[-0.22, 0.22].map((x) => (
-          <group key={x}>
-            <mesh position={[x, 0.33, 0]}>
+          <group key={x} position={[x, 0.55, 0]} rotation={[(x < 0 ? 1 : -1) * swing * 0.95, 0, 0]}>
+            <mesh position={[0, -0.22, 0]}>
               <capsuleGeometry args={[0.06, 0.34, 8, 16]} />
               {plastic(C.spine, 0.5)}
             </mesh>
-            <RoundedBox args={[0.26, 0.13, 0.34]} radius={0.06} position={[x + (x < 0 ? -0.03 : 0.03), 0.07, 0.05]}>
+            <RoundedBox args={[0.26, 0.13, 0.34]} radius={0.06} position={[x < 0 ? -0.03 : 0.03, -0.48, 0.05]}>
               {plastic(C.shoe, 0.4)}
             </RoundedBox>
           </group>
         ))}
         {/* arms (behind cover edges) */}
-        <Limb from={[-0.6, 1.2, 0.02]} len={0.42} rot={rightArm} color={C.spine} hand={C.bodyHi} />
-        <Limb from={[0.6, 1.2, 0.02]} len={0.42} rot={leftArm} color={C.spine} hand={C.bodyHi} />
+        <Limb from={[-0.6, 1.2, 0.02]} len={0.42} rot={rightArm * (1 - run) - 0.2 * run} rotX={swing * 1.25} color={C.spine} hand={C.bodyHi} />
+        <Limb from={[0.6, 1.2, 0.02]} len={0.42} rot={leftArm * (1 - run) + 0.2 * run} rotX={-swing * 1.25} color={C.spine} hand={C.bodyHi} />
         {/* back cover, pages, front cover, spine */}
         <RoundedBox args={[1.2, 1.42, 0.09]} radius={0.04} position={[0.04, 1.08, -0.15]}>
           {plastic(C.body)}

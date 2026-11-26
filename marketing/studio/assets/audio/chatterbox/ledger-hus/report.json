@@ -1,0 +1,234 @@
+{
+ "hus1": [
+  {
+   "take": 0,
+   "heard": "Oh f-",
+   "score": 0.0,
+   "dur": 0.58
+  },
+  {
+   "take": 1,
+   "heard": "What? See?",
+   "score": 0.0,
+   "dur": 0.94
+  },
+  {
+   "take": 2,
+   "heard": "Well, got it.",
+   "score": 0.0,
+   "dur": 2.38
+  },
+  {
+   "take": 3,
+   "heard": "Och, chach, go!",
+   "score": 0.0,
+   "dur": 0.74
+  },
+  {
+   "picked": "hus1-0.wav"
+  }
+ ],
+ "hus2": [
+  {
+   "take": 0,
+   "heard": "HUH",
+   "score": 0.0,
+   "dur": 0.3
+  },
+  {
+   "take": 1,
+   "heard": "FUCKED",
+   "score": 0.0,
+   "dur": 0.38
+  },
+  {
+   "take": 2,
+   "heard": "POTS",
+   "score": 0.0,
+   "dur": 0.54
+  },
+  {
+   "take": 3,
+   "heard": "Oh my god, oh my god, oh my god, oh my god, oh my god!",
+   "score": 0.0,
+   "dur": 3.5
+  },
+  {
+   "picked": "hus2-0.wav"
+  }
+ ],
+ "hus3": [
+  {
+   "take": 0,
+   "heard": "us.",
+   "score": 0.0,
+   "dur": 0.62
+  },
+  {
+   "take": 1,
+   "heard": "Quests.",
+   "score": 0.0,
+   "dur": 0.66
+  },
+  {
+   "take": 2,
+   "heard": "us.",
+   "score": 0.0,
+   "dur": 0.58
+  },
+  {
+   "take": 3,
+   "heard": "was.",
+   "score": 0.0,
+   "dur": 0.58
+  },
+  {
+   "picked": "hus3-0.wav", "note": "hand-picked: loudest, punchiest take (all hus3 transcripts scored 0)"
+  }
+ ],
+ "huschant": [
+  {
+   "take": 0,
+   "heard": "Hoos, hos, hos, hos.",
+   "score": 0.0,
+   "dur": 2.42
+  },
+  {
+   "take": 1,
+   "heard": "Hoss, hoss, hoss, hoss, hoss.",
+   "score": 0.0,
+   "dur": 3.14
+  },
+  {
+   "take": 2,
+   "heard": "Wuss, huss, huss, huss.",
+   "score": 0.0,
+   "dur": 2.14
+  },
+  {
+   "take": 3,
+   "heard": "Hoos, hos, hos, hos!",
+   "score": 0.0,
+   "dur": 2.06
+  },
+  {
+   "picked": "huschant-3.wav"
+  }
+ ],
+ "huh": [
+  {
+   "take": 0,
+   "heard": "Huh?",
+   "score": 1.0,
+   "dur": 0.44
+  },
+  {
+   "take": 1,
+   "heard": "Huh?",
+   "score": 1.0,
+   "dur": 0.64
+  },
+  {
+   "take": 2,
+   "heard": "Huh?",
+   "score": 1.0,
+   "dur": 0.52
+  },
+  {
+   "take": 3,
+   "heard": "Huh?",
+   "score": 1.0,
+   "dur": 0.36
+  },
+  {
+   "picked": "huh-3.wav"
+  }
+ ],
+ "saved": [
+  {
+   "take": 0,
+   "heard": "Streak. Saved.",
+   "score": 1.0,
+   "dur": 1.46
+  },
+  {
+   "take": 1,
+   "heard": "Streak. Saved.",
+   "score": 1.0,
+   "dur": 1.74
+  },
+  {
+   "take": 2,
+   "heard": "Streak Saved",
+   "score": 1.0,
+   "dur": 1.42
+  },
+  {
+   "take": 3,
+   "heard": "Streak. Saved.",
+   "score": 1.0,
+   "dur": 1.66
+  },
+  {
+   "picked": "saved-2.wav"
+  }
+ ],
+ "noskip": [
+  {
+   "take": 0,
+   "heard": "We don't skip days.",
+   "score": 1.0,
+   "dur": 1.5
+  },
+  {
+   "take": 1,
+   "heard": "We don't skip days.",
+   "score": 1.0,
+   "dur": 1.38
+  },
+  {
+   "take": 2,
+   "heard": "We don't skip days.",
+   "score": 1.0,
+   "dur": 1.42
+  },
+  {
+   "take": 3,
+   "heard": "We don't skip days.",
+   "score": 1.0,
+   "dur": 1.38
+  },
+  {
+   "picked": "noskip-1.wav"
+  }
+ ],
+ "cta": [
+  {
+   "take": 0,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.42
+  },
+  {
+   "take": 1,
+   "heard": "Start free at LedgerCPA.app",
+   "score": 0.923,
+   "dur": 3.06
+  },
+  {
+   "take": 2,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 2.94
+  },
+  {
+   "take": 3,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.02
+  },
+  {
+   "picked": "cta-2.wav"
+  }
+ ]
+}

@@ -71,7 +71,7 @@ def tts_edge(text, voice, rate):
 
     asyncio.run(go())
     wav = path + ".wav"
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-ac", "1", "-ar", str(SR), wav], check=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-ac", "1", "-ar", str(SR), wav], check=True, stdin=subprocess.DEVNULL)
     audio, _ = sf.read(wav, dtype="float32")
     os.remove(path); os.remove(wav)
     return audio
@@ -138,6 +138,17 @@ def synth(engine, text, voice, rate):
     return tts_edge(text, voice, rate) if engine == "edge" else tts_kokoro(text, voice, rate)
 
 
+def load_clip(path):
+    """A pre-rendered line (e.g. from generate_voice_chatterbox.py), resampled to SR mono."""
+    path = path if os.path.isabs(path) else os.path.join(STUDIO, path)
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+        tmp = f.name
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-ac", "1", "-ar", str(SR), tmp], check=True, stdin=subprocess.DEVNULL)
+    audio, _ = sf.read(tmp, dtype="float32")
+    os.remove(tmp)
+    return audio
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--text")
@@ -158,9 +169,11 @@ def main():
 
     engine = a.engine or spec.get("engine", "auto")
     if engine == "auto":
-        engine = "edge" if edge_available() else "kokoro"
+        engine = "files" if all(ln.get("file") for ln in spec["lines"]) else ("edge" if edge_available() else "kokoro")
     voice = a.voice or spec.get("voice") or (EDGE_DEFAULT if engine == "edge" else KOKORO_DEFAULT)
-    if engine == "kokoro" and "Neural" in voice:
+    if engine == "files":
+        voice = spec.get("voice", "files")
+    if engine == "kokoro" and voice and "Neural" in voice:
         print(f"edge voice {voice} not available offline; using Kokoro {KOKORO_DEFAULT}")
         voice = KOKORO_DEFAULT
     rate = a.rate or spec.get("rate", "+8%")
@@ -170,7 +183,9 @@ def main():
     clips, lines, t = [], [], 0.0
     for ln in spec["lines"]:
         v = ln.get("voice", voice)
-        audio = squeeze_pauses(trim(synth(engine, ln.get("say", ln["text"]), v, ln.get("rate", rate))))
+        raw = load_clip(ln["file"]) if ln.get("file") else synth(engine, ln.get("say", ln["text"]), v, ln.get("rate", rate))
+        audio = squeeze_pauses(trim(raw), max_gap=ln.get("max_pause", 0.25))
+        audio = audio / (np.sqrt(np.mean(audio ** 2)) + 1e-9) * 0.08  # even loudness line to line
         pre = ln.get("gap", gap) if clips else 0.0
         if pre:
             clips.append(np.zeros(int(pre * SR), np.float32)); t += pre
@@ -184,7 +199,7 @@ def main():
 
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     sf.write(a.out + ".wav", full, SR)
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", a.out + ".wav", "-b:a", "192k", a.out + ".mp3"], check=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", a.out + ".wav", "-b:a", "192k", a.out + ".mp3"], check=True, stdin=subprocess.DEVNULL)
     json.dump({"engine": engine, "voice": voice, "total": round(t, 3), "lines": lines}, open(a.out + ".lines.json", "w"), indent=1)
     print(f"wrote {a.out}.mp3 ({t:.2f}s) and {a.out}.lines.json")
 
