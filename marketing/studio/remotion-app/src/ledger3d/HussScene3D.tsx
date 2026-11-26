@@ -59,8 +59,8 @@ export const HussScene3D: React.FC<{ t: number; T: HussTiming; aspect: number }>
     { t: L.huss2[0] - 0.05, v: [0, 0.72, 4.0] },
     { t: L.huss2[0] + 0.2, v: [0.32, 0.45, 3.9], ease: expoOut },
     { t: L.pass[0] - 0.05, v: [0.32, 0.45, 3.7] },
-    { t: L.pass[0] + 0.3, v: [1.2, 0.05, 2.7], ease: expoOut },
-    { t: T.end - 0.05, v: [1.15, 0.05, 2.5] },
+    { t: L.pass[0] + 0.3, v: [1.3, 0.2, 3.7], ease: expoOut },
+    { t: T.end - 0.05, v: [1.25, 0.2, 3.45] },
     { t: T.end + 0.45, v: [0, 0.2, 9.2], ease: expoOut },
     { t: T.duration, v: [0, 0.1, 8.4] },
   ];
@@ -139,10 +139,10 @@ export const HussScene3D: React.FC<{ t: number; T: HussTiming; aspect: number }>
             <Mascot {...ledgerPose} scale={0.42} />
           </group>
           <Card w={1.0} h={0.68} px={480} drawKey={`rep${q}-${checks}`} draw={(c, w, h) => repCard(c, w, h, q, 40, Math.max(0, checks))}
-            position={[0.12, -0.52, 1.6]} rotation={[-0.1, 0.05, -0.03]} scale={repS * 0.5} />
-          {repS > 0 && t - lastHuss < 0.35 && <Glow color="rgba(52,211,153,0.95)" size={0.6} opacity={(1 - (t - lastHuss) / 0.35) * 0.8} position={[0.12, -0.57, 1.65]} />}
+            position={[0.26, -0.3, 1.6]} rotation={[-0.1, 0.05, -0.03]} scale={repS * 0.5} />
+          {repS > 0 && t - lastHuss < 0.35 && <Glow color="rgba(52,211,153,0.95)" size={0.6} opacity={(1 - (t - lastHuss) / 0.35) * 0.8} position={[0.26, -0.35, 1.65]} />}
           <Flame t={t} position={[-0.05, 1.6, -0.7]} scale={flameS * 0.36} />
-          {flameS > 0 && <FacePlane w={1.4} h={0.7} drawKey={`hs${nStreak}`} draw={(c, w, h) => streakCard(c, w, h, nStreak)} position={[0.45, 1.5, -0.3]} scale={flameS * 0.62} />}
+          {flameS > 0 && <FacePlane w={1.4} h={0.7} drawKey={`hs${nStreak}`} draw={(c, w, h) => streakCard(c, w, h, nStreak)} position={[0.28, 1.42, -0.3]} scale={flameS * 0.52} />}
           {sweat >= 0 && sweat < 1 && <Glow color="rgba(170,220,255,0.95)" size={0.07} opacity={1 - sweat} position={[0.33, 0.95 - sweat * 0.35, -0.2]} />}
           <Particles t={t} color="#9fb0ff" count={30} opacity={0.2} />
         </>
