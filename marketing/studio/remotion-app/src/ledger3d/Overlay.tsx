@@ -175,7 +175,7 @@ export const Chip: React.FC<{ t: number; a: number; b: number; label: string; W:
 
 /* ---------- end card ---------- */
 
-export const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H: number }> = ({ t, a, cta, W, H }) => {
+export const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H: number; tagline?: string }> = ({ t, a, cta, W, H, tagline = "Study together. Pass together." }) => {
   if (t < a) return null;
   const wide = W > H;
   const k1 = backOut(prog(t, a + 0.15, 0.4), 1.8);
@@ -189,7 +189,7 @@ export const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H
           Ledger
         </div>
         <div style={{ fontSize: wide ? 56 : 66, fontStyle: "italic", fontWeight: 500, marginTop: 10, transform: `translateY(${(1 - k2) * 30}px)`, opacity: clamp(k2), color: "#fff3e8" }}>
-          Study together. Pass together.
+          {tagline}
         </div>
       </div>
       <div style={{ position: "absolute", top: wide ? H * 0.72 : H * 0.69, width: wide ? W : W * 0.85, left: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}>

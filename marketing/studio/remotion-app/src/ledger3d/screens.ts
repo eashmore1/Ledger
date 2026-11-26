@@ -560,3 +560,146 @@ export const spineFace = (ctx: Ctx, W: number, H: number, label: string, color: 
   ctx.fillRect(0, H * 0.8, W, H * 0.08);
   text(ctx, label, W / 2, H * 0.66, font(900, H * 0.42), "#fff", "center");
 };
+
+/* ---------------- hus meme ad ---------------- */
+
+/** Phone lying on the desk: streak about to expire -> saved. */
+export const screenStreakSave = (ctx: Ctx, W: number, H: number, s: { left: number; saved: number; streak: number; session: number; pulse: number }) => {
+  chrome(ctx, W, H, s.saved > 0.5 ? COL.cream : "#16102e");
+  const dark = s.saved <= 0.5;
+  text(ctx, "11:58", W / 2, 300, font(600, 190, SERIF), dark ? "#fff" : COL.navy, "center");
+  text(ctx, "Thursday, November 26", W / 2, 360, font(600, 30), dark ? "rgba(255,255,255,.6)" : COL.muted, "center");
+  if (dark) {
+    // urgent notification
+    const y = 470 + Math.sin(s.pulse * Math.PI) * 6;
+    ctx.fillStyle = "rgba(255,255,255,.94)";
+    rr(ctx, 40, y, W - 80, 250, 40);
+    ctx.fill();
+    ctx.fillStyle = COL.body;
+    rr(ctx, 76, y + 36, 64, 76, 14);
+    ctx.fill();
+    text(ctx, "LEDGER · now", 162, y + 66, font(800, 26), COL.muted);
+    text(ctx, `Your ${s.streak}-day streak`, 162, y + 112, font(800, 38), COL.navy);
+    const m = Math.floor(s.left / 60), sec = Math.floor(s.left % 60);
+    text(ctx, `ends in ${m}:${String(sec).padStart(2, "0")}`, 76, y + 190, font(900, 56), "#dc2626");
+  } else {
+    const k = Math.min(1, (s.saved - 0.5) * 2);
+    ctx.globalAlpha = k;
+    text(ctx, "STREAK SAVED", W / 2, 560, font(900, 58), COL.green, "center");
+    // big flame
+    const cx = W / 2, cy = 820, r = 150 * (0.8 + 0.2 * k);
+    const g = ctx.createRadialGradient(cx, cy + 40, 10, cx, cy, r * 1.4);
+    g.addColorStop(0, "#ffe08a");
+    g.addColorStop(0.45, "#ff8a2a");
+    g.addColorStop(1, "rgba(255,77,18,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 1.3);
+    ctx.bezierCurveTo(cx + r, cy - r * 0.3, cx + r * 0.9, cy + r, cx, cy + r);
+    ctx.bezierCurveTo(cx - r * 0.9, cy + r, cx - r, cy - r * 0.3, cx, cy - r * 1.3);
+    ctx.fill();
+    text(ctx, String(s.streak), cx, cy + 70, font(700, 170, SERIF), "#fff", "center");
+    text(ctx, "DAY STREAK", W / 2, 1060, font(800, 40), COL.orange, "center");
+    card(ctx, 60, 1120, W - 120, 170, 34);
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(110, 1205, 11, 0, Math.PI * 2);
+    ctx.fill();
+    text(ctx, "Session running", 136, 1196, font(800, 32), COL.navy);
+    const sec = Math.floor(s.session);
+    text(ctx, `FAR · 00:00:${String(sec).padStart(2, "0")}`, 136, 1244, font(600, 28), COL.muted);
+    ctx.globalAlpha = 1;
+  }
+  endChrome(ctx, W, H);
+};
+
+/** Desk prop labels (sticky note). */
+export const stickyFace = (ctx: Ctx, W: number, H: number, label: string, color: string) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgba(0,0,0,.06)";
+  ctx.fillRect(0, 0, W, H * 0.16);
+  const lines = label.split("|");
+  lines.forEach((l, i) => text(ctx, l, W / 2, H * (0.45 + i * 0.22), font(800, H * 0.16), "#2a2440", "center"));
+};
+
+/* ---------------- huss (partying) meme ad ---------------- */
+
+/** The view out the window: a house across the street throwing a party. */
+export const partyFace = (ctx: Ctx, W: number, H: number, t: number) => {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, "#0d1026");
+  g.addColorStop(1, "#1c1638");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  // stars
+  for (let i = 0; i < 30; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${0.3 + 0.4 * ((i * 37) % 10) / 10})`;
+    ctx.fillRect((i * 97) % W, (i * 53) % (H * 0.4), 2, 2);
+  }
+  // house
+  const hx = W * 0.12, hy = H * 0.42, hw = W * 0.76, hh = H * 0.5;
+  ctx.fillStyle = "#07060f";
+  ctx.beginPath();
+  ctx.moveTo(hx - 10, hy);
+  ctx.lineTo(hx + hw / 2, hy - H * 0.16);
+  ctx.lineTo(hx + hw + 10, hy);
+  ctx.fill();
+  ctx.fillRect(hx, hy, hw, hh);
+  const cols = ["#ff2bd6", "#22e3ff", "#ffe600", "#7c5cff", "#ff6a1f"];
+  const beat = Math.floor(t * 4.67); // 140 bpm-ish strobe
+  for (let r = 0; r < 2; r++)
+    for (let c = 0; c < 3; c++) {
+      const wx = hx + 18 + c * (hw - 36) / 3 + 6, wy = hy + 22 + r * hh * 0.45, ww = (hw - 36) / 3 - 12, wh = hh * 0.32;
+      const col = cols[(beat + r * 2 + c) % cols.length];
+      ctx.fillStyle = col;
+      ctx.fillRect(wx, wy, ww, wh);
+      // dancing silhouettes
+      ctx.fillStyle = "#07060f";
+      for (let p = 0; p < 2; p++) {
+        const bob = Math.abs(Math.sin(t * 9.4 + p * 1.7 + c + r)) * 8;
+        const px = wx + ww * (0.3 + p * 0.4);
+        ctx.beginPath();
+        ctx.arc(px, wy + wh - 34 - bob, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(px - 8, wy + wh - 26 - bob, 16, 26 + bob);
+        // arms up
+        ctx.fillRect(px - 14, wy + wh - 46 - bob - (p ? 6 : 0), 4, 18);
+        ctx.fillRect(px + 10, wy + wh - 46 - bob - (p ? 0 : 6), 4, 18);
+      }
+    }
+  // light spill on the ground
+  const spill = ctx.createRadialGradient(W / 2, H, 10, W / 2, H, W * 0.7);
+  spill.addColorStop(0, cols[beat % cols.length] + "66");
+  spill.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = spill;
+  ctx.fillRect(0, H * 0.6, W, H * 0.4);
+};
+
+/** Practice-question rep counter. */
+export const repCard = (ctx: Ctx, W: number, H: number, q: number, total: number, checks: number) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = COL.card;
+  rr(ctx, 0, 0, W, H, 36);
+  ctx.fill();
+  text(ctx, "FAR · PRACTICE", 40, 70, font(800, 32), COL.muted);
+  text(ctx, `Q ${q}`, 40, 190, font(700, 120, SERIF), COL.navy);
+  text(ctx, `/ ${total}`, 40 + ctx.measureText(`Q ${q}`).width + 16, 190, font(600, 54, SERIF), COL.muted);
+  for (let i = 0; i < 5; i++) {
+    const x = 70 + i * 92, y = 270, on = i < checks;
+    ctx.fillStyle = on ? COL.green : "#eee6da";
+    ctx.beginPath();
+    ctx.arc(x, y, 34, 0, Math.PI * 2);
+    ctx.fill();
+    if (on) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x - 14, y + 1);
+      ctx.lineTo(x - 3, y + 12);
+      ctx.lineTo(x + 16, y - 12);
+      ctx.stroke();
+    }
+  }
+};
