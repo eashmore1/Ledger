@@ -1,0 +1,12 @@
+[
+ {"who":"S","text":"I failed FAR... by two points.","cap":"I failed FAR… by 2 points.","pre":0.35,"scene":1},
+ {"who":"S","text":"Three hundred hours. And I still don't know what to study today.","cap":"300 hours. And I still don't know what to study today.","pre":0.5,"scene":1},
+ {"who":"L","text":"Whoa, whoa! Rough night? Hi! I'm Ledger.","pre":2.3,"scene":2},
+ {"who":"S","text":"Did... that book just talk?","pre":0.35,"scene":2},
+ {"who":"L","text":"Tell me your exam date and your review course. I'll map out every unit, day by day.","pre":0.35,"scene":2},
+ {"who":"S","text":"Wait. So today is just... Unit three?","cap":"Wait. So today is just… Unit 3?","pre":0.9,"scene":3},
+ {"who":"L","text":"Just Unit three! Check it off, and I'll keep the rest on pace.","cap":"Just Unit 3! Check it off, and I'll keep the rest on pace.","pre":0.3,"scene":3},
+ {"who":"L","text":"Plus streaks. And study friends who notice when you skip.","pre":0.9,"scene":4},
+ {"who":"S","text":"Okay. I can actually do this.","pre":0.35,"scene":4},
+ {"who":"L","text":"Start free at ledger C P A dot app!","cap":"Start free at ledgercpa.app","pre":0.8,"scene":5}
+]
