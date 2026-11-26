@@ -57,8 +57,8 @@ export const HussScene3D: React.FC<{ t: number; T: HussTiming; aspect: number }>
     { t: L.streak[0] - 0.05, v: [0.42, 0.42, 4.4] },
     { t: L.streak[0] + 0.3, v: [0, 0.75, 4.3], ease: expoOut },
     { t: L.huss2[0] - 0.05, v: [0, 0.72, 4.0] },
-    { t: L.huss2[0] + 0.2, v: [0.32, 0.45, 3.9], ease: expoOut },
-    { t: L.pass[0] - 0.05, v: [0.32, 0.45, 3.7] },
+    { t: L.huss2[0] + 0.2, v: [0.2, 0.5, 4.75], ease: expoOut },
+    { t: L.pass[0] - 0.05, v: [0.2, 0.5, 4.45] },
     { t: L.pass[0] + 0.3, v: [1.3, 0.2, 3.7], ease: expoOut },
     { t: T.end - 0.05, v: [1.25, 0.2, 3.45] },
     { t: T.end + 0.45, v: [0, 0.2, 9.2], ease: expoOut },
@@ -111,12 +111,13 @@ export const HussScene3D: React.FC<{ t: number; T: HussTiming; aspect: number }>
   };
 
   /* ---- rep card + streak flame ---- */
-  const q = 36 + repsDone;
+  const q = 40 - T.huss.length + repsDone; // the last HUSS lands on 40/40
   const repS = Math.max(
     t >= L.huss1[0] - 0.1 && t < L.streak[0] + 0.1 ? backOut(prog(t, L.huss1[0] - 0.1, 0.3)) * (1 - prog(t, L.streak[0] - 0.1, 0.2)) : 0,
     t >= L.huss2[0] - 0.1 && t < L.pass[0] + 0.1 ? backOut(prog(t, L.huss2[0] - 0.1, 0.3)) * (1 - prog(t, L.pass[0] - 0.1, 0.2)) : 0,
   );
-  const checks = Math.min(5, repsDone - (t >= L.huss2[0] - 0.1 ? 2 : 0));
+  const firstBurst = T.huss.filter((h) => h < L.huss1[1] + 0.1).length;
+  const checks = Math.min(5, repsDone - (t >= L.huss2[0] - 0.1 ? firstBurst : 0));
   const flameS = t >= L.streak[0] && t < L.pass[0] + 0.1 ? backOut(prog(t, L.streak[0], 0.45)) * (1 - prog(t, L.pass[0] - 0.1, 0.2)) : 0;
   const nStreak = Math.round(1 + easeOut(prog(t, L.streak[0] + 0.1, 1.0)) * 46);
   const sweat = t > L.huss2[0] ? prog(t, L.huss2[0], 1.2) : -1;
