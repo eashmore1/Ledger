@@ -38,6 +38,10 @@ def norm(w):
     return re.sub(r"[^a-z0-9']", "", w.lower())
 
 
+# CPA sections candidates say as words, not letters
+SAID_AS_WORD = {"FAR", "BAR", "REG"}
+
+
 def spoken_tokens(word):
     """Display word -> the words a speaker actually says ('ledgercpa.app' -> ledger c p a dot app)."""
     w = word.strip()
@@ -48,6 +52,10 @@ def spoken_tokens(word):
             out += list(part) if part == "cpa" else [part]
         return out + ["dot", tld]
     core = re.sub(r"[^A-Za-z0-9']", "", w)
+    if core in SAID_AS_WORD:
+        return [core.lower()]
+    if core == "2":
+        return ["two"]
     if len(core) >= 2 and core.isupper():
         return list(core.lower())
     if core.isdigit():

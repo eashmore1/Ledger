@@ -152,11 +152,22 @@ export const Student: React.FC<StudentPose & { position?: [number, number, numbe
             ))}
             {/* mouth */}
             <group position={[0, -0.2, 0.39]} rotation={[-0.2, 0, 0]}>
-              {talk > 0.15 || surprise > 0.4 ? (
-                <mesh scale={[0.06 + smile * 0.02 - surprise * 0.015, 0.025 + Math.max(talk, surprise * 0.8) * 0.05, 0.02]}>
-                  <sphereGeometry args={[1, 20, 12]} />
-                  <meshBasicMaterial color="#4a1f18" />
-                </mesh>
+              {talk > 0.08 || surprise > 0.4 ? (
+                <group>
+                  {/* open mouth: dark cavity, teeth line, tongue */}
+                  <mesh scale={[0.07 + smile * 0.02 - surprise * 0.012, 0.018 + Math.max(talk, surprise * 0.8) * 0.075, 0.02]}>
+                    <sphereGeometry args={[1, 24, 14]} />
+                    <meshBasicMaterial color="#3d1510" />
+                  </mesh>
+                  <mesh position={[0, 0.012 + Math.max(talk, surprise * 0.8) * 0.05, 0.012]} scale={[0.05, 0.012, 0.01]}>
+                    <sphereGeometry args={[1, 12, 8]} />
+                    <meshBasicMaterial color="#f6efe8" />
+                  </mesh>
+                  <mesh position={[0, -0.01 - Math.max(talk, surprise * 0.8) * 0.04, 0.01]} scale={[0.04, 0.02 + talk * 0.015, 0.01]}>
+                    <sphereGeometry args={[1, 12, 8]} />
+                    <meshBasicMaterial color="#d9685e" />
+                  </mesh>
+                </group>
               ) : (
                 <mesh geometry={frown} rotation={[0, 0, smile > sad ? Math.PI : 0]} position={[0, smile > sad ? 0.04 : -0.04, 0]} scale={[1, 0.55 + Math.max(smile, sad) * 0.45, 1]}>
                   <meshBasicMaterial color={INK} />

@@ -15,6 +15,7 @@ export type Timeline = {
   voiceEnd: number;
   duration: number; // seconds, including the end-card hold
   hookScreen: string[];
+  mouth?: { fps: number; [who: string]: number[] | number };
 };
 
 export type Raw = {
