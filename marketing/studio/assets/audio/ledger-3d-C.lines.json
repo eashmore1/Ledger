@@ -1,0 +1,100 @@
+{
+ "engine": "kokoro",
+ "voice": "af_heart",
+ "total": 25.11,
+ "lines": [
+  {
+   "id": "hook",
+   "scene": "hook",
+   "text": "Stop studying for the CPA alone.",
+   "screen": "STOP STUDYING|FOR THE CPA|ALONE.",
+   "voice": "af_heart",
+   "start": 0.0,
+   "end": 2.01
+  },
+  {
+   "id": "meet",
+   "scene": "meet",
+   "text": "Meet Ledger.",
+   "voice": "af_heart",
+   "start": 2.17,
+   "end": 2.97
+  },
+  {
+   "id": "start",
+   "scene": "timer",
+   "text": "Hit start, and it tracks every minute you study.",
+   "voice": "af_heart",
+   "start": 3.13,
+   "end": 5.56
+  },
+  {
+   "id": "post",
+   "scene": "post",
+   "text": "Post your session, and your friends see it instantly.",
+   "voice": "af_heart",
+   "start": 5.72,
+   "end": 8.27
+  },
+  {
+   "id": "live",
+   "scene": "live",
+   "text": "See who's locked in right now,",
+   "voice": "af_heart",
+   "start": 8.43,
+   "end": 9.89
+  },
+  {
+   "id": "room",
+   "scene": "room",
+   "text": "and jump into a live study room together.",
+   "gap": 0.08,
+   "voice": "af_heart",
+   "start": 9.97,
+   "end": 12.04
+  },
+  {
+   "id": "same",
+   "scene": "same",
+   "text": "Same timer. Same focus. Nobody quits first.",
+   "voice": "af_heart",
+   "start": 12.2,
+   "end": 15.33
+  },
+  {
+   "id": "streak",
+   "scene": "streak",
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
+   "voice": "af_heart",
+   "start": 15.49,
+   "end": 18.84
+  },
+  {
+   "id": "pass",
+   "scene": "pass",
+   "text": "Because consistency is how you pass.",
+   "voice": "af_heart",
+   "start": 19.0,
+   "end": 20.99
+  },
+  {
+   "id": "brand",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "voice": "af_heart",
+   "start": 21.15,
+   "end": 22.54
+  },
+  {
+   "id": "cta",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger CPA dot app.",
+   "rate": "-6%",
+   "gap": 0.22,
+   "voice": "af_heart",
+   "start": 22.76,
+   "end": 25.11
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+{
+ "engine": "kokoro",
+ "voice": "af_heart",
+ "total": 25.44,
+ "lines": [
+  {
+   "id": "hook",
+   "scene": "hook",
+   "text": "What if studying for the CPA felt like a game?",
+   "screen": "WHAT IF THE CPA|FELT LIKE|A GAME?",
+   "voice": "af_heart",
+   "start": 0.0,
+   "end": 2.34
+  },
+  {
+   "id": "meet",
+   "scene": "meet",
+   "text": "Meet Ledger.",
+   "voice": "af_heart",
+   "start": 2.5,
+   "end": 3.3
+  },
+  {
+   "id": "start",
+   "scene": "timer",
+   "text": "Hit start, and it tracks every minute you study.",
+   "voice": "af_heart",
+   "start": 3.46,
+   "end": 5.89
+  },
+  {
+   "id": "post",
+   "scene": "post",
+   "text": "Post your session, and your friends see it instantly.",
+   "voice": "af_heart",
+   "start": 6.05,
+   "end": 8.6
+  },
+  {
+   "id": "live",
+   "scene": "live",
+   "text": "See who's locked in right now,",
+   "voice": "af_heart",
+   "start": 8.76,
+   "end": 10.22
+  },
+  {
+   "id": "room",
+   "scene": "room",
+   "text": "and jump into a live study room together.",
+   "gap": 0.08,
+   "voice": "af_heart",
+   "start": 10.3,
+   "end": 12.37
+  },
+  {
+   "id": "same",
+   "scene": "same",
+   "text": "Same timer. Same focus. Nobody quits first.",
+   "voice": "af_heart",
+   "start": 12.53,
+   "end": 15.66
+  },
+  {
+   "id": "streak",
+   "scene": "streak",
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
+   "voice": "af_heart",
+   "start": 15.82,
+   "end": 19.17
+  },
+  {
+   "id": "pass",
+   "scene": "pass",
+   "text": "Because consistency is how you pass.",
+   "voice": "af_heart",
+   "start": 19.33,
+   "end": 21.32
+  },
+  {
+   "id": "brand",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "voice": "af_heart",
+   "start": 21.48,
+   "end": 22.87
+  },
+  {
+   "id": "cta",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger CPA dot app.",
+   "rate": "-6%",
+   "gap": 0.22,
+   "voice": "af_heart",
+   "start": 23.09,
+   "end": 25.44
+  }
+ ]
+}

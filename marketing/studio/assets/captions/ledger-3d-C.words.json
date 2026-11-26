@@ -1,0 +1,598 @@
+{
+ "engine": "sphinx",
+ "audio": "ledger-3d-C.wav",
+ "total_ms": 25110,
+ "lines": [
+  {
+   "id": "hook",
+   "scene": "hook",
+   "text": "Stop studying for the CPA alone.",
+   "screen": "STOP STUDYING|FOR THE CPA|ALONE.",
+   "voice": "af_heart",
+   "start": 0.0,
+   "end": 2.01
+  },
+  {
+   "id": "meet",
+   "scene": "meet",
+   "text": "Meet Ledger.",
+   "voice": "af_heart",
+   "start": 2.17,
+   "end": 2.97
+  },
+  {
+   "id": "start",
+   "scene": "timer",
+   "text": "Hit start, and it tracks every minute you study.",
+   "voice": "af_heart",
+   "start": 3.13,
+   "end": 5.56
+  },
+  {
+   "id": "post",
+   "scene": "post",
+   "text": "Post your session, and your friends see it instantly.",
+   "voice": "af_heart",
+   "start": 5.72,
+   "end": 8.27
+  },
+  {
+   "id": "live",
+   "scene": "live",
+   "text": "See who's locked in right now,",
+   "voice": "af_heart",
+   "start": 8.43,
+   "end": 9.89
+  },
+  {
+   "id": "room",
+   "scene": "room",
+   "text": "and jump into a live study room together.",
+   "gap": 0.08,
+   "voice": "af_heart",
+   "start": 9.97,
+   "end": 12.04
+  },
+  {
+   "id": "same",
+   "scene": "same",
+   "text": "Same timer. Same focus. Nobody quits first.",
+   "voice": "af_heart",
+   "start": 12.2,
+   "end": 15.33
+  },
+  {
+   "id": "streak",
+   "scene": "streak",
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
+   "voice": "af_heart",
+   "start": 15.49,
+   "end": 18.84
+  },
+  {
+   "id": "pass",
+   "scene": "pass",
+   "text": "Because consistency is how you pass.",
+   "voice": "af_heart",
+   "start": 19.0,
+   "end": 20.99
+  },
+  {
+   "id": "brand",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "voice": "af_heart",
+   "start": 21.15,
+   "end": 22.54
+  },
+  {
+   "id": "cta",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "rate": "-6%",
+   "gap": 0.22,
+   "voice": "af_heart",
+   "start": 22.76,
+   "end": 25.11
+  }
+ ],
+ "words": [
+  {
+   "word": "Stop",
+   "start_ms": 0,
+   "end_ms": 300,
+   "line": "hook"
+  },
+  {
+   "word": "studying",
+   "start_ms": 300,
+   "end_ms": 800,
+   "line": "hook"
+  },
+  {
+   "word": "for",
+   "start_ms": 800,
+   "end_ms": 910,
+   "line": "hook"
+  },
+  {
+   "word": "the",
+   "start_ms": 910,
+   "end_ms": 990,
+   "line": "hook"
+  },
+  {
+   "word": "CPA",
+   "start_ms": 990,
+   "end_ms": 1560,
+   "line": "hook"
+  },
+  {
+   "word": "alone.",
+   "start_ms": 1560,
+   "end_ms": 1980,
+   "line": "hook"
+  },
+  {
+   "word": "Meet",
+   "start_ms": 2180,
+   "end_ms": 2430,
+   "line": "meet"
+  },
+  {
+   "word": "Ledger.",
+   "start_ms": 2430,
+   "end_ms": 2920,
+   "line": "meet"
+  },
+  {
+   "word": "Hit",
+   "start_ms": 3140,
+   "end_ms": 3340,
+   "line": "start"
+  },
+  {
+   "word": "start,",
+   "start_ms": 3340,
+   "end_ms": 3890,
+   "line": "start"
+  },
+  {
+   "word": "and",
+   "start_ms": 3890,
+   "end_ms": 4020,
+   "line": "start"
+  },
+  {
+   "word": "it",
+   "start_ms": 4020,
+   "end_ms": 4100,
+   "line": "start"
+  },
+  {
+   "word": "tracks",
+   "start_ms": 4100,
+   "end_ms": 4440,
+   "line": "start"
+  },
+  {
+   "word": "every",
+   "start_ms": 4440,
+   "end_ms": 4750,
+   "line": "start"
+  },
+  {
+   "word": "minute",
+   "start_ms": 4750,
+   "end_ms": 4980,
+   "line": "start"
+  },
+  {
+   "word": "you",
+   "start_ms": 4980,
+   "end_ms": 5110,
+   "line": "start"
+  },
+  {
+   "word": "study.",
+   "start_ms": 5110,
+   "end_ms": 5530,
+   "line": "start"
+  },
+  {
+   "word": "Post",
+   "start_ms": 5670,
+   "end_ms": 6000,
+   "line": "post"
+  },
+  {
+   "word": "your",
+   "start_ms": 6000,
+   "end_ms": 6090,
+   "line": "post"
+  },
+  {
+   "word": "session,",
+   "start_ms": 6090,
+   "end_ms": 6580,
+   "line": "post"
+  },
+  {
+   "word": "and",
+   "start_ms": 6580,
+   "end_ms": 6930,
+   "line": "post"
+  },
+  {
+   "word": "your",
+   "start_ms": 6930,
+   "end_ms": 7020,
+   "line": "post"
+  },
+  {
+   "word": "friends",
+   "start_ms": 7020,
+   "end_ms": 7350,
+   "line": "post"
+  },
+  {
+   "word": "see",
+   "start_ms": 7350,
+   "end_ms": 7560,
+   "line": "post"
+  },
+  {
+   "word": "it",
+   "start_ms": 7560,
+   "end_ms": 7630,
+   "line": "post"
+  },
+  {
+   "word": "instantly.",
+   "start_ms": 7630,
+   "end_ms": 8240,
+   "line": "post"
+  },
+  {
+   "word": "See",
+   "start_ms": 8440,
+   "end_ms": 8690,
+   "line": "live"
+  },
+  {
+   "word": "who's",
+   "start_ms": 8690,
+   "end_ms": 8890,
+   "line": "live"
+  },
+  {
+   "word": "locked",
+   "start_ms": 8890,
+   "end_ms": 9230,
+   "line": "live"
+  },
+  {
+   "word": "in",
+   "start_ms": 9230,
+   "end_ms": 9340,
+   "line": "live"
+  },
+  {
+   "word": "right",
+   "start_ms": 9340,
+   "end_ms": 9530,
+   "line": "live"
+  },
+  {
+   "word": "now,",
+   "start_ms": 9530,
+   "end_ms": 9830,
+   "line": "live"
+  },
+  {
+   "word": "and",
+   "start_ms": 9920,
+   "end_ms": 10120,
+   "line": "room"
+  },
+  {
+   "word": "jump",
+   "start_ms": 10120,
+   "end_ms": 10450,
+   "line": "room"
+  },
+  {
+   "word": "into",
+   "start_ms": 10450,
+   "end_ms": 10670,
+   "line": "room"
+  },
+  {
+   "word": "a",
+   "start_ms": 10670,
+   "end_ms": 10720,
+   "line": "room"
+  },
+  {
+   "word": "live",
+   "start_ms": 10720,
+   "end_ms": 11060,
+   "line": "room"
+  },
+  {
+   "word": "study",
+   "start_ms": 11060,
+   "end_ms": 11370,
+   "line": "room"
+  },
+  {
+   "word": "room",
+   "start_ms": 11370,
+   "end_ms": 11560,
+   "line": "room"
+  },
+  {
+   "word": "together.",
+   "start_ms": 11560,
+   "end_ms": 12010,
+   "line": "room"
+  },
+  {
+   "word": "Same",
+   "start_ms": 12210,
+   "end_ms": 12510,
+   "line": "same"
+  },
+  {
+   "word": "timer.",
+   "start_ms": 12510,
+   "end_ms": 13080,
+   "line": "same"
+  },
+  {
+   "word": "Same",
+   "start_ms": 13080,
+   "end_ms": 13400,
+   "line": "same"
+  },
+  {
+   "word": "focus.",
+   "start_ms": 13400,
+   "end_ms": 13950,
+   "line": "same"
+  },
+  {
+   "word": "Nobody",
+   "start_ms": 14140,
+   "end_ms": 14550,
+   "line": "same"
+  },
+  {
+   "word": "quits",
+   "start_ms": 14550,
+   "end_ms": 14860,
+   "line": "same"
+  },
+  {
+   "word": "first.",
+   "start_ms": 14860,
+   "end_ms": 15300,
+   "line": "same"
+  },
+  {
+   "word": "Keep",
+   "start_ms": 15440,
+   "end_ms": 15660,
+   "line": "streak"
+  },
+  {
+   "word": "your",
+   "start_ms": 15660,
+   "end_ms": 15750,
+   "line": "streak"
+  },
+  {
+   "word": "streak",
+   "start_ms": 15750,
+   "end_ms": 16050,
+   "line": "streak"
+  },
+  {
+   "word": "alive,",
+   "start_ms": 16050,
+   "end_ms": 16490,
+   "line": "streak"
+  },
+  {
+   "word": "unlock",
+   "start_ms": 16710,
+   "end_ms": 17120,
+   "line": "streak"
+  },
+  {
+   "word": "badges,",
+   "start_ms": 17120,
+   "end_ms": 17680,
+   "line": "streak"
+  },
+  {
+   "word": "and",
+   "start_ms": 17680,
+   "end_ms": 17830,
+   "line": "streak"
+  },
+  {
+   "word": "crush",
+   "start_ms": 17830,
+   "end_ms": 18100,
+   "line": "streak"
+  },
+  {
+   "word": "your",
+   "start_ms": 18100,
+   "end_ms": 18190,
+   "line": "streak"
+  },
+  {
+   "word": "weekly",
+   "start_ms": 18190,
+   "end_ms": 18490,
+   "line": "streak"
+  },
+  {
+   "word": "goal.",
+   "start_ms": 18490,
+   "end_ms": 18810,
+   "line": "streak"
+  },
+  {
+   "word": "Because",
+   "start_ms": 18950,
+   "end_ms": 19250,
+   "line": "pass"
+  },
+  {
+   "word": "consistency",
+   "start_ms": 19250,
+   "end_ms": 20120,
+   "line": "pass"
+  },
+  {
+   "word": "is",
+   "start_ms": 20120,
+   "end_ms": 20240,
+   "line": "pass"
+  },
+  {
+   "word": "how",
+   "start_ms": 20240,
+   "end_ms": 20380,
+   "line": "pass"
+  },
+  {
+   "word": "you",
+   "start_ms": 20380,
+   "end_ms": 20530,
+   "line": "pass"
+  },
+  {
+   "word": "pass.",
+   "start_ms": 20530,
+   "end_ms": 20960,
+   "line": "pass"
+  },
+  {
+   "word": "Ledger.",
+   "start_ms": 21160,
+   "end_ms": 21730,
+   "line": "brand"
+  },
+  {
+   "word": "Study",
+   "start_ms": 21730,
+   "end_ms": 22040,
+   "line": "brand"
+  },
+  {
+   "word": "together.",
+   "start_ms": 22040,
+   "end_ms": 22490,
+   "line": "brand"
+  },
+  {
+   "word": "Start",
+   "start_ms": 22770,
+   "end_ms": 23080,
+   "line": "cta"
+  },
+  {
+   "word": "free",
+   "start_ms": 23080,
+   "end_ms": 23440,
+   "line": "cta"
+  },
+  {
+   "word": "at",
+   "start_ms": 23440,
+   "end_ms": 23620,
+   "line": "cta"
+  },
+  {
+   "word": "ledgercpa.app",
+   "start_ms": 23620,
+   "end_ms": 25060,
+   "line": "cta"
+  }
+ ],
+ "check": {
+  "match": 0.748,
+  "lines": [
+   {
+    "line": "hook",
+    "script": "stop studying for the c p a alone",
+    "heard_as": "stop studying for the sepia wound",
+    "match": 0.57
+   },
+   {
+    "line": "meet",
+    "script": "meet ledger",
+    "heard_as": "meet ledger",
+    "match": 1.0
+   },
+   {
+    "line": "start",
+    "script": "hit start and it tracks every minute you study",
+    "heard_as": "head start and it tracks every many study",
+    "match": 0.71
+   },
+   {
+    "line": "post",
+    "script": "post your session and your friends see it instantly",
+    "heard_as": "poster session and your friends see it instantly",
+    "match": 0.82
+   },
+   {
+    "line": "live",
+    "script": "see who's locked in right now",
+    "heard_as": "see who's lived in right now",
+    "match": 0.83
+   },
+   {
+    "line": "room",
+    "script": "and jump into a live study room together",
+    "heard_as": "and jump into alive study room together",
+    "match": 0.8
+   },
+   {
+    "line": "same",
+    "script": "same timer same focus nobody quits first",
+    "heard_as": "same time or same focus nobody quits first",
+    "match": 0.8
+   },
+   {
+    "line": "streak",
+    "script": "keep your streak alive unlock badges and crush your weekly goal",
+    "heard_as": "seeger streak alive and not badges and crash your weekly goal",
+    "match": 0.64
+   },
+   {
+    "line": "pass",
+    "script": "because consistency is how you pass",
+    "heard_as": "because consistency is how you pass",
+    "match": 1.0
+   },
+   {
+    "line": "brand",
+    "script": "ledger study together",
+    "heard_as": "ledger study together",
+    "match": 1.0
+   },
+   {
+    "line": "cta",
+    "script": "start free at ledgercpa dot app",
+    "heard_as": "start free at ledger see ph ah",
+    "match": 0.46
+   }
+  ]
+ }
+}

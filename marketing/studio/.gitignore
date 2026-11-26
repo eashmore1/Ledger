@@ -1,0 +1,8 @@
+.venv/
+models/
+remotion-app/node_modules/
+remotion-app/out/
+remotion-app/public/ad/frames/
+*.pyc
+__pycache__/
+remotion-app/public/ledger-3d/mix-*.wav

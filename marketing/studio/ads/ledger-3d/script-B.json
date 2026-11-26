@@ -1,0 +1,68 @@
+{
+ "engine": "kokoro",
+ "voice": "af_heart",
+ "rate": "+8%",
+ "gap": 0.16,
+ "lines": [
+  {
+   "id": "hook",
+   "scene": "hook",
+   "text": "What if studying for the CPA felt like a game?",
+   "screen": "WHAT IF THE CPA|FELT LIKE|A GAME?"
+  },
+  {
+   "id": "meet",
+   "scene": "meet",
+   "text": "Meet Ledger."
+  },
+  {
+   "id": "start",
+   "scene": "timer",
+   "text": "Hit start, and it tracks every minute you study."
+  },
+  {
+   "id": "post",
+   "scene": "post",
+   "text": "Post your session, and your friends see it instantly."
+  },
+  {
+   "id": "live",
+   "scene": "live",
+   "text": "See who's locked in right now,"
+  },
+  {
+   "id": "room",
+   "scene": "room",
+   "text": "and jump into a live study room together.",
+   "gap": 0.08
+  },
+  {
+   "id": "same",
+   "scene": "same",
+   "text": "Same timer. Same focus. Nobody quits first."
+  },
+  {
+   "id": "streak",
+   "scene": "streak",
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal."
+  },
+  {
+   "id": "pass",
+   "scene": "pass",
+   "text": "Because consistency is how you pass."
+  },
+  {
+   "id": "brand",
+   "scene": "end",
+   "text": "Ledger. Study together."
+  },
+  {
+   "id": "cta",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger CPA dot app.",
+   "rate": "-6%",
+   "gap": 0.22
+  }
+ ]
+}
