@@ -1,0 +1,237 @@
+{
+ "town": [
+  {
+   "take": 0,
+   "heard": "In this town, everybody goes out partying.",
+   "score": 1.0,
+   "dur": 3.2
+  },
+  {
+   "take": 1,
+   "heard": "In this town, everybody goes out partying.",
+   "score": 1.0,
+   "dur": 2.84
+  },
+  {
+   "take": 2,
+   "heard": "In this town, everybody goes out partying.",
+   "score": 1.0,
+   "dur": 2.6
+  },
+  {
+   "take": 3,
+   "heard": "In this town, everybody goes out partying.",
+   "score": 1.0,
+   "dur": 2.56
+  },
+  {
+   "picked": "town-3.wav"
+  }
+ ],
+ "exceptme": [
+  {
+   "take": 0,
+   "heard": "Everybody, except me.",
+   "score": 1.0,
+   "dur": 1.72
+  },
+  {
+   "take": 1,
+   "heard": "everybody, except me.",
+   "score": 1.0,
+   "dur": 1.8
+  },
+  {
+   "take": 2,
+   "heard": "Everybody, except me.",
+   "score": 1.0,
+   "dur": 1.88
+  },
+  {
+   "take": 3,
+   "heard": "Everybody, except me.",
+   "score": 1.0,
+   "dur": 1.84
+  },
+  {
+   "picked": "exceptme-0.wav"
+  }
+ ],
+ "while": [
+  {
+   "take": 0,
+   "heard": "While they're out partying, I'm locked in on FAR.",
+   "score": 1.0,
+   "dur": 2.6
+  },
+  {
+   "take": 1,
+   "heard": "while they're out partying, unlocked in on FAR.",
+   "score": 0.824,
+   "dur": 3.28
+  },
+  {
+   "take": 2,
+   "heard": "While they're out partying, I'm locked in on 4.",
+   "score": 0.889,
+   "dur": 2.48
+  },
+  {
+   "take": 3,
+   "heard": "While they're out partying, I'm locked in on FAR.",
+   "score": 1.0,
+   "dur": 2.72
+  },
+  {
+   "picked": "while-0.wav"
+  }
+ ],
+ "huss1": [
+  {
+   "take": 0,
+   "heard": "huss huss huss huss",
+   "score": 0.857,
+   "dur": 2.08
+  },
+  {
+   "take": 1,
+   "heard": "Hush, hush, hush, hush.",
+   "score": 0.0,
+   "dur": 2.12
+  },
+  {
+   "take": 2,
+   "heard": "huss, huss, huss, huss.",
+   "score": 0.857,
+   "dur": 2.24
+  },
+  {
+   "take": 3,
+   "heard": "huss, huss, huss, huss, huss.",
+   "score": 0.75,
+   "dur": 3.0
+  },
+  {
+   "picked": "huss1-1.wav",
+   "auto_picked": "huss1-0.wav",
+   "why": "manual pick: most breathy take (highest HF energy / spectral flatness); Whisper hearing hush is expected for panting"
+  }
+ ],
+ "huss2": [
+  {
+   "take": 0,
+   "heard": "huss, huss, huss, huss.",
+   "score": 0.857,
+   "dur": 2.0
+  },
+  {
+   "take": 1,
+   "heard": "Haas, Haas, Haas, Haas.",
+   "score": 0.0,
+   "dur": 2.28
+  },
+  {
+   "take": 2,
+   "heard": "Hush, hush, hush, hush.",
+   "score": 0.0,
+   "dur": 2.68
+  },
+  {
+   "take": 3,
+   "heard": "Haas, Haas, Haas, Haas.",
+   "score": 0.0,
+   "dur": 2.48
+  },
+  {
+   "picked": "huss2-0.wav",
+   "why": "most breathy and loudest take; also the auto pick"
+  }
+ ],
+ "streak": [
+  {
+   "take": 0,
+   "heard": "47 days straight.",
+   "score": 0.571,
+   "dur": 1.76
+  },
+  {
+   "take": 1,
+   "heard": "47 days straight.",
+   "score": 0.571,
+   "dur": 2.04
+  },
+  {
+   "take": 2,
+   "heard": "47 days straight.",
+   "score": 0.571,
+   "dur": 1.76
+  },
+  {
+   "take": 3,
+   "heard": "47 days straight.",
+   "score": 0.571,
+   "dur": 1.88
+  },
+  {
+   "picked": "streak-0.wav"
+  }
+ ],
+ "pass": [
+  {
+   "take": 0,
+   "heard": "While they party, you pass.",
+   "score": 1.0,
+   "dur": 1.98
+  },
+  {
+   "take": 1,
+   "heard": "While they party, you pass.",
+   "score": 1.0,
+   "dur": 2.02
+  },
+  {
+   "take": 2,
+   "heard": "While they party, you pass.",
+   "score": 1.0,
+   "dur": 2.14
+  },
+  {
+   "take": 3,
+   "heard": "While they party, you pass.",
+   "score": 1.0,
+   "dur": 1.98
+  },
+  {
+   "picked": "pass-0.wav"
+  }
+ ],
+ "cta": [
+  {
+   "take": 0,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.42
+  },
+  {
+   "take": 1,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.06
+  },
+  {
+   "take": 2,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 2.94
+  },
+  {
+   "take": 3,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.02
+  },
+  {
+   "picked": "cta-2.wav"
+  }
+ ]
+}
