@@ -168,6 +168,10 @@ export const Student: React.FC<StudentPose & { position?: [number, number, numbe
                     <meshBasicMaterial color="#d9685e" />
                   </mesh>
                 </group>
+              ) : Math.max(smile, sad) < 0.2 ? (
+                <RoundedBox args={[0.13, 0.022, 0.02]} radius={0.01}>
+                  <meshBasicMaterial color={INK} />
+                </RoundedBox>
               ) : (
                 <mesh geometry={frown} rotation={[0, 0, smile > sad ? Math.PI : 0]} position={[0, smile > sad ? 0.04 : -0.04, 0]} scale={[1, 0.55 + Math.max(smile, sad) * 0.45, 1]}>
                   <meshBasicMaterial color={INK} />
