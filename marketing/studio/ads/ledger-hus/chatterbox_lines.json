@@ -1,0 +1,14 @@
+{
+ "_note": "Voices for the 'hus hus hus' meme ad. Single 'Hus!' takes get placed on each running stride by mix.py.",
+ "voices": {"S": "assets/audio/refs/student-ref.wav", "L": "assets/audio/refs/ledger-ref.wav"},
+ "lines": [
+  {"id": "hus1", "who": "L", "text": "Hus!", "say": "Hus!", "exaggeration": 0.9, "cfg": 0.3},
+  {"id": "hus2", "who": "L", "text": "Hus!", "say": "Huss!", "exaggeration": 1.0, "cfg": 0.3},
+  {"id": "hus3", "who": "L", "text": "Hus!", "say": "Hus!", "exaggeration": 0.75, "cfg": 0.35},
+  {"id": "huschant", "who": "L", "text": "Hus! Hus! Hus! Hus!", "say": "Hus! Hus! Hus! Hus!", "exaggeration": 0.9, "cfg": 0.3},
+  {"id": "huh", "who": "S", "text": "Huh?!", "say": "Huh?!", "exaggeration": 0.8, "cfg": 0.4},
+  {"id": "saved", "who": "L", "text": "Streak. Saved.", "say": "Streak... saved.", "exaggeration": 0.7, "cfg": 0.4},
+  {"id": "noskip", "who": "L", "text": "We don't skip days.", "say": "We don't skip days.", "exaggeration": 0.6, "cfg": 0.45},
+  {"id": "cta", "who": "L", "text": "Start free at ledgercpa.app", "say": "Start free at Ledger C P A dot app.", "exaggeration": 0.5, "cfg": 0.5}
+ ]
+}
