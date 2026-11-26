@@ -1,0 +1,92 @@
+{
+ "engine": "kokoro",
+ "voice": "am_liam",
+ "rate": "+5%",
+ "gap": 0.16,
+ "lines": [
+  {
+   "id": "hook",
+   "who": "S",
+   "scene": "hook",
+   "text": "Seventy-two. Three points from passing.",
+   "screen": "72.|3 POINTS|FROM PASSING.",
+   "voice": "am_liam"
+  },
+  {
+   "id": "alone",
+   "who": "S",
+   "scene": "rain",
+   "text": "Two in the morning, studying alone, and nothing sticks.",
+   "voice": "am_liam"
+  },
+  {
+   "id": "hey",
+   "who": "L",
+   "scene": "pop",
+   "text": "Hey there. You don't have to study alone.",
+   "gap": 0.2,
+   "rate": "-3%",
+   "voice": "am_fenrir"
+  },
+  {
+   "id": "talk",
+   "who": "S",
+   "scene": "talk",
+   "text": "Hold on. Did that book just talk?",
+   "voice": "am_liam"
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "scene": "timer",
+   "text": "I'm Ledger. Hit start, and your friends see you studying live.",
+   "voice": "am_fenrir"
+  },
+  {
+   "id": "room",
+   "who": "L",
+   "scene": "room",
+   "text": "Jump in a study room. Same timer, same focus. Nobody quits first.",
+   "voice": "am_fenrir"
+  },
+  {
+   "id": "streak",
+   "who": "L",
+   "scene": "streak",
+   "text": "Stack your streak, one day at a time.",
+   "voice": "am_fenrir"
+  },
+  {
+   "id": "cando",
+   "who": "S",
+   "scene": "streak",
+   "text": "Okay. I can actually do this.",
+   "voice": "am_liam"
+  },
+  {
+   "id": "passed",
+   "who": "S",
+   "scene": "pass",
+   "text": "Wait. I passed?",
+   "gap": 0.22,
+   "voice": "am_liam"
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "scene": "end",
+   "text": "Told you. Study together.",
+   "voice": "am_fenrir"
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger CPA dot app.",
+   "rate": "-4%",
+   "gap": 0.2,
+   "voice": "am_fenrir"
+  }
+ ]
+}

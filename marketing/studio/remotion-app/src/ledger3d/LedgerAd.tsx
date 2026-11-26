@@ -10,7 +10,7 @@ import { SANS, SERIF } from "./screens";
 
 export type LedgerAdProps = { variant: Variant; withAudio?: boolean };
 
-const useFonts = () => {
+export const useFonts = () => {
   const { delayRender, continueRender } = useDelayRender();
   const [ready, setReady] = useState(false);
   const [handle] = useState(() => delayRender("fonts"));

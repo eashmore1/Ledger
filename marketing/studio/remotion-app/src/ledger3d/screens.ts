@@ -481,3 +481,82 @@ export const passCard = (ctx: Ctx, W: number, H: number, stamp: number) => {
     ctx.restore();
   }
 };
+
+/* ---------------- story ad ---------------- */
+
+/** Score report: 72 "did not pass" (hook) or 84 "passed" (payoff). */
+export const scoreCard = (ctx: Ctx, W: number, H: number, pass: boolean, stamp: number) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = COL.card;
+  rr(ctx, 0, 0, W, H, 44);
+  ctx.fill();
+  const accent = pass ? COL.green : "#dc2626";
+  ctx.fillStyle = accent;
+  rr(ctx, 0, 0, W, 16, 8);
+  ctx.fill();
+  text(ctx, "CPA EXAM · FAR", 56, 96, font(800, 36), COL.muted);
+  text(ctx, "Score", 56, 170, font(600, 40), COL.navy);
+  text(ctx, pass ? "84" : "72", 50, 345, font(700, 170, SERIF), pass ? COL.navy : "#7a1d1d");
+  text(ctx, "75 to pass", 60, 430, font(600, 34), COL.muted);
+  if (stamp > 0) {
+    ctx.save();
+    ctx.translate(W * 0.69, H * 0.7);
+    ctx.rotate(-0.2);
+    const s = (1 + (1 - Math.min(1, stamp)) * 1.6) * (pass ? 0.66 : 0.6);
+    ctx.scale(s, s);
+    ctx.globalAlpha = Math.min(1, stamp * 1.5);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 11;
+    const label = pass ? "PASSED" : "NOT PASSED";
+    ctx.font = font(900, pass ? 84 : 62);
+    const w = ctx.measureText(label).width + 70;
+    rr(ctx, -w / 2, -70, w, 140, 24);
+    ctx.stroke();
+    text(ctx, label, 0, pass ? 30 : 22, font(900, pass ? 84 : 62), accent, "center");
+    ctx.restore();
+  }
+};
+
+/** Window sky: stormy night -> sunrise, k in 0..1. */
+export const skyFace = (ctx: Ctx, W: number, H: number, k: number, flash: number) => {
+  const mixc = (a: number[], b: number[]) => `rgb(${a.map((x, i) => Math.round(x + (b[i] - x) * k)).join(",")})`;
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, mixc([18, 24, 48], [120, 170, 235]));
+  g.addColorStop(0.6, mixc([34, 40, 70], [255, 196, 140]));
+  g.addColorStop(1, mixc([44, 46, 72], [255, 150, 90]));
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  if (k > 0.02) {
+    const sun = ctx.createRadialGradient(W * 0.62, H * 0.78, 0, W * 0.62, H * 0.78, W * 0.7);
+    sun.addColorStop(0, `rgba(255,236,180,${k})`);
+    sun.addColorStop(0.25, `rgba(255,190,120,${0.6 * k})`);
+    sun.addColorStop(1, "rgba(255,160,90,0)");
+    ctx.fillStyle = sun;
+    ctx.fillRect(0, 0, W, H);
+  }
+  // city silhouette
+  ctx.fillStyle = mixc([12, 14, 26], [92, 70, 90]);
+  for (let i = 0; i < 9; i++) {
+    const bw = W / 9, bh = H * (0.12 + ((i * 37) % 23) / 100);
+    ctx.fillRect(i * bw, H - bh, bw - 4, bh);
+    if (k < 0.6) {
+      ctx.fillStyle = `rgba(255,214,140,${0.5 * (1 - k)})`;
+      for (let j = 0; j < 4; j++) if ((i * 7 + j * 3) % 5 < 2) ctx.fillRect(i * bw + 8 + (j % 2) * 18, H - bh + 14 + Math.floor(j / 2) * 22, 8, 10);
+      ctx.fillStyle = mixc([12, 14, 26], [92, 70, 90]);
+    }
+  }
+  if (flash > 0) {
+    ctx.fillStyle = `rgba(220,230,255,${flash})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+};
+
+/** Book spine label. */
+export const spineFace = (ctx: Ctx, W: number, H: number, label: string, color: string) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgba(255,255,255,.18)";
+  ctx.fillRect(0, H * 0.12, W, H * 0.08);
+  ctx.fillRect(0, H * 0.8, W, H * 0.08);
+  text(ctx, label, W / 2, H * 0.66, font(900, H * 0.42), "#fff", "center");
+};

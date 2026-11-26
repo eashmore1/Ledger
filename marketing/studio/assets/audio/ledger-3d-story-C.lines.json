@@ -1,0 +1,113 @@
+{
+ "engine": "kokoro",
+ "voice": "am_liam",
+ "total": 25.49,
+ "lines": [
+  {
+   "id": "hook",
+   "who": "S",
+   "scene": "hook",
+   "text": "Three hundred hours, and I still failed.",
+   "screen": "300 HOURS\u2026|AND I STILL|FAILED.",
+   "voice": "am_liam",
+   "start": 0.0,
+   "end": 2.13
+  },
+  {
+   "id": "alone",
+   "who": "S",
+   "scene": "rain",
+   "text": "Two in the morning, studying alone, and nothing sticks.",
+   "voice": "am_liam",
+   "start": 2.29,
+   "end": 4.78
+  },
+  {
+   "id": "hey",
+   "who": "L",
+   "scene": "pop",
+   "text": "Hey there. You don't have to study alone.",
+   "gap": 0.2,
+   "rate": "-3%",
+   "voice": "am_fenrir",
+   "start": 4.98,
+   "end": 6.85
+  },
+  {
+   "id": "talk",
+   "who": "S",
+   "scene": "talk",
+   "text": "Hold on. Did that book just talk?",
+   "voice": "am_liam",
+   "start": 7.01,
+   "end": 8.81
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "scene": "timer",
+   "text": "I'm Ledger. Hit start, and your friends see you studying live.",
+   "voice": "am_fenrir",
+   "start": 8.97,
+   "end": 12.17
+  },
+  {
+   "id": "room",
+   "who": "L",
+   "scene": "room",
+   "text": "Jump in a study room. Same timer, same focus. Nobody quits first.",
+   "voice": "am_fenrir",
+   "start": 12.33,
+   "end": 16.41
+  },
+  {
+   "id": "streak",
+   "who": "L",
+   "scene": "streak",
+   "text": "Stack your streak, one day at a time.",
+   "voice": "am_fenrir",
+   "start": 16.57,
+   "end": 18.29
+  },
+  {
+   "id": "cando",
+   "who": "S",
+   "scene": "streak",
+   "text": "Okay. I can actually do this.",
+   "voice": "am_liam",
+   "start": 18.45,
+   "end": 20.28
+  },
+  {
+   "id": "passed",
+   "who": "S",
+   "scene": "pass",
+   "text": "Wait. I passed?",
+   "gap": 0.22,
+   "voice": "am_liam",
+   "start": 20.5,
+   "end": 21.7
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "scene": "end",
+   "text": "Told you. Study together.",
+   "voice": "am_fenrir",
+   "start": 21.86,
+   "end": 23.14
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger CPA dot app.",
+   "rate": "-4%",
+   "gap": 0.2,
+   "voice": "am_fenrir",
+   "start": 23.34,
+   "end": 25.49
+  }
+ ]
+}

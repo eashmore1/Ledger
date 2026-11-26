@@ -37,7 +37,7 @@ const chunkWords = (words: Word[]): Chunk[] => {
   return out;
 };
 
-const Captions: React.FC<{ t: number; tl: Timeline; W: number; H: number; hide: (t: number) => boolean }> = ({ t, tl, W, H, hide }) => {
+export const Captions: React.FC<{ t: number; tl: Timeline; W: number; H: number; hide: (t: number) => boolean; tint?: (w: Word) => string }> = ({ t, tl, W, H, hide, tint }) => {
   const chunks = useMemo(() => chunkWords(tl.words.filter((w) => w.line !== "hook" && w.line !== "brand" && w.line !== "cta")), [tl]);
   if (hide(t)) return null;
   const idx = chunks.findIndex((c, i) => t >= c.start - 0.04 && t < (chunks[i + 1] ? Math.min(chunks[i + 1].start - 0.04, c.end + 0.6) : c.end + 0.5));
@@ -76,7 +76,7 @@ const Captions: React.FC<{ t: number; tl: Timeline; W: number; H: number; hide: 
             key={i}
             style={{
               display: "inline-block",
-              color: active ? ACTIVE : "#ffffff",
+              color: active ? ACTIVE : tint ? tint(w) : "#ffffff",
               transform: `scale(${active ? 1 + 0.12 * pop : 1}) translateY(${active ? -4 * pop : 0}px)`,
               ...stroke(size * 0.085),
             }}
@@ -92,7 +92,7 @@ const Captions: React.FC<{ t: number; tl: Timeline; W: number; H: number; hide: 
 
 /* ---------- hook headline ---------- */
 
-const Hook: React.FC<{ t: number; tl: Timeline; W: number; H: number; until: number }> = ({ t, tl, W, H, until }) => {
+export const Hook: React.FC<{ t: number; tl: Timeline; W: number; H: number; until: number }> = ({ t, tl, W, H, until }) => {
   if (t > until + 0.2) return null;
   const out = easeIn(prog(t, until - 0.08, 0.22));
   const wide = W > H;
@@ -142,7 +142,7 @@ const Hook: React.FC<{ t: number; tl: Timeline; W: number; H: number; until: num
 
 /* ---------- feature chip ---------- */
 
-const Chip: React.FC<{ t: number; a: number; b: number; label: string; W: number; H: number }> = ({ t, a, b, label, W, H }) => {
+export const Chip: React.FC<{ t: number; a: number; b: number; label: string; W: number; H: number }> = ({ t, a, b, label, W, H }) => {
   if (t < a || t > b) return null;
   const k = backOut(prog(t, a + 0.05, 0.35), 2);
   const o = 1 - easeIn(prog(t, b - 0.18, 0.18));
@@ -175,7 +175,7 @@ const Chip: React.FC<{ t: number; a: number; b: number; label: string; W: number
 
 /* ---------- end card ---------- */
 
-const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H: number }> = ({ t, a, cta, W, H }) => {
+export const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H: number }> = ({ t, a, cta, W, H }) => {
   if (t < a) return null;
   const wide = W > H;
   const k1 = backOut(prog(t, a + 0.15, 0.4), 1.8);
@@ -220,7 +220,7 @@ const EndCard: React.FC<{ t: number; a: number; cta: number; W: number; H: numbe
 
 /* ---------- grain ---------- */
 
-const grainURL = (() => {
+export const grainURL = (() => {
   if (typeof document === "undefined") return "";
   const c = document.createElement("canvas");
   c.width = c.height = 256;

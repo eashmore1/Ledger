@@ -6,7 +6,7 @@ import C from "../../public/ledger-3d/ledger-3d-C.words.json";
 
 export type Variant = "A" | "B" | "C";
 export type Word = { word: string; start: number; end: number; line: string };
-export type Line = { id: string; scene: string; text: string; start: number; end: number; screen?: string };
+export type Line = { id: string; scene: string; text: string; start: number; end: number; screen?: string; who?: string };
 export type Timeline = {
   variant: Variant;
   lines: Line[];
@@ -17,9 +17,9 @@ export type Timeline = {
   hookScreen: string[];
 };
 
-type Raw = {
+export type Raw = {
   total_ms: number;
-  lines: { id: string; scene: string; text: string; start: number; end: number; screen?: string }[];
+  lines: { id: string; scene: string; text: string; start: number; end: number; screen?: string; who?: string }[];
   words: { word: string; start_ms: number; end_ms: number; line: string }[];
 };
 
@@ -27,8 +27,9 @@ const RAW: Record<Variant, Raw> = { A: A as Raw, B: B as Raw, C: C as Raw };
 export const END_HOLD = 2.3;
 export const FPS = 30;
 
-export const timeline = (v: Variant): Timeline => {
-  const r = RAW[v];
+export const timeline = (v: Variant): Timeline => buildTimeline(RAW[v], v);
+
+export const buildTimeline = (r: Raw, v: Variant): Timeline => {
   const lines = r.lines.map((l) => ({ ...l }));
   const L: Record<string, Line> = {};
   lines.forEach((l) => (L[l.id] = l));

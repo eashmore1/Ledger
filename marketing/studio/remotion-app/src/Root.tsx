@@ -1,5 +1,6 @@
 import { Composition } from "remotion";
 import { adDuration, LedgerAd, LedgerAdProps } from "./ledger3d/LedgerAd";
+import { StoryAd, StoryAdProps, storyDuration } from "./ledger3d/StoryAd";
 
 const FPS = 30;
 const meta = ({ props }: { props: LedgerAdProps }) => ({ durationInFrames: adDuration(props.variant, FPS) });
@@ -15,6 +16,12 @@ export const RemotionRoot: React.FC = () => (
     {(["A", "B", "C"] as const).map((v) => (
       <Composition key={v} id={`Ledger3D-${v}`} component={LedgerAd} fps={FPS} width={1080} height={1920} durationInFrames={840}
         defaultProps={{ variant: v, withAudio: true } as LedgerAdProps} calculateMetadata={meta} />
+    ))}
+    {/* Story cut: failed exam on a rainy night -> Ledger -> pass */}
+    {(["A", "B", "C"] as const).map((v) => (
+      <Composition key={`s${v}`} id={`LedgerStory3D-${v}`} component={StoryAd} fps={FPS} width={1080} height={1920} durationInFrames={840}
+        defaultProps={{ variant: v, withAudio: true } as StoryAdProps}
+        calculateMetadata={({ props }: { props: StoryAdProps }) => ({ durationInFrames: storyDuration(props.variant, FPS) })} />
     ))}
   </>
 );

@@ -41,7 +41,7 @@ def main():
 
         raw = os.path.join(APP, "out", f"ledger-3d-{v}.raw.mp4")
         run(["npx", "remotion", "render", f"Ledger3D-{v}", raw, f"--concurrency={a.concurrency}",
-             "--codec=h264", "--crf=16", "--audio-codec=aac", "--audio-bitrate=256k"], cwd=APP)
+             "--codec=h264", "--crf=19", "--audio-codec=aac", "--audio-bitrate=256k"], cwd=APP)
 
         # Master: exact -14 LUFS / -1 dBTP (two-pass loudnorm), faststart for upload.
         final = os.path.join(STUDIO, "output", f"ledger-3d-{v}.mp4")

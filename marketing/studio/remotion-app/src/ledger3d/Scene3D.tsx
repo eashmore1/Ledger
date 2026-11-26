@@ -14,10 +14,10 @@ import {
 
 /* ---------------- textures ---------------- */
 
-type Draw = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
+export type Draw = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
 
 /** Canvas texture redrawn whenever `key` changes. */
-const useCanvasTex = (w: number, h: number, draw: Draw, key: string) => {
+export const useCanvasTex = (w: number, h: number, draw: Draw, key: string) => {
   const canvas = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = w;
@@ -43,7 +43,7 @@ const useCanvasTex = (w: number, h: number, draw: Draw, key: string) => {
 };
 
 const glowTexCache: Record<string, THREE.Texture> = {};
-const glowTex = (color: string) => {
+export const glowTex = (color: string) => {
   if (glowTexCache[color]) return glowTexCache[color];
   const c = document.createElement("canvas");
   c.width = c.height = 256;
@@ -59,7 +59,7 @@ const glowTex = (color: string) => {
   return (glowTexCache[color] = t);
 };
 
-const Glow: React.FC<{ color: string; size: number; opacity?: number; position?: V3 }> = ({ color, size, opacity = 1, position = [0, 0, 0] }) =>
+export const Glow: React.FC<{ color: string; size: number; opacity?: number; position?: V3 }> = ({ color, size, opacity = 1, position = [0, 0, 0] }) =>
   opacity <= 0.001 ? null : (
     <Billboard position={position}>
       <mesh>
@@ -73,7 +73,7 @@ const Glow: React.FC<{ color: string; size: number; opacity?: number; position?:
 
 const PHONE_W = 1.56, PHONE_H = 3.3, SCR_W = 1.44, SCR_H = 3.18;
 
-const Phone: React.FC<{ draw: Draw; drawKey: string; position: V3; rotation: V3; scale: number }> = ({ draw, drawKey, position, rotation, scale }) => {
+export const Phone: React.FC<{ draw: Draw; drawKey: string; position: V3; rotation: V3; scale: number }> = ({ draw, drawKey, position, rotation, scale }) => {
   const tex = useCanvasTex(720, 1590, draw, drawKey);
   if (scale <= 0.001) return null;
   return (
@@ -104,7 +104,7 @@ const Phone: React.FC<{ draw: Draw; drawKey: string; position: V3; rotation: V3;
 };
 
 /** Thin rounded card with a canvas face. */
-const Card: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; position: V3; rotation?: V3; scale: number; px?: number }> = ({
+export const Card: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; position: V3; rotation?: V3; scale: number; px?: number }> = ({
   w, h, draw, drawKey, position, rotation = [0, 0, 0], scale, px = 400,
 }) => {
   const tex = useCanvasTex(Math.round(w * px), Math.round(h * px), draw, drawKey);
@@ -123,7 +123,7 @@ const Card: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; positi
 };
 
 /** A coin: cylinder with a canvas face on the front (and back). */
-const Coin: React.FC<{ r: number; draw: Draw; drawKey: string; position: V3; rotation?: V3; scale: number; edge?: string; thick?: number }> = ({
+export const Coin: React.FC<{ r: number; draw: Draw; drawKey: string; position: V3; rotation?: V3; scale: number; edge?: string; thick?: number }> = ({
   r, draw, drawKey, position, rotation = [0, 0, 0], scale, edge = "#e8c46a", thick = 0.09,
 }) => {
   const tex = useCanvasTex(512, 512, draw, drawKey);
@@ -158,7 +158,7 @@ const heartShape = (() => {
   return s;
 })();
 
-const Heart: React.FC<{ position: V3; rotation: V3; scale: number; color: string }> = ({ position, rotation, scale, color }) => {
+export const Heart: React.FC<{ position: V3; rotation: V3; scale: number; color: string }> = ({ position, rotation, scale, color }) => {
   const geo = useMemo(() => {
     const g = new THREE.ExtrudeGeometry(heartShape, { depth: 0.35, bevelEnabled: true, bevelThickness: 0.18, bevelSize: 0.16, bevelSegments: 6, curveSegments: 24 });
     g.center();
@@ -172,7 +172,7 @@ const Heart: React.FC<{ position: V3; rotation: V3; scale: number; color: string
   );
 };
 
-const Flame: React.FC<{ t: number; position: V3; scale: number }> = ({ t, position, scale }) => {
+export const Flame: React.FC<{ t: number; position: V3; scale: number }> = ({ t, position, scale }) => {
   const geo = useMemo(() => {
     const pts: THREE.Vector2[] = [];
     for (let i = 0; i <= 40; i++) {
@@ -201,7 +201,7 @@ const Flame: React.FC<{ t: number; position: V3; scale: number }> = ({ t, positi
   );
 };
 
-const Ring: React.FC<{ k: number; r: number; tube: number; color: string; track?: string; position: V3; rotation?: V3; scale: number }> = ({
+export const Ring: React.FC<{ k: number; r: number; tube: number; color: string; track?: string; position: V3; rotation?: V3; scale: number }> = ({
   k, r, tube, color, track: trackCol = "#3b2f52", position, rotation = [0, 0, 0], scale,
 }) => {
   const q = Math.round(clamp(k) * 200) / 200;
@@ -222,7 +222,7 @@ const Ring: React.FC<{ k: number; r: number; tube: number; color: string; track?
   );
 };
 
-const FacePlane: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; position: V3; scale?: number; opacity?: number }> = ({
+export const FacePlane: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; position: V3; scale?: number; opacity?: number }> = ({
   w, h, draw, drawKey, position, scale = 1, opacity = 1,
 }) => {
   const tex = useCanvasTex(Math.round(w * 300), Math.round(h * 300), draw, drawKey);
@@ -236,7 +236,7 @@ const FacePlane: React.FC<{ w: number; h: number; draw: Draw; drawKey: string; p
 };
 
 /** Drifting bokeh particles at several depths. */
-const Particles: React.FC<{ t: number; color: string; count?: number; opacity: number }> = ({ t, color, count = 70, opacity }) => {
+export const Particles: React.FC<{ t: number; color: string; count?: number; opacity: number }> = ({ t, color, count = 70, opacity }) => {
   const mesh = useMemo(() => new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({
     map: glowTex("rgba(255,255,255,1)"), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false,
   }), count), [count]);
@@ -258,7 +258,7 @@ const Particles: React.FC<{ t: number; color: string; count?: number; opacity: n
 };
 
 /** Confetti for the end card. */
-const Confetti: React.FC<{ t: number; t0: number }> = ({ t, t0 }) => {
+export const Confetti: React.FC<{ t: number; t0: number }> = ({ t, t0 }) => {
   const N = 90;
   const mesh = useMemo(() => {
     const mm = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.09, 0.16), new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: 0.5 }), N);
@@ -312,7 +312,7 @@ export const beats = (tl: Timeline) => {
 
 /* ---------------- the scene ---------------- */
 
-const CameraRig: React.FC<{ pos: V3; look: V3; fov: number }> = ({ pos, look, fov }) => {
+export const CameraRig: React.FC<{ pos: V3; look: V3; fov: number }> = ({ pos, look, fov }) => {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   camera.position.set(...pos);
   camera.lookAt(new THREE.Vector3(...look));
@@ -384,7 +384,7 @@ export const Scene3D: React.FC<{ t: number; tl: Timeline; aspect: number }> = ({
   const cl: V3 = [cl0[0] - hookSide, cl0[1], cl0[2]];
 
   /* ---- phone ---- */
-  const phoneOn = (t < B.live + 0.35) || (t > B.room - 0.15 && t < B.same + 0.3);
+  const phoneOn = (t < B.live + 0.35) || (t > B.room - 0.15 && t < B.same + 0.18);
   const phoneKeys: Key[] = [
     { t: 0, v: [0, 0.4, -9] },
     { t: 0.55, v: [0, -0.3, 0], ease: expoOut },
@@ -397,7 +397,7 @@ export const Scene3D: React.FC<{ t: number; tl: Timeline; aspect: number }> = ({
     { t: B.room - 0.15, v: [0, -6, -1] },
     { t: B.room + 0.3, v: [0, -0.2, 0], ease: expoOut },
     { t: B.same, v: [0, -0.2, 0] },
-    { t: B.same + 0.3, v: [0, -0.2, -9], ease: easeIn },
+    { t: B.same + 0.18, v: [0, -0.2, -9], ease: easeIn },
   ];
   const spin = t < 0.55 ? (1 - expoOut(prog(t, 0, 0.55))) * -Math.PI * 2.2 : 0;
   const rotKeys: Key[] = [
@@ -521,7 +521,7 @@ export const Scene3D: React.FC<{ t: number; tl: Timeline; aspect: number }> = ({
   });
 
   /* ---- same timer ring with orbiting avatars ---- */
-  const ringS = life(t, B.same - 0.05, B.streak + 0.15, 0.5, 0.25);
+  const ringS = life(t, B.same + 0.08, B.streak + 0.15, 0.5, 0.25);
   const ringK = easeOut(prog(t, B.same, 0.6)) * 0.84;
   const orbit = PEOPLE.map((p, i) => {
     const s = life(t, B.focus + i * 0.06, B.streak + 0.1, 0.35, 0.2);
@@ -539,7 +539,7 @@ export const Scene3D: React.FC<{ t: number; tl: Timeline; aspect: number }> = ({
     const t0 = B.badges + i * 0.12;
     const s = life(t, t0, B.goal + 0.05, 0.45, 0.18);
     const flip = (1 - expoOut(prog(t, t0, 0.7))) * Math.PI * 2;
-    return <Coin key={k} r={0.34} thick={0.1} drawKey={`b${k}`} draw={(c, w) => badgeFace(c, w, k)} position={[(i - 1) * 0.78, -0.25 + (i === 1 ? -0.08 : 0), 1.3]} rotation={[0, flip + (i - 1) * -0.18, 0]} scale={s} />;
+    return <Coin key={k} r={0.3} thick={0.1} drawKey={`b${k}`} draw={(c, w) => badgeFace(c, w, k)} position={[(i - 1) * 0.66, -0.25 + (i === 1 ? -0.08 : 0), 1.3]} rotation={[0, flip + (i - 1) * -0.18, 0]} scale={s} />;
   });
   const goalS = life(t, B.goal + 0.08, B.pass + 0.15, 0.45, 0.22);
   const goalK = easeOut(prog(t, B.goal + 0.1, 0.9));

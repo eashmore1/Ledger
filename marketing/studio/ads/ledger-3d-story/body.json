@@ -1,0 +1,68 @@
+[
+ {
+  "id": "alone",
+  "who": "S",
+  "scene": "rain",
+  "text": "Two in the morning, studying alone, and nothing sticks."
+ },
+ {
+  "id": "hey",
+  "who": "L",
+  "scene": "pop",
+  "text": "Hey there. You don't have to study alone.",
+  "gap": 0.2,
+  "rate": "-3%"
+ },
+ {
+  "id": "talk",
+  "who": "S",
+  "scene": "talk",
+  "text": "Hold on. Did that book just talk?"
+ },
+ {
+  "id": "start",
+  "who": "L",
+  "scene": "timer",
+  "text": "I'm Ledger. Hit start, and your friends see you studying live."
+ },
+ {
+  "id": "room",
+  "who": "L",
+  "scene": "room",
+  "text": "Jump in a study room. Same timer, same focus. Nobody quits first."
+ },
+ {
+  "id": "streak",
+  "who": "L",
+  "scene": "streak",
+  "text": "Stack your streak, one day at a time."
+ },
+ {
+  "id": "cando",
+  "who": "S",
+  "scene": "streak",
+  "text": "Okay. I can actually do this."
+ },
+ {
+  "id": "passed",
+  "who": "S",
+  "scene": "pass",
+  "text": "Wait. I passed?",
+  "gap": 0.22
+ },
+ {
+  "id": "brand",
+  "who": "L",
+  "scene": "end",
+  "text": "Told you. Study together."
+ },
+ {
+  "id": "cta",
+  "who": "L",
+  "scene": "end",
+  "text": "Start free at ledgercpa.app",
+  "say": "Start free at ledger CPA dot app.",
+  "rate": "-4%",
+  "gap": 0.2
+ }
+]
