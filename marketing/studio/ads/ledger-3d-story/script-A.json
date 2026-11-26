@@ -1,8 +1,6 @@
 {
- "engine": "kokoro",
- "voice": "am_liam",
- "rate": "+5%",
- "gap": 0.16,
+ "engine": "files",
+ "voice": "chatterbox",
  "lines": [
   {
    "id": "hook",
@@ -10,83 +8,98 @@
    "scene": "hook",
    "text": "I failed FAR. Again.",
    "screen": "I FAILED FAR\u2026|AGAIN.",
-   "voice": "am_liam"
+   "file": "assets/audio/chatterbox/ledger-3d-story/hookA.wav",
+   "max_pause": 0.35
   },
   {
    "id": "alone",
    "who": "S",
    "scene": "rain",
-   "text": "Two in the morning, studying alone, and nothing sticks.",
-   "voice": "am_liam"
+   "text": "It's 2 AM, I'm studying alone, and nothing's sticking.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/alone.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "hey",
    "who": "L",
    "scene": "pop",
-   "text": "Hey there. You don't have to study alone.",
-   "gap": 0.2,
-   "rate": "-3%",
-   "voice": "am_fenrir"
+   "text": "Hey! You don't have to do this alone.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/hey.wav",
+   "gap": 0.3,
+   "max_pause": 0.32
   },
   {
    "id": "talk",
    "who": "S",
    "scene": "talk",
-   "text": "Hold on. Did that book just talk?",
-   "voice": "am_liam"
+   "text": "Wait. Did that book just talk?",
+   "file": "assets/audio/chatterbox/ledger-3d-story/talk.wav",
+   "gap": 0.2,
+   "max_pause": 0.32
   },
   {
    "id": "start",
    "who": "L",
    "scene": "timer",
-   "text": "I'm Ledger. Hit start, and your friends see you studying live.",
-   "voice": "am_fenrir"
+   "text": "Yep! I'm Ledger. Hit start, and your friends see you studying, live.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/start.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "room",
    "who": "L",
    "scene": "room",
    "text": "Jump in a study room. Same timer, same focus. Nobody quits first.",
-   "voice": "am_fenrir"
+   "file": "assets/audio/chatterbox/ledger-3d-story/room.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "streak",
    "who": "L",
    "scene": "streak",
-   "text": "Stack your streak, one day at a time.",
-   "voice": "am_fenrir"
+   "text": "Then just stack your streak, one day at a time.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/streak.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "cando",
    "who": "S",
    "scene": "streak",
    "text": "Okay. I can actually do this.",
-   "voice": "am_liam"
+   "file": "assets/audio/chatterbox/ledger-3d-story/cando.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "passed",
    "who": "S",
    "scene": "pass",
-   "text": "Wait. I passed?",
-   "gap": 0.22,
-   "voice": "am_liam"
+   "text": "Wait. I passed?!",
+   "file": "assets/audio/chatterbox/ledger-3d-story/passed.wav",
+   "gap": 0.28,
+   "max_pause": 0.32
   },
   {
    "id": "brand",
    "who": "L",
    "scene": "end",
    "text": "Told you. Study together.",
-   "voice": "am_fenrir"
+   "file": "assets/audio/chatterbox/ledger-3d-story/brand.wav",
+   "gap": 0.18,
+   "max_pause": 0.32
   },
   {
    "id": "cta",
    "who": "L",
    "scene": "end",
    "text": "Start free at ledgercpa.app",
-   "say": "Start free at ledger CPA dot app.",
-   "rate": "-4%",
-   "gap": 0.2,
-   "voice": "am_fenrir"
+   "file": "assets/audio/chatterbox/ledger-3d-story/cta.wav",
+   "gap": 0.22,
+   "max_pause": 0.32
   }
  ]
 }
