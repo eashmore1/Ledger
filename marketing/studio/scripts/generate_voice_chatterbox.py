@@ -20,9 +20,25 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 STUDIO = os.path.dirname(HERE)
 
 
+ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
+TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def spell(n):
+    # Whisper writes numbers as digits ("72", "300"); the script spells them out.
+    if n < 20:
+        return ONES[n]
+    if n < 100:
+        return TENS[n // 10] + ("" if n % 10 == 0 else " " + ONES[n % 10])
+    if n < 1000:
+        return ONES[n // 100] + " hundred" + ("" if n % 100 == 0 else " " + spell(n % 100))
+    return str(n)
+
+
 def norm(s):
     s = s.lower().replace("c p a", "cpa").replace("c.p.a.", "cpa").replace("ledgercpa", "ledger cpa")
-    s = re.sub(r"\b2\b", "two", s).replace("a m", "am").replace("a.m.", "am")
+    s = s.replace("a.m.", "am").replace("a m", "am").replace("-", " ")
+    s = re.sub(r"\b\d+\b", lambda m: spell(int(m.group())), s)
     return re.sub(r"[^a-z0-9' ]", " ", s).split()
 
 

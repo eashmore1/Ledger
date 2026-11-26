@@ -1,0 +1,301 @@
+{
+ "hookA": [
+  {
+   "take": 0,
+   "heard": "I failed far, again.",
+   "score": 1.0,
+   "dur": 1.52
+  },
+  {
+   "take": 1,
+   "heard": "I failed FAR, again.",
+   "score": 1.0,
+   "dur": 1.96
+  },
+  {
+   "take": 2,
+   "heard": "I failed far, again.",
+   "score": 1.0,
+   "dur": 2.12
+  },
+  {
+   "picked": "hookA-0.wav"
+  }
+ ],
+ "hookB": [
+  {
+   "take": 0,
+   "heard": "72. Three points from passing.",
+   "score": 1.0,
+   "dur": 3.28
+  },
+  {
+   "take": 1,
+   "heard": "72, three points from passing.",
+   "score": 1.0,
+   "dur": 2.96
+  },
+  {
+   "take": 2,
+   "heard": "72, three points from passing.",
+   "score": 1.0,
+   "dur": 2.88
+  },
+  {
+   "picked": "hookB-2.wav"
+  }
+ ],
+ "hookC": [
+  {
+   "take": 0,
+   "heard": "300 hours, and I still failed.",
+   "score": 1.0,
+   "dur": 2.32
+  },
+  {
+   "take": 1,
+   "heard": "300 hours, and I still failed.",
+   "score": 1.0,
+   "dur": 2.36
+  },
+  {
+   "take": 2,
+   "heard": "300 hours, and I still failed.",
+   "score": 1.0,
+   "dur": 2.6
+  },
+  {
+   "picked": "hookC-0.wav"
+  }
+ ],
+ "alone": [
+  {
+   "take": 0,
+   "heard": "It's 2 a.m., I'm studying alone, and nothing's sticking.",
+   "score": 1.0,
+   "dur": 4.0
+  },
+  {
+   "take": 1,
+   "heard": "It's 2 a.m. I'm studying alone and nothing's sticking.",
+   "score": 1.0,
+   "dur": 3.84
+  },
+  {
+   "take": 2,
+   "heard": "It's 2 a.m. I'm studying alone and nothing's sticking.",
+   "score": 1.0,
+   "dur": 3.56
+  },
+  {
+   "picked": "alone-2.wav"
+  }
+ ],
+ "hey": [
+  {
+   "take": 0,
+   "heard": "Hey, you don't have to do this alone.",
+   "score": 1.0,
+   "dur": 2.18
+  },
+  {
+   "take": 1,
+   "heard": "Hey, you don't have to do this alone.",
+   "score": 1.0,
+   "dur": 2.22
+  },
+  {
+   "take": 2,
+   "heard": "Hey, you don't have to do this alone.",
+   "score": 1.0,
+   "dur": 2.02
+  },
+  {
+   "picked": "hey-2.wav"
+  }
+ ],
+ "talk": [
+  {
+   "take": 0,
+   "heard": "Wait, did that book just talk?",
+   "score": 1.0,
+   "dur": 1.8
+  },
+  {
+   "take": 1,
+   "heard": "Wait, did that book just talk?",
+   "score": 1.0,
+   "dur": 1.68
+  },
+  {
+   "take": 2,
+   "heard": "Wait, did that book just talk?",
+   "score": 1.0,
+   "dur": 1.72
+  },
+  {
+   "picked": "talk-1.wav"
+  }
+ ],
+ "start": [
+  {
+   "take": 0,
+   "heard": "Yep, I'm Ledger. Hit start and your friends can see you studying, live.",
+   "score": 1.0,
+   "dur": 4.22
+  },
+  {
+   "take": 1,
+   "heard": "Yep, I'm Ledger, hit start and your friends can see you studying live.",
+   "score": 1.0,
+   "dur": 4.26
+  },
+  {
+   "take": 2,
+   "heard": "Yup, I'm Ledger. Hit start and your friends can see you studying, live!",
+   "score": 0.923,
+   "dur": 3.78
+  },
+  {
+   "picked": "start-0.wav"
+  }
+ ],
+ "room": [
+  {
+   "take": 0,
+   "heard": "jump into a study room, same timer, same focus, nobody quits first.",
+   "score": 1.0,
+   "dur": 4.86
+  },
+  {
+   "take": 1,
+   "heard": "Jump into a study room, same timer, same focus. Nobody quits first.",
+   "score": 1.0,
+   "dur": 4.62
+  },
+  {
+   "take": 2,
+   "heard": "Dump into a study room.  Same timer, same focus.  Nobody quits first.",
+   "score": 0.917,
+   "dur": 4.9
+  },
+  {
+   "picked": "room-1.wav"
+  }
+ ],
+ "streak": [
+  {
+   "take": 0,
+   "heard": "then just stack your streak, one day at a time.",
+   "score": 1.0,
+   "dur": 2.7
+  },
+  {
+   "take": 1,
+   "heard": "then just stack your streak, one day at a time.",
+   "score": 1.0,
+   "dur": 2.54
+  },
+  {
+   "take": 2,
+   "heard": "Then, just stack your streak, one day at a time.",
+   "score": 1.0,
+   "dur": 3.34
+  },
+  {
+   "picked": "streak-1.wav"
+  }
+ ],
+ "cando": [
+  {
+   "take": 0,
+   "heard": "Okay, I can actually do this.",
+   "score": 1.0,
+   "dur": 2.08
+  },
+  {
+   "take": 1,
+   "heard": "Okay, I can actually do this.",
+   "score": 1.0,
+   "dur": 1.68
+  },
+  {
+   "take": 2,
+   "heard": "Okay, I can actually do this.",
+   "score": 1.0,
+   "dur": 1.56
+  },
+  {
+   "picked": "cando-2.wav"
+  }
+ ],
+ "passed": [
+  {
+   "take": 0,
+   "heard": "Oh, wait, I passed?",
+   "score": 0.857,
+   "dur": 1.84
+  },
+  {
+   "take": 1,
+   "heard": "Wait, I passed?",
+   "score": 1.0,
+   "dur": 1.36
+  },
+  {
+   "take": 2,
+   "heard": "Uh, wait, I passed?",
+   "score": 0.857,
+   "dur": 1.44
+  },
+  {
+   "picked": "passed-1.wav"
+  }
+ ],
+ "brand": [
+  {
+   "take": 0,
+   "heard": "Told you, study together.",
+   "score": 1.0,
+   "dur": 1.78
+  },
+  {
+   "take": 1,
+   "heard": "Told you.  Study together.",
+   "score": 1.0,
+   "dur": 1.5
+  },
+  {
+   "take": 2,
+   "heard": "Told you, study together.",
+   "score": 1.0,
+   "dur": 1.62
+  },
+  {
+   "picked": "brand-1.wav"
+  }
+ ],
+ "cta": [
+  {
+   "take": 0,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.42
+  },
+  {
+   "take": 1,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 3.06
+  },
+  {
+   "take": 2,
+   "heard": "Start free at LedgerCPA.app.",
+   "score": 0.923,
+   "dur": 2.94
+  },
+  {
+   "picked": "cta-2.wav"
+  }
+ ]
+}

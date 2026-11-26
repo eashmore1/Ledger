@@ -79,7 +79,7 @@ const Cloud: React.FC<{ t: number; position: V3; scale: number; dark: number }> 
   );
 };
 
-const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; bookShake: number }> = ({ t, day, flash, bookGlow, bookShake }) => {
+export const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; bookShake: number; rain?: boolean }> = ({ t, day, flash, bookGlow, bookShake, rain = true }) => {
   const sky = useCanvasTex(300, 380, (c, w, h) => skyFace(c, w, h, day, flash), `${day.toFixed(2)}-${flash.toFixed(2)}`);
   const spines = [
     useCanvasTex(400, 80, (c, w, h) => spineFace(c, w, h, "FAR", "#c2410c"), "far"),
@@ -102,7 +102,7 @@ const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: number; 
           <planeGeometry args={[1.2, 1.52]} />
           <meshBasicMaterial map={sky} toneMapped={false} />
         </mesh>
-        <Rain t={t} count={90} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={6} opacity={0.55 * (1 - day)} len={0.16} />
+        <Rain t={t} count={90} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={6} opacity={rain ? 0.55 * (1 - day) : 0} len={0.16} />
         {[[0, 0.79, 1.36, 0.08], [0, -0.79, 1.36, 0.08], [-0.64, 0, 0.08, 1.66], [0.64, 0, 0.08, 1.66], [0, 0, 0.04, 1.6], [0, 0, 1.3, 0.04]].map(([x, y, w, h], i) => (
           <mesh key={i} position={[x, y, 0.03]}>
             <boxGeometry args={[w, h, 0.06]} />
