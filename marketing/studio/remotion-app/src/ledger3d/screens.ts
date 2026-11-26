@@ -560,3 +560,65 @@ export const spineFace = (ctx: Ctx, W: number, H: number, label: string, color: 
   ctx.fillRect(0, H * 0.8, W, H * 0.08);
   text(ctx, label, W / 2, H * 0.66, font(900, H * 0.42), "#fff", "center");
 };
+
+/* ---------------- hus meme ad ---------------- */
+
+/** Phone lying on the desk: streak about to expire -> saved. */
+export const screenStreakSave = (ctx: Ctx, W: number, H: number, s: { left: number; saved: number; streak: number; session: number; pulse: number }) => {
+  chrome(ctx, W, H, s.saved > 0.5 ? COL.cream : "#16102e");
+  const dark = s.saved <= 0.5;
+  text(ctx, "11:58", W / 2, 300, font(600, 190, SERIF), dark ? "#fff" : COL.navy, "center");
+  text(ctx, "Thursday, November 26", W / 2, 360, font(600, 30), dark ? "rgba(255,255,255,.6)" : COL.muted, "center");
+  if (dark) {
+    // urgent notification
+    const y = 470 + Math.sin(s.pulse * Math.PI) * 6;
+    ctx.fillStyle = "rgba(255,255,255,.94)";
+    rr(ctx, 40, y, W - 80, 250, 40);
+    ctx.fill();
+    ctx.fillStyle = COL.body;
+    rr(ctx, 76, y + 36, 64, 76, 14);
+    ctx.fill();
+    text(ctx, "LEDGER · now", 162, y + 66, font(800, 26), COL.muted);
+    text(ctx, `Your ${s.streak}-day streak`, 162, y + 112, font(800, 38), COL.navy);
+    const m = Math.floor(s.left / 60), sec = Math.floor(s.left % 60);
+    text(ctx, `ends in ${m}:${String(sec).padStart(2, "0")}`, 76, y + 190, font(900, 56), "#dc2626");
+  } else {
+    const k = Math.min(1, (s.saved - 0.5) * 2);
+    ctx.globalAlpha = k;
+    text(ctx, "STREAK SAVED", W / 2, 560, font(900, 58), COL.green, "center");
+    // big flame
+    const cx = W / 2, cy = 820, r = 150 * (0.8 + 0.2 * k);
+    const g = ctx.createRadialGradient(cx, cy + 40, 10, cx, cy, r * 1.4);
+    g.addColorStop(0, "#ffe08a");
+    g.addColorStop(0.45, "#ff8a2a");
+    g.addColorStop(1, "rgba(255,77,18,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 1.3);
+    ctx.bezierCurveTo(cx + r, cy - r * 0.3, cx + r * 0.9, cy + r, cx, cy + r);
+    ctx.bezierCurveTo(cx - r * 0.9, cy + r, cx - r, cy - r * 0.3, cx, cy - r * 1.3);
+    ctx.fill();
+    text(ctx, String(s.streak), cx, cy + 70, font(700, 170, SERIF), "#fff", "center");
+    text(ctx, "DAY STREAK", W / 2, 1060, font(800, 40), COL.orange, "center");
+    card(ctx, 60, 1120, W - 120, 170, 34);
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(110, 1205, 11, 0, Math.PI * 2);
+    ctx.fill();
+    text(ctx, "Session running", 136, 1196, font(800, 32), COL.navy);
+    const sec = Math.floor(s.session);
+    text(ctx, `FAR · 00:00:${String(sec).padStart(2, "0")}`, 136, 1244, font(600, 28), COL.muted);
+    ctx.globalAlpha = 1;
+  }
+  endChrome(ctx, W, H);
+};
+
+/** Desk prop labels (sticky note). */
+export const stickyFace = (ctx: Ctx, W: number, H: number, label: string, color: string) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgba(0,0,0,.06)";
+  ctx.fillRect(0, 0, W, H * 0.16);
+  const lines = label.split("|");
+  lines.forEach((l, i) => text(ctx, l, W / 2, H * (0.45 + i * 0.22), font(800, H * 0.16), "#2a2440", "center"));
+};

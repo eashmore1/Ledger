@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { adDuration, LedgerAd, LedgerAdProps } from "./ledger3d/LedgerAd";
 import { StoryAd, StoryAdProps, storyDuration } from "./ledger3d/StoryAd";
+import { HusAd, HusAdProps, husDuration } from "./ledger3d/HusAd";
 
 const FPS = 30;
 const meta = ({ props }: { props: LedgerAdProps }) => ({ durationInFrames: adDuration(props.variant, FPS) });
@@ -22,6 +23,12 @@ export const RemotionRoot: React.FC = () => (
       <Composition key={`s${v}`} id={`LedgerStory3D-${v}`} component={StoryAd} fps={FPS} width={1080} height={1920} durationInFrames={840}
         defaultProps={{ variant: v, withAudio: true } as StoryAdProps}
         calculateMetadata={({ props }: { props: StoryAdProps }) => ({ durationInFrames: storyDuration(props.variant, FPS) })} />
+    ))}
+    {/* Meme cut: "hus hus hus" sprint to save the streak */}
+    {(["A", "B", "C"] as const).map((v) => (
+      <Composition key={`h${v}`} id={`LedgerHus-${v}`} component={HusAd} fps={FPS} width={1080} height={1920} durationInFrames={540}
+        defaultProps={{ variant: v, withAudio: true } as HusAdProps}
+        calculateMetadata={({ props }: { props: HusAdProps }) => ({ durationInFrames: husDuration(props.variant, FPS) })} />
     ))}
   </>
 );
