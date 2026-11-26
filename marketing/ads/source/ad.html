@@ -1,0 +1,220 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Fraunces';font-weight:100 900;font-style:normal;src:url(file:///home/user/Ledger/fonts/fraunces-latin-opsz-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:100 900;font-style:italic;src:url(file:///home/user/Ledger/fonts/fraunces-latin-opsz-italic.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-weight:100 900;src:url(file:///home/user/Ledger/fonts/libre-franklin-latin-wght-normal.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:540px;height:960px;overflow:hidden;background:#fbf3e4;font-family:'Libre Franklin',sans-serif;color:#2a1407}
+#stage{position:absolute;inset:0;overflow:hidden}
+.bg{position:absolute;inset:0;transition:none}
+.layer{position:absolute;inset:0;opacity:0}
+#buddy{position:absolute;left:50%;top:0;transform-origin:50% 100%}
+.cap{position:absolute;left:28px;right:28px;bottom:96px;text-align:center;font-weight:800;font-size:34px;line-height:1.18;letter-spacing:-.01em}
+.cap span{background:#2a1407;color:#fff;padding:4px 12px;border-radius:10px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.cap b{color:#ffb35c;font-weight:800}
+.serif{font-family:'Fraunces',serif}
+/* scene 1: calendar page */
+.cal1{position:absolute;left:64px;top:96px;width:200px;height:220px;background:#fff;border-radius:18px;box-shadow:0 10px 0 #e4d2b4;transform:rotate(-6deg);text-align:center;padding-top:22px}
+.cal1 .h{position:absolute;left:0;right:0;top:0;height:46px;background:#e2551c;border-radius:18px 18px 0 0;color:#fff;font-weight:800;font-size:20px;line-height:46px;letter-spacing:.12em}
+.cal1 .n{margin-top:40px;font-size:112px;font-weight:800;line-height:1;font-family:'Fraunces',serif}
+.scrib{position:absolute;font-family:'Fraunces',serif;font-weight:700;font-size:44px;color:#5a5fcf}
+/* scene 3: phone */
+.phone{position:absolute;left:150px;top:70px;width:350px;height:450px;background:#2a1407;border-radius:40px;padding:12px}
+.screen{width:100%;height:100%;background:#fffaf2;border-radius:30px;overflow:hidden;padding:20px 14px}
+.screen .t{font-family:'Fraunces',serif;font-weight:700;font-style:italic;color:#e2551c;font-size:30px}
+.screen .s{font-size:12.5px;font-weight:700;color:#8a6a4a;margin:4px 0 12px;letter-spacing:.04em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.grid .dw{font-size:10px;font-weight:800;color:#b49a7a;text-align:center}
+.cell{height:50px;border-radius:9px;background:#f1e6d3;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;transform:scale(0)}
+.cell.u{background:#4f46e5}.cell.r{background:#e2551c}.cell.x{background:#2a1407}.cell.off{background:#f1e6d3;color:#c7ad8a}
+.prog{margin-top:16px;background:#f1e6d3;border-radius:99px;height:14px;overflow:hidden}
+.prog i{display:block;height:100%;background:#4f46e5;border-radius:99px;width:0}
+.pl{margin-top:8px;font-size:13px;font-weight:700;color:#5a4330}
+.leg{display:flex;gap:10px;margin-top:14px;font-size:11px;font-weight:700;color:#5a4330}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+/* scene 4 */
+.card{position:absolute;background:#fff;border-radius:22px;box-shadow:0 8px 0 #e4d2b4;padding:16px 20px}
+.streak{left:30px;top:110px;width:250px}
+.streak .big{font-family:'Fraunces',serif;font-weight:800;font-size:64px;line-height:1;color:#e2551c}
+.streak .lb{font-weight:800;font-size:15px;color:#8a6a4a;letter-spacing:.05em;text-transform:uppercase}
+.dots{display:flex;gap:6px;margin-top:12px}.dots i{width:22px;height:22px;border-radius:50%;background:#f1e6d3}.dots i.on{background:#e2551c}
+.friends{left:30px;right:30px;top:318px}
+.fr{display:flex;align-items:center;gap:10px;margin:6px 0;font-weight:700;font-size:16px}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+.prop{margin-left:auto;background:#fff1e3;color:#e2551c;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:800}
+.hours{right:30px;top:110px;width:210px}
+.hours .big{font-family:'Fraunces',serif;font-weight:800;font-size:52px;line-height:1;color:#4f46e5}
+/* scene 5 */
+.logo{position:absolute;left:0;right:0;top:120px;text-align:center;font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:104px;color:#e2551c;letter-spacing:-.01em}
+.tag{position:absolute;left:0;right:0;top:262px;text-align:center;font-weight:700;font-size:24px;color:#5a4330}
+.url{position:absolute;left:50%;top:330px;transform:translateX(-50%);background:#e2551c;color:#fff;font-weight:800;font-size:30px;padding:14px 30px;border-radius:99px;white-space:nowrap;box-shadow:0 6px 0 #b23a08}
+.qm{position:absolute;font-family:'Fraunces',serif;font-weight:800;color:#5a5fcf}
+</style>
+<script src="file:///home/user/Ledger/mascot.js"></script>
+</head><body>
+<div id="stage">
+  <div class="bg" id="bg"></div>
+
+  <div class="layer" id="L1">
+    <div class="cal1"><div class="h">STUDY DAY</div><div class="n">47</div></div>
+    <div class="scrib" style="left:330px;top:120px;transform:rotate(8deg)">FAR?</div>
+    <div class="scrib" style="left:380px;top:210px;transform:rotate(-10deg);color:#e2551c">AUD??</div>
+    <div class="scrib" style="left:300px;top:300px;transform:rotate(4deg);font-size:36px">behind?</div>
+  </div>
+
+  <div class="layer" id="L2">
+    <div class="qm" id="q1" style="left:90px;top:170px;font-size:110px">?</div>
+    <div class="qm" id="q2" style="left:390px;top:120px;font-size:80px;color:#e2551c">?</div>
+    <div class="qm" id="q3" style="left:420px;top:300px;font-size:60px">?</div>
+  </div>
+
+  <div class="layer" id="L3">
+    <div class="phone"><div class="screen">
+      <div class="t">Ledger</div>
+      <div class="s">FAR plan · your course units</div>
+      <div class="grid" id="grid"></div>
+      <div class="prog"><i id="progbar"></i></div>
+      <div class="pl" id="progtxt">0/6 units</div>
+      <div class="leg"><span><i style="background:#4f46e5"></i>Units</span><span><i style="background:#e2551c"></i>Review</span><span><i style="background:#2a1407"></i>Exam</span></div>
+    </div></div>
+  </div>
+
+  <div class="layer" id="L4">
+    <div class="card streak" id="c1"><div class="lb">Study streak</div><div class="big" id="streakN">0 days</div><div class="dots" id="dots"></div></div>
+    <div class="card hours" id="c2"><div class="lb" style="font-weight:800;font-size:15px;color:#8a6a4a;letter-spacing:.05em;text-transform:uppercase">This week</div><div class="big" id="hrsN">0h</div></div>
+    <div class="card friends" id="c3">
+      <div class="fr"><div class="av" style="background:#4f46e5">M</div>Maya · 3h<span class="prop">+ props</span></div>
+      <div class="fr"><div class="av" style="background:#2f9e6e">J</div>Jordan · 2h<span class="prop">+ props</span></div>
+      <div class="fr"><div class="av" style="background:#e2551c">S</div>Sam · 4h<span class="prop">+ props</span></div>
+    </div>
+  </div>
+
+  <div class="layer" id="L5">
+    <div class="logo" id="logo">Ledger</div>
+    <div class="tag" id="tag">The CPA study tracker</div>
+    <div class="url" id="url">ledgercpa.app</div>
+  </div>
+
+  <div id="buddy"></div>
+  <div class="cap" id="cap"></div>
+</div>
+<script>
+const T = window.TIMING;  // {lines:[{start,dur}], mouth:[...], total}
+const LINES = window.LINES;
+const FPS = 30;
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const back=x=>{x=clamp(x);const c=1.7;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const S = T.lines.map(l=>l.start);  // line starts
+// scene boundaries
+const B = [0, S[1]-0.15, S[2]-0.2, S[3]-0.2, S[4]-0.2, T.total];
+const BG = ['#fbf3e4','#efeafc','#fbf3e4','#fff1e3','#fbf3e4'];
+
+// calendar cells: 4 weeks, units on weekdays, review last week, exam last cell
+const cells=[]; (function(){
+  let u=1; const plan=[];
+  for(let i=0;i<28;i++){
+    const dow=i%7;
+    if(i===27) plan.push(['x','★']);
+    else if(i>=21) plan.push(['r','R']);
+    else if(dow===6) plan.push(['off','']);
+    else { const n=Math.min(6,1+Math.floor((i - Math.floor(i/7))/3)); plan.push(['u','U'+n]); }
+  }
+  const g=document.getElementById('grid');
+  ['M','T','W','T','F','S','S'].forEach(d=>{const e=document.createElement('div');e.className='dw';e.textContent=d;g.appendChild(e)});
+  plan.forEach(([c,t])=>{const e=document.createElement('div');e.className='cell '+c;e.textContent=t;g.appendChild(e);cells.push(e)});
+  const dots=document.getElementById('dots'); for(let i=0;i<7;i++){const e=document.createElement('i');dots.appendChild(e)}
+})();
+
+// mascot with a talking mouth
+let curPose=null;
+const MOUTH_RE=/<(path|ellipse) (class="lm-smile" )?(d="(M51\.5 62\.5|M55\.5 68\.2|M56 65\.5|M54 67q|M53 64q)|cx="60" cy="65\.5")[^>]*\/>/g;
+function setPose(p){
+  if(p===curPose) return; curPose=p;
+  let svg=LedgerBuddy(p,330).replace(MOUTH_RE,'');
+  const closed = p==='worry' ? '<path id="mc" d="M54 67q6-5 12 0" fill="none" stroke="#2a1407" stroke-width="3" stroke-linecap="round"/>'
+    : p==='sleep' ? '<ellipse id="mc" cx="60" cy="65.5" rx="3" ry="3.6" fill="#2a1407"/>'
+    : '<path id="mc" d="M53 64q7 6.5 14 0" fill="none" stroke="#2a1407" stroke-width="3" stroke-linecap="round"/>';
+  svg=svg.replace('<circle cx="42" cy="61"', closed+'<g id="mo"><ellipse id="mo1" cx="60" cy="65" rx="7" ry="4" fill="#2a1407"/><ellipse id="mo2" cx="60" cy="68" rx="4" ry="2" fill="#ff8c7a"/></g><circle cx="42" cy="61"');
+  document.getElementById('buddy').innerHTML=svg;
+}
+function setMouth(m){
+  const mc=document.getElementById('mc'), mo=document.getElementById('mo');
+  if(!mc) return;
+  const open=m>0.06;
+  mc.style.display=open?'none':''; mo.style.display=open?'':'none';
+  if(open){
+    const ry=1.6+5.4*m, rx=5.2+2.6*m;
+    const e1=document.getElementById('mo1'), e2=document.getElementById('mo2');
+    e1.setAttribute('rx',rx); e1.setAttribute('ry',ry); e1.setAttribute('cy',64+ry*0.25);
+    e2.setAttribute('rx',rx*0.55); e2.setAttribute('ry',Math.max(0.6,ry*0.4)); e2.setAttribute('cy',64+ry*0.25+ry*0.55);
+  }
+}
+function placeBuddy(x,y,s,rot){
+  const b=document.getElementById('buddy');
+  b.style.transform=`translate(-50%,0) translate(${x}px,${y}px) rotate(${rot||0}deg) scale(${s})`;
+}
+
+// captions: split each line into chunks of ~3-4 words, timed by character count
+const CAPS=[]; LINES.forEach((ln,i)=>{
+  const words=(ln.caption||ln.text).split(' '); const chunks=[]; let cur=[];
+  words.forEach(w=>{cur.push(w); if(cur.length>=4 || /[.,?!]$/.test(w) && cur.length>=2){chunks.push(cur.join(' '));cur=[]}});
+  if(cur.length) chunks.push(cur.join(' '));
+  const tot=chunks.reduce((a,c)=>a+c.length,0); let t=T.lines[i].start;
+  chunks.forEach(c=>{const d=T.lines[i].dur*c.length/tot; CAPS.push({t0:t,t1:t+d,text:c}); t+=d});
+});
+const HL=/(Ledger|day-by-day|unit|streak|friends|free|ledgercpa\.app|47)/gi;
+
+function render(t){
+  // pause and seek mascot's CSS animations
+  document.getAnimations().forEach(a=>{a.pause(); a.currentTime=(t*1000)%100000});
+  let sc=0; for(let i=0;i<5;i++) if(t>=B[i]) sc=i;
+  document.getElementById('bg').style.background=BG[sc];
+  for(let i=0;i<5;i++){
+    const L=document.getElementById('L'+(i+1));
+    const local=t-B[i], len=B[i+1]-B[i];
+    const fin=clamp(local/0.35), fout=clamp((len-local)/0.25);
+    L.style.opacity = (t>=B[i] && t<B[i+1]) ? Math.min(fin, i===4?1:fout) : 0;
+    L.style.transform = `translateY(${(1-ease(fin))*30}px)`;
+  }
+  const lt=t-B[sc];
+  // mascot per scene
+  if(sc===0){
+    setPose(lt<1.6?'sleep':'worry');
+    const shake = lt>1.6&&lt<2.0 ? Math.sin(lt*80)*3 : 0;
+    placeBuddy(-40+shake, 400, 1, 0);
+  } else if(sc===1){
+    setPose('think'); placeBuddy(0, 380+(1-back(lt/0.4))*60, 1.05, 0);
+    ['q1','q2','q3'].forEach((id,k)=>{const e=document.getElementById(id);const p=back((lt-k*0.12)/0.35);e.style.transform=`scale(${clamp(p,0,2)}) rotate(${Math.sin(t*3+k)*8}deg)`});
+  } else if(sc===2){
+    setPose('point'); placeBuddy(-175, 520+(1-ease(lt/0.5))*200, 0.72, 0);
+    // cells pop in over ~3.5s, progress fills as units complete
+    cells.forEach((c,k)=>{const p=back((lt-0.6-k*0.11)/0.3);c.style.transform=`scale(${clamp(p,0,1.3)})`});
+    const done=Math.round(clamp((lt-3.8)/2.2)*6);
+    document.getElementById('progbar').style.width=(done/6*100)+'%';
+    document.getElementById('progtxt').textContent=done+'/6 units done';
+  } else if(sc===3){
+    setPose('cheer'); placeBuddy(0, 520+(1-back(lt/0.45))*120, 0.95, 0);
+    ['c1','c2','c3'].forEach((id,k)=>{const e=document.getElementById(id);const p=back((lt-k*0.35)/0.4);e.style.transform=`scale(${clamp(p,0,1.2)})`;e.style.opacity=clamp(p*3)});
+    const n=Math.round(clamp((lt-0.2)/1.6)*12);
+    document.getElementById('streakN').textContent=n+(n===1?' day':' days');
+    document.querySelectorAll('#dots i').forEach((d,k)=>d.classList.toggle('on',k<Math.round(clamp((lt-0.2)/1.6)*7)));
+    document.getElementById('hrsN').textContent=(Math.round(clamp((lt-0.6)/1.4)*186)/10)+'h';
+  } else {
+    setPose('wave'); placeBuddy(0, 440+(1-back(lt/0.5))*140, 1.05, 0);
+    document.getElementById('logo').style.transform=`scale(${clamp(back(lt/0.45),0,1.2)})`;
+    document.getElementById('url').style.transform=`translateX(-50%) scale(${clamp(back((lt-0.5)/0.4),0,1.2)*(1+0.03*Math.sin(Math.max(0,lt-1)*6))})`;
+  }
+  // talking mouth (sleep pose never talks)
+  const f=Math.min(T.mouth.length-1, Math.floor(t*FPS));
+  setMouth(curPose==='sleep'?0:T.mouth[f]);
+  // captions
+  const c=CAPS.find(c=>t>=c.t0&&t<c.t1+0.12);
+  const cap=document.getElementById('cap');
+  cap.style.display = sc===4 && lt>0.3 ? 'none' : '';
+  cap.innerHTML=c?'<span>'+c.text.replace(HL,'<b>$1</b>')+'</span>':'';
+}
+window.render=render;
+</script>
+</body></html>
