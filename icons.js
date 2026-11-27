@@ -18,6 +18,7 @@
     heartOutline: '<path d="M12 20s-7.5-4.6-10-9.3C.5 7.4 2.4 4 6 4c2 0 3.6 1.2 4.5 2.6C11.4 5.2 13 4 15 4c3.6 0 5.5 3.4 4 6.7C19.5 15.4 12 20 12 20z"/>',
     bell:         '<path d="M7 17h10M9 3.6A5 5 0 0 1 17 8v4.5l1.5 3H5.5L7 12.5V8c0-.9.2-1.7.6-2.4"/><path d="M10.5 20a1.5 1.5 0 0 0 3 0"/>',
     chat:         '<path d="M4 5h16v10H9l-4 4v-4H4z"/>',
+    bellOff:      '<path d="M7 17h10M9 3.6A5 5 0 0 1 17 8v4.5l1.5 3H5.5L7 12.5V8c0-.9.2-1.7.6-2.4"/><path d="M10.5 20a1.5 1.5 0 0 0 3 0"/><path d="M3.5 3.5l17 17"/>',
     warning:      '<path d="M12 4.5L21 19H3z"/><path d="M12 10v4"/><circle cx="12" cy="16.6" r=".2" fill="currentColor" stroke="none"/>',
     bot:          '<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 3v3M9 13v1M15 13v1"/>',
     envelope:     '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 6l8.5 7 8.5-7"/>',

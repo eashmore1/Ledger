@@ -198,7 +198,7 @@ async function leaveRoom(silent){
   _room=null;
   clearInterval(r.beat);clearInterval(r.tick);
   try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){} try{r.unsubC&&r.unsubC();}catch(e){}
-  document.getElementById('room-overlay')?.remove();
+  document.getElementById('room-overlay')?.remove(); document.getElementById('room-chat-pop')?.remove();
   const now=Date.now();
   const others=(r.members||[]).filter(m=>m&&m.uid!==AUTH.uid&&m.lastBeat&&now-m.lastBeat<ROOM_FRESH_MS).length;
   const closing=!others&&r.data.hostUid===AUTH.uid;
@@ -220,7 +220,7 @@ function _roomClosed(){
   const r=_room; _room=null;
   clearInterval(r.beat);clearInterval(r.tick);
   try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){} try{r.unsubC&&r.unsubC();}catch(e){}
-  document.getElementById('room-overlay')?.remove();
+  document.getElementById('room-overlay')?.remove(); document.getElementById('room-chat-pop')?.remove();
   showToast('The room closed — your session is still running','info');
   if(TS.phase==='active'||TS.phase==='paused') openSessionModal();
   _refreshRoomsList();
@@ -265,21 +265,13 @@ function openRoomView(){
     </div>
     <div class="room-members-hdr"><span id="room-count"></span></div>
     <div class="room-members" id="room-members"></div>
-    <div class="room-chat">
-      <div class="room-members-hdr" style="display:flex;justify-content:space-between;gap:8px"><span>Room chat</span><span style="text-transform:none;letter-spacing:0;font-weight:500;color:rgba(255,255,255,.4)">Only people in the room · gone when it closes</span></div>
-      <div class="room-chat-list" id="room-chat-list" aria-live="polite"></div>
-      <form class="room-chat-form" onsubmit="event.preventDefault();sendRoomChat()">
-        <input id="room-chat-in" type="text" maxlength="${ROOM_CHAT_MAX}" placeholder="Say something to the room…" autocomplete="off" aria-label="Message the room">
-        <button class="room-btn" type="submit" id="room-chat-send">Send</button>
-      </form>
-    </div>
+    <div class="room-chat" id="room-chat"></div>
     <div class="room-foot">
       <button class="room-btn room-btn-main" onclick="endRoomSession()">End &amp; log session</button>
       <button class="room-btn" onclick="leaveRoomKeepStudying()">Leave room</button>
     </div>
   </div>`;
-  _renderRoomClock();_renderRoomMembers();
-  _room.unread=0; _renderRoomChat(); _refreshRoomsList();
+  _renderRoomClock();_renderRoomMembers();_renderRoomChatShell();
 }
 function minimizeRoom(){ document.getElementById('room-overlay')?.remove(); showToast('Still in the room — tap the timer up top to come back','info'); }
 function roomTogglePause(){
@@ -360,6 +352,70 @@ function _roomChime(){
 // ── Live chat ───────────────────────────────────────────────────
 // rooms/{id}/chat — only people in the room can read it, and it is deleted
 // with the room. It is not a history like DMs: it exists for the session.
+// Each person can hide the chat panel and/or mute its pop-ups; both choices
+// are remembered on this device.
+const ROOM_CHAT_PREF_KEY='ledgerRoomChat';
+function _roomChatPref(){
+  try{ const p=JSON.parse(localStorage.getItem(ROOM_CHAT_PREF_KEY)||'{}'); return {open:p.open!==false,muted:!!p.muted}; }
+  catch(e){ return {open:true,muted:false}; }
+}
+function _setRoomChatPref(ch){
+  const p=Object.assign({},_chatPref(),ch);
+  try{ localStorage.setItem(ROOM_CHAT_PREF_KEY,JSON.stringify(p)); }catch(e){}
+  _roomChatPref._mem=p;
+  return p;
+}
+// Falls back to an in-memory copy when storage is unavailable.
+function _chatPref(){ return _roomChatPref._mem||(_roomChatPref._mem=_roomChatPref()); }
+// Is the chat on screen right now?
+function _roomChatVisible(){ return !!(document.getElementById('room-overlay')&&_chatPref().open); }
+
+function setRoomChatOpen(open){
+  _setRoomChatPref({open:!!open});
+  if(open&&_room) _room.unread=0;
+  _renderRoomChatShell();
+  _refreshRoomsList();
+  if(open) setTimeout(()=>document.getElementById('room-chat-in')?.focus({preventScroll:true}),0);
+}
+function toggleRoomChatMute(){
+  const p=_setRoomChatPref({muted:!_chatPref().muted});
+  document.getElementById('room-chat-pop')?.remove();
+  _renderRoomChatShell();
+  showToast(p.muted?'Chat pop-ups muted — messages still collect here':'Chat pop-ups on','info');
+}
+function _roomMuteBtn(){
+  const m=_chatPref().muted;
+  return `<button class="room-ibtn${m?' on':''}" id="room-chat-mute" onclick="toggleRoomChatMute()" aria-pressed="${m}" aria-label="${m?'Unmute chat pop-ups':'Mute chat pop-ups'}" title="${m?'Pop-ups muted — tap to turn on':'Mute pop-ups'}">${ico(m?'bellOff':'bell')}</button>`;
+}
+// The chat panel: open (messages + box) or folded down to one slim bar.
+function _renderRoomChatShell(){
+  const host=document.getElementById('room-chat'); if(!host||!_room) return;
+  const p=_chatPref();
+  host.classList.toggle('closed',!p.open);
+  if(!p.open){
+    const n=_room.unread||0;
+    host.innerHTML=`<div class="room-chat-bar">
+      <button class="room-chat-pill" id="room-chat-show" onclick="setRoomChatOpen(true)">${ico('chat')}<span>Chat</span>${n?`<span class="room-chat-badge">${n>99?'99+':n}</span>`:''}</button>
+      ${_roomMuteBtn()}
+    </div>`;
+    return;
+  }
+  const draft=document.getElementById('room-chat-in')?.value||'';
+  _room.unread=0;
+  host.innerHTML=`<div class="room-chat-hdr">
+      <span class="room-chat-title">${ico('chat')} Chat</span>
+      <span class="room-chat-note">Only this room · gone when it closes</span>
+      ${_roomMuteBtn()}
+      <button class="room-ibtn" id="room-chat-hide" onclick="setRoomChatOpen(false)" aria-label="Hide chat" title="Hide chat">${ico('x')}</button>
+    </div>
+    <div class="room-chat-list" id="room-chat-list" aria-live="polite"></div>
+    <form class="room-chat-form" onsubmit="event.preventDefault();sendRoomChat()">
+      <input id="room-chat-in" type="text" maxlength="${ROOM_CHAT_MAX}" placeholder="Message the room" autocomplete="off" enterkeyhint="send" aria-label="Message the room">
+      <button class="room-chat-send" type="submit" id="room-chat-send" aria-label="Send">${ico('arrow')}</button>
+    </form>`;
+  const inp=document.getElementById('room-chat-in'); if(inp&&draft) inp.value=draft;
+  _renderRoomChat();
+}
 function _watchRoomChat(){
   if(!_room) return;
   const r=_room;
@@ -370,29 +426,57 @@ function _watchRoomChat(){
     r.chat=s.docs.map(d=>Object.assign({id:d.id},d.data()));
     const fresh=first?[]:r.chat.filter(m=>!before.has(m.id)&&m.from!==AUTH.uid&&!isBlocked(m.from));
     first=false;
-    if(fresh.length&&!document.getElementById('room-overlay')){
+    if(fresh.length&&!_roomChatVisible()){
       r.unread=(r.unread||0)+fresh.length;
-      const m=fresh[fresh.length-1];
-      showToast((m.name||'Someone')+': '+String(m.text||'').slice(0,80),'info');
+      if(!_chatPref().muted) _roomChatPop(fresh[fresh.length-1],fresh.length);
+      _renderRoomChatShell();
       _refreshRoomsList();
     }
     _renderRoomChat();
   },()=>{});
 }
+// A small tappable card for a new message while the chat is hidden.
+function _roomChatPop(m,n){
+  document.getElementById('room-chat-pop')?.remove();
+  clearTimeout(_roomChatPop._t);
+  const el=document.createElement('div');
+  el.id='room-chat-pop'; el.className='room-chat-pop'; el.setAttribute('role','status');
+  const more=n>1?` <span class="room-chat-pop-more">+${n-1} more</span>`:'';
+  el.innerHTML=`<button class="room-chat-pop-main" onclick="openRoomChatFromPop()">
+      <span class="room-chat-pop-av" style="background:${esc(m.color||'#5a5fcf')}">${esc(String(m.name||'?').trim().charAt(0).toUpperCase()||'?')}</span>
+      <span class="room-chat-pop-body"><span class="room-chat-pop-name">${esc(m.name||'Someone')} · ${esc((_room&&_room.data.name)||'Study room')}${more}</span><span class="room-chat-pop-text">${esc(String(m.text||'').slice(0,140))}</span></span>
+    </button>
+    <button class="room-chat-pop-mute" onclick="toggleRoomChatMute()" aria-label="Mute chat pop-ups" title="Mute chat pop-ups">${ico('bellOff')}</button>
+    <button class="room-chat-pop-x" onclick="this.parentNode.remove()" aria-label="Dismiss">${ico('x')}</button>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  _roomChatPop._t=setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); },5500);
+}
+function openRoomChatFromPop(){
+  document.getElementById('room-chat-pop')?.remove();
+  if(!_room) return;
+  _setRoomChatPref({open:true});
+  if(!document.getElementById('room-overlay')) openRoomView(); else _renderRoomChatShell();
+  _refreshRoomsList();
+  setTimeout(()=>document.getElementById('room-chat-in')?.focus({preventScroll:true}),0);
+}
 function _renderRoomChat(){
   const host=document.getElementById('room-chat-list'); if(!host||!_room) return;
   const nearBottom=host.scrollHeight-host.scrollTop-host.clientHeight<40;
   const list=(_room.chat||[]).filter(m=>!isBlocked(m.from));
+  let prev=null;
   host.innerHTML=list.length?list.map(m=>{
     const me=m.from===AUTH.uid;
+    // Back-to-back messages from one person within 3 minutes share a header.
+    const cont=prev&&prev.from===m.from&&(m.at||0)-(prev.at||0)<180000;
+    prev=m;
     const t=new Date(m.at||Date.now()).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
     const rk=me?'':_regReport({kind:'message',target:m.from,targetName:m.name||'Member',text:String(m.text||'').slice(0,1000),refPath:_room.ref.path+'/chat/'+m.id});
-    return `<div class="room-chat-msg${me?' mine':''}" data-msg="${esc(m.id)}">
-      <span class="room-chat-dot" style="background:${esc(m.color||'#5a5fcf')}"></span>
-      <div style="min-width:0;flex:1"><div class="room-chat-meta"><b>${me?'You':esc(m.name||'Member')}</b> · ${esc(t)}${me?'':`<button class="room-chat-more" aria-label="Report or block" title="Report or block" onclick="openContentActions('${rk}')">⋯</button>`}</div>
-      <div class="room-chat-text">${esc(m.text||'')}</div></div>
+    return `<div class="room-chat-msg${me?' mine':''}${cont?' cont':''}" data-msg="${esc(m.id)}">
+      ${cont?'':`<div class="room-chat-meta">${me?'':`<b style="color:${esc(m.color||'#a5a8ff')}">${esc(m.name||'Member')}</b>`}<span>${esc(t)}</span></div>`}
+      <div class="room-chat-row"><div class="room-chat-text">${esc(m.text||'')}</div>${me?'':`<button class="room-chat-more" aria-label="Report or block" title="Report or block" onclick="openContentActions('${rk}')">⋯</button>`}</div>
     </div>`;
-  }).join(''):'<div class="room-chat-empty">No messages yet. Keep it short — everyone\'s studying.</div>';
+  }).join(''):'<div class="room-chat-empty">No messages yet. Keep it short, everyone\'s studying.</div>';
   if(nearBottom||!host.dataset.seen){ host.scrollTop=host.scrollHeight; host.dataset.seen='1'; }
 }
 async function sendRoomChat(){

@@ -71,6 +71,40 @@ test('live study rooms', async (t) => {
     assert.ok(await rejects(b, (uid) => _room.ref.collection('chat').doc('bad1').set({ from: uid, name: 'x', color: '#000', text: 'what the fuck', at: Date.now(), expireAt: firebase.firestore.Timestamp.now() }), B.uid), 'language filter applies');
   });
 
+  await t.test('hidden chat pops up new messages; muting stops the pop-ups', async () => {
+    const say = async (p, text) => { await p.waitForTimeout(1600); await p.fill('#room-chat-in', text); await p.click('#room-chat-send'); };
+    await a.click('#room-chat-hide');
+    assert.equal(await a.locator('#room-chat-list').count(), 0, 'the chat folds away');
+    await say(b, 'quick q on sublease');
+    await a.waitForSelector('#room-chat-pop');
+    assert.match(await a.locator('#room-chat-pop').innerText(), /quick q on sublease/);
+    assert.match(await a.locator('#room-chat-show').innerText(), /1/, 'unread count on the chat button');
+    // Tapping the pop-up opens the chat and clears the count.
+    await a.click('#room-chat-pop .room-chat-pop-main');
+    await a.waitForSelector('#room-chat-list');
+    assert.match(await a.locator('#room-chat-list').innerText(), /sublease/);
+    assert.equal(await a.locator('#room-chat-pop').count(), 0);
+    // Mute, hide, and a new message only bumps the count.
+    await a.click('#room-chat-mute');
+    await a.click('#room-chat-hide');
+    await say(b, 'never mind, found it');
+    await a.waitForFunction(() => /1/.test(document.getElementById('room-chat-show')?.innerText || ''));
+    await a.waitForTimeout(400);
+    assert.equal(await a.locator('#room-chat-pop').count(), 0, 'muted: no pop-up');
+    assert.equal(await a.evaluate(() => _chatPref().muted), true);
+    // The choices stick for next time; put them back.
+    assert.deepEqual(await a.evaluate(() => JSON.parse(localStorage.getItem('ledgerRoomChat'))), { open: false, muted: true });
+    await a.click('#room-chat-show');
+    await a.click('#room-chat-mute');
+    assert.equal(await a.locator('#room-chat-pop').count(), 0);
+    // Minimized room: the pop-up still reaches you.
+    await a.evaluate(() => minimizeRoom());
+    await say(b, 'back to it');
+    await a.waitForSelector('#room-chat-pop');
+    await a.click('#room-chat-pop .room-chat-pop-main');
+    await a.waitForSelector('#room-overlay #room-chat-list');
+  });
+
   await t.test('someone outside the room cannot read its chat', async () => {
     const C = await H.signUpAndOnboard(env, { name: 'Cal Outside', email: 'cal@example.com' });
     const path = await a.evaluate(() => _room.ref.path);
