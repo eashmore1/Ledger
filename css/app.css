@@ -108,6 +108,23 @@ button:focus-visible,a:focus-visible{border-radius:var(--r-sm)}
 .room-member.paused .room-av-dot{background:#a1a1aa}
 .room-m-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .room-m-meta{font-size:11px;color:rgba(255,255,255,.55);margin-top:1px}
+.room-chat{margin-bottom:22px}
+.room-chat-list{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;max-height:220px;min-height:76px;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:9px}
+.room-chat-msg{display:flex;gap:9px;align-items:flex-start;min-width:0}
+.room-chat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.room-chat-meta{font-size:11px;color:rgba(255,255,255,.5);display:flex;align-items:center}
+.room-chat-meta b{color:rgba(255,255,255,.85);font-weight:700;margin-right:4px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room-chat-msg.mine .room-chat-meta b{color:#ffb38a}
+.room-chat-text{font-size:13.5px;line-height:1.45;color:#fff;overflow-wrap:anywhere;margin-top:1px}
+.room-chat-more{background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:14px;font-weight:800;padding:0 6px;margin-left:2px;line-height:1;border-radius:6px;font-family:inherit}
+.room-chat-more:hover{color:#fff;background:rgba(255,255,255,.1)}
+.room-chat-empty{font-size:12px;color:rgba(255,255,255,.45);margin:auto 0;text-align:center}
+.room-chat-form{display:flex;gap:8px;margin-top:8px}
+.room-chat-form input{flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:11px;padding:10px 12px;font-size:16px;font-family:inherit}
+.room-chat-form input::placeholder{color:rgba(255,255,255,.4)}
+.room-chat-form input:focus{outline:none;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12)}
+.room-chat-form .room-btn{padding:10px 16px}
+@media(min-width:641px){.room-chat-form input{font-size:14px}}
 .room-foot{display:flex;gap:10px}
 @media(max-width:640px){.room-clock{font-size:64px}.room-overlay{padding:16px 14px calc(24px + env(safe-area-inset-bottom,0px))}}
 @media(prefers-reduced-motion:reduce){.room-overlay{animation:none}.room-bar-fill{transition:none}}

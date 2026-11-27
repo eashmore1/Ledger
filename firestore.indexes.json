@@ -17,6 +17,12 @@
   ],
   "fieldOverrides": [
     {
+      "collectionGroup": "chat",
+      "fieldPath": "expireAt",
+      "ttl": true,
+      "indexes": []
+    },
+    {
       "collectionGroup": "blocks",
       "fieldPath": "blocked",
       "indexes": [

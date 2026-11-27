@@ -12,6 +12,8 @@ const ROOM_TIMERS=[{f:50,b:10,l:'50 min focus · 10 min break'},{f:25,b:5,l:'25 
 let _room=null;                       // the room I'm in: {id,clubId,ref,data,members,beat,tick,unsubM,unsubR,lastPhase,autoPaused,joinedAt}
 let _roomsCache=[];
 let _roomsTimer=null;
+const ROOM_CHAT_MAX=300;              // characters per chat message
+const ROOM_CHAT_KEEP=100;             // messages kept on screen
 
 function _roomsCol(clubId){return clubId?firebaseDb.collection('clubs').doc(clubId).collection('rooms'):firebaseDb.collection('rooms');}
 function _fmtMS(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
@@ -48,7 +50,7 @@ function _roomsListHTML(){
   if(_room){
     mine=`<div class="room-row room-row-mine" onclick="openRoomView()">
       <span class="today-live-dot"></span>
-      <div style="flex:1;min-width:0"><div class="room-row-name">${esc(_room.data.name||'Study room')}</div><div class="room-row-meta">You're in this room · ${_roomPhaseText(_room.data)}</div></div>
+      <div style="flex:1;min-width:0"><div class="room-row-name">${esc(_room.data.name||'Study room')}</div><div class="room-row-meta">You're in this room · ${_roomPhaseText(_room.data)}${_room.unread?' · <b style="color:var(--grn)">'+_room.unread+' new message'+(_room.unread===1?'':'s')+'</b>':''}</div></div>
       <button class="btn btn-xs" style="background:#22c55e;color:#04301c;border:none;font-weight:800">Open</button>
     </div>`;
   }
@@ -85,7 +87,7 @@ async function loadRooms(){
   const out=[], now=Date.now();
   const take=(d,clubId,clubName)=>{
     const r=d.data()||{};
-    if(r.lastActive&&now-r.lastActive>ROOM_STALE_MS){ d.ref.delete().catch(()=>{}); return; } // sweep the long-dead
+    if(r.lastActive&&now-r.lastActive>ROOM_STALE_MS){ _clearRoomChat(d.ref).then(()=>d.ref.delete()).catch(()=>{}); return; } // sweep the long-dead
     out.push(Object.assign({},r,{id:d.id,clubId:clubId||'',clubName:clubName||''}));
   };
   const jobs=[firebaseDb.collection('rooms').orderBy('lastActive','desc').limit(15).get().then(s=>s.docs.forEach(d=>take(d,''))).catch(()=>{})];
@@ -155,7 +157,8 @@ async function joinRoom(id,clubId){
   if(TS.phase==='paused') resumeTimer();
   else if(TS.phase!=='active') startTimer({section:TS.section||getCurrentSection(),material:TS.material||''});
   _room.lastPhase=_roomPhase(_room.data).k;
-  _roomBeat();
+  _room.chat=[]; _room.unread=0;
+  const firstBeat=_roomBeat();
   _room.beat=setInterval(_roomBeat,45000);
   _room.unsubM=ref.collection('members').onSnapshot(s=>{ if(!_room) return; _room.members=s.docs.map(d=>d.data()); _renderRoomMembers(); },()=>{});
   _room.unsubR=ref.onSnapshot(d=>{
@@ -171,6 +174,9 @@ async function joinRoom(id,clubId){
     _room.data=d.data()||_room.data; _renderRoomClock();
   },()=>{});
   _room.tick=setInterval(_roomTick,1000);
+  // The chat is readable only once my row is in the room.
+  const mine=_room;
+  Promise.resolve(firstBeat).then(()=>{ if(_room===mine) _watchRoomChat(); });
   logLedgerEvent('room_joined',{});
   openRoomView();
   _refreshRoomsList();
@@ -182,22 +188,27 @@ function _roomBeat(){
   const me={uid:AUTH.uid,name,initials:(name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())||'M',color:(S&&S.profileColor)||hashColor(AUTH.uid),
     section:TS.section||'',material:(TS.material||'').slice(0,80),joinedAt:_room.joinedAt,lastBeat:now,
     status:TS.phase==='active'?'studying':'paused',elapsed:TS.elapsed||0};
-  _room.ref.collection('members').doc(AUTH.uid).set(me).catch(()=>{});
+  const p=_room.ref.collection('members').doc(AUTH.uid).set(me).catch(()=>{});
   const others=_roomFreshMembers().filter(m=>m.uid!==AUTH.uid).length;
   _room.ref.update({lastActive:now,count:others+1}).catch(()=>{});
+  return p;
 }
 async function leaveRoom(silent){
   const r=_room; if(!r) return;
   _room=null;
   clearInterval(r.beat);clearInterval(r.tick);
-  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){}
+  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){} try{r.unsubC&&r.unsubC();}catch(e){}
   document.getElementById('room-overlay')?.remove();
   const now=Date.now();
   const others=(r.members||[]).filter(m=>m&&m.uid!==AUTH.uid&&m.lastBeat&&now-m.lastBeat<ROOM_FRESH_MS).length;
+  const closing=!others&&r.data.hostUid===AUTH.uid;
+  // The chat is only for the session: when the room closes, it goes with it.
+  // (Read it while my row still lets me.)
+  if(closing) await _clearRoomChat(r.ref);
   try{ await r.ref.collection('members').doc(AUTH.uid).delete(); }catch(e){}
   try{
     // Last one out closes the room (only its host is allowed to); otherwise just step out.
-    if(!others&&r.data.hostUid===AUTH.uid) await r.ref.delete();
+    if(closing) await r.ref.delete();
     else await r.ref.update({count:Math.max(0,others),lastActive:others?now:now-ROOM_FRESH_MS});
   }catch(e){}
   _roomsCache=_roomsCache.filter(x=>x.id!==r.id||others>0);
@@ -208,7 +219,7 @@ function _roomClosed(){
   if(!_room) return;
   const r=_room; _room=null;
   clearInterval(r.beat);clearInterval(r.tick);
-  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){}
+  try{r.unsubM&&r.unsubM();}catch(e){} try{r.unsubR&&r.unsubR();}catch(e){} try{r.unsubC&&r.unsubC();}catch(e){}
   document.getElementById('room-overlay')?.remove();
   showToast('The room closed — your session is still running','info');
   if(TS.phase==='active'||TS.phase==='paused') openSessionModal();
@@ -254,12 +265,21 @@ function openRoomView(){
     </div>
     <div class="room-members-hdr"><span id="room-count"></span></div>
     <div class="room-members" id="room-members"></div>
+    <div class="room-chat">
+      <div class="room-members-hdr" style="display:flex;justify-content:space-between;gap:8px"><span>Room chat</span><span style="text-transform:none;letter-spacing:0;font-weight:500;color:rgba(255,255,255,.4)">Only people in the room · gone when it closes</span></div>
+      <div class="room-chat-list" id="room-chat-list" aria-live="polite"></div>
+      <form class="room-chat-form" onsubmit="event.preventDefault();sendRoomChat()">
+        <input id="room-chat-in" type="text" maxlength="${ROOM_CHAT_MAX}" placeholder="Say something to the room…" autocomplete="off" aria-label="Message the room">
+        <button class="room-btn" type="submit" id="room-chat-send">Send</button>
+      </form>
+    </div>
     <div class="room-foot">
       <button class="room-btn room-btn-main" onclick="endRoomSession()">End &amp; log session</button>
       <button class="room-btn" onclick="leaveRoomKeepStudying()">Leave room</button>
     </div>
   </div>`;
   _renderRoomClock();_renderRoomMembers();
+  _room.unread=0; _renderRoomChat(); _refreshRoomsList();
 }
 function minimizeRoom(){ document.getElementById('room-overlay')?.remove(); showToast('Still in the room — tap the timer up top to come back','info'); }
 function roomTogglePause(){
@@ -334,6 +354,72 @@ function _roomChime(){
       g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
       o.start(t); o.stop(t+0.55);
     });
+  }catch(e){}
+}
+
+// ── Live chat ───────────────────────────────────────────────────
+// rooms/{id}/chat — only people in the room can read it, and it is deleted
+// with the room. It is not a history like DMs: it exists for the session.
+function _watchRoomChat(){
+  if(!_room) return;
+  const r=_room;
+  let first=true;
+  r.unsubC=r.ref.collection('chat').orderBy('at').limitToLast(ROOM_CHAT_KEEP).onSnapshot(s=>{
+    if(_room!==r) return;
+    const before=new Set(r.chat.map(m=>m.id));
+    r.chat=s.docs.map(d=>Object.assign({id:d.id},d.data()));
+    const fresh=first?[]:r.chat.filter(m=>!before.has(m.id)&&m.from!==AUTH.uid&&!isBlocked(m.from));
+    first=false;
+    if(fresh.length&&!document.getElementById('room-overlay')){
+      r.unread=(r.unread||0)+fresh.length;
+      const m=fresh[fresh.length-1];
+      showToast((m.name||'Someone')+': '+String(m.text||'').slice(0,80),'info');
+      _refreshRoomsList();
+    }
+    _renderRoomChat();
+  },()=>{});
+}
+function _renderRoomChat(){
+  const host=document.getElementById('room-chat-list'); if(!host||!_room) return;
+  const nearBottom=host.scrollHeight-host.scrollTop-host.clientHeight<40;
+  const list=(_room.chat||[]).filter(m=>!isBlocked(m.from));
+  host.innerHTML=list.length?list.map(m=>{
+    const me=m.from===AUTH.uid;
+    const t=new Date(m.at||Date.now()).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    const rk=me?'':_regReport({kind:'message',target:m.from,targetName:m.name||'Member',text:String(m.text||'').slice(0,1000),refPath:_room.ref.path+'/chat/'+m.id});
+    return `<div class="room-chat-msg${me?' mine':''}" data-msg="${esc(m.id)}">
+      <span class="room-chat-dot" style="background:${esc(m.color||'#5a5fcf')}"></span>
+      <div style="min-width:0;flex:1"><div class="room-chat-meta"><b>${me?'You':esc(m.name||'Member')}</b> · ${esc(t)}${me?'':`<button class="room-chat-more" aria-label="Report or block" title="Report or block" onclick="openContentActions('${rk}')">⋯</button>`}</div>
+      <div class="room-chat-text">${esc(m.text||'')}</div></div>
+    </div>`;
+  }).join(''):'<div class="room-chat-empty">No messages yet. Keep it short — everyone\'s studying.</div>';
+  if(nearBottom||!host.dataset.seen){ host.scrollTop=host.scrollHeight; host.dataset.seen='1'; }
+}
+async function sendRoomChat(){
+  if(!_room||!firebaseDb||!AUTH||!AUTH.uid) return;
+  const inp=document.getElementById('room-chat-in'); if(!inp) return;
+  const text=safeText(inp.value.replace(/\s+/g,' ').trim()).slice(0,ROOM_CHAT_MAX);
+  if(!text) return;
+  if(_badWords(text)) return;
+  const now=Date.now();
+  if(_room.lastSent&&now-_room.lastSent<1500){ showToast('Slow down a little','info'); return; }
+  _room.lastSent=now;
+  const id='m'+now.toString(36)+Math.random().toString(36).slice(2,8);
+  const msg={from:AUTH.uid,name:(S.name||'Member').slice(0,80),color:(S&&S.profileColor)||hashColor(AUTH.uid),text,at:now,
+    expireAt:firebase.firestore.Timestamp.fromMillis(now+12*3600000)};
+  inp.value='';
+  try{ await _room.ref.collection('chat').doc(id).set(msg); logLedgerEvent('room_chat',{}); }
+  catch(e){ if(document.getElementById('room-chat-in')&&!document.getElementById('room-chat-in').value) document.getElementById('room-chat-in').value=text; showToast('Message didn\'t send — try again','err'); }
+}
+// Delete a room's chat (the host when closing it, or anyone sweeping a dead room).
+async function _clearRoomChat(ref){
+  try{
+    for(let i=0;i<10;i++){
+      const s=await ref.collection('chat').limit(200).get();
+      if(s.empty) return;
+      const b=firebaseDb.batch(); s.docs.forEach(d=>b.delete(d.ref)); await b.commit();
+      if(s.size<200) return;
+    }
   }catch(e){}
 }
 

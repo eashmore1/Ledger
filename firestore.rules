@@ -270,6 +270,13 @@ service cloud.firestore {
           allow create, update: if roomMemberWrite(uid) && canReadClub(clubId);
           allow delete: if request.auth != null && request.auth.uid == uid;
         }
+        match /chat/{msgId} {
+          allow read: if roomChatRead(/databases/$(database)/documents/clubs/$(clubId)/rooms/$(roomId),
+            /databases/$(database)/documents/clubs/$(clubId)/rooms/$(roomId)/members/$(request.auth.uid));
+          allow create: if roomChatCreate(/databases/$(database)/documents/clubs/$(clubId)/rooms/$(roomId),
+            /databases/$(database)/documents/clubs/$(clubId)/rooms/$(roomId)/members/$(request.auth.uid), msgId) && canReadClub(clubId);
+          allow delete: if roomChatDelete(/databases/$(database)/documents/clubs/$(clubId)/rooms/$(roomId));
+        }
       }
     }
 
@@ -329,6 +336,38 @@ service cloud.firestore {
         allow create, update: if roomMemberWrite(uid);
         allow delete: if request.auth != null && request.auth.uid == uid;
       }
+      match /chat/{msgId} {
+        allow read: if roomChatRead(/databases/$(database)/documents/rooms/$(roomId),
+            /databases/$(database)/documents/rooms/$(roomId)/members/$(request.auth.uid));
+        allow create: if roomChatCreate(/databases/$(database)/documents/rooms/$(roomId),
+            /databases/$(database)/documents/rooms/$(roomId)/members/$(request.auth.uid), msgId);
+        allow delete: if roomChatDelete(/databases/$(database)/documents/rooms/$(roomId));
+      }
+    }
+
+    // Live room chat: only for the people sitting in the room right now, and
+    // thrown away with the room (plus a TTL on expireAt as a backstop). Anyone
+    // may read and delete it once the room has been dead for hours, so a
+    // sweep can clear it out.
+    function roomStale(room) {
+      return exists(room) && get(room).data.lastActive < request.time.toMillis() - 6 * 60 * 60 * 1000;
+    }
+    function roomChatRead(room, me) {
+      return request.auth != null && (exists(me) || roomStale(room));
+    }
+    function roomChatCreate(room, me, msgId) {
+      let d = request.resource.data;
+      return request.auth != null && safeId(msgId) && exists(room) && exists(me) &&
+        d.keys().hasOnly(['from','name','color','text','at','expireAt']) &&
+        d.from == request.auth.uid &&
+        d.name is string && d.name.size() <= 80 &&
+        d.text is string && d.text.size() >= 1 && d.text.size() <= 300 && cleanText(d.text) &&
+        d.at is number && d.expireAt is timestamp;
+    }
+    function roomChatDelete(room) {
+      return request.auth != null &&
+        (resource.data.from == request.auth.uid || !exists(room) ||
+         get(room).data.hostUid == request.auth.uid || roomStale(room));
     }
 
     // ── QUESTION BANK ──────────────────────────────────────────────────

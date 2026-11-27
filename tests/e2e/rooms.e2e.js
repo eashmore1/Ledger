@@ -57,6 +57,28 @@ test('live study rooms', async (t) => {
     assert.equal(await b.locator('#room-overlay').count(), 1, 'a refused delete does not kick the guest out');
   });
 
+  await t.test('live chat reaches everyone in the room, and only them', async () => {
+    await b.fill('#room-chat-in', 'anyone else stuck on leases?');
+    await b.click('#room-chat-send');
+    await a.waitForFunction(() => /stuck on leases/.test(document.getElementById('room-chat-list')?.innerText || ''));
+    assert.match(await a.locator('#room-chat-list').innerText(), /Ben/);
+    await a.fill('#room-chat-in', 'yes — lessee side');
+    await a.press('#room-chat-in', 'Enter');
+    await b.waitForFunction(() => /lessee side/.test(document.getElementById('room-chat-list')?.innerText || ''));
+    assert.equal(await a.locator('#room-chat-in').inputValue(), '', 'the box clears after sending');
+    // Rules: you can't post as someone else, and the filter applies.
+    assert.ok(await rejects(b, (uid) => _room.ref.collection('chat').doc('forged').set({ from: uid, name: 'x', color: '#000', text: 'hi', at: Date.now(), expireAt: firebase.firestore.Timestamp.now() }), A.uid), 'cannot post as the host');
+    assert.ok(await rejects(b, (uid) => _room.ref.collection('chat').doc('bad1').set({ from: uid, name: 'x', color: '#000', text: 'what the fuck', at: Date.now(), expireAt: firebase.firestore.Timestamp.now() }), B.uid), 'language filter applies');
+  });
+
+  await t.test('someone outside the room cannot read its chat', async () => {
+    const C = await H.signUpAndOnboard(env, { name: 'Cal Outside', email: 'cal@example.com' });
+    const path = await a.evaluate(() => _room.ref.path);
+    assert.ok(await rejects(C.page, (p) => firebaseDb.collection(p + '/chat').get(), path), 'outsider cannot list chat');
+    assert.ok(await rejects(C.page, (p) => firebaseDb.collection(p + '/chat').doc('x1').set({ from: AUTH.uid, name: 'Cal', color: '#000', text: 'hi', at: Date.now(), expireAt: firebase.firestore.Timestamp.now() }), path), 'outsider cannot post');
+    await C.page.close().catch(() => {});
+  });
+
   await t.test('the break pauses your timer and focus resumes it', async () => {
     await a.evaluate(() => { _room.unsubR(); _room.data = Object.assign({}, _room.data, { timerStart: Date.now() - 25 * 60000 + 1200 }); });
     await a.waitForFunction(() => _room.lastPhase === 'break', null, { timeout: 8000 });
@@ -72,10 +94,19 @@ test('live study rooms', async (t) => {
     await b.waitForSelector('.sess-save-btn');
     assert.equal(await b.locator('#room-overlay').count(), 0);
     await a.waitForFunction(() => /1 person here/i.test(document.getElementById('room-count')?.innerText || ''));
+    const roomPath = await a.evaluate(() => _room.ref.path);
     await a.click('#room-overlay button:has-text("Leave room")');
     await a.waitForFunction(() => !document.getElementById('room-overlay'));
     assert.equal(await a.evaluate(() => TS.phase), 'active', 'leaving the room keeps the session running');
     await a.waitForFunction(async () => !(await firebaseDb.collection('rooms').get()).size, null, { timeout: 8000 });
+    // The chat went with the room (checked as the emulator's admin, past the rules).
+    const chatLeft = async () => {
+      const r = await fetch(`http://${H.FS_HOST}/v1/projects/${H.PROJECT}/databases/(default)/documents/${roomPath}/chat`, { headers: { Authorization: 'Bearer owner' } });
+      return ((await r.json()).documents || []).length;
+    };
+    let left = await chatLeft();
+    for (let i = 0; left && i < 25; i++) { await a.waitForTimeout(200); left = await chatLeft(); }
+    assert.equal(left, 0, 'chat is deleted when the room closes');
     await b.evaluate(() => { discardSession(); return watchRooms(); });
     assert.equal(await b.locator('.room-row[data-room]').count(), 0, 'the closed room is gone from the list');
   });
