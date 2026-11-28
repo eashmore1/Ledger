@@ -1,0 +1,434 @@
+{
+ "engine": "sphinx",
+ "audio": "ledger-scroll-A.wav",
+ "total_ms": 20490,
+ "lines": [
+  {
+   "id": "hook",
+   "who": "S",
+   "scene": "hook",
+   "text": "One more video, then I'll study.",
+   "file": "assets/audio/el/ledger-scroll/hook.wav",
+   "max_pause": 0.32,
+   "screen": "ONE MORE VIDEO\u2026|THEN I'LL|STUDY.",
+   "voice": "elevenlabs",
+   "start": 0.0,
+   "end": 3.28
+  },
+  {
+   "id": "ping",
+   "who": "L",
+   "scene": "ping",
+   "text": "Sarah's been studying for two hours.",
+   "file": "assets/audio/el/ledger-scroll/ping.wav",
+   "max_pause": 0.32,
+   "gap": 0.35,
+   "voice": "elevenlabs",
+   "start": 3.63,
+   "end": 6.19
+  },
+  {
+   "id": "who",
+   "who": "S",
+   "scene": "who",
+   "text": "Wait. How do you know that?",
+   "file": "assets/audio/el/ledger-scroll/who.wav",
+   "max_pause": 0.32,
+   "gap": 0.2,
+   "voice": "elevenlabs",
+   "start": 6.39,
+   "end": 8.02
+  },
+  {
+   "id": "see",
+   "who": "L",
+   "scene": "see",
+   "text": "Everyone can see. That's kind of the point.",
+   "file": "assets/audio/el/ledger-scroll/see.wav",
+   "max_pause": 0.32,
+   "gap": 0.18,
+   "voice": "elevenlabs",
+   "start": 8.2,
+   "end": 10.57
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "scene": "timer",
+   "text": "Hit start, and they'll see you too.",
+   "file": "assets/audio/el/ledger-scroll/start.wav",
+   "max_pause": 0.32,
+   "gap": 0.2,
+   "voice": "elevenlabs",
+   "start": 10.77,
+   "end": 12.64
+  },
+  {
+   "id": "room",
+   "who": "S",
+   "scene": "room",
+   "text": "Okay. Sarah is not beating me.",
+   "file": "assets/audio/el/ledger-scroll/room.wav",
+   "max_pause": 0.32,
+   "gap": 0.22,
+   "voice": "elevenlabs",
+   "start": 12.86,
+   "end": 15.47
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "file": "assets/audio/el/ledger-scroll/brand.wav",
+   "max_pause": 0.32,
+   "gap": 0.3,
+   "voice": "elevenlabs",
+   "start": 15.77,
+   "end": 17.39
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "file": "assets/audio/el/ledger-scroll/cta.wav",
+   "max_pause": 0.32,
+   "gap": 0.22,
+   "voice": "elevenlabs",
+   "start": 17.61,
+   "end": 20.49
+  }
+ ],
+ "words": [
+  {
+   "word": "One",
+   "start_ms": 160,
+   "end_ms": 640,
+   "line": "hook"
+  },
+  {
+   "word": "more",
+   "start_ms": 640,
+   "end_ms": 1000,
+   "line": "hook"
+  },
+  {
+   "word": "video,",
+   "start_ms": 1000,
+   "end_ms": 2000,
+   "line": "hook"
+  },
+  {
+   "word": "then",
+   "start_ms": 2460,
+   "end_ms": 2700,
+   "line": "hook"
+  },
+  {
+   "word": "I'll",
+   "start_ms": 2700,
+   "end_ms": 2810,
+   "line": "hook"
+  },
+  {
+   "word": "study.",
+   "start_ms": 2810,
+   "end_ms": 3240,
+   "line": "hook"
+  },
+  {
+   "word": "Sarah's",
+   "start_ms": 3640,
+   "end_ms": 4080,
+   "line": "ping"
+  },
+  {
+   "word": "been",
+   "start_ms": 4080,
+   "end_ms": 4260,
+   "line": "ping"
+  },
+  {
+   "word": "studying",
+   "start_ms": 4260,
+   "end_ms": 4730,
+   "line": "ping"
+  },
+  {
+   "word": "for",
+   "start_ms": 4730,
+   "end_ms": 4900,
+   "line": "ping"
+  },
+  {
+   "word": "two",
+   "start_ms": 4900,
+   "end_ms": 5440,
+   "line": "ping"
+  },
+  {
+   "word": "hours.",
+   "start_ms": 5440,
+   "end_ms": 6160,
+   "line": "ping"
+  },
+  {
+   "word": "Wait.",
+   "start_ms": 6440,
+   "end_ms": 6850,
+   "line": "who"
+  },
+  {
+   "word": "How",
+   "start_ms": 7130,
+   "end_ms": 7370,
+   "line": "who"
+  },
+  {
+   "word": "do",
+   "start_ms": 7370,
+   "end_ms": 7450,
+   "line": "who"
+  },
+  {
+   "word": "you",
+   "start_ms": 7450,
+   "end_ms": 7540,
+   "line": "who"
+  },
+  {
+   "word": "know",
+   "start_ms": 7540,
+   "end_ms": 7750,
+   "line": "who"
+  },
+  {
+   "word": "that?",
+   "start_ms": 7750,
+   "end_ms": 8000,
+   "line": "who"
+  },
+  {
+   "word": "Everyone",
+   "start_ms": 8270,
+   "end_ms": 8680,
+   "line": "see"
+  },
+  {
+   "word": "can",
+   "start_ms": 8680,
+   "end_ms": 8840,
+   "line": "see"
+  },
+  {
+   "word": "see.",
+   "start_ms": 8840,
+   "end_ms": 9460,
+   "line": "see"
+  },
+  {
+   "word": "That's",
+   "start_ms": 9460,
+   "end_ms": 9730,
+   "line": "see"
+  },
+  {
+   "word": "kind",
+   "start_ms": 9730,
+   "end_ms": 10030,
+   "line": "see"
+  },
+  {
+   "word": "of",
+   "start_ms": 10030,
+   "end_ms": 10100,
+   "line": "see"
+  },
+  {
+   "word": "the",
+   "start_ms": 10100,
+   "end_ms": 10170,
+   "line": "see"
+  },
+  {
+   "word": "point.",
+   "start_ms": 10170,
+   "end_ms": 10560,
+   "line": "see"
+  },
+  {
+   "word": "Hit",
+   "start_ms": 10780,
+   "end_ms": 10990,
+   "line": "start"
+  },
+  {
+   "word": "start,",
+   "start_ms": 10990,
+   "end_ms": 11460,
+   "line": "start"
+  },
+  {
+   "word": "and",
+   "start_ms": 11660,
+   "end_ms": 11820,
+   "line": "start"
+  },
+  {
+   "word": "they'll",
+   "start_ms": 11820,
+   "end_ms": 11960,
+   "line": "start"
+  },
+  {
+   "word": "see",
+   "start_ms": 11960,
+   "end_ms": 12130,
+   "line": "start"
+  },
+  {
+   "word": "you",
+   "start_ms": 12130,
+   "end_ms": 12250,
+   "line": "start"
+  },
+  {
+   "word": "too.",
+   "start_ms": 12250,
+   "end_ms": 12620,
+   "line": "start"
+  },
+  {
+   "word": "Okay.",
+   "start_ms": 12880,
+   "end_ms": 13300,
+   "line": "room"
+  },
+  {
+   "word": "Sarah",
+   "start_ms": 13600,
+   "end_ms": 13890,
+   "line": "room"
+  },
+  {
+   "word": "is",
+   "start_ms": 13890,
+   "end_ms": 14190,
+   "line": "room"
+  },
+  {
+   "word": "not",
+   "start_ms": 14190,
+   "end_ms": 14880,
+   "line": "room"
+  },
+  {
+   "word": "beating",
+   "start_ms": 14880,
+   "end_ms": 15230,
+   "line": "room"
+  },
+  {
+   "word": "me.",
+   "start_ms": 15230,
+   "end_ms": 15440,
+   "line": "room"
+  },
+  {
+   "word": "Ledger.",
+   "start_ms": 15780,
+   "end_ms": 16240,
+   "line": "brand"
+  },
+  {
+   "word": "Study",
+   "start_ms": 16510,
+   "end_ms": 16890,
+   "line": "brand"
+  },
+  {
+   "word": "together.",
+   "start_ms": 16890,
+   "end_ms": 17350,
+   "line": "brand"
+  },
+  {
+   "word": "Start",
+   "start_ms": 17650,
+   "end_ms": 17990,
+   "line": "cta"
+  },
+  {
+   "word": "free",
+   "start_ms": 17990,
+   "end_ms": 18310,
+   "line": "cta"
+  },
+  {
+   "word": "at",
+   "start_ms": 18310,
+   "end_ms": 18590,
+   "line": "cta"
+  },
+  {
+   "word": "ledgercpa.app",
+   "start_ms": 19760,
+   "end_ms": 20450,
+   "line": "cta"
+  }
+ ],
+ "check": {
+  "match": 0.745,
+  "lines": [
+   {
+    "line": "hook",
+    "script": "one more video then i'll study",
+    "heard_as": "won more video then all study",
+    "match": 0.67
+   },
+   {
+    "line": "ping",
+    "script": "sarah's been studying for two hours",
+    "heard_as": "sarah's been studying for two hours",
+    "match": 1.0
+   },
+   {
+    "line": "who",
+    "script": "wait how do you know that",
+    "heard_as": "wait how do you know that",
+    "match": 1.0
+   },
+   {
+    "line": "see",
+    "script": "everyone can see that's kind of the point",
+    "heard_as": "everyone can see that's kind of the plane",
+    "match": 0.88
+   },
+   {
+    "line": "start",
+    "script": "hit start and they'll see you too",
+    "heard_as": "kick start and i'll see you tube",
+    "match": 0.57
+   },
+   {
+    "line": "room",
+    "script": "okay sarah is not beating me",
+    "heard_as": "okay sir is not beating me",
+    "match": 0.83
+   },
+   {
+    "line": "brand",
+    "script": "ledger study together",
+    "heard_as": "ledger steady together",
+    "match": 0.67
+   },
+   {
+    "line": "cta",
+    "script": "start free at ledgercpa dot app",
+    "heard_as": "star free at ledger si da da and",
+    "match": 0.29
+   }
+  ]
+ }
+}

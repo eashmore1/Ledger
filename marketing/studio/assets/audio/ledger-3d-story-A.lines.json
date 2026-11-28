@@ -1,7 +1,7 @@
 {
  "engine": "files",
  "voice": "chatterbox",
- "total": 28.13,
+ "total": 34.83,
  "lines": [
   {
    "id": "hook",
@@ -13,7 +13,7 @@
    "max_pause": 0.35,
    "voice": "chatterbox",
    "start": 0.0,
-   "end": 1.47
+   "end": 2.8
   },
   {
    "id": "alone",
@@ -24,8 +24,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 1.65,
-   "end": 4.92
+   "start": 2.98,
+   "end": 6.9
   },
   {
    "id": "hey",
@@ -36,8 +36,8 @@
    "gap": 0.3,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 5.22,
-   "end": 7.19
+   "start": 7.2,
+   "end": 9.52
   },
   {
    "id": "talk",
@@ -48,8 +48,8 @@
    "gap": 0.2,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 7.39,
-   "end": 8.93
+   "start": 9.72,
+   "end": 11.81
   },
   {
    "id": "start",
@@ -60,8 +60,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 9.11,
-   "end": 13.22
+   "start": 11.99,
+   "end": 15.97
   },
   {
    "id": "room",
@@ -72,8 +72,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 13.4,
-   "end": 17.93
+   "start": 16.15,
+   "end": 21.14
   },
   {
    "id": "streak",
@@ -84,8 +84,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 18.11,
-   "end": 20.61
+   "start": 21.32,
+   "end": 24.1
   },
   {
    "id": "cando",
@@ -96,8 +96,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 20.79,
-   "end": 22.25
+   "start": 24.28,
+   "end": 27.53
   },
   {
    "id": "passed",
@@ -108,8 +108,8 @@
    "gap": 0.28,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 22.53,
-   "end": 23.71
+   "start": 27.81,
+   "end": 29.68
   },
   {
    "id": "brand",
@@ -120,8 +120,8 @@
    "gap": 0.18,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 23.89,
-   "end": 25.23
+   "start": 29.86,
+   "end": 31.77
   },
   {
    "id": "cta",
@@ -132,8 +132,8 @@
    "gap": 0.22,
    "max_pause": 0.32,
    "voice": "chatterbox",
-   "start": 25.45,
-   "end": 28.13
+   "start": 31.99,
+   "end": 34.83
   }
  ]
 }

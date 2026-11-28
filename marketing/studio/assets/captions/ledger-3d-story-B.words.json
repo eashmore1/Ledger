@@ -1,7 +1,7 @@
 {
  "engine": "sphinx",
  "audio": "ledger-3d-story-B.wav",
- "total_ms": 25490,
+ "total_ms": 35310,
  "lines": [
   {
    "id": "hook",
@@ -9,638 +9,677 @@
    "scene": "hook",
    "text": "Seventy-two. Three points from passing.",
    "screen": "72.|3 POINTS|FROM PASSING.",
-   "voice": "am_liam",
+   "file": "assets/audio/chatterbox/ledger-3d-story/hookB.wav",
+   "max_pause": 0.35,
+   "voice": "chatterbox",
    "start": 0.0,
-   "end": 2.13
+   "end": 3.28
   },
   {
    "id": "alone",
    "who": "S",
    "scene": "rain",
-   "text": "Two in the morning, studying alone, and nothing sticks.",
-   "voice": "am_liam",
-   "start": 2.29,
-   "end": 4.78
+   "text": "It's 2 AM, I'm studying alone, and nothing's sticking.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/alone.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 3.46,
+   "end": 7.38
   },
   {
    "id": "hey",
    "who": "L",
    "scene": "pop",
-   "text": "Hey there. You don't have to study alone.",
-   "gap": 0.2,
-   "rate": "-3%",
-   "voice": "am_fenrir",
-   "start": 4.98,
-   "end": 6.85
+   "text": "Hey! You don't have to do this alone.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/hey.wav",
+   "gap": 0.3,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 7.68,
+   "end": 10.0
   },
   {
    "id": "talk",
    "who": "S",
    "scene": "talk",
-   "text": "Hold on. Did that book just talk?",
-   "voice": "am_liam",
-   "start": 7.01,
-   "end": 8.81
+   "text": "Wait. Did that book just talk?",
+   "file": "assets/audio/chatterbox/ledger-3d-story/talk.wav",
+   "gap": 0.2,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 10.2,
+   "end": 12.29
   },
   {
    "id": "start",
    "who": "L",
    "scene": "timer",
-   "text": "I'm Ledger. Hit start, and your friends see you studying live.",
-   "voice": "am_fenrir",
-   "start": 8.97,
-   "end": 12.17
+   "text": "Yep! I'm Ledger. Hit start, and your friends see you studying, live.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/start.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 12.47,
+   "end": 16.45
   },
   {
    "id": "room",
    "who": "L",
    "scene": "room",
    "text": "Jump in a study room. Same timer, same focus. Nobody quits first.",
-   "voice": "am_fenrir",
-   "start": 12.33,
-   "end": 16.41
+   "file": "assets/audio/chatterbox/ledger-3d-story/room.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 16.63,
+   "end": 21.62
   },
   {
    "id": "streak",
    "who": "L",
    "scene": "streak",
-   "text": "Stack your streak, one day at a time.",
-   "voice": "am_fenrir",
-   "start": 16.57,
-   "end": 18.29
+   "text": "Then just stack your streak, one day at a time.",
+   "file": "assets/audio/chatterbox/ledger-3d-story/streak.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 21.8,
+   "end": 24.58
   },
   {
    "id": "cando",
    "who": "S",
    "scene": "streak",
    "text": "Okay. I can actually do this.",
-   "voice": "am_liam",
-   "start": 18.45,
-   "end": 20.28
+   "file": "assets/audio/chatterbox/ledger-3d-story/cando.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 24.76,
+   "end": 28.01
   },
   {
    "id": "passed",
    "who": "S",
    "scene": "pass",
-   "text": "Wait. I passed?",
-   "gap": 0.22,
-   "voice": "am_liam",
-   "start": 20.5,
-   "end": 21.7
+   "text": "Wait. I passed?!",
+   "file": "assets/audio/chatterbox/ledger-3d-story/passed.wav",
+   "gap": 0.28,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 28.29,
+   "end": 30.16
   },
   {
    "id": "brand",
    "who": "L",
    "scene": "end",
    "text": "Told you. Study together.",
-   "voice": "am_fenrir",
-   "start": 21.86,
-   "end": 23.14
+   "file": "assets/audio/chatterbox/ledger-3d-story/brand.wav",
+   "gap": 0.18,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 30.34,
+   "end": 32.25
   },
   {
    "id": "cta",
    "who": "L",
    "scene": "end",
    "text": "Start free at ledgercpa.app",
-   "rate": "-4%",
-   "gap": 0.2,
-   "voice": "am_fenrir",
-   "start": 23.34,
-   "end": 25.49
+   "file": "assets/audio/chatterbox/ledger-3d-story/cta.wav",
+   "gap": 0.22,
+   "max_pause": 0.32,
+   "voice": "chatterbox",
+   "start": 32.47,
+   "end": 35.31
   }
  ],
  "words": [
   {
    "word": "Seventy-two.",
    "start_ms": 0,
-   "end_ms": 666,
+   "end_ms": 1025,
    "line": "hook"
   },
   {
    "word": "Three",
    "start_ms": 0,
-   "end_ms": 210,
+   "end_ms": 540,
    "line": "hook"
   },
   {
    "word": "points",
-   "start_ms": 210,
-   "end_ms": 630,
+   "start_ms": 540,
+   "end_ms": 960,
    "line": "hook"
   },
   {
    "word": "from",
-   "start_ms": 1370,
-   "end_ms": 1540,
+   "start_ms": 960,
+   "end_ms": 1280,
    "line": "hook"
   },
   {
    "word": "passing.",
-   "start_ms": 1540,
-   "end_ms": 2100,
+   "start_ms": 2690,
+   "end_ms": 3240,
    "line": "hook"
   },
   {
-   "word": "Two",
-   "start_ms": 2240,
-   "end_ms": 2480,
+   "word": "It's",
+   "start_ms": 3520,
+   "end_ms": 3710,
    "line": "alone"
   },
   {
-   "word": "in",
-   "start_ms": 2480,
-   "end_ms": 2540,
+   "word": "2",
+   "start_ms": 3710,
+   "end_ms": 4000,
    "line": "alone"
   },
   {
-   "word": "the",
-   "start_ms": 2540,
-   "end_ms": 2610,
+   "word": "AM,",
+   "start_ms": 4000,
+   "end_ms": 4770,
    "line": "alone"
   },
   {
-   "word": "morning,",
-   "start_ms": 2610,
-   "end_ms": 2970,
+   "word": "I'm",
+   "start_ms": 4770,
+   "end_ms": 4860,
    "line": "alone"
   },
   {
    "word": "studying",
-   "start_ms": 2970,
-   "end_ms": 3370,
+   "start_ms": 4860,
+   "end_ms": 5310,
    "line": "alone"
   },
   {
    "word": "alone,",
-   "start_ms": 3370,
-   "end_ms": 3830,
+   "start_ms": 5310,
+   "end_ms": 5990,
    "line": "alone"
   },
   {
    "word": "and",
-   "start_ms": 3830,
-   "end_ms": 3950,
+   "start_ms": 5990,
+   "end_ms": 6150,
    "line": "alone"
   },
   {
-   "word": "nothing",
-   "start_ms": 3950,
-   "end_ms": 4260,
+   "word": "nothing's",
+   "start_ms": 6150,
+   "end_ms": 6780,
    "line": "alone"
   },
   {
-   "word": "sticks.",
-   "start_ms": 4260,
-   "end_ms": 4740,
+   "word": "sticking.",
+   "start_ms": 6780,
+   "end_ms": 7360,
    "line": "alone"
   },
   {
-   "word": "Hey",
-   "start_ms": 4990,
-   "end_ms": 5190,
-   "line": "hey"
-  },
-  {
-   "word": "there.",
-   "start_ms": 5190,
-   "end_ms": 5390,
+   "word": "Hey!",
+   "start_ms": 7860,
+   "end_ms": 8500,
    "line": "hey"
   },
   {
    "word": "You",
-   "start_ms": 5390,
-   "end_ms": 5550,
+   "start_ms": 8650,
+   "end_ms": 8810,
    "line": "hey"
   },
   {
    "word": "don't",
-   "start_ms": 5550,
-   "end_ms": 5710,
+   "start_ms": 8810,
+   "end_ms": 8960,
    "line": "hey"
   },
   {
    "word": "have",
-   "start_ms": 5710,
-   "end_ms": 5920,
+   "start_ms": 8960,
+   "end_ms": 9140,
    "line": "hey"
   },
   {
    "word": "to",
-   "start_ms": 5920,
-   "end_ms": 6020,
+   "start_ms": 9140,
+   "end_ms": 9250,
    "line": "hey"
   },
   {
-   "word": "study",
-   "start_ms": 6020,
-   "end_ms": 6360,
+   "word": "do",
+   "start_ms": 9250,
+   "end_ms": 9400,
+   "line": "hey"
+  },
+  {
+   "word": "this",
+   "start_ms": 9400,
+   "end_ms": 9600,
    "line": "hey"
   },
   {
    "word": "alone.",
-   "start_ms": 6360,
-   "end_ms": 6810,
+   "start_ms": 9600,
+   "end_ms": 9980,
    "line": "hey"
   },
   {
-   "word": "Hold",
-   "start_ms": 7030,
-   "end_ms": 7330,
-   "line": "talk"
-  },
-  {
-   "word": "on.",
-   "start_ms": 7330,
-   "end_ms": 7580,
+   "word": "Wait.",
+   "start_ms": 10220,
+   "end_ms": 10810,
    "line": "talk"
   },
   {
    "word": "Did",
-   "start_ms": 7580,
-   "end_ms": 7710,
+   "start_ms": 10810,
+   "end_ms": 10990,
    "line": "talk"
   },
   {
    "word": "that",
-   "start_ms": 7710,
-   "end_ms": 7880,
+   "start_ms": 10990,
+   "end_ms": 11220,
    "line": "talk"
   },
   {
    "word": "book",
-   "start_ms": 7880,
-   "end_ms": 8110,
+   "start_ms": 11220,
+   "end_ms": 11540,
    "line": "talk"
   },
   {
    "word": "just",
-   "start_ms": 8110,
-   "end_ms": 8330,
+   "start_ms": 11540,
+   "end_ms": 11840,
    "line": "talk"
   },
   {
    "word": "talk?",
-   "start_ms": 8330,
-   "end_ms": 8790,
+   "start_ms": 11840,
+   "end_ms": 12270,
    "line": "talk"
   },
   {
+   "word": "Yep!",
+   "start_ms": 12480,
+   "end_ms": 12630,
+   "line": "start"
+  },
+  {
    "word": "I'm",
-   "start_ms": 8990,
-   "end_ms": 9120,
+   "start_ms": 12910,
+   "end_ms": 13080,
    "line": "start"
   },
   {
    "word": "Ledger.",
-   "start_ms": 9120,
-   "end_ms": 9600,
+   "start_ms": 13080,
+   "end_ms": 13470,
    "line": "start"
   },
   {
    "word": "Hit",
-   "start_ms": 9600,
-   "end_ms": 9880,
+   "start_ms": 13800,
+   "end_ms": 13940,
    "line": "start"
   },
   {
    "word": "start,",
-   "start_ms": 9880,
-   "end_ms": 10270,
+   "start_ms": 13940,
+   "end_ms": 14280,
    "line": "start"
   },
   {
    "word": "and",
-   "start_ms": 10270,
-   "end_ms": 10390,
+   "start_ms": 14280,
+   "end_ms": 14380,
    "line": "start"
   },
   {
    "word": "your",
-   "start_ms": 10390,
-   "end_ms": 10480,
+   "start_ms": 14380,
+   "end_ms": 14490,
    "line": "start"
   },
   {
    "word": "friends",
-   "start_ms": 10480,
-   "end_ms": 10840,
+   "start_ms": 14490,
+   "end_ms": 14900,
    "line": "start"
   },
   {
    "word": "see",
-   "start_ms": 10840,
-   "end_ms": 11010,
+   "start_ms": 14900,
+   "end_ms": 15060,
    "line": "start"
   },
   {
    "word": "you",
-   "start_ms": 11010,
-   "end_ms": 11180,
+   "start_ms": 15060,
+   "end_ms": 15170,
    "line": "start"
   },
   {
-   "word": "studying",
-   "start_ms": 11180,
-   "end_ms": 11640,
+   "word": "studying,",
+   "start_ms": 15170,
+   "end_ms": 15780,
    "line": "start"
   },
   {
    "word": "live.",
-   "start_ms": 11640,
-   "end_ms": 12080,
+   "start_ms": 15950,
+   "end_ms": 16410,
    "line": "start"
   },
   {
    "word": "Jump",
-   "start_ms": 12340,
-   "end_ms": 12620,
+   "start_ms": 16650,
+   "end_ms": 16890,
    "line": "room"
   },
   {
    "word": "in",
-   "start_ms": 12620,
-   "end_ms": 12700,
+   "start_ms": 16890,
+   "end_ms": 17160,
    "line": "room"
   },
   {
    "word": "a",
-   "start_ms": 12700,
-   "end_ms": 12740,
+   "start_ms": 17160,
+   "end_ms": 17230,
    "line": "room"
   },
   {
    "word": "study",
-   "start_ms": 12740,
-   "end_ms": 13050,
+   "start_ms": 17230,
+   "end_ms": 17610,
    "line": "room"
   },
   {
    "word": "room.",
-   "start_ms": 13050,
-   "end_ms": 13480,
+   "start_ms": 17610,
+   "end_ms": 18170,
    "line": "room"
   },
   {
    "word": "Same",
-   "start_ms": 13480,
-   "end_ms": 13800,
+   "start_ms": 18170,
+   "end_ms": 18500,
    "line": "room"
   },
   {
    "word": "timer,",
-   "start_ms": 13800,
-   "end_ms": 14200,
+   "start_ms": 18500,
+   "end_ms": 18990,
    "line": "room"
   },
   {
    "word": "same",
-   "start_ms": 14200,
-   "end_ms": 14510,
+   "start_ms": 18990,
+   "end_ms": 19410,
    "line": "room"
   },
   {
    "word": "focus.",
-   "start_ms": 14510,
-   "end_ms": 15110,
+   "start_ms": 19410,
+   "end_ms": 20030,
    "line": "room"
   },
   {
    "word": "Nobody",
-   "start_ms": 15110,
-   "end_ms": 15590,
+   "start_ms": 20280,
+   "end_ms": 20730,
    "line": "room"
   },
   {
    "word": "quits",
-   "start_ms": 15590,
-   "end_ms": 15930,
+   "start_ms": 20730,
+   "end_ms": 21050,
    "line": "room"
   },
   {
    "word": "first.",
-   "start_ms": 15930,
-   "end_ms": 16390,
+   "start_ms": 21050,
+   "end_ms": 21580,
    "line": "room"
   },
   {
-   "word": "Stack",
-   "start_ms": 16600,
-   "end_ms": 16870,
+   "word": "Then",
+   "start_ms": 21810,
+   "end_ms": 22000,
+   "line": "streak"
+  },
+  {
+   "word": "just",
+   "start_ms": 22000,
+   "end_ms": 22390,
+   "line": "streak"
+  },
+  {
+   "word": "stack",
+   "start_ms": 22390,
+   "end_ms": 22760,
    "line": "streak"
   },
   {
    "word": "your",
-   "start_ms": 16870,
-   "end_ms": 16960,
+   "start_ms": 22760,
+   "end_ms": 22870,
    "line": "streak"
   },
   {
    "word": "streak,",
-   "start_ms": 16960,
-   "end_ms": 17350,
+   "start_ms": 22870,
+   "end_ms": 23430,
    "line": "streak"
   },
   {
    "word": "one",
-   "start_ms": 17350,
-   "end_ms": 17520,
+   "start_ms": 23670,
+   "end_ms": 23890,
    "line": "streak"
   },
   {
    "word": "day",
-   "start_ms": 17520,
-   "end_ms": 17670,
+   "start_ms": 23890,
+   "end_ms": 24060,
    "line": "streak"
   },
   {
    "word": "at",
-   "start_ms": 17670,
-   "end_ms": 17740,
+   "start_ms": 24060,
+   "end_ms": 24140,
    "line": "streak"
   },
   {
    "word": "a",
-   "start_ms": 17740,
-   "end_ms": 17790,
+   "start_ms": 24140,
+   "end_ms": 24200,
    "line": "streak"
   },
   {
    "word": "time.",
-   "start_ms": 17790,
-   "end_ms": 18250,
+   "start_ms": 24200,
+   "end_ms": 24560,
    "line": "streak"
   },
   {
    "word": "Okay.",
-   "start_ms": 18400,
-   "end_ms": 18960,
+   "start_ms": 25850,
+   "end_ms": 26280,
    "line": "cando"
   },
   {
    "word": "I",
-   "start_ms": 18960,
-   "end_ms": 19090,
+   "start_ms": 26870,
+   "end_ms": 26960,
    "line": "cando"
   },
   {
    "word": "can",
-   "start_ms": 19090,
-   "end_ms": 19250,
+   "start_ms": 26960,
+   "end_ms": 27120,
    "line": "cando"
   },
   {
    "word": "actually",
-   "start_ms": 19250,
-   "end_ms": 19700,
+   "start_ms": 27120,
+   "end_ms": 27440,
    "line": "cando"
   },
   {
    "word": "do",
-   "start_ms": 19700,
-   "end_ms": 19890,
+   "start_ms": 27440,
+   "end_ms": 27620,
    "line": "cando"
   },
   {
    "word": "this.",
-   "start_ms": 19890,
-   "end_ms": 20240,
+   "start_ms": 27620,
+   "end_ms": 27990,
    "line": "cando"
   },
   {
    "word": "Wait.",
-   "start_ms": 20510,
-   "end_ms": 20830,
+   "start_ms": 28320,
+   "end_ms": 28810,
    "line": "passed"
   },
   {
    "word": "I",
-   "start_ms": 20830,
-   "end_ms": 20960,
+   "start_ms": 29080,
+   "end_ms": 29140,
    "line": "passed"
   },
   {
-   "word": "passed?",
-   "start_ms": 20960,
-   "end_ms": 21520,
+   "word": "passed?!",
+   "start_ms": 29140,
+   "end_ms": 29850,
    "line": "passed"
   },
   {
    "word": "Told",
-   "start_ms": 21810,
-   "end_ms": 22130,
+   "start_ms": 30290,
+   "end_ms": 30630,
    "line": "brand"
   },
   {
    "word": "you.",
-   "start_ms": 22130,
-   "end_ms": 22310,
+   "start_ms": 30630,
+   "end_ms": 30940,
    "line": "brand"
   },
   {
    "word": "Study",
-   "start_ms": 22310,
-   "end_ms": 22600,
+   "start_ms": 31130,
+   "end_ms": 31520,
    "line": "brand"
   },
   {
    "word": "together.",
-   "start_ms": 22600,
-   "end_ms": 23100,
+   "start_ms": 31520,
+   "end_ms": 32140,
    "line": "brand"
   },
   {
    "word": "Start",
-   "start_ms": 23370,
-   "end_ms": 23600,
+   "start_ms": 32490,
+   "end_ms": 32800,
    "line": "cta"
   },
   {
    "word": "free",
-   "start_ms": 23600,
-   "end_ms": 23860,
+   "start_ms": 32800,
+   "end_ms": 33160,
    "line": "cta"
   },
   {
    "word": "at",
-   "start_ms": 23860,
-   "end_ms": 23990,
+   "start_ms": 33160,
+   "end_ms": 33370,
    "line": "cta"
   },
   {
    "word": "ledgercpa.app",
-   "start_ms": 23990,
-   "end_ms": 25450,
+   "start_ms": 34540,
+   "end_ms": 35220,
    "line": "cta"
   }
  ],
  "check": {
-  "match": 0.803,
+  "match": 0.744,
   "lines": [
    {
     "line": "hook",
     "script": "seventytwo three points from passing",
-    "heard_as": "seventy two three points from passing",
-    "match": 0.73
+    "heard_as": "seventy two or three points from passing",
+    "match": 0.67
    },
    {
     "line": "alone",
-    "script": "two in the morning studying alone and nothing sticks",
-    "heard_as": "two in the morning studying alone and nothing sticks",
-    "match": 1.0
+    "script": "it's two a m i'm studying alone and nothing's sticking",
+    "heard_as": "it's two am i'm sitting alone and nothing's sticking",
+    "match": 0.74
    },
    {
     "line": "hey",
-    "script": "hey there you don't have to study alone",
-    "heard_as": "he there you don't have to study alone",
+    "script": "hey you don't have to do this alone",
+    "heard_as": "funny you don't have to do this alone",
     "match": 0.88
    },
    {
     "line": "talk",
-    "script": "hold on did that book just talk",
-    "heard_as": "hold on to that book just talk",
-    "match": 0.86
+    "script": "wait did that book just talk",
+    "heard_as": "wait did that book just talk",
+    "match": 1.0
    },
    {
     "line": "start",
-    "script": "i'm ledger hit start and your friends see you studying live",
-    "heard_as": "i'm ledger kids start in your friend see you studying live",
-    "match": 0.73
+    "script": "yep i'm ledger hit start and your friends see you studying live",
+    "heard_as": "yet i'm i'm derek big star in your friends can see is that eating live",
+    "match": 0.37
    },
    {
     "line": "room",
     "script": "jump in a study room same timer same focus nobody quits first",
-    "heard_as": "jump in the study room seemed timer same focus nobody quits first",
-    "match": 0.83
+    "heard_as": "jump into as any room same time and same focus nobody quits first",
+    "match": 0.64
    },
    {
     "line": "streak",
-    "script": "stack your streak one day at a time",
-    "heard_as": "specter streak one day at a time",
-    "match": 0.8
+    "script": "then just stack your streak one day at a time",
+    "heard_as": "then just stack your streak one day at a time",
+    "match": 1.0
    },
    {
     "line": "cando",
     "script": "okay i can actually do this",
-    "heard_as": "okay i can actually do this",
-    "match": 1.0
+    "heard_as": "fifth okay i can actually do this",
+    "match": 0.92
    },
    {
     "line": "passed",
     "script": "wait i passed",
-    "heard_as": "wait i passed him",
-    "match": 0.86
+    "heard_as": "wait i passed",
+    "match": 1.0
    },
    {
     "line": "brand",
     "script": "told you study together",
-    "heard_as": "cold you study together",
-    "match": 0.75
+    "heard_as": "told you study together",
+    "match": 1.0
    },
    {
     "line": "cta",
     "script": "start free at ledgercpa dot app",
-    "heard_as": "star free of ledger c p aidan app",
-    "match": 0.29
+    "heard_as": "star free at letters the ph that app",
+    "match": 0.43
    }
   ]
  }

@@ -1,0 +1,103 @@
+{
+ "engine": "files",
+ "voice": "elevenlabs",
+ "total": 20.49,
+ "lines": [
+  {
+   "id": "hook",
+   "who": "S",
+   "scene": "hook",
+   "text": "One more video, then I'll study.",
+   "file": "assets/audio/el/ledger-scroll/hook.wav",
+   "max_pause": 0.32,
+   "screen": "ONE MORE VIDEO\u2026|THEN I'LL|STUDY.",
+   "voice": "elevenlabs",
+   "start": 0.0,
+   "end": 3.28
+  },
+  {
+   "id": "ping",
+   "who": "L",
+   "scene": "ping",
+   "text": "Sarah's been studying for two hours.",
+   "file": "assets/audio/el/ledger-scroll/ping.wav",
+   "max_pause": 0.32,
+   "gap": 0.35,
+   "voice": "elevenlabs",
+   "start": 3.63,
+   "end": 6.19
+  },
+  {
+   "id": "who",
+   "who": "S",
+   "scene": "who",
+   "text": "Wait. How do you know that?",
+   "file": "assets/audio/el/ledger-scroll/who.wav",
+   "max_pause": 0.32,
+   "gap": 0.2,
+   "voice": "elevenlabs",
+   "start": 6.39,
+   "end": 8.02
+  },
+  {
+   "id": "see",
+   "who": "L",
+   "scene": "see",
+   "text": "Everyone can see. That's kind of the point.",
+   "file": "assets/audio/el/ledger-scroll/see.wav",
+   "max_pause": 0.32,
+   "gap": 0.18,
+   "voice": "elevenlabs",
+   "start": 8.2,
+   "end": 10.57
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "scene": "timer",
+   "text": "Hit start, and they'll see you too.",
+   "file": "assets/audio/el/ledger-scroll/start.wav",
+   "max_pause": 0.32,
+   "gap": 0.2,
+   "voice": "elevenlabs",
+   "start": 10.77,
+   "end": 12.64
+  },
+  {
+   "id": "room",
+   "who": "S",
+   "scene": "room",
+   "text": "Okay. Sarah is not beating me.",
+   "file": "assets/audio/el/ledger-scroll/room.wav",
+   "max_pause": 0.32,
+   "gap": 0.22,
+   "voice": "elevenlabs",
+   "start": 12.86,
+   "end": 15.47
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "file": "assets/audio/el/ledger-scroll/brand.wav",
+   "max_pause": 0.32,
+   "gap": 0.3,
+   "voice": "elevenlabs",
+   "start": 15.77,
+   "end": 17.39
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "file": "assets/audio/el/ledger-scroll/cta.wav",
+   "max_pause": 0.32,
+   "gap": 0.22,
+   "voice": "elevenlabs",
+   "start": 17.61,
+   "end": 20.49
+  }
+ ]
+}
