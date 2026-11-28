@@ -1,47 +1,57 @@
 {
- "engine": "kokoro",
- "voice": "af_heart",
- "total": 25.11,
+ "engine": "files",
+ "voice": "elevenlabs-ryan",
+ "total": 27.59,
  "lines": [
   {
    "id": "hook",
    "scene": "hook",
    "text": "Stop studying for the CPA alone.",
    "screen": "STOP STUDYING|FOR THE CPA|ALONE.",
-   "voice": "af_heart",
+   "file": "assets/audio/el/ledger-3d/hookC.wav",
+   "max_pause": 0.3,
+   "voice": "elevenlabs-ryan",
    "start": 0.0,
-   "end": 2.01
+   "end": 1.87
   },
   {
    "id": "meet",
    "scene": "meet",
    "text": "Meet Ledger.",
-   "voice": "af_heart",
-   "start": 2.17,
-   "end": 2.97
+   "file": "assets/audio/el/ledger-3d/meet.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 2.03,
+   "end": 3.2
   },
   {
    "id": "start",
    "scene": "timer",
    "text": "Hit start, and it tracks every minute you study.",
-   "voice": "af_heart",
-   "start": 3.13,
-   "end": 5.56
+   "file": "assets/audio/el/ledger-3d/start.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 3.36,
+   "end": 5.86
   },
   {
    "id": "post",
    "scene": "post",
    "text": "Post your session, and your friends see it instantly.",
-   "voice": "af_heart",
-   "start": 5.72,
-   "end": 8.27
+   "file": "assets/audio/el/ledger-3d/post.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 6.02,
+   "end": 8.26
   },
   {
    "id": "live",
    "scene": "live",
    "text": "See who's locked in right now,",
-   "voice": "af_heart",
-   "start": 8.43,
+   "file": "assets/audio/el/ledger-3d/live.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 8.42,
    "end": 9.89
   },
   {
@@ -49,41 +59,51 @@
    "scene": "room",
    "text": "and jump into a live study room together.",
    "gap": 0.08,
-   "voice": "af_heart",
+   "file": "assets/audio/el/ledger-3d/room.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
    "start": 9.97,
-   "end": 12.04
+   "end": 12.08
   },
   {
    "id": "same",
    "scene": "same",
    "text": "Same timer. Same focus. Nobody quits first.",
-   "voice": "af_heart",
-   "start": 12.2,
-   "end": 15.33
+   "file": "assets/audio/el/ledger-3d/same.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 12.24,
+   "end": 15.59
   },
   {
    "id": "streak",
    "scene": "streak",
    "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
-   "voice": "af_heart",
-   "start": 15.49,
-   "end": 18.84
+   "file": "assets/audio/el/ledger-3d/streak.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 15.75,
+   "end": 19.47
   },
   {
    "id": "pass",
    "scene": "pass",
    "text": "Because consistency is how you pass.",
-   "voice": "af_heart",
-   "start": 19.0,
-   "end": 20.99
+   "file": "assets/audio/el/ledger-3d/pass.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 19.63,
+   "end": 22.19
   },
   {
    "id": "brand",
    "scene": "end",
    "text": "Ledger. Study together.",
-   "voice": "af_heart",
-   "start": 21.15,
-   "end": 22.54
+   "file": "assets/audio/el/ledger-3d/brand.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 22.35,
+   "end": 24.09
   },
   {
    "id": "cta",
@@ -92,9 +112,11 @@
    "say": "Start free at ledger CPA dot app.",
    "rate": "-6%",
    "gap": 0.22,
-   "voice": "af_heart",
-   "start": 22.76,
-   "end": 25.11
+   "file": "assets/audio/el/ledger-3d/cta.wav",
+   "max_pause": 0.28,
+   "voice": "elevenlabs-ryan",
+   "start": 24.31,
+   "end": 27.59
   }
  ]
 }
