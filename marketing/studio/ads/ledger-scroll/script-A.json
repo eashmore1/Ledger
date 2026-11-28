@@ -1,0 +1,78 @@
+{
+ "engine": "files",
+ "voice": "elevenlabs",
+ "lines": [
+  {
+   "id": "hook",
+   "who": "S",
+   "scene": "hook",
+   "text": "One more video, then I'll study.",
+   "file": "assets/audio/el/ledger-scroll/hook.wav",
+   "max_pause": 0.32,
+   "screen": "ONE MORE VIDEO\u2026|THEN I'LL|STUDY."
+  },
+  {
+   "id": "ping",
+   "who": "L",
+   "scene": "ping",
+   "text": "Sarah's been studying for two hours.",
+   "file": "assets/audio/el/ledger-scroll/ping.wav",
+   "max_pause": 0.32,
+   "gap": 0.35
+  },
+  {
+   "id": "who",
+   "who": "S",
+   "scene": "who",
+   "text": "Wait. How do you know that?",
+   "file": "assets/audio/el/ledger-scroll/who.wav",
+   "max_pause": 0.32,
+   "gap": 0.2
+  },
+  {
+   "id": "see",
+   "who": "L",
+   "scene": "see",
+   "text": "Everyone can see. That's kind of the point.",
+   "file": "assets/audio/el/ledger-scroll/see.wav",
+   "max_pause": 0.32,
+   "gap": 0.18
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "scene": "timer",
+   "text": "Hit start, and they'll see you too.",
+   "file": "assets/audio/el/ledger-scroll/start.wav",
+   "max_pause": 0.32,
+   "gap": 0.2
+  },
+  {
+   "id": "room",
+   "who": "S",
+   "scene": "room",
+   "text": "Okay. Sarah is not beating me.",
+   "file": "assets/audio/el/ledger-scroll/room.wav",
+   "max_pause": 0.32,
+   "gap": 0.22
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "scene": "end",
+   "text": "Ledger. Study together.",
+   "file": "assets/audio/el/ledger-scroll/brand.wav",
+   "max_pause": 0.32,
+   "gap": 0.3
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "scene": "end",
+   "text": "Start free at ledgercpa.app",
+   "file": "assets/audio/el/ledger-scroll/cta.wav",
+   "max_pause": 0.32,
+   "gap": 0.22
+  }
+ ]
+}

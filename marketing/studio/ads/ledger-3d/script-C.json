@@ -1,60 +1,79 @@
 {
- "engine": "kokoro",
- "voice": "af_heart",
- "rate": "+8%",
+ "engine": "files",
+ "voice": "elevenlabs-ryan",
  "gap": 0.16,
  "lines": [
   {
    "id": "hook",
    "scene": "hook",
    "text": "Stop studying for the CPA alone.",
-   "screen": "STOP STUDYING|FOR THE CPA|ALONE."
+   "screen": "STOP STUDYING|FOR THE CPA|ALONE.",
+   "file": "assets/audio/el/ledger-3d/hookC.wav",
+   "max_pause": 0.3
   },
   {
    "id": "meet",
    "scene": "meet",
-   "text": "Meet Ledger."
+   "text": "Meet Ledger.",
+   "file": "assets/audio/el/ledger-3d/meet.wav",
+   "max_pause": 0.28
   },
   {
    "id": "start",
    "scene": "timer",
-   "text": "Hit start, and it tracks every minute you study."
+   "text": "Hit start, and it tracks every minute you study.",
+   "file": "assets/audio/el/ledger-3d/start.wav",
+   "max_pause": 0.28
   },
   {
    "id": "post",
    "scene": "post",
-   "text": "Post your session, and your friends see it instantly."
+   "text": "Post your session, and your friends see it instantly.",
+   "file": "assets/audio/el/ledger-3d/post.wav",
+   "max_pause": 0.28
   },
   {
    "id": "live",
    "scene": "live",
-   "text": "See who's locked in right now,"
+   "text": "See who's locked in right now,",
+   "file": "assets/audio/el/ledger-3d/live.wav",
+   "max_pause": 0.28
   },
   {
    "id": "room",
    "scene": "room",
    "text": "and jump into a live study room together.",
-   "gap": 0.08
+   "gap": 0.08,
+   "file": "assets/audio/el/ledger-3d/room.wav",
+   "max_pause": 0.28
   },
   {
    "id": "same",
    "scene": "same",
-   "text": "Same timer. Same focus. Nobody quits first."
+   "text": "Same timer. Same focus. Nobody quits first.",
+   "file": "assets/audio/el/ledger-3d/same.wav",
+   "max_pause": 0.28
   },
   {
    "id": "streak",
    "scene": "streak",
-   "text": "Keep your streak alive, unlock badges, and crush your weekly goal."
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
+   "file": "assets/audio/el/ledger-3d/streak.wav",
+   "max_pause": 0.28
   },
   {
    "id": "pass",
    "scene": "pass",
-   "text": "Because consistency is how you pass."
+   "text": "Because consistency is how you pass.",
+   "file": "assets/audio/el/ledger-3d/pass.wav",
+   "max_pause": 0.28
   },
   {
    "id": "brand",
    "scene": "end",
-   "text": "Ledger. Study together."
+   "text": "Ledger. Study together.",
+   "file": "assets/audio/el/ledger-3d/brand.wav",
+   "max_pause": 0.28
   },
   {
    "id": "cta",
@@ -62,7 +81,9 @@
    "text": "Start free at ledgercpa.app",
    "say": "Start free at ledger CPA dot app.",
    "rate": "-6%",
-   "gap": 0.22
+   "gap": 0.22,
+   "file": "assets/audio/el/ledger-3d/cta.wav",
+   "max_pause": 0.28
   }
  ]
 }

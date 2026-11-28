@@ -1,19 +1,83 @@
 {
- "_note": "Spoken text for Chatterbox. 'say' is what the voice reads; 'text' is the caption. Pronounce FAR as the word 'far'.",
- "voices": {"S": "assets/audio/refs/student-ref.wav", "L": "assets/audio/refs/ledger-ref.wav"},
+ "_note": "Spoken text for ElevenLabs (scripts/generate_voice_elevenlabs.py, eleven_v3). 'say' is performed (v3 audio tags in [brackets] set the delivery, they are not read); 'text' is the caption. S = Mark (the student), L = Eve (Ledger).",
  "lines": [
-  {"id": "hookA", "who": "S", "text": "I failed FAR. Again.", "say": "I failed far... again.", "exaggeration": 0.5, "cfg": 0.35},
-  {"id": "hookB", "who": "S", "text": "Seventy-two. Three points from passing.", "say": "Seventy-two. Three points from passing.", "exaggeration": 0.5, "cfg": 0.35},
-  {"id": "hookC", "who": "S", "text": "Three hundred hours, and I still failed.", "say": "Three hundred hours... and I still failed.", "exaggeration": 0.5, "cfg": 0.35},
-  {"id": "alone", "who": "S", "text": "It's 2 AM, I'm studying alone, and nothing's sticking.", "say": "It's two A M, I'm studying alone, and nothing's sticking.", "exaggeration": 0.45, "cfg": 0.4},
-  {"id": "hey", "who": "L", "text": "Hey! You don't have to do this alone.", "say": "Hey! You don't have to do this alone.", "exaggeration": 0.7, "cfg": 0.45},
-  {"id": "talk", "who": "S", "text": "Wait. Did that book just talk?", "say": "Wait... did that book just talk?", "exaggeration": 0.65, "cfg": 0.45},
-  {"id": "start", "who": "L", "text": "Yep! I'm Ledger. Hit start, and your friends see you studying, live.", "say": "Yep! I'm Ledger. Hit start, and your friends can see you studying, live.", "exaggeration": 0.6, "cfg": 0.5},
-  {"id": "room", "who": "L", "text": "Jump in a study room. Same timer, same focus. Nobody quits first.", "say": "Jump into a study room. Same timer, same focus. Nobody quits first.", "exaggeration": 0.6, "cfg": 0.5},
-  {"id": "streak", "who": "L", "text": "Then just stack your streak, one day at a time.", "say": "Then just stack your streak. One day at a time.", "exaggeration": 0.55, "cfg": 0.5},
-  {"id": "cando", "who": "S", "text": "Okay. I can actually do this.", "say": "Okay... I can actually do this.", "exaggeration": 0.55, "cfg": 0.45},
-  {"id": "passed", "who": "S", "text": "Wait. I passed?!", "say": "Wait... I passed?!", "exaggeration": 0.85, "cfg": 0.45},
-  {"id": "brand", "who": "L", "text": "Told you. Study together.", "say": "Told you. Study together.", "exaggeration": 0.6, "cfg": 0.5},
-  {"id": "cta", "who": "L", "text": "Start free at ledgercpa.app", "say": "Start free at Ledger C P A dot app.", "exaggeration": 0.5, "cfg": 0.5}
+  {
+   "id": "hookA",
+   "who": "S",
+   "text": "I failed FAR. Again.",
+   "say": "[defeated, quiet] I failed far... [sighs] again."
+  },
+  {
+   "id": "hookB",
+   "who": "S",
+   "text": "Seventy-two. Three points from passing.",
+   "say": "[flat, disbelieving] Seventy-two. Three points from passing."
+  },
+  {
+   "id": "hookC",
+   "who": "S",
+   "text": "Three hundred hours, and I still failed.",
+   "say": "[frustrated] Three hundred hours... and I still failed."
+  },
+  {
+   "id": "alone",
+   "who": "S",
+   "text": "It's 2 AM, I'm studying alone, and nothing's sticking.",
+   "say": "[tired, mumbling] It's two A M, I'm studying alone, and nothing's sticking."
+  },
+  {
+   "id": "hey",
+   "who": "L",
+   "text": "Hey! You don't have to do this alone.",
+   "say": "[warm, cheerful] Hey! You don't have to do this alone."
+  },
+  {
+   "id": "talk",
+   "who": "S",
+   "text": "Wait. Did that book just talk?",
+   "say": "[startled] Wait... did that book just talk?"
+  },
+  {
+   "id": "start",
+   "who": "L",
+   "text": "Yep! I'm Ledger. Hit start, and your friends see you studying, live.",
+   "say": "[friendly, upbeat] Yep! I'm Ledger. Hit start, and your friends can see you studying, live."
+  },
+  {
+   "id": "room",
+   "who": "L",
+   "text": "Jump in a study room. Same timer, same focus. Nobody quits first.",
+   "say": "Jump into a study room. Same timer, same focus. Nobody quits first."
+  },
+  {
+   "id": "streak",
+   "who": "L",
+   "text": "Then just stack your streak, one day at a time.",
+   "say": "[encouraging] Then just stack your streak. One day at a time."
+  },
+  {
+   "id": "cando",
+   "who": "S",
+   "text": "Okay. I can actually do this.",
+   "say": "[determined, small laugh] Okay... I can actually do this."
+  },
+  {
+   "id": "passed",
+   "who": "S",
+   "text": "Wait. I passed?!",
+   "say": "[shocked, then excited] Wait... I passed?!"
+  },
+  {
+   "id": "brand",
+   "who": "L",
+   "text": "Told you. Study together.",
+   "say": "[proud, playful] Told you. Study together."
+  },
+  {
+   "id": "cta",
+   "who": "L",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at Ledger C P A dot app."
+  }
  ]
 }

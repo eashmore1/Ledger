@@ -1,0 +1,13 @@
+{
+ "_note": "The 'one more video' ad. ElevenLabs eleven_v3: S = Mark (the student), L = Eve (Ledger). 'say' is performed (tags set delivery), 'text' is the caption.",
+ "lines": [
+  {"id": "hook", "who": "S", "text": "One more video, then I'll study.", "say": "[lazy, mumbling] One more video... then I'll study.", "screen": "ONE MORE VIDEO…|THEN I'LL|STUDY."},
+  {"id": "ping", "who": "L", "text": "Sarah's been studying for two hours.", "say": "[dry, teasing] Sarah's been studying for two hours."},
+  {"id": "who", "who": "S", "text": "Wait. How do you know that?", "say": "[startled] Wait... how do you know that?"},
+  {"id": "see", "who": "L", "text": "Everyone can see. That's kind of the point.", "say": "[playful] Everyone can see. That's kind of the point."},
+  {"id": "start", "who": "L", "text": "Hit start, and they'll see you too.", "say": "[encouraging] Hit start... and they'll see you too."},
+  {"id": "room", "who": "S", "text": "Okay. Sarah is not beating me.", "say": "[competitive, half laughing] Okay. Sarah is NOT beating me."},
+  {"id": "brand", "who": "L", "text": "Ledger. Study together.", "say": "[proud] Ledger. Study together."},
+  {"id": "cta", "who": "L", "text": "Start free at ledgercpa.app", "say": "Start free at Ledger C P A dot app."}
+ ]
+}

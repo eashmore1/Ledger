@@ -1,0 +1,83 @@
+{
+ "_note": "Narrator lines for the first Ledger ads (Ryan, ElevenLabs eleven_v3). Built by hand from body.json + hooks.json.",
+ "lines": [
+  {
+   "id": "hookA",
+   "who": "N",
+   "text": "Studying for the CPA alone is brutal.",
+   "say": "[honest, a little tired] Studying for the C P A alone is brutal."
+  },
+  {
+   "id": "hookB",
+   "who": "N",
+   "text": "What if studying for the CPA felt like a game?",
+   "say": "[curious] What if studying for the C P A felt like a game?"
+  },
+  {
+   "id": "hookC",
+   "who": "N",
+   "text": "Stop studying for the CPA alone.",
+   "say": "[direct] Stop studying for the C P A alone."
+  },
+  {
+   "id": "meet",
+   "who": "N",
+   "text": "Meet Ledger.",
+   "say": "[warm] Meet Ledger."
+  },
+  {
+   "id": "start",
+   "who": "N",
+   "text": "Hit start, and it tracks every minute you study.",
+   "say": "Hit start, and it tracks every minute you study."
+  },
+  {
+   "id": "post",
+   "who": "N",
+   "text": "Post your session, and your friends see it instantly.",
+   "say": "Post your session, and your friends see it instantly."
+  },
+  {
+   "id": "live",
+   "who": "N",
+   "text": "See who's locked in right now,",
+   "say": "See who's locked in right now,"
+  },
+  {
+   "id": "room",
+   "who": "N",
+   "text": "and jump into a live study room together.",
+   "say": "and jump into a live study room together."
+  },
+  {
+   "id": "same",
+   "who": "N",
+   "text": "Same timer. Same focus. Nobody quits first.",
+   "say": "Same timer. Same focus. Nobody quits first."
+  },
+  {
+   "id": "streak",
+   "who": "N",
+   "text": "Keep your streak alive, unlock badges, and crush your weekly goal.",
+   "say": "Keep your streak alive, unlock badges, and crush your weekly goal."
+  },
+  {
+   "id": "pass",
+   "who": "N",
+   "text": "Because consistency is how you pass.",
+   "say": "[sincere] Because consistency is how you pass."
+  },
+  {
+   "id": "brand",
+   "who": "N",
+   "text": "Ledger. Study together.",
+   "say": "Ledger. Study together."
+  },
+  {
+   "id": "cta",
+   "who": "N",
+   "text": "Start free at ledgercpa.app",
+   "say": "Start free at ledger C P A dot app."
+  }
+ ]
+}

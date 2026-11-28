@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { adDuration, LedgerAd, LedgerAdProps } from "./ledger3d/LedgerAd";
 import { StoryAd, StoryAdProps, storyDuration } from "./ledger3d/StoryAd";
 import { HusAd, HusAdProps, husDuration } from "./ledger3d/HusAd";
+import { ScrollAd, ScrollAdProps, scrollDuration } from "./ledger3d/ScrollAd";
 import { HussAd, HussAdProps, hussDuration } from "./ledger3d/HussAd";
 
 const FPS = 30;
@@ -25,6 +26,10 @@ export const RemotionRoot: React.FC = () => (
         defaultProps={{ variant: v, withAudio: true } as StoryAdProps}
         calculateMetadata={({ props }: { props: StoryAdProps }) => ({ durationInFrames: storyDuration(props.variant, FPS) })} />
     ))}
+    {/* "One more video": caught scrolling at 11:47 PM, Sarah is studying, hit start */}
+    <Composition id="LedgerScroll-A" component={ScrollAd} fps={FPS} width={1080} height={1920} durationInFrames={690}
+      defaultProps={{ variant: "A", withAudio: true } as ScrollAdProps}
+      calculateMetadata={({ props }: { props: ScrollAdProps }) => ({ durationInFrames: scrollDuration(props.variant, FPS) })} />
     {/* Meme cut: "huss huss huss / while they're out partying" */}
     {(["A", "B", "C"] as const).map((v) => (
       <Composition key={`hs${v}`} id={`LedgerHuss-${v}`} component={HussAd} fps={FPS} width={1080} height={1920} durationInFrames={510}

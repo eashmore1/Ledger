@@ -4,11 +4,11 @@
 import { RoundedBox } from "@react-three/drei";
 import { useMemo } from "react";
 import * as THREE from "three";
-import { backOut, easeIn, easeInOut, easeOut, expoOut, Key, lerp, life, noise, prog, rand, shake, track, V3 } from "./anim";
+import { backOut, clamp, easeIn, easeInOut, easeOut, lerp, life, noise, prog, rand, V3 } from "./anim";
 import { Timeline, wordAt } from "./data";
 import { Mascot } from "./Mascot";
-import { CameraRig, Card, Coin, Confetti, FacePlane, Flame, Glow, Particles, Phone, Ring, useCanvasTex } from "./Scene3D";
-import { avatarCoin, clockFace, PEOPLE, scoreCard, screenRoom, screenStart, skyFace, spineFace, streakCard } from "./screens";
+import { CameraRig, Confetti, Flame, Glow, Phone, useCanvasTex } from "./Scene3D";
+import { screenRoom, screenScore, screenStart, screenStreak, skyFace, spineFace } from "./screens";
 import { Student } from "./Student";
 
 export const storyBeats = (tl: Timeline) => {
@@ -102,7 +102,7 @@ export const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: n
           <planeGeometry args={[1.2, 1.52]} />
           <meshBasicMaterial map={sky} toneMapped={false} />
         </mesh>
-        <Rain t={t} count={90} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={6} opacity={rain ? 0.55 * (1 - day) : 0} len={0.16} />
+        <Rain t={t} count={130} box={[-0.6, 0.6, -0.76, 0.76, 0.01]} speed={5.2} opacity={rain ? 0.32 * (1 - day) : 0} len={0.13} />
         {[[0, 0.79, 1.36, 0.08], [0, -0.79, 1.36, 0.08], [-0.64, 0, 0.08, 1.66], [0.64, 0, 0.08, 1.66], [0, 0, 0.04, 1.6], [0, 0, 1.3, 0.04]].map(([x, y, w, h], i) => (
           <mesh key={i} position={[x, y, 0.03]}>
             <boxGeometry args={[w, h, 0.06]} />
@@ -206,221 +206,185 @@ export const Room: React.FC<{ t: number; day: number; flash: number; bookGlow: n
   );
 };
 
+/* ---- cinematography ----
+   Real cuts between a handful of camera setups, each with a slow push and a
+   little handheld drift, instead of a whip-zoom on every line. */
+export type Shot = { at: number; p0: V3; p1: V3; l0: V3; l1: V3; fov?: number };
+export const shotAt = (shots: Shot[], t: number) => {
+  let i = 0;
+  while (i + 1 < shots.length && t >= shots[i + 1].at) i++;
+  const s = shots[i], end = shots[i + 1]?.at ?? s.at + 4;
+  const k = easeInOut(clamp((t - s.at) / Math.max(0.5, end - s.at)));
+  const mix = (a: V3, b: V3): V3 => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
+  // handheld: two slow noise octaves, a few millimetres, never a shake
+  const hx = noise(t * 0.45, 31) * 0.012 + noise(t * 1.3, 37) * 0.004;
+  const hy = noise(t * 0.4, 41) * 0.01 + noise(t * 1.1, 43) * 0.003;
+  const p = mix(s.p0, s.p1), l = mix(s.l0, s.l1);
+  return { pos: [p[0] + hx, p[1] + hy, p[2]] as V3, look: [l[0] + hx * 0.6, l[1] + hy * 0.6, l[2]] as V3, fov: s.fov ?? 30, index: i };
+};
+
+/** Blinks at irregular, human intervals (deterministic). */
+export const blinkAt = (t: number, seed: number) => {
+  let at = 0.6 + rand(seed) * 1.5, n = 0;
+  while (at < t + 1) {
+    const d = t - at;
+    if (d >= 0 && d < 0.16) return Math.sin((d / 0.16) * Math.PI);
+    at += 1.8 + rand(seed + ++n * 3.7) * 3.2 + (rand(seed + n * 5.1) > 0.85 ? -1.5 : 0);
+  }
+  return 0;
+};
+
+// The phone stands on the desk, propped against a little stand, facing camera.
+const PHONE_POS: V3 = [0.3, -0.62, 0.76];
+const PHONE_ROT: V3 = [-0.28, -0.12, 0];
+const PHONE_S = 0.11;
+
 export const StoryScene3D: React.FC<{ t: number; tl: Timeline; aspect: number }> = ({ t, tl, aspect }) => {
   const B = storyBeats(tl);
   const wide = aspect > 1;
   const inRoom = t < B.end;
-  // features cut-away window: from "Hit start" until the streak line
-  const featureOn = t >= B.hit - 0.1 && t < B.streak - 0.05;
-  const day = easeInOut(prog(t, B.streak - 0.15, 0.6));
-  const flash = Math.max(0, 1 - Math.abs(t - 0.08) * 8) + Math.max(0, 1 - Math.abs(t - B.glow + 0.2) * 7) * 0.6;
-  const bookGlow = t < B.pop ? easeIn(prog(t, B.glow, B.pop - B.glow)) : Math.max(0, 1 - (t - B.pop) * 2.5);
-  const bookShake = t > B.glow && t < B.pop ? prog(t, B.glow, B.pop - B.glow) : 0;
+  const day = easeInOut(prog(t, B.streak - 0.15, 1.4));
+  const flash = Math.max(0, 1 - Math.abs(t - 0.35) * 6) * 0.5; // one distant lightning flicker
+  const bookGlow = t < B.pop ? easeIn(prog(t, B.glow, B.pop - B.glow)) * 0.6 : Math.max(0, 0.6 - (t - B.pop) * 1.5);
+  const bookShake = t > B.glow && t < B.pop ? prog(t, B.glow, B.pop - B.glow) * 0.7 : 0;
 
-  /* ---- camera ---- */
-  const FACE: V3 = [0, 0.6, -0.6];
-  const pos: Key[] = [
-    { t: 0, v: [0.1, 0.62, 3.5] },
-    { t: B.alone - 0.05, v: [0.05, 0.6, 3.0] },
-    { t: B.alone + 0.35, v: [0, 0.55, 7.6], ease: expoOut },
-    { t: B.glow, v: [-0.15, 0.45, 6.8] },
-    { t: B.pop - 0.05, v: [0.35, 0.3, 5.8], ease: easeIn },
-    { t: B.pop + 0.4, v: [0.55, 0.25, 5.6], ease: expoOut },
-    { t: B.talk - 0.05, v: [0.5, 0.25, 5.2] },
-    { t: B.talk + 0.3, v: [0.15, 0.7, 3.0], ease: expoOut },
-    { t: B.start - 0.05, v: [0.1, 0.66, 2.8] },
-    { t: B.start + 0.35, v: [0.55, 0.0, 3.6], ease: expoOut },
-    { t: B.hit - 0.1, v: [0.6, -0.05, 3.3] },
-    { t: B.hit + 0.3, v: [0, 0.15, 7.6], ease: expoOut },
-    { t: B.room - 0.05, v: [0.3, 0.1, 7.2] },
-    { t: B.room + 0.35, v: [-0.3, 0.2, 7.4], ease: expoOut },
-    { t: B.same - 0.05, v: [0, 0.1, 7.0] },
-    { t: B.same + 0.35, v: [0, 0.35, 7.6], ease: expoOut },
-    { t: B.streak - 0.05, v: [0, 0.3, 7.0] },
-    { t: B.streak + 0.4, v: [0, 0.75, 7.4], ease: expoOut },
-    { t: B.cando - 0.05, v: [0, 0.7, 6.8] },
-    { t: B.cando + 0.35, v: [0.35, 0.5, 4.6], ease: expoOut },
-    { t: B.passed - 0.05, v: [0.3, 0.5, 4.3] },
-    { t: B.passed + 0.3, v: [0, 0.55, 5.6], ease: expoOut },
-    { t: B.end - 0.05, v: [0, 0.55, 5.0] },
-    { t: B.end + 0.45, v: [0, 0.2, 9.2], ease: expoOut },
-    { t: B.D, v: [0, 0.1, 8.4] },
+  /* ---- shots ---- */
+  const PH: V3 = [PHONE_POS[0], PHONE_POS[1] + 0.02, PHONE_POS[2]];
+  const FACE: V3 = [0, 0.55, -0.6];
+  const shots: Shot[] = [
+    // the score on his phone, slow push
+    { at: 0, p0: [0.33, -0.5, 1.98], p1: [0.32, -0.53, 1.74], l0: PH, l1: PH },
+    // medium on him, rain on the window behind
+    { at: B.alone, p0: [0.12, 0.5, 3.75], p1: [0.04, 0.5, 3.35], l0: [0, 0.38, -0.6], l1: [0, 0.4, -0.6] },
+    // wider three-quarter: the book stack starts to rattle, Ledger pops out
+    { at: B.glow - 0.35, p0: [-0.75, 0.3, 4.4], p1: [-0.6, 0.28, 4.05], l0: [0.35, -0.12, -0.05], l1: [0.4, -0.15, 0] },
+    // his reaction, close
+    { at: B.talk, p0: [0.32, 0.64, 3.05], p1: [0.28, 0.62, 2.85], l0: FACE, l1: FACE },
+    // two-shot: him and Ledger
+    { at: B.start, p0: [0.55, 0.22, 3.9], p1: [0.5, 0.2, 3.6], l0: [0.38, -0.05, -0.05], l1: [0.4, -0.08, 0] },
+    // insert: the phone, live session
+    { at: B.hit, p0: [0.33, -0.5, 1.92], p1: [0.32, -0.53, 1.72], l0: PH, l1: PH },
+    // insert from a new angle: the study room
+    { at: B.room, p0: [0.16, -0.48, 1.88], p1: [0.2, -0.5, 1.72], l0: PH, l1: PH },
+    // wide: the sun comes up
+    { at: B.streak, p0: [0, 0.72, 6.4], p1: [0, 0.66, 5.6], l0: [0, 0.48, -0.6], l1: [0, 0.46, -0.6] },
+    // close: he believes it
+    { at: B.cando, p0: [-0.25, 0.56, 3.45], p1: [-0.18, 0.54, 3.15], l0: FACE, l1: FACE },
+    // insert: the result
+    { at: B.passed - 0.05, p0: [0.33, -0.5, 1.92], p1: [0.32, -0.53, 1.76], l0: PH, l1: PH },
+    // he jumps, Ledger too; camera eases back
+    { at: B.passWord + 0.35, p0: [0.25, 0.38, 4.0], p1: [0.2, 0.4, 4.6], l0: [0.15, 0.2, -0.3], l1: [0.15, 0.22, -0.3] },
+    // end card
+    { at: B.end, p0: [0, 0.2, 9.0], p1: [0, 0.15, 8.4], l0: [0, -0.6, 0], l1: [0, -0.6, 0] },
   ];
-  const look: Key[] = [
-    { t: 0, v: [0, 0.42, -0.6] },
-    { t: B.alone, v: [0, 0.45, -0.6] },
-    { t: B.alone + 0.35, v: [0, 0.25, -0.6], ease: expoOut },
-    { t: B.glow, v: [0, 0.25, -0.6] },
-    { t: B.pop - 0.05, v: [0.6, -0.4, 0.2], ease: easeIn },
-    { t: B.talk - 0.05, v: [0.45, -0.25, 0.1] },
-    { t: B.talk + 0.3, v: FACE, ease: expoOut },
-    { t: B.start, v: FACE },
-    { t: B.start + 0.35, v: [0.7, -0.35, 0.4], ease: expoOut },
-    { t: B.hit - 0.1, v: [0.7, -0.35, 0.4] },
-    { t: B.hit + 0.3, v: [0, 0.1, 1.5], ease: expoOut },
-    { t: B.streak - 0.05, v: [0, 0.1, 1.5] },
-    { t: B.streak + 0.4, v: [0, 0.55, -0.6], ease: expoOut },
-    { t: B.cando, v: [0, 0.55, -0.6] },
-    { t: B.cando + 0.35, v: [0.3, 0.3, -0.3], ease: expoOut },
-    { t: B.passed, v: [0.3, 0.3, -0.3] },
-    { t: B.passed + 0.3, v: [0, 0.45, 0.2], ease: expoOut },
-    { t: B.end, v: [0, 0.45, 0.2] },
-    { t: B.end + 0.45, v: [0, -0.6, 0], ease: expoOut },
-  ];
-  const [sx, sy] = shake(t, [0.08, B.pop + 0.05, B.passWord + 0.1, B.end + 0.25], 0.06);
-  const cp = track(pos, t), cl = track(look, t);
-  const camPos: V3 = [cp[0] + sx, cp[1] + sy, cp[2] * (wide ? 1.25 : 1)];
+  const cam = shotAt(shots, t);
+  const camPos: V3 = [cam.pos[0], cam.pos[1], cam.pos[2] * (wide ? 1.25 : 1)];
 
   /* ---- student ---- */
-  const blinkPh = (t * 0.9 + 0.4) % 3.4;
-  const blink = blinkPh > 3.25 ? Math.sin(((blinkPh - 3.25) / 0.15) * Math.PI) : 0;
-  const sad = 1 - easeOut(prog(t, B.talk, 0.4));
-  const surprise = t > B.pop && t < B.start + 0.3 ? easeOut(prog(t, B.pop, 0.25)) * (1 - easeIn(prog(t, B.start, 0.3))) : 0;
-  const smile = easeOut(prog(t, B.streak, 0.5));
-  const cheer = t > B.passWord ? backOut(prog(t, B.passWord, 0.35)) : 0;
+  const sad = 1 - easeOut(prog(t, B.talk, 0.5));
+  const surprise = t > B.pop && t < B.start + 0.3 ? easeOut(prog(t, B.pop + 0.08, 0.3)) * (1 - easeInOut(prog(t, B.start, 0.5))) : 0;
+  const smile = easeOut(prog(t, B.streak, 0.8));
+  const cheer = t > B.passWord ? easeOut(prog(t, B.passWord + 0.1, 0.45)) : 0;
+  const sway = noise(t * 0.35, 7) * 0.06;
   const studentPose = {
-    slump: t < B.pop ? 0.7 : lerp(0.7, 0, easeOut(prog(t, B.pop, 0.4))) * (1 - smile),
-    tired: t < B.streak ? 0.8 * (1 - surprise) : 0,
+    slump: (t < B.pop ? 0.62 + noise(t * 0.3, 3) * 0.06 : lerp(0.62, 0, easeOut(prog(t, B.pop, 0.6))) * (1 - smile)) + (1 - smile) * 0.04,
+    tired: t < B.streak ? 0.75 * (1 - surprise) : 0,
     sad: sad * (1 - surprise),
     surprise,
-    smile: Math.max(smile, t > B.start && t < B.streak ? 0.35 : 0),
+    smile: Math.max(smile, t > B.start && t < B.streak ? 0.3 : 0),
     talk: mouthFor(tl, "S", t),
     cheer: Math.min(1, cheer),
-    blink,
-    look: (t > B.pop && t < B.start + 0.3 ? [0.9, -0.4] : t > B.cando - 0.1 && t < B.passed ? [0.6, -0.2] : [0, -0.15]) as [number, number],
-    headTurn: t > B.pop && t < B.start + 0.3 ? 0.3 * easeOut(prog(t, B.pop, 0.3)) : 0,
+    blink: Math.max(blinkAt(t, 11), surprise > 0.05 && surprise < 0.2 ? 0.6 : 0),
+    look: (t > B.pop && t < B.start + 0.3 ? [0.9, -0.4] : t >= B.hit && t < B.streak ? [0.5, -0.8] : t > B.passed - 0.1 && t < B.passWord + 0.3 ? [0.5, -0.8] : [noise(t * 0.5, 5) * 0.25, -0.15 + noise(t * 0.4, 9) * 0.1]) as [number, number],
+    headTurn: (t > B.pop && t < B.start + 0.3 ? 0.3 * easeOut(prog(t, B.pop, 0.4)) : 0) + sway,
   };
-  const hop = t > B.passWord ? Math.abs(Math.sin((t - B.passWord) * 9)) * 0.1 * Math.exp(-(t - B.passWord) * 1.5) : 0;
+  const hop = t > B.passWord ? Math.abs(Math.sin((t - B.passWord - 0.1) * 8)) * 0.07 * Math.exp(-(t - B.passWord) * 1.6) : 0;
+  const breath = 1 + Math.sin(t * 2.3) * 0.008;
 
   /* ---- Ledger on the desk ---- */
-  const jump = prog(t, B.pop, 0.5);
-  const ledgerOn = t >= B.pop && inRoom;
-  // top of the book stack: desk (-0.8) + three 0.14 books -> feet stand at y = -0.385
+  const crouch = t > B.pop - 0.12 && t < B.pop ? Math.sin(prog(t, B.pop - 0.12, 0.12) * Math.PI) * 0.25 : 0;
+  const jump = prog(t, B.pop, 0.55);
+  const ledgerOn = t >= B.pop - 0.12 && inRoom;
   const STACK_TOP = -0.8 + 0.07 + 2 * 0.14 + 0.065;
-  const lY = STACK_TOP + Math.sin(Math.PI * Math.min(1, jump)) * 0.75;
-  const lX = 0.85;
-  const land = t - (B.pop + 0.5);
-  const squash = land > 0 && land < 0.5 ? Math.sin(land * 22) * Math.exp(-land * 8) * 0.22 : jump < 1 ? -0.15 : 0;
-  const ledgerBlinkPh = (t * 1.1) % 2.9;
+  const lY = STACK_TOP + Math.sin(Math.PI * Math.min(1, jump)) * 0.55;
+  const land = t - (B.pop + 0.55);
+  const squash = crouch > 0 ? -crouch : land > 0 && land < 0.6 ? Math.sin(land * 18) * Math.exp(-land * 7) * 0.16 : 0;
   const ledgerPose = {
-    wave: (t > B.hey && t < B.talk) || (t > B.start && t < B.hit) ? easeOut(prog(t, t < B.talk ? B.hey : B.start, 0.25)) : 0,
+    wave: (t > B.hey && t < B.talk) || (t > B.start && t < B.hit) ? easeOut(prog(t, t < B.talk ? B.hey : B.start, 0.3)) : 0,
     waveT: t,
-    cheer: (t > B.cando && t < B.end) ? easeOut(prog(t, B.cando, 0.3)) * (0.85 + Math.sin(t * 9) * 0.15) : 0,
+    cheer: (t > B.passWord && t < B.end) ? easeOut(prog(t, B.passWord + 0.15, 0.4)) * (0.85 + Math.sin(t * 7) * 0.15) : 0,
     mouth: mouthFor(tl, "L", t),
     happy: t > B.passWord ? 1 : 0,
-    blink: ledgerBlinkPh > 2.75 ? Math.sin(((ledgerBlinkPh - 2.75) / 0.15) * Math.PI) : 0,
-    look: [-0.8, 0.3] as [number, number],
+    blink: blinkAt(t, 23),
+    look: (t >= B.hit && t < B.streak ? [-0.6, -0.6] : [-0.8, 0.3]) as [number, number],
     squash,
   };
 
-  /* ---- features (cut-away in front of a dimmed room) ---- */
-  const dim = featureOn ? Math.min(easeOut(prog(t, B.hit - 0.1, 0.3)), 1 - easeIn(prog(t, B.streak - 0.3, 0.25))) : 0;
-  const phoneS = life(t, B.hit - 0.05, B.same + 0.15, 0.4, 0.18) * 0.58;
+  /* ---- what the phone shows ---- */
   const pressK = prog(t, B.press, 0.45);
   const running = t > B.press + 0.15;
   const el = running ? easeOut(prog(t, B.press + 0.15, B.room - B.press - 0.3)) * 3725 : 0;
-  const inRoomScreen = t >= B.room - 0.1;
-  const joined = 1 + Math.max(0, (t - B.room - 0.1) / 0.25);
+  const joined = 1 + Math.max(0, (t - B.room - 0.1) / 0.3);
   const left = 50 * 60 - (t - B.room);
-  const pulse = (Math.sin(t * 8) + 1) / 2;
-  const screenKey = inRoomScreen ? `r${joined.toFixed(1)}-${Math.floor(left)}-${pulse.toFixed(1)}` : `s${Math.floor(el)}-${pressK.toFixed(2)}`;
-  const coins = PEOPLE.slice(0, 5).map((p, i) => {
-    const s = Math.max(life(t, B.friends - 0.05 + i * 0.1, B.room - 0.08, 0.35, 0.12), life(t, B.room + 0.1 + i * 0.25, B.same + 0.12, 0.35, 0.15));
-    const ang = [-2.5, -0.7, 2.45, 0.7, -1.57][i];
-    return <Coin key={i} r={0.15} drawKey={`sc${i}`} draw={(c, w) => avatarCoin(c, w, p)} position={[Math.cos(ang) * 0.68, Math.sin(ang) * 0.95 + 0.1, 2.3]} rotation={[0, noise(t, i) * 0.4, 0]} scale={s} edge="#ffffff" />;
-  });
-  const ringS = life(t, B.same + 0.05, B.streak - 0.05, 0.45, 0.2);
-  const orbit = PEOPLE.map((p, i) => {
-    const a = (i / 6) * Math.PI * 2 + t * 0.9;
-    const s = life(t, B.same + 0.25 + i * 0.05, B.streak - 0.05, 0.3, 0.2);
-    return <Coin key={i} r={0.12} drawKey={`so${i}`} draw={(c, w) => avatarCoin(c, w, p)} position={[Math.cos(a) * 0.82, Math.sin(a) * 0.25 + 0.15, 2.0 + Math.sin(a) * 0.5]} scale={s} edge="#ffffff" />;
-  });
+  const pulse = (Math.sin(t * 6) + 1) / 2;
+  const nStreak = Math.round(1 + easeOut(prog(t, B.streak + 0.3, 1.6)) * 29);
+  const failStamp = easeOut(prog(t, 0.9, 0.3));
+  const passStamp = easeOut(prog(t, B.passWord - 0.05, 0.3));
+  let screen: { draw: (c: CanvasRenderingContext2D, w: number, h: number) => void; key: string };
+  if (t < B.hit - 0.05) screen = { draw: (c, w, h) => screenScore(c, w, h, false, failStamp), key: `f${failStamp.toFixed(2)}` };
+  else if (t < B.room - 0.05) screen = { draw: (c, w, h) => screenStart(c, w, h, { press: pressK, elapsed: el, running }), key: `s${Math.floor(el)}-${pressK.toFixed(2)}` };
+  else if (t < B.streak) screen = { draw: (c, w, h) => screenRoom(c, w, h, { joined, left, pulse }), key: `r${joined.toFixed(1)}-${Math.floor(left)}-${pulse.toFixed(1)}` };
+  else if (t < B.passed - 0.05) screen = { draw: (c, w, h) => screenStreak(c, w, h, nStreak), key: `k${nStreak}` };
+  else screen = { draw: (c, w, h) => screenScore(c, w, h, true, passStamp), key: `p${passStamp.toFixed(2)}` };
+  // the phone lights up when it's being used, dims to a glow otherwise
+  const screenBright = cam.index === 0 || cam.index === 5 || cam.index === 6 || cam.index === 9 ? 1 : 0.85;
 
   /* ---- cloud -> streak flame ---- */
-  const cloudS = inRoom ? (t < B.streak ? 1 : Math.max(0, 1 - easeIn(prog(t, B.streak, 0.3)) * 1.0)) * (1 - 0.3 * easeOut(prog(t, B.pop, 1.5))) : 0;
-  const flameS = life(t, B.streak + 0.2, B.end + 0.05, 0.5, 0.2);
-  const nStreak = Math.round(1 + easeOut(prog(t, B.streak + 0.3, 1.2)) * 29);
-
-  /* ---- score cards ---- */
-  const failS = life(t, 0.0, B.alone + 0.25, 0.25, 0.2);
-  const failStamp = easeOut(prog(t, 0.35, 0.25));
-  const passS = life(t, B.passWord - 0.1, B.end + 0.05, 0.3, 0.18);
-  const passK = expoOut(prog(t, B.passWord - 0.1, 0.35));
-  const passStamp = easeOut(prog(t, B.passWord + 0.15, 0.25));
+  const cloudS = inRoom ? (t < B.streak ? 1 : Math.max(0, 1 - easeIn(prog(t, B.streak, 0.5)))) * (1 - 0.25 * easeOut(prog(t, B.pop, 1.5))) : 0;
+  const flameS = life(t, B.streak + 0.4, B.passed - 0.1, 0.7, 0.3);
 
   const nightAmb = 1 - day;
+  const laptopFlicker = 1 + noise(t * 6, 2) * 0.06;
   return (
     <>
-      <CameraRig pos={camPos} look={cl} fov={wide ? 26 : 30} />
-      <ambientLight intensity={inRoom ? lerp(0.32, 0.75, day) + flash * 1.5 : 0.6} color={inRoom ? (day > 0.5 ? "#ffe2c4" : "#8090d0") : "#ffffff"} />
-      <directionalLight position={[-3, 3, 2]} intensity={inRoom ? lerp(0.6, 2.6, day) + flash * 3 : 2.2} color={day > 0.5 || !inRoom ? "#ffc68a" : "#93a8ff"} />
-      <directionalLight position={[3, 2, 4]} intensity={inRoom ? 0.6 + day * 0.6 : 1.6} color="#fff1e0" />
+      <CameraRig pos={camPos} look={cam.look} fov={wide ? 26 : cam.fov} />
+      {inRoom && <fog attach="fog" args={[day > 0.5 ? "#3a2618" : "#0d0c16", 6, 16]} />}
+      <hemisphereLight args={[inRoom ? (day > 0.5 ? "#ffe3c8" : "#5a68a8") : "#ffffff", "#1a120c", inRoom ? lerp(0.35, 0.8, day) + flash * 0.8 : 0.7]} />
+      {/* window light: cold moon at night, warm low sun in the morning */}
+      <directionalLight position={[-3, 2.5, -1]} intensity={inRoom ? lerp(0.9, 2.8, day) + flash * 2.5 : 2.0} color={day > 0.5 || !inRoom ? "#ffbf80" : "#8ea2ff"} />
+      <directionalLight position={[3, 2, 4]} intensity={inRoom ? 0.35 + day * 0.5 : 1.4} color="#fff1e0" />
 
       {inRoom && (
         <>
           <Room t={t} day={day} flash={flash} bookGlow={bookGlow} bookShake={bookShake} />
-          <Student {...studentPose} position={[0, -0.15 + hop, -0.6]} />
+          <pointLight position={[0, 0.25, 0]} intensity={(1 - day) * 1.4 * laptopFlicker} distance={1.8} color="#a9bcff" />
+          <group position={[0, -0.15 + hop, -0.6]} scale={[1, breath, 1]}>
+            <Student {...studentPose} />
+          </group>
           <Cloud t={t} position={[0, 1.55, -0.55]} scale={cloudS * 0.95} dark={nightAmb} />
-          <Flame t={t} position={[-0.05, 1.6, -0.7]} scale={flameS * 0.36} />
-          {flameS > 0 && <FacePlane w={1.4} h={0.7} drawKey={`st${nStreak}`} draw={(c, w, h) => streakCard(c, w, h, nStreak)} position={[0.62, 1.52, -0.3]} scale={flameS * 0.62} />}
-          {ledgerOn && <Mascot {...ledgerPose} position={[lX, lY, 0.45]} rotation={[0, -0.45, 0]} scale={0.42} />}
-          {ledgerOn && t < B.pop + 0.8 && <Glow color="rgba(255,200,120,0.95)" size={1.8} opacity={Math.max(0, 1 - (t - B.pop) * 1.4)} position={[0.75, -0.2, 0.7]} />}
-          {/* sparkles around the pop */}
-          {t > B.pop && t < B.pop + 1.2 &&
-            Array.from({ length: 10 }, (_, i) => {
-              const k = prog(t, B.pop + i * 0.02, 1.0);
-              const a = rand(i * 4.1) * Math.PI * 2;
-              return <Glow key={i} color="rgba(255,226,150,0.95)" size={0.18 * (1 - k)} opacity={1 - k} position={[0.8 + Math.cos(a) * k * 0.9, -0.2 + Math.sin(a) * k * 0.7 + k * 0.2, 0.7]} />;
-            })}
-          <Particles t={t} color={day > 0.5 ? "#ffe2b0" : "#9fb0ff"} count={40} opacity={0.25} />
+          <Flame t={t} position={[-0.05, 1.6, -0.7]} scale={flameS * 0.3} />
+          {ledgerOn && <Mascot {...ledgerPose} position={[0.85, lY, 0.45]} rotation={[0, -0.45 + noise(t * 0.4, 13) * 0.08, 0]} scale={0.42} />}
+          {/* phone on its stand */}
+          <group>
+            <mesh position={[PHONE_POS[0], -0.78, PHONE_POS[2] - 0.05]} rotation={[-0.5, -0.12, 0]}>
+              <boxGeometry args={[0.12, 0.05, 0.14]} />
+              <meshStandardMaterial color="#2d2a33" roughness={0.5} />
+            </mesh>
+            <Phone draw={screen.draw} drawKey={`${screen.key}-${screenBright}`} position={PHONE_POS} rotation={PHONE_ROT} scale={PHONE_S} />
+            <pointLight position={[PHONE_POS[0], PHONE_POS[1] + 0.05, PHONE_POS[2] + 0.2]} intensity={0.35 * screenBright} distance={0.8} color="#fff3e6" />
+          </group>
+          {t > B.passWord && <Confetti t={t} t0={B.passWord + 0.45} />}
         </>
       )}
-
-      {/* hook: the score that didn't pass */}
-      <Card w={1.1} h={0.97} px={500} drawKey={`fail${failStamp.toFixed(2)}`} draw={(c, w, h) => scoreCard(c, w, h, false, failStamp)}
-        position={[0.08, 0.08, 0.9]} rotation={[-0.05, -0.2, 0.05]} scale={failS * 0.5} />
-
-      {/* features cut-away */}
-      {dim > 0 && (
-        <mesh position={[0, 0, 1.2]}>
-          <planeGeometry args={[30, 30]} />
-          <meshBasicMaterial color="#120c08" transparent opacity={dim * 0.78} depthWrite={false} />
-        </mesh>
-      )}
-      {dim > 0 && <Glow color="rgba(255,120,50,0.9)" size={4} opacity={dim * 0.35} position={[0, 0.1, 1.4]} />}
-      <Phone
-        draw={(c, w, h) => (inRoomScreen ? screenRoom(c, w, h, { joined, left, pulse }) : screenStart(c, w, h, { press: pressK, elapsed: el, running }))}
-        drawKey={screenKey}
-        position={[0, 0.05 + (1 - easeOut(prog(t, B.hit - 0.05, 0.4))) * -1.5, 2.0 - (t > B.same ? easeIn(prog(t, B.same, 0.2)) * 4 : 0)]}
-        rotation={[-0.04, noise(t * 0.5, 2) * 0.15 + (inRoomScreen ? 0.12 : -0.12), 0.02]}
-        scale={phoneS}
-      />
-      {dim > 0 && coins}
-      {ringS > 0 && (
-        <group position={[0, 0.15, 2.0]} scale={ringS * 0.55} rotation={[0.12, -0.2 + (t - B.same) * 0.12, 0]}>
-          <Glow color="rgba(255,110,40,0.9)" size={4} opacity={0.45} position={[0, 0, -0.5]} />
-          <Ring k={easeOut(prog(t, B.same + 0.05, 0.6)) * 0.84} r={1.12} tube={0.085} color="#ff6a1f" position={[0, 0, 0]} scale={1} />
-          <FacePlane w={1.7} h={1.2} drawKey={`ck${Math.floor(left)}`} draw={(c, w, h) => clockFace(c, w, h, left)} position={[0, 0, 0.02]} />
-        </group>
-      )}
-      {orbit}
-
-      {/* payoff: passed */}
-      <Card w={1.1} h={0.97} px={500} drawKey={`pass${passStamp.toFixed(2)}`} draw={(c, w, h) => scoreCard(c, w, h, true, passStamp)}
-        position={[lerp(0.2, 0.05, passK), lerp(-2.5, 0.5, passK), lerp(3, 1.6, passK)]} rotation={[lerp(-1.1, -0.04, passK), lerp(0.6, 0.1, passK), lerp(-0.3, 0.03, passK)]} scale={passS * 0.68} />
-      {passS > 0 && <Glow color="rgba(52,211,153,0.9)" size={3} opacity={0.4 * passStamp} position={[0, 0.2, 1.3]} />}
-      {t > B.passWord && inRoom && <Confetti t={t} t0={B.passWord + 0.1} />}
 
       {/* end card world */}
       {!inRoom && (
         <>
-          <Mascot wave={t > B.cta - 0.2 ? easeOut(prog(t, B.cta - 0.2, 0.25)) : 0} waveT={t} cheer={t < B.cta - 0.2 ? easeOut(prog(t, B.end + 0.3, 0.25)) * (0.85 + Math.sin(t * 9) * 0.15) : 0}
-            mouth={mouthFor(tl, "L", t)} happy={t < B.cta - 0.2 ? 1 : 0}
-            position={[0, lerp(-5, -2.05, backOut(prog(t, B.end, 0.6), 1.3)), 0.6]} rotation={[0, noise(t * 0.6, 4) * 0.15, 0]} scale={0.92}
-            squash={(() => { const l = t - (B.end + 0.38); return l > 0 && l < 0.5 ? Math.sin(l * 22) * Math.exp(-l * 8) * 0.22 : 0; })()} />
-          <Confetti t={t} t0={B.end + 0.3} />
-          <Glow color="rgba(255,240,210,0.9)" size={6} opacity={0.35} position={[0, -0.4, -1]} />
-          <Particles t={t} color="#fff1df" opacity={0.5} />
+          <Mascot wave={t > B.cta - 0.2 ? easeOut(prog(t, B.cta - 0.2, 0.3)) : 0} waveT={t} cheer={t < B.cta - 0.2 ? easeOut(prog(t, B.end + 0.3, 0.3)) * (0.85 + Math.sin(t * 7) * 0.15) : 0}
+            mouth={mouthFor(tl, "L", t)} happy={t < B.cta - 0.2 ? 1 : 0} blink={blinkAt(t, 29)}
+            position={[0, lerp(-5, -2.05, backOut(prog(t, B.end, 0.7), 1.2)), 0.6]} rotation={[0, noise(t * 0.6, 4) * 0.12, 0]} scale={0.92}
+            squash={(() => { const l = t - (B.end + 0.45); return l > 0 && l < 0.6 ? Math.sin(l * 18) * Math.exp(-l * 7) * 0.16 : 0; })()} />
+          <Glow color="rgba(255,240,210,0.9)" size={6} opacity={0.25} position={[0, -0.4, -1]} />
         </>
       )}
     </>

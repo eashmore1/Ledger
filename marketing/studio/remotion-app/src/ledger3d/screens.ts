@@ -703,3 +703,105 @@ export const repCard = (ctx: Ctx, W: number, H: number, q: number, total: number
     }
   }
 };
+
+/** Phone screen: the exam score email/notification, with the score card in the middle. */
+export const screenScore = (ctx: Ctx, W: number, H: number, pass: boolean, stamp: number) => {
+  ctx.fillStyle = COL.cream;
+  ctx.fillRect(0, 0, W, H);
+  text(ctx, "9:41", 60, 82, font(700, 34), COL.navy);
+  text(ctx, "Inbox", 60, 230, font(800, 64, SERIF), COL.navy);
+  text(ctx, "NASBA · CPA Exam Score", 60, 300, font(600, 30), COL.muted);
+  ctx.strokeStyle = COL.line;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(60, 340); ctx.lineTo(W - 60, 340); ctx.stroke();
+  text(ctx, "Your score has been released.", 60, 410, font(600, 34), COL.navy);
+  ctx.save();
+  ctx.translate(40, 480);
+  const s = (W - 80) / 550;
+  ctx.scale(s, s);
+  scoreCard(ctx, 550, 485, pass, stamp);
+  ctx.restore();
+  text(ctx, pass ? "Congratulations." : "You may retake this section.", 60, 480 + 485 * s + 90, font(600, 32), COL.muted);
+};
+
+/** Phone screen: the streak card, full screen. */
+export const screenStreak = (ctx: Ctx, W: number, H: number, n: number) => {
+  ctx.fillStyle = COL.cream;
+  ctx.fillRect(0, 0, W, H);
+  text(ctx, "9:41", 60, 82, font(700, 34), COL.navy);
+  text(ctx, "Ledger", 60, 230, font(800, 64, SERIF), COL.orange);
+  const g = ctx.createLinearGradient(0, 360, 0, 900);
+  g.addColorStop(0, COL.orangeL); g.addColorStop(1, COL.orange);
+  ctx.fillStyle = g;
+  rr(ctx, 40, 360, W - 80, 520, 44);
+  ctx.fill();
+  text(ctx, "One day at a time.", 60, 980, font(600, 34), COL.muted);
+  ctx.save();
+  ctx.translate(40, 420);
+  const s = (W - 80) / 560;
+  ctx.scale(s, s);
+  streakCard(ctx, 560, 280, n);
+  ctx.restore();
+};
+
+/** Phone screen: a short-video feed at 11:47 PM. `scroll` 0..1 swipes to the next video;
+ *  `notif` 0..1 slides a Ledger notification down from the top. */
+export const screenFeed = (ctx: Ctx, W: number, H: number, s: { scroll: number; notif: number; likes: number }) => {
+  const vids = [
+    { a: "#3b2b5c", b: "#c2416b", who: "@deskcore", cap: "my 5am routine (it's not 5am)" },
+    { a: "#0f3b47", b: "#d98a2b", who: "@lockedin.sam", cap: "day 1 of finally locking in" },
+  ];
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
+  vids.forEach((v, i) => {
+    const y0 = (i - s.scroll) * H;
+    if (y0 > H || y0 < -H) return;
+    ctx.save();
+    ctx.translate(0, y0);
+    const g = ctx.createLinearGradient(0, 0, W * 0.4, H);
+    g.addColorStop(0, v.a); g.addColorStop(1, v.b);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    // a soft, out-of-focus figure: the "video"
+    const r = ctx.createRadialGradient(W * 0.5, H * 0.42, 20, W * 0.5, H * 0.42, W * 0.55);
+    r.addColorStop(0, "rgba(255,225,200,.55)"); r.addColorStop(1, "rgba(255,225,200,0)");
+    ctx.fillStyle = r;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(20,12,10,.35)";
+    ctx.beginPath(); ctx.ellipse(W * 0.5, H * 0.36, W * 0.16, W * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(W * 0.5, H * 0.66, W * 0.32, H * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+    // right rail
+    const rail = [[s.likes > 0 && i === 0 ? s.likes : 48.2, "K"], [1.9, "K"], [612, ""]] as [number, string][];
+    rail.forEach(([n, k], j) => {
+      const y = H * 0.55 + j * 170;
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.beginPath(); ctx.arc(W - 90, y, 38, 0, Math.PI * 2); ctx.fill();
+      text(ctx, `${n}${k}`, W - 90, y + 80, font(700, 28), "#fff", "center");
+    });
+    text(ctx, v.who, 44, H - 250, font(800, 38), "#fff");
+    text(ctx, v.cap, 44, H - 196, font(500, 32), "rgba(255,255,255,.9)");
+    ctx.fillStyle = "rgba(255,255,255,.35)";
+    ctx.fillRect(0, H - 120, W, 4);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, H - 120, W * (i === 0 ? 0.82 : 0.12), 4);
+    ctx.restore();
+  });
+  text(ctx, "11:47", 60, 82, font(700, 34), "#fff");
+  text(ctx, "Following    For You", W / 2, 170, font(700, 34), "rgba(255,255,255,.9)", "center");
+  if (s.notif > 0) {
+    const y = -260 + s.notif * 330;
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.35)"; ctx.shadowBlur = 30;
+    ctx.fillStyle = "rgba(250,247,242,.97)";
+    rr(ctx, 30, y, W - 60, 230, 44);
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = COL.orange;
+    rr(ctx, 64, y + 40, 72, 72, 18); ctx.fill();
+    text(ctx, "L", 100, y + 92, font(800, 46, SERIF), "#fff", "center");
+    text(ctx, "LEDGER", 160, y + 70, font(800, 26), COL.muted);
+    text(ctx, "now", W - 70, y + 70, font(600, 26), COL.muted, "right");
+    text(ctx, "Sarah is studying", 160, y + 122, font(800, 38), COL.navy);
+    text(ctx, "2h 41m and counting · FAR", 160, y + 172, font(500, 32), COL.muted);
+  }
+};
