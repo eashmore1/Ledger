@@ -374,3 +374,77 @@ function toggleTheme(){
   renderApp(); // full re-render updates nav icon + all theme-sensitive inline styles
 }
 
+
+// ═══════════════════════════════════════════════
+// UI/UX POLISH HELPERS (pairs with the "UI/UX POLISH" block in css/app.css)
+// ═══════════════════════════════════════════════
+// 3 · Crossfade icons with blur — old glyph blurs out as the new one blurs in.
+function swapIcon(el,html){
+  if(!el)return;
+  if(_reduceMotion()){el.innerHTML=html;return;}
+  const old=el.innerHTML;
+  el.innerHTML=`<span class="ico-swap"><span class="ico-a">${old}</span><span class="ico-b">${html}</span></span>`;
+  const wrap=el.firstElementChild;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>wrap.classList.add('flip')));
+  setTimeout(()=>{if(el.firstElementChild===wrap)el.innerHTML=html;},260);
+}
+
+// 9 · Doherty threshold — if an action is still running after 400ms, the
+// button shows a spinner so it never looks frozen. Wrap any promise:
+//   withBusy(btn, saveSomething())
+function withBusy(btn,promise){
+  let timer=null;
+  if(btn)timer=setTimeout(()=>btn.classList.add('is-busy'),400);
+  const done=()=>{clearTimeout(timer);if(btn)btn.classList.remove('is-busy');};
+  return Promise.resolve(promise).then(v=>{done();return v;},e=>{done();throw e;});
+}
+
+// 2 + 6 · Dialogs grow out of the control you tapped, and the page behind
+// them steps back while one is open.
+function _syncDialogs(target){
+  if(target&&target.classList&&target.classList.contains('modal-overlay')&&target.classList.contains('open')){
+    const box=target.querySelector('.modal-box');
+    if(box&&_lastTap.x!=null&&Date.now()-_lastTap.t<800){
+      const r=box.getBoundingClientRect();
+      const ox=Math.max(0,Math.min(r.width,_lastTap.x-r.left)),oy=Math.max(0,Math.min(r.height,_lastTap.y-r.top));
+      box.style.setProperty('--ox',ox+'px');box.style.setProperty('--oy',oy+'px');
+      target.style.setProperty('--ox',_lastTap.x+'px');target.style.setProperty('--oy',_lastTap.y+'px');
+    }
+  }
+  document.body.classList.toggle('focus-staged',!!document.querySelector('.modal-overlay.open'));
+}
+new MutationObserver(muts=>{
+  for(const m of muts){
+    if(m.type==='attributes')_syncDialogs(m.target);
+    else m.addedNodes.forEach(n=>{if(n.nodeType===1&&n.classList&&n.classList.contains('modal-overlay'))_syncDialogs(n);});
+  }
+}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],childList:true});
+
+// 4 · Rubber band past the edge — the bottom sheet follows your finger, drag
+// down to dismiss; pull it the wrong way and it resists, then springs back.
+(function(){
+  let drawer=null,y0=0,dy=0;
+  const rubber=x=>40*x/(x+40);
+  document.addEventListener('touchstart',e=>{
+    drawer=e.target.closest&&e.target.closest('.mob-more-drawer');
+    if(!drawer||drawer.scrollTop>0){drawer=null;return;}
+    y0=e.touches[0].clientY;dy=0;
+    drawer.classList.remove('rb-spring');drawer.classList.add('rb-drag');
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(!drawer)return;
+    dy=e.touches[0].clientY-y0;
+    drawer.style.transform=`translateY(${dy>0?dy:-rubber(-dy)}px)`;
+  },{passive:true});
+  const end=()=>{
+    if(!drawer)return;
+    const d=drawer,close=dy>90;
+    drawer=null;
+    d.classList.remove('rb-drag');d.classList.add('rb-spring');
+    d.style.transform='';
+    if(close&&typeof closeMobileMoreSheet==='function')closeMobileMoreSheet();
+    setTimeout(()=>d.classList.remove('rb-spring'),460);
+  };
+  document.addEventListener('touchend',end,{passive:true});
+  document.addEventListener('touchcancel',end,{passive:true});
+})();

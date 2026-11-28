@@ -1143,12 +1143,29 @@ function timeAgo(isoStr){
 function esc(str){
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+const _reduceMotion=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const _lastTap={x:null,y:null,el:null,t:0};
+document.addEventListener('pointerdown',e=>{
+  _lastTap.x=e.clientX;_lastTap.y=e.clientY;_lastTap.t=Date.now();
+  _lastTap.el=e.target.closest?e.target.closest('button,.btn,[role="button"],.ac-action'):null;
+},true);
+
+// 1 · Pulse to confirm — a ring leaves the control that just did something.
+function pulseConfirm(el){
+  if(!el||!el.isConnected||_reduceMotion())return;
+  el.classList.remove('confirm-pulse');void el.offsetWidth;
+  el.classList.add('confirm-pulse');
+  el.addEventListener('animationend',()=>el.classList.remove('confirm-pulse'),{once:true});
+}
+
 function showToast(msg,type='ok'){
   const wrap=document.getElementById('toast-wrap');
   const t=document.createElement('div');
   t.className=`toast toast-${type}`;
   t.textContent=msg;
   wrap.appendChild(t);
+  // Pulse to confirm: ring the button that triggered a success.
+  if(type==='ok'&&_lastTap.el&&Date.now()-_lastTap.t<4000)pulseConfirm(_lastTap.el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
 }

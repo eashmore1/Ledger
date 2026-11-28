@@ -1640,3 +1640,81 @@ html,body{overflow-x:hidden}
 body:has(.modal-overlay.open) .calc-fab,
 body:has(.modal-overlay.open) .ledger-bubble,
 body:has(.modal-overlay.open) #pwa-prompt-banner{display:none!important}
+
+/* ═══════════════════════════════════════════════════════════════
+   UI/UX POLISH — motion + interaction rules
+   1 Pulse to confirm · 2 Expand the same element · 3 Crossfade icons
+   with blur · 4 Rubber band past the edge · 5 Reveal with masks
+   6 Stage the focus · 7 Fitts's law · 8 Hick's law · 9 Doherty threshold
+   Everything here is a no-op under prefers-reduced-motion (the global
+   rule above collapses durations to ~0).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1 ─ PULSE TO CONFIRM: a ring leaves the control that just did something. */
+@keyframes confirmRing{0%{box-shadow:0 0 0 0 var(--pulse,rgba(4,120,87,.55))}100%{box-shadow:0 0 0 12px rgba(4,120,87,0)}}
+@keyframes confirmNudge{0%{transform:scale(1)}35%{transform:scale(1.06)}100%{transform:scale(1)}}
+.confirm-pulse{animation:confirmRing .5s cubic-bezier(.22,.61,.36,1),confirmNudge .3s cubic-bezier(.22,.61,.36,1)}
+.confirm-pulse.btn-primary,.confirm-pulse.post-btn{--pulse:rgba(194,58,0,.5)}
+
+/* 2 ─ EXPAND THE SAME ELEMENT: dialogs grow out of the control you tapped. */
+@keyframes modalGrow{from{opacity:0;transform:scale(.7);filter:blur(4px)}60%{filter:blur(0)}to{opacity:1;transform:none;filter:blur(0)}}
+.modal-box,.sess-box{transform-origin:var(--ox,50%) var(--oy,50%)}
+.modal-overlay.open .modal-box{animation:modalGrow .3s cubic-bezier(.22,.61,.36,1)}
+
+/* 3 ─ CROSSFADE ICONS WITH BLUR: swapIcon() layers old + new glyphs. */
+.ico-swap{position:relative;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.ico-swap>.ico-a,.ico-swap>.ico-b{display:inline-flex;align-items:center;justify-content:center;transition:opacity .2s ease,filter .2s ease,transform .2s ease}
+.ico-swap>.ico-b{position:absolute;inset:0;opacity:0;filter:blur(4px);transform:scale(.6)}
+.ico-swap.flip>.ico-a{opacity:0;filter:blur(4px);transform:scale(.6)}
+.ico-swap.flip>.ico-b{opacity:1;filter:blur(0);transform:none}
+
+/* 4 ─ RUBBER BAND: sheets follow the finger and spring back (JS sets --rb). */
+.mob-more-drawer.rb-drag{transition:none}
+.mob-more-drawer.rb-spring{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.page,.modal-box,.sess-overlay,.cm-body{overscroll-behavior-y:contain}
+
+/* 5 ─ REVEAL WITH MASKS: content wipes in instead of fading. */
+@keyframes maskUp{from{clip-path:inset(0 0 100% 0);transform:translateY(10px)}to{clip-path:inset(0 0 0 0);transform:none}}
+@keyframes maskRight{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.mask-reveal{animation:maskUp .5s cubic-bezier(.22,.61,.36,1) both}
+.page.tab-right :is(.today-head,.page-head,h1),.page.tab-left :is(.today-head,.page-head,h1){animation:maskUp .4s cubic-bezier(.22,.61,.36,1) both}
+.page.tab-right .prog-fill,.page.tab-left .prog-fill,.page.fade-in .prog-fill{animation:maskRight .7s cubic-bezier(.22,.61,.36,1) both}
+
+/* 6 ─ STAGE THE FOCUS: while a dialog is open, the page behind steps back. */
+.app-wrap,.toast-wrap{transition:opacity .25s ease}
+body.focus-staged .app-wrap{opacity:.45;pointer-events:none}
+.modal-overlay.open{background:radial-gradient(ellipse at var(--ox,50%) var(--oy,50%),rgba(0,0,0,.38),rgba(0,0,0,.66))}
+.modal-box:focus-within{box-shadow:var(--shadow-lg),0 0 0 1px var(--bdr2)}
+.modal-box input:focus,.modal-box textarea:focus,.modal-box select:focus{outline:none;border-color:var(--ora);box-shadow:0 0 0 3px rgba(194,58,0,.16)}
+
+/* 7 ─ FITTS'S LAW: every control is a 44px target on touch screens, and
+   small icon-only controls borrow extra hit area from the empty space
+   around them without changing how they look. */
+.modal-close,.mob-more-close,.btn-sm,.btn-xs,.nav-tab,.ac-action,.follow-btn{position:relative}
+.modal-close::after,.mob-more-close::after,.btn-xs::after,.btn-sm::after{content:'';position:absolute;inset:-6px}
+@media(pointer:coarse){
+  .btn,.btn-sm,.btn-xs,.post-btn,.nav-pro-chip,.follow-btn,.modal-close,.mob-more-close,.ac-action{min-height:44px}
+  .btn-sm,.btn-xs,.modal-close,.mob-more-close{min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+  .modal-box input:not([type=checkbox]):not([type=radio]),.modal-box select,.modal-box .btn,.modal-box .btn-primary{min-height:44px}
+  .modal-box input[type=checkbox],.modal-box input[type=radio]{width:22px;height:22px}
+  .mob-more-row{min-height:56px}
+  .session-fab{width:56px;height:56px}
+}
+/* Primary action is the biggest, closest-to-thumb target in a dialog. */
+@media(max-width:640px){
+  .modal-body .btn-primary,.modal-box>.btn-primary{width:100%;min-height:48px;font-size:15px}
+}
+
+/* 8 ─ HICK'S LAW: fewer choices at once. Secondary controls fade back until
+   you point at them; the one recommended option stays loud. */
+.nav-right .btn-ghost{opacity:.82}
+.nav-right .btn-ghost:hover,.nav-right .btn-ghost:focus-visible{opacity:1}
+
+/* 9 ─ DOHERTY THRESHOLD: acknowledge every press inside ~100ms and never
+   leave a slow action looking idle. Press states land instantly; a busy
+   button shows its spinner (JS adds .is-busy after 400ms). */
+button,.btn,[role="button"],.nav-tab,.mob-nav-btn,.ac-action{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn:active,.post-btn:active,.nav-tab:active,.ac-action:active,.nav-pro-chip:active,.follow-btn:active{transform:scale(.96);transition-duration:.08s}
+.is-busy{position:relative;pointer-events:none;color:transparent!important}
+.is-busy::after{content:'';position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite}
+.btn-ghost.is-busy::after{border-color:var(--bdr2);border-top-color:var(--ora)}

@@ -199,6 +199,7 @@ function giveProps(actId,userId){
     document.querySelector(`.activity-card[data-aid="${actId}"] .ac-action`);
   if(btn){
     btn.classList.add('props-anim');
+    swapIcon(btn.querySelector('span'),ico(hasProps?'heartOutline':'heartFilled'));
     if(!hasProps){
       const r=btn.getBoundingClientRect();
       const p=document.createElement('div');
