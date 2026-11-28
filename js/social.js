@@ -670,8 +670,8 @@ function _renderFullUserProfile(u){
       <div class="vp-hero-top" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px">
         <div style="display:flex;align-items:center;gap:14px;min-width:0">
           <div style="width:80px;height:80px;border-radius:50%;background:${u.color};border:3px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;color:#fff">${avatarInner}</div>
-          <div>
-            <div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1.15">${u.name}${u.isPrivate?' <span style="font-size:13px;opacity:.65">'+ico('lock')+'</span>':''} ${tierBadge}</div>
+          <div style="min-width:0">
+            <div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1.15;overflow-wrap:anywhere">${u.name}${u.isPrivate?' <span style="font-size:13px;opacity:.65">'+ico('lock')+'</span>':''} ${tierBadge}</div>
             <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">${[u.disc,u.state,u.classYear].filter(Boolean).join(' · ')}</div>
             ${u.bio?`<div style="font-size:12px;color:rgba(255,255,255,.72);margin-top:5px;line-height:1.5;max-width:420px">${u.bio}</div>`:''}
           </div>
@@ -683,17 +683,17 @@ function _renderFullUserProfile(u){
         </div>
       </div>
       <!-- Stats row -->
-      <div style="display:flex;gap:0;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)">
+      <div class="vp-stats" style="display:flex;gap:0;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)">
         ${[
           {v:Math.round(u.hoursTotal),l:'Hours',c:'rgba(212,64,0,.9)',fn:''},
           u.streak?{v:u.streak,l:'Streak',c:'#fff',fn:''}:null,
           u.sessionCount?{v:u.sessionCount,l:'Sessions',c:'#fff',fn:''}:null,
           !isLocked?{v:u.followersCount||0,l:'Followers',c:'#fff',id:'prof-foll-cnt',fn:`openUserFollowList('${u.uid}','followers','${u.name}')`}:null,
           !isLocked?{v:u.followingCount||0,l:'Following',c:'#fff',fn:`openUserFollowList('${u.uid}','following','${u.name}')`}:null,
-        ].filter(Boolean).map(s=>`<div onclick="${s.fn||''}" style="flex:1;text-align:center;${s.fn?'cursor:pointer':''}">
+        ].filter(Boolean).map(s=>`<div class="vp-stat" onclick="${s.fn||''}" style="flex:1;min-width:0;text-align:center;${s.fn?'cursor:pointer':''}">
           <div ${s.id?`id="${s.id}"`:''} style="font-size:22px;font-weight:900;color:${s.c};letter-spacing:-.04em;line-height:1">${s.v}</div>
           <div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;font-weight:600">${s.l}</div>
-        </div>`).join('<div style="width:1px;background:rgba(255,255,255,.1)"></div>')}
+        </div>`).join('<div class="vp-stat-div" style="width:1px;background:rgba(255,255,255,.1)"></div>')}
       </div>
     </div>
   </div>

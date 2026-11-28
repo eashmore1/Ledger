@@ -1676,13 +1676,11 @@ body:has(.modal-overlay.open) #pwa-prompt-banner{display:none!important}
 /* 5 ─ REVEAL WITH MASKS: content wipes in instead of fading. */
 @keyframes maskUp{from{clip-path:inset(0 0 100% 0);transform:translateY(10px)}to{clip-path:inset(0 0 0 0);transform:none}}
 @keyframes maskRight{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-.mask-reveal{animation:maskUp .5s cubic-bezier(.22,.61,.36,1) both}
-.page.tab-right :is(.today-head,.page-head,h1),.page.tab-left :is(.today-head,.page-head,h1){animation:maskUp .4s cubic-bezier(.22,.61,.36,1) both}
-.page.tab-right .prog-fill,.page.tab-left .prog-fill,.page.fade-in .prog-fill{animation:maskRight .7s cubic-bezier(.22,.61,.36,1) both}
+.mask-reveal{animation:maskUp .5s cubic-bezier(.22,.61,.36,1) backwards}
+.page.tab-right :is(.today-head,.page-head,h1),.page.tab-left :is(.today-head,.page-head,h1){animation:maskUp .4s cubic-bezier(.22,.61,.36,1) backwards}
+.page.tab-right .prog-fill,.page.tab-left .prog-fill,.page.fade-in .prog-fill{animation:maskRight .7s cubic-bezier(.22,.61,.36,1) backwards}
 
 /* 6 ─ STAGE THE FOCUS: while a dialog is open, the page behind steps back. */
-.app-wrap,.toast-wrap{transition:opacity .25s ease}
-body.focus-staged .app-wrap{opacity:.45;pointer-events:none}
 .modal-overlay.open{background:radial-gradient(ellipse at var(--ox,50%) var(--oy,50%),rgba(0,0,0,.38),rgba(0,0,0,.66))}
 .modal-box:focus-within{box-shadow:var(--shadow-lg),0 0 0 1px var(--bdr2)}
 .modal-box input:focus,.modal-box textarea:focus,.modal-box select:focus{outline:none;border-color:var(--ora);box-shadow:0 0 0 3px rgba(194,58,0,.16)}
@@ -1718,3 +1716,18 @@ button,.btn,[role="button"],.nav-tab,.mob-nav-btn,.ac-action{-webkit-tap-highlig
 .is-busy{position:relative;pointer-events:none;color:transparent!important}
 .is-busy::after{content:'';position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite}
 .btn-ghost.is-busy::after{border-color:var(--bdr2);border-top-color:var(--ora)}
+/* Page frozen behind a pop-up (see _syncScrollLock in app-shell.js). */
+html.scroll-locked{overflow:hidden;overscroll-behavior:none}
+/* The page edge (iOS bounce, area behind a frozen page) matches dark mode. */
+html:has(body.dark){background:#0c0905}
+.modal-overlay,.sess-overlay,.room-overlay{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.modal-box,.cm-body{-webkit-overflow-scrolling:touch}
+
+/* Someone else's profile on phones: stats wrap into rows instead of
+   squeezing five columns into the screen (they ran off the edge). */
+@media(max-width:640px){
+  .profile-hero{padding:20px}
+  .vp-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:14px}
+  .vp-stat-div{display:none}
+  .vp-stat>div:first-child{font-size:20px!important}
+}

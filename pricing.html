@@ -199,7 +199,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,237,230,
 .btn-hero-primary:active,.btn-hero-ghost:active,.btn-cta:active,.btn-review:active,.plan-cta:active{transform:scale(.97);transition-duration:.08s}
 /* Reveal with masks: hero headline wipes in */
 @keyframes lgMask{from{clip-path:inset(0 0 100% 0);transform:translateY(10px)}to{clip-path:inset(0 0 0 0);transform:none}}
-@media(prefers-reduced-motion:no-preference){.hero h1{animation:lgMask .6s cubic-bezier(.22,.61,.36,1) both}}
+@media(prefers-reduced-motion:no-preference){.hero h1{animation:lgMask .6s cubic-bezier(.22,.61,.36,1) backwards}}
 </style>
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>

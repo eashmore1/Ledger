@@ -261,6 +261,16 @@ function switchTab(tab){
   const _moreSheet=document.getElementById('mob-more-sheet');
   if(_moreSheet&&_moreSheet.classList.contains('open'))_moreSheet.classList.remove('open');
   if(typeof _onbOnNavigate==='function') _onbOnNavigate(tab);
+  // On a full page (someone's profile, a session, a club, Messages) the bottom
+  // tabs should still work: rebuild the app shell on the tab that was tapped.
+  if(!document.getElementById('page-content')&&typeof AUTH!=='undefined'&&AUTH&&S){
+    if(typeof _detachDMInboxListener==='function')_detachDMInboxListener();
+    currentTab=tab;
+    try{history.replaceState({view:'app'},'','/'+_hashFor(tab));}catch(e){}
+    renderApp();
+    window.scrollTo(0,0);
+    return;
+  }
   const prevTab=currentTab;
   currentTab=tab;
   if(tab!==prevTab) logLedgerEvent('screen_view',{firebase_screen:tab,screen_name:tab});
@@ -411,7 +421,6 @@ function _syncDialogs(target){
       target.style.setProperty('--ox',_lastTap.x+'px');target.style.setProperty('--oy',_lastTap.y+'px');
     }
   }
-  document.body.classList.toggle('focus-staged',!!document.querySelector('.modal-overlay.open'));
 }
 new MutationObserver(muts=>{
   for(const m of muts){
@@ -448,3 +457,42 @@ new MutationObserver(muts=>{
   document.addEventListener('touchend',end,{passive:true});
   document.addEventListener('touchcancel',end,{passive:true});
 })();
+
+// Freeze the page behind pop-ups. Any full-screen layer sitting on <body>
+// (modals, sheets, the session overlay, celebration cards…) locks the page
+// underneath so a swipe scrolls the pop-up, not what's behind it. The page is
+// pinned with position:fixed (the only lock iOS Safari/WKWebView honours) and
+// put back exactly where it was when the last pop-up closes.
+const _SCROLL_LOCK_SKIP=/^(onb-|cookie-banner|toast-wrap|study-nudge-banner|pwa-prompt-banner|streak-urgency-banner|room-chat-pop|calc-)/;
+let _lockY=null,_lockQueued=false;
+function _isBlockingLayer(el){
+  if(el.id&&_SCROLL_LOCK_SKIP.test(el.id))return false;
+  if(el.id==='root'||el.tagName==='SCRIPT'||el.tagName==='STYLE')return false;
+  const cs=getComputedStyle(el);
+  if(cs.position!=='fixed'||cs.display==='none'||cs.visibility==='hidden'||cs.pointerEvents==='none')return false;
+  const r=el.getBoundingClientRect();
+  return r.width>=window.innerWidth-2&&r.height>=window.innerHeight-2;
+}
+function _syncScrollLock(){
+  _lockQueued=false;
+  const layers=[...document.body.children].filter(_isBlockingLayer);
+  document.body.classList.toggle('focus-staged',!!document.querySelector('.modal-overlay.open'));
+  layers.forEach(l=>{l.style.overscrollBehavior='contain';});
+  const b=document.body;
+  // Desktop only needs overflow:hidden (html.scroll-locked); touch screens
+  // (iOS ignores overflow on body) also get the page pinned in place.
+  const pin=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
+  if(layers.length&&_lockY===null){
+    _lockY=window.scrollY;
+    if(pin){b.style.position='fixed';b.style.top=(-_lockY)+'px';b.style.left='0';b.style.right='0';b.style.width='100%';}
+    document.documentElement.classList.add('scroll-locked');
+  }else if(!layers.length&&_lockY!==null){
+    const y=_lockY;_lockY=null;
+    const pinned=b.style.position==='fixed';
+    if(pinned){b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.width='';}
+    document.documentElement.classList.remove('scroll-locked');
+    if(pinned)window.scrollTo(0,y);
+  }
+}
+function _queueScrollLock(){if(!_lockQueued){_lockQueued=true;requestAnimationFrame(_syncScrollLock);}}
+new MutationObserver(_queueScrollLock).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
